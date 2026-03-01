@@ -8,30 +8,28 @@ import 'package:shellvault/features/connection/presentation/providers/group_prov
 import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
 import 'package:shellvault/features/connection/presentation/widgets/icon_picker_field.dart';
 
-class GroupFormDialog extends StatefulWidget {
+class GroupFormDialog extends ConsumerStatefulWidget {
   final GroupEntity? group;
-  final WidgetRef ref;
 
-  const GroupFormDialog({super.key, this.group, required this.ref});
+  const GroupFormDialog({super.key, this.group});
 
   bool get isEditing => group != null;
 
   static Future<void> show(
-    BuildContext context,
-    WidgetRef ref, {
+    BuildContext context, {
     GroupEntity? group,
   }) {
     return showDialog(
       context: context,
-      builder: (_) => GroupFormDialog(group: group, ref: ref),
+      builder: (_) => GroupFormDialog(group: group),
     );
   }
 
   @override
-  State<GroupFormDialog> createState() => _GroupFormDialogState();
+  ConsumerState<GroupFormDialog> createState() => _GroupFormDialogState();
 }
 
-class _GroupFormDialogState extends State<GroupFormDialog> {
+class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
   final _nameController = TextEditingController();
   int _color = ColorConstants.defaultServerColor;
   String _iconName = IconConstants.defaultIconName;
@@ -56,7 +54,7 @@ class _GroupFormDialogState extends State<GroupFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final groupsAsync = widget.ref.watch(groupListProvider);
+    final groupsAsync = ref.watch(groupListProvider);
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -141,7 +139,7 @@ class _GroupFormDialogState extends State<GroupFormDialog> {
     if (name.isEmpty) return;
 
     final now = DateTime.now();
-    final notifier = widget.ref.read(groupListProvider.notifier);
+    final notifier = ref.read(groupListProvider.notifier);
 
     if (widget.isEditing) {
       await notifier.updateGroup(widget.group!.copyWith(

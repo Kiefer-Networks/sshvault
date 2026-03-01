@@ -76,7 +76,7 @@ class TagListScreen extends ConsumerWidget {
   }
 
   void _showTagForm(BuildContext context, WidgetRef ref, {TagEntity? tag}) {
-    TagFormDialog.show(context, ref, tag: tag);
+    TagFormDialog.show(context, tag: tag);
   }
 
   Future<void> _deleteTag(

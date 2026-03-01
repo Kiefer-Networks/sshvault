@@ -64,6 +64,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   Future<void> _loadServer() async {
     final result =
         await ref.read(serverDetailProvider(widget.serverId!).future);
+    if (!mounted) return;
     _nameController.text = result.name;
     _hostnameController.text = result.hostname;
     _portController.text = result.port.toString();
@@ -83,6 +84,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     // Load credentials
     final creds =
         await ref.read(serverCredentialsProvider(widget.serverId!).future);
+    if (!mounted) return;
     _passwordController.text = creds.password ?? '';
     _privateKeyController.text = creds.privateKey ?? '';
     _publicKeyController.text = creds.publicKey ?? '';

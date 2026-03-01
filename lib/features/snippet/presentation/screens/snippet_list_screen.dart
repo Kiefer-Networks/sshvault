@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
+import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
 import 'package:shellvault/features/snippet/presentation/widgets/snippet_tile.dart';
 
@@ -147,7 +148,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
 
   Future<void> _deleteSnippet(
     BuildContext context,
-    dynamic snippet,
+    SnippetEntity snippet,
   ) async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await ConfirmDialog.show(

@@ -3,6 +3,7 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
@@ -105,7 +106,7 @@ class GroupListScreen extends ConsumerWidget {
     WidgetRef ref, {
     GroupEntity? group,
   }) {
-    GroupFormDialog.show(context, ref, group: group);
+    GroupFormDialog.show(context, group: group);
   }
 
   Future<void> _deleteGroup(
@@ -169,7 +170,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
       }
 
       if (mounted) {
-        ref.read(shellNavigationProvider)?.goBranch(6);
+        ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
       }
     } catch (e) {
       if (mounted) {
@@ -314,7 +315,7 @@ class _GroupServerList extends ConsumerWidget {
                   await ref
                       .read(sessionManagerProvider.notifier)
                       .openSession(server.id);
-                  ref.read(shellNavigationProvider)?.goBranch(6);
+                  ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
                 },
                 onDetail: () => context.push('/server/${server.id}'),
               ),

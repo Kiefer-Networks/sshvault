@@ -66,6 +66,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
   Future<void> _loadSnippet() async {
     final snippet =
         await ref.read(snippetDetailProvider(widget.snippetId!).future);
+    if (!mounted) return;
     _nameController.text = snippet.name;
     _contentController.text = snippet.content;
     _descriptionController.text = snippet.description;

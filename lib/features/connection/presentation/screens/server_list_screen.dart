@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
@@ -100,13 +101,13 @@ class ServerListScreen extends ConsumerWidget {
             await ref
                 .read(sessionManagerProvider.notifier)
                 .openSession(server.id);
-            ref.read(shellNavigationProvider)?.goBranch(6);
+            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
           },
           onConnect: () async {
             await ref
                 .read(sessionManagerProvider.notifier)
                 .openSession(server.id);
-            ref.read(shellNavigationProvider)?.goBranch(6);
+            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
           },
           onDetail: () => context.push('/server/${server.id}'),
           onEdit: () => context.push('/server/${server.id}/edit'),
@@ -158,7 +159,7 @@ class ServerListScreen extends ConsumerWidget {
             await ref
                 .read(sessionManagerProvider.notifier)
                 .openSession(server.id);
-            ref.read(shellNavigationProvider)?.goBranch(6);
+            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
           },
           onDetail: () => context.push('/server/${server.id}'),
           onEdit: () => context.push('/server/${server.id}/edit'),
@@ -186,7 +187,7 @@ class ServerListScreen extends ConsumerWidget {
                 await ref
                     .read(sessionManagerProvider.notifier)
                     .openSession(server.id);
-                ref.read(shellNavigationProvider)?.goBranch(6);
+                ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
               },
             ),
             ListTile(

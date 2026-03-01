@@ -35,6 +35,9 @@ abstract final class AppConstants {
   static const int maxPinAttempts = 5;
   static const int lockoutDurationSeconds = 300; // 5 minutes
 
+  // Navigation
+  static const int terminalBranchIndex = 6;
+
   // Pagination
   static const int defaultPageSize = 50;
 }

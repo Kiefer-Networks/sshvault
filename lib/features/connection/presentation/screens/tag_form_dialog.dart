@@ -6,30 +6,28 @@ import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
 
-class TagFormDialog extends StatefulWidget {
+class TagFormDialog extends ConsumerStatefulWidget {
   final TagEntity? tag;
-  final WidgetRef ref;
 
-  const TagFormDialog({super.key, this.tag, required this.ref});
+  const TagFormDialog({super.key, this.tag});
 
   bool get isEditing => tag != null;
 
   static Future<void> show(
-    BuildContext context,
-    WidgetRef ref, {
+    BuildContext context, {
     TagEntity? tag,
   }) {
     return showDialog(
       context: context,
-      builder: (_) => TagFormDialog(tag: tag, ref: ref),
+      builder: (_) => TagFormDialog(tag: tag),
     );
   }
 
   @override
-  State<TagFormDialog> createState() => _TagFormDialogState();
+  ConsumerState<TagFormDialog> createState() => _TagFormDialogState();
 }
 
-class _TagFormDialogState extends State<TagFormDialog> {
+class _TagFormDialogState extends ConsumerState<TagFormDialog> {
   final _nameController = TextEditingController();
   int _color = ColorConstants.defaultServerColor;
 
@@ -96,7 +94,7 @@ class _TagFormDialogState extends State<TagFormDialog> {
     if (name.isEmpty) return;
 
     final now = DateTime.now();
-    final notifier = widget.ref.read(tagListProvider.notifier);
+    final notifier = ref.read(tagListProvider.notifier);
 
     if (widget.isEditing) {
       await notifier.updateTag(widget.tag!.copyWith(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
+import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
 import 'package:shellvault/features/connection/presentation/screens/ssh_key_form_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -81,7 +82,7 @@ class SshKeyListScreen extends ConsumerWidget {
   Future<void> _editKey(
     BuildContext context,
     WidgetRef ref,
-    dynamic key,
+    SshKeyEntity key,
   ) async {
     await SshKeyFormDialog.show(context, existingKey: key);
   }
@@ -89,7 +90,7 @@ class SshKeyListScreen extends ConsumerWidget {
   Future<void> _deleteKey(
     BuildContext context,
     WidgetRef ref,
-    dynamic key,
+    SshKeyEntity key,
   ) async {
     final l10n = AppLocalizations.of(context)!;
 

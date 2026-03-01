@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
@@ -60,7 +61,7 @@ class ServerDetailScreen extends ConsumerWidget {
           if (context.mounted) {
             context.pop();
           }
-          ref.read(shellNavigationProvider)?.goBranch(6);
+          ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
         },
         icon: const Icon(Icons.terminal),
         label: Text(l10n.serverConnect),
