@@ -7,12 +7,23 @@ import 'package:shellvault/features/connection/data/datasources/ssh_key_dao.dart
 import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/tag_dao.dart';
 import 'package:shellvault/features/settings/data/datasources/app_settings_dao.dart';
+import 'package:shellvault/features/snippet/data/datasources/snippet_dao.dart';
 
 part 'database.g.dart';
 
 @DriftDatabase(
-  tables: [SshKeys, Servers, Groups, Tags, ServerTags, AppSettings],
-  daos: [ServerDao, SshKeyDao, GroupDao, TagDao, AppSettingsDao],
+  tables: [
+    SshKeys,
+    Servers,
+    Groups,
+    Tags,
+    ServerTags,
+    Snippets,
+    SnippetTags,
+    SnippetVariables,
+    AppSettings,
+  ],
+  daos: [ServerDao, SshKeyDao, GroupDao, TagDao, AppSettingsDao, SnippetDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
@@ -35,6 +46,11 @@ class AppDatabase extends _$AppDatabase {
         if (from < 2) {
           await m.createTable(sshKeys);
           await m.addColumn(servers, servers.sshKeyId);
+        }
+        if (from < 3) {
+          await m.createTable(snippets);
+          await m.createTable(snippetTags);
+          await m.createTable(snippetVariables);
         }
       },
     );

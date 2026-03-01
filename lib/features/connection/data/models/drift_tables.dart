@@ -80,6 +80,44 @@ class ServerTags extends Table {
   Set<Column> get primaryKey => {serverId, tagId};
 }
 
+class Snippets extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
+  TextColumn get content => text()();
+  TextColumn get language => text().withDefault(const Constant('bash'))();
+  TextColumn get description => text().withDefault(const Constant(''))();
+  TextColumn get groupId => text().nullable().references(Groups, #id)();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+  TextColumn get ownerId => text().nullable()();
+  TextColumn get sharedWith => text().nullable()();
+  TextColumn get permissions => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class SnippetTags extends Table {
+  TextColumn get snippetId => text().references(Snippets, #id)();
+  TextColumn get tagId => text().references(Tags, #id)();
+
+  @override
+  Set<Column> get primaryKey => {snippetId, tagId};
+}
+
+class SnippetVariables extends Table {
+  TextColumn get id => text()();
+  TextColumn get snippetId => text().references(Snippets, #id)();
+  TextColumn get name => text().withLength(min: 1, max: 50)();
+  TextColumn get defaultValue => text().withDefault(const Constant(''))();
+  TextColumn get description => text().withDefault(const Constant(''))();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class AppSettings extends Table {
   TextColumn get key => text()();
   TextColumn get value => text()();
