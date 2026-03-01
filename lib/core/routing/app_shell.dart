@@ -318,7 +318,7 @@ class _DesktopScaffold extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const _SyncStatusIcon(),
+                      _SyncRailButton(),
                       const SizedBox(height: 4),
                       IconButton(
                         icon: const Icon(Icons.settings_outlined),
@@ -405,6 +405,51 @@ class _SyncStatusIcon extends ConsumerWidget {
   }
 }
 
+class _SyncRailButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final authState = ref.watch(authProvider);
+    final isAuthenticated =
+        authState.valueOrNull == AuthStatus.authenticated;
+    final syncState = ref.watch(syncProvider);
+    final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
+    final hasError = syncState.hasError;
+
+    final IconData icon;
+    if (!isAuthenticated) {
+      icon = Icons.cloud_off_outlined;
+    } else if (hasError) {
+      icon = Icons.cloud_off;
+    } else {
+      icon = Icons.cloud_done_outlined;
+    }
+
+    return IconButton(
+      icon: isSyncing
+          ? const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(
+              icon,
+              color: hasError
+                  ? Theme.of(context).colorScheme.error
+                  : null,
+            ),
+      tooltip: l10n.settingsSectionSync,
+      onPressed: () {
+        if (isAuthenticated) {
+          context.push('/sync-settings');
+        } else {
+          context.push('/login');
+        }
+      },
+    );
+  }
+}
+
 class _AppDrawer extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
@@ -477,6 +522,7 @@ class _AppDrawer extends StatelessWidget {
             const Spacer(),
 
             const Divider(indent: 16, endIndent: 16),
+            _SyncDrawerItem(),
             _DrawerItem(
               icon: Icons.settings_outlined,
               selectedIcon: Icons.settings,
@@ -500,6 +546,63 @@ class _AppDrawer extends StatelessWidget {
             const SizedBox(height: 8),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SyncDrawerItem extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final authState = ref.watch(authProvider);
+    final isAuthenticated =
+        authState.valueOrNull == AuthStatus.authenticated;
+    final syncState = ref.watch(syncProvider);
+    final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
+    final hasError = syncState.hasError;
+
+    final IconData icon;
+    if (!isAuthenticated) {
+      icon = Icons.cloud_off_outlined;
+    } else if (isSyncing) {
+      icon = Icons.cloud_sync_outlined;
+    } else if (hasError) {
+      icon = Icons.cloud_off;
+    } else {
+      icon = Icons.cloud_done_outlined;
+    }
+
+    final subtitle = !isAuthenticated
+        ? l10n.settingsSyncNotLoggedIn
+        : isSyncing
+            ? l10n.syncSyncing
+            : hasError
+                ? l10n.syncError
+                : l10n.syncSuccess;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(l10n.settingsSectionSync),
+        subtitle: Text(
+          subtitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+          if (isAuthenticated) {
+            context.push('/sync-settings');
+          } else {
+            context.push('/login');
+          }
+        },
       ),
     );
   }
