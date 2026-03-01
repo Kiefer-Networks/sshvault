@@ -68,6 +68,8 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
             await _sshKeyService.extractPublicKey(privateKey);
         if (extractResult.isSuccess) {
           publicKey = extractResult.value;
+        } else {
+          return Err(extractResult.failure);
         }
       }
 

@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/crypto/crypto_provider.dart';
+import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/crypto/ssh_key_type.dart';
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
@@ -356,6 +361,56 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     );
   }
 
+  Future<void> _pickKeyFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(type: FileType.any);
+      if (result == null || result.files.isEmpty) return;
+
+      final file = result.files.first;
+
+      // Prefer bytes (works on Android SAF + iOS), fallback to path
+      String content;
+      if (file.bytes != null) {
+        content = utf8.decode(file.bytes!, allowMalformed: true);
+      } else if (file.path != null) {
+        content = await File(file.path!).readAsString();
+      } else {
+        setState(() => _error = 'Could not read the selected file');
+        return;
+      }
+
+      if (!content.contains('-----BEGIN')) {
+        setState(
+            () => _error = 'Invalid key file — expected PEM format (-----BEGIN ...)');
+        return;
+      }
+
+      // Auto-fill name from filename if empty
+      if (_nameController.text.trim().isEmpty && file.name.isNotEmpty) {
+        _nameController.text = file.name.replaceAll(RegExp(r'\.[^.]+$'), '');
+      }
+
+      // Extract comment from key if possible
+      final keyService = SshKeyService();
+      final infoResult = await keyService.extractKeyInfo(content.trim());
+      if (infoResult.isSuccess) {
+        final info = infoResult.value;
+        if (info.comment != null &&
+            info.comment!.isNotEmpty &&
+            _commentController.text.trim().isEmpty) {
+          _commentController.text = info.comment!;
+        }
+      }
+
+      setState(() {
+        _privateKeyController.text = content.trim();
+        _error = null;
+      });
+    } catch (e) {
+      setState(() => _error = 'Failed to read file: $e');
+    }
+  }
+
   Widget _buildImportForm(ThemeData theme) {
     return SingleChildScrollView(
       child: Column(
@@ -371,12 +426,18 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
             textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: _saving ? null : _pickKeyFile,
+            icon: const Icon(Icons.file_open),
+            label: const Text('Import from File'),
+          ),
+          const SizedBox(height: 16),
           TextFormField(
             controller: _privateKeyController,
             decoration: const InputDecoration(
               labelText: 'Private Key',
               prefixIcon: Icon(Icons.vpn_key),
-              hintText: 'Paste SSH private key...',
+              hintText: 'Paste SSH private key or use button above...',
             ),
             maxLines: 5,
           ),

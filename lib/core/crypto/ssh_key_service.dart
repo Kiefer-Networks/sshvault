@@ -24,6 +24,12 @@ class SshKeyPair {
   });
 }
 
+class ExtractedKeyInfo {
+  final String publicKey;
+  final String? comment;
+  ExtractedKeyInfo({required this.publicKey, this.comment});
+}
+
 class SshKeyService {
   static final _secureRandom = FortunaRandom();
   static bool _initialized = false;
@@ -103,6 +109,29 @@ class SshKeyService {
       );
     } catch (e) {
       return Err(CryptoFailure('Failed to extract public key', cause: e));
+    }
+  }
+
+  /// Extract public key and comment from a PEM-encoded private key.
+  /// Comment extraction is only supported for unencrypted OpenSSH keys.
+  Future<Result<ExtractedKeyInfo>> extractKeyInfo(
+    String privateKeyPem,
+  ) async {
+    try {
+      final trimmed = privateKeyPem.trim();
+
+      if (trimmed.contains('OPENSSH PRIVATE KEY')) {
+        return await _extractOpenSshKeyInfo(trimmed);
+      }
+
+      // For non-OpenSSH formats, fall back to extractPublicKey (no comment available)
+      final result = await extractPublicKey(trimmed);
+      if (result.isSuccess) {
+        return Success(ExtractedKeyInfo(publicKey: result.value));
+      }
+      return Err(result.failure);
+    } catch (e) {
+      return Err(CryptoFailure('Failed to extract key info', cause: e));
     }
   }
 
@@ -335,6 +364,121 @@ class SshKeyService {
       return Err(
         CryptoFailure('Unsupported OpenSSH key type: $keyType'),
       );
+    } catch (e) {
+      return Err(CryptoFailure('Failed to parse OpenSSH private key', cause: e));
+    }
+  }
+
+  /// Extract public key + comment from an OpenSSH private key.
+  Future<Result<ExtractedKeyInfo>> _extractOpenSshKeyInfo(String pem) async {
+    try {
+      final lines = pem.split('\n');
+      final b64 = lines.where((l) => !l.startsWith('-----')).join();
+      final bytes = Uint8List.fromList(base64Decode(b64));
+
+      int offset = 0;
+
+      // Skip magic "openssh-key-v1\0"
+      const magic = 'openssh-key-v1\x00';
+      offset = magic.length;
+
+      // ciphername
+      final cipherLen = _readUint32(bytes, offset);
+      offset += 4;
+      final cipherName = utf8.decode(bytes.sublist(offset, offset + cipherLen));
+      offset += cipherLen;
+
+      if (cipherName != 'none') {
+        return const Err(
+          CryptoFailure('Encrypted OpenSSH keys are not supported for extraction. '
+              'Remove the passphrase first with ssh-keygen -p.'),
+        );
+      }
+
+      // kdfname
+      final kdfLen = _readUint32(bytes, offset);
+      offset += 4 + kdfLen;
+
+      // kdfoptions
+      final kdfOptLen = _readUint32(bytes, offset);
+      offset += 4 + kdfOptLen;
+
+      // number of keys
+      final numKeys = _readUint32(bytes, offset);
+      offset += 4;
+
+      if (numKeys < 1) {
+        return const Err(CryptoFailure('No keys found in OpenSSH file.'));
+      }
+
+      // Read public key blob
+      final pubBlobLen = _readUint32(bytes, offset);
+      offset += 4;
+      final pubBlob = bytes.sublist(offset, offset + pubBlobLen);
+      offset += pubBlobLen;
+
+      // Parse key type from public blob
+      int pOff = 0;
+      final typeLen = _readUint32(pubBlob, pOff);
+      pOff += 4;
+      final keyType = utf8.decode(pubBlob.sublist(pOff, pOff + typeLen));
+      pOff += typeLen;
+
+      String? publicKey;
+      if (keyType == 'ssh-ed25519') {
+        final pkLen = _readUint32(pubBlob, pOff);
+        pOff += 4;
+        final publicKeyBytes =
+            Uint8List.fromList(pubBlob.sublist(pOff, pOff + pkLen));
+        publicKey = _ed25519ToOpenSshPublicKey(publicKeyBytes, 'shellvault-extracted');
+      }
+
+      if (publicKey == null) {
+        return Err(CryptoFailure('Unsupported OpenSSH key type: $keyType'));
+      }
+
+      // Parse private section to extract comment
+      String? comment;
+      final privSectionLen = _readUint32(bytes, offset);
+      offset += 4;
+      final privSection = bytes.sublist(offset, offset + privSectionLen);
+
+      // Private section format:
+      // checkInt1 (uint32) | checkInt2 (uint32) | keyType (string) |
+      // ... key data ... | comment (string) | padding
+      int sOff = 0;
+      // checkInt1 + checkInt2
+      sOff += 8;
+      // keyType string
+      final sTypeLen = _readUint32(privSection, sOff);
+      sOff += 4 + sTypeLen;
+
+      if (keyType == 'ssh-ed25519') {
+        // pubkey (string) + privkey (string)
+        final sPubLen = _readUint32(privSection, sOff);
+        sOff += 4 + sPubLen;
+        final sPrivLen = _readUint32(privSection, sOff);
+        sOff += 4 + sPrivLen;
+      }
+
+      // Comment string
+      if (sOff + 4 <= privSection.length) {
+        final commentLen = _readUint32(privSection, sOff);
+        sOff += 4;
+        if (sOff + commentLen <= privSection.length) {
+          comment = utf8.decode(privSection.sublist(sOff, sOff + commentLen));
+        }
+      }
+
+      // Replace placeholder comment in publicKey line if we found a real comment
+      if (comment != null && comment.isNotEmpty) {
+        publicKey = publicKey.replaceFirst(' shellvault-extracted', ' $comment');
+      }
+
+      return Success(ExtractedKeyInfo(
+        publicKey: publicKey,
+        comment: (comment != null && comment.isNotEmpty) ? comment : null,
+      ));
     } catch (e) {
       return Err(CryptoFailure('Failed to parse OpenSSH private key', cause: e));
     }
