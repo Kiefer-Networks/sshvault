@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
 import 'package:shellvault/features/connection/presentation/screens/ssh_key_form_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/ssh_key_tile.dart';
@@ -13,9 +14,7 @@ class SshKeyListScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SSH Keys'),
-      ),
+      appBar: buildShellAppBar(context, title: 'SSH Keys'),
       body: keysAsync.when(
         data: (keys) {
           if (keys.isEmpty) {

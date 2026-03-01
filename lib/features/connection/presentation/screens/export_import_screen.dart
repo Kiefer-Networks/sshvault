@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
+import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/export_import_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/export_password_dialog.dart';
@@ -17,9 +18,7 @@ class ExportImportScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Export / Import'),
-      ),
+      appBar: buildShellAppBar(context, title: 'Export / Import'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/screens/tag_form_dialog.dart';
@@ -14,9 +15,7 @@ class TagListScreen extends ConsumerWidget {
     final tagsAsync = ref.watch(tagListProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tags'),
-      ),
+      appBar: buildShellAppBar(context, title: 'Tags'),
       body: tagsAsync.when(
         data: (tags) {
           if (tags.isEmpty) {

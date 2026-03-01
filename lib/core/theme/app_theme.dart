@@ -85,6 +85,36 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: const Color(0xFF0F0F1A),
+        selectedIconTheme: IconThemeData(color: colorScheme.primary),
+        unselectedIconTheme: IconThemeData(
+          color: colorScheme.onSurface.withAlpha(179),
+        ),
+        selectedLabelTextStyle: TextStyle(
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+        ),
+        unselectedLabelTextStyle: TextStyle(
+          color: colorScheme.onSurface.withAlpha(179),
+          fontSize: 13,
+        ),
+        indicatorColor: colorScheme.primary.withAlpha(26),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: Color(0xFF0F0F1A),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          ),
+        ),
+        surfaceTintColor: Color(0x00000000),
+      ),
     );
   }
 }

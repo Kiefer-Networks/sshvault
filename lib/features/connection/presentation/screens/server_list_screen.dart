@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
@@ -18,54 +19,10 @@ class ServerListScreen extends ConsumerWidget {
     final viewMode = ref.watch(viewModeProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ShellVault'),
-        actions: [
-          const ViewModeToggle(),
-          const SizedBox(width: 8),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) {
-              switch (value) {
-                case 'groups':
-                  context.push('/groups');
-                case 'tags':
-                  context.push('/tags');
-                case 'export_import':
-                  context.push('/export-import');
-              }
-            },
-            itemBuilder: (_) => [
-              const PopupMenuItem(
-                value: 'groups',
-                child: ListTile(
-                  leading: Icon(Icons.folder_outlined),
-                  title: Text('Groups'),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'tags',
-                child: ListTile(
-                  leading: Icon(Icons.label_outline),
-                  title: Text('Tags'),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'export_import',
-                child: ListTile(
-                  leading: Icon(Icons.import_export),
-                  title: Text('Export / Import'),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-            ],
-          ),
-        ],
+      appBar: buildShellAppBar(
+        context,
+        title: 'Hosts',
+        actions: const [ViewModeToggle(), SizedBox(width: 8)],
       ),
       body: Column(
         children: [
