@@ -25,7 +25,9 @@ class _NavItem {
   });
 }
 
-const _navItems = <_NavItem>[
+/// Base nav items (indices 0–5). Terminal (index 6) is appended dynamically
+/// only when there are active sessions.
+const _baseNavItems = <_NavItem>[
   _NavItem(
     icon: Icons.dns_outlined,
     selectedIcon: Icons.dns,
@@ -56,12 +58,13 @@ const _navItems = <_NavItem>[
     selectedIcon: Icons.import_export,
     label: 'Export / Import',
   ),
-  _NavItem(
-    icon: Icons.terminal_outlined,
-    selectedIcon: Icons.terminal,
-    label: 'Terminal',
-  ),
 ];
+
+const _terminalNavItem = _NavItem(
+  icon: Icons.terminal_outlined,
+  selectedIcon: Icons.terminal,
+  label: 'Terminal',
+);
 
 /// The root shell widget used by [StatefulShellRoute].
 ///
@@ -93,16 +96,22 @@ class AppShellState extends ConsumerState<AppShell> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(shellNavigationProvider.notifier).state =
-          widget.navigationShell;
+      if (mounted) {
+        ref.read(shellNavigationProvider.notifier).state =
+            widget.navigationShell;
+      }
     });
   }
 
   @override
   void didUpdateWidget(covariant AppShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    ref.read(shellNavigationProvider.notifier).state =
-        widget.navigationShell;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(shellNavigationProvider.notifier).state =
+            widget.navigationShell;
+      }
+    });
   }
 
   void _onDestinationSelected(int index) {
@@ -197,14 +206,22 @@ class _DesktopScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Terminal is the last nav item (index 6)
-    const terminalIndex = 6;
+    final showTerminal = sessionCount > 0;
+
+    // Build visible nav items — Terminal only when sessions exist
+    final visibleItems = [
+      ..._baseNavItems,
+      if (showTerminal) _terminalNavItem,
+    ];
+
+    // Clamp selectedIndex if Terminal is hidden but was selected
+    final clampedIndex = currentIndex < visibleItems.length ? currentIndex : 0;
 
     return Scaffold(
       body: Row(
         children: [
           NavigationRail(
-            selectedIndex: currentIndex,
+            selectedIndex: clampedIndex,
             onDestinationSelected: onDestinationSelected,
             extended: extended,
             leading: Padding(
@@ -260,21 +277,21 @@ class _DesktopScaffold extends StatelessWidget {
               ),
             ),
             destinations: [
-              for (var i = 0; i < _navItems.length; i++)
+              for (var i = 0; i < visibleItems.length; i++)
                 NavigationRailDestination(
-                  icon: i == terminalIndex && sessionCount > 0
+                  icon: showTerminal && i == visibleItems.length - 1
                       ? Badge(
                           label: Text('$sessionCount'),
-                          child: Icon(_navItems[i].icon),
+                          child: Icon(visibleItems[i].icon),
                         )
-                      : Icon(_navItems[i].icon),
-                  selectedIcon: i == terminalIndex && sessionCount > 0
+                      : Icon(visibleItems[i].icon),
+                  selectedIcon: showTerminal && i == visibleItems.length - 1
                       ? Badge(
                           label: Text('$sessionCount'),
-                          child: Icon(_navItems[i].selectedIcon),
+                          child: Icon(visibleItems[i].selectedIcon),
                         )
-                      : Icon(_navItems[i].selectedIcon),
-                  label: Text(_navItems[i].label),
+                      : Icon(visibleItems[i].selectedIcon),
+                  label: Text(visibleItems[i].label),
                 ),
             ],
           ),
@@ -308,8 +325,13 @@ class _AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Terminal is the last nav item (index 6)
-    const terminalIndex = 6;
+    final showTerminal = sessionCount > 0;
+
+    // Build visible nav items — Terminal only when sessions exist
+    final visibleItems = [
+      ..._baseNavItems,
+      if (showTerminal) _terminalNavItem,
+    ];
 
     return Drawer(
       child: SafeArea(
@@ -341,13 +363,13 @@ class _AppDrawer extends StatelessWidget {
             const SizedBox(height: 8),
 
             // Nav items
-            for (var i = 0; i < _navItems.length; i++)
+            for (var i = 0; i < visibleItems.length; i++)
               _DrawerItem(
-                icon: _navItems[i].icon,
-                selectedIcon: _navItems[i].selectedIcon,
-                label: _navItems[i].label,
+                icon: visibleItems[i].icon,
+                selectedIcon: visibleItems[i].selectedIcon,
+                label: visibleItems[i].label,
                 selected: i == currentIndex,
-                badge: i == terminalIndex && sessionCount > 0
+                badge: showTerminal && i == visibleItems.length - 1
                     ? sessionCount
                     : null,
                 onTap: () {
