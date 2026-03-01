@@ -1,0 +1,1039 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Spanish Castilian (`es`).
+class AppLocalizationsEs extends AppLocalizations {
+  AppLocalizationsEs([String locale = 'es']) : super(locale);
+
+  @override
+  String get appName => 'SSH Vault';
+
+  @override
+  String get navHosts => 'Hosts';
+
+  @override
+  String get navSnippets => 'Snippets';
+
+  @override
+  String get navGroups => 'Grupos';
+
+  @override
+  String get navTags => 'Etiquetas';
+
+  @override
+  String get navSshKeys => 'Claves SSH';
+
+  @override
+  String get navExportImport => 'Exportar / Importar';
+
+  @override
+  String get navTerminal => 'Terminal';
+
+  @override
+  String get navSettings => 'Ajustes';
+
+  @override
+  String get navAbout => 'Acerca de';
+
+  @override
+  String get lockScreenTitle => 'SSH Vault está bloqueado';
+
+  @override
+  String get lockScreenUnlock => 'Desbloquear';
+
+  @override
+  String get lockScreenEnterPin => 'Ingresar PIN';
+
+  @override
+  String get pinDialogSetTitle => 'Establecer PIN';
+
+  @override
+  String get pinDialogSetSubtitle =>
+      'Ingresa un PIN de 6 dígitos para proteger SSH Vault';
+
+  @override
+  String get pinDialogLabel => 'PIN';
+
+  @override
+  String get pinDialogHint => '000000';
+
+  @override
+  String get pinDialogConfirmLabel => 'Confirmar PIN';
+
+  @override
+  String get pinDialogErrorLength => 'El PIN debe tener exactamente 6 dígitos';
+
+  @override
+  String get pinDialogErrorMismatch => 'Los PINs no coinciden';
+
+  @override
+  String get pinDialogVerifyTitle => 'Ingresar PIN';
+
+  @override
+  String pinDialogWrongPin(int attempts) {
+    return 'PIN incorrecto ($attempts/5)';
+  }
+
+  @override
+  String get securityBannerMessage =>
+      'Tus credenciales SSH no están protegidas. Configura un PIN o bloqueo biométrico en Ajustes.';
+
+  @override
+  String get securityBannerDismiss => 'Descartar';
+
+  @override
+  String get settingsTitle => 'Ajustes';
+
+  @override
+  String get settingsSectionAppearance => 'Apariencia';
+
+  @override
+  String get settingsSectionTerminal => 'Terminal';
+
+  @override
+  String get settingsSectionSshDefaults => 'SSH predeterminado';
+
+  @override
+  String get settingsSectionSecurity => 'Seguridad';
+
+  @override
+  String get settingsSectionExport => 'Exportar';
+
+  @override
+  String get settingsSectionAbout => 'Acerca de';
+
+  @override
+  String get settingsTheme => 'Tema';
+
+  @override
+  String get settingsThemeSystem => 'Sistema';
+
+  @override
+  String get settingsThemeLight => 'Claro';
+
+  @override
+  String get settingsThemeDark => 'Oscuro';
+
+  @override
+  String get settingsTerminalTheme => 'Tema del terminal';
+
+  @override
+  String get settingsTerminalThemeDefault => 'Oscuro por defecto';
+
+  @override
+  String get settingsFontSize => 'Tamaño de fuente';
+
+  @override
+  String settingsFontSizeValue(int size) {
+    return '$size px';
+  }
+
+  @override
+  String get settingsDefaultPort => 'Puerto predeterminado';
+
+  @override
+  String get settingsDefaultPortDialog => 'Puerto SSH predeterminado';
+
+  @override
+  String get settingsPortLabel => 'Puerto';
+
+  @override
+  String get settingsPortHint => '22';
+
+  @override
+  String get settingsDefaultUsername => 'Usuario predeterminado';
+
+  @override
+  String get settingsDefaultUsernameDialog => 'Usuario predeterminado';
+
+  @override
+  String get settingsUsernameLabel => 'Usuario';
+
+  @override
+  String get settingsUsernameHint => 'root';
+
+  @override
+  String get settingsAutoLock => 'Bloqueo automático';
+
+  @override
+  String get settingsAutoLockDisabled => 'Desactivado';
+
+  @override
+  String settingsAutoLockMinutes(int minutes) {
+    return '$minutes minutos';
+  }
+
+  @override
+  String get settingsAutoLockOff => 'Desactivado';
+
+  @override
+  String get settingsAutoLock1Min => '1 min';
+
+  @override
+  String get settingsAutoLock5Min => '5 min';
+
+  @override
+  String get settingsAutoLock15Min => '15 min';
+
+  @override
+  String get settingsAutoLock30Min => '30 min';
+
+  @override
+  String get settingsBiometricUnlock => 'Desbloqueo biométrico';
+
+  @override
+  String get settingsBiometricNotAvailable =>
+      'No disponible en este dispositivo';
+
+  @override
+  String get settingsBiometricError => 'Error al verificar biometría';
+
+  @override
+  String get settingsBiometricReason =>
+      'Verifica tu identidad para activar el desbloqueo biométrico';
+
+  @override
+  String get settingsBiometricRequiresPin =>
+      'Establece un PIN primero para activar el desbloqueo biométrico';
+
+  @override
+  String get settingsPinCode => 'Código PIN';
+
+  @override
+  String get settingsPinIsSet => 'PIN establecido';
+
+  @override
+  String get settingsPinNotConfigured => 'PIN no configurado';
+
+  @override
+  String get settingsPinRemove => 'Eliminar';
+
+  @override
+  String get settingsPinRemoveWarning =>
+      'Eliminar el PIN descifrará todos los campos de la base de datos y desactivará el desbloqueo biométrico. ¿Continuar?';
+
+  @override
+  String get settingsPinRemoveTitle => 'Eliminar PIN';
+
+  @override
+  String get settingsEncryptExport => 'Cifrar exportaciones por defecto';
+
+  @override
+  String get settingsAbout => 'Acerca de SSH Vault';
+
+  @override
+  String get settingsAboutLegalese => 'por Kiefer Networks';
+
+  @override
+  String get settingsAboutDescription => 'Cliente SSH seguro y autoalojado';
+
+  @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get settingsLanguageSystem => 'Sistema';
+
+  @override
+  String get settingsLanguageEn => 'English';
+
+  @override
+  String get settingsLanguageDe => 'Deutsch';
+
+  @override
+  String get settingsLanguageEs => 'Español';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get save => 'Guardar';
+
+  @override
+  String get delete => 'Eliminar';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get update => 'Actualizar';
+
+  @override
+  String get create => 'Crear';
+
+  @override
+  String get retry => 'Reintentar';
+
+  @override
+  String get copy => 'Copiar';
+
+  @override
+  String get edit => 'Editar';
+
+  @override
+  String get loading => '...';
+
+  @override
+  String error(String message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get serverListTitle => 'Hosts';
+
+  @override
+  String get serverListEmpty => 'Aún no hay servidores';
+
+  @override
+  String get serverListEmptySubtitle =>
+      'Agrega tu primer servidor SSH para comenzar.';
+
+  @override
+  String get serverAddButton => 'Agregar servidor';
+
+  @override
+  String get serverDuplicated => 'Servidor duplicado';
+
+  @override
+  String get serverDeleteTitle => 'Eliminar servidor';
+
+  @override
+  String serverDeleteMessage(String name) {
+    return '¿Estás seguro de que deseas eliminar \"$name\"? Esta acción no se puede deshacer.';
+  }
+
+  @override
+  String serverDeleteShort(String name) {
+    return '¿Eliminar \"$name\"?';
+  }
+
+  @override
+  String get serverConnect => 'Conectar';
+
+  @override
+  String get serverDetails => 'Detalles';
+
+  @override
+  String get serverDuplicate => 'Duplicar';
+
+  @override
+  String get serverActive => 'Activo';
+
+  @override
+  String get serverNoGroup => 'Sin grupo';
+
+  @override
+  String get serverFormTitleEdit => 'Editar servidor';
+
+  @override
+  String get serverFormTitleAdd => 'Agregar servidor';
+
+  @override
+  String get serverFormUpdateButton => 'Actualizar servidor';
+
+  @override
+  String get serverFormAddButton => 'Agregar servidor';
+
+  @override
+  String get serverFormPublicKeyExtracted =>
+      'Clave pública extraída exitosamente';
+
+  @override
+  String serverFormPublicKeyError(String message) {
+    return 'No se pudo extraer la clave pública: $message';
+  }
+
+  @override
+  String serverFormKeyGenerated(String type) {
+    return 'Par de claves $type generado';
+  }
+
+  @override
+  String get serverDetailTitle => 'Detalles del servidor';
+
+  @override
+  String get serverDetailDeleteMessage => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get serverDetailConnection => 'Conexión';
+
+  @override
+  String get serverDetailHost => 'Host';
+
+  @override
+  String get serverDetailPort => 'Puerto';
+
+  @override
+  String get serverDetailUsername => 'Usuario';
+
+  @override
+  String get serverDetailTags => 'Etiquetas';
+
+  @override
+  String get serverDetailNotes => 'Notas';
+
+  @override
+  String get serverDetailInfo => 'Info';
+
+  @override
+  String get serverDetailCreated => 'Creado';
+
+  @override
+  String get serverDetailUpdated => 'Actualizado';
+
+  @override
+  String get copiedToClipboard => 'Copiado al portapapeles';
+
+  @override
+  String get serverFormNameLabel => 'Nombre del servidor';
+
+  @override
+  String get serverFormHostnameLabel => 'Hostname / IP';
+
+  @override
+  String get serverFormPortLabel => 'Puerto';
+
+  @override
+  String get serverFormUsernameLabel => 'Usuario';
+
+  @override
+  String get serverFormPasswordLabel => 'Contraseña';
+
+  @override
+  String get serverFormUseManagedKey => 'Usar clave administrada';
+
+  @override
+  String get serverFormManagedKeySubtitle =>
+      'Seleccionar de claves SSH administradas centralmente';
+
+  @override
+  String get serverFormDirectKeySubtitle =>
+      'Pegar clave directamente en este servidor';
+
+  @override
+  String get serverFormGenerateKey => 'Generar par de claves SSH';
+
+  @override
+  String get serverFormPrivateKeyLabel => 'Clave privada';
+
+  @override
+  String get serverFormPrivateKeyHint => 'Pegar clave privada SSH...';
+
+  @override
+  String get serverFormExtractPublicKey => 'Extraer clave pública';
+
+  @override
+  String get serverFormPublicKeyLabel => 'Clave pública';
+
+  @override
+  String get serverFormPublicKeyHint =>
+      'Se genera automáticamente desde la clave privada';
+
+  @override
+  String get serverFormPassphraseLabel => 'Passphrase de la clave (opcional)';
+
+  @override
+  String get serverFormNotesLabel => 'Notas (opcional)';
+
+  @override
+  String get searchServers => 'Buscar servidores...';
+
+  @override
+  String get filterAllGroups => 'Todos los grupos';
+
+  @override
+  String get filterAll => 'Todos';
+
+  @override
+  String get filterActive => 'Activo';
+
+  @override
+  String get filterInactive => 'Inactivo';
+
+  @override
+  String get filterClear => 'Limpiar';
+
+  @override
+  String get groupListTitle => 'Grupos';
+
+  @override
+  String get groupListEmpty => 'Aún no hay grupos';
+
+  @override
+  String get groupListEmptySubtitle =>
+      'Crea grupos para organizar tus servidores.';
+
+  @override
+  String get groupAddButton => 'Agregar grupo';
+
+  @override
+  String get groupDeleteTitle => 'Eliminar grupo';
+
+  @override
+  String groupDeleteMessage(String name) {
+    return '¿Eliminar \"$name\"? Los servidores en este grupo quedarán sin grupo.';
+  }
+
+  @override
+  String get groupCollapse => 'Colapsar';
+
+  @override
+  String get groupShowHosts => 'Mostrar hosts';
+
+  @override
+  String get groupFormTitleEdit => 'Editar grupo';
+
+  @override
+  String get groupFormTitleNew => 'Nuevo grupo';
+
+  @override
+  String get groupFormNameLabel => 'Nombre del grupo';
+
+  @override
+  String get groupFormParentLabel => 'Grupo padre';
+
+  @override
+  String get groupFormParentNone => 'Ninguno (Raíz)';
+
+  @override
+  String get tagListTitle => 'Etiquetas';
+
+  @override
+  String get tagListEmpty => 'Aún no hay etiquetas';
+
+  @override
+  String get tagListEmptySubtitle =>
+      'Crea etiquetas para etiquetar y filtrar tus servidores.';
+
+  @override
+  String get tagAddButton => 'Agregar etiqueta';
+
+  @override
+  String get tagDeleteTitle => 'Eliminar etiqueta';
+
+  @override
+  String tagDeleteMessage(String name) {
+    return '¿Eliminar \"$name\"? Se eliminará de todos los servidores.';
+  }
+
+  @override
+  String get tagFormTitleEdit => 'Editar etiqueta';
+
+  @override
+  String get tagFormTitleNew => 'Nueva etiqueta';
+
+  @override
+  String get tagFormNameLabel => 'Nombre de la etiqueta';
+
+  @override
+  String get sshKeyListTitle => 'Claves SSH';
+
+  @override
+  String get sshKeyListEmpty => 'Aún no hay claves SSH';
+
+  @override
+  String get sshKeyListEmptySubtitle =>
+      'Genera o importa claves SSH para administrarlas centralmente';
+
+  @override
+  String get sshKeyCannotDeleteTitle => 'No se puede eliminar';
+
+  @override
+  String sshKeyCannotDeleteMessage(String name, int count) {
+    return 'No se puede eliminar \"$name\". Usada por $count servidor(es). Desvincula de todos los servidores primero.';
+  }
+
+  @override
+  String get sshKeyDeleteTitle => 'Eliminar clave SSH';
+
+  @override
+  String sshKeyDeleteMessage(String name) {
+    return '¿Eliminar \"$name\"? Esto no se puede deshacer.';
+  }
+
+  @override
+  String get sshKeyFormTitleEdit => 'Editar clave SSH';
+
+  @override
+  String get sshKeyFormTitleAdd => 'Agregar clave SSH';
+
+  @override
+  String get sshKeyFormTabGenerate => 'Generar';
+
+  @override
+  String get sshKeyFormTabImport => 'Importar';
+
+  @override
+  String get sshKeyFormNameLabel => 'Nombre de la clave';
+
+  @override
+  String get sshKeyFormNameHint => 'ej. Mi clave de producción';
+
+  @override
+  String get sshKeyFormKeyType => 'Tipo de clave';
+
+  @override
+  String get sshKeyFormKeySize => 'Tamaño de clave';
+
+  @override
+  String sshKeyFormKeySizeBit(int bits) {
+    return '$bits bit';
+  }
+
+  @override
+  String get sshKeyFormCommentLabel => 'Comentario';
+
+  @override
+  String get sshKeyFormCommentHint => 'usuario@host o descripción';
+
+  @override
+  String get sshKeyFormCommentOptional => 'Comentario (opcional)';
+
+  @override
+  String get sshKeyFormImportFromFile => 'Importar desde archivo';
+
+  @override
+  String get sshKeyFormPrivateKeyLabel => 'Clave privada';
+
+  @override
+  String get sshKeyFormPrivateKeyHint =>
+      'Pegar clave privada SSH o usar botón de arriba...';
+
+  @override
+  String get sshKeyFormPassphraseLabel => 'Passphrase (opcional)';
+
+  @override
+  String get sshKeyFormNameRequired => 'El nombre es obligatorio';
+
+  @override
+  String get sshKeyFormPrivateKeyRequired => 'La clave privada es obligatoria';
+
+  @override
+  String get sshKeyFormFileReadError =>
+      'No se pudo leer el archivo seleccionado';
+
+  @override
+  String get sshKeyFormInvalidFormat =>
+      'Formato de clave inválido — se esperaba formato PEM (-----BEGIN ...)';
+
+  @override
+  String sshKeyFormFileError(String message) {
+    return 'Error al leer archivo: $message';
+  }
+
+  @override
+  String get sshKeyFormSaving => 'Guardando...';
+
+  @override
+  String get sshKeySelectorLabel => 'Clave SSH';
+
+  @override
+  String get sshKeySelectorNone => 'Sin clave administrada';
+
+  @override
+  String get sshKeySelectorManage => 'Administrar claves...';
+
+  @override
+  String get sshKeySelectorError => 'Error al cargar claves SSH';
+
+  @override
+  String get sshKeyTileCopyPublicKey => 'Copiar clave pública';
+
+  @override
+  String get sshKeyTilePublicKeyCopied => 'Clave pública copiada';
+
+  @override
+  String sshKeyTileLinkedServers(int count) {
+    return 'Usada por $count servidor(es)';
+  }
+
+  @override
+  String get sshKeyTileUnlinkFirst =>
+      'Desvincula de todos los servidores primero';
+
+  @override
+  String get exportImportTitle => 'Exportar / Importar';
+
+  @override
+  String get exportSectionTitle => 'Exportar';
+
+  @override
+  String get exportJsonButton => 'Exportar como JSON (sin credenciales)';
+
+  @override
+  String get exportZipButton => 'Exportar ZIP cifrado (con credenciales)';
+
+  @override
+  String get importSectionTitle => 'Importar';
+
+  @override
+  String get importButton => 'Importar desde archivo';
+
+  @override
+  String get importSupportedFormats =>
+      'Soporta archivos JSON (sin cifrar) y ZIP (cifrados).';
+
+  @override
+  String exportedTo(String path) {
+    return 'Exportado a: $path';
+  }
+
+  @override
+  String get share => 'Compartir';
+
+  @override
+  String importResult(int servers, int groups, int tags, int skipped) {
+    return '$servers servidores, $groups grupos, $tags etiquetas importados. $skipped omitidos.';
+  }
+
+  @override
+  String get importPasswordTitle => 'Ingresar contraseña';
+
+  @override
+  String get importPasswordLabel => 'Contraseña de exportación';
+
+  @override
+  String get importPasswordDecrypt => 'Descifrar';
+
+  @override
+  String get exportPasswordTitle => 'Establecer contraseña de exportación';
+
+  @override
+  String get exportPasswordDescription =>
+      'Esta contraseña se usará para cifrar tu archivo de exportación incluyendo las credenciales.';
+
+  @override
+  String get exportPasswordLabel => 'Contraseña';
+
+  @override
+  String get exportPasswordConfirmLabel => 'Confirmar contraseña';
+
+  @override
+  String get exportPasswordMismatch => 'Las contraseñas no coinciden';
+
+  @override
+  String get exportPasswordButton => 'Cifrar y exportar';
+
+  @override
+  String get importConflictTitle => 'Manejar conflictos';
+
+  @override
+  String get importConflictDescription =>
+      '¿Cómo se deben manejar las entradas existentes durante la importación?';
+
+  @override
+  String get importConflictSkip => 'Omitir existentes';
+
+  @override
+  String get importConflictRename => 'Renombrar nuevos';
+
+  @override
+  String get importConflictOverwrite => 'Sobrescribir';
+
+  @override
+  String get confirmDeleteLabel => 'Eliminar';
+
+  @override
+  String get keyGenTitle => 'Generar par de claves SSH';
+
+  @override
+  String get keyGenKeyType => 'Tipo de clave';
+
+  @override
+  String get keyGenKeySize => 'Tamaño de clave';
+
+  @override
+  String get keyGenComment => 'Comentario';
+
+  @override
+  String get keyGenCommentHint => 'usuario@host o descripción';
+
+  @override
+  String keyGenKeySizeBit(int bits) {
+    return '$bits bit';
+  }
+
+  @override
+  String get keyGenGenerating => 'Generando...';
+
+  @override
+  String get keyGenGenerate => 'Generar';
+
+  @override
+  String keyGenResultTitle(String type) {
+    return 'Clave $type generada';
+  }
+
+  @override
+  String get keyGenPublicKey => 'Clave pública';
+
+  @override
+  String get keyGenPrivateKey => 'Clave privada';
+
+  @override
+  String keyGenCommentInfo(String comment) {
+    return 'Comentario: $comment';
+  }
+
+  @override
+  String get keyGenAnother => 'Generar otra';
+
+  @override
+  String get keyGenUseThisKey => 'Usar esta clave';
+
+  @override
+  String get keyGenCopyTooltip => 'Copiar al portapapeles';
+
+  @override
+  String keyGenCopied(String label) {
+    return '$label copiada';
+  }
+
+  @override
+  String get colorPickerLabel => 'Color';
+
+  @override
+  String get iconPickerLabel => 'Icono';
+
+  @override
+  String get tagSelectorLabel => 'Etiquetas';
+
+  @override
+  String get tagSelectorEmpty => 'Aún no hay etiquetas';
+
+  @override
+  String get tagSelectorError => 'Error al cargar etiquetas';
+
+  @override
+  String get snippetListTitle => 'Snippets';
+
+  @override
+  String get snippetSearchHint => 'Buscar snippets...';
+
+  @override
+  String get snippetListEmpty => 'Aún no hay snippets';
+
+  @override
+  String get snippetListEmptySubtitle =>
+      'Crea snippets de código reutilizables y comandos.';
+
+  @override
+  String get snippetAddButton => 'Agregar snippet';
+
+  @override
+  String get snippetFormTitleEdit => 'Editar snippet';
+
+  @override
+  String get snippetFormTitleNew => 'Nuevo snippet';
+
+  @override
+  String get snippetFormNameLabel => 'Nombre';
+
+  @override
+  String get snippetFormNameHint => 'ej. Limpieza de Docker';
+
+  @override
+  String get snippetFormLanguageLabel => 'Lenguaje';
+
+  @override
+  String get snippetFormContentLabel => 'Contenido';
+
+  @override
+  String get snippetFormContentHint => 'Ingresa tu código snippet...';
+
+  @override
+  String get snippetFormDescriptionLabel => 'Descripción';
+
+  @override
+  String get snippetFormDescriptionHint => 'Descripción opcional...';
+
+  @override
+  String get snippetFormGroupLabel => 'Grupo';
+
+  @override
+  String get snippetFormNoGroup => 'Sin grupo';
+
+  @override
+  String get snippetFormNameRequired => 'El nombre es obligatorio';
+
+  @override
+  String get snippetFormContentRequired => 'El contenido es obligatorio';
+
+  @override
+  String get snippetFormUpdateButton => 'Actualizar snippet';
+
+  @override
+  String get snippetFormCreateButton => 'Crear snippet';
+
+  @override
+  String get snippetDetailTitle => 'Detalles del snippet';
+
+  @override
+  String get snippetDetailDeleteTitle => 'Eliminar snippet';
+
+  @override
+  String get snippetDetailDeleteMessage => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get snippetDetailContent => 'Contenido';
+
+  @override
+  String get snippetDetailFillVariables => 'Llenar variables';
+
+  @override
+  String get snippetDetailDescription => 'Descripción';
+
+  @override
+  String get snippetDetailVariables => 'Variables';
+
+  @override
+  String get snippetDetailTags => 'Etiquetas';
+
+  @override
+  String get snippetDetailInfo => 'Info';
+
+  @override
+  String get snippetDetailCreated => 'Creado';
+
+  @override
+  String get snippetDetailUpdated => 'Actualizado';
+
+  @override
+  String get variableEditorTitle => 'Variables de plantilla';
+
+  @override
+  String get variableEditorAdd => 'Agregar';
+
+  @override
+  String get variableEditorEmpty =>
+      'Sin variables. Usa sintaxis de llaves en el contenido para referenciarlas.';
+
+  @override
+  String get variableEditorNameLabel => 'Nombre';
+
+  @override
+  String get variableEditorNameHint => 'ej. hostname';
+
+  @override
+  String get variableEditorDefaultLabel => 'Predeterminado';
+
+  @override
+  String get variableEditorDefaultHint => 'opcional';
+
+  @override
+  String get variableFillTitle => 'Llenar variables';
+
+  @override
+  String variableFillHint(String name) {
+    return 'Ingresa valor para $name';
+  }
+
+  @override
+  String get variableFillPreview => 'Vista previa';
+
+  @override
+  String get terminalTitle => 'Terminal';
+
+  @override
+  String get terminalEmpty => 'Sin sesiones activas';
+
+  @override
+  String get terminalEmptySubtitle =>
+      'Conéctate a un host para abrir una sesión de terminal.';
+
+  @override
+  String get terminalGoToHosts => 'Ir a Hosts';
+
+  @override
+  String get terminalCloseAll => 'Cerrar todas las sesiones';
+
+  @override
+  String get terminalCloseTitle => 'Cerrar sesión';
+
+  @override
+  String terminalCloseMessage(String title) {
+    return '¿Cerrar la conexión activa a \"$title\"?';
+  }
+
+  @override
+  String get connectionAuthenticating => 'Autenticando...';
+
+  @override
+  String connectionConnecting(String name) {
+    return 'Conectando a $name...';
+  }
+
+  @override
+  String get connectionError => 'Error de conexión';
+
+  @override
+  String get connectionLost => 'Conexión perdida';
+
+  @override
+  String get connectionReconnect => 'Reconectar';
+
+  @override
+  String get snippetQuickPanelTitle => 'Insertar snippet';
+
+  @override
+  String get snippetQuickPanelSearch => 'Buscar snippets...';
+
+  @override
+  String get snippetQuickPanelEmpty => 'No hay snippets disponibles';
+
+  @override
+  String get snippetQuickPanelNoMatch => 'No hay snippets coincidentes';
+
+  @override
+  String get snippetQuickPanelInsertTooltip => 'Insertar snippet';
+
+  @override
+  String get terminalThemePickerTitle => 'Tema del terminal';
+
+  @override
+  String get validatorHostnameRequired => 'El hostname es obligatorio';
+
+  @override
+  String get validatorHostnameInvalid => 'Hostname o dirección IP inválida';
+
+  @override
+  String get validatorPortRequired => 'El puerto es obligatorio';
+
+  @override
+  String get validatorPortRange => 'El puerto debe estar entre 1 y 65535';
+
+  @override
+  String get validatorUsernameRequired => 'El usuario es obligatorio';
+
+  @override
+  String get validatorUsernameInvalid => 'Formato de usuario inválido';
+
+  @override
+  String get validatorServerNameRequired =>
+      'El nombre del servidor es obligatorio';
+
+  @override
+  String get validatorServerNameLength =>
+      'El nombre del servidor debe tener 100 caracteres o menos';
+
+  @override
+  String get validatorSshKeyInvalid => 'Formato de clave SSH inválido';
+
+  @override
+  String get validatorPasswordRequired => 'La contraseña es obligatoria';
+
+  @override
+  String get validatorPasswordLength =>
+      'La contraseña debe tener al menos 8 caracteres';
+
+  @override
+  String get authMethodPassword => 'Contraseña';
+
+  @override
+  String get authMethodKey => 'Clave SSH';
+
+  @override
+  String get authMethodBoth => 'Contraseña + Clave';
+}
