@@ -1,0 +1,34 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+
+part 'server_entity.freezed.dart';
+part 'server_entity.g.dart';
+
+@freezed
+abstract class ServerEntity with _$ServerEntity {
+  const factory ServerEntity({
+    required String id,
+    required String name,
+    required String hostname,
+    required int port,
+    required String username,
+    required AuthMethod authMethod,
+    @Default('') String notes,
+    required int color,
+    @Default('server') String iconName,
+    @Default(true) bool isActive,
+    String? groupId,
+    String? sshKeyId,
+    @Default(0) int sortOrder,
+    @Default([]) List<TagEntity> tags,
+    String? ownerId,
+    String? sharedWith,
+    String? permissions,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) = _ServerEntity;
+
+  factory ServerEntity.fromJson(Map<String, dynamic> json) =>
+      _$ServerEntityFromJson(json);
+}

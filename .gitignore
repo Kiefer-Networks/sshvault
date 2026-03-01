@@ -1,0 +1,183 @@
+# ============================================================================
+# ShellVault .gitignore
+# ============================================================================
+
+# --------------------------------------------------------------------------
+# AI / KI Tool Artifacts — remove all traces of AI-assisted development
+# --------------------------------------------------------------------------
+.claude/
+.claude_memory/
+.cursor/
+.cursorignore
+.cursorindexingignore
+.cursorules
+.copilot/
+.github/copilot/
+copilot-*.md
+.codeium/
+.tabnine/
+.tabnine_root
+.aider*
+.continue/
+.cody/
+.sourcegraph/
+.windsurf/
+.supermaven/
+.codium/
+.devai/
+.bolt/
+.v0/
+ai-*.log
+*-ai-generated*
+*.ai.bak
+CLAUDE.md
+
+# --------------------------------------------------------------------------
+# Flutter / Dart
+# --------------------------------------------------------------------------
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+*.dart.js
+*.dart.js.deps
+*.dart.js.map
+*.dart.precompiled.js
+pubspec.lock
+
+# --------------------------------------------------------------------------
+# Go Backend
+# --------------------------------------------------------------------------
+server/shellvault-server
+server/bin/
+server/vendor/
+server/*.exe
+server/*.exe~
+server/*.dll
+server/*.so
+server/*.dylib
+server/*.test
+server/*.out
+server/coverage.txt
+server/coverage.html
+
+# --------------------------------------------------------------------------
+# IDE & Editors
+# --------------------------------------------------------------------------
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+*~
+\#*\#
+.#*
+
+# --------------------------------------------------------------------------
+# OS generated files
+# --------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --------------------------------------------------------------------------
+# Build & Compilation
+# --------------------------------------------------------------------------
+*.class
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+
+# --------------------------------------------------------------------------
+# Logs & Temp
+# --------------------------------------------------------------------------
+*.log
+*.tmp
+*.temp
+*.pid
+*.seed
+
+# --------------------------------------------------------------------------
+# Security — never commit secrets
+# --------------------------------------------------------------------------
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+!**/test/fixtures/*.pem
+.env
+.env.*
+!.env.example
+secrets/
+credentials.json
+
+# --------------------------------------------------------------------------
+# Symbolication & Obfuscation (Flutter)
+# --------------------------------------------------------------------------
+app.*.symbols
+app.*.map.json
+
+# --------------------------------------------------------------------------
+# Android
+# --------------------------------------------------------------------------
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/.gradle/
+/android/local.properties
+/android/key.properties
+
+# --------------------------------------------------------------------------
+# iOS / macOS
+# --------------------------------------------------------------------------
+**/Pods/
+**/Podfile.lock
+*.xcuserdata/
+**/xcuserdata/
+**/DerivedData/
+
+# --------------------------------------------------------------------------
+# Web
+# --------------------------------------------------------------------------
+/web/.dart_tool/
+
+# --------------------------------------------------------------------------
+# Docker (server)
+# --------------------------------------------------------------------------
+server/docker/data/
+server/*.db
+server/*.db-journal
+server/*.db-wal
+server/*.db-shm
+
+# --------------------------------------------------------------------------
+# Miscellaneous
+# --------------------------------------------------------------------------
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+.atom/
+*.pyc
+node_modules/

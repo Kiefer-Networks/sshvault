@@ -1,0 +1,114 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/constants/color_constants.dart';
+import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
+
+class TagFormDialog extends StatefulWidget {
+  final TagEntity? tag;
+  final WidgetRef ref;
+
+  const TagFormDialog({super.key, this.tag, required this.ref});
+
+  bool get isEditing => tag != null;
+
+  static Future<void> show(
+    BuildContext context,
+    WidgetRef ref, {
+    TagEntity? tag,
+  }) {
+    return showDialog(
+      context: context,
+      builder: (_) => TagFormDialog(tag: tag, ref: ref),
+    );
+  }
+
+  @override
+  State<TagFormDialog> createState() => _TagFormDialogState();
+}
+
+class _TagFormDialogState extends State<TagFormDialog> {
+  final _nameController = TextEditingController();
+  int _color = ColorConstants.defaultServerColor;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.tag != null) {
+      _nameController.text = widget.tag!.name;
+      _color = widget.tag!.color;
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.isEditing ? 'Edit Tag' : 'New Tag'),
+      content: SizedBox(
+        width: 400,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Tag Name',
+                  prefixIcon: Icon(Icons.label_outline),
+                ),
+                autofocus: true,
+              ),
+              const SizedBox(height: 16),
+              ColorPickerField(
+                selectedColor: _color,
+                onColorChanged: (c) => setState(() => _color = c),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _save,
+          child: Text(widget.isEditing ? 'Update' : 'Create'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _save() async {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) return;
+
+    final now = DateTime.now();
+    final notifier = widget.ref.read(tagListProvider.notifier);
+
+    if (widget.isEditing) {
+      await notifier.updateTag(widget.tag!.copyWith(
+        name: name,
+        color: _color,
+      ));
+    } else {
+      await notifier.createTag(TagEntity(
+        id: '',
+        name: name,
+        color: _color,
+        createdAt: now,
+        updatedAt: now,
+      ));
+    }
+
+    if (mounted) Navigator.of(context).pop();
+  }
+}

@@ -1,0 +1,61 @@
+name: shellvault
+description: "Secure, self-hosted SSH client with zero-knowledge sync"
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Navigation
+  go_router: ^14.8.1
+
+  # Database
+  drift: ^2.25.0
+  drift_flutter: ^0.2.4
+
+  # Immutable Models
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
+
+  # Unique IDs
+  uuid: ^4.5.1
+
+  # Secure Storage
+  flutter_secure_storage: ^9.2.4
+
+  # Crypto
+  pointycastle: ^3.9.1
+  cryptography: ^2.7.0
+  crypto: ^3.0.6
+
+  # File System
+  archive: ^4.0.2
+  path_provider: ^2.1.5
+  file_picker: ^8.1.7
+  share_plus: ^10.1.4
+
+  # UI
+  flutter_slidable: ^3.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Code Generation
+  build_runner: ^2.4.15
+  freezed: ^3.0.0
+  json_serializable: ^6.9.4
+  riverpod_generator: ^2.6.3
+  drift_dev: ^2.25.0
+
+flutter:
+  uses-material-design: true
