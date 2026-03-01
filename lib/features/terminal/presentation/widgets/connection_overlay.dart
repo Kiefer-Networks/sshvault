@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
-import 'package:shellvault/core/theme/glassmorphism.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 
-class ConnectionOverlay extends StatelessWidget {
+/// Shows connection status for the active terminal session.
+///
+/// - Connecting/Authenticating: inline spinner overlay
+/// - Error/Disconnected: standard [AlertDialog] shown once
+class ConnectionOverlay extends StatefulWidget {
   final SshConnectionStatus status;
   final String? serverName;
   final String? errorMessage;
@@ -20,125 +23,109 @@ class ConnectionOverlay extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return switch (status) {
-      SshConnectionStatus.connecting ||
-      SshConnectionStatus.authenticating =>
-        _buildConnecting(context),
-      SshConnectionStatus.error => _buildError(context),
-      SshConnectionStatus.disconnected => _buildDisconnected(context),
-      SshConnectionStatus.connected => const SizedBox.shrink(),
-    };
+  State<ConnectionOverlay> createState() => _ConnectionOverlayState();
+}
+
+class _ConnectionOverlayState extends State<ConnectionOverlay> {
+  bool _dialogShown = false;
+
+  @override
+  void didUpdateWidget(ConnectionOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.status != oldWidget.status) {
+      _dialogShown = false;
+    }
   }
 
-  Widget _buildConnecting(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    return Center(
-      child: GlassmorphicContainer(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(
-              status == SshConnectionStatus.authenticating
-                  ? l10n.connectionAuthenticating
-                  : l10n.connectionConnecting(serverName ?? 'server'),
-              style: theme.textTheme.bodyLarge,
+  void _showStatusDialog() {
+    if (_dialogShown) return;
+    _dialogShown = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final isError = widget.status == SshConnectionStatus.error;
+      final l10n = AppLocalizations.of(context)!;
+
+      showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) {
+          return AlertDialog(
+            icon: Icon(
+              isError ? Icons.error_outline : Icons.link_off,
+              size: 40,
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildError(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    return Center(
-      child: GlassmorphicContainer(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
-            const SizedBox(height: 16),
-            Text(
-              l10n.connectionError,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.error,
+            title: Text(
+              isError ? l10n.connectionError : l10n.connectionLost,
+            ),
+            content: isError && widget.errorMessage != null
+                ? Text(widget.errorMessage!)
+                : null,
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop('close');
+                },
+                child: Text(l10n.close),
               ),
-            ),
-            if (errorMessage != null) ...[
-              const SizedBox(height: 8),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 300),
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop('retry');
+                },
                 child: Text(
-                  errorMessage!,
-                  style: theme.textTheme.bodySmall,
-                  textAlign: TextAlign.center,
+                  isError ? l10n.retry : l10n.connectionReconnect,
                 ),
               ),
             ],
-            const SizedBox(height: 20),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                OutlinedButton(
-                  onPressed: onClose,
-                  child: Text(l10n.close),
-                ),
-                const SizedBox(width: 12),
-                FilledButton.icon(
-                  onPressed: onRetry,
-                  icon: const Icon(Icons.refresh, size: 18),
-                  label: Text(l10n.retry),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+          );
+        },
+      ).then((result) {
+        if (!mounted) return;
+        if (result == 'close') {
+          widget.onClose?.call();
+        } else if (result == 'retry') {
+          widget.onRetry?.call();
+        }
+      });
+    });
   }
 
-  Widget _buildDisconnected(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    return Center(
-      child: GlassmorphicContainer(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.link_off, size: 48,
-                color: theme.colorScheme.onSurface.withAlpha(153)),
-            const SizedBox(height: 16),
-            Text(
-              l10n.connectionLost,
-              style: theme.textTheme.titleMedium,
+
+    return switch (widget.status) {
+      SshConnectionStatus.connecting ||
+      SshConnectionStatus.authenticating =>
+        Center(
+          child: Card(
+            elevation: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(
+                    widget.status == SshConnectionStatus.authenticating
+                        ? l10n.connectionAuthenticating
+                        : l10n.connectionConnecting(
+                            widget.serverName ?? 'server'),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                OutlinedButton(
-                  onPressed: onClose,
-                  child: Text(l10n.close),
-                ),
-                const SizedBox(width: 12),
-                FilledButton.icon(
-                  onPressed: onRetry,
-                  icon: const Icon(Icons.refresh, size: 18),
-                  label: Text(l10n.connectionReconnect),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
-    );
+      SshConnectionStatus.error ||
+      SshConnectionStatus.disconnected =>
+        Builder(builder: (_) {
+          _showStatusDialog();
+          return const SizedBox.shrink();
+        }),
+      SshConnectionStatus.connected => const SizedBox.shrink(),
+    };
   }
 }

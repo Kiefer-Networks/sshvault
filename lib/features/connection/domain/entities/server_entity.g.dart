@@ -21,6 +21,8 @@ _ServerEntity _$ServerEntityFromJson(Map<String, dynamic> json) =>
       groupId: json['groupId'] as String?,
       sshKeyId: json['sshKeyId'] as String?,
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
+      distroId: json['distroId'] as String?,
+      distroName: json['distroName'] as String?,
       tags:
           (json['tags'] as List<dynamic>?)
               ?.map((e) => TagEntity.fromJson(e as Map<String, dynamic>))
@@ -48,6 +50,8 @@ Map<String, dynamic> _$ServerEntityToJson(_ServerEntity instance) =>
       'groupId': instance.groupId,
       'sshKeyId': instance.sshKeyId,
       'sortOrder': instance.sortOrder,
+      'distroId': instance.distroId,
+      'distroName': instance.distroName,
       'tags': instance.tags.map((e) => e.toJson()).toList(),
       'ownerId': instance.ownerId,
       'sharedWith': instance.sharedWith,

@@ -12,6 +12,22 @@ enum SshConnectionStatus {
   error,
 }
 
+class DistroInfo {
+  final String id;
+  final String name;
+  final String? version;
+  final String? prettyName;
+
+  const DistroInfo({
+    required this.id,
+    required this.name,
+    this.version,
+    this.prettyName,
+  });
+
+  String get displayName => prettyName ?? '$name ${version ?? ''}'.trim();
+}
+
 class SshSessionEntity {
   final String id;
   final String serverId;
@@ -23,6 +39,7 @@ class SshSessionEntity {
   StreamSubscription<Uint8List>? stderrSubscription;
   SshConnectionStatus status;
   String? errorMessage;
+  DistroInfo? distroInfo;
   final DateTime createdAt;
 
   SshSessionEntity({
@@ -36,6 +53,7 @@ class SshSessionEntity {
     this.stderrSubscription,
     this.status = SshConnectionStatus.connecting,
     this.errorMessage,
+    this.distroInfo,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 

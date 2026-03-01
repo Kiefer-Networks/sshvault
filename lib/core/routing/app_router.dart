@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/app_shell.dart';
+import 'package:shellvault/features/account/presentation/screens/account_info_screen.dart';
+import 'package:shellvault/features/account/presentation/screens/server_config_screen.dart';
+import 'package:shellvault/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:shellvault/features/auth/presentation/screens/login_screen.dart';
+import 'package:shellvault/features/auth/presentation/screens/register_screen.dart';
+import 'package:shellvault/features/auth/presentation/screens/sync_password_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/export_import_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/group_list_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/server_detail_screen.dart';
@@ -12,6 +18,7 @@ import 'package:shellvault/features/settings/presentation/screens/settings_scree
 import 'package:shellvault/features/snippet/presentation/screens/snippet_detail_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_form_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_list_screen.dart';
+import 'package:shellvault/features/sync/presentation/screens/sync_settings_screen.dart';
 import 'package:shellvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -150,6 +157,45 @@ abstract final class AppRouter {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
+      ),
+
+      // Auth routes
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/sync-password',
+        builder: (context, state) => const SyncPasswordScreen(),
+      ),
+
+      // Account / Sync routes
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/account',
+        builder: (context, state) => const AccountInfoScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/server-config',
+        builder: (context, state) => const ServerConfigScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/sync-settings',
+        builder: (context, state) => const SyncSettingsScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

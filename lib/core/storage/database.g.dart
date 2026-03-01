@@ -1478,6 +1478,28 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _distroIdMeta = const VerificationMeta(
+    'distroId',
+  );
+  @override
+  late final GeneratedColumn<String> distroId = GeneratedColumn<String>(
+    'distro_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _distroNameMeta = const VerificationMeta(
+    'distroName',
+  );
+  @override
+  late final GeneratedColumn<String> distroName = GeneratedColumn<String>(
+    'distro_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _ownerIdMeta = const VerificationMeta(
     'ownerId',
   );
@@ -1548,6 +1570,8 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     groupId,
     sshKeyId,
     sortOrder,
+    distroId,
+    distroName,
     ownerId,
     sharedWith,
     permissions,
@@ -1649,6 +1673,18 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
       );
     }
+    if (data.containsKey('distro_id')) {
+      context.handle(
+        _distroIdMeta,
+        distroId.isAcceptableOrUnknown(data['distro_id']!, _distroIdMeta),
+      );
+    }
+    if (data.containsKey('distro_name')) {
+      context.handle(
+        _distroNameMeta,
+        distroName.isAcceptableOrUnknown(data['distro_name']!, _distroNameMeta),
+      );
+    }
     if (data.containsKey('owner_id')) {
       context.handle(
         _ownerIdMeta,
@@ -1747,6 +1783,14 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
       )!,
+      distroId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}distro_id'],
+      ),
+      distroName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}distro_name'],
+      ),
       ownerId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}owner_id'],
@@ -1790,6 +1834,8 @@ class Server extends DataClass implements Insertable<Server> {
   final String? groupId;
   final String? sshKeyId;
   final int sortOrder;
+  final String? distroId;
+  final String? distroName;
   final String? ownerId;
   final String? sharedWith;
   final String? permissions;
@@ -1809,6 +1855,8 @@ class Server extends DataClass implements Insertable<Server> {
     this.groupId,
     this.sshKeyId,
     required this.sortOrder,
+    this.distroId,
+    this.distroName,
     this.ownerId,
     this.sharedWith,
     this.permissions,
@@ -1835,6 +1883,12 @@ class Server extends DataClass implements Insertable<Server> {
       map['ssh_key_id'] = Variable<String>(sshKeyId);
     }
     map['sort_order'] = Variable<int>(sortOrder);
+    if (!nullToAbsent || distroId != null) {
+      map['distro_id'] = Variable<String>(distroId);
+    }
+    if (!nullToAbsent || distroName != null) {
+      map['distro_name'] = Variable<String>(distroName);
+    }
     if (!nullToAbsent || ownerId != null) {
       map['owner_id'] = Variable<String>(ownerId);
     }
@@ -1868,6 +1922,12 @@ class Server extends DataClass implements Insertable<Server> {
           ? const Value.absent()
           : Value(sshKeyId),
       sortOrder: Value(sortOrder),
+      distroId: distroId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(distroId),
+      distroName: distroName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(distroName),
       ownerId: ownerId == null && nullToAbsent
           ? const Value.absent()
           : Value(ownerId),
@@ -1901,6 +1961,8 @@ class Server extends DataClass implements Insertable<Server> {
       groupId: serializer.fromJson<String?>(json['groupId']),
       sshKeyId: serializer.fromJson<String?>(json['sshKeyId']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      distroId: serializer.fromJson<String?>(json['distroId']),
+      distroName: serializer.fromJson<String?>(json['distroName']),
       ownerId: serializer.fromJson<String?>(json['ownerId']),
       sharedWith: serializer.fromJson<String?>(json['sharedWith']),
       permissions: serializer.fromJson<String?>(json['permissions']),
@@ -1925,6 +1987,8 @@ class Server extends DataClass implements Insertable<Server> {
       'groupId': serializer.toJson<String?>(groupId),
       'sshKeyId': serializer.toJson<String?>(sshKeyId),
       'sortOrder': serializer.toJson<int>(sortOrder),
+      'distroId': serializer.toJson<String?>(distroId),
+      'distroName': serializer.toJson<String?>(distroName),
       'ownerId': serializer.toJson<String?>(ownerId),
       'sharedWith': serializer.toJson<String?>(sharedWith),
       'permissions': serializer.toJson<String?>(permissions),
@@ -1947,6 +2011,8 @@ class Server extends DataClass implements Insertable<Server> {
     Value<String?> groupId = const Value.absent(),
     Value<String?> sshKeyId = const Value.absent(),
     int? sortOrder,
+    Value<String?> distroId = const Value.absent(),
+    Value<String?> distroName = const Value.absent(),
     Value<String?> ownerId = const Value.absent(),
     Value<String?> sharedWith = const Value.absent(),
     Value<String?> permissions = const Value.absent(),
@@ -1966,6 +2032,8 @@ class Server extends DataClass implements Insertable<Server> {
     groupId: groupId.present ? groupId.value : this.groupId,
     sshKeyId: sshKeyId.present ? sshKeyId.value : this.sshKeyId,
     sortOrder: sortOrder ?? this.sortOrder,
+    distroId: distroId.present ? distroId.value : this.distroId,
+    distroName: distroName.present ? distroName.value : this.distroName,
     ownerId: ownerId.present ? ownerId.value : this.ownerId,
     sharedWith: sharedWith.present ? sharedWith.value : this.sharedWith,
     permissions: permissions.present ? permissions.value : this.permissions,
@@ -1989,6 +2057,10 @@ class Server extends DataClass implements Insertable<Server> {
       groupId: data.groupId.present ? data.groupId.value : this.groupId,
       sshKeyId: data.sshKeyId.present ? data.sshKeyId.value : this.sshKeyId,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      distroId: data.distroId.present ? data.distroId.value : this.distroId,
+      distroName: data.distroName.present
+          ? data.distroName.value
+          : this.distroName,
       ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       sharedWith: data.sharedWith.present
           ? data.sharedWith.value
@@ -2017,6 +2089,8 @@ class Server extends DataClass implements Insertable<Server> {
           ..write('groupId: $groupId, ')
           ..write('sshKeyId: $sshKeyId, ')
           ..write('sortOrder: $sortOrder, ')
+          ..write('distroId: $distroId, ')
+          ..write('distroName: $distroName, ')
           ..write('ownerId: $ownerId, ')
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
@@ -2041,6 +2115,8 @@ class Server extends DataClass implements Insertable<Server> {
     groupId,
     sshKeyId,
     sortOrder,
+    distroId,
+    distroName,
     ownerId,
     sharedWith,
     permissions,
@@ -2064,6 +2140,8 @@ class Server extends DataClass implements Insertable<Server> {
           other.groupId == this.groupId &&
           other.sshKeyId == this.sshKeyId &&
           other.sortOrder == this.sortOrder &&
+          other.distroId == this.distroId &&
+          other.distroName == this.distroName &&
           other.ownerId == this.ownerId &&
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
@@ -2085,6 +2163,8 @@ class ServersCompanion extends UpdateCompanion<Server> {
   final Value<String?> groupId;
   final Value<String?> sshKeyId;
   final Value<int> sortOrder;
+  final Value<String?> distroId;
+  final Value<String?> distroName;
   final Value<String?> ownerId;
   final Value<String?> sharedWith;
   final Value<String?> permissions;
@@ -2105,6 +2185,8 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.groupId = const Value.absent(),
     this.sshKeyId = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.distroId = const Value.absent(),
+    this.distroName = const Value.absent(),
     this.ownerId = const Value.absent(),
     this.sharedWith = const Value.absent(),
     this.permissions = const Value.absent(),
@@ -2126,6 +2208,8 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.groupId = const Value.absent(),
     this.sshKeyId = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.distroId = const Value.absent(),
+    this.distroName = const Value.absent(),
     this.ownerId = const Value.absent(),
     this.sharedWith = const Value.absent(),
     this.permissions = const Value.absent(),
@@ -2152,6 +2236,8 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Expression<String>? groupId,
     Expression<String>? sshKeyId,
     Expression<int>? sortOrder,
+    Expression<String>? distroId,
+    Expression<String>? distroName,
     Expression<String>? ownerId,
     Expression<String>? sharedWith,
     Expression<String>? permissions,
@@ -2173,6 +2259,8 @@ class ServersCompanion extends UpdateCompanion<Server> {
       if (groupId != null) 'group_id': groupId,
       if (sshKeyId != null) 'ssh_key_id': sshKeyId,
       if (sortOrder != null) 'sort_order': sortOrder,
+      if (distroId != null) 'distro_id': distroId,
+      if (distroName != null) 'distro_name': distroName,
       if (ownerId != null) 'owner_id': ownerId,
       if (sharedWith != null) 'shared_with': sharedWith,
       if (permissions != null) 'permissions': permissions,
@@ -2196,6 +2284,8 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Value<String?>? groupId,
     Value<String?>? sshKeyId,
     Value<int>? sortOrder,
+    Value<String?>? distroId,
+    Value<String?>? distroName,
     Value<String?>? ownerId,
     Value<String?>? sharedWith,
     Value<String?>? permissions,
@@ -2217,6 +2307,8 @@ class ServersCompanion extends UpdateCompanion<Server> {
       groupId: groupId ?? this.groupId,
       sshKeyId: sshKeyId ?? this.sshKeyId,
       sortOrder: sortOrder ?? this.sortOrder,
+      distroId: distroId ?? this.distroId,
+      distroName: distroName ?? this.distroName,
       ownerId: ownerId ?? this.ownerId,
       sharedWith: sharedWith ?? this.sharedWith,
       permissions: permissions ?? this.permissions,
@@ -2268,6 +2360,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
+    if (distroId.present) {
+      map['distro_id'] = Variable<String>(distroId.value);
+    }
+    if (distroName.present) {
+      map['distro_name'] = Variable<String>(distroName.value);
+    }
     if (ownerId.present) {
       map['owner_id'] = Variable<String>(ownerId.value);
     }
@@ -2305,6 +2403,8 @@ class ServersCompanion extends UpdateCompanion<Server> {
           ..write('groupId: $groupId, ')
           ..write('sshKeyId: $sshKeyId, ')
           ..write('sortOrder: $sortOrder, ')
+          ..write('distroId: $distroId, ')
+          ..write('distroName: $distroName, ')
           ..write('ownerId: $ownerId, ')
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
@@ -5697,6 +5797,8 @@ typedef $$ServersTableCreateCompanionBuilder =
       Value<String?> groupId,
       Value<String?> sshKeyId,
       Value<int> sortOrder,
+      Value<String?> distroId,
+      Value<String?> distroName,
       Value<String?> ownerId,
       Value<String?> sharedWith,
       Value<String?> permissions,
@@ -5719,6 +5821,8 @@ typedef $$ServersTableUpdateCompanionBuilder =
       Value<String?> groupId,
       Value<String?> sshKeyId,
       Value<int> sortOrder,
+      Value<String?> distroId,
+      Value<String?> distroName,
       Value<String?> ownerId,
       Value<String?> sharedWith,
       Value<String?> permissions,
@@ -5846,6 +5950,16 @@ class $$ServersTableFilterComposer
 
   ColumnFilters<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get distroId => $composableBuilder(
+    column: $table.distroId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get distroName => $composableBuilder(
+    column: $table.distroName,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6010,6 +6124,16 @@ class $$ServersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get distroId => $composableBuilder(
+    column: $table.distroId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get distroName => $composableBuilder(
+    column: $table.distroName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get ownerId => $composableBuilder(
     column: $table.ownerId,
     builder: (column) => ColumnOrderings(column),
@@ -6125,6 +6249,14 @@ class $$ServersTableAnnotationComposer
 
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<String> get distroId =>
+      $composableBuilder(column: $table.distroId, builder: (column) => column);
+
+  GeneratedColumn<String> get distroName => $composableBuilder(
+    column: $table.distroName,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get ownerId =>
       $composableBuilder(column: $table.ownerId, builder: (column) => column);
@@ -6262,6 +6394,8 @@ class $$ServersTableTableManager
                 Value<String?> groupId = const Value.absent(),
                 Value<String?> sshKeyId = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String?> distroId = const Value.absent(),
+                Value<String?> distroName = const Value.absent(),
                 Value<String?> ownerId = const Value.absent(),
                 Value<String?> sharedWith = const Value.absent(),
                 Value<String?> permissions = const Value.absent(),
@@ -6282,6 +6416,8 @@ class $$ServersTableTableManager
                 groupId: groupId,
                 sshKeyId: sshKeyId,
                 sortOrder: sortOrder,
+                distroId: distroId,
+                distroName: distroName,
                 ownerId: ownerId,
                 sharedWith: sharedWith,
                 permissions: permissions,
@@ -6304,6 +6440,8 @@ class $$ServersTableTableManager
                 Value<String?> groupId = const Value.absent(),
                 Value<String?> sshKeyId = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String?> distroId = const Value.absent(),
+                Value<String?> distroName = const Value.absent(),
                 Value<String?> ownerId = const Value.absent(),
                 Value<String?> sharedWith = const Value.absent(),
                 Value<String?> permissions = const Value.absent(),
@@ -6324,6 +6462,8 @@ class $$ServersTableTableManager
                 groupId: groupId,
                 sshKeyId: sshKeyId,
                 sortOrder: sortOrder,
+                distroId: distroId,
+                distroName: distroName,
                 ownerId: ownerId,
                 sharedWith: sharedWith,
                 permissions: permissions,

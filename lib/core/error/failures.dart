@@ -39,3 +39,17 @@ final class NotFoundFailure extends Failure {
 final class SshConnectionFailure extends Failure {
   const SshConnectionFailure(super.message, {super.cause});
 }
+
+final class NetworkFailure extends Failure {
+  final int? statusCode;
+  const NetworkFailure(super.message, {this.statusCode, super.cause});
+}
+
+final class AuthFailure extends Failure {
+  const AuthFailure(super.message, {super.cause});
+}
+
+final class SyncFailure extends Failure {
+  final int? conflictVersion;
+  const SyncFailure(super.message, {this.conflictVersion, super.cause});
+}

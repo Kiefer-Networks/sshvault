@@ -3,9 +3,11 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
+import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
     as app;
+import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 /// Breakpoints following Material 3 Compact / Medium / Expanded.
@@ -368,6 +370,39 @@ class _DesktopScaffold extends StatelessWidget {
 // Drawer (mobile only)
 // ---------------------------------------------------------------------------
 
+class _SyncStatusIcon extends ConsumerWidget {
+  const _SyncStatusIcon();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final isAuthenticated =
+        authState.valueOrNull == AuthStatus.authenticated;
+    if (!isAuthenticated) return const SizedBox.shrink();
+
+    final syncState = ref.watch(syncProvider);
+    final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
+    final hasError = syncState.hasError;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: isSyncing
+          ? const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(
+              hasError ? Icons.cloud_off : Icons.cloud_done_outlined,
+              size: 20,
+              color: hasError
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.primary,
+            ),
+    );
+  }
+}
+
 class _AppDrawer extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
@@ -413,6 +448,7 @@ class _AppDrawer extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  const _SyncStatusIcon(),
                 ],
               ),
             ),

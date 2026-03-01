@@ -778,6 +778,12 @@ abstract class AppLocalizations {
   /// **'Username'**
   String get serverDetailUsername;
 
+  /// No description provided for @serverDetailGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get serverDetailGroup;
+
   /// No description provided for @serverDetailTags.
   ///
   /// In en, this message translates to:
@@ -807,6 +813,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updated'**
   String get serverDetailUpdated;
+
+  /// No description provided for @serverDetailDistro.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get serverDetailDistro;
 
   /// No description provided for @copiedToClipboard.
   ///
@@ -2079,6 +2091,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No log entries available'**
   String get settingsLogsEmpty;
+
+  /// No description provided for @authLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get authLogin;
+
+  /// No description provided for @authRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get authRegister;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authWhyLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.'**
+  String get authWhyLogin;
+
+  /// No description provided for @authEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get authEmailLabel;
+
+  /// No description provided for @authEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get authEmailRequired;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get authPasswordLabel;
+
+  /// No description provided for @authConfirmPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get authConfirmPasswordLabel;
+
+  /// No description provided for @authPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get authPasswordMismatch;
+
+  /// No description provided for @authOrContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'or continue with'**
+  String get authOrContinueWith;
+
+  /// No description provided for @authNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'No account?'**
+  String get authNoAccount;
+
+  /// No description provided for @authHasAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get authHasAccount;
+
+  /// No description provided for @authSelfHosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Hosted Server'**
+  String get authSelfHosted;
+
+  /// No description provided for @authResetEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If an account exists, a reset link has been sent to your email.'**
+  String get authResetEmailSent;
+
+  /// No description provided for @authResetDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address and we will send you a link to reset your password.'**
+  String get authResetDescription;
+
+  /// No description provided for @authSendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Link'**
+  String get authSendResetLink;
+
+  /// No description provided for @authBackToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get authBackToLogin;
+
+  /// No description provided for @syncPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Password'**
+  String get syncPasswordTitle;
+
+  /// No description provided for @syncPasswordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a separate password to encrypt your vault data. This password never leaves your device — the server only stores encrypted data.'**
+  String get syncPasswordDescription;
+
+  /// No description provided for @syncPasswordWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'If you forget this password, your synced data cannot be recovered. There is no reset option.'**
+  String get syncPasswordWarning;
+
+  /// No description provided for @syncPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Password'**
+  String get syncPasswordLabel;
+
+  /// No description provided for @syncSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Settings'**
+  String get syncSettingsTitle;
+
+  /// No description provided for @syncAutoSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Sync'**
+  String get syncAutoSync;
+
+  /// No description provided for @syncAutoSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically sync when the app starts'**
+  String get syncAutoSyncDescription;
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Now'**
+  String get syncNow;
+
+  /// No description provided for @syncSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get syncSyncing;
+
+  /// No description provided for @syncSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync completed'**
+  String get syncSuccess;
+
+  /// No description provided for @syncError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync error'**
+  String get syncError;
+
+  /// No description provided for @syncNeverSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Never synced'**
+  String get syncNeverSynced;
+
+  /// No description provided for @syncVaultVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault Version'**
+  String get syncVaultVersion;
+
+  /// No description provided for @settingsSectionSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Synchronization'**
+  String get settingsSectionSync;
+
+  /// No description provided for @settingsSyncAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get settingsSyncAccount;
+
+  /// No description provided for @settingsSyncNotLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not logged in'**
+  String get settingsSyncNotLoggedIn;
+
+  /// No description provided for @settingsSyncStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get settingsSyncStatus;
+
+  /// No description provided for @settingsSyncServerUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get settingsSyncServerUrl;
+
+  /// No description provided for @settingsSyncDefaultServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Default (shellvault.app)'**
+  String get settingsSyncDefaultServer;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountTitle;
+
+  /// No description provided for @accountNotLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not logged in'**
+  String get accountNotLoggedIn;
+
+  /// No description provided for @accountVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get accountVerified;
+
+  /// No description provided for @accountMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since'**
+  String get accountMemberSince;
+
+  /// No description provided for @accountPaymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get accountPaymentStatus;
+
+  /// No description provided for @accountPaymentActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync unlocked (one-time purchase)'**
+  String get accountPaymentActive;
+
+  /// No description provided for @accountPaymentInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync not yet purchased'**
+  String get accountPaymentInactive;
+
+  /// No description provided for @accountUnlockSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Sync'**
+  String get accountUnlockSync;
+
+  /// No description provided for @accountDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Devices'**
+  String get accountDevices;
+
+  /// No description provided for @accountNoDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'No devices registered'**
+  String get accountNoDevices;
+
+  /// No description provided for @accountLastSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync'**
+  String get accountLastSync;
+
+  /// No description provided for @accountChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get accountChangePassword;
+
+  /// No description provided for @accountOldPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get accountOldPassword;
+
+  /// No description provided for @accountNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get accountNewPassword;
+
+  /// No description provided for @accountDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get accountDeleteAccount;
+
+  /// No description provided for @accountDeleteWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete your account and all synced data. This cannot be undone.'**
+  String get accountDeleteWarning;
+
+  /// No description provided for @accountLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get accountLogout;
+
+  /// No description provided for @serverConfigTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Configuration'**
+  String get serverConfigTitle;
+
+  /// No description provided for @serverConfigSelfHosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Hosted'**
+  String get serverConfigSelfHosted;
+
+  /// No description provided for @serverConfigSelfHostedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your own ShellVault server'**
+  String get serverConfigSelfHostedDescription;
+
+  /// No description provided for @serverConfigUrlLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get serverConfigUrlLabel;
+
+  /// No description provided for @serverConfigTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Connection'**
+  String get serverConfigTest;
+
+  /// No description provided for @donationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support ShellVault'**
+  String get donationTitle;
+
+  /// No description provided for @donationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'If you enjoy ShellVault, consider making a donation to support development.'**
+  String get donationDescription;
+
+  /// No description provided for @donationButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate'**
+  String get donationButton;
 }
 
 class _AppLocalizationsDelegate

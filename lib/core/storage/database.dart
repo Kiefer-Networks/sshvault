@@ -52,6 +52,10 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(snippetTags);
           await m.createTable(snippetVariables);
         }
+        if (from < 4) {
+          await m.addColumn(servers, servers.distroId);
+          await m.addColumn(servers, servers.distroName);
+        }
       },
     );
   }

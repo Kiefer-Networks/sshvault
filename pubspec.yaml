@@ -46,6 +46,19 @@ dependencies:
   share_plus: ^10.1.4
   url_launcher: ^6.3.1
 
+  # Networking
+  dio: ^5.7.0
+
+  # OAuth
+  sign_in_with_apple: ^6.1.4
+  google_sign_in: ^6.3.0
+
+  # Device Info
+  device_info_plus: ^11.2.0
+
+  # Connectivity
+  connectivity_plus: ^6.1.0
+
   # Biometric Authentication
   local_auth: ^2.3.0
 

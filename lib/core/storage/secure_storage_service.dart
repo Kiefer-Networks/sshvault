@@ -247,4 +247,108 @@ class SecureStorageService {
       return Err(StorageFailure('Failed to delete DEK', cause: e));
     }
   }
+
+  // --- Auth Tokens ---
+
+  Future<Result<void>> saveAccessToken(String token) async {
+    try {
+      await _storage.write(key: AppConstants.accessTokenKey, value: token);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to save access token', cause: e));
+    }
+  }
+
+  Future<Result<String?>> getAccessToken() async {
+    try {
+      final value = await _storage.read(key: AppConstants.accessTokenKey);
+      return Success(value);
+    } catch (e) {
+      return Err(StorageFailure('Failed to read access token', cause: e));
+    }
+  }
+
+  Future<Result<void>> saveRefreshToken(String token) async {
+    try {
+      await _storage.write(key: AppConstants.refreshTokenKey, value: token);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to save refresh token', cause: e));
+    }
+  }
+
+  Future<Result<String?>> getRefreshToken() async {
+    try {
+      final value = await _storage.read(key: AppConstants.refreshTokenKey);
+      return Success(value);
+    } catch (e) {
+      return Err(StorageFailure('Failed to read refresh token', cause: e));
+    }
+  }
+
+  Future<Result<void>> saveTokenExpiry(String isoDate) async {
+    try {
+      await _storage.write(key: AppConstants.tokenExpiryKey, value: isoDate);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to save token expiry', cause: e));
+    }
+  }
+
+  Future<Result<String?>> getTokenExpiry() async {
+    try {
+      final value = await _storage.read(key: AppConstants.tokenExpiryKey);
+      return Success(value);
+    } catch (e) {
+      return Err(StorageFailure('Failed to read token expiry', cause: e));
+    }
+  }
+
+  Future<Result<void>> saveSyncPassword(String password) async {
+    try {
+      await _storage.write(key: AppConstants.syncPasswordKey, value: password);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to save sync password', cause: e));
+    }
+  }
+
+  Future<Result<String?>> getSyncPassword() async {
+    try {
+      final value = await _storage.read(key: AppConstants.syncPasswordKey);
+      return Success(value);
+    } catch (e) {
+      return Err(StorageFailure('Failed to read sync password', cause: e));
+    }
+  }
+
+  Future<Result<void>> saveUserEmail(String email) async {
+    try {
+      await _storage.write(key: AppConstants.userEmailKey, value: email);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to save user email', cause: e));
+    }
+  }
+
+  Future<Result<String?>> getUserEmail() async {
+    try {
+      final value = await _storage.read(key: AppConstants.userEmailKey);
+      return Success(value);
+    } catch (e) {
+      return Err(StorageFailure('Failed to read user email', cause: e));
+    }
+  }
+
+  Future<Result<void>> clearAuthTokens() async {
+    try {
+      await _storage.delete(key: AppConstants.accessTokenKey);
+      await _storage.delete(key: AppConstants.refreshTokenKey);
+      await _storage.delete(key: AppConstants.tokenExpiryKey);
+      await _storage.delete(key: AppConstants.userEmailKey);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to clear auth tokens', cause: e));
+    }
+  }
 }

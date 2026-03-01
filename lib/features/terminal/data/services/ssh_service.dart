@@ -9,6 +9,7 @@ import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
+import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:xterm/xterm.dart';
 
 typedef SshConnection = ({
@@ -146,6 +147,40 @@ class SshService {
     try {
       return SSHKeyPair.fromPem(privateKey, passphrase);
     } catch (e) {
+      return null;
+    }
+  }
+
+  Future<DistroInfo?> detectDistro(SSHClient client) async {
+    try {
+      final result = await client.run('cat /etc/os-release 2>/dev/null || echo ""');
+      final output = utf8.decode(result);
+      if (output.trim().isEmpty) return null;
+
+      final map = <String, String>{};
+      for (final line in output.split('\n')) {
+        final idx = line.indexOf('=');
+        if (idx < 0) continue;
+        final key = line.substring(0, idx).trim();
+        var value = line.substring(idx + 1).trim();
+        if (value.startsWith('"') && value.endsWith('"')) {
+          value = value.substring(1, value.length - 1);
+        }
+        map[key] = value;
+      }
+
+      final id = map['ID'];
+      final name = map['NAME'];
+      if (id == null && name == null) return null;
+
+      return DistroInfo(
+        id: id ?? name!.toLowerCase(),
+        name: name ?? id!,
+        version: map['VERSION_ID'],
+        prettyName: map['PRETTY_NAME'],
+      );
+    } catch (e) {
+      _log.debug(_tag, 'Distro detection failed: $e');
       return null;
     }
   }

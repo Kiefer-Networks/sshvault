@@ -12,6 +12,7 @@ import 'package:shellvault/features/connection/domain/entities/server_credential
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
 import 'package:shellvault/features/connection/presentation/widgets/icon_picker_field.dart';
 import 'package:shellvault/features/connection/presentation/widgets/server_form_fields.dart';
@@ -279,6 +280,16 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
     try {
       final now = DateTime.now();
+      final now0 = DateTime.fromMillisecondsSinceEpoch(0);
+      final tags = _selectedTagIds
+          .map((id) => TagEntity(
+                id: id,
+                name: '',
+                createdAt: now0,
+                updatedAt: now0,
+              ))
+          .toList();
+
       final server = ServerEntity(
         id: widget.serverId ?? '',
         name: _nameController.text.trim(),
@@ -292,6 +303,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         isActive: _isActive,
         groupId: _groupId,
         sshKeyId: _useManagedKey ? _sshKeyId : null,
+        tags: tags,
         createdAt: now,
         updatedAt: now,
       );

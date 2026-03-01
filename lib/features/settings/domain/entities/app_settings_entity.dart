@@ -14,6 +14,10 @@ class AppSettingsEntity {
   final String locale;
   final int failedPinAttempts;
   final DateTime? lockoutUntil;
+  final String serverUrl;
+  final bool selfHosted;
+  final bool autoSync;
+  final int localVaultVersion;
 
   const AppSettingsEntity({
     this.themeMode = ThemeMode.system,
@@ -28,6 +32,10 @@ class AppSettingsEntity {
     this.locale = '',
     this.failedPinAttempts = 0,
     this.lockoutUntil,
+    this.serverUrl = '',
+    this.selfHosted = false,
+    this.autoSync = true,
+    this.localVaultVersion = 0,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -60,6 +68,10 @@ class AppSettingsEntity {
     String? locale,
     int? failedPinAttempts,
     DateTime? lockoutUntil,
+    String? serverUrl,
+    bool? selfHosted,
+    bool? autoSync,
+    int? localVaultVersion,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -76,6 +88,10 @@ class AppSettingsEntity {
       locale: locale ?? this.locale,
       failedPinAttempts: failedPinAttempts ?? this.failedPinAttempts,
       lockoutUntil: lockoutUntil ?? this.lockoutUntil,
+      serverUrl: serverUrl ?? this.serverUrl,
+      selfHosted: selfHosted ?? this.selfHosted,
+      autoSync: autoSync ?? this.autoSync,
+      localVaultVersion: localVaultVersion ?? this.localVaultVersion,
     );
   }
 }

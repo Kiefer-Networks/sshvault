@@ -31,6 +31,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyLocale = 'locale';
   static const _keyFailedAttempts = 'failed_pin_attempts';
   static const _keyLockoutUntil = 'lockout_until';
+  static const _keyServerUrl = 'server_url';
+  static const _keySelfHosted = 'self_hosted';
+  static const _keyAutoSync = 'auto_sync';
+  static const _keyLocalVaultVersion = 'local_vault_version';
 
   @override
   Future<AppSettingsEntity> build() async {
@@ -48,6 +52,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     final locale = await dao.getValue(_keyLocale);
     final failedAttemptsStr = await dao.getValue(_keyFailedAttempts);
     final lockoutUntilStr = await dao.getValue(_keyLockoutUntil);
+    final serverUrl = await dao.getValue(_keyServerUrl);
+    final selfHostedStr = await dao.getValue(_keySelfHosted);
+    final autoSyncStr = await dao.getValue(_keyAutoSync);
+    final localVaultVersionStr = await dao.getValue(_keyLocalVaultVersion);
 
     // Migrate legacy plaintext PIN to hash if present
     final legacyPin = await dao.getValue('pin_code');
@@ -70,6 +78,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
         locale: locale ?? '',
         failedPinAttempts: int.tryParse(failedAttemptsStr ?? '') ?? 0,
         lockoutUntil: _parseLockoutUntil(lockoutUntilStr),
+        serverUrl: serverUrl ?? '',
+        selfHosted: selfHostedStr == 'true',
+        autoSync: autoSyncStr != 'false',
+        localVaultVersion: int.tryParse(localVaultVersionStr ?? '') ?? 0,
       );
     }
 
@@ -86,6 +98,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       locale: locale ?? '',
       failedPinAttempts: int.tryParse(failedAttemptsStr ?? '') ?? 0,
       lockoutUntil: _parseLockoutUntil(lockoutUntilStr),
+      serverUrl: serverUrl ?? '',
+      selfHosted: selfHostedStr == 'true',
+      autoSync: autoSyncStr != 'false',
+      localVaultVersion: int.tryParse(localVaultVersionStr ?? '') ?? 0,
     );
   }
 
@@ -271,6 +287,33 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     _log.info(_tag, 'Locale changed to ${locale.isEmpty ? 'system' : locale}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyLocale, locale);
+    ref.invalidateSelf();
+  }
+
+  Future<void> setServerUrl(String url) async {
+    _log.info(_tag, 'Server URL changed');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyServerUrl, url);
+    ref.invalidateSelf();
+  }
+
+  Future<void> setSelfHosted(bool selfHosted) async {
+    _log.info(_tag, 'Self-hosted ${selfHosted ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keySelfHosted, selfHosted.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setAutoSync(bool enabled) async {
+    _log.info(_tag, 'Auto-sync ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyAutoSync, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setLocalVaultVersion(int version) async {
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyLocalVaultVersion, version.toString());
     ref.invalidateSelf();
   }
 }

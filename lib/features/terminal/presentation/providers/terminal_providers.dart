@@ -5,6 +5,7 @@ import 'package:xterm/xterm.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/terminal/data/services/ssh_service.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data.dart';
@@ -138,6 +139,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
             session.title = title;
             _notifyChange();
           };
+
+          // Detect distro in background
+          _detectDistro(session);
         },
         onFailure: (failure) {
           session.status = SshConnectionStatus.error;
@@ -205,6 +209,38 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
     // Reconnect
     await _connectSession(session);
+  }
+
+  Future<void> _detectDistro(SshSessionEntity session) async {
+    if (session.client == null) return;
+    final sshService = ref.read(sshServiceProvider);
+    final distro = await sshService.detectDistro(session.client!);
+    if (distro != null && state.any((s) => s.id == session.id)) {
+      session.distroInfo = distro;
+      _notifyChange();
+
+      // Persist distro info on the server entity
+      _saveDistroInfo(session.serverId, distro);
+    }
+  }
+
+  Future<void> _saveDistroInfo(String serverId, DistroInfo distro) async {
+    try {
+      final serverUseCases = ref.read(serverUseCasesProvider);
+      final result = await serverUseCases.getServer(serverId);
+      result.fold(
+        onSuccess: (server) async {
+          if (server.distroId == distro.id) return;
+          final updated = server.copyWith(
+            distroId: distro.id,
+            distroName: distro.displayName,
+          );
+          await serverUseCases.updateServer(updated, null);
+          ref.invalidate(serverDetailProvider(serverId));
+        },
+        onFailure: (_) {},
+      );
+    } catch (_) {}
   }
 
   void _notifyChange() {

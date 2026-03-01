@@ -4,7 +4,7 @@ abstract final class AppConstants {
 
   // Database
   static const String databaseName = 'shellvault.db';
-  static const int databaseVersion = 3;
+  static const int databaseVersion = 4;
 
   // SSH Defaults
   static const int defaultSshPort = 22;
@@ -40,4 +40,13 @@ abstract final class AppConstants {
 
   // Pagination
   static const int defaultPageSize = 50;
+
+  // Auth / Sync
+  static const String defaultServerUrl = 'https://api.shellvault.app';
+  static const String accessTokenKey = 'sv_access_token';
+  static const String refreshTokenKey = 'sv_refresh_token';
+  static const String tokenExpiryKey = 'sv_token_expiry';
+  static const String syncPasswordKey = 'sv_sync_password';
+  static const String userEmailKey = 'sv_user_email';
+  static const String serverUrlKey = 'sv_server_url';
 }

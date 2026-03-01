@@ -43,7 +43,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     Uuid? uuid,
   })  : _uuid = uuid ?? const Uuid();
 
-  Future<Map<String, dynamic>> _buildExportData({
+  Future<Map<String, dynamic>> buildExportData({
     bool includeCredentials = false,
   }) async {
     final servers = await _serverDao.getAllServers();
@@ -103,7 +103,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   @override
   Future<Result<String>> exportToJson() async {
     try {
-      final data = await _buildExportData();
+      final data = await buildExportData();
       final jsonString = const JsonEncoder.withIndent('  ').convert(data);
 
       final dir = await getApplicationDocumentsDirectory();
@@ -121,7 +121,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   @override
   Future<Result<String>> exportToEncryptedZip(String password) async {
     try {
-      final data = await _buildExportData(includeCredentials: true);
+      final data = await buildExportData(includeCredentials: true);
       final jsonString = const JsonEncoder.withIndent('  ').convert(data);
 
       final envelopeResult =
@@ -210,6 +210,32 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
         return Err(ImportFailure(e.message));
       }
       return Err(ImportFailure('Failed to decrypt archive', cause: e));
+    }
+  }
+
+  @override
+  Future<Result<String>> exportToJsonString({
+    bool includeCredentials = false,
+  }) async {
+    try {
+      final data = await buildExportData(includeCredentials: includeCredentials);
+      return Success(const JsonEncoder.withIndent('  ').convert(data));
+    } catch (e) {
+      return Err(ExportFailure('Failed to export JSON string', cause: e));
+    }
+  }
+
+  @override
+  Future<Result<ImportResult>> importFromJsonString(
+    String jsonString,
+    ImportConflictStrategy strategy, {
+    bool includeCredentials = false,
+  }) async {
+    try {
+      final data = jsonDecode(jsonString) as Map<String, dynamic>;
+      return _importData(data, strategy, includeCredentials: includeCredentials);
+    } catch (e) {
+      return Err(ImportFailure('Failed to import from JSON string', cause: e));
     }
   }
 

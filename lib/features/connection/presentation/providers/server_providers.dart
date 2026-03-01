@@ -28,6 +28,14 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     );
   }
 
+  void _invalidateAll({String? serverId}) {
+    ref.invalidateSelf();
+    if (serverId != null) {
+      ref.invalidate(serverDetailProvider(serverId));
+      ref.invalidate(serverCredentialsProvider(serverId));
+    }
+  }
+
   Future<void> createServer(
     ServerEntity server,
     ServerCredentials? credentials,
@@ -35,7 +43,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final useCases = ref.read(serverUseCasesProvider);
     final result = await useCases.createServer(server, credentials);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (created) => _invalidateAll(serverId: created.id),
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -47,7 +55,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final useCases = ref.read(serverUseCasesProvider);
     final result = await useCases.updateServer(server, credentials);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) => _invalidateAll(serverId: server.id),
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -56,7 +64,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final useCases = ref.read(serverUseCasesProvider);
     final result = await useCases.deleteServer(id);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) => _invalidateAll(serverId: id),
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -65,7 +73,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final useCases = ref.read(serverUseCasesProvider);
     final result = await useCases.duplicateServer(id, copySuffix: copySuffix);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (dup) => _invalidateAll(serverId: dup.id),
       onFailure: (failure) => throw Exception(failure.message),
     );
   }

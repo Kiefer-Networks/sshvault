@@ -28,4 +28,14 @@ abstract class ExportImportRepository {
     ImportConflictStrategy strategy, {
     String? password,
   });
+
+  /// Export data as a JSON string (no file I/O). Used by Sync.
+  Future<Result<String>> exportToJsonString({bool includeCredentials = false});
+
+  /// Import data from a JSON string (no file I/O). Used by Sync.
+  Future<Result<ImportResult>> importFromJsonString(
+    String jsonString,
+    ImportConflictStrategy strategy, {
+    bool includeCredentials = false,
+  });
 }

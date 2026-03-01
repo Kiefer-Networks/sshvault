@@ -21,6 +21,8 @@ abstract class ServerEntity with _$ServerEntity {
     String? groupId,
     String? sshKeyId,
     @Default(0) int sortOrder,
+    String? distroId,
+    String? distroName,
     @Default([]) List<TagEntity> tags,
     String? ownerId,
     String? sharedWith,

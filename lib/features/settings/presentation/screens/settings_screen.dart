@@ -2,16 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/services/biometric_provider.dart';
 import 'package:shellvault/core/services/logging_provider.dart';
 import 'package:shellvault/core/widgets/pin_dialog.dart';
+import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
     as app;
+import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:shellvault/features/terminal/presentation/widgets/terminal_theme_picker.dart';
 
@@ -253,6 +257,79 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               const Divider(),
 
+              // Sync
+              _SectionHeader(title: l10n.settingsSectionSync),
+              Builder(builder: (context) {
+                final authState = ref.watch(authProvider);
+                final isAuthenticated =
+                    authState.valueOrNull == AuthStatus.authenticated;
+                return ListTile(
+                  leading: const Icon(Icons.account_circle_outlined),
+                  title: Text(l10n.settingsSyncAccount),
+                  subtitle: FutureBuilder<String>(
+                    future: _getUserEmail(ref),
+                    builder: (_, snap) => Text(
+                      isAuthenticated
+                          ? (snap.data ?? l10n.loading)
+                          : l10n.settingsSyncNotLoggedIn,
+                    ),
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(
+                    isAuthenticated ? '/account' : '/login',
+                  ),
+                );
+              }),
+              Builder(builder: (context) {
+                final syncState = ref.watch(syncProvider);
+                final isSyncing =
+                    syncState.valueOrNull == SyncStatus.syncing;
+                return ListTile(
+                  leading: isSyncing
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child:
+                              CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.sync),
+                  title: Text(l10n.settingsSyncStatus),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/sync-settings'),
+                );
+              }),
+              SwitchListTile(
+                secondary: const Icon(Icons.sync_outlined),
+                title: Text(l10n.syncAutoSync),
+                value: settings.autoSync,
+                onChanged: (v) {
+                  ref.read(settingsProvider.notifier).setAutoSync(v);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.dns_outlined),
+                title: Text(l10n.settingsSyncServerUrl),
+                subtitle: Text(settings.serverUrl.isEmpty
+                    ? l10n.settingsSyncDefaultServer
+                    : settings.serverUrl),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/server-config'),
+              ),
+              Builder(builder: (context) {
+                final authState = ref.watch(authProvider);
+                final isAuthenticated =
+                    authState.valueOrNull == AuthStatus.authenticated;
+                if (!isAuthenticated) return const SizedBox.shrink();
+                return ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: Text(l10n.accountLogout),
+                  onTap: () async {
+                    await ref.read(authProvider.notifier).logout();
+                  },
+                );
+              }),
+              const Divider(),
+
               // Support
               _SectionHeader(title: l10n.settingsSectionSupport),
               ListTile(
@@ -289,6 +366,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ThemeMode.light => l10n.settingsThemeLight,
       ThemeMode.dark => l10n.settingsThemeDark,
     };
+  }
+
+  Future<String> _getUserEmail(WidgetRef ref) async {
+    final storage = ref.read(secureStorageProvider);
+    final result = await storage.getUserEmail();
+    return result.isSuccess ? (result.value ?? '') : '';
   }
 
   String _localeLabel(AppLocalizations l10n, String locale) {

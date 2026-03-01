@@ -31,6 +31,8 @@ class Servers extends Table {
   TextColumn get groupId => text().nullable().references(Groups, #id)();
   TextColumn get sshKeyId => text().nullable().references(SshKeys, #id)();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+  TextColumn get distroId => text().nullable()();
+  TextColumn get distroName => text().nullable()();
   TextColumn get ownerId => text().nullable()();
   TextColumn get sharedWith => text().nullable()();
   TextColumn get permissions => text().nullable()();

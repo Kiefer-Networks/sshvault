@@ -375,6 +375,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get serverDetailUsername => 'Benutzername';
 
   @override
+  String get serverDetailGroup => 'Gruppe';
+
+  @override
   String get serverDetailTags => 'Tags';
 
   @override
@@ -388,6 +391,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get serverDetailUpdated => 'Aktualisiert';
+
+  @override
+  String get serverDetailDistro => 'System';
 
   @override
   String get copiedToClipboard => 'In die Zwischenablage kopiert';
@@ -1087,4 +1093,199 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsLogsEmpty => 'Keine Protokolleinträge vorhanden';
+
+  @override
+  String get authLogin => 'Anmelden';
+
+  @override
+  String get authRegister => 'Registrieren';
+
+  @override
+  String get authForgotPassword => 'Passwort vergessen?';
+
+  @override
+  String get authWhyLogin =>
+      'Melde dich an, um verschlüsselte Cloud-Synchronisation auf allen Geräten zu aktivieren. Die App funktioniert auch ohne Konto komplett offline.';
+
+  @override
+  String get authEmailLabel => 'E-Mail';
+
+  @override
+  String get authEmailRequired => 'E-Mail ist erforderlich';
+
+  @override
+  String get authEmailInvalid => 'Ungültige E-Mail-Adresse';
+
+  @override
+  String get authPasswordLabel => 'Passwort';
+
+  @override
+  String get authConfirmPasswordLabel => 'Passwort bestätigen';
+
+  @override
+  String get authPasswordMismatch => 'Passwörter stimmen nicht überein';
+
+  @override
+  String get authOrContinueWith => 'oder fortfahren mit';
+
+  @override
+  String get authNoAccount => 'Kein Konto?';
+
+  @override
+  String get authHasAccount => 'Bereits ein Konto?';
+
+  @override
+  String get authSelfHosted => 'Selbst-gehosteter Server';
+
+  @override
+  String get authResetEmailSent =>
+      'Falls ein Konto existiert, wurde ein Rücksetz-Link an deine E-Mail gesendet.';
+
+  @override
+  String get authResetDescription =>
+      'Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.';
+
+  @override
+  String get authSendResetLink => 'Rücksetz-Link senden';
+
+  @override
+  String get authBackToLogin => 'Zurück zur Anmeldung';
+
+  @override
+  String get syncPasswordTitle => 'Sync-Passwort';
+
+  @override
+  String get syncPasswordDescription =>
+      'Lege ein separates Passwort fest, um deine Vault-Daten zu verschlüsseln. Dieses Passwort verlässt niemals dein Gerät — der Server speichert nur verschlüsselte Daten.';
+
+  @override
+  String get syncPasswordWarning =>
+      'Wenn du dieses Passwort vergisst, können deine synchronisierten Daten nicht wiederhergestellt werden. Es gibt keine Rücksetz-Option.';
+
+  @override
+  String get syncPasswordLabel => 'Sync-Passwort';
+
+  @override
+  String get syncSettingsTitle => 'Sync-Einstellungen';
+
+  @override
+  String get syncAutoSync => 'Auto-Sync';
+
+  @override
+  String get syncAutoSyncDescription =>
+      'Automatisch synchronisieren beim App-Start';
+
+  @override
+  String get syncNow => 'Jetzt synchronisieren';
+
+  @override
+  String get syncSyncing => 'Synchronisiert...';
+
+  @override
+  String get syncSuccess => 'Synchronisierung abgeschlossen';
+
+  @override
+  String get syncError => 'Sync-Fehler';
+
+  @override
+  String get syncNeverSynced => 'Noch nie synchronisiert';
+
+  @override
+  String get syncVaultVersion => 'Vault-Version';
+
+  @override
+  String get settingsSectionSync => 'Synchronisierung';
+
+  @override
+  String get settingsSyncAccount => 'Konto';
+
+  @override
+  String get settingsSyncNotLoggedIn => 'Nicht angemeldet';
+
+  @override
+  String get settingsSyncStatus => 'Sync';
+
+  @override
+  String get settingsSyncServerUrl => 'Server-URL';
+
+  @override
+  String get settingsSyncDefaultServer => 'Standard (shellvault.app)';
+
+  @override
+  String get accountTitle => 'Konto';
+
+  @override
+  String get accountNotLoggedIn => 'Nicht angemeldet';
+
+  @override
+  String get accountVerified => 'Verifiziert';
+
+  @override
+  String get accountMemberSince => 'Mitglied seit';
+
+  @override
+  String get accountPaymentStatus => 'Zahlung';
+
+  @override
+  String get accountPaymentActive => 'Sync freigeschaltet (Einmalzahlung)';
+
+  @override
+  String get accountPaymentInactive => 'Sync noch nicht erworben';
+
+  @override
+  String get accountUnlockSync => 'Sync freischalten';
+
+  @override
+  String get accountDevices => 'Geräte';
+
+  @override
+  String get accountNoDevices => 'Keine Geräte registriert';
+
+  @override
+  String get accountLastSync => 'Letzte Sync';
+
+  @override
+  String get accountChangePassword => 'Passwort ändern';
+
+  @override
+  String get accountOldPassword => 'Aktuelles Passwort';
+
+  @override
+  String get accountNewPassword => 'Neues Passwort';
+
+  @override
+  String get accountDeleteAccount => 'Konto löschen';
+
+  @override
+  String get accountDeleteWarning =>
+      'Dies löscht dein Konto und alle synchronisierten Daten unwiderruflich.';
+
+  @override
+  String get accountLogout => 'Abmelden';
+
+  @override
+  String get serverConfigTitle => 'Server-Konfiguration';
+
+  @override
+  String get serverConfigSelfHosted => 'Selbst-gehostet';
+
+  @override
+  String get serverConfigSelfHostedDescription =>
+      'Eigenen ShellVault-Server verwenden';
+
+  @override
+  String get serverConfigUrlLabel => 'Server-URL';
+
+  @override
+  String get serverConfigTest => 'Verbindung testen';
+
+  @override
+  String get donationTitle => 'ShellVault unterstützen';
+
+  @override
+  String get donationDescription =>
+      'Wenn dir ShellVault gefällt, erwäge eine Spende zur Unterstützung der Entwicklung.';
+
+  @override
+  String get donationButton => 'Spenden';
 }
