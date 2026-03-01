@@ -484,6 +484,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get groupShowHosts => 'Hosts anzeigen';
 
   @override
+  String get groupConnectAll => 'Alle verbinden';
+
+  @override
   String get groupFormTitleEdit => 'Gruppe bearbeiten';
 
   @override

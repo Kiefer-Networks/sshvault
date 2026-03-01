@@ -7,7 +7,9 @@ import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
+import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/screens/group_form_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -123,11 +125,53 @@ class _GroupTile extends ConsumerStatefulWidget {
 
 class _GroupTileState extends ConsumerState<_GroupTile> {
   bool _expanded = false;
+  bool _connectingAll = false;
+
+  Future<void> _connectAllServers() async {
+    if (_connectingAll) return;
+    setState(() => _connectingAll = true);
+
+    try {
+      final groupId = widget.group.id;
+      final useCases = ref.read(serverUseCasesProvider);
+      final result = await useCases.getServers(
+        filter: ServerFilter(groupId: groupId),
+      );
+      final servers = result.fold(
+        onSuccess: (s) => s,
+        onFailure: (f) => throw Exception(f.message),
+      );
+
+      if (servers.isEmpty) return;
+
+      final sessionManager = ref.read(sessionManagerProvider.notifier);
+      for (final server in servers) {
+        await sessionManager.openSession(server.id);
+      }
+
+      if (mounted) {
+        ref.read(shellNavigationProvider)?.goBranch(6);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.error(e.toString())),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _connectingAll = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final group = widget.group;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       children: [
@@ -160,6 +204,18 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (group.serverCount > 0)
+                _connectingAll
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : IconButton(
+                        icon: const Icon(Icons.play_circle_outline, size: 20),
+                        onPressed: _connectAllServers,
+                        tooltip: l10n.groupConnectAll,
+                      ),
+              if (group.serverCount > 0)
                 IconButton(
                   icon: Icon(
                     _expanded
@@ -168,7 +224,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
                     size: 20,
                   ),
                   onPressed: () => setState(() => _expanded = !_expanded),
-                  tooltip: _expanded ? AppLocalizations.of(context)!.groupCollapse : AppLocalizations.of(context)!.groupShowHosts,
+                  tooltip: _expanded ? l10n.groupCollapse : l10n.groupShowHosts,
                 ),
               IconButton(
                 icon: const Icon(Icons.edit, size: 20),

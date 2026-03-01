@@ -161,6 +161,7 @@
   "groupDeleteMessage": "\"{name}\" löschen? Server in dieser Gruppe werden nicht zugeordnet.",
   "groupCollapse": "Einklappen",
   "groupShowHosts": "Hosts anzeigen",
+  "groupConnectAll": "Alle verbinden",
 
   "groupFormTitleEdit": "Gruppe bearbeiten",
   "groupFormTitleNew": "Neue Gruppe",

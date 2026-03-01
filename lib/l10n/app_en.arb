@@ -170,6 +170,7 @@
   "@groupDeleteMessage": { "placeholders": { "name": { "type": "String" } } },
   "groupCollapse": "Collapse",
   "groupShowHosts": "Show hosts",
+  "groupConnectAll": "Connect All",
 
   "groupFormTitleEdit": "Edit Group",
   "groupFormTitleNew": "New Group",

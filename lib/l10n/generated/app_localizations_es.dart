@@ -483,6 +483,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get groupShowHosts => 'Mostrar hosts';
 
   @override
+  String get groupConnectAll => 'Conectar todos';
+
+  @override
   String get groupFormTitleEdit => 'Editar grupo';
 
   @override

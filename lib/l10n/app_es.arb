@@ -161,6 +161,7 @@
   "groupDeleteMessage": "¿Eliminar \"{name}\"? Los servidores en este grupo quedarán sin grupo.",
   "groupCollapse": "Colapsar",
   "groupShowHosts": "Mostrar hosts",
+  "groupConnectAll": "Conectar todos",
 
   "groupFormTitleEdit": "Editar grupo",
   "groupFormTitleNew": "Nuevo grupo",

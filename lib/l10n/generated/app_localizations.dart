@@ -988,6 +988,12 @@ abstract class AppLocalizations {
   /// **'Show hosts'**
   String get groupShowHosts;
 
+  /// No description provided for @groupConnectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect All'**
+  String get groupConnectAll;
+
   /// No description provided for @groupFormTitleEdit.
   ///
   /// In en, this message translates to:
