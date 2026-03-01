@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
     as app;
+import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 /// Breakpoints following Material 3 Compact / Medium / Expanded.
 abstract final class ShellBreakpoints {
@@ -53,6 +56,11 @@ const _navItems = <_NavItem>[
     selectedIcon: Icons.import_export,
     label: 'Export / Import',
   ),
+  _NavItem(
+    icon: Icons.terminal_outlined,
+    selectedIcon: Icons.terminal,
+    label: 'Terminal',
+  ),
 ];
 
 /// The root shell widget used by [StatefulShellRoute].
@@ -61,7 +69,7 @@ const _navItems = <_NavItem>[
 /// tablet / desktop (>= 600 dp).  The rail extends its labels at >= 1200 dp.
 ///
 /// Branch screens can open the drawer via [AppShell.maybeOf(context)].
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
 
   const AppShell({super.key, required this.navigationShell});
@@ -73,13 +81,29 @@ class AppShell extends StatefulWidget {
   }
 
   @override
-  State<AppShell> createState() => AppShellState();
+  ConsumerState<AppShell> createState() => AppShellState();
 }
 
-class AppShellState extends State<AppShell> {
+class AppShellState extends ConsumerState<AppShell> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   void openDrawer() => scaffoldKey.currentState?.openDrawer();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(shellNavigationProvider.notifier).state =
+          widget.navigationShell;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant AppShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    ref.read(shellNavigationProvider.notifier).state =
+        widget.navigationShell;
+  }
 
   void _onDestinationSelected(int index) {
     widget.navigationShell.goBranch(
@@ -90,6 +114,8 @@ class AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final sessionCount = ref.watch(sessionManagerProvider).length;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
@@ -99,6 +125,7 @@ class AppShellState extends State<AppShell> {
             scaffoldKey: scaffoldKey,
             currentIndex: widget.navigationShell.currentIndex,
             onDestinationSelected: _onDestinationSelected,
+            sessionCount: sessionCount,
             child: widget.navigationShell,
           );
         }
@@ -107,6 +134,7 @@ class AppShellState extends State<AppShell> {
           currentIndex: widget.navigationShell.currentIndex,
           onDestinationSelected: _onDestinationSelected,
           extended: width >= ShellBreakpoints.railExtended,
+          sessionCount: sessionCount,
           child: widget.navigationShell,
         );
       },
@@ -122,12 +150,14 @@ class _MobileScaffold extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
+  final int sessionCount;
   final Widget child;
 
   const _MobileScaffold({
     required this.scaffoldKey,
     required this.currentIndex,
     required this.onDestinationSelected,
+    required this.sessionCount,
     required this.child,
   });
 
@@ -138,6 +168,7 @@ class _MobileScaffold extends StatelessWidget {
       drawer: _AppDrawer(
         currentIndex: currentIndex,
         onDestinationSelected: onDestinationSelected,
+        sessionCount: sessionCount,
       ),
       body: child,
     );
@@ -152,18 +183,22 @@ class _DesktopScaffold extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
   final bool extended;
+  final int sessionCount;
   final Widget child;
 
   const _DesktopScaffold({
     required this.currentIndex,
     required this.onDestinationSelected,
     required this.extended,
+    required this.sessionCount,
     required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // Terminal is the last nav item (index 6)
+    const terminalIndex = 6;
 
     return Scaffold(
       body: Row(
@@ -225,11 +260,21 @@ class _DesktopScaffold extends StatelessWidget {
               ),
             ),
             destinations: [
-              for (final item in _navItems)
+              for (var i = 0; i < _navItems.length; i++)
                 NavigationRailDestination(
-                  icon: Icon(item.icon),
-                  selectedIcon: Icon(item.selectedIcon),
-                  label: Text(item.label),
+                  icon: i == terminalIndex && sessionCount > 0
+                      ? Badge(
+                          label: Text('$sessionCount'),
+                          child: Icon(_navItems[i].icon),
+                        )
+                      : Icon(_navItems[i].icon),
+                  selectedIcon: i == terminalIndex && sessionCount > 0
+                      ? Badge(
+                          label: Text('$sessionCount'),
+                          child: Icon(_navItems[i].selectedIcon),
+                        )
+                      : Icon(_navItems[i].selectedIcon),
+                  label: Text(_navItems[i].label),
                 ),
             ],
           ),
@@ -252,15 +297,19 @@ class _DesktopScaffold extends StatelessWidget {
 class _AppDrawer extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
+  final int sessionCount;
 
   const _AppDrawer({
     required this.currentIndex,
     required this.onDestinationSelected,
+    required this.sessionCount,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // Terminal is the last nav item (index 6)
+    const terminalIndex = 6;
 
     return Drawer(
       child: SafeArea(
@@ -298,6 +347,9 @@ class _AppDrawer extends StatelessWidget {
                 selectedIcon: _navItems[i].selectedIcon,
                 label: _navItems[i].label,
                 selected: i == currentIndex,
+                badge: i == terminalIndex && sessionCount > 0
+                    ? sessionCount
+                    : null,
                 onTap: () {
                   Navigator.pop(context); // close drawer
                   onDestinationSelected(i);
@@ -340,6 +392,7 @@ class _DrawerItem extends StatelessWidget {
   final IconData selectedIcon;
   final String label;
   final bool selected;
+  final int? badge;
   final VoidCallback onTap;
 
   const _DrawerItem({
@@ -348,6 +401,7 @@ class _DrawerItem extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.badge,
   });
 
   @override
@@ -356,10 +410,18 @@ class _DrawerItem extends StatelessWidget {
     final color =
         selected ? theme.colorScheme.primary : theme.colorScheme.onSurface;
 
+    Widget iconWidget = Icon(selected ? selectedIcon : icon, color: color);
+    if (badge != null) {
+      iconWidget = Badge(
+        label: Text('$badge'),
+        child: iconWidget,
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: ListTile(
-        leading: Icon(selected ? selectedIcon : icon, color: color),
+        leading: iconWidget,
         title: Text(
           label,
           style: TextStyle(

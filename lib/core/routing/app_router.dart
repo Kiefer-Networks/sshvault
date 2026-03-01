@@ -12,6 +12,7 @@ import 'package:shellvault/features/settings/presentation/screens/settings_scree
 import 'package:shellvault/features/snippet/presentation/screens/snippet_detail_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_form_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_list_screen.dart';
+import 'package:shellvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -84,6 +85,16 @@ abstract final class AppRouter {
               GoRoute(
                 path: '/export-import',
                 builder: (context, state) => const ExportImportScreen(),
+              ),
+            ],
+          ),
+
+          // 6 — Terminal
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/terminal',
+                builder: (context, state) => const TerminalBranchScreen(),
               ),
             ],
           ),
