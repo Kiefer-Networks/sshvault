@@ -143,7 +143,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
                       onPressed: () async {
-                        final uri = Uri.parse('https://shellvault.app/donate');
+                        final uri = Uri.parse('https://sshvault.app/donate');
                         if (await canLaunchUrl(uri)) {
                           await launchUrl(uri,
                               mode: LaunchMode.externalApplication);

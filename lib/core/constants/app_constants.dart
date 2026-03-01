@@ -42,7 +42,7 @@ abstract final class AppConstants {
   static const int defaultPageSize = 50;
 
   // Auth / Sync
-  static const String defaultServerUrl = 'https://api.shellvault.app';
+  static const String defaultServerUrl = 'https://api.sshvault.app';
   static const String accessTokenKey = 'sv_access_token';
   static const String refreshTokenKey = 'sv_refresh_token';
   static const String tokenExpiryKey = 'sv_token_expiry';

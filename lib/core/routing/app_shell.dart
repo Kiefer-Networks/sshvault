@@ -318,6 +318,8 @@ class _DesktopScaffold extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      const _SyncStatusIcon(),
+                      const SizedBox(height: 4),
                       IconButton(
                         icon: const Icon(Icons.settings_outlined),
                         tooltip: l10n.navSettings,

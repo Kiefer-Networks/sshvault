@@ -413,7 +413,7 @@
   "settingsSyncNotLoggedIn": "Nicht angemeldet",
   "settingsSyncStatus": "Sync",
   "settingsSyncServerUrl": "Server-URL",
-  "settingsSyncDefaultServer": "Standard (shellvault.app)",
+  "settingsSyncDefaultServer": "Standard (sshvault.app)",
 
   "accountTitle": "Konto",
   "accountNotLoggedIn": "Nicht angemeldet",
