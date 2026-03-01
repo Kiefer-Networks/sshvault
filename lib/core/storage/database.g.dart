@@ -23,10 +23,6 @@ class $SshKeysTable extends SshKeys with TableInfo<$SshKeysTable, SshKey> {
     'name',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 100,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -689,10 +685,6 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
     'name',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 100,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -1352,10 +1344,6 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     'name',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 100,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -1367,10 +1355,6 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     'hostname',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 255,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -1392,10 +1376,6 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     'username',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 32,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -2356,10 +2336,6 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
     'name',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 50,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -3093,10 +3069,6 @@ class $SnippetsTable extends Snippets with TableInfo<$SnippetsTable, Snippet> {
     'name',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 100,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -4047,10 +4019,6 @@ class $SnippetVariablesTable extends SnippetVariables
     'name',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 50,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );

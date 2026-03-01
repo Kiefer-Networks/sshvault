@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 
 class SshKeys extends Table {
   TextColumn get id => text()();
-  TextColumn get name => text().withLength(min: 1, max: 100)();
+  TextColumn get name => text()();
   TextColumn get keyType => text()(); // ed25519, rsa, ecdsa256, etc.
   TextColumn get fingerprint => text().withDefault(const Constant(''))();
   TextColumn get publicKey => text().withDefault(const Constant(''))();
@@ -19,10 +19,10 @@ class SshKeys extends Table {
 
 class Servers extends Table {
   TextColumn get id => text()();
-  TextColumn get name => text().withLength(min: 1, max: 100)();
-  TextColumn get hostname => text().withLength(min: 1, max: 255)();
+  TextColumn get name => text()();
+  TextColumn get hostname => text()();
   IntColumn get port => integer().withDefault(const Constant(22))();
-  TextColumn get username => text().withLength(min: 1, max: 32)();
+  TextColumn get username => text()();
   TextColumn get authMethod => text().withDefault(const Constant('password'))();
   TextColumn get notes => text().withDefault(const Constant(''))();
   IntColumn get color => integer().withDefault(const Constant(0xFF6C63FF))();
@@ -43,7 +43,7 @@ class Servers extends Table {
 
 class Groups extends Table {
   TextColumn get id => text()();
-  TextColumn get name => text().withLength(min: 1, max: 100)();
+  TextColumn get name => text()();
   IntColumn get color => integer().withDefault(const Constant(0xFF6C63FF))();
   TextColumn get iconName => text().withDefault(const Constant('server'))();
   TextColumn get parentId => text().nullable().references(Groups, #id)();
@@ -60,7 +60,7 @@ class Groups extends Table {
 
 class Tags extends Table {
   TextColumn get id => text()();
-  TextColumn get name => text().withLength(min: 1, max: 50)();
+  TextColumn get name => text()();
   IntColumn get color => integer().withDefault(const Constant(0xFF6C63FF))();
   TextColumn get ownerId => text().nullable()();
   TextColumn get sharedWith => text().nullable()();
@@ -82,7 +82,7 @@ class ServerTags extends Table {
 
 class Snippets extends Table {
   TextColumn get id => text()();
-  TextColumn get name => text().withLength(min: 1, max: 100)();
+  TextColumn get name => text()();
   TextColumn get content => text()();
   TextColumn get language => text().withDefault(const Constant('bash'))();
   TextColumn get description => text().withDefault(const Constant(''))();
@@ -109,7 +109,7 @@ class SnippetTags extends Table {
 class SnippetVariables extends Table {
   TextColumn get id => text()();
   TextColumn get snippetId => text().references(Snippets, #id)();
-  TextColumn get name => text().withLength(min: 1, max: 50)();
+  TextColumn get name => text()();
   TextColumn get defaultValue => text().withDefault(const Constant(''))();
   TextColumn get description => text().withDefault(const Constant(''))();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
