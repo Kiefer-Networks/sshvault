@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
+import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
 import 'package:shellvault/features/connection/presentation/screens/group_form_dialog.dart';
@@ -12,12 +13,10 @@ class GroupListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final groupsAsync = ref.watch(groupListProvider);
+    final groupsAsync = ref.watch(groupTreeProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Groups'),
-      ),
+      appBar: buildShellAppBar(context, title: 'Groups'),
       body: groupsAsync.when(
         data: (groups) {
           if (groups.isEmpty) {
@@ -33,17 +32,9 @@ class GroupListScreen extends ConsumerWidget {
             );
           }
 
-          return ListView.builder(
+          return ListView(
             padding: const EdgeInsets.only(bottom: 80),
-            itemCount: groups.length,
-            itemBuilder: (context, index) {
-              final group = groups[index];
-              return _GroupTile(
-                group: group,
-                onEdit: () => _showGroupForm(context, ref, group: group),
-                onDelete: () => _deleteGroup(context, ref, group),
-              );
-            },
+            children: _buildGroupList(context, ref, groups),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -54,6 +45,29 @@ class GroupListScreen extends ConsumerWidget {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  List<Widget> _buildGroupList(
+    BuildContext context,
+    WidgetRef ref,
+    List<GroupEntity> groups, {
+    int depth = 0,
+  }) {
+    final widgets = <Widget>[];
+    for (final group in groups) {
+      widgets.add(_GroupTile(
+        group: group,
+        depth: depth,
+        onEdit: () => _showGroupForm(context, ref, group: group),
+        onDelete: () => _deleteGroup(context, ref, group),
+      ));
+      if (group.children.isNotEmpty) {
+        widgets.addAll(
+          _buildGroupList(context, ref, group.children, depth: depth + 1),
+        );
+      }
+    }
+    return widgets;
   }
 
   void _showGroupForm(
@@ -83,11 +97,13 @@ class GroupListScreen extends ConsumerWidget {
 
 class _GroupTile extends StatelessWidget {
   final GroupEntity group;
+  final int depth;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _GroupTile({
     required this.group,
+    this.depth = 0,
     required this.onEdit,
     required this.onDelete,
   });
@@ -96,6 +112,10 @@ class _GroupTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ListTile(
+      contentPadding: EdgeInsets.only(
+        left: 16.0 + depth * 24.0,
+        right: 16.0,
+      ),
       leading: Container(
         width: 40,
         height: 40,
