@@ -2,11 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/network/auth_interceptor.dart';
-import 'package:shellvault/core/storage/secure_storage_service.dart';
+import 'package:shellvault/core/storage/secure_storage_provider.dart';
 
-final secureStorageProvider = Provider<SecureStorageService>((ref) {
-  return SecureStorageService();
-});
+export 'package:shellvault/core/storage/secure_storage_provider.dart';
 
 final serverUrlProvider = StateProvider<String>((ref) {
   return AppConstants.defaultServerUrl;

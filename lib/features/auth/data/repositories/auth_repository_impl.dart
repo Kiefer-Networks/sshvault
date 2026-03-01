@@ -49,8 +49,8 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<AuthResponse>> oauthLogin(
       String provider, String idToken) async {
     final result = await _apiClient.post(
-      '/v1/auth/oauth',
-      data: {'provider': provider, 'id_token': idToken},
+      '/v1/auth/oauth/$provider',
+      data: {'id_token': idToken},
     );
     return result.fold(
       onSuccess: (data) {
@@ -102,9 +102,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Result<void>> verifyEmail(String token) async {
-    final result = await _apiClient.post(
-      '/v1/auth/verify-email',
-      data: {'token': token},
+    final result = await _apiClient.get(
+      '/v1/auth/verify-email?token=${Uri.encodeComponent(token)}',
     );
     return result.fold(
       onSuccess: (_) => const Success(null),

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/network/api_provider.dart';
@@ -66,7 +64,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
   }
 
   Future<void> loginWithApple() async {
-    if (kIsWeb || !(Platform.isIOS || Platform.isMacOS)) return;
+    if (!showAppleSignIn) return;
 
     state = const AsyncValue.loading();
     final appleService = ref.read(appleAuthServiceProvider);
@@ -156,4 +154,6 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
 /// Whether Apple Sign In should be shown (only iOS/macOS native)
 bool get showAppleSignIn =>
-    !kIsWeb && (Platform.isIOS || Platform.isMacOS);
+    !kIsWeb &&
+    (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS);
