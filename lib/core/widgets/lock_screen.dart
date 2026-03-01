@@ -81,7 +81,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
   }
 
   Future<void> _onUnlockSuccess() async {
-    await ref.read(settingsProvider.notifier).loadDekAfterUnlock();
     if (mounted) {
       setState(() => _isUnlocked = true);
     }

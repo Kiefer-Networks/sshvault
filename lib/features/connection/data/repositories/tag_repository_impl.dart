@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/crypto/field_crypto_service.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/features/connection/data/datasources/server_dao.dart';
@@ -12,17 +11,15 @@ class TagRepositoryImpl implements TagRepository {
   final TagDao _tagDao;
   final ServerDao _serverDao;
   final Uuid _uuid;
-  final FieldCryptoService? _crypto;
 
-  TagRepositoryImpl(this._tagDao, this._serverDao, {FieldCryptoService? crypto, Uuid? uuid})
-      : _crypto = crypto,
-        _uuid = uuid ?? const Uuid();
+  TagRepositoryImpl(this._tagDao, this._serverDao, {Uuid? uuid})
+      : _uuid = uuid ?? const Uuid();
 
   @override
   Future<Result<List<TagEntity>>> getTags() async {
     try {
       final rows = await _tagDao.getAllTags();
-      return Success(rows.map((r) => TagMapper.fromDrift(r, crypto: _crypto)).toList());
+      return Success(rows.map((r) => TagMapper.fromDrift(r)).toList());
     } catch (e) {
       return Err(DatabaseFailure('Failed to load tags', cause: e));
     }
@@ -35,7 +32,7 @@ class TagRepositoryImpl implements TagRepository {
       if (row == null) {
         return Err(NotFoundFailure('Tag not found: $id'));
       }
-      return Success(TagMapper.fromDrift(row, crypto: _crypto));
+      return Success(TagMapper.fromDrift(row));
     } catch (e) {
       return Err(DatabaseFailure('Failed to load tag', cause: e));
     }
@@ -50,7 +47,7 @@ class TagRepositoryImpl implements TagRepository {
         createdAt: now,
         updatedAt: now,
       );
-      await _tagDao.insertTag(TagMapper.toCompanion(newTag, crypto: _crypto));
+      await _tagDao.insertTag(TagMapper.toCompanion(newTag));
       return Success(newTag);
     } catch (e) {
       return Err(DatabaseFailure('Failed to create tag', cause: e));
@@ -61,7 +58,7 @@ class TagRepositoryImpl implements TagRepository {
   Future<Result<TagEntity>> updateTag(TagEntity tag) async {
     try {
       final updated = tag.copyWith(updatedAt: DateTime.now());
-      await _tagDao.updateTag(TagMapper.toCompanion(updated, crypto: _crypto));
+      await _tagDao.updateTag(TagMapper.toCompanion(updated));
       return Success(updated);
     } catch (e) {
       return Err(DatabaseFailure('Failed to update tag', cause: e));
@@ -82,7 +79,7 @@ class TagRepositoryImpl implements TagRepository {
   Future<Result<List<TagEntity>>> getTagsForServer(String serverId) async {
     try {
       final rows = await _serverDao.getTagsForServer(serverId);
-      return Success(rows.map((r) => TagMapper.fromDrift(r, crypto: _crypto)).toList());
+      return Success(rows.map((r) => TagMapper.fromDrift(r)).toList());
     } catch (e) {
       return Err(DatabaseFailure('Failed to load server tags', cause: e));
     }

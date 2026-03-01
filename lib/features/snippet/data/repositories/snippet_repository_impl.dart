@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/crypto/field_crypto_service.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/features/connection/data/models/tag_mapper.dart';
@@ -11,18 +10,16 @@ import 'package:shellvault/features/snippet/domain/repositories/snippet_reposito
 class SnippetRepositoryImpl implements SnippetRepository {
   final SnippetDao _snippetDao;
   final Uuid _uuid;
-  final FieldCryptoService? _crypto;
 
-  SnippetRepositoryImpl(this._snippetDao, {FieldCryptoService? crypto, Uuid? uuid})
-      : _crypto = crypto,
-        _uuid = uuid ?? const Uuid();
+  SnippetRepositoryImpl(this._snippetDao, {Uuid? uuid})
+      : _uuid = uuid ?? const Uuid();
 
   Future<SnippetEntity> _enrichWithRelations(SnippetEntity snippet) async {
     final tags = await _snippetDao.getTagsForSnippet(snippet.id);
     final variables = await _snippetDao.getVariablesForSnippet(snippet.id);
     return snippet.copyWith(
-      tags: tags.map((t) => TagMapper.fromDrift(t, crypto: _crypto)).toList(),
-      variables: variables.map((v) => SnippetMapper.variableFromDrift(v, crypto: _crypto)).toList(),
+      tags: tags.map((t) => TagMapper.fromDrift(t)).toList(),
+      variables: variables.map((v) => SnippetMapper.variableFromDrift(v)).toList(),
     );
   }
 
@@ -32,7 +29,7 @@ class SnippetRepositoryImpl implements SnippetRepository {
       final rows = await _snippetDao.getAllSnippets();
       final snippets = <SnippetEntity>[];
       for (final row in rows) {
-        snippets.add(await _enrichWithRelations(SnippetMapper.fromDrift(row, crypto: _crypto)));
+        snippets.add(await _enrichWithRelations(SnippetMapper.fromDrift(row)));
       }
       return Success(snippets);
     } catch (e) {
@@ -48,7 +45,7 @@ class SnippetRepositoryImpl implements SnippetRepository {
         return Err(NotFoundFailure('Snippet not found: $id'));
       }
       final snippet =
-          await _enrichWithRelations(SnippetMapper.fromDrift(row, crypto: _crypto));
+          await _enrichWithRelations(SnippetMapper.fromDrift(row));
       return Success(snippet);
     } catch (e) {
       return Err(DatabaseFailure('Failed to load snippet', cause: e));
@@ -63,7 +60,7 @@ class SnippetRepositoryImpl implements SnippetRepository {
       final rows = await _snippetDao.getSnippetsByGroupId(groupId);
       final snippets = <SnippetEntity>[];
       for (final row in rows) {
-        snippets.add(await _enrichWithRelations(SnippetMapper.fromDrift(row, crypto: _crypto)));
+        snippets.add(await _enrichWithRelations(SnippetMapper.fromDrift(row)));
       }
       return Success(snippets);
     } catch (e) {
@@ -79,35 +76,16 @@ class SnippetRepositoryImpl implements SnippetRepository {
     String? language,
   }) async {
     try {
-      // When encryption is active, load all and filter in memory
-      final bool hasSearch = searchQuery != null && searchQuery.isNotEmpty;
-      final useInMemorySearch = _crypto != null && hasSearch;
-
       final rows = await _snippetDao.getFilteredSnippets(
-        searchQuery: useInMemorySearch ? null : searchQuery,
+        searchQuery: searchQuery,
         groupId: groupId,
         tagIds: tagIds,
-        language: _crypto != null ? null : language,
+        language: language,
       );
 
       var snippets = <SnippetEntity>[];
       for (final row in rows) {
-        snippets.add(await _enrichWithRelations(SnippetMapper.fromDrift(row, crypto: _crypto)));
-      }
-
-      // In-memory search on decrypted data
-      if (useInMemorySearch) {
-        final query = searchQuery.toLowerCase();
-        snippets = snippets.where((s) =>
-          s.name.toLowerCase().contains(query) ||
-          s.content.toLowerCase().contains(query) ||
-          s.description.toLowerCase().contains(query)
-        ).toList();
-      }
-
-      // In-memory language filter on decrypted data
-      if (_crypto != null && language != null && language.isNotEmpty) {
-        snippets = snippets.where((s) => s.language == language).toList();
+        snippets.add(await _enrichWithRelations(SnippetMapper.fromDrift(row)));
       }
 
       return Success(snippets);
@@ -125,7 +103,7 @@ class SnippetRepositoryImpl implements SnippetRepository {
         createdAt: now,
         updatedAt: now,
       );
-      await _snippetDao.insertSnippet(SnippetMapper.toCompanion(newSnippet, crypto: _crypto));
+      await _snippetDao.insertSnippet(SnippetMapper.toCompanion(newSnippet));
 
       // Set tags
       final tagIds = snippet.tags.map((t) => t.id).toList();
@@ -139,7 +117,6 @@ class SnippetRepositoryImpl implements SnippetRepository {
             .map((v) => SnippetMapper.variableToCompanion(
                   v.copyWith(id: _uuid.v4()),
                   newSnippet.id,
-                  crypto: _crypto,
                 ))
             .toList();
         await _snippetDao.setSnippetVariables(newSnippet.id, varCompanions);
@@ -155,7 +132,7 @@ class SnippetRepositoryImpl implements SnippetRepository {
   Future<Result<SnippetEntity>> updateSnippet(SnippetEntity snippet) async {
     try {
       final updated = snippet.copyWith(updatedAt: DateTime.now());
-      await _snippetDao.updateSnippet(SnippetMapper.toCompanion(updated, crypto: _crypto));
+      await _snippetDao.updateSnippet(SnippetMapper.toCompanion(updated));
 
       // Update tags
       final tagIds = snippet.tags.map((t) => t.id).toList();
@@ -167,7 +144,6 @@ class SnippetRepositoryImpl implements SnippetRepository {
         return SnippetMapper.variableToCompanion(
           v.copyWith(id: varId),
           snippet.id,
-          crypto: _crypto,
         );
       }).toList();
       await _snippetDao.setSnippetVariables(snippet.id, varCompanions);

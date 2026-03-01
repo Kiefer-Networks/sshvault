@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/crypto/field_crypto_service.dart';
 import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
@@ -14,16 +13,13 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
   final SecureStorageService _secureStorage;
   final SshKeyService _sshKeyService;
   final Uuid _uuid;
-  final FieldCryptoService? _crypto;
 
   SshKeyRepositoryImpl(
     this._sshKeyDao,
     this._secureStorage, {
-    FieldCryptoService? crypto,
     SshKeyService? sshKeyService,
     Uuid? uuid,
-  })  : _crypto = crypto,
-        _sshKeyService = sshKeyService ?? SshKeyService(),
+  })  : _sshKeyService = sshKeyService ?? SshKeyService(),
         _uuid = uuid ?? const Uuid();
 
   @override
@@ -33,7 +29,7 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
       final entities = <SshKeyEntity>[];
       for (final row in rows) {
         final count = await _sshKeyDao.countServersUsingSshKey(row.id);
-        entities.add(SshKeyMapper.fromDrift(row, linkedServerCount: count, crypto: _crypto));
+        entities.add(SshKeyMapper.fromDrift(row, linkedServerCount: count));
       }
       return Success(entities);
     } catch (e) {
@@ -49,7 +45,7 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
         return Err(NotFoundFailure('SSH key not found: $id'));
       }
       final count = await _sshKeyDao.countServersUsingSshKey(id);
-      return Success(SshKeyMapper.fromDrift(row, linkedServerCount: count, crypto: _crypto));
+      return Success(SshKeyMapper.fromDrift(row, linkedServerCount: count));
     } catch (e) {
       return Err(DatabaseFailure('Failed to load SSH key', cause: e));
     }
@@ -91,7 +87,7 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
         updatedAt: now,
       );
 
-      await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(newKey, crypto: _crypto));
+      await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(newKey));
 
       // Save private key and passphrase in SecureStorage
       await _secureStorage.saveSshKeyPrivateKey(id, privateKey);
@@ -109,7 +105,7 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
   Future<Result<SshKeyEntity>> updateSshKey(SshKeyEntity key) async {
     try {
       final updated = key.copyWith(updatedAt: DateTime.now());
-      await _sshKeyDao.updateSshKey(SshKeyMapper.toCompanion(updated, crypto: _crypto));
+      await _sshKeyDao.updateSshKey(SshKeyMapper.toCompanion(updated));
       return Success(updated);
     } catch (e) {
       return Err(DatabaseFailure('Failed to update SSH key', cause: e));

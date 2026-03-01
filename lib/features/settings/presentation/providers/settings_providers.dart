@@ -6,13 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pointycastle/export.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/crypto/database_migration_service.dart';
-import 'package:shellvault/core/crypto/dek_manager.dart';
-import 'package:shellvault/core/crypto/field_crypto_provider.dart';
-import 'package:shellvault/core/crypto/field_crypto_service.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
-import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/features/settings/domain/entities/app_settings_entity.dart';
 
 final settingsProvider =
@@ -61,20 +56,6 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       await dao.setValue(_keyPinHash, hashResult.hash);
       await dao.setValue(_keyPinSalt, hashResult.salt);
       await dao.deleteValue('pin_code');
-
-      // Generate DEK if not present
-      final dekManager = DekManager(ref.read(secureStorageProvider));
-      final hasDek = await dekManager.hasDek();
-      if (!hasDek) {
-        final dekResult = await dekManager.generateAndStoreDek();
-        final dek = dekResult.value;
-        final crypto = FieldCryptoService(dek);
-        ref.read(fieldCryptoServiceProvider.notifier).state = crypto;
-
-        // Encrypt existing DB data
-        final db = ref.read(databaseProvider);
-        await DatabaseMigrationService(db).encryptDatabase(crypto);
-      }
 
       return AppSettingsEntity(
         themeMode: _parseThemeMode(themeStr),
@@ -246,7 +227,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     ref.invalidateSelf();
   }
 
-  /// Sets a new PIN, generates DEK, and encrypts the database.
+  /// Sets a new PIN code (app-level lock only, no database encryption).
   Future<void> setPinCode(String pin) async {
     _log.info(_tag, 'PIN code set');
     final dao = ref.read(databaseProvider).appSettingsDao;
@@ -255,41 +236,13 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     await dao.setValue(_keyPinHash, hashResult.hash);
     await dao.setValue(_keyPinSalt, hashResult.salt);
 
-    // Generate DEK and encrypt database
-    final dekManager = DekManager(ref.read(secureStorageProvider));
-    final hasDek = await dekManager.hasDek();
-    if (!hasDek) {
-      final dekResult = await dekManager.generateAndStoreDek();
-      final dek = dekResult.value;
-      final crypto = FieldCryptoService(dek);
-      ref.read(fieldCryptoServiceProvider.notifier).state = crypto;
-
-      final db = ref.read(databaseProvider);
-      await DatabaseMigrationService(db).encryptDatabase(crypto);
-    }
-
     ref.invalidateSelf();
   }
 
-  /// Clears the PIN, decrypts the database, deletes the DEK,
-  /// and disables biometric unlock.
+  /// Clears the PIN code and disables biometric unlock.
   Future<void> clearPinCode() async {
     _log.info(_tag, 'PIN code removed');
     final dao = ref.read(databaseProvider).appSettingsDao;
-    final dekManager = DekManager(ref.read(secureStorageProvider));
-
-    // Decrypt database before removing DEK
-    final dekResult = await dekManager.loadDek();
-    final dek = dekResult.isSuccess ? dekResult.value : null;
-    if (dek != null) {
-      final crypto = FieldCryptoService(dek);
-      final db = ref.read(databaseProvider);
-      await DatabaseMigrationService(db).decryptDatabase(crypto);
-    }
-
-    // Remove DEK and disable crypto
-    await dekManager.deleteDek();  // Result ignored — best effort
-    ref.read(fieldCryptoServiceProvider.notifier).state = null;
 
     // Clear PIN hash and salt
     await dao.setValue(_keyPinHash, '');
@@ -301,15 +254,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     ref.invalidateSelf();
   }
 
-  /// Loads the DEK from secure storage and activates field encryption.
-  /// Called after successful PIN/biometric unlock.
+  /// No-op — field encryption has been removed.
+  /// Kept for API compatibility with lock screen.
   Future<void> loadDekAfterUnlock() async {
-    final dekManager = DekManager(ref.read(secureStorageProvider));
-    final dekResult = await dekManager.loadDek();
-    final dek = dekResult.isSuccess ? dekResult.value : null;
-    if (dek != null) {
-      ref.read(fieldCryptoServiceProvider.notifier).state = FieldCryptoService(dek);
-    }
+    // No-op: field-level encryption removed
+    return;
   }
 
   Future<void> setDismissedSecurityHint(bool dismissed) async {

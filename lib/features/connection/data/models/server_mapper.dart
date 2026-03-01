@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:shellvault/core/crypto/field_crypto_service.dart';
 import 'package:shellvault/core/storage/database.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
@@ -8,28 +7,20 @@ abstract final class ServerMapper {
   static ServerEntity fromDrift(
     Server row, {
     List<TagEntity> tags = const [],
-    FieldCryptoService? crypto,
   }) {
-    final name = crypto?.decryptField(row.name) ?? row.name;
-    final hostname = crypto?.decryptField(row.hostname) ?? row.hostname;
-    final username = crypto?.decryptField(row.username) ?? row.username;
-    final notes = crypto?.decryptNullableField(row.notes) ?? row.notes;
-    final authMethod = crypto?.decryptField(row.authMethod) ?? row.authMethod;
-    final iconName = crypto?.decryptNullableField(row.iconName) ?? row.iconName;
-
     return ServerEntity(
       id: row.id,
-      name: name,
-      hostname: hostname,
+      name: row.name,
+      hostname: row.hostname,
       port: row.port,
-      username: username,
+      username: row.username,
       authMethod: AuthMethod.values.firstWhere(
-        (e) => e.name == authMethod,
+        (e) => e.name == row.authMethod,
         orElse: () => AuthMethod.password,
       ),
-      notes: notes,
+      notes: row.notes,
       color: row.color,
-      iconName: iconName,
+      iconName: row.iconName,
       isActive: row.isActive,
       groupId: row.groupId,
       sshKeyId: row.sshKeyId,
@@ -43,27 +34,17 @@ abstract final class ServerMapper {
     );
   }
 
-  static ServersCompanion toCompanion(
-    ServerEntity entity, {
-    FieldCryptoService? crypto,
-  }) {
-    final name = crypto?.encryptField(entity.name) ?? entity.name;
-    final hostname = crypto?.encryptField(entity.hostname) ?? entity.hostname;
-    final username = crypto?.encryptField(entity.username) ?? entity.username;
-    final notes = crypto?.encryptNullableField(entity.notes) ?? entity.notes;
-    final authMethod = crypto?.encryptField(entity.authMethod.name) ?? entity.authMethod.name;
-    final iconName = crypto?.encryptNullableField(entity.iconName) ?? entity.iconName;
-
+  static ServersCompanion toCompanion(ServerEntity entity) {
     return ServersCompanion(
       id: Value(entity.id),
-      name: Value(name),
-      hostname: Value(hostname),
+      name: Value(entity.name),
+      hostname: Value(entity.hostname),
       port: Value(entity.port),
-      username: Value(username),
-      authMethod: Value(authMethod),
-      notes: Value(notes),
+      username: Value(entity.username),
+      authMethod: Value(entity.authMethod.name),
+      notes: Value(entity.notes),
       color: Value(entity.color),
-      iconName: Value(iconName),
+      iconName: Value(entity.iconName),
       isActive: Value(entity.isActive),
       groupId: Value(entity.groupId),
       sshKeyId: Value(entity.sshKeyId),

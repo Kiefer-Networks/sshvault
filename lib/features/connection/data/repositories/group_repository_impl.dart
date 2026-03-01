@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/crypto/field_crypto_service.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
@@ -10,11 +9,9 @@ import 'package:shellvault/features/connection/domain/repositories/group_reposit
 class GroupRepositoryImpl implements GroupRepository {
   final GroupDao _groupDao;
   final Uuid _uuid;
-  final FieldCryptoService? _crypto;
 
-  GroupRepositoryImpl(this._groupDao, {FieldCryptoService? crypto, Uuid? uuid})
-      : _crypto = crypto,
-        _uuid = uuid ?? const Uuid();
+  GroupRepositoryImpl(this._groupDao, {Uuid? uuid})
+      : _uuid = uuid ?? const Uuid();
 
   @override
   Future<Result<List<GroupEntity>>> getGroups() async {
@@ -23,7 +20,7 @@ class GroupRepositoryImpl implements GroupRepository {
       final entities = <GroupEntity>[];
       for (final row in rows) {
         final count = await _groupDao.getServerCountForGroup(row.id);
-        entities.add(GroupMapper.fromDrift(row, serverCount: count, crypto: _crypto));
+        entities.add(GroupMapper.fromDrift(row, serverCount: count));
       }
       return Success(entities);
     } catch (e) {
@@ -39,7 +36,7 @@ class GroupRepositoryImpl implements GroupRepository {
         return Err(NotFoundFailure('Group not found: $id'));
       }
       final count = await _groupDao.getServerCountForGroup(id);
-      return Success(GroupMapper.fromDrift(row, serverCount: count, crypto: _crypto));
+      return Success(GroupMapper.fromDrift(row, serverCount: count));
     } catch (e) {
       return Err(DatabaseFailure('Failed to load group', cause: e));
     }
@@ -54,7 +51,7 @@ class GroupRepositoryImpl implements GroupRepository {
         createdAt: now,
         updatedAt: now,
       );
-      await _groupDao.insertGroup(GroupMapper.toCompanion(newGroup, crypto: _crypto));
+      await _groupDao.insertGroup(GroupMapper.toCompanion(newGroup));
       return Success(newGroup);
     } catch (e) {
       return Err(DatabaseFailure('Failed to create group', cause: e));
@@ -65,7 +62,7 @@ class GroupRepositoryImpl implements GroupRepository {
   Future<Result<GroupEntity>> updateGroup(GroupEntity group) async {
     try {
       final updated = group.copyWith(updatedAt: DateTime.now());
-      await _groupDao.updateGroup(GroupMapper.toCompanion(updated, crypto: _crypto));
+      await _groupDao.updateGroup(GroupMapper.toCompanion(updated));
       return Success(updated);
     } catch (e) {
       return Err(DatabaseFailure('Failed to update group', cause: e));
@@ -89,7 +86,7 @@ class GroupRepositoryImpl implements GroupRepository {
       final allEntities = <GroupEntity>[];
       for (final row in allRows) {
         final count = await _groupDao.getServerCountForGroup(row.id);
-        allEntities.add(GroupMapper.fromDrift(row, serverCount: count, crypto: _crypto));
+        allEntities.add(GroupMapper.fromDrift(row, serverCount: count));
       }
 
       final rootGroups =
