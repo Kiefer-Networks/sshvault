@@ -17,6 +17,9 @@ import 'package:shellvault/features/connection/domain/usecases/group_usecases.da
 import 'package:shellvault/features/connection/domain/usecases/server_usecases.dart';
 import 'package:shellvault/features/connection/domain/usecases/ssh_key_usecases.dart';
 import 'package:shellvault/features/connection/domain/usecases/tag_usecases.dart';
+import 'package:shellvault/features/snippet/data/repositories/snippet_repository_impl.dart';
+import 'package:shellvault/features/snippet/domain/repositories/snippet_repository.dart';
+import 'package:shellvault/features/snippet/domain/usecases/snippet_usecases.dart';
 
 final serverRepositoryProvider = Provider<ServerRepository>((ref) {
   final db = ref.watch(databaseProvider);
@@ -74,4 +77,14 @@ final tagUseCasesProvider = Provider<TagUseCases>((ref) {
 
 final exportImportUseCasesProvider = Provider<ExportImportUseCases>((ref) {
   return ExportImportUseCases(ref.watch(exportImportRepositoryProvider));
+});
+
+// Snippets
+final snippetRepositoryProvider = Provider<SnippetRepository>((ref) {
+  final db = ref.watch(databaseProvider);
+  return SnippetRepositoryImpl(db.snippetDao);
+});
+
+final snippetUseCasesProvider = Provider<SnippetUseCases>((ref) {
+  return SnippetUseCases(ref.watch(snippetRepositoryProvider));
 });
