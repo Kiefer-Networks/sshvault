@@ -75,6 +75,19 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
   }
 }
 
+/// Servers belonging to a specific group.
+final serversByGroupProvider =
+    FutureProvider.family<List<ServerEntity>, String>((ref, groupId) async {
+  final useCases = ref.watch(serverUseCasesProvider);
+  final result = await useCases.getServers(
+    filter: ServerFilter(groupId: groupId),
+  );
+  return result.fold(
+    onSuccess: (servers) => servers,
+    onFailure: (failure) => throw Exception(failure.message),
+  );
+});
+
 final serverDetailProvider =
     FutureProvider.family<ServerEntity, String>((ref, id) async {
   final useCases = ref.watch(serverUseCasesProvider);
