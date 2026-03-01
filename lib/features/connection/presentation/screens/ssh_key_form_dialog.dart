@@ -495,12 +495,15 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
               Icon(Icons.info_outline,
                   size: 16, color: theme.colorScheme.onSurfaceVariant),
               const SizedBox(width: 8),
-              Text(
-                '${widget.existingKey!.keyType.displayName}'
-                '${widget.existingKey!.fingerprint.isNotEmpty ? ' · ${widget.existingKey!.fingerprint}' : ''}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                  color: theme.colorScheme.onSurfaceVariant,
+              Expanded(
+                child: Text(
+                  '${widget.existingKey!.keyType.displayName}'
+                  '${widget.existingKey!.fingerprint.isNotEmpty ? ' · ${widget.existingKey!.fingerprint}' : ''}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontFamily: 'monospace',
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
