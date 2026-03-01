@@ -1,6 +1,6 @@
 {
-    "name": "shellvault",
-    "short_name": "shellvault",
+    "name": "SSH Vault",
+    "short_name": "SSH Vault",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

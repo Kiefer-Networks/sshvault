@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.shellvault" "\0"
-            VALUE "FileDescription", "shellvault" "\0"
+            VALUE "FileDescription", "SSH Vault" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "shellvault" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.shellvault. All rights reserved." "\0"
             VALUE "OriginalFilename", "shellvault.exe" "\0"
-            VALUE "ProductName", "shellvault" "\0"
+            VALUE "ProductName", "SSH Vault" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
