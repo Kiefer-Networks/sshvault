@@ -8,12 +8,16 @@ class ServerGridCard extends StatelessWidget {
   final ServerEntity server;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
+  final VoidCallback? onDetail;
+  final VoidCallback? onEdit;
 
   const ServerGridCard({
     super.key,
     required this.server,
     required this.onTap,
     required this.onLongPress,
+    this.onDetail,
+    this.onEdit,
   });
 
   @override
@@ -89,6 +93,44 @@ class ServerGridCard extends StatelessWidget {
                     ),
                   );
                 }).toList(),
+              ),
+            if (onDetail != null || onEdit != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (onDetail != null)
+                    IconButton(
+                      icon: Icon(
+                        Icons.info_outlined,
+                        size: 18,
+                        color: theme.colorScheme.onSurface.withAlpha(153),
+                      ),
+                      onPressed: onDetail,
+                      tooltip: 'Details',
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                    ),
+                  if (onEdit != null)
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        size: 18,
+                        color: theme.colorScheme.onSurface.withAlpha(153),
+                      ),
+                      onPressed: onEdit,
+                      tooltip: 'Edit',
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                    ),
+                ],
               ),
           ],
         ),

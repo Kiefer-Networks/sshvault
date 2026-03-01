@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
+import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/status_badge.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
+import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class ServerDetailScreen extends ConsumerWidget {
   final String serverId;
@@ -44,6 +46,20 @@ class ServerDetailScreen extends ConsumerWidget {
             },
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'connectFab',
+        onPressed: () async {
+          await ref
+              .read(sessionManagerProvider.notifier)
+              .openSession(serverId);
+          if (context.mounted) {
+            context.pop();
+          }
+          ref.read(shellNavigationProvider)?.goBranch(6);
+        },
+        icon: const Icon(Icons.terminal),
+        label: const Text('Connect'),
       ),
       body: serverAsync.when(
         data: (server) {

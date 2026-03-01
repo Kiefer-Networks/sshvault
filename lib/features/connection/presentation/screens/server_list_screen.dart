@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -9,6 +10,7 @@ import 'package:shellvault/features/connection/presentation/widgets/search_filte
 import 'package:shellvault/features/connection/presentation/widgets/server_grid_card.dart';
 import 'package:shellvault/features/connection/presentation/widgets/server_list_tile.dart';
 import 'package:shellvault/features/connection/presentation/widgets/view_mode_toggle.dart';
+import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class ServerListScreen extends ConsumerWidget {
   const ServerListScreen({super.key});
@@ -90,7 +92,19 @@ class ServerListScreen extends ConsumerWidget {
         final server = servers[index];
         return ServerListTile(
           server: server,
-          onTap: () => context.push('/server/${server.id}'),
+          onTap: () async {
+            await ref
+                .read(sessionManagerProvider.notifier)
+                .openSession(server.id);
+            ref.read(shellNavigationProvider)?.goBranch(6);
+          },
+          onConnect: () async {
+            await ref
+                .read(sessionManagerProvider.notifier)
+                .openSession(server.id);
+            ref.read(shellNavigationProvider)?.goBranch(6);
+          },
+          onDetail: () => context.push('/server/${server.id}'),
           onEdit: () => context.push('/server/${server.id}/edit'),
           onDuplicate: () async {
             await ref
@@ -135,7 +149,14 @@ class ServerListScreen extends ConsumerWidget {
         final server = servers[index];
         return ServerGridCard(
           server: server,
-          onTap: () => context.push('/server/${server.id}'),
+          onTap: () async {
+            await ref
+                .read(sessionManagerProvider.notifier)
+                .openSession(server.id);
+            ref.read(shellNavigationProvider)?.goBranch(6);
+          },
+          onDetail: () => context.push('/server/${server.id}'),
+          onEdit: () => context.push('/server/${server.id}/edit'),
           onLongPress: () {
             _showServerActions(context, ref, server);
           },
@@ -151,6 +172,25 @@ class ServerListScreen extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            ListTile(
+              leading: const Icon(Icons.terminal),
+              title: const Text('Connect'),
+              onTap: () async {
+                Navigator.pop(ctx);
+                await ref
+                    .read(sessionManagerProvider.notifier)
+                    .openSession(server.id);
+                ref.read(shellNavigationProvider)?.goBranch(6);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outlined),
+              title: const Text('Details'),
+              onTap: () {
+                Navigator.pop(ctx);
+                context.push('/server/${server.id}');
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.edit),
               title: const Text('Edit'),

@@ -12,6 +12,7 @@ class ServerListTile extends StatelessWidget {
   final VoidCallback onDuplicate;
   final VoidCallback onDelete;
   final VoidCallback? onConnect;
+  final VoidCallback? onDetail;
 
   const ServerListTile({
     super.key,
@@ -21,6 +22,7 @@ class ServerListTile extends StatelessWidget {
     required this.onDuplicate,
     required this.onDelete,
     this.onConnect,
+    this.onDetail,
   });
 
   @override
@@ -108,13 +110,25 @@ class ServerListTile extends StatelessWidget {
           ],
         ),
         isThreeLine: server.tags.isNotEmpty,
-        trailing: onConnect != null
-            ? IconButton(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (onDetail != null)
+              IconButton(
+                icon: const Icon(Icons.info_outlined),
+                onPressed: onDetail,
+                tooltip: 'Details',
+                visualDensity: VisualDensity.compact,
+              ),
+            if (onConnect != null)
+              IconButton(
                 icon: const Icon(Icons.terminal),
                 onPressed: onConnect,
                 tooltip: 'Connect',
-              )
-            : null,
+                visualDensity: VisualDensity.compact,
+              ),
+          ],
+        ),
       ),
     );
   }
