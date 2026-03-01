@@ -71,6 +71,7 @@ class SshKeyListScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'addSshKeyFab',
         onPressed: () => _addKey(context, ref),
         child: const Icon(Icons.add),
       ),

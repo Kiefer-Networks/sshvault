@@ -46,6 +46,7 @@ class GroupListScreen extends ConsumerWidget {
         error: (error, _) => Center(child: Text('Error: $error')),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'addGroupFab',
         onPressed: () => _showGroupForm(context, ref),
         child: const Icon(Icons.add),
       ),

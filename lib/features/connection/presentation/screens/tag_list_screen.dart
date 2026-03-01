@@ -48,6 +48,7 @@ class TagListScreen extends ConsumerWidget {
         error: (error, _) => Center(child: Text('Error: $error')),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'addTagFab',
         onPressed: () => _showTagForm(context, ref),
         child: const Icon(Icons.add),
       ),

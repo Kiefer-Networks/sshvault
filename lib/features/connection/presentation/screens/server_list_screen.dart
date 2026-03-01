@@ -76,6 +76,7 @@ class ServerListScreen extends ConsumerWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'addServerFab',
         onPressed: () => context.push('/server/new'),
         child: const Icon(Icons.add),
       ),

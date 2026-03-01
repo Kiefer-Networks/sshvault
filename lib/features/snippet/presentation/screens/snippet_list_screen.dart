@@ -116,6 +116,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'addSnippetFab',
         onPressed: () => context.push('/snippet/new'),
         child: const Icon(Icons.add),
       ),
