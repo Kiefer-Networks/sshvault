@@ -96,6 +96,9 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
     }
   }
 
+  Future<List<SnippetVariable>> getAllSnippetVariables() =>
+      select(snippetVariables).get();
+
   Future<List<SnippetVariable>> getVariablesForSnippet(
     String snippetId,
   ) =>

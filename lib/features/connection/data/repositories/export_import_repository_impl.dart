@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/crypto/encryption_service.dart';
 import 'package:shellvault/core/crypto/export_envelope.dart';
+import 'package:shellvault/core/crypto/field_crypto_service.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/storage/secure_storage_service.dart';
@@ -31,6 +32,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   final SshKeyDao _sshKeyDao;
   final SecureStorageService _secureStorage;
   final EncryptionService _encryptionService;
+  final FieldCryptoService? _crypto;
   final Uuid _uuid;
 
   ExportImportRepositoryImpl(
@@ -40,8 +42,10 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     this._sshKeyDao,
     this._secureStorage,
     this._encryptionService, {
+    FieldCryptoService? crypto,
     Uuid? uuid,
-  }) : _uuid = uuid ?? const Uuid();
+  })  : _crypto = crypto,
+        _uuid = uuid ?? const Uuid();
 
   Future<Map<String, dynamic>> _buildExportData({
     bool includeCredentials = false,
@@ -51,12 +55,14 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     final tags = await _tagDao.getAllTags();
     final sshKeys = await _sshKeyDao.getAllSshKeys();
 
+    // Decrypt during export so exported data is always plaintext
     final serverList = <Map<String, dynamic>>[];
     for (final server in servers) {
       final tagRows = await _serverDao.getTagsForServer(server.id);
       final entity = ServerMapper.fromDrift(
         server,
-        tags: tagRows.map(TagMapper.fromDrift).toList(),
+        tags: tagRows.map((t) => TagMapper.fromDrift(t, crypto: _crypto)).toList(),
+        crypto: _crypto,
       );
       final json = entity.toJson();
       json['tagIds'] = tagRows.map((t) => t.id).toList();
@@ -73,7 +79,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
 
     final sshKeyList = <Map<String, dynamic>>[];
     for (final sshKey in sshKeys) {
-      final entity = SshKeyMapper.fromDrift(sshKey);
+      final entity = SshKeyMapper.fromDrift(sshKey, crypto: _crypto);
       final json = entity.toJson();
       if (includeCredentials) {
         final privResult =
@@ -94,8 +100,8 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       'version': AppConstants.exportVersion,
       'exportedAt': DateTime.now().toIso8601String(),
       'servers': serverList,
-      'groups': groups.map((g) => GroupMapper.fromDrift(g).toJson()).toList(),
-      'tags': tags.map((t) => TagMapper.fromDrift(t).toJson()).toList(),
+      'groups': groups.map((g) => GroupMapper.fromDrift(g, crypto: _crypto).toJson()).toList(),
+      'tags': tags.map((t) => TagMapper.fromDrift(t, crypto: _crypto).toJson()).toList(),
       'sshKeys': sshKeyList,
     };
   }
@@ -224,7 +230,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     var skipped = 0;
     final errors = <String>[];
 
-    // Import groups first
+    // Import groups first (encrypt during import if crypto active)
     final groups = (data['groups'] as List<dynamic>?) ?? [];
     for (final groupJson in groups) {
       try {
@@ -240,17 +246,17 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
             case ImportConflictStrategy.overwrite:
               final entity = GroupEntity.fromJson(map);
               await _groupDao
-                  .updateGroup(GroupMapper.toCompanion(entity));
+                  .updateGroup(GroupMapper.toCompanion(entity, crypto: _crypto));
             case ImportConflictStrategy.rename:
               map['id'] = _uuid.v4();
               map['name'] = '${map['name']} (Imported)';
               final entity = GroupEntity.fromJson(map);
               await _groupDao
-                  .insertGroup(GroupMapper.toCompanion(entity));
+                  .insertGroup(GroupMapper.toCompanion(entity, crypto: _crypto));
           }
         } else {
           final entity = GroupEntity.fromJson(map);
-          await _groupDao.insertGroup(GroupMapper.toCompanion(entity));
+          await _groupDao.insertGroup(GroupMapper.toCompanion(entity, crypto: _crypto));
         }
         groupsImported++;
       } catch (e) {
@@ -273,16 +279,16 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               continue;
             case ImportConflictStrategy.overwrite:
               final entity = TagEntity.fromJson(map);
-              await _tagDao.updateTag(TagMapper.toCompanion(entity));
+              await _tagDao.updateTag(TagMapper.toCompanion(entity, crypto: _crypto));
             case ImportConflictStrategy.rename:
               map['id'] = _uuid.v4();
               map['name'] = '${map['name']} (Imported)';
               final entity = TagEntity.fromJson(map);
-              await _tagDao.insertTag(TagMapper.toCompanion(entity));
+              await _tagDao.insertTag(TagMapper.toCompanion(entity, crypto: _crypto));
           }
         } else {
           final entity = TagEntity.fromJson(map);
-          await _tagDao.insertTag(TagMapper.toCompanion(entity));
+          await _tagDao.insertTag(TagMapper.toCompanion(entity, crypto: _crypto));
         }
         tagsImported++;
       } catch (e) {
@@ -313,19 +319,19 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
             case ImportConflictStrategy.overwrite:
               final entity = SshKeyEntity.fromJson(map);
               await _sshKeyDao
-                  .updateSshKey(SshKeyMapper.toCompanion(entity));
+                  .updateSshKey(SshKeyMapper.toCompanion(entity, crypto: _crypto));
             case ImportConflictStrategy.rename:
               sshKeyId = _uuid.v4();
               map['id'] = sshKeyId;
               map['name'] = '${map['name']} (Imported)';
               final entity = SshKeyEntity.fromJson(map);
               await _sshKeyDao
-                  .insertSshKey(SshKeyMapper.toCompanion(entity));
+                  .insertSshKey(SshKeyMapper.toCompanion(entity, crypto: _crypto));
           }
         } else {
           final entity = SshKeyEntity.fromJson(map);
           await _sshKeyDao
-              .insertSshKey(SshKeyMapper.toCompanion(entity));
+              .insertSshKey(SshKeyMapper.toCompanion(entity, crypto: _crypto));
         }
 
         // Restore secrets
@@ -362,19 +368,19 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
             case ImportConflictStrategy.overwrite:
               final entity = ServerEntity.fromJson(map);
               await _serverDao
-                  .updateServer(ServerMapper.toCompanion(entity));
+                  .updateServer(ServerMapper.toCompanion(entity, crypto: _crypto));
             case ImportConflictStrategy.rename:
               serverId = _uuid.v4();
               map['id'] = serverId;
               map['name'] = '${map['name']} (Imported)';
               final entity = ServerEntity.fromJson(map);
               await _serverDao
-                  .insertServer(ServerMapper.toCompanion(entity));
+                  .insertServer(ServerMapper.toCompanion(entity, crypto: _crypto));
           }
         } else {
           final entity = ServerEntity.fromJson(map);
           await _serverDao
-              .insertServer(ServerMapper.toCompanion(entity));
+              .insertServer(ServerMapper.toCompanion(entity, crypto: _crypto));
         }
 
         // Restore tags

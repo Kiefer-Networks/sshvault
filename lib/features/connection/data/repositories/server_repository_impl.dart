@@ -1,4 +1,5 @@
 import 'package:uuid/uuid.dart';
+import 'package:shellvault/core/crypto/field_crypto_service.dart';
 import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
@@ -16,20 +17,27 @@ class ServerRepositoryImpl implements ServerRepository {
   final SecureStorageService _secureStorage;
   final SshKeyService _sshKeyService;
   final Uuid _uuid;
+  final FieldCryptoService? _crypto;
 
   ServerRepositoryImpl(
     this._serverDao,
     this._secureStorage, {
+    FieldCryptoService? crypto,
     SshKeyService? sshKeyService,
     Uuid? uuid,
-  })  : _sshKeyService = sshKeyService ?? SshKeyService(),
+  })  : _crypto = crypto,
+        _sshKeyService = sshKeyService ?? SshKeyService(),
         _uuid = uuid ?? const Uuid();
 
   @override
   Future<Result<List<ServerEntity>>> getServers({ServerFilter? filter}) async {
     try {
+      // When encryption is active, load all and filter in memory
+      final bool hasSearch = filter != null && filter.searchQuery.isNotEmpty;
+      final useInMemorySearch = _crypto != null && hasSearch;
+
       final rows = await _serverDao.getFilteredServers(
-        searchQuery: filter?.searchQuery,
+        searchQuery: useInMemorySearch ? null : filter?.searchQuery,
         groupId: filter?.groupId,
         tagIds: filter?.tagIds.isEmpty ?? true ? null : filter?.tagIds,
         isActive: filter?.isActive,
@@ -38,8 +46,18 @@ class ServerRepositoryImpl implements ServerRepository {
       final entities = <ServerEntity>[];
       for (final row in rows) {
         final tagRows = await _serverDao.getTagsForServer(row.id);
-        final tags = tagRows.map(TagMapper.fromDrift).toList();
-        entities.add(ServerMapper.fromDrift(row, tags: tags));
+        final tags = tagRows.map((t) => TagMapper.fromDrift(t, crypto: _crypto)).toList();
+        entities.add(ServerMapper.fromDrift(row, tags: tags, crypto: _crypto));
+      }
+
+      // In-memory search on decrypted data
+      if (_crypto != null && filter != null && filter.searchQuery.isNotEmpty) {
+        final query = filter.searchQuery.toLowerCase();
+        return Success(entities.where((s) =>
+          s.name.toLowerCase().contains(query) ||
+          s.hostname.toLowerCase().contains(query) ||
+          s.username.toLowerCase().contains(query)
+        ).toList());
       }
 
       return Success(entities);
@@ -56,8 +74,8 @@ class ServerRepositoryImpl implements ServerRepository {
         return Err(NotFoundFailure('Server not found: $id'));
       }
       final tagRows = await _serverDao.getTagsForServer(id);
-      final tags = tagRows.map(TagMapper.fromDrift).toList();
-      return Success(ServerMapper.fromDrift(row, tags: tags));
+      final tags = tagRows.map((t) => TagMapper.fromDrift(t, crypto: _crypto)).toList();
+      return Success(ServerMapper.fromDrift(row, tags: tags, crypto: _crypto));
     } catch (e) {
       return Err(DatabaseFailure('Failed to load server', cause: e));
     }
@@ -77,7 +95,7 @@ class ServerRepositoryImpl implements ServerRepository {
         updatedAt: now,
       );
 
-      await _serverDao.insertServer(ServerMapper.toCompanion(newServer));
+      await _serverDao.insertServer(ServerMapper.toCompanion(newServer, crypto: _crypto));
 
       if (server.tags.isNotEmpty) {
         await _serverDao.setServerTags(
@@ -103,7 +121,7 @@ class ServerRepositoryImpl implements ServerRepository {
   ) async {
     try {
       final updated = server.copyWith(updatedAt: DateTime.now());
-      await _serverDao.updateServer(ServerMapper.toCompanion(updated));
+      await _serverDao.updateServer(ServerMapper.toCompanion(updated, crypto: _crypto));
 
       await _serverDao.setServerTags(
         server.id,
@@ -147,7 +165,7 @@ class ServerRepositoryImpl implements ServerRepository {
         );
 
         try {
-          await _serverDao.insertServer(ServerMapper.toCompanion(duplicate));
+          await _serverDao.insertServer(ServerMapper.toCompanion(duplicate, crypto: _crypto));
           if (server.tags.isNotEmpty) {
             await _serverDao.setServerTags(
               newId,
