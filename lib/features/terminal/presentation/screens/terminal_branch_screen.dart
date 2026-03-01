@@ -92,6 +92,12 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
         context,
         title: l10n.terminalTitle,
         actions: [
+          if (activeSession != null)
+            IconButton(
+              icon: const Icon(Icons.content_paste),
+              tooltip: l10n.snippetQuickPanelInsertTooltip,
+              onPressed: _insertSnippet,
+            ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
             onSelected: (value) {
