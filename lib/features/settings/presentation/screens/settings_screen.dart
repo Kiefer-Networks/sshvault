@@ -342,6 +342,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 title: Text(l10n.settingsSendLogs),
                 onTap: () => _sendLogsToSupport(l10n),
               ),
+              ListTile(
+                leading: const Icon(Icons.favorite_outlined),
+                title: Text(l10n.supportProjectTitle),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/support'),
+              ),
               const Divider(),
 
               // About

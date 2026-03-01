@@ -1235,7 +1235,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get accountPaymentStatus => 'Zahlung';
 
   @override
-  String get accountPaymentActive => 'Sync freigeschaltet (Einmalzahlung)';
+  String get accountPaymentActive => 'Sync aktiv (Jahresabo)';
 
   @override
   String get accountPaymentInactive => 'Sync noch nicht erworben';
@@ -1288,12 +1288,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get serverConfigTest => 'Verbindung testen';
 
   @override
-  String get donationTitle => 'ShellVault unterstützen';
+  String get supportProjectTitle => 'Projekt unterstützen';
 
   @override
-  String get donationDescription =>
-      'Wenn dir ShellVault gefällt, erwäge eine Spende zur Unterstützung der Entwicklung.';
+  String get supportProjectDescription =>
+      'ShellVault wird mit Leidenschaft von Kiefer Networks entwickelt. Unterstütze die Weiterentwicklung mit einem freiwilligen Kauf.';
 
   @override
-  String get donationButton => 'Spenden';
+  String get supportProjectThankYou => 'Vielen Dank für deine Unterstützung!';
+
+  @override
+  String get supportProjectError =>
+      'Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.';
+
+  @override
+  String get supportProjectNotAvailable =>
+      'In-App-Käufe sind auf dieser Plattform nicht verfügbar. Du kannst uns über den Link unten unterstützen.';
+
+  @override
+  String get supportProjectStripeLink => 'Über Browser unterstützen';
 }

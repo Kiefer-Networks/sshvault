@@ -5,7 +5,6 @@ import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ServerConfigScreen extends ConsumerStatefulWidget {
   const ServerConfigScreen({super.key});
@@ -107,53 +106,6 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                 onPressed: () =>
                     _saveUrl(_urlController.text.trim()),
                 child: Text(l10n.save),
-              ),
-            ),
-          const SizedBox(height: 24),
-
-          // Donation card for self-hosted
-          if (isSelfHosted)
-            Card(
-              color: theme.colorScheme.primaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.favorite_outlined,
-                            color: theme.colorScheme.onPrimaryContainer),
-                        const SizedBox(width: 8),
-                        Text(
-                          l10n.donationTitle,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: theme.colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.donationDescription,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    OutlinedButton.icon(
-                      onPressed: () async {
-                        final uri = Uri.parse('https://sshvault.app/donate');
-                        if (await canLaunchUrl(uri)) {
-                          await launchUrl(uri,
-                              mode: LaunchMode.externalApplication);
-                        }
-                      },
-                      icon: const Icon(Icons.open_in_new, size: 18),
-                      label: Text(l10n.donationButton),
-                    ),
-                  ],
-                ),
               ),
             ),
         ],

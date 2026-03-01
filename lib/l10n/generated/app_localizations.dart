@@ -2359,7 +2359,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountPaymentActive.
   ///
   /// In en, this message translates to:
-  /// **'Sync unlocked (one-time purchase)'**
+  /// **'Sync active (yearly subscription)'**
   String get accountPaymentActive;
 
   /// No description provided for @accountPaymentInactive.
@@ -2458,23 +2458,41 @@ abstract class AppLocalizations {
   /// **'Test Connection'**
   String get serverConfigTest;
 
-  /// No description provided for @donationTitle.
+  /// No description provided for @supportProjectTitle.
   ///
   /// In en, this message translates to:
-  /// **'Support ShellVault'**
-  String get donationTitle;
+  /// **'Support the Project'**
+  String get supportProjectTitle;
 
-  /// No description provided for @donationDescription.
+  /// No description provided for @supportProjectDescription.
   ///
   /// In en, this message translates to:
-  /// **'If you enjoy ShellVault, consider making a donation to support development.'**
-  String get donationDescription;
+  /// **'ShellVault is built with passion by Kiefer Networks. Support its continued development with a voluntary purchase.'**
+  String get supportProjectDescription;
 
-  /// No description provided for @donationButton.
+  /// No description provided for @supportProjectThankYou.
   ///
   /// In en, this message translates to:
-  /// **'Donate'**
-  String get donationButton;
+  /// **'Thank you for your support!'**
+  String get supportProjectThankYou;
+
+  /// No description provided for @supportProjectError.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase could not be completed. Please try again.'**
+  String get supportProjectError;
+
+  /// No description provided for @supportProjectNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'In-app purchases are not available on this platform. You can support us via the link below.'**
+  String get supportProjectNotAvailable;
+
+  /// No description provided for @supportProjectStripeLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Support via Browser'**
+  String get supportProjectStripeLink;
 }
 
 class _AppLocalizationsDelegate

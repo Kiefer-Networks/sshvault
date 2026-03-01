@@ -62,6 +62,9 @@ dependencies:
   # Biometric Authentication
   local_auth: ^2.3.0
 
+  # In-App Purchase
+  in_app_purchase: ^3.2.0
+
   # UI
   flutter_slidable: ^3.1.2
 

@@ -18,6 +18,7 @@ import 'package:shellvault/features/settings/presentation/screens/settings_scree
 import 'package:shellvault/features/snippet/presentation/screens/snippet_detail_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_form_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_list_screen.dart';
+import 'package:shellvault/features/support/presentation/screens/support_screen.dart';
 import 'package:shellvault/features/sync/presentation/screens/sync_settings_screen.dart';
 import 'package:shellvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
@@ -196,6 +197,11 @@ abstract final class AppRouter {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/sync-settings',
         builder: (context, state) => const SyncSettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/support',
+        builder: (context, state) => const SupportScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

@@ -422,7 +422,7 @@
   "accountVerified": "Verifiziert",
   "accountMemberSince": "Mitglied seit",
   "accountPaymentStatus": "Zahlung",
-  "accountPaymentActive": "Sync freigeschaltet (Einmalzahlung)",
+  "accountPaymentActive": "Sync aktiv (Jahresabo)",
   "accountPaymentInactive": "Sync noch nicht erworben",
   "accountUnlockSync": "Sync freischalten",
   "accountDevices": "Geräte",
@@ -441,7 +441,10 @@
   "serverConfigUrlLabel": "Server-URL",
   "serverConfigTest": "Verbindung testen",
 
-  "donationTitle": "ShellVault unterstützen",
-  "donationDescription": "Wenn dir ShellVault gefällt, erwäge eine Spende zur Unterstützung der Entwicklung.",
-  "donationButton": "Spenden"
+  "supportProjectTitle": "Projekt unterstützen",
+  "supportProjectDescription": "ShellVault wird mit Leidenschaft von Kiefer Networks entwickelt. Unterstütze die Weiterentwicklung mit einem freiwilligen Kauf.",
+  "supportProjectThankYou": "Vielen Dank für deine Unterstützung!",
+  "supportProjectError": "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
+  "supportProjectNotAvailable": "In-App-Käufe sind auf dieser Plattform nicht verfügbar. Du kannst uns über den Link unten unterstützen.",
+  "supportProjectStripeLink": "Über Browser unterstützen"
 }
