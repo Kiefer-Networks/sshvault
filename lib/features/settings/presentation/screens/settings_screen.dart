@@ -225,7 +225,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 onTap: () async {
                   final pin = await PinDialog.showSetPin(context);
                   if (pin != null) {
-                    ref
+                    await ref
                         .read(settingsProvider.notifier)
                         .setPinCode(pin);
                   }
