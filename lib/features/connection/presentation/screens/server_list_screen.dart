@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
+import 'package:shellvault/core/widgets/error_state.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -60,20 +61,9 @@ class ServerListScreen extends ConsumerWidget {
               loading: () => const Center(
                 child: CircularProgressIndicator(),
               ),
-              error: (error, _) => Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.error_outline, size: 48),
-                    const SizedBox(height: 16),
-                    Text(l10n.error(error.toString())),
-                    const SizedBox(height: 16),
-                    FilledButton(
-                      onPressed: () => ref.invalidate(serverListProvider),
-                      child: Text(l10n.retry),
-                    ),
-                  ],
-                ),
+              error: (error, _) => ErrorState(
+                error: error,
+                onRetry: () => ref.invalidate(serverListProvider),
               ),
             ),
           ),

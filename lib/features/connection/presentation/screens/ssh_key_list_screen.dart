@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/widgets/error_state.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
@@ -51,20 +52,9 @@ class SshKeyListScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, size: 48),
-              const SizedBox(height: 16),
-              Text(l10n.error(error.toString())),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () => ref.invalidate(sshKeyListProvider),
-                child: Text(l10n.retry),
-              ),
-            ],
-          ),
+        error: (error, _) => ErrorState(
+          error: error,
+          onRetry: () => ref.invalidate(sshKeyListProvider),
         ),
       ),
       floatingActionButton: FloatingActionButton(

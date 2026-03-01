@@ -2,15 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 
-final exportJsonProvider = FutureProvider.family<String, void>((ref, _) async {
-  final useCases = ref.read(exportImportUseCasesProvider);
-  final result = await useCases.exportToJson();
-  return result.fold(
-    onSuccess: (path) => path,
-    onFailure: (failure) => throw Exception(failure.message),
-  );
-});
-
 class ExportImportNotifier extends Notifier<AsyncValue<String?>> {
   @override
   AsyncValue<String?> build() => const AsyncData(null);

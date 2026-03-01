@@ -214,33 +214,38 @@ class ExportImportScreen extends ConsumerWidget {
     }
   }
 
-  Future<String?> _askImportPassword(BuildContext context) {
+  Future<String?> _askImportPassword(BuildContext context) async {
     final controller = TextEditingController();
     final l10n = AppLocalizations.of(context)!;
-    return showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.importPasswordTitle),
-        content: TextField(
-          controller: controller,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: l10n.importPasswordLabel,
+    try {
+      final result = await showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l10n.importPasswordTitle),
+          content: TextField(
+            controller: controller,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: l10n.importPasswordLabel,
+            ),
+            keyboardType: TextInputType.visiblePassword,
+            autofocus: true,
           ),
-          keyboardType: TextInputType.visiblePassword,
-          autofocus: true,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(controller.text),
+              child: Text(l10n.importPasswordDecrypt),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(controller.text),
-            child: Text(l10n.importPasswordDecrypt),
-          ),
-        ],
-      ),
-    );
+      );
+      return result;
+    } finally {
+      controller.dispose();
+    }
   }
 }

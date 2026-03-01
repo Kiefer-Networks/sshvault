@@ -483,6 +483,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String groupServerCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Server',
+      one: '1 Server',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get groupCollapse => 'Einklappen';
 
   @override

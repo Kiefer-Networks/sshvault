@@ -66,7 +66,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       final dekManager = DekManager(ref.read(secureStorageProvider));
       final hasDek = await dekManager.hasDek();
       if (!hasDek) {
-        final dek = await dekManager.generateAndStoreDek();
+        final dekResult = await dekManager.generateAndStoreDek();
+        final dek = dekResult.value;
         final crypto = FieldCryptoService(dek);
         ref.read(fieldCryptoServiceProvider.notifier).state = crypto;
 
@@ -258,7 +259,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     final dekManager = DekManager(ref.read(secureStorageProvider));
     final hasDek = await dekManager.hasDek();
     if (!hasDek) {
-      final dek = await dekManager.generateAndStoreDek();
+      final dekResult = await dekManager.generateAndStoreDek();
+      final dek = dekResult.value;
       final crypto = FieldCryptoService(dek);
       ref.read(fieldCryptoServiceProvider.notifier).state = crypto;
 
@@ -277,7 +279,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     final dekManager = DekManager(ref.read(secureStorageProvider));
 
     // Decrypt database before removing DEK
-    final dek = await dekManager.loadDek();
+    final dekResult = await dekManager.loadDek();
+    final dek = dekResult.isSuccess ? dekResult.value : null;
     if (dek != null) {
       final crypto = FieldCryptoService(dek);
       final db = ref.read(databaseProvider);
@@ -285,7 +288,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     }
 
     // Remove DEK and disable crypto
-    await dekManager.deleteDek();
+    await dekManager.deleteDek();  // Result ignored — best effort
     ref.read(fieldCryptoServiceProvider.notifier).state = null;
 
     // Clear PIN hash and salt
@@ -302,7 +305,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   /// Called after successful PIN/biometric unlock.
   Future<void> loadDekAfterUnlock() async {
     final dekManager = DekManager(ref.read(secureStorageProvider));
-    final dek = await dekManager.loadDek();
+    final dekResult = await dekManager.loadDek();
+    final dek = dekResult.isSuccess ? dekResult.value : null;
     if (dek != null) {
       ref.read(fieldCryptoServiceProvider.notifier).state = FieldCryptoService(dek);
     }

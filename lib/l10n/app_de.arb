@@ -161,6 +161,8 @@
   "groupAddButton": "Gruppe hinzufügen",
   "groupDeleteTitle": "Gruppe löschen",
   "groupDeleteMessage": "\"{name}\" löschen? Server in dieser Gruppe werden nicht zugeordnet.",
+  "groupServerCount": "{count, plural, =1{1 Server} other{{count} Server}}",
+  "@groupServerCount": { "placeholders": { "count": { "type": "int" } } },
   "groupCollapse": "Einklappen",
   "groupShowHosts": "Hosts anzeigen",
   "groupConnectAll": "Alle verbinden",

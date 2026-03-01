@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/storage/secure_storage_service.dart';
 
 /// Manages the Data Encryption Key (DEK) lifecycle.
@@ -16,28 +17,34 @@ class DekManager {
 
   /// Generates a new random DEK and stores it in secure storage.
   /// Returns the generated key bytes.
-  Future<Uint8List> generateAndStoreDek() async {
+  Future<Result<Uint8List>> generateAndStoreDek() async {
     final random = Random.secure();
     final dek = Uint8List.fromList(
       List.generate(AppConstants.aesKeyLength, (_) => random.nextInt(256)),
     );
-    await _secureStorage.saveDek(dek);
-    return dek;
+    final saveResult = await _secureStorage.saveDek(dek);
+    return saveResult.fold(
+      onSuccess: (_) => Success(dek),
+      onFailure: (failure) => Err(failure),
+    );
   }
 
   /// Loads the DEK from secure storage. Returns null if no DEK exists.
-  Future<Uint8List?> loadDek() async {
+  Future<Result<Uint8List?>> loadDek() async {
     return _secureStorage.loadDek();
   }
 
   /// Deletes the DEK from secure storage.
-  Future<void> deleteDek() async {
-    await _secureStorage.deleteDek();
+  Future<Result<void>> deleteDek() async {
+    return _secureStorage.deleteDek();
   }
 
   /// Returns true if a DEK exists in secure storage.
   Future<bool> hasDek() async {
-    final dek = await loadDek();
-    return dek != null;
+    final result = await loadDek();
+    return result.fold(
+      onSuccess: (dek) => dek != null,
+      onFailure: (_) => false,
+    );
   }
 }

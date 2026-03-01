@@ -219,18 +219,32 @@ class SecureStorageService {
 
   // --- DEK (Data Encryption Key) ---
 
-  Future<void> saveDek(Uint8List dek) async {
-    final encoded = base64Encode(dek);
-    await _storage.write(key: AppConstants.dekStorageKey, value: encoded);
+  Future<Result<void>> saveDek(Uint8List dek) async {
+    try {
+      final encoded = base64Encode(dek);
+      await _storage.write(key: AppConstants.dekStorageKey, value: encoded);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to save DEK', cause: e));
+    }
   }
 
-  Future<Uint8List?> loadDek() async {
-    final encoded = await _storage.read(key: AppConstants.dekStorageKey);
-    if (encoded == null) return null;
-    return base64Decode(encoded);
+  Future<Result<Uint8List?>> loadDek() async {
+    try {
+      final encoded = await _storage.read(key: AppConstants.dekStorageKey);
+      if (encoded == null) return const Success(null);
+      return Success(base64Decode(encoded));
+    } catch (e) {
+      return Err(StorageFailure('Failed to load DEK', cause: e));
+    }
   }
 
-  Future<void> deleteDek() async {
-    await _storage.delete(key: AppConstants.dekStorageKey);
+  Future<Result<void>> deleteDek() async {
+    try {
+      await _storage.delete(key: AppConstants.dekStorageKey);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to delete DEK', cause: e));
+    }
   }
 }

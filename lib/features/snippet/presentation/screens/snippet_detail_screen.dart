@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/utils/date_formatter.dart';
+import 'package:shellvault/core/widgets/info_row.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
@@ -264,15 +266,15 @@ class SnippetDetailScreen extends ConsumerWidget {
                     children: [
                       Text(l10n.snippetDetailInfo, style: theme.textTheme.titleSmall),
                       const SizedBox(height: 12),
-                      _InfoRow(
+                      InfoRow(
                         icon: Icons.calendar_today,
                         label: l10n.snippetDetailCreated,
-                        value: _formatDate(snippet.createdAt),
+                        value: formatDate(snippet.createdAt),
                       ),
-                      _InfoRow(
+                      InfoRow(
                         icon: Icons.update,
                         label: l10n.snippetDetailUpdated,
-                        value: _formatDate(snippet.updatedAt),
+                        value: formatDate(snippet.updatedAt),
                       ),
                     ],
                   ),
@@ -287,52 +289,4 @@ class SnippetDetailScreen extends ConsumerWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
-        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(icon,
-              size: 18,
-              color: theme.colorScheme.onSurface.withAlpha(102)),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(128),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              value,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: 'monospace',
-              ),
-              textAlign: TextAlign.end,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

@@ -161,6 +161,8 @@
   "groupAddButton": "Agregar grupo",
   "groupDeleteTitle": "Eliminar grupo",
   "groupDeleteMessage": "¿Eliminar \"{name}\"? Los servidores en este grupo quedarán sin grupo.",
+  "groupServerCount": "{count, plural, =1{1 servidor} other{{count} servidores}}",
+  "@groupServerCount": { "placeholders": { "count": { "type": "int" } } },
   "groupCollapse": "Colapsar",
   "groupShowHosts": "Mostrar hosts",
   "groupConnectAll": "Conectar todos",

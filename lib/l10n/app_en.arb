@@ -170,6 +170,8 @@
   "groupDeleteTitle": "Delete Group",
   "groupDeleteMessage": "Delete \"{name}\"? Servers in this group will become ungrouped.",
   "@groupDeleteMessage": { "placeholders": { "name": { "type": "String" } } },
+  "groupServerCount": "{count, plural, =1{1 server} other{{count} servers}}",
+  "@groupServerCount": { "placeholders": { "count": { "type": "int" } } },
   "groupCollapse": "Collapse",
   "groupShowHosts": "Show hosts",
   "groupConnectAll": "Connect All",

@@ -982,6 +982,12 @@ abstract class AppLocalizations {
   /// **'Delete \"{name}\"? Servers in this group will become ungrouped.'**
   String groupDeleteMessage(String name);
 
+  /// No description provided for @groupServerCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 server} other{{count} servers}}'**
+  String groupServerCount(int count);
+
   /// No description provided for @groupCollapse.
   ///
   /// In en, this message translates to:

@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
+import 'package:shellvault/core/utils/date_formatter.dart';
+import 'package:shellvault/core/widgets/info_row.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
@@ -59,9 +61,8 @@ class ServerDetailScreen extends ConsumerWidget {
               .read(sessionManagerProvider.notifier)
               .openSession(serverId);
           if (context.mounted) {
-            context.pop();
+            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
           }
-          ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
         },
         icon: const Icon(Icons.terminal),
         label: Text(l10n.serverConnect),
@@ -140,22 +141,22 @@ class ServerDetailScreen extends ConsumerWidget {
                       Text(l10n.serverDetailConnection,
                           style: theme.textTheme.titleSmall),
                       const SizedBox(height: 12),
-                      _InfoRow(
+                      InfoRow(
                         icon: Icons.dns_outlined,
                         label: l10n.serverDetailHost,
                         value: server.hostname,
-                        onCopy: () => _copy(context, server.hostname),
+                        onTap: () => _copy(context, server.hostname),
                       ),
-                      _InfoRow(
+                      InfoRow(
                         icon: Icons.numbers,
                         label: l10n.serverDetailPort,
                         value: server.port.toString(),
                       ),
-                      _InfoRow(
+                      InfoRow(
                         icon: Icons.person_outline,
                         label: l10n.serverDetailUsername,
                         value: server.username,
-                        onCopy: () => _copy(context, server.username),
+                        onTap: () => _copy(context, server.username),
                       ),
                     ],
                   ),
@@ -214,15 +215,15 @@ class ServerDetailScreen extends ConsumerWidget {
                     children: [
                       Text(l10n.serverDetailInfo, style: theme.textTheme.titleSmall),
                       const SizedBox(height: 12),
-                      _InfoRow(
+                      InfoRow(
                         icon: Icons.calendar_today,
                         label: l10n.serverDetailCreated,
-                        value: _formatDate(server.createdAt),
+                        value: formatDate(server.createdAt),
                       ),
-                      _InfoRow(
+                      InfoRow(
                         icon: Icons.update,
                         label: l10n.serverDetailUpdated,
-                        value: _formatDate(server.updatedAt),
+                        value: formatDate(server.updatedAt),
                       ),
                     ],
                   ),
@@ -244,60 +245,4 @@ class ServerDetailScreen extends ConsumerWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
-        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final VoidCallback? onCopy;
-
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-    this.onCopy,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: theme.colorScheme.onSurface.withAlpha(102)),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(128),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              value,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: 'monospace',
-              ),
-              textAlign: TextAlign.end,
-            ),
-          ),
-          if (onCopy != null) ...[
-            const SizedBox(width: 4),
-            GestureDetector(
-              onTap: onCopy,
-              child: Icon(Icons.copy, size: 16,
-                  color: theme.colorScheme.onSurface.withAlpha(102)),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
 }
