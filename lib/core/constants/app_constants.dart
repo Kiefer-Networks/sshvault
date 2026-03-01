@@ -26,6 +26,10 @@ abstract final class AppConstants {
   // Secure Storage Keys
   static const String credentialPrefix = 'sv_cred_';
   static const String keyPrefix = 'sv_key_';
+  static const String dekStorageKey = 'sv_dek';
+
+  // Field Encryption
+  static const String encryptedFieldPrefix = 'v1:';
 
   // Pagination
   static const int defaultPageSize = 50;

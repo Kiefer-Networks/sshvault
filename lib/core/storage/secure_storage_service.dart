@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/error/failures.dart';
@@ -206,5 +209,22 @@ class SecureStorageService {
     } catch (e) {
       return Err(StorageFailure('Failed to delete SSH key secrets', cause: e));
     }
+  }
+
+  // --- DEK (Data Encryption Key) ---
+
+  Future<void> saveDek(Uint8List dek) async {
+    final encoded = base64Encode(dek);
+    await _storage.write(key: AppConstants.dekStorageKey, value: encoded);
+  }
+
+  Future<Uint8List?> loadDek() async {
+    final encoded = await _storage.read(key: AppConstants.dekStorageKey);
+    if (encoded == null) return null;
+    return base64Decode(encoded);
+  }
+
+  Future<void> deleteDek() async {
+    await _storage.delete(key: AppConstants.dekStorageKey);
   }
 }
