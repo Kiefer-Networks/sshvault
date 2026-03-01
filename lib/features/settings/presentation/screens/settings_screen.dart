@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
     as app;
+import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
+import 'package:shellvault/features/terminal/presentation/widgets/terminal_theme_picker.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -51,6 +53,53 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   },
                 ),
               ),
+              const Divider(),
+
+              // Terminal
+              const _SectionHeader(title: 'Terminal'),
+              Builder(builder: (context) {
+                final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
+                return ListTile(
+                  leading: const Icon(Icons.color_lens_outlined),
+                  title: const Text('Terminal Theme'),
+                  subtitle: Text(themeKeyAsync.when(
+                    data: (key) => key.displayName,
+                    loading: () => '...',
+                    error: (_, _) => 'Default Dark',
+                  )),
+                  onTap: () => TerminalThemePicker.show(context),
+                );
+              }),
+              Builder(builder: (context) {
+                final fontSizeAsync = ref.watch(terminalFontSizeProvider);
+                final fontSize = fontSizeAsync.valueOrNull ?? 14.0;
+                return ListTile(
+                  leading: const Icon(Icons.text_fields_outlined),
+                  title: const Text('Font Size'),
+                  subtitle: Text('${fontSize.toInt()} px'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: fontSize <= 8
+                            ? null
+                            : () => ref
+                                .read(terminalFontSizeProvider.notifier)
+                                .decrease(),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: fontSize >= 24
+                            ? null
+                            : () => ref
+                                .read(terminalFontSizeProvider.notifier)
+                                .increase(),
+                      ),
+                    ],
+                  ),
+                );
+              }),
               const Divider(),
 
               // SSH Defaults

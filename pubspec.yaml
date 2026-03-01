@@ -45,6 +45,10 @@ dependencies:
   # UI
   flutter_slidable: ^3.1.1
 
+  # SSH & Terminal
+  dartssh2: ^2.9.0
+  xterm: ^4.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

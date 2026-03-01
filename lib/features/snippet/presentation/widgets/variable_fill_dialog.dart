@@ -4,13 +4,25 @@ import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart'
 
 class VariableFillDialog extends StatefulWidget {
   final SnippetEntity snippet;
+  final bool returnContent;
 
-  const VariableFillDialog({super.key, required this.snippet});
+  const VariableFillDialog({
+    super.key,
+    required this.snippet,
+    this.returnContent = false,
+  });
 
-  static Future<void> show(BuildContext context, SnippetEntity snippet) {
-    return showDialog(
+  static Future<String?> show(
+    BuildContext context,
+    SnippetEntity snippet, {
+    bool returnContent = false,
+  }) {
+    return showDialog<String>(
       context: context,
-      builder: (context) => VariableFillDialog(snippet: snippet),
+      builder: (context) => VariableFillDialog(
+        snippet: snippet,
+        returnContent: returnContent,
+      ),
     );
   }
 
@@ -48,6 +60,10 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
 
   void _copyAndClose() {
     final resolved = _resolveContent();
+    if (widget.returnContent) {
+      Navigator.of(context).pop(resolved);
+      return;
+    }
     Clipboard.setData(ClipboardData(text: resolved));
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(

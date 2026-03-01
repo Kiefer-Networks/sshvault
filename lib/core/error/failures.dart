@@ -35,3 +35,7 @@ final class ImportFailure extends Failure {
 final class NotFoundFailure extends Failure {
   const NotFoundFailure(super.message, {super.cause});
 }
+
+final class SshConnectionFailure extends Failure {
+  const SshConnectionFailure(super.message, {super.cause});
+}
