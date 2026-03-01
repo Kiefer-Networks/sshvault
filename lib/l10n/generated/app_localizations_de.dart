@@ -558,6 +558,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get sshKeyAddButton => 'SSH-Schlüssel hinzufügen';
+
+  @override
   String get sshKeyFormTitleEdit => 'SSH-Schlüssel bearbeiten';
 
   @override
@@ -827,6 +830,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get snippetAddButton => 'Snippet hinzufügen';
+
+  @override
+  String get snippetDeleteTitle => 'Snippet löschen';
+
+  @override
+  String snippetDeleteMessage(String name) {
+    return '\"$name\" löschen? Dies kann nicht rückgängig gemacht werden.';
+  }
 
   @override
   String get snippetFormTitleEdit => 'Snippet bearbeiten';

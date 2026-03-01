@@ -3,6 +3,7 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
+import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
 import 'package:shellvault/features/snippet/presentation/widgets/snippet_tile.dart';
@@ -80,6 +81,8 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
               ),
             ),
 
+          const SizedBox(height: 8),
+
           // List
           Expanded(
             child: snippetsAsync.when(
@@ -100,19 +103,36 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                 return ListView.separated(
                   padding: const EdgeInsets.only(bottom: 80),
                   itemCount: snippets.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
+                  separatorBuilder: (_, _) =>
+                      const Divider(height: 1, indent: 72),
                   itemBuilder: (context, index) {
                     final snippet = snippets[index];
                     return SnippetTile(
                       snippet: snippet,
                       onTap: () => context.push('/snippet/${snippet.id}'),
+                      onEdit: () => context.push('/snippet/${snippet.id}/edit'),
+                      onDelete: () => _deleteSnippet(context, snippet),
                     );
                   },
                 );
               },
               loading: () =>
                   const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+              error: (error, _) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.error_outline, size: 48),
+                    const SizedBox(height: 16),
+                    Text(l10n.error(error.toString())),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: () => ref.invalidate(snippetListProvider),
+                      child: Text(l10n.retry),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -123,5 +143,20 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  Future<void> _deleteSnippet(
+    BuildContext context,
+    dynamic snippet,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: l10n.snippetDeleteTitle,
+      message: l10n.snippetDeleteMessage(snippet.name),
+    );
+    if (confirmed == true) {
+      await ref.read(snippetListProvider.notifier).deleteSnippet(snippet.id);
+    }
   }
 }

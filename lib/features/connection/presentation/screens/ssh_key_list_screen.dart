@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
 import 'package:shellvault/features/connection/presentation/screens/ssh_key_form_dialog.dart';
+import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
+import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
 import 'package:shellvault/features/connection/presentation/widgets/ssh_key_tile.dart';
 
 class SshKeyListScreen extends ConsumerWidget {
@@ -12,7 +14,6 @@ class SshKeyListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final keysAsync = ref.watch(sshKeyListProvider);
-    final theme = Theme.of(context);
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -21,56 +22,48 @@ class SshKeyListScreen extends ConsumerWidget {
       body: keysAsync.when(
         data: (keys) {
           if (keys.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.vpn_key_outlined,
-                    size: 64,
-                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.sshKeyListEmpty,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.sshKeyListEmptySubtitle,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+            return EmptyState(
+              icon: Icons.vpn_key_outlined,
+              title: l10n.sshKeyListEmpty,
+              subtitle: l10n.sshKeyListEmptySubtitle,
+              action: FilledButton.icon(
+                onPressed: () => _addKey(context, ref),
+                icon: const Icon(Icons.add),
+                label: Text(l10n.sshKeyAddButton),
               ),
             );
           }
-          return RefreshIndicator(
-            onRefresh: () =>
-                ref.read(sshKeyListProvider.notifier).refresh(),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: keys.length,
-              itemBuilder: (context, index) {
-                final key = keys[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: SshKeyTile(
-                    sshKey: key,
-                    onEdit: () => _editKey(context, ref, key),
-                    onDelete: () => _deleteKey(context, ref, key),
-                  ),
-                );
-              },
-            ),
+
+          return ListView.separated(
+            padding: const EdgeInsets.only(bottom: 80),
+            itemCount: keys.length,
+            separatorBuilder: (_, _) =>
+                const Divider(height: 1, indent: 72),
+            itemBuilder: (context, index) {
+              final key = keys[index];
+              return SshKeyTile(
+                sshKey: key,
+                onEdit: () => _editKey(context, ref, key),
+                onDelete: () => _deleteKey(context, ref, key),
+              );
+            },
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
-          child: Text(l10n.error(error.toString())),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48),
+              const SizedBox(height: 16),
+              Text(l10n.error(error.toString())),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => ref.invalidate(sshKeyListProvider),
+                child: Text(l10n.retry),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -122,25 +115,10 @@ class SshKeyListScreen extends ConsumerWidget {
       return;
     }
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(ctx)!.sshKeyDeleteTitle),
-        content: Text(AppLocalizations.of(ctx)!.sshKeyDeleteMessage(key.name)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(AppLocalizations.of(ctx)!.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.error,
-            ),
-            child: Text(AppLocalizations.of(ctx)!.delete),
-          ),
-        ],
-      ),
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: l10n.sshKeyDeleteTitle,
+      message: l10n.sshKeyDeleteMessage(key.name),
     );
 
     if (confirmed == true && context.mounted) {

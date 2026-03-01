@@ -187,6 +187,7 @@
   "sshKeyCannotDeleteMessage": "\"{name}\" kann nicht gelöscht werden. Wird von {count} Server(n) verwendet. Zuerst von allen Servern trennen.",
   "sshKeyDeleteTitle": "SSH-Schlüssel löschen",
   "sshKeyDeleteMessage": "\"{name}\" löschen? Dies kann nicht rückgängig gemacht werden.",
+  "sshKeyAddButton": "SSH-Schlüssel hinzufügen",
 
   "sshKeyFormTitleEdit": "SSH-Schlüssel bearbeiten",
   "sshKeyFormTitleAdd": "SSH-Schlüssel hinzufügen",
@@ -278,6 +279,8 @@
   "snippetListEmpty": "Noch keine Snippets",
   "snippetListEmptySubtitle": "Erstelle wiederverwendbare Code-Snippets und Befehle.",
   "snippetAddButton": "Snippet hinzufügen",
+  "snippetDeleteTitle": "Snippet löschen",
+  "snippetDeleteMessage": "\"{name}\" löschen? Dies kann nicht rückgängig gemacht werden.",
 
   "snippetFormTitleEdit": "Snippet bearbeiten",
   "snippetFormTitleNew": "Neues Snippet",

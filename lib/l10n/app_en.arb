@@ -199,6 +199,7 @@
   "sshKeyDeleteTitle": "Delete SSH Key",
   "sshKeyDeleteMessage": "Delete \"{name}\"? This cannot be undone.",
   "@sshKeyDeleteMessage": { "placeholders": { "name": { "type": "String" } } },
+  "sshKeyAddButton": "Add SSH Key",
 
   "sshKeyFormTitleEdit": "Edit SSH Key",
   "sshKeyFormTitleAdd": "Add SSH Key",
@@ -299,6 +300,9 @@
   "snippetListEmpty": "No snippets yet",
   "snippetListEmptySubtitle": "Create reusable code snippets and commands.",
   "snippetAddButton": "Add Snippet",
+  "snippetDeleteTitle": "Delete Snippet",
+  "snippetDeleteMessage": "Delete \"{name}\"? This cannot be undone.",
+  "@snippetDeleteMessage": { "placeholders": { "name": { "type": "String" } } },
 
   "snippetFormTitleEdit": "Edit Snippet",
   "snippetFormTitleNew": "New Snippet",

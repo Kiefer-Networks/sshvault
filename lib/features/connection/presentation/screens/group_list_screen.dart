@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
@@ -42,13 +43,31 @@ class GroupListScreen extends ConsumerWidget {
             );
           }
 
-          return ListView(
+          final widgets = _buildGroupList(context, ref, groups);
+          return ListView.separated(
             padding: const EdgeInsets.only(bottom: 80),
-            children: _buildGroupList(context, ref, groups),
+            itemCount: widgets.length,
+            separatorBuilder: (_, _) =>
+                const Divider(height: 1, indent: 72),
+            itemBuilder: (_, index) => widgets[index],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48),
+              const SizedBox(height: 16),
+              Text(l10n.error(error.toString())),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => ref.invalidate(groupTreeProvider),
+                child: Text(l10n.retry),
+              ),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'addGroupFab',
@@ -175,71 +194,86 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
 
     return Column(
       children: [
-        ListTile(
-          contentPadding: EdgeInsets.only(
-            left: 16.0 + widget.depth * 24.0,
-            right: 16.0,
-          ),
-          leading: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Color(group.color).withAlpha(26),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              IconConstants.getIcon(group.iconName),
-              color: Color(group.color),
-              size: 20,
-            ),
-          ),
-          title: Text(group.name),
-          subtitle: Text(
-            '${group.serverCount} server${group.serverCount == 1 ? '' : 's'}',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(128),
-            ),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
+        Slidable(
+          endActionPane: ActionPane(
+            motion: const DrawerMotion(),
             children: [
-              if (group.serverCount > 0)
-                _connectingAll
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : IconButton(
-                        icon: const Icon(Icons.play_circle_outline, size: 20),
-                        onPressed: _connectAllServers,
-                        tooltip: l10n.groupConnectAll,
-                      ),
-              if (group.serverCount > 0)
-                IconButton(
-                  icon: Icon(
-                    _expanded
-                        ? Icons.expand_less
-                        : Icons.expand_more,
-                    size: 20,
-                  ),
-                  onPressed: () => setState(() => _expanded = !_expanded),
-                  tooltip: _expanded ? l10n.groupCollapse : l10n.groupShowHosts,
-                ),
-              IconButton(
-                icon: const Icon(Icons.edit, size: 20),
-                onPressed: widget.onEdit,
+              SlidableAction(
+                onPressed: (_) => widget.onEdit(),
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                icon: Icons.edit,
+                label: l10n.edit,
+                borderRadius: BorderRadius.circular(12),
               ),
-              IconButton(
-                icon: Icon(Icons.delete,
-                    size: 20, color: theme.colorScheme.error),
-                onPressed: widget.onDelete,
+              SlidableAction(
+                onPressed: (_) => widget.onDelete(),
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: Colors.white,
+                icon: Icons.delete,
+                label: l10n.delete,
+                borderRadius: BorderRadius.circular(12),
               ),
             ],
           ),
-          onTap: group.serverCount > 0
-              ? () => setState(() => _expanded = !_expanded)
-              : null,
+          child: ListTile(
+            contentPadding: EdgeInsets.only(
+              left: 16.0 + widget.depth * 24.0,
+              right: 16.0,
+            ),
+            leading: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: Color(group.color).withAlpha(26),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                IconConstants.getIcon(group.iconName),
+                color: Color(group.color),
+                size: 22,
+              ),
+            ),
+            title: Text(group.name),
+            subtitle: Text(
+              '${group.serverCount} server${group.serverCount == 1 ? '' : 's'}',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(153),
+              ),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (group.serverCount > 0)
+                  _connectingAll
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.play_circle_outline),
+                          onPressed: _connectAllServers,
+                          tooltip: l10n.groupConnectAll,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                if (group.serverCount > 0)
+                  IconButton(
+                    icon: Icon(
+                      _expanded
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                    ),
+                    onPressed: () => setState(() => _expanded = !_expanded),
+                    tooltip: _expanded ? l10n.groupCollapse : l10n.groupShowHosts,
+                    visualDensity: VisualDensity.compact,
+                  ),
+              ],
+            ),
+            onTap: group.serverCount > 0
+                ? () => setState(() => _expanded = !_expanded)
+                : null,
+          ),
         ),
         if (_expanded)
           _GroupServerList(

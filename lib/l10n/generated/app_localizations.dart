@@ -1120,6 +1120,12 @@ abstract class AppLocalizations {
   /// **'Delete \"{name}\"? This cannot be undone.'**
   String sshKeyDeleteMessage(String name);
 
+  /// No description provided for @sshKeyAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add SSH Key'**
+  String get sshKeyAddButton;
+
   /// No description provided for @sshKeyFormTitleEdit.
   ///
   /// In en, this message translates to:
@@ -1605,6 +1611,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Snippet'**
   String get snippetAddButton;
+
+  /// No description provided for @snippetDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Snippet'**
+  String get snippetDeleteTitle;
+
+  /// No description provided for @snippetDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"? This cannot be undone.'**
+  String snippetDeleteMessage(String name);
 
   /// No description provided for @snippetFormTitleEdit.
   ///

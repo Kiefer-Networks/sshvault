@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
@@ -34,9 +35,11 @@ class TagListScreen extends ConsumerWidget {
             );
           }
 
-          return ListView.builder(
+          return ListView.separated(
             padding: const EdgeInsets.only(bottom: 80),
             itemCount: tags.length,
+            separatorBuilder: (_, _) =>
+                const Divider(height: 1, indent: 72),
             itemBuilder: (context, index) {
               final tag = tags[index];
               return _TagTile(
@@ -48,7 +51,21 @@ class TagListScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48),
+              const SizedBox(height: 16),
+              Text(l10n.error(error.toString())),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => ref.invalidate(tagListProvider),
+                child: Text(l10n.retry),
+              ),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'addTagFab',
@@ -93,30 +110,71 @@ class _TagTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ListTile(
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Color(tag.color).withAlpha(26),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(Icons.label, color: Color(tag.color), size: 20),
-      ),
-      title: Text(tag.name),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+    final l10n = AppLocalizations.of(context)!;
+
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
         children: [
-          IconButton(
-            icon: const Icon(Icons.edit, size: 20),
-            onPressed: onEdit,
+          SlidableAction(
+            onPressed: (_) => onEdit(),
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: Colors.white,
+            icon: Icons.edit,
+            label: l10n.edit,
+            borderRadius: BorderRadius.circular(12),
           ),
-          IconButton(
-            icon: Icon(Icons.delete, size: 20, color: theme.colorScheme.error),
-            onPressed: onDelete,
+          SlidableAction(
+            onPressed: (_) => onDelete(),
+            backgroundColor: theme.colorScheme.error,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: l10n.delete,
+            borderRadius: BorderRadius.circular(12),
           ),
         ],
       ),
+      child: ListTile(
+        leading: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: Color(tag.color).withAlpha(26),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.label, color: Color(tag.color), size: 22),
+        ),
+        title: Text(tag.name),
+        subtitle: Text(
+          _colorHex(tag.color),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withAlpha(153),
+            fontFamily: 'monospace',
+          ),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: onEdit,
+              tooltip: l10n.edit,
+              visualDensity: VisualDensity.compact,
+            ),
+            IconButton(
+              icon: Icon(Icons.delete, color: theme.colorScheme.error),
+              onPressed: onDelete,
+              tooltip: l10n.delete,
+              visualDensity: VisualDensity.compact,
+            ),
+          ],
+        ),
+        onTap: onEdit,
+      ),
     );
+  }
+
+  String _colorHex(int color) {
+    return '#${(color & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
   }
 }

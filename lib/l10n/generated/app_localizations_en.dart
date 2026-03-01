@@ -555,6 +555,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get sshKeyAddButton => 'Add SSH Key';
+
+  @override
   String get sshKeyFormTitleEdit => 'Edit SSH Key';
 
   @override
@@ -820,6 +823,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get snippetAddButton => 'Add Snippet';
+
+  @override
+  String get snippetDeleteTitle => 'Delete Snippet';
+
+  @override
+  String snippetDeleteMessage(String name) {
+    return 'Delete \"$name\"? This cannot be undone.';
+  }
 
   @override
   String get snippetFormTitleEdit => 'Edit Snippet';

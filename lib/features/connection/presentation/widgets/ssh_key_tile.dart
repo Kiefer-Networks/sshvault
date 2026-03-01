@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 
 class SshKeyTile extends StatelessWidget {
@@ -21,48 +22,117 @@ class SshKeyTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final canDelete = sshKey.linkedServerCount == 0;
 
-    return Card(
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        children: [
+          if (onEdit != null)
+            SlidableAction(
+              onPressed: (_) => onEdit!(),
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: Colors.white,
+              icon: Icons.edit,
+              label: l10n.edit,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          if (sshKey.publicKey.isNotEmpty)
+            SlidableAction(
+              onPressed: (_) {
+                Clipboard.setData(ClipboardData(text: sshKey.publicKey));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.sshKeyTilePublicKeyCopied)),
+                );
+              },
+              backgroundColor: Colors.teal,
+              foregroundColor: Colors.white,
+              icon: Icons.copy,
+              label: l10n.copy,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          if (onDelete != null && canDelete)
+            SlidableAction(
+              onPressed: (_) => onDelete!(),
+              backgroundColor: theme.colorScheme.error,
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: l10n.delete,
+              borderRadius: BorderRadius.circular(12),
+            ),
+        ],
+      ),
       child: ListTile(
-        leading: Icon(
-          Icons.vpn_key_outlined,
-          color: theme.colorScheme.primary,
+        leading: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withAlpha(26),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.vpn_key_outlined,
+            color: theme.colorScheme.primary,
+            size: 22,
+          ),
         ),
-        title: Text(
-          sshKey.name,
-          style: theme.textTheme.titleMedium,
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                sshKey.name,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                sshKey.keyType.displayName,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSecondaryContainer,
+                ),
+              ),
+            ),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 2),
-            Text(
-              '${sshKey.keyType.displayName}'
-              '${sshKey.fingerprint.isNotEmpty ? ' · ${sshKey.fingerprint}' : ''}',
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontFamily: 'monospace',
-                fontSize: 11,
+            if (sshKey.fingerprint.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(
+                sshKey.fingerprint,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontFamily: 'monospace',
+                  fontSize: 11,
+                  color: theme.colorScheme.onSurface.withAlpha(153),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            ],
             if (sshKey.linkedServerCount > 0)
               Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(
                   l10n.sshKeyTileLinkedServers(sshKey.linkedServerCount),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: theme.colorScheme.onSurface.withAlpha(153),
                   ),
                 ),
               ),
           ],
         ),
+        isThreeLine: sshKey.linkedServerCount > 0,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (sshKey.publicKey.isNotEmpty)
               IconButton(
-                icon: const Icon(Icons.copy, size: 18),
+                icon: const Icon(Icons.copy),
                 tooltip: l10n.sshKeyTileCopyPublicKey,
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: sshKey.publicKey));
@@ -70,30 +140,18 @@ class SshKeyTile extends StatelessWidget {
                     SnackBar(content: Text(l10n.sshKeyTilePublicKeyCopied)),
                   );
                 },
+                visualDensity: VisualDensity.compact,
               ),
             if (onEdit != null)
               IconButton(
-                icon: const Icon(Icons.edit_outlined, size: 18),
+                icon: const Icon(Icons.edit),
                 tooltip: l10n.edit,
                 onPressed: onEdit,
-              ),
-            if (onDelete != null)
-              IconButton(
-                icon: Icon(
-                  Icons.delete_outline,
-                  size: 18,
-                  color: canDelete
-                      ? theme.colorScheme.error
-                      : theme.disabledColor,
-                ),
-                tooltip: canDelete
-                    ? l10n.delete
-                    : l10n.sshKeyTileUnlinkFirst,
-                onPressed: canDelete ? onDelete : null,
+                visualDensity: VisualDensity.compact,
               ),
           ],
         ),
-        isThreeLine: sshKey.linkedServerCount > 0,
+        onTap: onEdit,
       ),
     );
   }
