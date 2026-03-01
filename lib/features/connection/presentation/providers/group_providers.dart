@@ -22,7 +22,10 @@ class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
     final useCases = ref.read(groupUseCasesProvider);
     final result = await useCases.createGroup(group);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        ref.invalidate(groupTreeProvider);
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -31,7 +34,10 @@ class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
     final useCases = ref.read(groupUseCasesProvider);
     final result = await useCases.updateGroup(group);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        ref.invalidate(groupTreeProvider);
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -40,7 +46,10 @@ class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
     final useCases = ref.read(groupUseCasesProvider);
     final result = await useCases.deleteGroup(id);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        ref.invalidate(groupTreeProvider);
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
