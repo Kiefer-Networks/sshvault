@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
+    as app;
 
 /// Breakpoints following Material 3 Compact / Medium / Expanded.
 abstract final class ShellBreakpoints {
@@ -25,6 +27,11 @@ const _navItems = <_NavItem>[
     icon: Icons.dns_outlined,
     selectedIcon: Icons.dns,
     label: 'Hosts',
+  ),
+  _NavItem(
+    icon: Icons.code_outlined,
+    selectedIcon: Icons.code,
+    label: 'Snippets',
   ),
   _NavItem(
     icon: Icons.folder_outlined,
@@ -192,6 +199,31 @@ class _DesktopScaffold extends StatelessWidget {
                       color: theme.colorScheme.primary,
                     ),
             ),
+            trailing: Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.settings_outlined),
+                        tooltip: 'Settings',
+                        onPressed: () => context.push('/settings'),
+                      ),
+                      const SizedBox(height: 4),
+                      IconButton(
+                        icon: const Icon(Icons.info_outline),
+                        tooltip: 'About',
+                        onPressed: () =>
+                            app.showAppAboutDialog(context),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             destinations: [
               for (final item in _navItems)
                 NavigationRailDestination(
@@ -274,7 +306,6 @@ class _AppDrawer extends StatelessWidget {
 
             const Spacer(),
 
-            // Settings placeholder
             const Divider(indent: 16, endIndent: 16),
             _DrawerItem(
               icon: Icons.settings_outlined,
@@ -283,7 +314,17 @@ class _AppDrawer extends StatelessWidget {
               selected: false,
               onTap: () {
                 Navigator.pop(context);
-                // TODO: navigate to settings once implemented
+                context.push('/settings');
+              },
+            ),
+            _DrawerItem(
+              icon: Icons.info_outline,
+              selectedIcon: Icons.info,
+              label: 'About',
+              selected: false,
+              onTap: () {
+                Navigator.pop(context);
+                app.showAppAboutDialog(context);
               },
             ),
             const SizedBox(height: 8),

@@ -8,6 +8,10 @@ import 'package:shellvault/features/connection/presentation/screens/server_form_
 import 'package:shellvault/features/connection/presentation/screens/server_list_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/ssh_key_list_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/tag_list_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/settings_screen.dart';
+import 'package:shellvault/features/snippet/presentation/screens/snippet_detail_screen.dart';
+import 'package:shellvault/features/snippet/presentation/screens/snippet_form_screen.dart';
+import 'package:shellvault/features/snippet/presentation/screens/snippet_list_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -17,7 +21,7 @@ abstract final class AppRouter {
     initialLocation: '/',
     routes: [
       // ------------------------------------------------------------------
-      // Shell: indexed‐stack keeps each branch's state alive.
+      // Shell: indexed-stack keeps each branch's state alive.
       // ------------------------------------------------------------------
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -34,7 +38,17 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 1 — Groups
+          // 1 — Snippets
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/snippets',
+                builder: (context, state) => const SnippetListScreen(),
+              ),
+            ],
+          ),
+
+          // 2 — Groups
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -44,7 +58,7 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 2 — Tags
+          // 3 — Tags
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -54,7 +68,7 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 3 — SSH Keys
+          // 4 — SSH Keys
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -64,7 +78,7 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 4 — Export / Import
+          // 5 — Export / Import
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -78,7 +92,6 @@ abstract final class AppRouter {
 
       // ------------------------------------------------------------------
       // Detail routes — outside the shell (root navigator).
-      // Back button works automatically.
       // ------------------------------------------------------------------
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
@@ -100,6 +113,32 @@ abstract final class AppRouter {
           final id = state.pathParameters['id']!;
           return ServerFormScreen(serverId: id);
         },
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/snippet/new',
+        builder: (context, state) => const SnippetFormScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/snippet/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return SnippetDetailScreen(snippetId: id);
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/snippet/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return SnippetFormScreen(snippetId: id);
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
