@@ -2043,6 +2043,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'(Copy)'**
   String get serverCopySuffix;
+
+  /// No description provided for @settingsSectionSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get settingsSectionSupport;
+
+  /// No description provided for @settingsDownloadLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Logs'**
+  String get settingsDownloadLogs;
+
+  /// No description provided for @settingsSendLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Logs to Support'**
+  String get settingsSendLogs;
+
+  /// No description provided for @settingsLogsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs saved successfully'**
+  String get settingsLogsSaved;
+
+  /// No description provided for @settingsLogsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No log entries available'**
+  String get settingsLogsEmpty;
 }
 
 class _AppLocalizationsDelegate

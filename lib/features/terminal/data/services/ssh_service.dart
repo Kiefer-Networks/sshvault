@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
@@ -18,6 +19,9 @@ typedef SshConnection = ({
 });
 
 class SshService {
+  static const _tag = 'SSH';
+  final _log = LoggingService.instance;
+
   Future<Result<SshConnection>> connect({
     required ServerEntity server,
     required ServerCredentials credentials,
@@ -25,12 +29,15 @@ class SshService {
     String? managedPrivateKey,
     String? managedPassphrase,
   }) async {
+    _log.info(_tag, 'Connecting to ${server.hostname}:${server.port} as ${server.username}');
     try {
       final socket = await SSHSocket.connect(
         server.hostname,
         server.port,
         timeout: const Duration(seconds: 15),
       );
+
+      _log.debug(_tag, 'Socket connected to ${server.hostname}:${server.port}');
 
       final client = SSHClient(
         socket,
@@ -45,6 +52,7 @@ class SshService {
       );
 
       await client.authenticated;
+      _log.info(_tag, 'Authenticated to ${server.hostname}:${server.port}');
 
       final session = await client.shell(
         pty: const SSHPtyConfig(
@@ -52,6 +60,8 @@ class SshService {
           height: 24,
         ),
       );
+
+      _log.info(_tag, 'Shell session opened for ${server.hostname}');
 
       // UTF-8 decoder that tolerates malformed sequences (e.g. binary data
       // mixed into terminal output). allowMalformed replaces invalid bytes
@@ -66,7 +76,10 @@ class SshService {
       // Wire SSH stdout → terminal (store subscription for cleanup)
       final stdoutSub = session.stdout.listen(
         (data) => terminal.write(utf8.convert(data)),
-        onDone: () => terminal.write('\r\n[Connection closed]\r\n'),
+        onDone: () {
+          _log.info(_tag, 'Connection closed for ${server.hostname}');
+          terminal.write('\r\n[Connection closed]\r\n');
+        },
       );
 
       // Wire SSH stderr → terminal (store subscription for cleanup)
@@ -86,16 +99,19 @@ class SshService {
         stderrSubscription: stderrSub,
       ));
     } on SSHAuthFailError catch (e) {
+      _log.error(_tag, 'Authentication failed for ${server.username}@${server.hostname}: $e');
       return Err(SshConnectionFailure(
         'Authentication failed for ${server.username}@${server.hostname}',
         cause: e,
       ));
     } on SSHAuthAbortError catch (e) {
+      _log.error(_tag, 'Authentication aborted for ${server.hostname}: $e');
       return Err(SshConnectionFailure(
         'Authentication aborted',
         cause: e,
       ));
     } catch (e) {
+      _log.error(_tag, 'Failed to connect to ${server.hostname}:${server.port}: $e');
       return Err(SshConnectionFailure(
         'Failed to connect to ${server.hostname}:${server.port}',
         cause: e,
@@ -135,6 +151,7 @@ class SshService {
   }
 
   void disconnect(SSHClient client) {
+    _log.info(_tag, 'Disconnecting SSH client');
     client.close();
   }
 }

@@ -1053,4 +1053,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serverCopySuffix => '(Copy)';
+
+  @override
+  String get settingsSectionSupport => 'Support';
+
+  @override
+  String get settingsDownloadLogs => 'Download Logs';
+
+  @override
+  String get settingsSendLogs => 'Send Logs to Support';
+
+  @override
+  String get settingsLogsSaved => 'Logs saved successfully';
+
+  @override
+  String get settingsLogsEmpty => 'No log entries available';
 }

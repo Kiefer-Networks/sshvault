@@ -233,6 +233,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
 
     setState(() => _saving = true);
 
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+
     try {
       final tagsAsync = ref.read(tagListProvider);
       final allTags = tagsAsync.valueOrNull ?? [];
@@ -264,11 +267,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
         context.pop();
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.error(e.toString()))),
-        );
-      }
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.error(e.toString()))),
+      );
     } finally {
       if (mounted) setState(() => _saving = false);
     }

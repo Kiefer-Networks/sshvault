@@ -387,5 +387,11 @@
   "authMethodKey": "SSH Key",
   "authMethodBoth": "Password + Key",
 
-  "serverCopySuffix": "(Copy)"
+  "serverCopySuffix": "(Copy)",
+
+  "settingsSectionSupport": "Support",
+  "settingsDownloadLogs": "Download Logs",
+  "settingsSendLogs": "Send Logs to Support",
+  "settingsLogsSaved": "Logs saved successfully",
+  "settingsLogsEmpty": "No log entries available"
 }

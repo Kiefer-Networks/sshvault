@@ -1061,4 +1061,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get serverCopySuffix => '(Kopie)';
+
+  @override
+  String get settingsSectionSupport => 'Support';
+
+  @override
+  String get settingsDownloadLogs => 'Protokolle herunterladen';
+
+  @override
+  String get settingsSendLogs => 'Protokolle an Support senden';
+
+  @override
+  String get settingsLogsSaved => 'Protokolle erfolgreich gespeichert';
+
+  @override
+  String get settingsLogsEmpty => 'Keine Protokolleinträge vorhanden';
 }

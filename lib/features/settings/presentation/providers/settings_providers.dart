@@ -10,6 +10,7 @@ import 'package:shellvault/core/crypto/database_migration_service.dart';
 import 'package:shellvault/core/crypto/dek_manager.dart';
 import 'package:shellvault/core/crypto/field_crypto_provider.dart';
 import 'package:shellvault/core/crypto/field_crypto_service.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/features/settings/domain/entities/app_settings_entity.dart';
@@ -20,6 +21,9 @@ final settingsProvider =
 );
 
 class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
+  static const _tag = 'Settings';
+  final _log = LoggingService.instance;
+
   static const _keyThemeMode = 'theme_mode';
   static const _keyDefaultSshPort = 'default_ssh_port';
   static const _keyDefaultUsername = 'default_username';
@@ -200,36 +204,42 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
+    _log.info(_tag, 'Theme changed to ${_themeModeToString(mode)}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyThemeMode, _themeModeToString(mode));
     ref.invalidateSelf();
   }
 
   Future<void> setDefaultSshPort(int port) async {
+    _log.info(_tag, 'Default SSH port changed to $port');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyDefaultSshPort, port.toString());
     ref.invalidateSelf();
   }
 
   Future<void> setDefaultUsername(String username) async {
+    _log.info(_tag, 'Default username changed');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyDefaultUsername, username);
     ref.invalidateSelf();
   }
 
   Future<void> setAutoLockMinutes(int minutes) async {
+    _log.info(_tag, 'Auto-lock timeout changed to $minutes minutes');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyAutoLockMinutes, minutes.toString());
     ref.invalidateSelf();
   }
 
   Future<void> setBiometricUnlock(bool enabled) async {
+    _log.info(_tag, 'Biometric unlock ${enabled ? 'enabled' : 'disabled'}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyBiometricUnlock, enabled.toString());
     ref.invalidateSelf();
   }
 
   Future<void> setEncryptExportByDefault(bool enabled) async {
+    _log.info(_tag, 'Encrypt export default ${enabled ? 'enabled' : 'disabled'}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyEncryptExportDefault, enabled.toString());
     ref.invalidateSelf();
@@ -237,6 +247,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
 
   /// Sets a new PIN, generates DEK, and encrypts the database.
   Future<void> setPinCode(String pin) async {
+    _log.info(_tag, 'PIN code set');
     final dao = ref.read(databaseProvider).appSettingsDao;
     final hashResult = _hashPin(pin);
 
@@ -261,6 +272,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   /// Clears the PIN, decrypts the database, deletes the DEK,
   /// and disables biometric unlock.
   Future<void> clearPinCode() async {
+    _log.info(_tag, 'PIN code removed');
     final dao = ref.read(databaseProvider).appSettingsDao;
     final dekManager = DekManager(ref.read(secureStorageProvider));
 
@@ -303,6 +315,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   }
 
   Future<void> setLocale(String locale) async {
+    _log.info(_tag, 'Locale changed to ${locale.isEmpty ? 'system' : locale}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyLocale, locale);
     ref.invalidateSelf();

@@ -362,5 +362,11 @@
   "authMethodKey": "Clave SSH",
   "authMethodBoth": "Contraseña + Clave",
 
-  "serverCopySuffix": "(Copia)"
+  "serverCopySuffix": "(Copia)",
+
+  "settingsSectionSupport": "Soporte",
+  "settingsDownloadLogs": "Descargar registros",
+  "settingsSendLogs": "Enviar registros al soporte",
+  "settingsLogsSaved": "Registros guardados exitosamente",
+  "settingsLogsEmpty": "No hay entradas de registro disponibles"
 }

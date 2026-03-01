@@ -1,7 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/services/biometric_provider.dart';
+import 'package:shellvault/core/services/logging_provider.dart';
 import 'package:shellvault/core/widgets/pin_dialog.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
@@ -247,6 +253,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               const Divider(),
 
+              // Support
+              _SectionHeader(title: l10n.settingsSectionSupport),
+              ListTile(
+                leading: const Icon(Icons.download_outlined),
+                title: Text(l10n.settingsDownloadLogs),
+                onTap: () => _downloadLogs(l10n),
+              ),
+              ListTile(
+                leading: const Icon(Icons.email_outlined),
+                title: Text(l10n.settingsSendLogs),
+                onTap: () => _sendLogsToSupport(l10n),
+              ),
+              const Divider(),
+
               // About
               _SectionHeader(title: l10n.settingsSectionAbout),
               ListTile(
@@ -378,6 +398,85 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ref
           .read(settingsProvider.notifier)
           .setDefaultUsername(result.trim());
+    }
+  }
+
+  Future<void> _downloadLogs(AppLocalizations l10n) async {
+    final logger = ref.read(loggingServiceProvider);
+
+    if (logger.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.settingsLogsEmpty)),
+      );
+      return;
+    }
+
+    final filePath = await logger.exportToFile();
+    if (filePath == null || !mounted) return;
+
+    await Share.shareXFiles([XFile(filePath)]);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.settingsLogsSaved)),
+    );
+  }
+
+  Future<void> _sendLogsToSupport(AppLocalizations l10n) async {
+    final logger = ref.read(loggingServiceProvider);
+
+    // Detect platform
+    String platform;
+    if (kIsWeb) {
+      platform = 'Web';
+    } else if (Platform.isIOS) {
+      platform = 'iOS';
+    } else if (Platform.isAndroid) {
+      platform = 'Android';
+    } else if (Platform.isMacOS) {
+      platform = 'macOS';
+    } else if (Platform.isWindows) {
+      platform = 'Windows';
+    } else if (Platform.isLinux) {
+      platform = 'Linux';
+    } else {
+      platform = 'Unknown';
+    }
+
+    // If logs exist, export and share via share_plus with email intent
+    if (!logger.isEmpty) {
+      final filePath = await logger.exportToFile();
+      if (filePath != null && mounted) {
+        await Share.shareXFiles(
+          [XFile(filePath)],
+          subject: 'SSH Vault Support Request',
+          text: 'Please describe your issue:\n\n'
+              '---\n'
+              'App Version: 0.1.0\n'
+              'Platform: $platform\n'
+              '---\n',
+        );
+        return;
+      }
+    }
+
+    // Fallback: open mailto link without attachment
+    final mailUri = Uri(
+      scheme: 'mailto',
+      path: 'support@sshvault.app',
+      queryParameters: {
+        'subject': 'SSH Vault Support Request',
+        'body': 'Please describe your issue:\n\n'
+            '---\n'
+            'App Version: 0.1.0\n'
+            'Platform: $platform\n'
+            '---\n',
+      },
+    );
+
+    if (await canLaunchUrl(mailUri)) {
+      await launchUrl(mailUri);
     }
   }
 }

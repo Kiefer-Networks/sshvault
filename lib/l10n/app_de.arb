@@ -362,5 +362,11 @@
   "authMethodKey": "SSH-Schlüssel",
   "authMethodBoth": "Passwort + Schlüssel",
 
-  "serverCopySuffix": "(Kopie)"
+  "serverCopySuffix": "(Kopie)",
+
+  "settingsSectionSupport": "Support",
+  "settingsDownloadLogs": "Protokolle herunterladen",
+  "settingsSendLogs": "Protokolle an Support senden",
+  "settingsLogsSaved": "Protokolle erfolgreich gespeichert",
+  "settingsLogsEmpty": "Keine Protokolleinträge vorhanden"
 }
