@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/crypto/encryption_service.dart';
+import 'package:shellvault/core/crypto/crypto_provider.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
@@ -23,7 +23,7 @@ final syncUseCasesProvider = Provider<SyncUseCases>((ref) {
   return SyncUseCases(
     ref.watch(syncRepositoryProvider),
     ref.watch(exportImportRepositoryProvider),
-    EncryptionService(),
+    ref.watch(encryptionServiceProvider),
   );
 });
 

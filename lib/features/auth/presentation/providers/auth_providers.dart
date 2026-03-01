@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/network/api_provider.dart';
@@ -31,11 +34,38 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     return token != null ? AuthStatus.authenticated : AuthStatus.unauthenticated;
   }
 
+  Future<String?> _getDeviceName() async {
+    try {
+      final info = DeviceInfoPlugin();
+      if (kIsWeb) {
+        final web = await info.webBrowserInfo;
+        return web.browserName.name;
+      } else if (Platform.isAndroid) {
+        final android = await info.androidInfo;
+        return android.model;
+      } else if (Platform.isIOS) {
+        final ios = await info.iosInfo;
+        return ios.name;
+      } else if (Platform.isMacOS) {
+        final macos = await info.macOsInfo;
+        return macos.computerName;
+      } else if (Platform.isLinux) {
+        final linux = await info.linuxInfo;
+        return linux.prettyName;
+      } else if (Platform.isWindows) {
+        final windows = await info.windowsInfo;
+        return windows.computerName;
+      }
+    } catch (_) {}
+    return null;
+  }
+
   Future<void> login(String email, String password) async {
     state = const AsyncValue.loading();
     final repo = ref.read(authRepositoryProvider);
+    final deviceName = await _getDeviceName();
 
-    final result = await repo.login(email, password);
+    final result = await repo.login(email, password, deviceName: deviceName);
     state = await result.fold(
       onSuccess: (auth) async {
         await _persistTokens(auth.accessToken, auth.refreshToken,

@@ -28,10 +28,14 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<AuthResponse>> login(String email, String password) async {
+  Future<Result<AuthResponse>> login(String email, String password, {String? deviceName}) async {
     final result = await _apiClient.post(
       '/v1/auth/login',
-      data: {'email': email, 'password': password},
+      data: {
+        'email': email,
+        'password': password,
+        if (deviceName != null) 'device_name': deviceName,
+      },
     );
     return result.fold(
       onSuccess: (data) {
@@ -92,7 +96,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<void>> resetPassword(String token, String newPassword) async {
     final result = await _apiClient.post(
       '/v1/auth/reset-password',
-      data: {'token': token, 'password': newPassword},
+      data: {'token': token, 'new_password': newPassword},
     );
     return result.fold(
       onSuccess: (_) => const Success(null),

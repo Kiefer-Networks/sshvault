@@ -49,7 +49,7 @@ class AccountRepositoryImpl implements AccountRepository {
       String oldPassword, String newPassword) async {
     final result = await _apiClient.put(
       '/v1/user/password',
-      data: {'old_password': oldPassword, 'new_password': newPassword},
+      data: {'current_password': oldPassword, 'new_password': newPassword},
     );
     return result.fold(
       onSuccess: (_) => const Success(null),

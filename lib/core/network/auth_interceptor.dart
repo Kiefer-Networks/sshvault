@@ -59,10 +59,22 @@ class AuthInterceptor extends Interceptor {
         data: {'refresh_token': refreshToken},
       );
 
-      final data = response.data!;
+      final data = response.data;
+      if (data == null) {
+        await _handleAuthExpired();
+        return handler.next(err);
+      }
       final newAccessToken = data['access_token'] as String;
       final newRefreshToken = data['refresh_token'] as String;
-      final expiresAt = data['expires_at'] as String?;
+      String? expiresAt;
+      final rawExpiry = data['expires_at'];
+      if (rawExpiry is int) {
+        expiresAt = DateTime.fromMillisecondsSinceEpoch(
+                rawExpiry * 1000, isUtc: true)
+            .toIso8601String();
+      } else if (rawExpiry is String) {
+        expiresAt = rawExpiry;
+      }
 
       await _storage.saveAccessToken(newAccessToken);
       await _storage.saveRefreshToken(newRefreshToken);

@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 
 /// Product IDs for consumable support purchases.
 const _kProductIds = <String>{
@@ -15,12 +14,6 @@ const _kProductIds = <String>{
 
 /// Stripe Payment Link for Desktop/Web fallback (replace with real URL).
 const kStripeSupportUrl = 'https://sshvault.app/support';
-
-/// Whether the current platform supports native IAP (iOS/Android only).
-bool get isNativeIapPlatform {
-  if (kIsWeb) return false;
-  return Platform.isIOS || Platform.isAndroid || Platform.isMacOS;
-}
 
 /// Status of an in-progress support purchase.
 enum SupportPurchaseStatus { idle, purchasing, success, error }

@@ -14,11 +14,20 @@ class AuthResponse {
   });
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
+    String? expiresAt;
+    final raw = json['expires_at'];
+    if (raw is int) {
+      expiresAt = DateTime.fromMillisecondsSinceEpoch(raw * 1000, isUtc: true)
+          .toIso8601String();
+    } else if (raw is String) {
+      expiresAt = raw;
+    }
+
     return AuthResponse(
       user: UserEntity.fromJson(json['user'] as Map<String, dynamic>),
       accessToken: json['access_token'] as String,
       refreshToken: json['refresh_token'] as String,
-      expiresAt: json['expires_at'] as String?,
+      expiresAt: expiresAt,
     );
   }
 }

@@ -12,13 +12,19 @@ class VaultEntity {
   });
 
   factory VaultEntity.fromJson(Map<String, dynamic> json) {
+    DateTime? updatedAt;
+    final raw = json['updated_at'];
+    if (raw is int) {
+      updatedAt = DateTime.fromMillisecondsSinceEpoch(raw * 1000, isUtc: true);
+    } else if (raw is String) {
+      updatedAt = DateTime.parse(raw);
+    }
+
     return VaultEntity(
       version: json['version'] as int? ?? 0,
       blob: json['blob'] as String?,
       checksum: json['checksum'] as String?,
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'] as String)
-          : null,
+      updatedAt: updatedAt,
     );
   }
 }

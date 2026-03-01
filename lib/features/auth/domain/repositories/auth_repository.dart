@@ -3,7 +3,7 @@ import 'package:shellvault/features/auth/domain/entities/auth_response.dart';
 
 abstract class AuthRepository {
   Future<Result<AuthResponse>> register(String email, String password);
-  Future<Result<AuthResponse>> login(String email, String password);
+  Future<Result<AuthResponse>> login(String email, String password, {String? deviceName});
   Future<Result<AuthResponse>> oauthLogin(String provider, String idToken);
   Future<Result<void>> logout(String refreshToken);
   Future<Result<void>> forgotPassword(String email);
