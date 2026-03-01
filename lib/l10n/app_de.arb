@@ -378,6 +378,8 @@
   "authRegister": "Registrieren",
   "authForgotPassword": "Passwort vergessen?",
   "authWhyLogin": "Melde dich an, um verschlüsselte Cloud-Synchronisation auf allen Geräten zu aktivieren. Die App funktioniert auch ohne Konto komplett offline.",
+  "authPricingInfo": "Cloud-Sync für alle deine Geräte — 9,99 €/Jahr",
+  "authPricingHint": "Ein Abo, unbegrenzt Geräte. Jederzeit kündbar.",
   "authEmailLabel": "E-Mail",
   "authEmailRequired": "E-Mail ist erforderlich",
   "authEmailInvalid": "Ungültige E-Mail-Adresse",

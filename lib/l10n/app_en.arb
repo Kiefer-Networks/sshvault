@@ -403,6 +403,8 @@
   "authRegister": "Register",
   "authForgotPassword": "Forgot password?",
   "authWhyLogin": "Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.",
+  "authPricingInfo": "Cloud sync for all your devices — €9.99/year",
+  "authPricingHint": "One subscription, unlimited devices. Cancel anytime.",
   "authEmailLabel": "Email",
   "authEmailRequired": "Email is required",
   "authEmailInvalid": "Invalid email address",

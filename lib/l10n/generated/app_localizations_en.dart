@@ -1100,6 +1100,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.';
 
   @override
+  String get authPricingInfo => 'Cloud sync for all your devices — €9.99/year';
+
+  @override
+  String get authPricingHint =>
+      'One subscription, unlimited devices. Cancel anytime.';
+
+  @override
   String get authEmailLabel => 'Email';
 
   @override
@@ -1201,7 +1208,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSyncServerUrl => 'Server URL';
 
   @override
-  String get settingsSyncDefaultServer => 'Default (shellvault.app)';
+  String get settingsSyncDefaultServer => 'Default (sshvault.app)';
 
   @override
   String get accountTitle => 'Account';

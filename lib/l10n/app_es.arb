@@ -378,6 +378,8 @@
   "authRegister": "Registrarse",
   "authForgotPassword": "¿Olvidaste tu contraseña?",
   "authWhyLogin": "Inicia sesión para habilitar la sincronización cifrada en la nube en todos tus dispositivos. La app funciona completamente sin conexión sin una cuenta.",
+  "authPricingInfo": "Sincronización en la nube para todos tus dispositivos — 9,99 €/año",
+  "authPricingHint": "Una suscripción, dispositivos ilimitados. Cancela cuando quieras.",
   "authEmailLabel": "Correo electrónico",
   "authEmailRequired": "El correo electrónico es obligatorio",
   "authEmailInvalid": "Dirección de correo inválida",

@@ -1105,6 +1105,14 @@ class AppLocalizationsEs extends AppLocalizations {
       'Inicia sesión para habilitar la sincronización cifrada en la nube en todos tus dispositivos. La app funciona completamente sin conexión sin una cuenta.';
 
   @override
+  String get authPricingInfo =>
+      'Sincronización en la nube para todos tus dispositivos — 9,99 €/año';
+
+  @override
+  String get authPricingHint =>
+      'Una suscripción, dispositivos ilimitados. Cancela cuando quieras.';
+
+  @override
   String get authEmailLabel => 'Correo electrónico';
 
   @override
@@ -1206,7 +1214,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsSyncServerUrl => 'URL del servidor';
 
   @override
-  String get settingsSyncDefaultServer => 'Predeterminado (shellvault.app)';
+  String get settingsSyncDefaultServer => 'Predeterminado (sshvault.app)';
 
   @override
   String get accountTitle => 'Cuenta';

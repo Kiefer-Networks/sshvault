@@ -70,7 +70,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 12),
+                  Card(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primaryContainer
+                        .withValues(alpha: 0.3),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      child: Column(
+                        children: [
+                          Text(
+                            l10n.authPricingInfo,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface,
+                                ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            l10n.authPricingHint,
+                            textAlign: TextAlign.center,
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
                   // Email field
                   TextFormField(

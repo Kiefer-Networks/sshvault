@@ -2116,6 +2116,18 @@ abstract class AppLocalizations {
   /// **'Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.'**
   String get authWhyLogin;
 
+  /// No description provided for @authPricingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync for all your devices — €9.99/year'**
+  String get authPricingInfo;
+
+  /// No description provided for @authPricingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'One subscription, unlimited devices. Cancel anytime.'**
+  String get authPricingHint;
+
   /// No description provided for @authEmailLabel.
   ///
   /// In en, this message translates to:
@@ -2311,7 +2323,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsSyncDefaultServer.
   ///
   /// In en, this message translates to:
-  /// **'Default (shellvault.app)'**
+  /// **'Default (sshvault.app)'**
   String get settingsSyncDefaultServer;
 
   /// No description provided for @accountTitle.
