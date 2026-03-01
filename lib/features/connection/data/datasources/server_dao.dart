@@ -8,6 +8,9 @@ part 'server_dao.g.dart';
 class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
   ServerDao(super.db);
 
+  static String _escapeLike(String input) =>
+      input.replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_');
+
   Future<List<Server>> getAllServers() => select(servers).get();
 
   Future<Server?> getServerById(String id) =>
@@ -20,13 +23,14 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
       (select(servers)..where((s) => s.sshKeyId.equals(sshKeyId))).get();
 
   Future<List<Server>> searchServers(String query) {
+    final escaped = _escapeLike(query);
     return (select(servers)
           ..where(
             (s) =>
-                s.name.like('%$query%') |
-                s.hostname.like('%$query%') |
-                s.username.like('%$query%') |
-                s.notes.like('%$query%'),
+                s.name.like('%$escaped%') |
+                s.hostname.like('%$escaped%') |
+                s.username.like('%$escaped%') |
+                s.notes.like('%$escaped%'),
           ))
         .get();
   }
@@ -40,12 +44,13 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
     var query = select(servers);
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
+      final escaped = _escapeLike(searchQuery);
       query = query
         ..where(
           (s) =>
-              s.name.like('%$searchQuery%') |
-              s.hostname.like('%$searchQuery%') |
-              s.username.like('%$searchQuery%'),
+              s.name.like('%$escaped%') |
+              s.hostname.like('%$escaped%') |
+              s.username.like('%$escaped%'),
         );
     }
 

@@ -8,6 +8,9 @@ part 'snippet_dao.g.dart';
 class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
   SnippetDao(super.db);
 
+  static String _escapeLike(String input) =>
+      input.replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_');
+
   Future<List<Snippet>> getAllSnippets() =>
       (select(snippets)..orderBy([(s) => OrderingTerm.asc(s.sortOrder)])).get();
 
@@ -29,12 +32,13 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
     var query = select(snippets);
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
+      final escaped = _escapeLike(searchQuery);
       query = query
         ..where(
           (s) =>
-              s.name.like('%$searchQuery%') |
-              s.content.like('%$searchQuery%') |
-              s.description.like('%$searchQuery%'),
+              s.name.like('%$escaped%') |
+              s.content.like('%$escaped%') |
+              s.description.like('%$escaped%'),
         );
     }
 
