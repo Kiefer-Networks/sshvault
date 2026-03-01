@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 
 class AppSettingsEntity {
   final ThemeMode themeMode;
@@ -11,6 +12,8 @@ class AppSettingsEntity {
   final String pinSalt;
   final bool dismissedSecurityHint;
   final String locale;
+  final int failedPinAttempts;
+  final DateTime? lockoutUntil;
 
   const AppSettingsEntity({
     this.themeMode = ThemeMode.system,
@@ -23,10 +26,26 @@ class AppSettingsEntity {
     this.pinSalt = '',
     this.dismissedSecurityHint = false,
     this.locale = '',
+    this.failedPinAttempts = 0,
+    this.lockoutUntil,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
   bool get hasAnyLock => biometricUnlock || hasPin;
+
+  bool get isLockedOut {
+    if (lockoutUntil == null) return false;
+    return DateTime.now().isBefore(lockoutUntil!);
+  }
+
+  Duration get remainingLockout {
+    if (lockoutUntil == null) return Duration.zero;
+    final remaining = lockoutUntil!.difference(DateTime.now());
+    return remaining.isNegative ? Duration.zero : remaining;
+  }
+
+  bool get shouldLockout =>
+      failedPinAttempts >= AppConstants.maxPinAttempts;
 
   AppSettingsEntity copyWith({
     ThemeMode? themeMode,
@@ -39,6 +58,8 @@ class AppSettingsEntity {
     String? pinSalt,
     bool? dismissedSecurityHint,
     String? locale,
+    int? failedPinAttempts,
+    DateTime? lockoutUntil,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -53,6 +74,8 @@ class AppSettingsEntity {
       dismissedSecurityHint:
           dismissedSecurityHint ?? this.dismissedSecurityHint,
       locale: locale ?? this.locale,
+      failedPinAttempts: failedPinAttempts ?? this.failedPinAttempts,
+      lockoutUntil: lockoutUntil ?? this.lockoutUntil,
     );
   }
 }

@@ -21,8 +21,8 @@ dependencies:
   go_router: ^14.8.1
 
   # Database
-  drift: ^2.25.0
-  drift_flutter: ^0.2.4
+  drift: ^2.28.2
+  drift_flutter: ^0.2.7
 
   # Immutable Models
   freezed_annotation: ^3.0.0
@@ -61,11 +61,11 @@ dev_dependencies:
   flutter_lints: ^6.0.0
 
   # Code Generation
-  build_runner: ^2.4.15
-  freezed: ^3.0.0
-  json_serializable: ^6.9.4
-  riverpod_generator: ^2.6.3
-  drift_dev: ^2.25.0
+  build_runner: ^2.5.4
+  freezed: ^3.1.0
+  json_serializable: ^6.9.5
+  riverpod_generator: ^2.6.5
+  drift_dev: ^2.28.0
 
 flutter:
   generate: true

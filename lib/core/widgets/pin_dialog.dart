@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 /// Dialog to set or verify a 6-digit PIN code.
@@ -30,17 +31,16 @@ class PinDialog extends StatefulWidget {
   }
 
   /// Show dialog to verify an existing PIN using a verifier function.
-  /// Returns true if correct.
-  static Future<bool> showVerifyPin(
+  /// Returns the verified PIN string if correct, null if cancelled/failed.
+  static Future<String?> showVerifyPin(
     BuildContext context, {
-    required bool Function(String pin) verifier,
+    required Future<bool> Function(String pin) verifier,
   }) async {
-    final result = await showDialog<bool>(
+    return showDialog<String>(
       context: context,
       barrierDismissible: false,
       builder: (_) => _PinVerifyDialog(verifier: verifier),
     );
-    return result ?? false;
   }
 
   @override
@@ -145,7 +145,7 @@ class _PinDialogState extends State<PinDialog> {
 }
 
 class _PinVerifyDialog extends StatefulWidget {
-  final bool Function(String pin) verifier;
+  final Future<bool> Function(String pin) verifier;
 
   const _PinVerifyDialog({required this.verifier});
 
@@ -157,6 +157,7 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
   final _controller = TextEditingController();
   String? _error;
   int _attempts = 0;
+  bool _verifying = false;
 
   @override
   void dispose() {
@@ -164,18 +165,33 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
     super.dispose();
   }
 
-  void _verify() {
+  Future<void> _verify() async {
+    if (_verifying) return;
     final l10n = AppLocalizations.of(context)!;
-    if (widget.verifier(_controller.text)) {
-      Navigator.of(context).pop(true);
+    final pin = _controller.text;
+
+    if (pin.length != 6) {
+      setState(() => _error = l10n.pinDialogErrorLength);
+      return;
+    }
+
+    setState(() => _verifying = true);
+
+    final success = await widget.verifier(pin);
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.of(context).pop(pin);
     } else {
       _attempts++;
       setState(() {
+        _verifying = false;
         _error = l10n.pinDialogWrongPin(_attempts);
         _controller.clear();
       });
-      if (_attempts >= 5) {
-        Navigator.of(context).pop(false);
+      if (_attempts >= AppConstants.maxPinAttempts) {
+        Navigator.of(context).pop();
       }
     }
   }
@@ -215,9 +231,19 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
         ],
       ),
       actions: [
+        TextButton(
+          onPressed: _verifying ? null : () => Navigator.of(context).pop(),
+          child: Text(l10n.cancel),
+        ),
         FilledButton(
-          onPressed: _verify,
-          child: Text(l10n.lockScreenUnlock),
+          onPressed: _verifying ? null : _verify,
+          child: _verifying
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(l10n.lockScreenUnlock),
         ),
       ],
     );

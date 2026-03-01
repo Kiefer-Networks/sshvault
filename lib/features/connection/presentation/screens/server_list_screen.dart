@@ -111,12 +111,13 @@ class ServerListScreen extends ConsumerWidget {
           onDetail: () => context.push('/server/${server.id}'),
           onEdit: () => context.push('/server/${server.id}/edit'),
           onDuplicate: () async {
+            final l10nDup = AppLocalizations.of(context)!;
             await ref
                 .read(serverListProvider.notifier)
-                .duplicateServer(server.id);
+                .duplicateServer(server.id, copySuffix: l10nDup.serverCopySuffix);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(AppLocalizations.of(context)!.serverDuplicated)),
+                SnackBar(content: Text(l10nDup.serverDuplicated)),
               );
             }
           },
@@ -211,7 +212,7 @@ class ServerListScreen extends ConsumerWidget {
                 Navigator.pop(ctx);
                 await ref
                     .read(serverListProvider.notifier)
-                    .duplicateServer(server.id);
+                    .duplicateServer(server.id, copySuffix: l10n.serverCopySuffix);
               },
             ),
             ListTile(

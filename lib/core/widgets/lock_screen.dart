@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/services/biometric_provider.dart';
@@ -18,17 +21,20 @@ class _LockScreenState extends ConsumerState<LockScreen>
     with WidgetsBindingObserver {
   bool _isUnlocked = false;
   bool _isAuthenticating = false;
+  bool _isVerifying = false;
   final _pinController = TextEditingController();
   String? _pinError;
-  int _attempts = 0;
+  Timer? _lockoutTimer;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Defer biometric authentication to after the first frame.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _tryBiometric();
+      if (mounted) {
+        _startLockoutTimerIfNeeded();
+        _tryBiometric();
+      }
     });
   }
 
@@ -36,6 +42,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _pinController.dispose();
+    _lockoutTimer?.cancel();
     super.dispose();
   }
 
@@ -46,7 +53,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
         _isUnlocked = false;
         _pinController.clear();
         _pinError = null;
-        _attempts = 0;
       });
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _tryBiometric();
@@ -54,20 +60,39 @@ class _LockScreenState extends ConsumerState<LockScreen>
     }
   }
 
+  void _startLockoutTimerIfNeeded() {
+    final settings = ref.read(settingsProvider).valueOrNull;
+    if (settings != null && settings.isLockedOut) {
+      _lockoutTimer?.cancel();
+      _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!mounted) {
+          _lockoutTimer?.cancel();
+          return;
+        }
+        final s = ref.read(settingsProvider).valueOrNull;
+        if (s == null || !s.isLockedOut) {
+          _lockoutTimer?.cancel();
+          setState(() => _pinError = null);
+        } else {
+          setState(() {});
+        }
+      });
+    }
+  }
+
   Future<void> _onUnlockSuccess() async {
-    // Load DEK into memory for field decryption
     await ref.read(settingsProvider.notifier).loadDekAfterUnlock();
     if (mounted) {
       setState(() => _isUnlocked = true);
     }
   }
 
-  /// Attempts biometric authentication only (no dialog needed).
   Future<void> _tryBiometric() async {
     if (_isAuthenticating) return;
 
     final settings = ref.read(settingsProvider).valueOrNull;
     if (settings == null || !settings.biometricUnlock) return;
+    if (settings.isLockedOut) return;
 
     setState(() => _isAuthenticating = true);
 
@@ -84,22 +109,42 @@ class _LockScreenState extends ConsumerState<LockScreen>
     }
   }
 
-  /// Verifies the PIN entered in the inline text field.
-  void _verifyPin() {
+  Future<void> _verifyPin() async {
+    if (_isVerifying) return;
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsProvider.notifier);
+
+    final settings = ref.read(settingsProvider).valueOrNull;
+    if (settings != null && settings.isLockedOut) return;
 
     if (_pinController.text.length != 6) {
       setState(() => _pinError = l10n.pinDialogErrorLength);
       return;
     }
 
-    if (notifier.verifyPin(_pinController.text)) {
-      _onUnlockSuccess();
+    setState(() => _isVerifying = true);
+
+    final success = await notifier.verifyPin(_pinController.text);
+
+    if (!mounted) return;
+
+    if (success) {
+      await _onUnlockSuccess();
     } else {
-      _attempts++;
+      final updatedSettings = ref.read(settingsProvider).valueOrNull;
+      if (updatedSettings != null && updatedSettings.isLockedOut) {
+        _startLockoutTimerIfNeeded();
+      }
       setState(() {
-        _pinError = l10n.pinDialogWrongPin(_attempts);
+        _isVerifying = false;
+        if (updatedSettings?.isLockedOut ?? false) {
+          final remaining = updatedSettings!.remainingLockout;
+          _pinError = l10n.lockScreenLockedOut(remaining.inMinutes + 1);
+        } else {
+          final remaining = AppConstants.maxPinAttempts -
+              (updatedSettings?.failedPinAttempts ?? 0);
+          _pinError = l10n.pinDialogWrongPin(remaining);
+        }
         _pinController.clear();
       });
     }
@@ -112,6 +157,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
     final theme = Theme.of(context);
     final settings = ref.watch(settingsProvider).valueOrNull;
     final l10n = AppLocalizations.of(context)!;
+    final isLockedOut = settings?.isLockedOut ?? false;
 
     return Scaffold(
       body: Center(
@@ -120,21 +166,36 @@ class _LockScreenState extends ConsumerState<LockScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.lock_outline,
-                  size: 64, color: theme.colorScheme.primary),
+              Icon(
+                isLockedOut ? Icons.lock : Icons.lock_outline,
+                size: 64,
+                color: isLockedOut
+                    ? theme.colorScheme.error
+                    : theme.colorScheme.primary,
+              ),
               const SizedBox(height: 16),
               Text(
                 l10n.lockScreenTitle,
                 style: theme.textTheme.headlineSmall,
               ),
+              if (isLockedOut) ...[
+                const SizedBox(height: 8),
+                Text(
+                  l10n.lockScreenLockedOut(
+                      settings!.remainingLockout.inMinutes + 1),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.error,
+                  ),
+                ),
+              ],
               const SizedBox(height: 32),
 
-              // Inline PIN input field
               if (settings?.hasPin ?? false) ...[
                 SizedBox(
                   width: 240,
                   child: TextField(
                     controller: _pinController,
+                    enabled: !isLockedOut && !_isVerifying,
                     decoration: InputDecoration(
                       labelText: l10n.pinDialogLabel,
                       hintText: l10n.pinDialogHint,
@@ -155,17 +216,26 @@ class _LockScreenState extends ConsumerState<LockScreen>
                 ),
                 const SizedBox(height: 16),
                 FilledButton.icon(
-                  onPressed: _verifyPin,
-                  icon: const Icon(Icons.lock_open),
+                  onPressed:
+                      isLockedOut || _isVerifying ? null : _verifyPin,
+                  icon: _isVerifying
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child:
+                              CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.lock_open),
                   label: Text(l10n.lockScreenUnlock),
                 ),
               ],
 
-              // Biometric unlock button
               if (settings?.biometricUnlock ?? false) ...[
                 if (settings?.hasPin ?? false) const SizedBox(height: 16),
                 OutlinedButton.icon(
-                  onPressed: _isAuthenticating ? null : _tryBiometric,
+                  onPressed: _isAuthenticating || isLockedOut
+                      ? null
+                      : _tryBiometric,
                   icon: const Icon(Icons.fingerprint),
                   label: Text(l10n.lockScreenUnlock),
                 ),

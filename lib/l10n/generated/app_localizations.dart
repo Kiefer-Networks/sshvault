@@ -178,6 +178,12 @@ abstract class AppLocalizations {
   /// **'Enter PIN'**
   String get lockScreenEnterPin;
 
+  /// No description provided for @lockScreenLockedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many failed attempts. Try again in {minutes} min.'**
+  String lockScreenLockedOut(int minutes);
+
   /// No description provided for @pinDialogSetTitle.
   ///
   /// In en, this message translates to:
@@ -229,7 +235,7 @@ abstract class AppLocalizations {
   /// No description provided for @pinDialogWrongPin.
   ///
   /// In en, this message translates to:
-  /// **'Wrong PIN ({attempts}/5)'**
+  /// **'Wrong PIN. {attempts} attempts remaining.'**
   String pinDialogWrongPin(int attempts);
 
   /// No description provided for @securityBannerMessage.
@@ -2031,6 +2037,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password + Key'**
   String get authMethodBoth;
+
+  /// No description provided for @serverCopySuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'(Copy)'**
+  String get serverCopySuffix;
 }
 
 class _AppLocalizationsDelegate

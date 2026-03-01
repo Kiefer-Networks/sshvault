@@ -48,6 +48,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get lockScreenEnterPin => 'PIN eingeben';
 
   @override
+  String lockScreenLockedOut(int minutes) {
+    return 'Zu viele Fehlversuche. Versuche es in $minutes Min. erneut.';
+  }
+
+  @override
   String get pinDialogSetTitle => 'PIN festlegen';
 
   @override
@@ -74,7 +79,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String pinDialogWrongPin(int attempts) {
-    return 'Falsche PIN ($attempts/5)';
+    return 'Falsche PIN. $attempts Versuche verbleibend.';
   }
 
   @override
@@ -1053,4 +1058,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get authMethodBoth => 'Passwort + Schlüssel';
+
+  @override
+  String get serverCopySuffix => '(Kopie)';
 }

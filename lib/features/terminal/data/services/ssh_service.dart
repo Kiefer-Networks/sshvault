@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
@@ -9,7 +10,12 @@ import 'package:shellvault/features/connection/domain/entities/server_credential
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:xterm/xterm.dart';
 
-typedef SshConnection = ({SSHClient client, SSHSession session});
+typedef SshConnection = ({
+  SSHClient client,
+  SSHSession session,
+  StreamSubscription<Uint8List> stdoutSubscription,
+  StreamSubscription<Uint8List> stderrSubscription,
+});
 
 class SshService {
   Future<Result<SshConnection>> connect({
@@ -47,20 +53,25 @@ class SshService {
         ),
       );
 
+      // UTF-8 decoder that tolerates malformed sequences (e.g. binary data
+      // mixed into terminal output). allowMalformed replaces invalid bytes
+      // with U+FFFD instead of throwing.
+      const utf8 = Utf8Decoder(allowMalformed: true);
+
       // Wire terminal output → SSH session
       terminal.onOutput = (data) {
         session.write(Uint8List.fromList(data.codeUnits));
       };
 
-      // Wire SSH stdout → terminal
-      session.stdout.listen(
-        (data) => terminal.write(String.fromCharCodes(data)),
+      // Wire SSH stdout → terminal (store subscription for cleanup)
+      final stdoutSub = session.stdout.listen(
+        (data) => terminal.write(utf8.convert(data)),
         onDone: () => terminal.write('\r\n[Connection closed]\r\n'),
       );
 
-      // Wire SSH stderr → terminal
-      session.stderr.listen(
-        (data) => terminal.write(String.fromCharCodes(data)),
+      // Wire SSH stderr → terminal (store subscription for cleanup)
+      final stderrSub = session.stderr.listen(
+        (data) => terminal.write(utf8.convert(data)),
       );
 
       // Wire terminal resize → SSH
@@ -68,7 +79,12 @@ class SshService {
         session.resizeTerminal(width, height);
       };
 
-      return Success((client: client, session: session));
+      return Success((
+        client: client,
+        session: session,
+        stdoutSubscription: stdoutSub,
+        stderrSubscription: stderrSub,
+      ));
     } on SSHAuthFailError catch (e) {
       return Err(SshConnectionFailure(
         'Authentication failed for ${server.username}@${server.hostname}',

@@ -281,6 +281,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _confirmRemovePin(AppLocalizations l10n) async {
+    // Verify current PIN before allowing removal
+    final pin = await PinDialog.showVerifyPin(
+      context,
+      verifier: (pin) async =>
+          ref.read(settingsProvider.notifier).verifyPin(pin),
+    );
+    if (pin == null || !mounted) return;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -299,7 +307,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
     );
     if (confirmed == true) {
-      ref.read(settingsProvider.notifier).clearPinCode();
+      await ref.read(settingsProvider.notifier).clearPinCode();
     }
   }
 

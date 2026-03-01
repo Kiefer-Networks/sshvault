@@ -13,6 +13,12 @@ class SecureStorageService {
       : _storage = storage ??
             const FlutterSecureStorage(
               aOptions: AndroidOptions(encryptedSharedPreferences: true),
+              iOptions: IOSOptions(
+                accessibility: KeychainAccessibility.first_unlock_this_device,
+              ),
+              mOptions: MacOsOptions(
+                accessibility: KeychainAccessibility.first_unlock_this_device,
+              ),
             );
 
   String _credentialKey(String serverId) =>

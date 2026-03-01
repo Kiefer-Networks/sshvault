@@ -49,6 +49,8 @@
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>SSH Vault uses Face ID to protect your SSH credentials.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>SSH Vault connects to servers on your local network.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

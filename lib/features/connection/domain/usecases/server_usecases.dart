@@ -45,8 +45,8 @@ class ServerUseCases {
     return _repository.deleteServer(id);
   }
 
-  Future<Result<ServerEntity>> duplicateServer(String id) {
-    return _repository.duplicateServer(id);
+  Future<Result<ServerEntity>> duplicateServer(String id, {required String copySuffix}) {
+    return _repository.duplicateServer(id, copySuffix: copySuffix);
   }
 
   Future<Result<void>> reorderServers(List<String> orderedIds) {

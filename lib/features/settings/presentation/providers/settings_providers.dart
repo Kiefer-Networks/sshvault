@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -29,6 +30,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyPinSalt = 'pin_salt';
   static const _keyDismissedSecurityHint = 'dismissed_security_hint';
   static const _keyLocale = 'locale';
+  static const _keyFailedAttempts = 'failed_pin_attempts';
+  static const _keyLockoutUntil = 'lockout_until';
 
   @override
   Future<AppSettingsEntity> build() async {
@@ -44,6 +47,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     final pinSalt = await dao.getValue(_keyPinSalt);
     final dismissedHint = await dao.getValue(_keyDismissedSecurityHint);
     final locale = await dao.getValue(_keyLocale);
+    final failedAttemptsStr = await dao.getValue(_keyFailedAttempts);
+    final lockoutUntilStr = await dao.getValue(_keyLockoutUntil);
 
     // Migrate legacy plaintext PIN to hash if present
     final legacyPin = await dao.getValue('pin_code');
@@ -77,6 +82,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
         pinSalt: hashResult.salt,
         dismissedSecurityHint: dismissedHint == 'true',
         locale: locale ?? '',
+        failedPinAttempts: int.tryParse(failedAttemptsStr ?? '') ?? 0,
+        lockoutUntil: _parseLockoutUntil(lockoutUntilStr),
       );
     }
 
@@ -91,6 +98,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       pinSalt: pinSalt ?? '',
       dismissedSecurityHint: dismissedHint == 'true',
       locale: locale ?? '',
+      failedPinAttempts: int.tryParse(failedAttemptsStr ?? '') ?? 0,
+      lockoutUntil: _parseLockoutUntil(lockoutUntilStr),
     );
   }
 
@@ -110,19 +119,23 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     };
   }
 
+  DateTime? _parseLockoutUntil(String? value) {
+    if (value == null || value.isEmpty) return null;
+    final ms = int.tryParse(value);
+    if (ms == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(ms);
+  }
+
   /// Hashes a PIN with Argon2id. Returns the hash and salt as base64 strings.
   _PinHashResult _hashPin(String pin, {Uint8List? existingSalt}) {
     final Uint8List salt;
     if (existingSalt != null) {
       salt = existingSalt;
     } else {
-      final random = SecureRandom('Fortuna');
-      random.seed(KeyParameter(
-        Uint8List.fromList(
-          List.generate(32, (i) => DateTime.now().microsecondsSinceEpoch % 256 ^ i.hashCode),
-        ),
-      ));
-      salt = random.nextBytes(AppConstants.saltLength);
+      final rng = Random.secure();
+      salt = Uint8List.fromList(
+        List.generate(AppConstants.saltLength, (_) => rng.nextInt(256)),
+      );
     }
 
     final argon2 = Argon2BytesGenerator();
@@ -145,14 +158,45 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     );
   }
 
-  /// Verifies a PIN against stored hash and salt.
-  bool verifyPin(String pin) {
+  /// Verifies a PIN against stored hash and salt with brute-force protection.
+  /// Returns true on success, false on failure. Tracks failed attempts and
+  /// triggers lockout after [AppConstants.maxPinAttempts] failures.
+  Future<bool> verifyPin(String pin) async {
     final current = state.valueOrNull;
     if (current == null || !current.hasPin) return false;
 
+    // Check lockout
+    if (current.isLockedOut) return false;
+
     final salt = base64Decode(current.pinSalt);
     final result = _hashPin(pin, existingSalt: salt);
-    return result.hash == current.pinHash;
+
+    final dao = ref.read(databaseProvider).appSettingsDao;
+
+    if (result.hash == current.pinHash) {
+      // Reset failed attempts on success
+      await dao.setValue(_keyFailedAttempts, '0');
+      await dao.deleteValue(_keyLockoutUntil);
+      ref.invalidateSelf();
+      return true;
+    }
+
+    // Increment failed attempts
+    final newAttempts = current.failedPinAttempts + 1;
+    await dao.setValue(_keyFailedAttempts, newAttempts.toString());
+
+    if (newAttempts >= AppConstants.maxPinAttempts) {
+      final lockoutUntil = DateTime.now().add(
+        const Duration(seconds: AppConstants.lockoutDurationSeconds),
+      );
+      await dao.setValue(
+        _keyLockoutUntil,
+        lockoutUntil.millisecondsSinceEpoch.toString(),
+      );
+    }
+
+    ref.invalidateSelf();
+    return false;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {

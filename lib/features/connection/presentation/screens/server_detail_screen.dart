@@ -4,6 +4,7 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
+import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
@@ -110,7 +111,12 @@ class ServerDetailScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              server.authMethod.displayName,
+                              switch (server.authMethod) {
+                                AuthMethod.password =>
+                                  l10n.authMethodPassword,
+                                AuthMethod.key => l10n.authMethodKey,
+                                AuthMethod.both => l10n.authMethodBoth,
+                              },
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurface
                                     .withAlpha(128),

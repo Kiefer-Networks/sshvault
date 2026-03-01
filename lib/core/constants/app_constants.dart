@@ -1,5 +1,5 @@
 abstract final class AppConstants {
-  static const String appName = 'ShellVault';
+  static const String appName = 'SSH Vault';
   static const String appVersion = '0.1.0';
 
   // Database
@@ -30,6 +30,10 @@ abstract final class AppConstants {
 
   // Field Encryption
   static const String encryptedFieldPrefix = 'v1:';
+
+  // Security
+  static const int maxPinAttempts = 5;
+  static const int lockoutDurationSeconds = 300; // 5 minutes
 
   // Pagination
   static const int defaultPageSize = 50;

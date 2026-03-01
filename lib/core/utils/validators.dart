@@ -135,30 +135,9 @@ abstract final class Validators {
     return null;
   }
 
-  static String? validateSshKey(String? value) {
-    if (value == null || value.trim().isEmpty) return null;
-    final trimmed = value.trim();
-    const validPrefixes = [
-      '-----BEGIN',
-      'ssh-rsa',
-      'ssh-ed25519',
-      'ecdsa-sha2',
-      'ssh-dss',
-    ];
-    if (!validPrefixes.any((p) => trimmed.startsWith(p))) {
-      return 'Invalid SSH key format';
-    }
-    return null;
-  }
-
   static String? validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) return '$fieldName is required';
     return null;
   }
 
-  static String? validateExportPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Password is required';
-    if (value.length < 8) return 'Password must be at least 8 characters';
-    return null;
-  }
 }

@@ -151,7 +151,7 @@ class ServerRepositoryImpl implements ServerRepository {
   }
 
   @override
-  Future<Result<ServerEntity>> duplicateServer(String id) async {
+  Future<Result<ServerEntity>> duplicateServer(String id, {required String copySuffix}) async {
     final result = await getServer(id);
     return result.fold(
       onSuccess: (server) async {
@@ -159,7 +159,7 @@ class ServerRepositoryImpl implements ServerRepository {
         final now = DateTime.now();
         final duplicate = server.copyWith(
           id: newId,
-          name: '${server.name} (Copy)',
+          name: '${server.name} $copySuffix',
           createdAt: now,
           updatedAt: now,
         );

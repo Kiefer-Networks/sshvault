@@ -16,6 +16,8 @@
   "lockScreenTitle": "SSH Vault is locked",
   "lockScreenUnlock": "Unlock",
   "lockScreenEnterPin": "Enter PIN",
+  "lockScreenLockedOut": "Too many failed attempts. Try again in {minutes} min.",
+  "@lockScreenLockedOut": { "placeholders": { "minutes": { "type": "int" } } },
 
   "pinDialogSetTitle": "Set PIN Code",
   "pinDialogSetSubtitle": "Enter a 6-digit PIN to protect SSH Vault",
@@ -25,7 +27,7 @@
   "pinDialogErrorLength": "PIN must be exactly 6 digits",
   "pinDialogErrorMismatch": "PINs do not match",
   "pinDialogVerifyTitle": "Enter PIN",
-  "pinDialogWrongPin": "Wrong PIN ({attempts}/5)",
+  "pinDialogWrongPin": "Wrong PIN. {attempts} attempts remaining.",
   "@pinDialogWrongPin": { "placeholders": { "attempts": { "type": "int" } } },
 
   "securityBannerMessage": "Your SSH credentials are not protected. Set up a PIN or biometric lock in Settings.",
@@ -383,5 +385,7 @@
 
   "authMethodPassword": "Password",
   "authMethodKey": "SSH Key",
-  "authMethodBoth": "Password + Key"
+  "authMethodBoth": "Password + Key",
+
+  "serverCopySuffix": "(Copy)"
 }

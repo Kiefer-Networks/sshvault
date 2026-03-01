@@ -61,9 +61,9 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     );
   }
 
-  Future<void> duplicateServer(String id) async {
+  Future<void> duplicateServer(String id, {required String copySuffix}) async {
     final useCases = ref.read(serverUseCasesProvider);
-    final result = await useCases.duplicateServer(id);
+    final result = await useCases.duplicateServer(id, copySuffix: copySuffix);
     result.fold(
       onSuccess: (_) => ref.invalidateSelf(),
       onFailure: (failure) => throw Exception(failure.message),

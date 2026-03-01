@@ -119,6 +119,8 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
         onSuccess: (connection) {
           session.client = connection.client;
           session.session = connection.session;
+          session.stdoutSubscription = connection.stdoutSubscription;
+          session.stderrSubscription = connection.stderrSubscription;
           session.status = SshConnectionStatus.connected;
           session.errorMessage = null;
 
@@ -126,6 +128,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
           connection.session.done.then((_) {
             if (state.any((s) => s.id == session.id)) {
               session.status = SshConnectionStatus.disconnected;
+              session.cancelSubscriptions();
               _notifyChange();
             }
           });
@@ -155,6 +158,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     if (index < 0) return;
 
     final session = state[index];
+    session.cancelSubscriptions();
     session.client?.close();
 
     state = [
@@ -175,6 +179,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
   void closeAllSessions() {
     for (final session in state) {
+      session.cancelSubscriptions();
       session.client?.close();
     }
     state = [];
@@ -187,7 +192,8 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
     final session = state[index];
 
-    // Close old connection
+    // Cancel old subscriptions and close connection
+    await session.cancelSubscriptions();
     session.client?.close();
 
     // Reset state
