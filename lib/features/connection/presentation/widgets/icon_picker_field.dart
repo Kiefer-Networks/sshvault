@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 
 class IconPickerField extends StatelessWidget {
@@ -19,7 +20,7 @@ class IconPickerField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Icon', style: theme.textTheme.titleSmall),
+        Text(AppLocalizations.of(context)!.iconPickerLabel, style: theme.textTheme.titleSmall),
         const SizedBox(height: 8),
         Wrap(
           spacing: 6,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
@@ -28,6 +29,7 @@ class ServerListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Slidable(
       endActionPane: ActionPane(
@@ -38,7 +40,7 @@ class ServerListTile extends StatelessWidget {
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: Colors.white,
             icon: Icons.edit,
-            label: 'Edit',
+            label: l10n.edit,
             borderRadius: BorderRadius.circular(12),
           ),
           SlidableAction(
@@ -46,7 +48,7 @@ class ServerListTile extends StatelessWidget {
             backgroundColor: Colors.teal,
             foregroundColor: Colors.white,
             icon: Icons.copy,
-            label: 'Copy',
+            label: l10n.copy,
             borderRadius: BorderRadius.circular(12),
           ),
           SlidableAction(
@@ -54,7 +56,7 @@ class ServerListTile extends StatelessWidget {
             backgroundColor: theme.colorScheme.error,
             foregroundColor: Colors.white,
             icon: Icons.delete,
-            label: 'Delete',
+            label: l10n.delete,
             borderRadius: BorderRadius.circular(12),
           ),
         ],
@@ -117,14 +119,14 @@ class ServerListTile extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.info_outlined),
                 onPressed: onDetail,
-                tooltip: 'Details',
+                tooltip: l10n.serverDetails,
                 visualDensity: VisualDensity.compact,
               ),
             if (onConnect != null)
               IconButton(
                 icon: const Icon(Icons.terminal),
                 onPressed: onConnect,
-                tooltip: 'Connect',
+                tooltip: l10n.serverConnect,
                 visualDensity: VisualDensity.compact,
               ),
           ],

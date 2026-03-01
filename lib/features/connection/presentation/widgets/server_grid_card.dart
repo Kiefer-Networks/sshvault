@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
@@ -23,6 +24,7 @@ class ServerGridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return GestureDetector(
       onTap: onTap,
@@ -106,7 +108,7 @@ class ServerGridCard extends StatelessWidget {
                         color: theme.colorScheme.onSurface.withAlpha(153),
                       ),
                       onPressed: onDetail,
-                      tooltip: 'Details',
+                      tooltip: l10n.serverDetails,
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(
@@ -122,7 +124,7 @@ class ServerGridCard extends StatelessWidget {
                         color: theme.colorScheme.onSurface.withAlpha(153),
                       ),
                       onPressed: onEdit,
-                      tooltip: 'Edit',
+                      tooltip: l10n.edit,
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(

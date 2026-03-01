@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
 
 class ColorPickerField extends StatelessWidget {
@@ -17,7 +18,7 @@ class ColorPickerField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Color',
+          AppLocalizations.of(context)!.colorPickerLabel,
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(height: 8),

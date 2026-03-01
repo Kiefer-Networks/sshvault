@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
@@ -14,19 +15,21 @@ class TagListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tagsAsync = ref.watch(tagListProvider);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: buildShellAppBar(context, title: 'Tags'),
+      appBar: buildShellAppBar(context, title: l10n.tagListTitle),
       body: tagsAsync.when(
         data: (tags) {
           if (tags.isEmpty) {
             return EmptyState(
               icon: Icons.label_outline,
-              title: 'No tags yet',
-              subtitle: 'Create tags to label and filter your servers.',
+              title: l10n.tagListEmpty,
+              subtitle: l10n.tagListEmptySubtitle,
               action: FilledButton.icon(
                 onPressed: () => _showTagForm(context, ref),
                 icon: const Icon(Icons.add),
-                label: const Text('Add Tag'),
+                label: Text(l10n.tagAddButton),
               ),
             );
           }
@@ -45,7 +48,7 @@ class TagListScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'addTagFab',
@@ -64,10 +67,11 @@ class TagListScreen extends ConsumerWidget {
     WidgetRef ref,
     TagEntity tag,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await ConfirmDialog.show(
       context,
-      title: 'Delete Tag',
-      message: 'Delete "${tag.name}"? It will be removed from all servers.',
+      title: l10n.tagDeleteTitle,
+      message: l10n.tagDeleteMessage(tag.name),
     );
     if (confirmed == true) {
       await ref.read(tagListProvider.notifier).deleteTag(tag.id);

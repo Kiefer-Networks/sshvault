@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
@@ -57,8 +58,10 @@ class _GroupFormDialogState extends State<GroupFormDialog> {
   Widget build(BuildContext context) {
     final groupsAsync = widget.ref.watch(groupListProvider);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: Text(widget.isEditing ? 'Edit Group' : 'New Group'),
+      title: Text(widget.isEditing ? l10n.groupFormTitleEdit : l10n.groupFormTitleNew),
       content: SizedBox(
         width: 400,
         child: SingleChildScrollView(
@@ -67,10 +70,11 @@ class _GroupFormDialogState extends State<GroupFormDialog> {
             children: [
               TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Group Name',
-                  prefixIcon: Icon(Icons.folder_outlined),
+                decoration: InputDecoration(
+                  labelText: l10n.groupFormNameLabel,
+                  prefixIcon: const Icon(Icons.folder_outlined),
                 ),
+                keyboardType: TextInputType.text,
                 autofocus: true,
               ),
               const SizedBox(height: 16),
@@ -82,14 +86,14 @@ class _GroupFormDialogState extends State<GroupFormDialog> {
                   if (availableGroups.isEmpty) return const SizedBox.shrink();
                   return DropdownButtonFormField<String?>(
                     initialValue: _parentId,
-                    decoration: const InputDecoration(
-                      labelText: 'Parent Group',
-                      prefixIcon: Icon(Icons.account_tree),
+                    decoration: InputDecoration(
+                      labelText: l10n.groupFormParentLabel,
+                      prefixIcon: const Icon(Icons.account_tree),
                     ),
                     items: [
-                      const DropdownMenuItem(
+                      DropdownMenuItem(
                         value: null,
-                        child: Text('None (Root)'),
+                        child: Text(l10n.groupFormParentNone),
                       ),
                       ...availableGroups.map(
                         (g) => DropdownMenuItem(
@@ -122,11 +126,11 @@ class _GroupFormDialogState extends State<GroupFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: _save,
-          child: Text(widget.isEditing ? 'Update' : 'Create'),
+          child: Text(widget.isEditing ? l10n.update : l10n.create),
         ),
       ],
     );

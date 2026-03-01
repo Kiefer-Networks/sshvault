@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
@@ -15,12 +16,13 @@ class SnippetDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final snippetAsync = ref.watch(snippetDetailProvider(snippetId));
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Snippet Details'),
+        title: Text(l10n.snippetDetailTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -31,8 +33,8 @@ class SnippetDetailScreen extends ConsumerWidget {
             onPressed: () async {
               final confirmed = await ConfirmDialog.show(
                 context,
-                title: 'Delete Snippet',
-                message: 'This action cannot be undone.',
+                title: l10n.snippetDetailDeleteTitle,
+                message: l10n.snippetDetailDeleteMessage,
               );
               if (confirmed == true && context.mounted) {
                 await ref
@@ -115,7 +117,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Content', style: theme.textTheme.titleSmall),
+                          Text(l10n.snippetDetailContent, style: theme.textTheme.titleSmall),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -126,7 +128,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                                     snippet,
                                   ),
                                   icon: const Icon(Icons.tune, size: 18),
-                                  label: const Text('Fill Variables'),
+                                  label: Text(l10n.snippetDetailFillVariables),
                                 ),
                               IconButton(
                                 icon: const Icon(Icons.copy, size: 20),
@@ -135,8 +137,8 @@ class SnippetDetailScreen extends ConsumerWidget {
                                     ClipboardData(text: snippet.content),
                                   );
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Copied to clipboard'),
+                                    SnackBar(
+                                      content: Text(l10n.copiedToClipboard),
                                     ),
                                   );
                                 },
@@ -172,7 +174,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Description',
+                        Text(l10n.snippetDetailDescription,
                             style: theme.textTheme.titleSmall),
                         const SizedBox(height: 8),
                         Text(
@@ -195,7 +197,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Variables',
+                        Text(l10n.snippetDetailVariables,
                             style: theme.textTheme.titleSmall),
                         const SizedBox(height: 8),
                         ...snippet.variables.map(
@@ -239,7 +241,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Tags', style: theme.textTheme.titleSmall),
+                        Text(l10n.snippetDetailTags, style: theme.textTheme.titleSmall),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -260,16 +262,16 @@ class SnippetDetailScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Info', style: theme.textTheme.titleSmall),
+                      Text(l10n.snippetDetailInfo, style: theme.textTheme.titleSmall),
                       const SizedBox(height: 12),
                       _InfoRow(
                         icon: Icons.calendar_today,
-                        label: 'Created',
+                        label: l10n.snippetDetailCreated,
                         value: _formatDate(snippet.createdAt),
                       ),
                       _InfoRow(
                         icon: Icons.update,
-                        label: 'Updated',
+                        label: l10n.snippetDetailUpdated,
                         value: _formatDate(snippet.updatedAt),
                       ),
                     ],
@@ -280,7 +282,7 @@ class SnippetDetailScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );
   }

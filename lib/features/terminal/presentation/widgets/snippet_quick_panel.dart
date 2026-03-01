@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
@@ -57,6 +58,7 @@ class _SnippetQuickPanelContentState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final snippetsAsync = ref.watch(snippetListProvider);
 
@@ -75,7 +77,7 @@ class _SnippetQuickPanelContentState
         // Title
         Padding(
           padding: const EdgeInsets.all(16),
-          child: Text('Insert Snippet', style: theme.textTheme.titleMedium),
+          child: Text(l10n.snippetQuickPanelTitle, style: theme.textTheme.titleMedium),
         ),
         // Search
         Padding(
@@ -83,13 +85,14 @@ class _SnippetQuickPanelContentState
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Search snippets...',
+              hintText: l10n.snippetQuickPanelSearch,
               prefixIcon: const Icon(Icons.search, size: 20),
               isDense: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
+            keyboardType: TextInputType.text,
             onChanged: (value) => setState(() => _searchQuery = value),
           ),
         ),
@@ -114,8 +117,8 @@ class _SnippetQuickPanelContentState
                 return Center(
                   child: Text(
                     _searchQuery.isEmpty
-                        ? 'No snippets available'
-                        : 'No matching snippets',
+                        ? l10n.snippetQuickPanelEmpty
+                        : l10n.snippetQuickPanelNoMatch,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withAlpha(128),
                     ),
@@ -139,7 +142,7 @@ class _SnippetQuickPanelContentState
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Error: $e')),
+            error: (e, _) => Center(child: Text(l10n.error(e.toString()))),
           ),
         ),
       ],

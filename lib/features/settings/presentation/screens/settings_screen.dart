@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/services/biometric_provider.dart';
+import 'package:shellvault/core/widgets/pin_dialog.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
     as app;
@@ -17,19 +20,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(settingsProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: settingsAsync.when(
         data: (settings) {
           return ListView(
             children: [
               // Appearance
-              const _SectionHeader(title: 'Appearance'),
+              _SectionHeader(title: l10n.settingsSectionAppearance),
               ListTile(
                 leading: const Icon(Icons.palette_outlined),
-                title: const Text('Theme'),
-                subtitle: Text(_themeLabel(settings.themeMode)),
+                title: Text(l10n.settingsTheme),
+                subtitle: Text(_themeLabel(l10n, settings.themeMode)),
                 trailing: SegmentedButton<ThemeMode>(
                   segments: const [
                     ButtonSegment(
@@ -53,19 +57,39 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   },
                 ),
               ),
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(l10n.settingsLanguage),
+                subtitle: Text(_localeLabel(l10n, settings.locale)),
+                trailing: DropdownButton<String>(
+                  value: settings.locale.isEmpty ? '' : settings.locale,
+                  underline: const SizedBox.shrink(),
+                  items: [
+                    DropdownMenuItem(value: '', child: Text(l10n.settingsLanguageSystem)),
+                    DropdownMenuItem(value: 'en', child: Text(l10n.settingsLanguageEn)),
+                    DropdownMenuItem(value: 'de', child: Text(l10n.settingsLanguageDe)),
+                    DropdownMenuItem(value: 'es', child: Text(l10n.settingsLanguageEs)),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) {
+                      ref.read(settingsProvider.notifier).setLocale(v);
+                    }
+                  },
+                ),
+              ),
               const Divider(),
 
               // Terminal
-              const _SectionHeader(title: 'Terminal'),
+              _SectionHeader(title: l10n.settingsSectionTerminal),
               Builder(builder: (context) {
                 final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
                 return ListTile(
                   leading: const Icon(Icons.color_lens_outlined),
-                  title: const Text('Terminal Theme'),
+                  title: Text(l10n.settingsTerminalTheme),
                   subtitle: Text(themeKeyAsync.when(
                     data: (key) => key.displayName,
-                    loading: () => '...',
-                    error: (_, _) => 'Default Dark',
+                    loading: () => l10n.loading,
+                    error: (_, _) => l10n.settingsTerminalThemeDefault,
                   )),
                   onTap: () => TerminalThemePicker.show(context),
                 );
@@ -75,8 +99,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 final fontSize = fontSizeAsync.valueOrNull ?? 14.0;
                 return ListTile(
                   leading: const Icon(Icons.text_fields_outlined),
-                  title: const Text('Font Size'),
-                  subtitle: Text('${fontSize.toInt()} px'),
+                  title: Text(l10n.settingsFontSize),
+                  subtitle: Text(l10n.settingsFontSizeValue(fontSize.toInt())),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -103,38 +127,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(),
 
               // SSH Defaults
-              const _SectionHeader(title: 'SSH Defaults'),
+              _SectionHeader(title: l10n.settingsSectionSshDefaults),
               ListTile(
                 leading: const Icon(Icons.numbers),
-                title: const Text('Default Port'),
+                title: Text(l10n.settingsDefaultPort),
                 subtitle: Text(settings.defaultSshPort.toString()),
-                onTap: () => _editPort(settings.defaultSshPort),
+                onTap: () => _editPort(l10n, settings.defaultSshPort),
               ),
               ListTile(
                 leading: const Icon(Icons.person_outline),
-                title: const Text('Default Username'),
+                title: Text(l10n.settingsDefaultUsername),
                 subtitle: Text(settings.defaultUsername),
-                onTap: () => _editUsername(settings.defaultUsername),
+                onTap: () => _editUsername(l10n, settings.defaultUsername),
               ),
               const Divider(),
 
               // Security
-              const _SectionHeader(title: 'Security'),
+              _SectionHeader(title: l10n.settingsSectionSecurity),
               ListTile(
                 leading: const Icon(Icons.lock_clock_outlined),
-                title: const Text('Auto-Lock Timeout'),
+                title: Text(l10n.settingsAutoLock),
                 subtitle: Text(settings.autoLockMinutes == 0
-                    ? 'Disabled'
-                    : '${settings.autoLockMinutes} minutes'),
+                    ? l10n.settingsAutoLockDisabled
+                    : l10n.settingsAutoLockMinutes(settings.autoLockMinutes)),
                 trailing: DropdownButton<int>(
                   value: settings.autoLockMinutes,
                   underline: const SizedBox.shrink(),
-                  items: const [
-                    DropdownMenuItem(value: 0, child: Text('Off')),
-                    DropdownMenuItem(value: 1, child: Text('1 min')),
-                    DropdownMenuItem(value: 5, child: Text('5 min')),
-                    DropdownMenuItem(value: 15, child: Text('15 min')),
-                    DropdownMenuItem(value: 30, child: Text('30 min')),
+                  items: [
+                    DropdownMenuItem(value: 0, child: Text(l10n.settingsAutoLockOff)),
+                    DropdownMenuItem(value: 1, child: Text(l10n.settingsAutoLock1Min)),
+                    DropdownMenuItem(value: 5, child: Text(l10n.settingsAutoLock5Min)),
+                    DropdownMenuItem(value: 15, child: Text(l10n.settingsAutoLock15Min)),
+                    DropdownMenuItem(value: 30, child: Text(l10n.settingsAutoLock30Min)),
                   ],
                   onChanged: (v) {
                     if (v != null) {
@@ -145,21 +169,75 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   },
                 ),
               ),
-              SwitchListTile(
-                secondary: const Icon(Icons.fingerprint),
-                title: const Text('Biometric Unlock'),
-                value: settings.biometricUnlock,
-                onChanged: (v) {
-                  ref.read(settingsProvider.notifier).setBiometricUnlock(v);
+              Builder(builder: (context) {
+                final biometricAvailable =
+                    ref.watch(biometricAvailableProvider);
+                return SwitchListTile(
+                  secondary: const Icon(Icons.fingerprint),
+                  title: Text(l10n.settingsBiometricUnlock),
+                  subtitle: biometricAvailable.when(
+                    data: (available) {
+                      if (!available) return Text(l10n.settingsBiometricNotAvailable);
+                      if (!settings.hasPin) return Text(l10n.settingsBiometricRequiresPin);
+                      return null;
+                    },
+                    loading: () => null,
+                    error: (_, _) => Text(l10n.settingsBiometricError),
+                  ),
+                  value: settings.biometricUnlock,
+                  onChanged: biometricAvailable.maybeWhen(
+                    data: (available) => available && settings.hasPin
+                        ? (v) async {
+                            if (v) {
+                              final service =
+                                  ref.read(biometricServiceProvider);
+                              final success = await service.authenticate(
+                                reason: l10n.settingsBiometricReason,
+                              );
+                              if (success) {
+                                ref
+                                    .read(settingsProvider.notifier)
+                                    .setBiometricUnlock(true);
+                              }
+                            } else {
+                              ref
+                                  .read(settingsProvider.notifier)
+                                  .setBiometricUnlock(false);
+                            }
+                          }
+                        : null,
+                    orElse: () => null,
+                  ),
+                );
+              }),
+              ListTile(
+                leading: const Icon(Icons.pin),
+                title: Text(l10n.settingsPinCode),
+                subtitle: Text(settings.hasPin
+                    ? l10n.settingsPinIsSet
+                    : l10n.settingsPinNotConfigured),
+                trailing: settings.hasPin
+                    ? TextButton(
+                        onPressed: () => _confirmRemovePin(l10n),
+                        child: Text(l10n.settingsPinRemove),
+                      )
+                    : null,
+                onTap: () async {
+                  final pin = await PinDialog.showSetPin(context);
+                  if (pin != null) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setPinCode(pin);
+                  }
                 },
               ),
               const Divider(),
 
               // Export
-              const _SectionHeader(title: 'Export'),
+              _SectionHeader(title: l10n.settingsSectionExport),
               SwitchListTile(
                 secondary: const Icon(Icons.enhanced_encryption_outlined),
-                title: const Text('Encrypt Exports by Default'),
+                title: Text(l10n.settingsEncryptExport),
                 value: settings.encryptExportByDefault,
                 onChanged: (v) {
                   ref
@@ -170,52 +248,84 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const Divider(),
 
               // About
-              const _SectionHeader(title: 'About'),
+              _SectionHeader(title: l10n.settingsSectionAbout),
               ListTile(
                 leading: const Icon(Icons.info_outline),
-                title: const Text('About ShellVault'),
+                title: Text(l10n.settingsAbout),
                 onTap: () => app.showAppAboutDialog(context),
               ),
             ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );
   }
 
-  String _themeLabel(ThemeMode mode) {
+  String _themeLabel(AppLocalizations l10n, ThemeMode mode) {
     return switch (mode) {
-      ThemeMode.system => 'System',
-      ThemeMode.light => 'Light',
-      ThemeMode.dark => 'Dark',
+      ThemeMode.system => l10n.settingsThemeSystem,
+      ThemeMode.light => l10n.settingsThemeLight,
+      ThemeMode.dark => l10n.settingsThemeDark,
     };
   }
 
-  Future<void> _editPort(int currentPort) async {
+  String _localeLabel(AppLocalizations l10n, String locale) {
+    return switch (locale) {
+      'en' => l10n.settingsLanguageEn,
+      'de' => l10n.settingsLanguageDe,
+      'es' => l10n.settingsLanguageEs,
+      _ => l10n.settingsLanguageSystem,
+    };
+  }
+
+  Future<void> _confirmRemovePin(AppLocalizations l10n) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.settingsPinRemoveTitle),
+        content: Text(l10n.settingsPinRemoveWarning),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.settingsPinRemove),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      ref.read(settingsProvider.notifier).clearPinCode();
+    }
+  }
+
+  Future<void> _editPort(AppLocalizations l10n, int currentPort) async {
     final controller =
         TextEditingController(text: currentPort.toString());
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Default SSH Port'),
+        title: Text(l10n.settingsDefaultPortDialog),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Port',
-            hintText: '22',
+          decoration: InputDecoration(
+            labelText: l10n.settingsPortLabel,
+            hintText: l10n.settingsPortHint,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -229,27 +339,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  Future<void> _editUsername(String currentUsername) async {
+  Future<void> _editUsername(AppLocalizations l10n, String currentUsername) async {
     final controller = TextEditingController(text: currentUsername);
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Default Username'),
+        title: Text(l10n.settingsDefaultUsernameDialog),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Username',
-            hintText: 'root',
+          decoration: InputDecoration(
+            labelText: l10n.settingsUsernameLabel,
+            hintText: l10n.settingsUsernameHint,
           ),
+          keyboardType: TextInputType.text,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),

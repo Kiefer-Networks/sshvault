@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
@@ -13,8 +14,10 @@ class SshKeyListScreen extends ConsumerWidget {
     final keysAsync = ref.watch(sshKeyListProvider);
     final theme = Theme.of(context);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: buildShellAppBar(context, title: 'SSH Keys'),
+      appBar: buildShellAppBar(context, title: l10n.sshKeyListTitle),
       body: keysAsync.when(
         data: (keys) {
           if (keys.isEmpty) {
@@ -29,14 +32,14 @@ class SshKeyListScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No SSH keys yet',
+                    l10n.sshKeyListEmpty,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Generate or import SSH keys to manage them centrally',
+                    l10n.sshKeyListEmptySubtitle,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -67,7 +70,7 @@ class SshKeyListScreen extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
-          child: Text('Error: $error'),
+          child: Text(l10n.error(error.toString())),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -95,20 +98,23 @@ class SshKeyListScreen extends ConsumerWidget {
     WidgetRef ref,
     dynamic key,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (key.linkedServerCount > 0) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Cannot Delete'),
+          title: Text(AppLocalizations.of(ctx)!.sshKeyCannotDeleteTitle),
           content: Text(
-            "Cannot delete '${key.name}'. "
-            'Used by ${key.linkedServerCount} server(s). '
-            'Unlink from all servers first.',
+            AppLocalizations.of(ctx)!.sshKeyCannotDeleteMessage(
+              key.name,
+              key.linkedServerCount,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Close'),
+              child: Text(AppLocalizations.of(ctx)!.close),
             ),
           ],
         ),
@@ -119,19 +125,19 @@ class SshKeyListScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete SSH Key'),
-        content: Text("Delete '${key.name}'? This cannot be undone."),
+        title: Text(AppLocalizations.of(ctx)!.sshKeyDeleteTitle),
+        content: Text(AppLocalizations.of(ctx)!.sshKeyDeleteMessage(key.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(ctx)!.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(ctx).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text(AppLocalizations.of(ctx)!.delete),
           ),
         ],
       ),
@@ -143,7 +149,7 @@ class SshKeyListScreen extends ConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
+            SnackBar(content: Text(l10n.error(e.toString()))),
           );
         }
       }

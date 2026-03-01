@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/crypto/crypto_provider.dart';
 import 'package:shellvault/core/crypto/ssh_key_service.dart';
@@ -70,7 +71,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Future<void> _saveGenerate() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = 'Name is required');
+      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired);
       return;
     }
 
@@ -131,12 +132,12 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Future<void> _saveImport() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = 'Name is required');
+      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired);
       return;
     }
     final privateKey = _privateKeyController.text.trim();
     if (privateKey.isEmpty) {
-      setState(() => _error = 'Private key is required');
+      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormPrivateKeyRequired);
       return;
     }
 
@@ -188,7 +189,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Future<void> _saveEdit() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = 'Name is required');
+      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired);
       return;
     }
 
@@ -218,9 +219,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final l10n = AppLocalizations.of(context)!;
+
     if (widget.isEditing) {
       return AlertDialog(
-        title: const Text('Edit SSH Key'),
+        title: Text(l10n.sshKeyFormTitleEdit),
         content: SizedBox(
           width: 480,
           child: _buildEditForm(theme),
@@ -230,7 +233,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     }
 
     return AlertDialog(
-      title: const Text('Add SSH Key'),
+      title: Text(l10n.sshKeyFormTitleAdd),
       content: SizedBox(
         width: 480,
         child: Column(
@@ -238,9 +241,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           children: [
             TabBar(
               controller: _tabController,
-              tabs: const [
-                Tab(text: 'Generate'),
-                Tab(text: 'Import'),
+              tabs: [
+                Tab(text: l10n.sshKeyFormTabGenerate),
+                Tab(text: l10n.sshKeyFormTabImport),
               ],
             ),
             const SizedBox(height: 16),
@@ -270,25 +273,27 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   }
 
   Widget _buildGenerateForm(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Key Name',
-              prefixIcon: Icon(Icons.label_outline),
-              hintText: 'e.g. My Production Key',
+            decoration: InputDecoration(
+              labelText: l10n.sshKeyFormNameLabel,
+              prefixIcon: const Icon(Icons.label_outline),
+              hintText: l10n.sshKeyFormNameHint,
             ),
+            keyboardType: TextInputType.text,
             textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<SshKeyType>(
             initialValue: _selectedType,
-            decoration: const InputDecoration(
-              labelText: 'Key Type',
-              prefixIcon: Icon(Icons.vpn_key),
+            decoration: InputDecoration(
+              labelText: l10n.sshKeyFormKeyType,
+              prefixIcon: const Icon(Icons.vpn_key),
             ),
             items: SshKeyType.values
                 .map((t) => DropdownMenuItem(
@@ -312,14 +317,14 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
               initialValue: _selectedBits > 0
                   ? _selectedBits
                   : _selectedType.defaultBitLength,
-              decoration: const InputDecoration(
-                labelText: 'Key Size',
-                prefixIcon: Icon(Icons.memory),
+              decoration: InputDecoration(
+                labelText: l10n.sshKeyFormKeySize,
+                prefixIcon: const Icon(Icons.memory),
               ),
               items: _selectedType.allowedBitLengths
                   .map((b) => DropdownMenuItem(
                         value: b,
-                        child: Text('$b bit'),
+                        child: Text(l10n.sshKeyFormKeySizeBit(b)),
                       ))
                   .toList(),
               onChanged: _saving
@@ -346,11 +351,12 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           const SizedBox(height: 16),
           TextFormField(
             controller: _commentController,
-            decoration: const InputDecoration(
-              labelText: 'Comment',
-              prefixIcon: Icon(Icons.comment_outlined),
-              hintText: 'user@host or description',
+            decoration: InputDecoration(
+              labelText: l10n.sshKeyFormCommentLabel,
+              prefixIcon: const Icon(Icons.comment_outlined),
+              hintText: l10n.sshKeyFormCommentHint,
             ),
+            keyboardType: TextInputType.text,
           ),
           if (_error != null) ...[
             const SizedBox(height: 16),
@@ -375,13 +381,12 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       } else if (file.path != null) {
         content = await File(file.path!).readAsString();
       } else {
-        setState(() => _error = 'Could not read the selected file');
+        setState(() => _error = AppLocalizations.of(context)!.sshKeyFormFileReadError);
         return;
       }
 
       if (!content.contains('-----BEGIN')) {
-        setState(
-            () => _error = 'Invalid key file — expected PEM format (-----BEGIN ...)');
+        setState(() => _error = AppLocalizations.of(context)!.sshKeyFormInvalidFormat);
         return;
       }
 
@@ -407,56 +412,61 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         _error = null;
       });
     } catch (e) {
-      setState(() => _error = 'Failed to read file: $e');
+      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormFileError(e.toString()));
     }
   }
 
   Widget _buildImportForm(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Key Name',
-              prefixIcon: Icon(Icons.label_outline),
-              hintText: 'e.g. My Production Key',
+            decoration: InputDecoration(
+              labelText: l10n.sshKeyFormNameLabel,
+              prefixIcon: const Icon(Icons.label_outline),
+              hintText: l10n.sshKeyFormNameHint,
             ),
+            keyboardType: TextInputType.text,
             textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: 16),
           OutlinedButton.icon(
             onPressed: _saving ? null : _pickKeyFile,
             icon: const Icon(Icons.file_open),
-            label: const Text('Import from File'),
+            label: Text(l10n.sshKeyFormImportFromFile),
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _privateKeyController,
-            decoration: const InputDecoration(
-              labelText: 'Private Key',
-              prefixIcon: Icon(Icons.vpn_key),
-              hintText: 'Paste SSH private key or use button above...',
+            decoration: InputDecoration(
+              labelText: l10n.sshKeyFormPrivateKeyLabel,
+              prefixIcon: const Icon(Icons.vpn_key),
+              hintText: l10n.sshKeyFormPrivateKeyHint,
             ),
+            keyboardType: TextInputType.multiline,
             maxLines: 5,
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _passphraseController,
-            decoration: const InputDecoration(
-              labelText: 'Passphrase (optional)',
-              prefixIcon: Icon(Icons.lock_outline),
+            decoration: InputDecoration(
+              labelText: l10n.sshKeyFormPassphraseLabel,
+              prefixIcon: const Icon(Icons.lock_outline),
             ),
+            keyboardType: TextInputType.visiblePassword,
             obscureText: true,
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _commentController,
-            decoration: const InputDecoration(
-              labelText: 'Comment (optional)',
-              prefixIcon: Icon(Icons.comment_outlined),
+            decoration: InputDecoration(
+              labelText: l10n.sshKeyFormCommentOptional,
+              prefixIcon: const Icon(Icons.comment_outlined),
             ),
+            keyboardType: TextInputType.text,
           ),
           if (_error != null) ...[
             const SizedBox(height: 16),
@@ -468,25 +478,28 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   }
 
   Widget _buildEditForm(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextFormField(
           controller: _nameController,
-          decoration: const InputDecoration(
-            labelText: 'Key Name',
-            prefixIcon: Icon(Icons.label_outline),
+          decoration: InputDecoration(
+            labelText: l10n.sshKeyFormNameLabel,
+            prefixIcon: const Icon(Icons.label_outline),
           ),
+          keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         TextFormField(
           controller: _commentController,
-          decoration: const InputDecoration(
-            labelText: 'Comment',
-            prefixIcon: Icon(Icons.comment_outlined),
+          decoration: InputDecoration(
+            labelText: l10n.sshKeyFormCommentLabel,
+            prefixIcon: const Icon(Icons.comment_outlined),
           ),
+          keyboardType: TextInputType.text,
         ),
         if (widget.existingKey != null) ...[
           const SizedBox(height: 16),
@@ -518,10 +531,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   }
 
   List<Widget> _buildActions({required VoidCallback onSave}) {
+    final l10n = AppLocalizations.of(context)!;
     return [
       TextButton(
         onPressed: _saving ? null : () => Navigator.pop(context),
-        child: const Text('Cancel'),
+        child: Text(l10n.cancel),
       ),
       FilledButton.icon(
         onPressed: _saving ? null : onSave,
@@ -532,7 +546,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : const Icon(Icons.save, size: 18),
-        label: Text(_saving ? 'Saving...' : 'Save'),
+        label: Text(_saving ? l10n.sshKeyFormSaving : l10n.save),
       ),
     ];
   }

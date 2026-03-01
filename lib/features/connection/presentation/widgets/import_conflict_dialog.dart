@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
 
 class ImportConflictDialog extends StatelessWidget {
@@ -13,30 +14,29 @@ class ImportConflictDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Handle Conflicts'),
-      content: const Text(
-        'How should existing entries be handled during import?',
-      ),
+      title: Text(l10n.importConflictTitle),
+      content: Text(l10n.importConflictDescription),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         OutlinedButton(
           onPressed: () =>
               Navigator.of(context).pop(ImportConflictStrategy.skip),
-          child: const Text('Skip Existing'),
+          child: Text(l10n.importConflictSkip),
         ),
         OutlinedButton(
           onPressed: () =>
               Navigator.of(context).pop(ImportConflictStrategy.rename),
-          child: const Text('Rename New'),
+          child: Text(l10n.importConflictRename),
         ),
         FilledButton(
           onPressed: () =>
               Navigator.of(context).pop(ImportConflictStrategy.overwrite),
-          child: const Text('Overwrite'),
+          child: Text(l10n.importConflictOverwrite),
         ),
       ],
     );

@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
@@ -16,9 +17,10 @@ class ExportImportScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final exportState = ref.watch(exportImportNotifierProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: buildShellAppBar(context, title: 'Export / Import'),
+      appBar: buildShellAppBar(context, title: l10n.exportImportTitle),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -32,7 +34,7 @@ class ExportImportScreen extends ConsumerWidget {
                   children: [
                     Icon(Icons.upload, color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
-                    Text('Export',
+                    Text(l10n.exportSectionTitle,
                         style: theme.textTheme.titleMedium),
                   ],
                 ),
@@ -42,7 +44,7 @@ class ExportImportScreen extends ConsumerWidget {
                   child: OutlinedButton.icon(
                     onPressed: () => _exportJson(context, ref),
                     icon: const Icon(Icons.description),
-                    label: const Text('Export as JSON (no credentials)'),
+                    label: Text(l10n.exportJsonButton),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -51,7 +53,7 @@ class ExportImportScreen extends ConsumerWidget {
                   child: FilledButton.icon(
                     onPressed: () => _exportEncrypted(context, ref),
                     icon: const Icon(Icons.lock),
-                    label: const Text('Export Encrypted ZIP (with credentials)'),
+                    label: Text(l10n.exportZipButton),
                   ),
                 ),
               ],
@@ -69,7 +71,7 @@ class ExportImportScreen extends ConsumerWidget {
                   children: [
                     Icon(Icons.download, color: theme.colorScheme.secondary),
                     const SizedBox(width: 8),
-                    Text('Import',
+                    Text(l10n.importSectionTitle,
                         style: theme.textTheme.titleMedium),
                   ],
                 ),
@@ -79,12 +81,12 @@ class ExportImportScreen extends ConsumerWidget {
                   child: OutlinedButton.icon(
                     onPressed: () => _importFile(context, ref),
                     icon: const Icon(Icons.file_open),
-                    label: const Text('Import from File'),
+                    label: Text(l10n.importButton),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Supports JSON (plain) and ZIP (encrypted) files.',
+                  l10n.importSupportedFormats,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withAlpha(102),
                   ),
@@ -103,7 +105,7 @@ class ExportImportScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(
-                  'Error: ${exportState.error}',
+                  l10n.error(exportState.error.toString()),
                   style: TextStyle(color: theme.colorScheme.error),
                 ),
               ),
@@ -150,11 +152,12 @@ class ExportImportScreen extends ConsumerWidget {
   }
 
   void _showShareOption(BuildContext context, String filePath) {
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Exported to: $filePath'),
+        content: Text(l10n.exportedTo(filePath)),
         action: SnackBarAction(
-          label: 'Share',
+          label: l10n.share,
           onPressed: () {
             Share.shareXFiles([XFile(filePath)]);
           },
@@ -194,13 +197,16 @@ class ExportImportScreen extends ConsumerWidget {
 
     if (importResult != null && context.mounted) {
       ref.invalidate(serverListProvider);
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Imported ${importResult.serversImported} servers, '
-            '${importResult.groupsImported} groups, '
-            '${importResult.tagsImported} tags. '
-            '${importResult.skipped} skipped.',
+            l10n.importResult(
+              importResult.serversImported,
+              importResult.groupsImported,
+              importResult.tagsImported,
+              importResult.skipped,
+            ),
           ),
           duration: const Duration(seconds: 5),
         ),
@@ -210,26 +216,28 @@ class ExportImportScreen extends ConsumerWidget {
 
   Future<String?> _askImportPassword(BuildContext context) {
     final controller = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Enter Password'),
+        title: Text(l10n.importPasswordTitle),
         content: TextField(
           controller: controller,
           obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Export Password',
+          decoration: InputDecoration(
+            labelText: l10n.importPasswordLabel,
           ),
+          keyboardType: TextInputType.visiblePassword,
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(controller.text),
-            child: const Text('Decrypt'),
+            child: Text(l10n.importPasswordDecrypt),
           ),
         ],
       ),

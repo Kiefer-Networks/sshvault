@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
@@ -18,16 +19,17 @@ class TagSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tagsAsync = ref.watch(tagListProvider);
 
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Tags', style: Theme.of(context).textTheme.titleSmall),
+        Text(l10n.tagSelectorLabel, style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 8),
         tagsAsync.when(
           data: (tags) {
             if (tags.isEmpty) {
               return Text(
-                'No tags yet',
+                l10n.tagSelectorEmpty,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context)
                           .colorScheme
@@ -50,7 +52,7 @@ class TagSelector extends ConsumerWidget {
           },
           loading: () =>
               const SizedBox(height: 32, child: CircularProgressIndicator()),
-          error: (_, _) => const Text('Failed to load tags'),
+          error: (_, _) => Text(l10n.tagSelectorError),
         ),
       ],
     );

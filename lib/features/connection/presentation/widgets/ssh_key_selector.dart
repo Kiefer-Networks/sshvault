@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
@@ -16,6 +17,7 @@ class SshKeySelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final keysAsync = ref.watch(sshKeyListProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return keysAsync.when(
       data: (keys) {
@@ -26,14 +28,14 @@ class SshKeySelector extends ConsumerWidget {
               initialValue: keys.any((k) => k.id == selectedKeyId)
                   ? selectedKeyId
                   : null,
-              decoration: const InputDecoration(
-                labelText: 'SSH Key',
-                prefixIcon: Icon(Icons.vpn_key_outlined),
+              decoration: InputDecoration(
+                labelText: l10n.sshKeySelectorLabel,
+                prefixIcon: const Icon(Icons.vpn_key_outlined),
               ),
               items: [
-                const DropdownMenuItem(
+                DropdownMenuItem(
                   value: null,
-                  child: Text('No managed key'),
+                  child: Text(l10n.sshKeySelectorNone),
                 ),
                 ...keys.map(
                   (k) => DropdownMenuItem(
@@ -52,14 +54,14 @@ class SshKeySelector extends ConsumerWidget {
               child: TextButton.icon(
                 onPressed: () => context.push('/keys'),
                 icon: const Icon(Icons.settings, size: 16),
-                label: const Text('Manage Keys...'),
+                label: Text(l10n.sshKeySelectorManage),
               ),
             ),
           ],
         );
       },
       loading: () => const LinearProgressIndicator(),
-      error: (_, _) => const Text('Failed to load SSH keys'),
+      error: (_, _) => Text(l10n.sshKeySelectorError),
     );
   }
 }

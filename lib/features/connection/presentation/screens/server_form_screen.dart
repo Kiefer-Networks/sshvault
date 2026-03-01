@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
@@ -112,7 +113,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${result.type.displayName} key pair generated'),
+          content: Text(AppLocalizations.of(context)!.serverFormKeyGenerated(result.type.displayName)),
         ),
       );
     }
@@ -125,19 +126,20 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     final sshKeyService = ref.read(sshKeyServiceProvider);
     final result = await sshKeyService.extractPublicKey(privateKey);
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
     result.fold(
       onSuccess: (publicKey) {
         setState(() {
           _publicKeyController.text = publicKey;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Public key extracted successfully')),
+          SnackBar(content: Text(l10n.serverFormPublicKeyExtracted)),
         );
       },
       onFailure: (failure) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not extract public key: ${failure.message}'),
+            content: Text(l10n.serverFormPublicKeyError(failure.message)),
           ),
         );
       },
@@ -148,14 +150,16 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   Widget build(BuildContext context) {
     final groupsAsync = ref.watch(groupListProvider);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isEditing ? 'Edit Server' : 'Add Server'),
+        title: Text(widget.isEditing ? l10n.serverFormTitleEdit : l10n.serverFormTitleAdd),
         actions: [
           if (widget.isEditing)
             Row(
               children: [
-                const Text('Active'),
+                Text(l10n.serverActive),
                 Switch(
                   value: _isActive,
                   onChanged: (v) => setState(() => _isActive = v),
@@ -202,14 +206,14 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                 if (groups.isEmpty) return const SizedBox.shrink();
                 return DropdownButtonFormField<String?>(
                   initialValue: _groupId,
-                  decoration: const InputDecoration(
-                    labelText: 'Group',
-                    prefixIcon: Icon(Icons.folder_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.navGroups,
+                    prefixIcon: const Icon(Icons.folder_outlined),
                   ),
                   items: [
-                    const DropdownMenuItem(
+                    DropdownMenuItem(
                       value: null,
-                      child: Text('No Group'),
+                      child: Text(l10n.serverNoGroup),
                     ),
                     ...groups.map(
                       (g) => DropdownMenuItem(
@@ -254,7 +258,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.save),
-              label: Text(widget.isEditing ? 'Update Server' : 'Add Server'),
+              label: Text(widget.isEditing ? l10n.serverFormUpdateButton : l10n.serverFormAddButton),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(double.infinity, 52),
               ),
@@ -318,7 +322,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.error(e.toString()))),
         );
       }
     } finally {

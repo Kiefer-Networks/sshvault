@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
@@ -21,9 +22,11 @@ class ServerDetailScreen extends ConsumerWidget {
     final serverAsync = ref.watch(serverDetailProvider(serverId));
     final theme = Theme.of(context);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Server Details'),
+        title: Text(l10n.serverDetailTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -34,8 +37,8 @@ class ServerDetailScreen extends ConsumerWidget {
             onPressed: () async {
               final confirmed = await ConfirmDialog.show(
                 context,
-                title: 'Delete Server',
-                message: 'This action cannot be undone.',
+                title: l10n.serverDeleteTitle,
+                message: l10n.serverDetailDeleteMessage,
               );
               if (confirmed == true && context.mounted) {
                 await ref
@@ -59,7 +62,7 @@ class ServerDetailScreen extends ConsumerWidget {
           ref.read(shellNavigationProvider)?.goBranch(6);
         },
         icon: const Icon(Icons.terminal),
-        label: const Text('Connect'),
+        label: Text(l10n.serverConnect),
       ),
       body: serverAsync.when(
         data: (server) {
@@ -127,23 +130,23 @@ class ServerDetailScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Connection',
+                      Text(l10n.serverDetailConnection,
                           style: theme.textTheme.titleSmall),
                       const SizedBox(height: 12),
                       _InfoRow(
                         icon: Icons.dns_outlined,
-                        label: 'Host',
+                        label: l10n.serverDetailHost,
                         value: server.hostname,
                         onCopy: () => _copy(context, server.hostname),
                       ),
                       _InfoRow(
                         icon: Icons.numbers,
-                        label: 'Port',
+                        label: l10n.serverDetailPort,
                         value: server.port.toString(),
                       ),
                       _InfoRow(
                         icon: Icons.person_outline,
-                        label: 'Username',
+                        label: l10n.serverDetailUsername,
                         value: server.username,
                         onCopy: () => _copy(context, server.username),
                       ),
@@ -159,7 +162,7 @@ class ServerDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Tags', style: theme.textTheme.titleSmall),
+                        Text(l10n.serverDetailTags, style: theme.textTheme.titleSmall),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -181,7 +184,7 @@ class ServerDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Notes', style: theme.textTheme.titleSmall),
+                        Text(l10n.serverDetailNotes, style: theme.textTheme.titleSmall),
                         const SizedBox(height: 8),
                         Text(
                           server.notes,
@@ -202,16 +205,16 @@ class ServerDetailScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Info', style: theme.textTheme.titleSmall),
+                      Text(l10n.serverDetailInfo, style: theme.textTheme.titleSmall),
                       const SizedBox(height: 12),
                       _InfoRow(
                         icon: Icons.calendar_today,
-                        label: 'Created',
+                        label: l10n.serverDetailCreated,
                         value: _formatDate(server.createdAt),
                       ),
                       _InfoRow(
                         icon: Icons.update,
-                        label: 'Updated',
+                        label: l10n.serverDetailUpdated,
                         value: _formatDate(server.updatedAt),
                       ),
                     ],
@@ -222,7 +225,7 @@ class ServerDetailScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );
   }
@@ -230,7 +233,7 @@ class ServerDetailScreen extends ConsumerWidget {
   void _copy(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Copied to clipboard')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
     );
   }
 

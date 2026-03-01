@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 
 class VariableEditor extends StatelessWidget {
@@ -13,6 +14,7 @@ class VariableEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Column(
@@ -21,18 +23,18 @@ class VariableEditor extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Template Variables', style: theme.textTheme.titleSmall),
+            Text(l10n.variableEditorTitle, style: theme.textTheme.titleSmall),
             TextButton.icon(
               onPressed: _addVariable,
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add'),
+              label: Text(l10n.variableEditorAdd),
             ),
           ],
         ),
         const SizedBox(height: 8),
         if (variables.isEmpty)
           Text(
-            'No variables. Use {{name}} in content to reference them.',
+            l10n.variableEditorEmpty,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurface.withAlpha(102),
             ),
@@ -93,11 +95,12 @@ class _VariableRow extends StatelessWidget {
             flex: 2,
             child: TextFormField(
               initialValue: variable.name,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'e.g. hostname',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.variableEditorNameLabel,
+                hintText: AppLocalizations.of(context)!.variableEditorNameHint,
                 isDense: true,
               ),
+              keyboardType: TextInputType.text,
               onChanged: (value) => onChanged(variable.copyWith(name: value)),
             ),
           ),
@@ -106,11 +109,12 @@ class _VariableRow extends StatelessWidget {
             flex: 2,
             child: TextFormField(
               initialValue: variable.defaultValue,
-              decoration: const InputDecoration(
-                labelText: 'Default',
-                hintText: 'optional',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.variableEditorDefaultLabel,
+                hintText: AppLocalizations.of(context)!.variableEditorDefaultHint,
                 isDense: true,
               ),
+              keyboardType: TextInputType.text,
               onChanged: (value) =>
                   onChanged(variable.copyWith(defaultValue: value)),
             ),

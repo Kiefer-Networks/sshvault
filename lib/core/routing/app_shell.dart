@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
+import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
     as app;
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
@@ -27,44 +29,50 @@ class _NavItem {
 
 /// Base nav items (indices 0–5). Terminal (index 6) is appended dynamically
 /// only when there are active sessions.
-const _baseNavItems = <_NavItem>[
-  _NavItem(
-    icon: Icons.dns_outlined,
-    selectedIcon: Icons.dns,
-    label: 'Hosts',
-  ),
-  _NavItem(
-    icon: Icons.code_outlined,
-    selectedIcon: Icons.code,
-    label: 'Snippets',
-  ),
-  _NavItem(
-    icon: Icons.folder_outlined,
-    selectedIcon: Icons.folder,
-    label: 'Groups',
-  ),
-  _NavItem(
-    icon: Icons.label_outline,
-    selectedIcon: Icons.label,
-    label: 'Tags',
-  ),
-  _NavItem(
-    icon: Icons.vpn_key_outlined,
-    selectedIcon: Icons.vpn_key,
-    label: 'SSH Keys',
-  ),
-  _NavItem(
-    icon: Icons.import_export_outlined,
-    selectedIcon: Icons.import_export,
-    label: 'Export / Import',
-  ),
-];
+List<_NavItem> _buildBaseNavItems(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
+  return <_NavItem>[
+    _NavItem(
+      icon: Icons.dns_outlined,
+      selectedIcon: Icons.dns,
+      label: l10n.navHosts,
+    ),
+    _NavItem(
+      icon: Icons.code_outlined,
+      selectedIcon: Icons.code,
+      label: l10n.navSnippets,
+    ),
+    _NavItem(
+      icon: Icons.folder_outlined,
+      selectedIcon: Icons.folder,
+      label: l10n.navGroups,
+    ),
+    _NavItem(
+      icon: Icons.label_outline,
+      selectedIcon: Icons.label,
+      label: l10n.navTags,
+    ),
+    _NavItem(
+      icon: Icons.vpn_key_outlined,
+      selectedIcon: Icons.vpn_key,
+      label: l10n.navSshKeys,
+    ),
+    _NavItem(
+      icon: Icons.import_export_outlined,
+      selectedIcon: Icons.import_export,
+      label: l10n.navExportImport,
+    ),
+  ];
+}
 
-const _terminalNavItem = _NavItem(
-  icon: Icons.terminal_outlined,
-  selectedIcon: Icons.terminal,
-  label: 'Terminal',
-);
+_NavItem _buildTerminalNavItem(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
+  return _NavItem(
+    icon: Icons.terminal_outlined,
+    selectedIcon: Icons.terminal,
+    label: l10n.navTerminal,
+  );
+}
 
 /// The root shell widget used by [StatefulShellRoute].
 ///
@@ -89,6 +97,7 @@ class AppShell extends ConsumerStatefulWidget {
 
 class AppShellState extends ConsumerState<AppShell> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _securityDialogShown = false;
 
   void openDrawer() => scaffoldKey.currentState?.openDrawer();
 
@@ -99,8 +108,55 @@ class AppShellState extends ConsumerState<AppShell> {
       if (mounted) {
         ref.read(shellNavigationProvider.notifier).state =
             widget.navigationShell;
+        // Listen for settings to load, then show security dialog if needed
+        ref.listenManual(settingsProvider, (_, next) {
+          final settings = next.valueOrNull;
+          if (settings == null || _securityDialogShown) return;
+          if (!settings.hasAnyLock && !settings.dismissedSecurityHint) {
+            _securityDialogShown = true;
+            _showSecurityDialog();
+          }
+        }, fireImmediately: true);
       }
     });
+  }
+
+  Future<void> _showSecurityDialog() async {
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    final goToSettings = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        icon: const Icon(Icons.shield_outlined,
+            color: Colors.orange, size: 40),
+        title: Text(l10n.settingsSectionSecurity),
+        content: Text(l10n.securityBannerMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              ref
+                  .read(settingsProvider.notifier)
+                  .setDismissedSecurityHint(true);
+              Navigator.pop(ctx, false);
+            },
+            child: Text(l10n.securityBannerDismiss),
+          ),
+          FilledButton(
+            onPressed: () {
+              ref
+                  .read(settingsProvider.notifier)
+                  .setDismissedSecurityHint(true);
+              Navigator.pop(ctx, true);
+            },
+            child: Text(l10n.navSettings),
+          ),
+        ],
+      ),
+    );
+    if (goToSettings == true && mounted) {
+      context.push('/settings');
+    }
   }
 
   @override
@@ -205,13 +261,14 @@ class _DesktopScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final showTerminal = sessionCount > 0;
 
     // Build visible nav items — Terminal only when sessions exist
     final visibleItems = [
-      ..._baseNavItems,
-      if (showTerminal) _terminalNavItem,
+      ..._buildBaseNavItems(context),
+      if (showTerminal) _buildTerminalNavItem(context),
     ];
 
     // Clamp selectedIndex if Terminal is hidden but was selected
@@ -239,7 +296,7 @@ class _DesktopScaffold extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'ShellVault',
+                          l10n.appName,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -261,13 +318,13 @@ class _DesktopScaffold extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.settings_outlined),
-                        tooltip: 'Settings',
+                        tooltip: l10n.navSettings,
                         onPressed: () => context.push('/settings'),
                       ),
                       const SizedBox(height: 4),
                       IconButton(
                         icon: const Icon(Icons.info_outline),
-                        tooltip: 'About',
+                        tooltip: l10n.navAbout,
                         onPressed: () =>
                             app.showAppAboutDialog(context),
                       ),
@@ -324,13 +381,14 @@ class _AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final showTerminal = sessionCount > 0;
 
     // Build visible nav items — Terminal only when sessions exist
     final visibleItems = [
-      ..._baseNavItems,
-      if (showTerminal) _terminalNavItem,
+      ..._buildBaseNavItems(context),
+      if (showTerminal) _buildTerminalNavItem(context),
     ];
 
     return Drawer(
@@ -350,7 +408,7 @@ class _AppDrawer extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'ShellVault',
+                    l10n.appName,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -384,7 +442,7 @@ class _AppDrawer extends StatelessWidget {
             _DrawerItem(
               icon: Icons.settings_outlined,
               selectedIcon: Icons.settings,
-              label: 'Settings',
+              label: l10n.navSettings,
               selected: false,
               onTap: () {
                 Navigator.pop(context);
@@ -394,7 +452,7 @@ class _AppDrawer extends StatelessWidget {
             _DrawerItem(
               icon: Icons.info_outline,
               selectedIcon: Icons.info,
-              label: 'About',
+              label: l10n.navAbout,
               selected: false,
               onTap: () {
                 Navigator.pop(context);

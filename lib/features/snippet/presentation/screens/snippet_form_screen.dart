@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
@@ -86,12 +87,12 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final groupsAsync = ref.watch(groupListProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text(widget.isEditing ? 'Edit Snippet' : 'New Snippet'),
+        title: Text(widget.isEditing ? l10n.snippetFormTitleEdit : l10n.snippetFormTitleNew),
       ),
       body: Form(
         key: _formKey,
@@ -101,22 +102,23 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
             // Name
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'e.g. Docker cleanup',
-                prefixIcon: Icon(Icons.label_outline),
+              decoration: InputDecoration(
+                labelText: l10n.snippetFormNameLabel,
+                hintText: l10n.snippetFormNameHint,
+                prefixIcon: const Icon(Icons.label_outline),
               ),
+              keyboardType: TextInputType.text,
               validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Name is required' : null,
+                  (v == null || v.trim().isEmpty) ? l10n.snippetFormNameRequired : null,
             ),
             const SizedBox(height: 16),
 
             // Language
             DropdownButtonFormField<String>(
               initialValue: _language,
-              decoration: const InputDecoration(
-                labelText: 'Language',
-                prefixIcon: Icon(Icons.code),
+              decoration: InputDecoration(
+                labelText: l10n.snippetFormLanguageLabel,
+                prefixIcon: const Icon(Icons.code),
               ),
               items: _languages
                   .map((l) => DropdownMenuItem(value: l, child: Text(l)))
@@ -130,16 +132,17 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
             // Content
             TextFormField(
               controller: _contentController,
-              decoration: const InputDecoration(
-                labelText: 'Content',
-                hintText: 'Enter your snippet code...',
+              decoration: InputDecoration(
+                labelText: l10n.snippetFormContentLabel,
+                hintText: l10n.snippetFormContentHint,
                 alignLabelWithHint: true,
               ),
+              keyboardType: TextInputType.multiline,
               maxLines: 10,
               minLines: 5,
               style: const TextStyle(fontFamily: 'monospace'),
               validator: (v) => (v == null || v.trim().isEmpty)
-                  ? 'Content is required'
+                  ? l10n.snippetFormContentRequired
                   : null,
             ),
             const SizedBox(height: 16),
@@ -147,11 +150,12 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
             // Description
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                hintText: 'Optional description...',
-                prefixIcon: Icon(Icons.description_outlined),
+              decoration: InputDecoration(
+                labelText: l10n.snippetFormDescriptionLabel,
+                hintText: l10n.snippetFormDescriptionHint,
+                prefixIcon: const Icon(Icons.description_outlined),
               ),
+              keyboardType: TextInputType.multiline,
               maxLines: 3,
               minLines: 1,
             ),
@@ -163,14 +167,14 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                 if (groups.isEmpty) return const SizedBox.shrink();
                 return DropdownButtonFormField<String?>(
                   initialValue: _groupId,
-                  decoration: const InputDecoration(
-                    labelText: 'Group',
-                    prefixIcon: Icon(Icons.folder_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.snippetFormGroupLabel,
+                    prefixIcon: const Icon(Icons.folder_outlined),
                   ),
                   items: [
-                    const DropdownMenuItem(
+                    DropdownMenuItem(
                       value: null,
-                      child: Text('No Group'),
+                      child: Text(l10n.snippetFormNoGroup),
                     ),
                     ...groups.map(
                       (g) => DropdownMenuItem(
@@ -212,7 +216,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                     )
                   : const Icon(Icons.save),
               label: Text(
-                  widget.isEditing ? 'Update Snippet' : 'Create Snippet'),
+                  widget.isEditing ? l10n.snippetFormUpdateButton : l10n.snippetFormCreateButton),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(double.infinity, 52),
               ),
@@ -262,7 +266,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.error(e.toString()))),
         );
       }
     } finally {

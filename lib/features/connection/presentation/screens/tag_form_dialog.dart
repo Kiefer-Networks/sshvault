@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
@@ -49,8 +50,10 @@ class _TagFormDialogState extends State<TagFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: Text(widget.isEditing ? 'Edit Tag' : 'New Tag'),
+      title: Text(widget.isEditing ? l10n.tagFormTitleEdit : l10n.tagFormTitleNew),
       content: SizedBox(
         width: 400,
         child: SingleChildScrollView(
@@ -59,10 +62,11 @@ class _TagFormDialogState extends State<TagFormDialog> {
             children: [
               TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Tag Name',
-                  prefixIcon: Icon(Icons.label_outline),
+                decoration: InputDecoration(
+                  labelText: l10n.tagFormNameLabel,
+                  prefixIcon: const Icon(Icons.label_outline),
                 ),
+                keyboardType: TextInputType.text,
                 autofocus: true,
               ),
               const SizedBox(height: 16),
@@ -77,11 +81,11 @@ class _TagFormDialogState extends State<TagFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: _save,
-          child: Text(widget.isEditing ? 'Update' : 'Create'),
+          child: Text(widget.isEditing ? l10n.update : l10n.create),
         ),
       ],
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/utils/validators.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/presentation/widgets/auth_method_selector.dart';
@@ -49,16 +50,18 @@ class ServerFormFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextFormField(
           controller: nameController,
-          decoration: const InputDecoration(
-            labelText: 'Server Name',
-            prefixIcon: Icon(Icons.label_outline),
+          decoration: InputDecoration(
+            labelText: l10n.serverFormNameLabel,
+            prefixIcon: const Icon(Icons.label_outline),
           ),
-          validator: Validators.validateServerName,
+          keyboardType: TextInputType.text,
+          validator: Validators.serverNameValidator(l10n),
           textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
@@ -69,11 +72,12 @@ class ServerFormFields extends StatelessWidget {
               flex: 3,
               child: TextFormField(
                 controller: hostnameController,
-                decoration: const InputDecoration(
-                  labelText: 'Hostname / IP',
-                  prefixIcon: Icon(Icons.dns_outlined),
+                decoration: InputDecoration(
+                  labelText: l10n.serverFormHostnameLabel,
+                  prefixIcon: const Icon(Icons.dns_outlined),
                 ),
-                validator: Validators.validateHostname,
+                keyboardType: TextInputType.url,
+                validator: Validators.hostnameValidator(l10n),
                 textInputAction: TextInputAction.next,
               ),
             ),
@@ -81,12 +85,12 @@ class ServerFormFields extends StatelessWidget {
             Expanded(
               child: TextFormField(
                 controller: portController,
-                decoration: const InputDecoration(
-                  labelText: 'Port',
+                decoration: InputDecoration(
+                  labelText: l10n.serverFormPortLabel,
                 ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                validator: Validators.validatePort,
+                validator: Validators.portValidator(l10n),
                 textInputAction: TextInputAction.next,
               ),
             ),
@@ -95,11 +99,12 @@ class ServerFormFields extends StatelessWidget {
         const SizedBox(height: 16),
         TextFormField(
           controller: usernameController,
-          decoration: const InputDecoration(
-            labelText: 'Username',
-            prefixIcon: Icon(Icons.person_outline),
+          decoration: InputDecoration(
+            labelText: l10n.serverFormUsernameLabel,
+            prefixIcon: const Icon(Icons.person_outline),
           ),
-          validator: Validators.validateUsername,
+          keyboardType: TextInputType.text,
+          validator: Validators.usernameValidator(l10n),
           textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 20),
@@ -113,10 +118,11 @@ class ServerFormFields extends StatelessWidget {
               authMethod == AuthMethod.both)
             TextFormField(
               controller: passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.password),
+              decoration: InputDecoration(
+                labelText: l10n.serverFormPasswordLabel,
+                prefixIcon: const Icon(Icons.password),
               ),
+              keyboardType: TextInputType.visiblePassword,
               obscureText: true,
               textInputAction: TextInputAction.next,
             ),
@@ -125,11 +131,11 @@ class ServerFormFields extends StatelessWidget {
             const SizedBox(height: 16),
             if (onUseManagedKeyChanged != null)
               SwitchListTile(
-                title: const Text('Use Managed Key'),
+                title: Text(l10n.serverFormUseManagedKey),
                 subtitle: Text(
                   useManagedKey
-                      ? 'Select from centrally managed SSH keys'
-                      : 'Paste key directly into this server',
+                      ? l10n.serverFormManagedKeySubtitle
+                      : l10n.serverFormDirectKeySubtitle,
                 ),
                 value: useManagedKey,
                 onChanged: onUseManagedKeyChanged,
@@ -149,45 +155,48 @@ class ServerFormFields extends StatelessWidget {
                   child: OutlinedButton.icon(
                     onPressed: onGenerateKeyPair,
                     icon: const Icon(Icons.auto_fix_high, size: 18),
-                    label: const Text('Generate SSH Key Pair'),
+                    label: Text(l10n.serverFormGenerateKey),
                   ),
                 ),
               TextFormField(
                 controller: privateKeyController,
                 decoration: InputDecoration(
-                  labelText: 'Private Key',
+                  labelText: l10n.serverFormPrivateKeyLabel,
                   prefixIcon: const Icon(Icons.vpn_key),
-                  hintText: 'Paste SSH private key...',
+                  hintText: l10n.serverFormPrivateKeyHint,
                   suffixIcon: onExtractPublicKey != null &&
                           privateKeyController.text.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.key, size: 20),
-                          tooltip: 'Extract Public Key',
+                          tooltip: l10n.serverFormExtractPublicKey,
                           onPressed: onExtractPublicKey,
                         )
                       : null,
                 ),
+                keyboardType: TextInputType.multiline,
                 maxLines: 3,
-                validator: useManagedKey ? null : Validators.validateSshKey,
+                validator: useManagedKey ? null : Validators.sshKeyValidator(l10n),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: publicKeyController,
-                decoration: const InputDecoration(
-                  labelText: 'Public Key',
-                  prefixIcon: Icon(Icons.key),
-                  hintText: 'Auto-generated from private key if empty',
+                decoration: InputDecoration(
+                  labelText: l10n.serverFormPublicKeyLabel,
+                  prefixIcon: const Icon(Icons.key),
+                  hintText: l10n.serverFormPublicKeyHint,
                 ),
+                keyboardType: TextInputType.multiline,
                 maxLines: 2,
                 readOnly: false,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: passphraseController,
-                decoration: const InputDecoration(
-                  labelText: 'Key Passphrase (optional)',
-                  prefixIcon: Icon(Icons.lock_outline),
+                decoration: InputDecoration(
+                  labelText: l10n.serverFormPassphraseLabel,
+                  prefixIcon: const Icon(Icons.lock_outline),
                 ),
+                keyboardType: TextInputType.visiblePassword,
                 obscureText: true,
               ),
             ],
@@ -196,10 +205,11 @@ class ServerFormFields extends StatelessWidget {
         const SizedBox(height: 16),
         TextFormField(
           controller: notesController,
-          decoration: const InputDecoration(
-            labelText: 'Notes (optional)',
-            prefixIcon: Icon(Icons.notes),
+          decoration: InputDecoration(
+            labelText: l10n.serverFormNotesLabel,
+            prefixIcon: const Icon(Icons.notes),
           ),
+          keyboardType: TextInputType.multiline,
           maxLines: 3,
         ),
       ],

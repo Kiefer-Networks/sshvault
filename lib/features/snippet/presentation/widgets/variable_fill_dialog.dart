@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 
 class VariableFillDialog extends StatefulWidget {
@@ -67,16 +68,17 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
     Clipboard.setData(ClipboardData(text: resolved));
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Copied to clipboard')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Fill Variables'),
+      title: Text(l10n.variableFillTitle),
       content: SizedBox(
         width: 400,
         child: SingleChildScrollView(
@@ -90,8 +92,9 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
                     labelText: variable.name,
                     hintText: variable.description.isNotEmpty
                         ? variable.description
-                        : 'Enter value for {{${variable.name}}}',
+                        : l10n.variableFillHint(variable.name),
                   ),
+                  keyboardType: TextInputType.text,
                 ),
                 const SizedBox(height: 12),
               ],
@@ -107,7 +110,7 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
                   ),
                 ),
                 child: Text(
-                  'Preview',
+                  l10n.variableFillPreview,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.onSurface.withAlpha(102),
                   ),
@@ -120,12 +123,12 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton.icon(
           onPressed: _copyAndClose,
           icon: const Icon(Icons.copy, size: 18),
-          label: const Text('Copy'),
+          label: Text(l10n.copy),
         ),
       ],
     );

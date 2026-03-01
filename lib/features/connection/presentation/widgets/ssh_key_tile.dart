@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 
 class SshKeyTile extends StatelessWidget {
@@ -17,6 +18,7 @@ class SshKeyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final canDelete = sshKey.linkedServerCount == 0;
 
     return Card(
@@ -47,7 +49,7 @@ class SshKeyTile extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(
-                  'Used by ${sshKey.linkedServerCount} server(s)',
+                  l10n.sshKeyTileLinkedServers(sshKey.linkedServerCount),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -61,18 +63,18 @@ class SshKeyTile extends StatelessWidget {
             if (sshKey.publicKey.isNotEmpty)
               IconButton(
                 icon: const Icon(Icons.copy, size: 18),
-                tooltip: 'Copy public key',
+                tooltip: l10n.sshKeyTileCopyPublicKey,
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: sshKey.publicKey));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Public key copied')),
+                    SnackBar(content: Text(l10n.sshKeyTilePublicKeyCopied)),
                   );
                 },
               ),
             if (onEdit != null)
               IconButton(
                 icon: const Icon(Icons.edit_outlined, size: 18),
-                tooltip: 'Edit',
+                tooltip: l10n.edit,
                 onPressed: onEdit,
               ),
             if (onDelete != null)
@@ -85,8 +87,8 @@ class SshKeyTile extends StatelessWidget {
                       : theme.disabledColor,
                 ),
                 tooltip: canDelete
-                    ? 'Delete'
-                    : 'Unlink from all servers first',
+                    ? l10n.delete
+                    : l10n.sshKeyTileUnlinkFirst,
                 onPressed: canDelete ? onDelete : null,
               ),
           ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
@@ -20,10 +21,12 @@ class ServerListScreen extends ConsumerWidget {
     final serversAsync = ref.watch(serverListProvider);
     final viewMode = ref.watch(viewModeProvider);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: buildShellAppBar(
         context,
-        title: 'Hosts',
+        title: l10n.serverListTitle,
         actions: const [ViewModeToggle(), SizedBox(width: 8)],
       ),
       body: Column(
@@ -36,12 +39,12 @@ class ServerListScreen extends ConsumerWidget {
                 if (servers.isEmpty) {
                   return EmptyState(
                     icon: Icons.dns_outlined,
-                    title: 'No servers yet',
-                    subtitle: 'Add your first SSH server to get started.',
+                    title: l10n.serverListEmpty,
+                    subtitle: l10n.serverListEmptySubtitle,
                     action: FilledButton.icon(
                       onPressed: () => context.push('/server/new'),
                       icon: const Icon(Icons.add),
-                      label: const Text('Add Server'),
+                      label: Text(l10n.serverAddButton),
                     ),
                   );
                 }
@@ -62,11 +65,11 @@ class ServerListScreen extends ConsumerWidget {
                   children: [
                     const Icon(Icons.error_outline, size: 48),
                     const SizedBox(height: 16),
-                    Text('Error: $error'),
+                    Text(l10n.error(error.toString())),
                     const SizedBox(height: 16),
                     FilledButton(
                       onPressed: () => ref.invalidate(serverListProvider),
-                      child: const Text('Retry'),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),
@@ -113,16 +116,16 @@ class ServerListScreen extends ConsumerWidget {
                 .duplicateServer(server.id);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Server duplicated')),
+                SnackBar(content: Text(AppLocalizations.of(context)!.serverDuplicated)),
               );
             }
           },
           onDelete: () async {
+            final l10n = AppLocalizations.of(context)!;
             final confirmed = await ConfirmDialog.show(
               context,
-              title: 'Delete Server',
-              message:
-                  'Are you sure you want to delete "${server.name}"? This action cannot be undone.',
+              title: l10n.serverDeleteTitle,
+              message: l10n.serverDeleteMessage(server.name),
             );
             if (confirmed == true) {
               await ref
@@ -167,6 +170,7 @@ class ServerListScreen extends ConsumerWidget {
   }
 
   void _showServerActions(BuildContext context, WidgetRef ref, server) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (ctx) => SafeArea(
@@ -175,7 +179,7 @@ class ServerListScreen extends ConsumerWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.terminal),
-              title: const Text('Connect'),
+              title: Text(l10n.serverConnect),
               onTap: () async {
                 Navigator.pop(ctx);
                 await ref
@@ -186,7 +190,7 @@ class ServerListScreen extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.info_outlined),
-              title: const Text('Details'),
+              title: Text(l10n.serverDetails),
               onTap: () {
                 Navigator.pop(ctx);
                 context.push('/server/${server.id}');
@@ -194,7 +198,7 @@ class ServerListScreen extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.edit),
-              title: const Text('Edit'),
+              title: Text(l10n.edit),
               onTap: () {
                 Navigator.pop(ctx);
                 context.push('/server/${server.id}/edit');
@@ -202,7 +206,7 @@ class ServerListScreen extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.copy),
-              title: const Text('Duplicate'),
+              title: Text(l10n.serverDuplicate),
               onTap: () async {
                 Navigator.pop(ctx);
                 await ref
@@ -213,15 +217,15 @@ class ServerListScreen extends ConsumerWidget {
             ListTile(
               leading: Icon(Icons.delete,
                   color: Theme.of(context).colorScheme.error),
-              title: Text('Delete',
+              title: Text(l10n.delete,
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.error)),
               onTap: () async {
                 Navigator.pop(ctx);
                 final confirmed = await ConfirmDialog.show(
                   context,
-                  title: 'Delete Server',
-                  message: 'Delete "${server.name}"?',
+                  title: l10n.serverDeleteTitle,
+                  message: l10n.serverDeleteShort(server.name),
                 );
                 if (confirmed == true) {
                   await ref

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 
@@ -31,6 +32,7 @@ class ConnectionOverlay extends StatelessWidget {
   }
 
   Widget _buildConnecting(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Center(
       child: GlassmorphicContainer(
@@ -42,8 +44,8 @@ class ConnectionOverlay extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               status == SshConnectionStatus.authenticating
-                  ? 'Authenticating...'
-                  : 'Connecting to ${serverName ?? "server"}...',
+                  ? l10n.connectionAuthenticating
+                  : l10n.connectionConnecting(serverName ?? 'server'),
               style: theme.textTheme.bodyLarge,
             ),
           ],
@@ -53,6 +55,7 @@ class ConnectionOverlay extends StatelessWidget {
   }
 
   Widget _buildError(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Center(
       child: GlassmorphicContainer(
@@ -63,7 +66,7 @@ class ConnectionOverlay extends StatelessWidget {
             Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 16),
             Text(
-              'Connection Error',
+              l10n.connectionError,
               style: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.error,
               ),
@@ -85,13 +88,13 @@ class ConnectionOverlay extends StatelessWidget {
               children: [
                 OutlinedButton(
                   onPressed: onClose,
-                  child: const Text('Close'),
+                  child: Text(l10n.close),
                 ),
                 const SizedBox(width: 12),
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh, size: 18),
-                  label: const Text('Retry'),
+                  label: Text(l10n.retry),
                 ),
               ],
             ),
@@ -102,6 +105,7 @@ class ConnectionOverlay extends StatelessWidget {
   }
 
   Widget _buildDisconnected(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Center(
       child: GlassmorphicContainer(
@@ -113,7 +117,7 @@ class ConnectionOverlay extends StatelessWidget {
                 color: theme.colorScheme.onSurface.withAlpha(153)),
             const SizedBox(height: 16),
             Text(
-              'Connection Lost',
+              l10n.connectionLost,
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 20),
@@ -122,13 +126,13 @@ class ConnectionOverlay extends StatelessWidget {
               children: [
                 OutlinedButton(
                   onPressed: onClose,
-                  child: const Text('Close'),
+                  child: Text(l10n.close),
                 ),
                 const SizedBox(width: 12),
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh, size: 18),
-                  label: const Text('Reconnect'),
+                  label: Text(l10n.connectionReconnect),
                 ),
               ],
             ),

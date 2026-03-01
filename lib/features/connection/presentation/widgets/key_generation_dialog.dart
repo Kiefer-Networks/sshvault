@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/crypto/ssh_key_type.dart';
 
@@ -75,13 +76,14 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (_result != null) {
-      return _buildResultView(theme);
+      return _buildResultView(theme, l10n);
     }
 
     return AlertDialog(
-      title: const Text('Generate SSH Key Pair'),
+      title: Text(l10n.keyGenTitle),
       content: SizedBox(
         width: 480,
         child: Column(
@@ -89,7 +91,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Key Type
-            Text('Key Type', style: theme.textTheme.titleSmall),
+            Text(l10n.keyGenKeyType, style: theme.textTheme.titleSmall),
             const SizedBox(height: 8),
             DropdownButtonFormField<SshKeyType>(
               initialValue: _selectedType,
@@ -117,7 +119,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
 
             // Key Size (only for RSA)
             if (_selectedType.allowedBitLengths.isNotEmpty) ...[
-              Text('Key Size', style: theme.textTheme.titleSmall),
+              Text(l10n.keyGenKeySize, style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               DropdownButtonFormField<int>(
                 initialValue: _selectedBits > 0
@@ -130,7 +132,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                 items: _selectedType.allowedBitLengths
                     .map((b) => DropdownMenuItem(
                           value: b,
-                          child: Text('$b bit'),
+                          child: Text(l10n.keyGenKeySizeBit(b)),
                         ))
                     .toList(),
                 onChanged: _generating
@@ -163,16 +165,17 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
               ),
 
             // Comment
-            Text('Comment', style: theme.textTheme.titleSmall),
+            Text(l10n.keyGenComment, style: theme.textTheme.titleSmall),
             const SizedBox(height: 8),
             TextFormField(
               controller: _commentController,
               enabled: !_generating,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.comment_outlined),
-                hintText: 'user@host or description',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.comment_outlined),
+                hintText: l10n.keyGenCommentHint,
                 isDense: true,
               ),
+              keyboardType: TextInputType.text,
             ),
 
             if (_error != null) ...[
@@ -188,7 +191,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
       actions: [
         TextButton(
           onPressed: _generating ? null : () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton.icon(
           onPressed: _generating ? null : _generate,
@@ -199,13 +202,13 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.auto_fix_high, size: 18),
-          label: Text(_generating ? 'Generating...' : 'Generate'),
+          label: Text(_generating ? l10n.keyGenGenerating : l10n.keyGenGenerate),
         ),
       ],
     );
   }
 
-  Widget _buildResultView(ThemeData theme) {
+  Widget _buildResultView(ThemeData theme, AppLocalizations l10n) {
     final result = _result!;
     return AlertDialog(
       title: Row(
@@ -214,7 +217,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '${result.type.displayName} Key Generated',
+              l10n.keyGenResultTitle(result.type.displayName),
               style: theme.textTheme.titleLarge,
             ),
           ),
@@ -228,7 +231,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
           children: [
             // Public Key
             _KeyPreviewCard(
-              label: 'Public Key',
+              label: l10n.keyGenPublicKey,
               value: result.publicKey,
               icon: Icons.key,
               theme: theme,
@@ -237,7 +240,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
 
             // Private Key
             _KeyPreviewCard(
-              label: 'Private Key',
+              label: l10n.keyGenPrivateKey,
               value: result.privateKey,
               icon: Icons.vpn_key,
               theme: theme,
@@ -253,7 +256,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    'Comment: ${result.comment}',
+                    l10n.keyGenCommentInfo(result.comment),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -272,11 +275,11 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
               _error = null;
             });
           },
-          child: const Text('Generate Another'),
+          child: Text(l10n.keyGenAnother),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, result),
-          child: const Text('Use This Key'),
+          child: Text(l10n.keyGenUseThisKey),
         ),
       ],
     );
@@ -318,11 +321,11 @@ class _KeyPreviewCard extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.copy, size: 16),
-                  tooltip: 'Copy to clipboard',
+                  tooltip: AppLocalizations.of(context)!.keyGenCopyTooltip,
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: value));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('$label copied')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.keyGenCopied(label))),
                     );
                   },
                   visualDensity: VisualDensity.compact,

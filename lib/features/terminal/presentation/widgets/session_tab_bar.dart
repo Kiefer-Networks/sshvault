@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
@@ -119,12 +120,12 @@ class _CloseButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       onTap: () async {
         if (session.status == SshConnectionStatus.connected) {
+          final l10n = AppLocalizations.of(context)!;
           final confirmed = await ConfirmDialog.show(
             context,
-            title: 'Close Session',
-            message:
-                'Close the active connection to "${session.title}"?',
-            confirmLabel: 'Close',
+            title: l10n.terminalCloseTitle,
+            message: l10n.terminalCloseMessage(session.title),
+            confirmLabel: l10n.close,
           );
           if (confirmed == true) onClose();
         } else {

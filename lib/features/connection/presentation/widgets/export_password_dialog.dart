@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/utils/validators.dart';
 
 class ExportPasswordDialog extends StatefulWidget {
@@ -31,22 +32,21 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Set Export Password'),
+      title: Text(l10n.exportPasswordTitle),
       content: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'This password will be used to encrypt your export file including credentials.',
-            ),
+            Text(l10n.exportPasswordDescription),
             const SizedBox(height: 16),
             TextFormField(
               controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: l10n.exportPasswordLabel,
                 suffixIcon: IconButton(
                   icon: Icon(_obscurePassword
                       ? Icons.visibility_off
@@ -55,14 +55,15 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
                       () => _obscurePassword = !_obscurePassword),
                 ),
               ),
-              validator: Validators.validateExportPassword,
+              keyboardType: TextInputType.visiblePassword,
+              validator: Validators.exportPasswordValidator(l10n),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _confirmController,
               obscureText: _obscureConfirm,
               decoration: InputDecoration(
-                labelText: 'Confirm Password',
+                labelText: l10n.exportPasswordConfirmLabel,
                 suffixIcon: IconButton(
                   icon: Icon(_obscureConfirm
                       ? Icons.visibility_off
@@ -71,9 +72,10 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
                       () => _obscureConfirm = !_obscureConfirm),
                 ),
               ),
+              keyboardType: TextInputType.visiblePassword,
               validator: (value) {
                 if (value != _passwordController.text) {
-                  return 'Passwords do not match';
+                  return l10n.exportPasswordMismatch;
                 }
                 return null;
               },
@@ -84,7 +86,7 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: () {
@@ -92,7 +94,7 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
               Navigator.of(context).pop(_passwordController.text);
             }
           },
-          child: const Text('Encrypt & Export'),
+          child: Text(l10n.exportPasswordButton),
         ),
       ],
     );

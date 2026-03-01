@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
@@ -20,19 +21,21 @@ class GroupListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final groupsAsync = ref.watch(groupTreeProvider);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: buildShellAppBar(context, title: 'Groups'),
+      appBar: buildShellAppBar(context, title: l10n.groupListTitle),
       body: groupsAsync.when(
         data: (groups) {
           if (groups.isEmpty) {
             return EmptyState(
               icon: Icons.folder_outlined,
-              title: 'No groups yet',
-              subtitle: 'Create groups to organize your servers.',
+              title: l10n.groupListEmpty,
+              subtitle: l10n.groupListEmptySubtitle,
               action: FilledButton.icon(
                 onPressed: () => _showGroupForm(context, ref),
                 icon: const Icon(Icons.add),
-                label: const Text('Add Group'),
+                label: Text(l10n.groupAddButton),
               ),
             );
           }
@@ -43,7 +46,7 @@ class GroupListScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'addGroupFab',
@@ -89,11 +92,11 @@ class GroupListScreen extends ConsumerWidget {
     WidgetRef ref,
     GroupEntity group,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await ConfirmDialog.show(
       context,
-      title: 'Delete Group',
-      message:
-          'Delete "${group.name}"? Servers in this group will become ungrouped.',
+      title: l10n.groupDeleteTitle,
+      message: l10n.groupDeleteMessage(group.name),
     );
     if (confirmed == true) {
       await ref.read(groupListProvider.notifier).deleteGroup(group.id);
@@ -165,7 +168,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
                     size: 20,
                   ),
                   onPressed: () => setState(() => _expanded = !_expanded),
-                  tooltip: _expanded ? 'Collapse' : 'Show hosts',
+                  tooltip: _expanded ? AppLocalizations.of(context)!.groupCollapse : AppLocalizations.of(context)!.groupShowHosts,
                 ),
               IconButton(
                 icon: const Icon(Icons.edit, size: 20),
@@ -238,7 +241,7 @@ class _GroupServerList extends ConsumerWidget {
       ),
       error: (e, _) => Padding(
         padding: EdgeInsets.only(left: indent),
-        child: Text('Error: $e', style: theme.textTheme.bodySmall),
+        child: Text(AppLocalizations.of(context)!.error(e.toString()), style: theme.textTheme.bodySmall),
       ),
     );
   }
@@ -289,13 +292,13 @@ class _ServerSubTile extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.info_outlined, size: 18),
             onPressed: onDetail,
-            tooltip: 'Details',
+            tooltip: AppLocalizations.of(context)!.serverDetails,
             visualDensity: VisualDensity.compact,
           ),
           IconButton(
             icon: const Icon(Icons.terminal, size: 18),
             onPressed: onTap,
-            tooltip: 'Connect',
+            tooltip: AppLocalizations.of(context)!.serverConnect,
             visualDensity: VisualDensity.compact,
           ),
         ],

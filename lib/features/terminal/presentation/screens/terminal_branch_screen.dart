@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xterm/xterm.dart';
 
@@ -64,20 +65,22 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
       }
     }
 
+    final l10n = AppLocalizations.of(context)!;
+
     // Empty state — no sessions
     if (sessions.isEmpty) {
       return Scaffold(
-        appBar: buildShellAppBar(context, title: 'Terminal'),
+        appBar: buildShellAppBar(context, title: l10n.terminalTitle),
         body: EmptyState(
           icon: Icons.terminal,
-          title: 'No active sessions',
-          subtitle: 'Connect to a host to open a terminal session.',
+          title: l10n.terminalEmpty,
+          subtitle: l10n.terminalEmptySubtitle,
           action: FilledButton.icon(
             onPressed: () {
               ref.read(shellNavigationProvider)?.goBranch(0);
             },
             icon: const Icon(Icons.dns),
-            label: const Text('Go to Hosts'),
+            label: Text(l10n.terminalGoToHosts),
           ),
         ),
       );
@@ -87,7 +90,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
       backgroundColor: terminalTheme.background,
       appBar: buildShellAppBar(
         context,
-        title: 'Terminal',
+        title: l10n.terminalTitle,
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
@@ -97,9 +100,9 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'close_all',
-                child: Text('Close All Sessions'),
+                child: Text(l10n.terminalCloseAll),
               ),
             ],
           ),

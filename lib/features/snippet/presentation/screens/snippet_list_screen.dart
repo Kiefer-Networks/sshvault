@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
@@ -24,11 +25,12 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final snippetsAsync = ref.watch(snippetListProvider);
     final filter = ref.watch(snippetFilterProvider);
 
     return Scaffold(
-      appBar: buildShellAppBar(context, title: 'Snippets'),
+      appBar: buildShellAppBar(context, title: l10n.snippetListTitle),
       body: Column(
         children: [
           // Search bar
@@ -37,7 +39,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search snippets...',
+                hintText: l10n.snippetSearchHint,
                 prefixIcon: const Icon(Icons.search, size: 20),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -51,6 +53,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                     : null,
                 isDense: true,
               ),
+              keyboardType: TextInputType.text,
               onChanged: (value) {
                 ref.read(snippetFilterProvider.notifier).state =
                     value.isEmpty
@@ -84,13 +87,12 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                 if (snippets.isEmpty) {
                   return EmptyState(
                     icon: Icons.code_outlined,
-                    title: 'No snippets yet',
-                    subtitle:
-                        'Create reusable code snippets and commands.',
+                    title: l10n.snippetListEmpty,
+                    subtitle: l10n.snippetListEmptySubtitle,
                     action: FilledButton.icon(
                       onPressed: () => context.push('/snippet/new'),
                       icon: const Icon(Icons.add),
-                      label: const Text('Add Snippet'),
+                      label: Text(l10n.snippetAddButton),
                     ),
                   );
                 }
@@ -110,7 +112,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
               },
               loading: () =>
                   const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('Error: $error')),
+              error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
             ),
           ),
         ],

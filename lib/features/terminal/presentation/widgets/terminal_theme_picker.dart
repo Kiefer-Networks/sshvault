@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
@@ -15,11 +16,12 @@ class TerminalThemePicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Terminal Theme'),
+      title: Text(l10n.terminalThemePickerTitle),
       content: SizedBox(
         width: 340,
         child: themeKeyAsync.when(
@@ -72,7 +74,7 @@ class TerminalThemePicker extends ConsumerWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
       ],
     );

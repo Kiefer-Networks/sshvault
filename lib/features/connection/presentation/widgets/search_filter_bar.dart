@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
@@ -28,6 +29,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
   Widget build(BuildContext context) {
     final filter = ref.watch(serverFilterProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -40,7 +42,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search servers...',
+                    hintText: l10n.searchServers,
                     prefixIcon: const Icon(Icons.search, size: 20),
                     suffixIcon: filter.searchQuery.isNotEmpty
                         ? IconButton(
@@ -56,6 +58,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 10),
                   ),
+                  keyboardType: TextInputType.text,
                   onChanged: (value) {
                     ref.read(serverFilterProvider.notifier).state =
                         filter.copyWith(searchQuery: value);
@@ -80,11 +83,11 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
         ),
         if (_showFilters) ...[
           const SizedBox(height: 12),
-          _buildGroupFilter(filter),
+          _buildGroupFilter(filter, l10n),
           const SizedBox(height: 8),
           _buildTagFilter(filter),
           const SizedBox(height: 8),
-          _buildStatusFilter(filter),
+          _buildStatusFilter(filter, l10n),
         ],
       ],
     );
@@ -96,7 +99,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
         filter.isActive != null;
   }
 
-  Widget _buildGroupFilter(ServerFilter filter) {
+  Widget _buildGroupFilter(ServerFilter filter, AppLocalizations l10n) {
     final groupsAsync = ref.watch(groupListProvider);
     return SizedBox(
       height: 36,
@@ -106,7 +109,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           children: [
             FilterChip(
-              label: const Text('All Groups'),
+              label: Text(l10n.filterAllGroups),
               selected: filter.groupId == null,
               onSelected: (_) {
                 ref.read(serverFilterProvider.notifier).state =
@@ -174,13 +177,13 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
     );
   }
 
-  Widget _buildStatusFilter(ServerFilter filter) {
+  Widget _buildStatusFilter(ServerFilter filter, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           FilterChip(
-            label: const Text('All'),
+            label: Text(l10n.filterAll),
             selected: filter.isActive == null,
             onSelected: (_) {
               ref.read(serverFilterProvider.notifier).state =
@@ -189,7 +192,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           ),
           const SizedBox(width: 8),
           FilterChip(
-            label: const Text('Active'),
+            label: Text(l10n.filterActive),
             selected: filter.isActive == true,
             onSelected: (_) {
               ref.read(serverFilterProvider.notifier).state =
@@ -200,7 +203,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           ),
           const SizedBox(width: 8),
           FilterChip(
-            label: const Text('Inactive'),
+            label: Text(l10n.filterInactive),
             selected: filter.isActive == false,
             onSelected: (_) {
               ref.read(serverFilterProvider.notifier).state =
@@ -213,7 +216,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           if (_hasActiveFilters(filter))
             TextButton.icon(
               icon: const Icon(Icons.clear_all, size: 18),
-              label: const Text('Clear'),
+              label: Text(l10n.filterClear),
               onPressed: () {
                 ref.read(serverFilterProvider.notifier).state =
                     const ServerFilter();
