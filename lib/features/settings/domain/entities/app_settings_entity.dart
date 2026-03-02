@@ -18,6 +18,7 @@ class AppSettingsEntity {
   final bool selfHosted;
   final bool autoSync;
   final int localVaultVersion;
+  final bool preventScreenshots;
 
   const AppSettingsEntity({
     this.themeMode = ThemeMode.system,
@@ -36,6 +37,7 @@ class AppSettingsEntity {
     this.selfHosted = false,
     this.autoSync = true,
     this.localVaultVersion = 0,
+    this.preventScreenshots = false,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -72,6 +74,7 @@ class AppSettingsEntity {
     bool? selfHosted,
     bool? autoSync,
     int? localVaultVersion,
+    bool? preventScreenshots,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -92,6 +95,7 @@ class AppSettingsEntity {
       selfHosted: selfHosted ?? this.selfHosted,
       autoSync: autoSync ?? this.autoSync,
       localVaultVersion: localVaultVersion ?? this.localVaultVersion,
+      preventScreenshots: preventScreenshots ?? this.preventScreenshots,
     );
   }
 }

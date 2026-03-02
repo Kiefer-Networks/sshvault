@@ -35,6 +35,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keySelfHosted = 'self_hosted';
   static const _keyAutoSync = 'auto_sync';
   static const _keyLocalVaultVersion = 'local_vault_version';
+  static const _keyPreventScreenshots = 'prevent_screenshots';
 
   @override
   Future<AppSettingsEntity> build() async {
@@ -56,6 +57,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     final selfHostedStr = await dao.getValue(_keySelfHosted);
     final autoSyncStr = await dao.getValue(_keyAutoSync);
     final localVaultVersionStr = await dao.getValue(_keyLocalVaultVersion);
+    final preventScreenshotsStr = await dao.getValue(_keyPreventScreenshots);
 
     // Migrate legacy plaintext PIN to hash if present
     final legacyPin = await dao.getValue('pin_code');
@@ -84,6 +86,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
         selfHosted: selfHostedStr == 'true',
         autoSync: autoSyncStr != 'false',
         localVaultVersion: int.tryParse(localVaultVersionStr ?? '') ?? 0,
+        preventScreenshots: preventScreenshotsStr == 'true',
       );
     }
 
@@ -104,6 +107,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       selfHosted: selfHostedStr == 'true',
       autoSync: autoSyncStr != 'false',
       localVaultVersion: int.tryParse(localVaultVersionStr ?? '') ?? 0,
+      preventScreenshots: preventScreenshotsStr == 'true',
     );
   }
 
@@ -314,6 +318,13 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   Future<void> setLocalVaultVersion(int version) async {
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyLocalVaultVersion, version.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setPreventScreenshots(bool enabled) async {
+    _log.info(_tag, 'Prevent screenshots ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyPreventScreenshots, enabled.toString());
     ref.invalidateSelf();
   }
 }

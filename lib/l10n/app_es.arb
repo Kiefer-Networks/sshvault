@@ -74,6 +74,8 @@
   "settingsPinRemove": "Eliminar",
   "settingsPinRemoveWarning": "Eliminar el PIN descifrará todos los campos de la base de datos y desactivará el desbloqueo biométrico. ¿Continuar?",
   "settingsPinRemoveTitle": "Eliminar PIN",
+  "settingsPreventScreenshots": "Prevenir capturas de pantalla",
+  "settingsPreventScreenshotsDescription": "Bloquear capturas de pantalla y grabación de pantalla",
   "settingsEncryptExport": "Cifrar exportaciones por defecto",
   "settingsAbout": "Acerca de SSH Vault",
   "settingsAboutLegalese": "por Kiefer Networks",

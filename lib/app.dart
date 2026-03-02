@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/routing/app_router.dart';
+import 'package:shellvault/core/services/screen_protection_service.dart';
 import 'package:shellvault/core/theme/app_theme.dart';
 import 'package:shellvault/core/widgets/lock_screen.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
@@ -19,13 +20,22 @@ class ShellVaultApp extends ConsumerStatefulWidget {
 
 class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
   bool _autoSyncTriggered = false;
+  final _screenProtection = ScreenProtectionService();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _triggerAutoSync();
+      _applyScreenProtection();
     });
+  }
+
+  void _applyScreenProtection() {
+    ref.listenManual(settingsProvider, (_, next) {
+      final prevent = next.valueOrNull?.preventScreenshots ?? false;
+      _screenProtection.setEnabled(prevent);
+    }, fireImmediately: true);
   }
 
   void _triggerAutoSync() {

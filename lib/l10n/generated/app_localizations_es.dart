@@ -224,6 +224,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsPinRemoveTitle => 'Eliminar PIN';
 
   @override
+  String get settingsPreventScreenshots => 'Prevenir capturas de pantalla';
+
+  @override
+  String get settingsPreventScreenshotsDescription =>
+      'Bloquear capturas de pantalla y grabación de pantalla';
+
+  @override
   String get settingsEncryptExport => 'Cifrar exportaciones por defecto';
 
   @override

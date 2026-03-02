@@ -74,6 +74,8 @@
   "settingsPinRemove": "Entfernen",
   "settingsPinRemoveWarning": "Das Entfernen der PIN entschlüsselt alle Datenbankfelder und deaktiviert die biometrische Entsperrung. Fortfahren?",
   "settingsPinRemoveTitle": "PIN entfernen",
+  "settingsPreventScreenshots": "Screenshots verhindern",
+  "settingsPreventScreenshotsDescription": "Screenshots und Bildschirmaufnahmen blockieren",
   "settingsEncryptExport": "Exporte standardmäßig verschlüsseln",
   "settingsAbout": "Über SSH Vault",
   "settingsAboutLegalese": "von Kiefer Networks",

@@ -77,6 +77,8 @@
   "settingsPinRemove": "Remove",
   "settingsPinRemoveWarning": "Removing PIN will decrypt all database fields and disable biometric unlock. Continue?",
   "settingsPinRemoveTitle": "Remove PIN",
+  "settingsPreventScreenshots": "Prevent Screenshots",
+  "settingsPreventScreenshotsDescription": "Block screenshots and screen recording",
   "settingsEncryptExport": "Encrypt Exports by Default",
   "settingsAbout": "About SSH Vault",
   "settingsAboutLegalese": "by Kiefer Networks",

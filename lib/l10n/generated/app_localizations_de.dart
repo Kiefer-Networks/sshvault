@@ -224,6 +224,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsPinRemoveTitle => 'PIN entfernen';
 
   @override
+  String get settingsPreventScreenshots => 'Screenshots verhindern';
+
+  @override
+  String get settingsPreventScreenshotsDescription =>
+      'Screenshots und Bildschirmaufnahmen blockieren';
+
+  @override
   String get settingsEncryptExport => 'Exporte standardmäßig verschlüsseln';
 
   @override

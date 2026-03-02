@@ -12,6 +12,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/services/biometric_provider.dart';
+import 'package:shellvault/core/services/screen_protection_service.dart';
 import 'package:shellvault/core/services/logging_provider.dart';
 import 'package:shellvault/core/widgets/pin_dialog.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
@@ -286,6 +287,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   }
                 },
               ),
+              if (ScreenProtectionService.isSupported)
+                SwitchListTile(
+                  secondary: const Icon(Icons.screenshot_monitor_outlined),
+                  title: Text(l10n.settingsPreventScreenshots),
+                  subtitle: Text(l10n.settingsPreventScreenshotsDescription),
+                  value: settings.preventScreenshots,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setPreventScreenshots(v);
+                  },
+                ),
               const Divider(),
 
               // Export

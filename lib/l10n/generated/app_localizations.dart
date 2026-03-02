@@ -502,6 +502,18 @@ abstract class AppLocalizations {
   /// **'Remove PIN'**
   String get settingsPinRemoveTitle;
 
+  /// No description provided for @settingsPreventScreenshots.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevent Screenshots'**
+  String get settingsPreventScreenshots;
+
+  /// No description provided for @settingsPreventScreenshotsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Block screenshots and screen recording'**
+  String get settingsPreventScreenshotsDescription;
+
   /// No description provided for @settingsEncryptExport.
   ///
   /// In en, this message translates to:
