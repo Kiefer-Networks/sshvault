@@ -34,7 +34,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final isLoading = authState.isLoading;
 
     ref.listen(authProvider, (prev, next) {
-      if (next.valueOrNull == AuthStatus.authenticated && mounted) {
+      if (next.value == AuthStatus.authenticated && mounted) {
         context.go('/sync-password?mode=create');
       }
       if (next.hasError && mounted) {

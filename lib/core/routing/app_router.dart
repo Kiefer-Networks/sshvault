@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/app_shell.dart';
+import 'package:shellvault/features/account/presentation/screens/audit_log_screen.dart';
 import 'package:shellvault/features/account/presentation/screens/server_config_screen.dart';
 import 'package:shellvault/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:shellvault/features/auth/presentation/screens/login_screen.dart';
@@ -202,6 +203,11 @@ abstract final class AppRouter {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/sync-settings',
         builder: (context, state) => const SyncSettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/audit-log',
+        builder: (context, state) => const AuditLogScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

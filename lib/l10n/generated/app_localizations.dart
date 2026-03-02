@@ -2637,6 +2637,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Support via Browser'**
   String get supportProjectStripeLink;
+
+  /// No description provided for @auditLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Log'**
+  String get auditLogTitle;
+
+  /// No description provided for @auditLogAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get auditLogAll;
+
+  /// No description provided for @auditLogEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity logs found'**
+  String get auditLogEmpty;
 }
 
 class _AppLocalizationsDelegate

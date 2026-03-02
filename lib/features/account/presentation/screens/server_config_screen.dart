@@ -22,7 +22,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
   @override
   void initState() {
     super.initState();
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     _urlController.text = settings?.serverUrl ?? AppConstants.defaultServerUrl;
   }
 
@@ -37,7 +37,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final settingsAsync = ref.watch(settingsProvider);
-    final settings = settingsAsync.valueOrNull;
+    final settings = settingsAsync.value;
     final isSelfHosted = settings?.selfHosted ?? false;
 
     return Scaffold(

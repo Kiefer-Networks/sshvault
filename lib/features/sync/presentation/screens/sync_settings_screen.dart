@@ -50,7 +50,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     _billingPollTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       attempts++;
       ref.invalidate(billingStatusProvider);
-      final billing = ref.read(billingStatusProvider).valueOrNull;
+      final billing = ref.read(billingStatusProvider).value;
       if (billing?.active ?? false) {
         timer.cancel();
         _billingPollTimer = null;
@@ -68,12 +68,12 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final authState = ref.watch(authProvider);
-    final isAuthenticated = authState.valueOrNull == AuthStatus.authenticated;
+    final isAuthenticated = authState.value == AuthStatus.authenticated;
     final syncState = ref.watch(syncProvider);
     final settingsAsync = ref.watch(settingsProvider);
-    final settings = settingsAsync.valueOrNull;
+    final settings = settingsAsync.value;
     final isSyncing =
-        syncState.valueOrNull == SyncStatus.syncing || syncState.isLoading;
+        syncState.value == SyncStatus.syncing || syncState.isLoading;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.syncTitle)),
@@ -106,7 +106,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           Builder(
             builder: (context) {
               final billingActive =
-                  ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
+                  ref.watch(billingStatusProvider).value?.active ?? false;
               return SwitchListTile(
                 secondary: const Icon(Icons.sync),
                 title: Text(l10n.syncAutoSync),
@@ -156,6 +156,12 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           // ── 5. ACCOUNT ACTIONS ──
           if (isAuthenticated) ...[
             const SizedBox(height: 24),
+            ListTile(
+              leading: const Icon(Icons.history_outlined),
+              title: Text(l10n.auditLogTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/audit-log'),
+            ),
             ListTile(
               leading: const Icon(Icons.lock_outlined),
               title: Text(l10n.accountChangePassword),
@@ -382,7 +388,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         style: TextStyle(color: Theme.of(context).colorScheme.error),
       );
     }
-    return switch (syncState.valueOrNull) {
+    return switch (syncState.value) {
       SyncStatus.syncing => Text(l10n.syncSyncing),
       SyncStatus.success => Text(l10n.syncSuccess),
       _ => Text(l10n.syncNeverSynced),

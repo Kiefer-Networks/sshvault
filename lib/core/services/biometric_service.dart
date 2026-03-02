@@ -39,13 +39,7 @@ class BiometricService {
   }) async {
     if (!isPlatformSupported) return false;
     try {
-      return await _auth.authenticate(
-        localizedReason: reason,
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: false,
-        ),
-      );
+      return await _auth.authenticate(localizedReason: reason);
     } catch (_) {
       return false;
     }

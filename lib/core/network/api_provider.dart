@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/network/auth_interceptor.dart';

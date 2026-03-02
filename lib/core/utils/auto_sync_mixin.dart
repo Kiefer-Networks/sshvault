@@ -9,8 +9,8 @@ import 'package:shellvault/features/sync/presentation/providers/sync_providers.d
 /// enabled in settings.
 mixin AutoSyncMixin<T> on AsyncNotifier<T> {
   void triggerAutoSync() {
-    final authStatus = ref.read(authProvider).valueOrNull;
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final authStatus = ref.read(authProvider).value;
+    final settings = ref.read(settingsProvider).value;
     if (authStatus == AuthStatus.authenticated &&
         (settings?.autoSync ?? false)) {
       ref.read(syncProvider.notifier).schedulePush();

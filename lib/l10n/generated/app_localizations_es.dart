@@ -1386,4 +1386,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get supportProjectStripeLink => 'Apoyar vía navegador';
+
+  @override
+  String get auditLogTitle => 'Registro de actividad';
+
+  @override
+  String get auditLogAll => 'Todos';
+
+  @override
+  String get auditLogEmpty => 'No se encontraron registros de actividad';
 }

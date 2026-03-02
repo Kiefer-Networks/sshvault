@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 import 'package:xterm/xterm.dart';
 
@@ -322,12 +323,12 @@ class TerminalFontSizeNotifier extends AsyncNotifier<double> {
   }
 
   Future<void> increase() async {
-    final current = state.valueOrNull ?? _default;
+    final current = state.value ?? _default;
     await setFontSize(current + 1);
   }
 
   Future<void> decrease() async {
-    final current = state.valueOrNull ?? _default;
+    final current = state.value ?? _default;
     await setFontSize(current - 1);
   }
 }

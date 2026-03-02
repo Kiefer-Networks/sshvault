@@ -1388,4 +1388,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get supportProjectStripeLink => 'Über Browser unterstützen';
+
+  @override
+  String get auditLogTitle => 'Aktivitätsprotokoll';
+
+  @override
+  String get auditLogAll => 'Alle';
+
+  @override
+  String get auditLogEmpty => 'Keine Aktivitätsprotokolle gefunden';
 }

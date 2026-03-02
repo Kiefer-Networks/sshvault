@@ -1380,4 +1380,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get supportProjectStripeLink => 'Support via Browser';
+
+  @override
+  String get auditLogTitle => 'Activity Log';
+
+  @override
+  String get auditLogAll => 'All';
+
+  @override
+  String get auditLogEmpty => 'No activity logs found';
 }

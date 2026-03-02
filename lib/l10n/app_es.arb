@@ -475,5 +475,9 @@
   "supportProjectThankYou": "¡Gracias por tu apoyo!",
   "supportProjectError": "No se pudo completar la compra. Inténtalo de nuevo.",
   "supportProjectNotAvailable": "Las compras integradas no están disponibles en esta plataforma. Puedes apoyarnos a través del enlace.",
-  "supportProjectStripeLink": "Apoyar vía navegador"
+  "supportProjectStripeLink": "Apoyar vía navegador",
+
+  "auditLogTitle": "Registro de actividad",
+  "auditLogAll": "Todos",
+  "auditLogEmpty": "No se encontraron registros de actividad"
 }

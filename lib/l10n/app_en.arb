@@ -500,5 +500,9 @@
   "supportProjectThankYou": "Thank you for your support!",
   "supportProjectError": "Purchase could not be completed. Please try again.",
   "supportProjectNotAvailable": "In-app purchases are not available on this platform. You can support us via the link below.",
-  "supportProjectStripeLink": "Support via Browser"
+  "supportProjectStripeLink": "Support via Browser",
+
+  "auditLogTitle": "Activity Log",
+  "auditLogAll": "All",
+  "auditLogEmpty": "No activity logs found"
 }

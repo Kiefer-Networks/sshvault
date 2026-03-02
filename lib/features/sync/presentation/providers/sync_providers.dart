@@ -54,8 +54,8 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
   void _startPeriodicSync() {
     _periodicSyncTimer?.cancel();
     _periodicSyncTimer = Timer.periodic(const Duration(minutes: 5), (_) {
-      final authStatus = ref.read(authProvider).valueOrNull;
-      final settings = ref.read(settingsProvider).valueOrNull;
+      final authStatus = ref.read(authProvider).value;
+      final settings = ref.read(settingsProvider).value;
       if (authStatus == AuthStatus.authenticated &&
           (settings?.autoSync ?? false)) {
         _log.debug(_tag, 'Periodic sync triggered');
@@ -66,7 +66,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
 
   Future<void> sync() async {
     // Check auth status
-    final authStatus = ref.read(authProvider).valueOrNull;
+    final authStatus = ref.read(authProvider).value;
     if (authStatus != AuthStatus.authenticated) {
       _log.warning(_tag, 'Sync aborted: not authenticated');
       state = AsyncValue.error('Not authenticated', StackTrace.current);
@@ -87,7 +87,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     _log.info(_tag, 'Sync initiated by user');
 
     // Get local vault version from settings
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     final localVersion = settings?.localVaultVersion ?? 0;
 
     final useCases = ref.read(syncUseCasesProvider);
@@ -128,7 +128,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
 
   Future<void> pushOnly() async {
     // Auth guard
-    final authStatus = ref.read(authProvider).valueOrNull;
+    final authStatus = ref.read(authProvider).value;
     if (authStatus != AuthStatus.authenticated) return;
 
     final storage = ref.read(secureStorageProvider);
@@ -139,7 +139,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     state = const AsyncValue.data(SyncStatus.syncing);
     _log.info(_tag, 'Push-only initiated');
 
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     final localVersion = settings?.localVaultVersion ?? 0;
 
     final useCases = ref.read(syncUseCasesProvider);
@@ -160,7 +160,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
 
   Future<void> pullOnly() async {
     // Auth guard
-    final authStatus = ref.read(authProvider).valueOrNull;
+    final authStatus = ref.read(authProvider).value;
     if (authStatus != AuthStatus.authenticated) return;
 
     final storage = ref.read(secureStorageProvider);

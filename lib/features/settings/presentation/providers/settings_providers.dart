@@ -172,7 +172,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   /// Returns true on success, false on failure. Tracks failed attempts and
   /// triggers lockout after [AppConstants.maxPinAttempts] failures.
   Future<bool> verifyPin(String pin) async {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null || !current.hasPin) return false;
 
     // Check lockout

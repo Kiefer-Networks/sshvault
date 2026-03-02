@@ -61,7 +61,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
   }
 
   void _startLockoutTimerIfNeeded() {
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     if (settings != null && settings.isLockedOut) {
       _lockoutTimer?.cancel();
       _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -69,7 +69,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
           _lockoutTimer?.cancel();
           return;
         }
-        final s = ref.read(settingsProvider).valueOrNull;
+        final s = ref.read(settingsProvider).value;
         if (s == null || !s.isLockedOut) {
           _lockoutTimer?.cancel();
           setState(() => _pinError = null);
@@ -89,7 +89,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
   Future<void> _tryBiometric() async {
     if (_isAuthenticating) return;
 
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     if (settings == null || !settings.biometricUnlock) return;
     if (settings.isLockedOut) return;
 
@@ -113,7 +113,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsProvider.notifier);
 
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     if (settings != null && settings.isLockedOut) return;
 
     if (_pinController.text.length != 6) {
@@ -130,7 +130,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
     if (success) {
       await _onUnlockSuccess();
     } else {
-      final updatedSettings = ref.read(settingsProvider).valueOrNull;
+      final updatedSettings = ref.read(settingsProvider).value;
       if (updatedSettings != null && updatedSettings.isLockedOut) {
         _startLockoutTimerIfNeeded();
       }
@@ -155,7 +155,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
     if (_isUnlocked) return widget.child;
 
     final theme = Theme.of(context);
-    final settings = ref.watch(settingsProvider).valueOrNull;
+    final settings = ref.watch(settingsProvider).value;
     final l10n = AppLocalizations.of(context)!;
     final isLockedOut = settings?.isLockedOut ?? false;
 

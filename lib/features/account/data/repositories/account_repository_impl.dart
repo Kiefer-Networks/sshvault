@@ -1,6 +1,7 @@
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/network/api_client.dart';
+import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
 import 'package:shellvault/features/account/domain/entities/billing_status.dart';
 import 'package:shellvault/features/account/domain/entities/device_entity.dart';
 import 'package:shellvault/features/account/domain/repositories/account_repository.dart';
@@ -144,6 +145,40 @@ class AccountRepositoryImpl implements AccountRepository {
     final result = await _apiClient.post('/v1/billing/portal');
     return result.fold(
       onSuccess: (data) => Success(data['url'] as String? ?? ''),
+      onFailure: (f) => Err(f),
+    );
+  }
+
+  @override
+  Future<Result<AuditLogResult>> getAuditLogs({
+    String? category,
+    String? action,
+    DateTime? from,
+    DateTime? to,
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final queryParams = <String, dynamic>{
+      'limit': limit.toString(),
+      'offset': offset.toString(),
+    };
+    if (category != null) queryParams['category'] = category;
+    if (action != null) queryParams['action'] = action;
+    if (from != null) queryParams['from'] = from.toUtc().toIso8601String();
+    if (to != null) queryParams['to'] = to.toUtc().toIso8601String();
+
+    final result = await _apiClient.get(
+      '/v1/audit',
+      queryParameters: queryParams,
+    );
+    return result.fold(
+      onSuccess: (data) {
+        try {
+          return Success(AuditLogResult.fromJson(data));
+        } catch (e) {
+          return Err(NetworkFailure('Invalid audit log response', cause: e));
+        }
+      },
       onFailure: (f) => Err(f),
     );
   }

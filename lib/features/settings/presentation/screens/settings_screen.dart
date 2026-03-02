@@ -126,7 +126,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Builder(
                 builder: (context) {
                   final fontSizeAsync = ref.watch(terminalFontSizeProvider);
-                  final fontSize = fontSizeAsync.valueOrNull ?? 14.0;
+                  final fontSize = fontSizeAsync.value ?? 14.0;
                   return ListTile(
                     leading: const Icon(Icons.text_fields_outlined),
                     title: Text(l10n.settingsFontSize),
@@ -321,7 +321,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 builder: (context) {
                   final authState = ref.watch(authProvider);
                   final isAuthenticated =
-                      authState.valueOrNull == AuthStatus.authenticated;
+                      authState.value == AuthStatus.authenticated;
                   return ListTile(
                     leading: const Icon(Icons.account_circle_outlined),
                     title: Text(l10n.settingsSyncAccount),
@@ -363,7 +363,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 builder: (context) {
                   final authState = ref.watch(authProvider);
                   final isAuthenticated =
-                      authState.valueOrNull == AuthStatus.authenticated;
+                      authState.value == AuthStatus.authenticated;
                   if (!isAuthenticated) return const SizedBox.shrink();
                   return ListTile(
                     leading: const Icon(Icons.logout),
@@ -558,7 +558,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (savePath == null || !mounted) return;
       await File(filePath).copy(savePath);
     } else {
-      await Share.shareXFiles([XFile(filePath)]);
+      await SharePlus.instance.share(ShareParams(files: [XFile(filePath)]));
     }
 
     if (!mounted) return;
@@ -592,15 +592,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (!logger.isEmpty && !isDesktopPlatform) {
       final filePath = await logger.exportToFile();
       if (filePath != null && mounted) {
-        await Share.shareXFiles(
-          [XFile(filePath)],
-          subject: 'SSH Vault Support Request',
-          text:
-              'Please describe your issue:\n\n'
-              '---\n'
-              'App Version: ${AppConstants.appVersion}\n'
-              'Platform: $platform\n'
-              '---\n',
+        await SharePlus.instance.share(
+          ShareParams(
+            files: [XFile(filePath)],
+            subject: 'SSH Vault Support Request',
+            text:
+                'Please describe your issue:\n\n'
+                '---\n'
+                'App Version: ${AppConstants.appVersion}\n'
+                'Platform: $platform\n'
+                '---\n',
+          ),
         );
         return;
       }

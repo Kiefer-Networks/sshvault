@@ -475,5 +475,9 @@
   "supportProjectThankYou": "Vielen Dank für deine Unterstützung!",
   "supportProjectError": "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
   "supportProjectNotAvailable": "In-App-Käufe sind auf dieser Plattform nicht verfügbar. Du kannst uns über den Link unten unterstützen.",
-  "supportProjectStripeLink": "Über Browser unterstützen"
+  "supportProjectStripeLink": "Über Browser unterstützen",
+
+  "auditLogTitle": "Aktivitätsprotokoll",
+  "auditLogAll": "Alle",
+  "auditLogEmpty": "Keine Aktivitätsprotokolle gefunden"
 }

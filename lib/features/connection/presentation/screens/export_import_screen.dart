@@ -166,7 +166,7 @@ class ExportImportScreen extends ConsumerWidget {
         action: SnackBarAction(
           label: l10n.share,
           onPressed: () {
-            Share.shareXFiles([XFile(filePath)]);
+            SharePlus.instance.share(ShareParams(files: [XFile(filePath)]));
           },
         ),
         duration: const Duration(seconds: 5),

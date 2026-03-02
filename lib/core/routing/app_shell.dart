@@ -134,7 +134,7 @@ class AppShellState extends ConsumerState<AppShell> {
             widget.navigationShell;
         // Listen for settings to load, then show security dialog if needed
         ref.listenManual(settingsProvider, (_, next) {
-          final settings = next.valueOrNull;
+          final settings = next.value;
           if (settings == null || _securityDialogShown) return;
           if (!settings.hasAnyLock && !settings.dismissedSecurityHint) {
             _securityDialogShown = true;
@@ -146,7 +146,7 @@ class AppShellState extends ConsumerState<AppShell> {
   }
 
   void _refreshAccountProviders() {
-    final auth = ref.read(authProvider).valueOrNull;
+    final auth = ref.read(authProvider).value;
     if (auth != AuthStatus.authenticated) return;
     ref.invalidate(billingStatusProvider);
     ref.invalidate(deviceListProvider);
@@ -412,13 +412,13 @@ class _SyncStatusIcon extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    final isAuthenticated = authState.valueOrNull == AuthStatus.authenticated;
+    final isAuthenticated = authState.value == AuthStatus.authenticated;
     if (!isAuthenticated) return const SizedBox.shrink();
 
     final syncState = ref.watch(syncProvider);
     final billingActive =
-        ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
-    final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
+        ref.watch(billingStatusProvider).value?.active ?? false;
+    final isSyncing = syncState.value == SyncStatus.syncing;
     final hasError = syncState.hasError;
 
     final IconData icon;
@@ -435,7 +435,7 @@ class _SyncStatusIcon extends ConsumerWidget {
     } else if (hasError) {
       icon = Icons.cloud_off;
       color = Theme.of(context).colorScheme.error;
-    } else if (billingActive && syncState.valueOrNull == SyncStatus.success) {
+    } else if (billingActive && syncState.value == SyncStatus.success) {
       icon = Icons.cloud_done_outlined;
       color = Theme.of(context).colorScheme.primary;
     } else {
@@ -455,11 +455,11 @@ class _SyncRailButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authProvider);
-    final isAuthenticated = authState.valueOrNull == AuthStatus.authenticated;
+    final isAuthenticated = authState.value == AuthStatus.authenticated;
     final syncState = ref.watch(syncProvider);
     final billingActive =
-        ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
-    final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
+        ref.watch(billingStatusProvider).value?.active ?? false;
+    final isSyncing = syncState.value == SyncStatus.syncing;
     final hasError = syncState.hasError;
 
     final IconData icon;
@@ -470,7 +470,7 @@ class _SyncRailButton extends ConsumerWidget {
     } else if (hasError) {
       icon = Icons.cloud_off;
       color = Theme.of(context).colorScheme.error;
-    } else if (billingActive && syncState.valueOrNull == SyncStatus.success) {
+    } else if (billingActive && syncState.value == SyncStatus.success) {
       icon = Icons.cloud_done_outlined;
       color = null;
     } else {
@@ -604,11 +604,11 @@ class _SyncDrawerItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authProvider);
-    final isAuthenticated = authState.valueOrNull == AuthStatus.authenticated;
+    final isAuthenticated = authState.value == AuthStatus.authenticated;
     final syncState = ref.watch(syncProvider);
     final billingActive =
-        ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
-    final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
+        ref.watch(billingStatusProvider).value?.active ?? false;
+    final isSyncing = syncState.value == SyncStatus.syncing;
     final hasError = syncState.hasError;
 
     final IconData icon;
@@ -618,7 +618,7 @@ class _SyncDrawerItem extends ConsumerWidget {
       icon = Icons.cloud_sync_outlined;
     } else if (hasError) {
       icon = Icons.cloud_off;
-    } else if (billingActive && syncState.valueOrNull == SyncStatus.success) {
+    } else if (billingActive && syncState.value == SyncStatus.success) {
       icon = Icons.cloud_done_outlined;
     } else {
       icon = Icons.cloud_outlined;

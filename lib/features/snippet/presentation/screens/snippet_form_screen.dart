@@ -248,7 +248,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
 
     try {
       final tagsAsync = ref.read(tagListProvider);
-      final allTags = tagsAsync.valueOrNull ?? [];
+      final allTags = tagsAsync.value ?? [];
       final selectedTags = allTags
           .where((t) => _selectedTagIds.contains(t.id))
           .toList();

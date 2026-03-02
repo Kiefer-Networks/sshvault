@@ -220,7 +220,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
   }
 
   Future<void> _handleFirstSync(String password) async {
-    final servers = ref.read(serverListProvider).valueOrNull ?? [];
+    final servers = ref.read(serverListProvider).value ?? [];
     final hasLocalData = servers.isNotEmpty;
 
     // Check if remote vault has data

@@ -34,7 +34,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isLoading = authState.isLoading;
 
     ref.listen(authProvider, (prev, next) {
-      if (next.valueOrNull == AuthStatus.authenticated && mounted) {
+      if (next.value == AuthStatus.authenticated && mounted) {
         // Check if sync password is set, if not redirect to set it
         _checkSyncPasswordAndNavigate();
       }

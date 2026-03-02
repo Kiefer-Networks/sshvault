@@ -33,7 +33,7 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
 
   void _applyScreenProtection() {
     ref.listenManual(settingsProvider, (_, next) {
-      final prevent = next.valueOrNull?.preventScreenshots ?? false;
+      final prevent = next.value?.preventScreenshots ?? false;
       _screenProtection.setEnabled(prevent);
     }, fireImmediately: true);
   }
@@ -42,8 +42,8 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     if (_autoSyncTriggered) return;
     _autoSyncTriggered = true;
 
-    final authStatus = ref.read(authProvider).valueOrNull;
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final authStatus = ref.read(authProvider).value;
+    final settings = ref.read(settingsProvider).value;
 
     if (authStatus != AuthStatus.authenticated) return;
     if (!(settings?.autoSync ?? true)) return;
@@ -62,8 +62,8 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
   @override
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(settingsProvider);
-    final themeMode = settingsAsync.valueOrNull?.themeMode ?? ThemeMode.system;
-    final localeSetting = settingsAsync.valueOrNull?.locale ?? '';
+    final themeMode = settingsAsync.value?.themeMode ?? ThemeMode.system;
+    final localeSetting = settingsAsync.value?.locale ?? '';
 
     return MaterialApp.router(
       title: 'SSH Vault',
@@ -81,7 +81,7 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: AppRouter.router,
       builder: (context, child) {
-        final settings = settingsAsync.valueOrNull;
+        final settings = settingsAsync.value;
         final content = child ?? const SizedBox.shrink();
         if (settings != null && settings.hasAnyLock) {
           return LockScreen(child: content);
