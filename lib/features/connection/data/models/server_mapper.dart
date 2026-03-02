@@ -3,11 +3,9 @@ import 'package:shellvault/core/storage/database.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+
 abstract final class ServerMapper {
-  static ServerEntity fromDrift(
-    Server row, {
-    List<TagEntity> tags = const [],
-  }) {
+  static ServerEntity fromDrift(Server row, {List<TagEntity> tags = const []}) {
     return ServerEntity(
       id: row.id,
       name: row.name,

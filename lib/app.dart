@@ -39,18 +39,20 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     if (!(settings?.autoSync ?? true)) return;
 
     // Only auto-sync if billing is active; fetch asynchronously
-    ref.read(billingStatusProvider.future).then((billing) {
-      if (billing.active && mounted) {
-        ref.read(syncProvider.notifier).sync();
-      }
-    }).catchError((_) {});
+    ref
+        .read(billingStatusProvider.future)
+        .then((billing) {
+          if (billing.active && mounted) {
+            ref.read(syncProvider.notifier).sync();
+          }
+        })
+        .catchError((_) {});
   }
 
   @override
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(settingsProvider);
-    final themeMode =
-        settingsAsync.valueOrNull?.themeMode ?? ThemeMode.system;
+    final themeMode = settingsAsync.valueOrNull?.themeMode ?? ThemeMode.system;
     final localeSetting = settingsAsync.valueOrNull?.locale ?? '';
 
     return MaterialApp.router(

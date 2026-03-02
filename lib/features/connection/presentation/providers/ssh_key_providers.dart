@@ -4,8 +4,8 @@ import 'package:shellvault/features/connection/presentation/providers/repository
 
 final sshKeyListProvider =
     AsyncNotifierProvider<SshKeyListNotifier, List<SshKeyEntity>>(
-  SshKeyListNotifier.new,
-);
+      SshKeyListNotifier.new,
+    );
 
 class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>> {
   @override
@@ -58,8 +58,10 @@ class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>> {
   }
 }
 
-final sshKeyDetailProvider =
-    FutureProvider.family<SshKeyEntity, String>((ref, id) async {
+final sshKeyDetailProvider = FutureProvider.family<SshKeyEntity, String>((
+  ref,
+  id,
+) async {
   final useCases = ref.watch(sshKeyUseCasesProvider);
   final result = await useCases.getSshKey(id);
   return result.fold(

@@ -6,12 +6,14 @@ class ApiClient {
   final Dio _dio;
 
   ApiClient(String baseUrl, {List<Interceptor>? interceptors})
-      : _dio = Dio(BaseOptions(
+    : _dio = Dio(
+        BaseOptions(
           baseUrl: baseUrl,
           connectTimeout: const Duration(seconds: 15),
           receiveTimeout: const Duration(seconds: 15),
           headers: {'Content-Type': 'application/json'},
-        )) {
+        ),
+      ) {
     if (interceptors != null) {
       _dio.interceptors.addAll(interceptors);
     }
@@ -36,15 +38,9 @@ class ApiClient {
     }
   }
 
-  Future<Result<Map<String, dynamic>>> post(
-    String path, {
-    Object? data,
-  }) async {
+  Future<Result<Map<String, dynamic>>> post(String path, {Object? data}) async {
     try {
-      final response = await _dio.post<Map<String, dynamic>>(
-        path,
-        data: data,
-      );
+      final response = await _dio.post<Map<String, dynamic>>(path, data: data);
       return Success(response.data ?? {});
     } on DioException catch (e) {
       return Err(_mapDioError(e));
@@ -53,15 +49,9 @@ class ApiClient {
     }
   }
 
-  Future<Result<Map<String, dynamic>>> put(
-    String path, {
-    Object? data,
-  }) async {
+  Future<Result<Map<String, dynamic>>> put(String path, {Object? data}) async {
     try {
-      final response = await _dio.put<Map<String, dynamic>>(
-        path,
-        data: data,
-      );
+      final response = await _dio.put<Map<String, dynamic>>(path, data: data);
       return Success(response.data ?? {});
     } on DioException catch (e) {
       return Err(_mapDioError(e));

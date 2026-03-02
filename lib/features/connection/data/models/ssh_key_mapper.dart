@@ -4,10 +4,7 @@ import 'package:shellvault/core/storage/database.dart';
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 
 abstract final class SshKeyMapper {
-  static SshKeyEntity fromDrift(
-    SshKey row, {
-    int linkedServerCount = 0,
-  }) {
+  static SshKeyEntity fromDrift(SshKey row, {int linkedServerCount = 0}) {
     return SshKeyEntity(
       id: row.id,
       name: row.name,

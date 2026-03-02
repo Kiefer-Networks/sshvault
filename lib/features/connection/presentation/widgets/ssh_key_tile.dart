@@ -76,12 +76,7 @@ class SshKeyTile extends StatelessWidget {
         ),
         title: Row(
           children: [
-            Expanded(
-              child: Text(
-                sshKey.name,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            Expanded(child: Text(sshKey.name, overflow: TextOverflow.ellipsis)),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

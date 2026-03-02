@@ -18,13 +18,16 @@ class SyncUseCases {
   /// Push local data to server
   Future<Result<int>> push(String syncPassword, int localVersion) async {
     // 1. Export to JSON string (with credentials)
-    final exportResult =
-        await _exportImportRepo.exportToJsonString(includeCredentials: true);
+    final exportResult = await _exportImportRepo.exportToJsonString(
+      includeCredentials: true,
+    );
     if (exportResult.isFailure) return Err(exportResult.failure);
 
     // 2. Encrypt with sync password
-    final envelopeResult =
-        _encryptionService.encryptForExport(exportResult.value, syncPassword);
+    final envelopeResult = _encryptionService.encryptForExport(
+      exportResult.value,
+      syncPassword,
+    );
     if (envelopeResult.isFailure) return Err(envelopeResult.failure);
 
     // 3. Encode envelope as blob
@@ -68,16 +71,20 @@ class SyncUseCases {
       final checksum = crypto.sha256.convert(blobBytes).toString();
       if (checksum != vault.checksum) {
         return const Err(
-            SyncFailure('Checksum mismatch — vault data may be corrupted'));
+          SyncFailure('Checksum mismatch — vault data may be corrupted'),
+        );
       }
     }
 
     // 4. Parse envelope and decrypt
     final envelopeJson = utf8.decode(blobBytes);
     final envelope = ExportEnvelope.fromJson(
-        jsonDecode(envelopeJson) as Map<String, dynamic>);
-    final decryptResult =
-        _encryptionService.decryptFromExport(envelope, syncPassword);
+      jsonDecode(envelopeJson) as Map<String, dynamic>,
+    );
+    final decryptResult = _encryptionService.decryptFromExport(
+      envelope,
+      syncPassword,
+    );
     if (decryptResult.isFailure) return Err(decryptResult.failure);
 
     // 5. Import from JSON string (overwrite, with credentials)

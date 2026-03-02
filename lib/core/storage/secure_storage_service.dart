@@ -10,22 +10,22 @@ class SecureStorageService {
   final FlutterSecureStorage _storage;
 
   SecureStorageService({FlutterSecureStorage? storage})
-      : _storage = storage ??
-            const FlutterSecureStorage(
-              aOptions: AndroidOptions(encryptedSharedPreferences: true),
-              iOptions: IOSOptions(
-                accessibility: KeychainAccessibility.first_unlock_this_device,
-              ),
-              mOptions: MacOsOptions(
-                accessibility: KeychainAccessibility.first_unlock_this_device,
-              ),
-            );
+    : _storage =
+          storage ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(encryptedSharedPreferences: true),
+            iOptions: IOSOptions(
+              accessibility: KeychainAccessibility.first_unlock_this_device,
+            ),
+            mOptions: MacOsOptions(
+              accessibility: KeychainAccessibility.first_unlock_this_device,
+            ),
+          );
 
   String _credentialKey(String serverId) =>
       '${AppConstants.credentialPrefix}$serverId';
 
-  String _sshKeyKey(String keyId) =>
-      '${AppConstants.keyPrefix}$keyId';
+  String _sshKeyKey(String keyId) => '${AppConstants.keyPrefix}$keyId';
 
   Future<Result<void>> savePassword(String serverId, String password) async {
     try {
@@ -52,10 +52,7 @@ class SecureStorageService {
 
   Future<Result<void>> savePrivateKey(String serverId, String key) async {
     try {
-      await _storage.write(
-        key: '${_credentialKey(serverId)}_key',
-        value: key,
-      );
+      await _storage.write(key: '${_credentialKey(serverId)}_key', value: key);
       return const Success(null);
     } catch (e) {
       return Err(StorageFailure('Failed to save SSH key', cause: e));
@@ -64,9 +61,7 @@ class SecureStorageService {
 
   Future<Result<String?>> getPrivateKey(String serverId) async {
     try {
-      final value = await _storage.read(
-        key: '${_credentialKey(serverId)}_key',
-      );
+      final value = await _storage.read(key: '${_credentialKey(serverId)}_key');
       return Success(value);
     } catch (e) {
       return Err(StorageFailure('Failed to read SSH key', cause: e));
@@ -159,24 +154,23 @@ class SecureStorageService {
 
   Future<Result<void>> saveSshKeyPrivateKey(String keyId, String key) async {
     try {
-      await _storage.write(
-        key: '${_sshKeyKey(keyId)}_privatekey',
-        value: key,
-      );
+      await _storage.write(key: '${_sshKeyKey(keyId)}_privatekey', value: key);
       return const Success(null);
     } catch (e) {
-      return Err(StorageFailure('Failed to save SSH key private key', cause: e));
+      return Err(
+        StorageFailure('Failed to save SSH key private key', cause: e),
+      );
     }
   }
 
   Future<Result<String?>> getSshKeyPrivateKey(String keyId) async {
     try {
-      final value = await _storage.read(
-        key: '${_sshKeyKey(keyId)}_privatekey',
-      );
+      final value = await _storage.read(key: '${_sshKeyKey(keyId)}_privatekey');
       return Success(value);
     } catch (e) {
-      return Err(StorageFailure('Failed to read SSH key private key', cause: e));
+      return Err(
+        StorageFailure('Failed to read SSH key private key', cause: e),
+      );
     }
   }
 
@@ -197,9 +191,7 @@ class SecureStorageService {
 
   Future<Result<String?>> getSshKeyPassphrase(String keyId) async {
     try {
-      final value = await _storage.read(
-        key: '${_sshKeyKey(keyId)}_passphrase',
-      );
+      final value = await _storage.read(key: '${_sshKeyKey(keyId)}_passphrase');
       return Success(value);
     } catch (e) {
       return Err(StorageFailure('Failed to read SSH key passphrase', cause: e));

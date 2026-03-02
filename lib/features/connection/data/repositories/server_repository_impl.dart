@@ -22,8 +22,8 @@ class ServerRepositoryImpl implements ServerRepository {
     this._secureStorage, {
     SshKeyService? sshKeyService,
     Uuid? uuid,
-  })  : _sshKeyService = sshKeyService ?? SshKeyService(),
-        _uuid = uuid ?? const Uuid();
+  }) : _sshKeyService = sshKeyService ?? SshKeyService(),
+       _uuid = uuid ?? const Uuid();
 
   @override
   Future<Result<List<ServerEntity>>> getServers({ServerFilter? filter}) async {
@@ -71,11 +71,7 @@ class ServerRepositoryImpl implements ServerRepository {
     try {
       final now = DateTime.now();
       final id = _uuid.v4();
-      final newServer = server.copyWith(
-        id: id,
-        createdAt: now,
-        updatedAt: now,
-      );
+      final newServer = server.copyWith(id: id, createdAt: now, updatedAt: now);
 
       await _serverDao.insertServer(ServerMapper.toCompanion(newServer));
 
@@ -133,7 +129,10 @@ class ServerRepositoryImpl implements ServerRepository {
   }
 
   @override
-  Future<Result<ServerEntity>> duplicateServer(String id, {required String copySuffix}) async {
+  Future<Result<ServerEntity>> duplicateServer(
+    String id, {
+    required String copySuffix,
+  }) async {
     final result = await getServer(id);
     return result.fold(
       onSuccess: (server) async {
@@ -163,14 +162,19 @@ class ServerRepositoryImpl implements ServerRepository {
               await _secureStorage.savePassword(newId, credMap['password']!);
             }
             if (credMap['privateKey'] != null) {
-              await _secureStorage.savePrivateKey(newId, credMap['privateKey']!);
+              await _secureStorage.savePrivateKey(
+                newId,
+                credMap['privateKey']!,
+              );
             }
             if (credMap['publicKey'] != null) {
               await _secureStorage.savePublicKey(newId, credMap['publicKey']!);
             }
             if (credMap['passphrase'] != null) {
               await _secureStorage.savePassphrase(
-                  newId, credMap['passphrase']!);
+                newId,
+                credMap['passphrase']!,
+              );
             }
           }
 
@@ -211,7 +215,9 @@ class ServerRepositoryImpl implements ServerRepository {
   }
 
   Future<void> _saveCredentials(
-      String serverId, ServerCredentials credentials) async {
+    String serverId,
+    ServerCredentials credentials,
+  ) async {
     if (credentials.password != null) {
       await _secureStorage.savePassword(serverId, credentials.password!);
     }
@@ -221,8 +227,9 @@ class ServerRepositoryImpl implements ServerRepository {
       // Auto-generate public key from private key if not provided
       String? publicKey = credentials.publicKey;
       if (publicKey == null || publicKey.isEmpty) {
-        final extractResult =
-            await _sshKeyService.extractPublicKey(credentials.privateKey!);
+        final extractResult = await _sshKeyService.extractPublicKey(
+          credentials.privateKey!,
+        );
         if (extractResult.isSuccess) {
           publicKey = extractResult.value;
         }

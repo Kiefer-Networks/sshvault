@@ -9,8 +9,7 @@ abstract final class Validators {
     r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$',
   );
 
-  static final _usernameRegex =
-      RegExp(r'^[a-zA-Z_][a-zA-Z0-9_\-\.]{0,31}$');
+  static final _usernameRegex = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_\-\.]{0,31}$');
 
   // ── Localized validators (return a validator closure) ──────────
 
@@ -86,7 +85,8 @@ abstract final class Validators {
   }
 
   static String? Function(String?) exportPasswordValidator(
-      AppLocalizations l10n) {
+    AppLocalizations l10n,
+  ) {
     return (value) {
       if (value == null || value.isEmpty) {
         return l10n.validatorPasswordRequired;
@@ -123,7 +123,8 @@ abstract final class Validators {
 
   static String? validateUsername(String? value) {
     if (value == null || value.trim().isEmpty) return 'Username is required';
-    if (!_usernameRegex.hasMatch(value.trim())) return 'Invalid username format';
+    if (!_usernameRegex.hasMatch(value.trim()))
+      return 'Invalid username format';
     return null;
   }
 
@@ -139,5 +140,4 @@ abstract final class Validators {
     if (value == null || value.trim().isEmpty) return '$fieldName is required';
     return null;
   }
-
 }

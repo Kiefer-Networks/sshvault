@@ -8,8 +8,10 @@ part 'snippet_dao.g.dart';
 class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
   SnippetDao(super.db);
 
-  static String _escapeLike(String input) =>
-      input.replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_');
+  static String _escapeLike(String input) => input
+      .replaceAll('\\', '\\\\')
+      .replaceAll('%', '\\%')
+      .replaceAll('_', '\\_');
 
   Future<List<Snippet>> getAllSnippets() =>
       (select(snippets)..orderBy([(s) => OrderingTerm.asc(s.sortOrder)])).get();
@@ -55,11 +57,10 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
     var results = await query.get();
 
     if (tagIds != null && tagIds.isNotEmpty) {
-      final snippetIdsWithTags = await (select(snippetTags)
-            ..where((st) => st.tagId.isIn(tagIds)))
-          .get();
-      final matchingIds =
-          snippetIdsWithTags.map((st) => st.snippetId).toSet();
+      final snippetIdsWithTags = await (select(
+        snippetTags,
+      )..where((st) => st.tagId.isIn(tagIds))).get();
+      final matchingIds = snippetIdsWithTags.map((st) => st.snippetId).toSet();
       results = results.where((s) => matchingIds.contains(s.id)).toList();
     }
 
@@ -74,38 +75,36 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
 
   Future<int> deleteSnippetById(String id) async {
     await (delete(snippetTags)..where((st) => st.snippetId.equals(id))).go();
-    await (delete(snippetVariables)..where((sv) => sv.snippetId.equals(id)))
-        .go();
+    await (delete(
+      snippetVariables,
+    )..where((sv) => sv.snippetId.equals(id))).go();
     return (delete(snippets)..where((s) => s.id.equals(id))).go();
   }
 
   Future<List<Tag>> getTagsForSnippet(String snippetId) async {
     final query = select(snippetTags).join([
       innerJoin(tags, tags.id.equalsExp(snippetTags.tagId)),
-    ])
-      ..where(snippetTags.snippetId.equals(snippetId));
+    ])..where(snippetTags.snippetId.equals(snippetId));
 
     final rows = await query.get();
     return rows.map((row) => row.readTable(tags)).toList();
   }
 
   Future<void> setSnippetTags(String snippetId, List<String> tagIds) async {
-    await (delete(snippetTags)
-          ..where((st) => st.snippetId.equals(snippetId)))
-        .go();
+    await (delete(
+      snippetTags,
+    )..where((st) => st.snippetId.equals(snippetId))).go();
     for (final tagId in tagIds) {
-      await into(snippetTags).insert(
-        SnippetTagsCompanion.insert(snippetId: snippetId, tagId: tagId),
-      );
+      await into(
+        snippetTags,
+      ).insert(SnippetTagsCompanion.insert(snippetId: snippetId, tagId: tagId));
     }
   }
 
   Future<List<SnippetVariable>> getAllSnippetVariables() =>
       select(snippetVariables).get();
 
-  Future<List<SnippetVariable>> getVariablesForSnippet(
-    String snippetId,
-  ) =>
+  Future<List<SnippetVariable>> getVariablesForSnippet(String snippetId) =>
       (select(snippetVariables)
             ..where((sv) => sv.snippetId.equals(snippetId))
             ..orderBy([(sv) => OrderingTerm.asc(sv.sortOrder)]))
@@ -115,9 +114,9 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
     String snippetId,
     List<SnippetVariablesCompanion> variables,
   ) async {
-    await (delete(snippetVariables)
-          ..where((sv) => sv.snippetId.equals(snippetId)))
-        .go();
+    await (delete(
+      snippetVariables,
+    )..where((sv) => sv.snippetId.equals(snippetId))).go();
     for (final variable in variables) {
       await into(snippetVariables).insert(variable);
     }

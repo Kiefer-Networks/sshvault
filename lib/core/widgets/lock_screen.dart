@@ -140,7 +140,8 @@ class _LockScreenState extends ConsumerState<LockScreen>
           final remaining = updatedSettings!.remainingLockout;
           _pinError = l10n.lockScreenLockedOut(remaining.inMinutes + 1);
         } else {
-          final remaining = AppConstants.maxPinAttempts -
+          final remaining =
+              AppConstants.maxPinAttempts -
               (updatedSettings?.failedPinAttempts ?? 0);
           _pinError = l10n.pinDialogWrongPin(remaining);
         }
@@ -173,15 +174,13 @@ class _LockScreenState extends ConsumerState<LockScreen>
                     : theme.colorScheme.primary,
               ),
               const SizedBox(height: 16),
-              Text(
-                l10n.lockScreenTitle,
-                style: theme.textTheme.headlineSmall,
-              ),
+              Text(l10n.lockScreenTitle, style: theme.textTheme.headlineSmall),
               if (isLockedOut) ...[
                 const SizedBox(height: 8),
                 Text(
                   l10n.lockScreenLockedOut(
-                      settings!.remainingLockout.inMinutes + 1),
+                    settings!.remainingLockout.inMinutes + 1,
+                  ),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.error,
                   ),
@@ -215,14 +214,12 @@ class _LockScreenState extends ConsumerState<LockScreen>
                 ),
                 const SizedBox(height: 16),
                 FilledButton.icon(
-                  onPressed:
-                      isLockedOut || _isVerifying ? null : _verifyPin,
+                  onPressed: isLockedOut || _isVerifying ? null : _verifyPin,
                   icon: _isVerifying
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child:
-                              CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.lock_open),
                   label: Text(l10n.lockScreenUnlock),

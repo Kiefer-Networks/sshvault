@@ -23,15 +23,18 @@ final googleAuthServiceProvider = Provider<GoogleAuthService>((ref) {
   return GoogleAuthService();
 });
 
-final authProvider =
-    AsyncNotifierProvider<AuthNotifier, AuthStatus>(AuthNotifier.new);
+final authProvider = AsyncNotifierProvider<AuthNotifier, AuthStatus>(
+  AuthNotifier.new,
+);
 
 class AuthNotifier extends AsyncNotifier<AuthStatus> {
   @override
   Future<AuthStatus> build() async {
     final tokenResult = await ref.watch(secureStorageProvider).getAccessToken();
     final token = tokenResult.isSuccess ? tokenResult.value : null;
-    return token != null ? AuthStatus.authenticated : AuthStatus.unauthenticated;
+    return token != null
+        ? AuthStatus.authenticated
+        : AuthStatus.unauthenticated;
   }
 
   Future<String?> _getDeviceName() async {
@@ -68,12 +71,15 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     final result = await repo.login(email, password, deviceName: deviceName);
     state = await result.fold(
       onSuccess: (auth) async {
-        await _persistTokens(auth.accessToken, auth.refreshToken,
-            auth.expiresAt, auth.user.email);
+        await _persistTokens(
+          auth.accessToken,
+          auth.refreshToken,
+          auth.expiresAt,
+          auth.user.email,
+        );
         return const AsyncValue.data(AuthStatus.authenticated);
       },
-      onFailure: (f) async =>
-          AsyncValue.error(f, StackTrace.current),
+      onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
     );
   }
 
@@ -84,12 +90,15 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     final result = await repo.register(email, password);
     state = await result.fold(
       onSuccess: (auth) async {
-        await _persistTokens(auth.accessToken, auth.refreshToken,
-            auth.expiresAt, auth.user.email);
+        await _persistTokens(
+          auth.accessToken,
+          auth.refreshToken,
+          auth.expiresAt,
+          auth.user.email,
+        );
         return const AsyncValue.data(AuthStatus.authenticated);
       },
-      onFailure: (f) async =>
-          AsyncValue.error(f, StackTrace.current),
+      onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
     );
   }
 
@@ -109,12 +118,15 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     final result = await repo.oauthLogin('apple', appleResult.value.idToken);
     state = await result.fold(
       onSuccess: (auth) async {
-        await _persistTokens(auth.accessToken, auth.refreshToken,
-            auth.expiresAt, auth.user.email);
+        await _persistTokens(
+          auth.accessToken,
+          auth.refreshToken,
+          auth.expiresAt,
+          auth.user.email,
+        );
         return const AsyncValue.data(AuthStatus.authenticated);
       },
-      onFailure: (f) async =>
-          AsyncValue.error(f, StackTrace.current),
+      onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
     );
   }
 
@@ -132,12 +144,15 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     final result = await repo.oauthLogin('google', googleResult.value);
     state = await result.fold(
       onSuccess: (auth) async {
-        await _persistTokens(auth.accessToken, auth.refreshToken,
-            auth.expiresAt, auth.user.email);
+        await _persistTokens(
+          auth.accessToken,
+          auth.refreshToken,
+          auth.expiresAt,
+          auth.user.email,
+        );
         return const AsyncValue.data(AuthStatus.authenticated);
       },
-      onFailure: (f) async =>
-          AsyncValue.error(f, StackTrace.current),
+      onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
     );
   }
 
@@ -147,8 +162,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     final storage = ref.read(secureStorageProvider);
 
     final refreshResult = await storage.getRefreshToken();
-    final refreshToken =
-        refreshResult.isSuccess ? refreshResult.value : null;
+    final refreshToken = refreshResult.isSuccess ? refreshResult.value : null;
     if (refreshToken != null) {
       await repo.logout(refreshToken);
     }

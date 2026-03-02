@@ -30,12 +30,7 @@ class VirtualKeyboard with ChangeNotifier {
   }
 
   void sendKey(TerminalKey key) {
-    terminal.keyInput(
-      key,
-      ctrl: _ctrl,
-      alt: _alt,
-      shift: _shift,
-    );
+    terminal.keyInput(key, ctrl: _ctrl, alt: _alt, shift: _shift);
 
     if (autoResetModifiers) {
       _ctrl = false;

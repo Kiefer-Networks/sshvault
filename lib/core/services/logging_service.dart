@@ -72,10 +72,7 @@ class LogSanitizer {
       caseSensitive: false,
     ),
     // cookie
-    RegExp(
-      r'''(cookie|set-cookie)\s*[:=]\s*\S+''',
-      caseSensitive: false,
-    ),
+    RegExp(r'''(cookie|set-cookie)\s*[:=]\s*\S+''', caseSensitive: false),
   ];
 
   // PEM private key blocks (RSA, DSA, EC, OPENSSH, ENCRYPTED, generic PRIVATE KEY)
@@ -91,9 +88,7 @@ class LogSanitizer {
   );
 
   // IPv4 addresses
-  static final _ipv4 = RegExp(
-    r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b',
-  );
+  static final _ipv4 = RegExp(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b');
 
   // IPv6 addresses (simplified — catches most common forms)
   static final _ipv6 = RegExp(
@@ -105,9 +100,7 @@ class LogSanitizer {
   );
 
   // Base64-encoded strings that look like secrets (long base64 blocks, 32+ chars)
-  static final _longBase64 = RegExp(
-    r'\b[A-Za-z0-9+/]{32,}={0,2}\b',
-  );
+  static final _longBase64 = RegExp(r'\b[A-Za-z0-9+/]{32,}={0,2}\b');
 
   // JWT tokens
   static final _jwt = RegExp(
@@ -132,9 +125,7 @@ class LogSanitizer {
   );
 
   // Hex-encoded secrets (64+ hex chars, likely SHA-256 hashes or keys)
-  static final _hexSecret = RegExp(
-    r'\b[0-9a-fA-F]{64,}\b',
-  );
+  static final _hexSecret = RegExp(r'\b[0-9a-fA-F]{64,}\b');
 
   /// Sanitize a log message by replacing all sensitive patterns with [REDACTED].
   static String sanitize(String message) {
@@ -276,5 +267,4 @@ class LoggingService {
     await file.writeAsString(text);
     return file.path;
   }
-
 }

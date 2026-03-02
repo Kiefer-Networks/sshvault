@@ -31,12 +31,9 @@ class GlassmorphicContainer extends StatelessWidget {
           child: Container(
             padding: padding ?? const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: backgroundColor ??
-                  Colors.white.withAlpha(13),
+              color: backgroundColor ?? Colors.white.withAlpha(13),
               borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(
-                color: Colors.white.withAlpha(26),
-              ),
+              border: Border.all(color: Colors.white.withAlpha(26)),
             ),
             child: child,
           ),

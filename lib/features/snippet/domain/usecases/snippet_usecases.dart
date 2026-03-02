@@ -36,13 +36,17 @@ class SnippetUseCases {
   }
 
   Future<Result<SnippetEntity>> createSnippet(SnippetEntity snippet) {
-    final nameValidation =
-        Validators.validateRequired(snippet.name, 'Snippet name');
+    final nameValidation = Validators.validateRequired(
+      snippet.name,
+      'Snippet name',
+    );
     if (nameValidation != null) {
       return Future.value(Err(ValidationFailure(nameValidation)));
     }
-    final contentValidation =
-        Validators.validateRequired(snippet.content, 'Snippet content');
+    final contentValidation = Validators.validateRequired(
+      snippet.content,
+      'Snippet content',
+    );
     if (contentValidation != null) {
       return Future.value(Err(ValidationFailure(contentValidation)));
     }
@@ -50,13 +54,17 @@ class SnippetUseCases {
   }
 
   Future<Result<SnippetEntity>> updateSnippet(SnippetEntity snippet) {
-    final nameValidation =
-        Validators.validateRequired(snippet.name, 'Snippet name');
+    final nameValidation = Validators.validateRequired(
+      snippet.name,
+      'Snippet name',
+    );
     if (nameValidation != null) {
       return Future.value(Err(ValidationFailure(nameValidation)));
     }
-    final contentValidation =
-        Validators.validateRequired(snippet.content, 'Snippet content');
+    final contentValidation = Validators.validateRequired(
+      snippet.content,
+      'Snippet content',
+    );
     if (contentValidation != null) {
       return Future.value(Err(ValidationFailure(contentValidation)));
     }

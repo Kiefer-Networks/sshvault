@@ -15,7 +15,10 @@ abstract class ServerRepository {
     ServerCredentials? credentials,
   );
   Future<Result<void>> deleteServer(String id);
-  Future<Result<ServerEntity>> duplicateServer(String id, {required String copySuffix});
+  Future<Result<ServerEntity>> duplicateServer(
+    String id, {
+    required String copySuffix,
+  });
   Future<Result<void>> reorderServers(List<String> orderedIds);
   Future<Result<ServerCredentials>> getCredentials(String serverId);
 }

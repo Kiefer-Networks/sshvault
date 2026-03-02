@@ -4,11 +4,7 @@ class StatusBadge extends StatelessWidget {
   final bool isActive;
   final double size;
 
-  const StatusBadge({
-    super.key,
-    required this.isActive,
-    this.size = 10,
-  });
+  const StatusBadge({super.key, required this.isActive, this.size = 10});
 
   @override
   Widget build(BuildContext context) {

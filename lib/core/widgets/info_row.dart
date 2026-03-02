@@ -27,9 +27,11 @@ class InfoRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Icon(icon,
-              size: 18,
-              color: theme.colorScheme.onSurface.withAlpha(102)),
+          Icon(
+            icon,
+            size: 18,
+            color: theme.colorScheme.onSurface.withAlpha(102),
+          ),
           const SizedBox(width: 8),
           Text(
             label,
@@ -51,15 +53,14 @@ class InfoRow extends StatelessWidget {
             const SizedBox(width: 4),
             GestureDetector(
               onTap: onTap,
-              child: Icon(Icons.copy,
-                  size: 16,
-                  color: theme.colorScheme.onSurface.withAlpha(102)),
+              child: Icon(
+                Icons.copy,
+                size: 16,
+                color: theme.colorScheme.onSurface.withAlpha(102),
+              ),
             ),
           ],
-          if (trailing != null) ...[
-            const SizedBox(width: 4),
-            trailing!,
-          ],
+          if (trailing != null) ...[const SizedBox(width: 4), trailing!],
         ],
       ),
     );

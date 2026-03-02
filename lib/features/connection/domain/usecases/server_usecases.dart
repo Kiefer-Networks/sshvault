@@ -45,7 +45,10 @@ class ServerUseCases {
     return _repository.deleteServer(id);
   }
 
-  Future<Result<ServerEntity>> duplicateServer(String id, {required String copySuffix}) {
+  Future<Result<ServerEntity>> duplicateServer(
+    String id, {
+    required String copySuffix,
+  }) {
     return _repository.duplicateServer(id, copySuffix: copySuffix);
   }
 

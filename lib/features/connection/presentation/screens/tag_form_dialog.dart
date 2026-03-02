@@ -13,10 +13,7 @@ class TagFormDialog extends ConsumerStatefulWidget {
 
   bool get isEditing => tag != null;
 
-  static Future<void> show(
-    BuildContext context, {
-    TagEntity? tag,
-  }) {
+  static Future<void> show(BuildContext context, {TagEntity? tag}) {
     return showDialog(
       context: context,
       builder: (_) => TagFormDialog(tag: tag),
@@ -51,7 +48,9 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
     final l10n = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: Text(widget.isEditing ? l10n.tagFormTitleEdit : l10n.tagFormTitleNew),
+      title: Text(
+        widget.isEditing ? l10n.tagFormTitleEdit : l10n.tagFormTitleNew,
+      ),
       content: SizedBox(
         width: 400,
         child: SingleChildScrollView(
@@ -97,18 +96,17 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
     final notifier = ref.read(tagListProvider.notifier);
 
     if (widget.isEditing) {
-      await notifier.updateTag(widget.tag!.copyWith(
-        name: name,
-        color: _color,
-      ));
+      await notifier.updateTag(widget.tag!.copyWith(name: name, color: _color));
     } else {
-      await notifier.createTag(TagEntity(
-        id: '',
-        name: name,
-        color: _color,
-        createdAt: now,
-        updatedAt: now,
-      ));
+      await notifier.createTag(
+        TagEntity(
+          id: '',
+          name: name,
+          color: _color,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
     }
 
     if (mounted) Navigator.of(context).pop();

@@ -7,11 +7,7 @@ class ErrorState extends StatelessWidget {
   final Object error;
   final VoidCallback onRetry;
 
-  const ErrorState({
-    super.key,
-    required this.error,
-    required this.onRetry,
-  });
+  const ErrorState({super.key, required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +20,7 @@ class ErrorState extends StatelessWidget {
           const SizedBox(height: 16),
           Text(l10n.error(error.toString())),
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: onRetry,
-            child: Text(l10n.retry),
-          ),
+          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

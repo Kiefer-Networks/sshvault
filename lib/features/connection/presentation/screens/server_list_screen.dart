@@ -58,9 +58,7 @@ class ServerListScreen extends ConsumerWidget {
                       : _buildGrid(context, ref, servers),
                 );
               },
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
-              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => ErrorState(
                 error: error,
                 onRetry: () => ref.invalidate(serverListProvider),
@@ -91,13 +89,17 @@ class ServerListScreen extends ConsumerWidget {
             await ref
                 .read(sessionManagerProvider.notifier)
                 .openSession(server.id);
-            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
+            ref
+                .read(shellNavigationProvider)
+                ?.goBranch(AppConstants.terminalBranchIndex);
           },
           onConnect: () async {
             await ref
                 .read(sessionManagerProvider.notifier)
                 .openSession(server.id);
-            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
+            ref
+                .read(shellNavigationProvider)
+                ?.goBranch(AppConstants.terminalBranchIndex);
           },
           onDetail: () => context.push('/server/${server.id}'),
           onEdit: () => context.push('/server/${server.id}/edit'),
@@ -105,11 +107,14 @@ class ServerListScreen extends ConsumerWidget {
             final l10nDup = AppLocalizations.of(context)!;
             await ref
                 .read(serverListProvider.notifier)
-                .duplicateServer(server.id, copySuffix: l10nDup.serverCopySuffix);
+                .duplicateServer(
+                  server.id,
+                  copySuffix: l10nDup.serverCopySuffix,
+                );
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10nDup.serverDuplicated)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(l10nDup.serverDuplicated)));
             }
           },
           onDelete: () async {
@@ -149,7 +154,9 @@ class ServerListScreen extends ConsumerWidget {
             await ref
                 .read(sessionManagerProvider.notifier)
                 .openSession(server.id);
-            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
+            ref
+                .read(shellNavigationProvider)
+                ?.goBranch(AppConstants.terminalBranchIndex);
           },
           onDetail: () => context.push('/server/${server.id}'),
           onEdit: () => context.push('/server/${server.id}/edit'),
@@ -177,7 +184,9 @@ class ServerListScreen extends ConsumerWidget {
                 await ref
                     .read(sessionManagerProvider.notifier)
                     .openSession(server.id);
-                ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
+                ref
+                    .read(shellNavigationProvider)
+                    ?.goBranch(AppConstants.terminalBranchIndex);
               },
             ),
             ListTile(
@@ -203,15 +212,21 @@ class ServerListScreen extends ConsumerWidget {
                 Navigator.pop(ctx);
                 await ref
                     .read(serverListProvider.notifier)
-                    .duplicateServer(server.id, copySuffix: l10n.serverCopySuffix);
+                    .duplicateServer(
+                      server.id,
+                      copySuffix: l10n.serverCopySuffix,
+                    );
               },
             ),
             ListTile(
-              leading: Icon(Icons.delete,
-                  color: Theme.of(context).colorScheme.error),
-              title: Text(l10n.delete,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.error)),
+              leading: Icon(
+                Icons.delete,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              title: Text(
+                l10n.delete,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
               onTap: () async {
                 Navigator.pop(ctx);
                 final confirmed = await ConfirmDialog.show(

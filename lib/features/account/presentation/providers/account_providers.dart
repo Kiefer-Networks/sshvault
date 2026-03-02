@@ -25,7 +25,5 @@ final deviceListProvider = FutureProvider<List<DeviceEntity>>((ref) async {
 final billingStatusProvider = FutureProvider<BillingStatus>((ref) async {
   final repo = ref.watch(accountRepositoryProvider);
   final result = await repo.getBillingStatus();
-  return result.isSuccess
-      ? result.value
-      : const BillingStatus(active: false);
+  return result.isSuccess ? result.value : const BillingStatus(active: false);
 });

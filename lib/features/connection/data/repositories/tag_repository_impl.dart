@@ -13,7 +13,7 @@ class TagRepositoryImpl implements TagRepository {
   final Uuid _uuid;
 
   TagRepositoryImpl(this._tagDao, this._serverDao, {Uuid? uuid})
-      : _uuid = uuid ?? const Uuid();
+    : _uuid = uuid ?? const Uuid();
 
   @override
   Future<Result<List<TagEntity>>> getTags() async {

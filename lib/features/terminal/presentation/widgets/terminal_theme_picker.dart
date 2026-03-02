@@ -58,9 +58,7 @@ class TerminalThemePicker extends ConsumerWidget {
                       ? Icon(Icons.check, color: theme.colorScheme.primary)
                       : null,
                   onTap: () {
-                    ref
-                        .read(terminalThemeKeyProvider.notifier)
-                        .setTheme(key);
+                    ref.read(terminalThemeKeyProvider.notifier).setTheme(key);
                     Navigator.of(context).pop();
                   },
                 );
@@ -113,11 +111,7 @@ class _ColorSwatchPreview extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _dot(foreground),
-              _dot(red),
-              _dot(green),
-            ],
+            children: [_dot(foreground), _dot(red), _dot(green)],
           ),
           const SizedBox(height: 2),
           Row(

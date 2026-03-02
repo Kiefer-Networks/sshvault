@@ -12,15 +12,15 @@ enum TerminalThemeKey {
   gruvboxDark;
 
   String get displayName => switch (this) {
-        defaultDark => 'Default Dark',
-        dracula => 'Dracula',
-        solarizedDark => 'Solarized Dark',
-        solarizedLight => 'Solarized Light',
-        monokai => 'Monokai',
-        nord => 'Nord',
-        oneDark => 'One Dark',
-        gruvboxDark => 'Gruvbox Dark',
-      };
+    defaultDark => 'Default Dark',
+    dracula => 'Dracula',
+    solarizedDark => 'Solarized Dark',
+    solarizedLight => 'Solarized Light',
+    monokai => 'Monokai',
+    nord => 'Nord',
+    oneDark => 'One Dark',
+    gruvboxDark => 'Gruvbox Dark',
+  };
 }
 
 abstract final class TerminalThemePresets {

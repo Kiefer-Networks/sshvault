@@ -19,14 +19,15 @@ const kStripeSupportUrl = 'https://sshvault.app/support';
 enum SupportPurchaseStatus { idle, purchasing, success, error }
 
 /// Tracks the current purchase status for UI feedback.
-final supportPurchaseStatusProvider =
-    StateProvider<SupportPurchaseStatus>((ref) => SupportPurchaseStatus.idle);
+final supportPurchaseStatusProvider = StateProvider<SupportPurchaseStatus>(
+  (ref) => SupportPurchaseStatus.idle,
+);
 
 /// Loads available IAP products and handles the purchase stream.
 final supportStoreProvider =
     AsyncNotifierProvider<SupportStoreNotifier, List<ProductDetails>>(
-  SupportStoreNotifier.new,
-);
+      SupportStoreNotifier.new,
+    );
 
 class SupportStoreNotifier extends AsyncNotifier<List<ProductDetails>> {
   StreamSubscription<List<PurchaseDetails>>? _sub;

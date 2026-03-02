@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:shellvault/core/storage/database.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
+
 abstract final class GroupMapper {
   static GroupEntity fromDrift(
     Group row, {

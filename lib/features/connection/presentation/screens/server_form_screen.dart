@@ -63,8 +63,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   }
 
   Future<void> _loadServer() async {
-    final result =
-        await ref.read(serverDetailProvider(widget.serverId!).future);
+    final result = await ref.read(
+      serverDetailProvider(widget.serverId!).future,
+    );
     if (!mounted) return;
     _nameController.text = result.name;
     _hostnameController.text = result.hostname;
@@ -83,8 +84,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     });
 
     // Load credentials
-    final creds =
-        await ref.read(serverCredentialsProvider(widget.serverId!).future);
+    final creds = await ref.read(
+      serverCredentialsProvider(widget.serverId!).future,
+    );
     if (!mounted) return;
     _passwordController.text = creds.password ?? '';
     _privateKeyController.text = creds.privateKey ?? '';
@@ -116,7 +118,11 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.serverFormKeyGenerated(result.type.displayName)),
+          content: Text(
+            AppLocalizations.of(
+              context,
+            )!.serverFormKeyGenerated(result.type.displayName),
+          ),
         ),
       );
     }
@@ -157,7 +163,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isEditing ? l10n.serverFormTitleEdit : l10n.serverFormTitleAdd),
+        title: Text(
+          widget.isEditing ? l10n.serverFormTitleEdit : l10n.serverFormTitleAdd,
+        ),
         actions: [
           if (widget.isEditing)
             Row(
@@ -187,19 +195,16 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
               passphraseController: _passphraseController,
               notesController: _notesController,
               authMethod: _authMethod,
-              onAuthMethodChanged: (m) =>
-                  setState(() => _authMethod = m),
+              onAuthMethodChanged: (m) => setState(() => _authMethod = m),
               onGenerateKeyPair: _generateKeyPair,
               onExtractPublicKey: _extractPublicKey,
               useManagedKey: _useManagedKey,
-              onUseManagedKeyChanged: (v) =>
-                  setState(() {
-                    _useManagedKey = v;
-                    if (!v) _sshKeyId = null;
-                  }),
+              onUseManagedKeyChanged: (v) => setState(() {
+                _useManagedKey = v;
+                if (!v) _sshKeyId = null;
+              }),
               selectedSshKeyId: _sshKeyId,
-              onSshKeyChanged: (id) =>
-                  setState(() => _sshKeyId = id),
+              onSshKeyChanged: (id) => setState(() => _sshKeyId = id),
             ),
             const SizedBox(height: 24),
 
@@ -219,10 +224,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                       child: Text(l10n.serverNoGroup),
                     ),
                     ...groups.map(
-                      (g) => DropdownMenuItem(
-                        value: g.id,
-                        child: Text(g.name),
-                      ),
+                      (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
                     ),
                   ],
                   onChanged: (v) => setState(() => _groupId = v),
@@ -261,7 +263,11 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.save),
-              label: Text(widget.isEditing ? l10n.serverFormUpdateButton : l10n.serverFormAddButton),
+              label: Text(
+                widget.isEditing
+                    ? l10n.serverFormUpdateButton
+                    : l10n.serverFormAddButton,
+              ),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(double.infinity, 52),
               ),
@@ -282,12 +288,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       final now = DateTime.now();
       final now0 = DateTime.fromMillisecondsSinceEpoch(0);
       final tags = _selectedTagIds
-          .map((id) => TagEntity(
-                id: id,
-                name: '',
-                createdAt: now0,
-                updatedAt: now0,
-              ))
+          .map(
+            (id) =>
+                TagEntity(id: id, name: '', createdAt: now0, updatedAt: now0),
+          )
           .toList();
 
       final server = ServerEntity(
@@ -336,7 +340,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.error(e.toString()))),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.error(e.toString())),
+          ),
         );
       }
     } finally {

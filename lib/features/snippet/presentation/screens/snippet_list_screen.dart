@@ -58,10 +58,9 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
               ),
               keyboardType: TextInputType.text,
               onChanged: (value) {
-                ref.read(snippetFilterProvider.notifier).state =
-                    value.isEmpty
-                        ? filter.copyWith(clearSearch: true)
-                        : filter.copyWith(searchQuery: value);
+                ref.read(snippetFilterProvider.notifier).state = value.isEmpty
+                    ? filter.copyWith(clearSearch: true)
+                    : filter.copyWith(searchQuery: value);
               },
             ),
           ),
@@ -75,8 +74,8 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                   Chip(
                     label: Text(filter.language!),
                     onDeleted: () {
-                      ref.read(snippetFilterProvider.notifier).state =
-                          filter.copyWith(clearLanguage: true);
+                      ref.read(snippetFilterProvider.notifier).state = filter
+                          .copyWith(clearLanguage: true);
                     },
                   ),
                 ],
@@ -118,8 +117,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                   },
                 );
               },
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => ErrorState(
                 error: error,
                 onRetry: () => ref.invalidate(snippetListProvider),

@@ -39,8 +39,7 @@ class SshKeyListScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.only(bottom: 80),
             itemCount: keys.length,
-            separatorBuilder: (_, _) =>
-                const Divider(height: 1, indent: 72),
+            separatorBuilder: (_, _) => const Divider(height: 1, indent: 72),
             itemBuilder: (context, index) {
               final key = keys[index];
               return SshKeyTile(
@@ -90,10 +89,9 @@ class SshKeyListScreen extends ConsumerWidget {
         builder: (ctx) => AlertDialog(
           title: Text(AppLocalizations.of(ctx)!.sshKeyCannotDeleteTitle),
           content: Text(
-            AppLocalizations.of(ctx)!.sshKeyCannotDeleteMessage(
-              key.name,
-              key.linkedServerCount,
-            ),
+            AppLocalizations.of(
+              ctx,
+            )!.sshKeyCannotDeleteMessage(key.name, key.linkedServerCount),
           ),
           actions: [
             TextButton(
@@ -117,9 +115,9 @@ class SshKeyListScreen extends ConsumerWidget {
         await ref.read(sshKeyListProvider.notifier).deleteSshKey(key.id);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.error(e.toString()))),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
         }
       }
     }

@@ -81,17 +81,16 @@ class ServerGridCard extends StatelessWidget {
                 children: server.tags.take(2).map((tag) {
                   return Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 2),
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Color(tag.color).withAlpha(26),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       tag.name,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Color(tag.color),
-                      ),
+                      style: TextStyle(fontSize: 10, color: Color(tag.color)),
                     ),
                   );
                 }).toList(),

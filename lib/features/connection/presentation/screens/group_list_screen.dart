@@ -49,8 +49,7 @@ class GroupListScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.only(bottom: 80),
             itemCount: widgets.length,
-            separatorBuilder: (_, _) =>
-                const Divider(height: 1, indent: 72),
+            separatorBuilder: (_, _) => const Divider(height: 1, indent: 72),
             itemBuilder: (_, index) => widgets[index],
           );
         },
@@ -76,12 +75,14 @@ class GroupListScreen extends ConsumerWidget {
   }) {
     final widgets = <Widget>[];
     for (final group in groups) {
-      widgets.add(_GroupTile(
-        group: group,
-        depth: depth,
-        onEdit: () => _showGroupForm(context, ref, group: group),
-        onDelete: () => _deleteGroup(context, ref, group),
-      ));
+      widgets.add(
+        _GroupTile(
+          group: group,
+          depth: depth,
+          onEdit: () => _showGroupForm(context, ref, group: group),
+          onDelete: () => _deleteGroup(context, ref, group),
+        ),
+      );
       if (group.children.isNotEmpty) {
         widgets.addAll(
           _buildGroupList(context, ref, group.children, depth: depth + 1),
@@ -160,7 +161,9 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
       }
 
       if (mounted) {
-        ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
+        ref
+            .read(shellNavigationProvider)
+            ?.goBranch(AppConstants.terminalBranchIndex);
       }
     } catch (e) {
       if (mounted) {
@@ -251,12 +254,12 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
                 if (group.serverCount > 0)
                   IconButton(
                     icon: Icon(
-                      _expanded
-                          ? Icons.expand_less
-                          : Icons.expand_more,
+                      _expanded ? Icons.expand_less : Icons.expand_more,
                     ),
                     onPressed: () => setState(() => _expanded = !_expanded),
-                    tooltip: _expanded ? l10n.groupCollapse : l10n.groupShowHosts,
+                    tooltip: _expanded
+                        ? l10n.groupCollapse
+                        : l10n.groupShowHosts,
                     visualDensity: VisualDensity.compact,
                   ),
               ],
@@ -266,11 +269,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
                 : null,
           ),
         ),
-        if (_expanded)
-          _GroupServerList(
-            groupId: group.id,
-            depth: widget.depth,
-          ),
+        if (_expanded) _GroupServerList(groupId: group.id, depth: widget.depth),
       ],
     );
   }
@@ -280,10 +279,7 @@ class _GroupServerList extends ConsumerWidget {
   final String groupId;
   final int depth;
 
-  const _GroupServerList({
-    required this.groupId,
-    required this.depth,
-  });
+  const _GroupServerList({required this.groupId, required this.depth});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -305,7 +301,9 @@ class _GroupServerList extends ConsumerWidget {
                   await ref
                       .read(sessionManagerProvider.notifier)
                       .openSession(server.id);
-                  ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
+                  ref
+                      .read(shellNavigationProvider)
+                      ?.goBranch(AppConstants.terminalBranchIndex);
                 },
                 onDetail: () => context.push('/server/${server.id}'),
               ),
@@ -322,7 +320,10 @@ class _GroupServerList extends ConsumerWidget {
       ),
       error: (e, _) => Padding(
         padding: EdgeInsets.only(left: indent),
-        child: Text(AppLocalizations.of(context)!.error(e.toString()), style: theme.textTheme.bodySmall),
+        child: Text(
+          AppLocalizations.of(context)!.error(e.toString()),
+          style: theme.textTheme.bodySmall,
+        ),
       ),
     );
   }
@@ -348,11 +349,7 @@ class _ServerSubTile extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.only(left: indent, right: 16),
       dense: true,
-      leading: Icon(
-        Icons.dns_outlined,
-        size: 18,
-        color: Color(server.color),
-      ),
+      leading: Icon(Icons.dns_outlined, size: 18, color: Color(server.color)),
       title: Text(
         server.name,
         style: theme.textTheme.bodyMedium,

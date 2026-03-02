@@ -30,7 +30,10 @@ class SshService {
     String? managedPrivateKey,
     String? managedPassphrase,
   }) async {
-    _log.info(_tag, 'Connecting to ${server.hostname}:${server.port} as ${server.username}');
+    _log.info(
+      _tag,
+      'Connecting to ${server.hostname}:${server.port} as ${server.username}',
+    );
     try {
       final socket = await SSHSocket.connect(
         server.hostname,
@@ -56,10 +59,7 @@ class SshService {
       _log.info(_tag, 'Authenticated to ${server.hostname}:${server.port}');
 
       final session = await client.shell(
-        pty: const SSHPtyConfig(
-          width: 80,
-          height: 24,
-        ),
+        pty: const SSHPtyConfig(width: 80, height: 24),
       );
 
       _log.info(_tag, 'Shell session opened for ${server.hostname}');
@@ -100,23 +100,30 @@ class SshService {
         stderrSubscription: stderrSub,
       ));
     } on SSHAuthFailError catch (e) {
-      _log.error(_tag, 'Authentication failed for ${server.username}@${server.hostname}: $e');
-      return Err(SshConnectionFailure(
-        'Authentication failed for ${server.username}@${server.hostname}',
-        cause: e,
-      ));
+      _log.error(
+        _tag,
+        'Authentication failed for ${server.username}@${server.hostname}: $e',
+      );
+      return Err(
+        SshConnectionFailure(
+          'Authentication failed for ${server.username}@${server.hostname}',
+          cause: e,
+        ),
+      );
     } on SSHAuthAbortError catch (e) {
       _log.error(_tag, 'Authentication aborted for ${server.hostname}: $e');
-      return Err(SshConnectionFailure(
-        'Authentication aborted',
-        cause: e,
-      ));
+      return Err(SshConnectionFailure('Authentication aborted', cause: e));
     } catch (e) {
-      _log.error(_tag, 'Failed to connect to ${server.hostname}:${server.port}: $e');
-      return Err(SshConnectionFailure(
-        'Failed to connect to ${server.hostname}:${server.port}',
-        cause: e,
-      ));
+      _log.error(
+        _tag,
+        'Failed to connect to ${server.hostname}:${server.port}: $e',
+      );
+      return Err(
+        SshConnectionFailure(
+          'Failed to connect to ${server.hostname}:${server.port}',
+          cause: e,
+        ),
+      );
     }
   }
 
@@ -153,7 +160,9 @@ class SshService {
 
   Future<DistroInfo?> detectDistro(SSHClient client) async {
     try {
-      final result = await client.run('cat /etc/os-release 2>/dev/null || echo ""');
+      final result = await client.run(
+        'cat /etc/os-release 2>/dev/null || echo ""',
+      );
       final output = utf8.decode(result);
       if (output.trim().isEmpty) return null;
 

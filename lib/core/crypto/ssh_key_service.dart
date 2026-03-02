@@ -54,8 +54,7 @@ class SshKeyService {
         SshKeyType.rsa => _generateRsa(options),
         SshKeyType.ecdsa256 ||
         SshKeyType.ecdsa384 ||
-        SshKeyType.ecdsa521 =>
-          _generateEcdsa(options),
+        SshKeyType.ecdsa521 => _generateEcdsa(options),
         SshKeyType.ed25519 => await _generateEd25519(options),
       };
     } catch (e) {
@@ -104,8 +103,10 @@ class SshKeyService {
       if (rsaResult.isSuccess) return rsaResult;
 
       return const Err(
-        CryptoFailure('Unsupported private key format. '
-            'Supported: RSA (PKCS#1/PKCS#8), ECDSA (SEC1), Ed25519 (OpenSSH).'),
+        CryptoFailure(
+          'Unsupported private key format. '
+          'Supported: RSA (PKCS#1/PKCS#8), ECDSA (SEC1), Ed25519 (OpenSSH).',
+        ),
       );
     } catch (e) {
       return Err(CryptoFailure('Failed to extract public key', cause: e));
@@ -114,9 +115,7 @@ class SshKeyService {
 
   /// Extract public key and comment from a PEM-encoded private key.
   /// Comment extraction is only supported for unencrypted OpenSSH keys.
-  Future<Result<ExtractedKeyInfo>> extractKeyInfo(
-    String privateKeyPem,
-  ) async {
+  Future<Result<ExtractedKeyInfo>> extractKeyInfo(String privateKeyPem) async {
     try {
       final trimmed = privateKeyPem.trim();
 
@@ -144,21 +143,25 @@ class SshKeyService {
     final bits = options.effectiveBits;
 
     final keyGen = RSAKeyGenerator()
-      ..init(ParametersWithRandom(
-        RSAKeyGeneratorParameters(BigInt.from(65537), bits, 64),
-        _secureRandom,
-      ));
+      ..init(
+        ParametersWithRandom(
+          RSAKeyGeneratorParameters(BigInt.from(65537), bits, 64),
+          _secureRandom,
+        ),
+      );
 
     final pair = keyGen.generateKeyPair();
     final pub = pair.publicKey as RSAPublicKey;
     final priv = pair.privateKey as RSAPrivateKey;
 
-    return Success(SshKeyPair(
-      privateKey: _rsaPrivateKeyToPem(priv),
-      publicKey: _rsaPublicKeyToOpenSsh(pub, options.comment),
-      type: SshKeyType.rsa,
-      comment: options.comment,
-    ));
+    return Success(
+      SshKeyPair(
+        privateKey: _rsaPrivateKeyToPem(priv),
+        publicKey: _rsaPublicKeyToOpenSsh(pub, options.comment),
+        type: SshKeyType.rsa,
+        comment: options.comment,
+      ),
+    );
   }
 
   Result<String> _extractRsaPublicKey(String pem, String comment) {
@@ -166,8 +169,10 @@ class SshKeyService {
     if (rsaPrivate == null) {
       return const Err(CryptoFailure('Could not parse RSA private key.'));
     }
-    final rsaPublic =
-        RSAPublicKey(rsaPrivate.modulus!, rsaPrivate.publicExponent!);
+    final rsaPublic = RSAPublicKey(
+      rsaPrivate.modulus!,
+      rsaPrivate.publicExponent!,
+    );
     return Success(_rsaPublicKeyToOpenSsh(rsaPublic, comment));
   }
 
@@ -187,21 +192,25 @@ class SshKeyService {
 
     final domainParams = ECDomainParameters(curveName);
     final keyGen = ECKeyGenerator()
-      ..init(ParametersWithRandom(
-        ECKeyGeneratorParameters(domainParams),
-        _secureRandom,
-      ));
+      ..init(
+        ParametersWithRandom(
+          ECKeyGeneratorParameters(domainParams),
+          _secureRandom,
+        ),
+      );
 
     final pair = keyGen.generateKeyPair();
     final pub = pair.publicKey as ECPublicKey;
     final priv = pair.privateKey as ECPrivateKey;
 
-    return Success(SshKeyPair(
-      privateKey: _ecPrivateKeyToPem(priv, domainParams),
-      publicKey: _ecPublicKeyToOpenSsh(pub, options.type, options.comment),
-      type: options.type,
-      comment: options.comment,
-    ));
+    return Success(
+      SshKeyPair(
+        privateKey: _ecPrivateKeyToPem(priv, domainParams),
+        publicKey: _ecPublicKeyToOpenSsh(pub, options.type, options.comment),
+        type: options.type,
+        comment: options.comment,
+      ),
+    );
   }
 
   Result<String> _extractEcdsaPublicKey(String pem, String comment) {
@@ -283,17 +292,24 @@ class SshKeyService {
     final publicKeyBytes = Uint8List.fromList(publicKey.bytes);
     final privateKeyBytes = Uint8List.fromList(privateKeyData);
 
-    return Success(SshKeyPair(
-      privateKey:
-          _ed25519ToOpenSshPrivateKey(privateKeyBytes, publicKeyBytes, options.comment),
-      publicKey: _ed25519ToOpenSshPublicKey(publicKeyBytes, options.comment),
-      type: SshKeyType.ed25519,
-      comment: options.comment,
-    ));
+    return Success(
+      SshKeyPair(
+        privateKey: _ed25519ToOpenSshPrivateKey(
+          privateKeyBytes,
+          publicKeyBytes,
+          options.comment,
+        ),
+        publicKey: _ed25519ToOpenSshPublicKey(publicKeyBytes, options.comment),
+        type: SshKeyType.ed25519,
+        comment: options.comment,
+      ),
+    );
   }
 
   Future<Result<String>> _extractOpenSshPublicKey(
-      String pem, String comment) async {
+    String pem,
+    String comment,
+  ) async {
     try {
       final lines = pem.split('\n');
       final b64 = lines.where((l) => !l.startsWith('-----')).join();
@@ -320,8 +336,10 @@ class SshKeyService {
 
       if (cipherName != 'none') {
         return const Err(
-          CryptoFailure('Encrypted OpenSSH keys are not supported for extraction. '
-              'Remove the passphrase first with ssh-keygen -p.'),
+          CryptoFailure(
+            'Encrypted OpenSSH keys are not supported for extraction. '
+            'Remove the passphrase first with ssh-keygen -p.',
+          ),
         );
       }
 
@@ -356,16 +374,17 @@ class SshKeyService {
       if (keyType == 'ssh-ed25519') {
         final pkLen = _readUint32(pubBlob, pOff);
         pOff += 4;
-        final publicKeyBytes =
-            Uint8List.fromList(pubBlob.sublist(pOff, pOff + pkLen));
+        final publicKeyBytes = Uint8List.fromList(
+          pubBlob.sublist(pOff, pOff + pkLen),
+        );
         return Success(_ed25519ToOpenSshPublicKey(publicKeyBytes, comment));
       }
 
-      return Err(
-        CryptoFailure('Unsupported OpenSSH key type: $keyType'),
-      );
+      return Err(CryptoFailure('Unsupported OpenSSH key type: $keyType'));
     } catch (e) {
-      return Err(CryptoFailure('Failed to parse OpenSSH private key', cause: e));
+      return Err(
+        CryptoFailure('Failed to parse OpenSSH private key', cause: e),
+      );
     }
   }
 
@@ -390,8 +409,10 @@ class SshKeyService {
 
       if (cipherName != 'none') {
         return const Err(
-          CryptoFailure('Encrypted OpenSSH keys are not supported for extraction. '
-              'Remove the passphrase first with ssh-keygen -p.'),
+          CryptoFailure(
+            'Encrypted OpenSSH keys are not supported for extraction. '
+            'Remove the passphrase first with ssh-keygen -p.',
+          ),
         );
       }
 
@@ -428,9 +449,13 @@ class SshKeyService {
       if (keyType == 'ssh-ed25519') {
         final pkLen = _readUint32(pubBlob, pOff);
         pOff += 4;
-        final publicKeyBytes =
-            Uint8List.fromList(pubBlob.sublist(pOff, pOff + pkLen));
-        publicKey = _ed25519ToOpenSshPublicKey(publicKeyBytes, 'shellvault-extracted');
+        final publicKeyBytes = Uint8List.fromList(
+          pubBlob.sublist(pOff, pOff + pkLen),
+        );
+        publicKey = _ed25519ToOpenSshPublicKey(
+          publicKeyBytes,
+          'shellvault-extracted',
+        );
       }
 
       if (publicKey == null) {
@@ -472,15 +497,22 @@ class SshKeyService {
 
       // Replace placeholder comment in publicKey line if we found a real comment
       if (comment != null && comment.isNotEmpty) {
-        publicKey = publicKey.replaceFirst(' shellvault-extracted', ' $comment');
+        publicKey = publicKey.replaceFirst(
+          ' shellvault-extracted',
+          ' $comment',
+        );
       }
 
-      return Success(ExtractedKeyInfo(
-        publicKey: publicKey,
-        comment: (comment != null && comment.isNotEmpty) ? comment : null,
-      ));
+      return Success(
+        ExtractedKeyInfo(
+          publicKey: publicKey,
+          comment: (comment != null && comment.isNotEmpty) ? comment : null,
+        ),
+      );
     } catch (e) {
-      return Err(CryptoFailure('Failed to parse OpenSSH private key', cause: e));
+      return Err(
+        CryptoFailure('Failed to parse OpenSSH private key', cause: e),
+      );
     }
   }
 
@@ -491,7 +523,8 @@ class SshKeyService {
   RSAPrivateKey? _pemToRsaPrivateKey(String pem) {
     final lines = pem.split('\n');
     final isRsa = lines.any(
-        (l) => l.contains('RSA PRIVATE KEY') || l.contains('PRIVATE KEY'));
+      (l) => l.contains('RSA PRIVATE KEY') || l.contains('PRIVATE KEY'),
+    );
     if (!isRsa) return null;
 
     final b64 = lines.where((l) => !l.startsWith('-----')).join();
@@ -552,8 +585,7 @@ class SshKeyService {
 
   // --- EC helpers ---
 
-  String _ecPrivateKeyToPem(
-      ECPrivateKey key, ECDomainParameters domainParams) {
+  String _ecPrivateKeyToPem(ECPrivateKey key, ECDomainParameters domainParams) {
     final privBytes = _bigIntToBytes(key.d!);
     final pubPoint = domainParams.G * key.d!;
     final pubBytes = pubPoint!.getEncoded(false); // uncompressed
@@ -578,8 +610,7 @@ class SshKeyService {
     seq.add(oidWrapper);
 
     // [1] Public key bit string
-    final pubBitString = ASN1BitString(elements: [],
-        tag: 0x03);
+    final pubBitString = ASN1BitString(elements: [], tag: 0x03);
     pubBitString.valueBytes = Uint8List.fromList([0x00, ...pubBytes]);
     final pubWrapper = ASN1Sequence(elements: [pubBitString], tag: 0xA1);
     seq.add(pubWrapper);
@@ -588,7 +619,10 @@ class SshKeyService {
   }
 
   String _ecPublicKeyToOpenSsh(
-      ECPublicKey key, SshKeyType type, String comment) {
+    ECPublicKey key,
+    SshKeyType type,
+    String comment,
+  ) {
     final curveName = type.curveName!;
     final sshType = type.sshName;
 
@@ -621,7 +655,10 @@ class SshKeyService {
   }
 
   String _ed25519ToOpenSshPrivateKey(
-      Uint8List privateKey, Uint8List publicKey, String comment) {
+    Uint8List privateKey,
+    Uint8List publicKey,
+    String comment,
+  ) {
     // OpenSSH private key format (unencrypted)
     final random = Random.secure();
     final checkInt = random.nextInt(0xFFFFFFFF);
@@ -691,8 +728,9 @@ class SshKeyService {
     final encoded = base64Encode(output.toBytes());
     final lines = <String>[];
     for (var i = 0; i < encoded.length; i += 70) {
-      lines.add(encoded.substring(
-          i, i + 70 > encoded.length ? encoded.length : i + 70));
+      lines.add(
+        encoded.substring(i, i + 70 > encoded.length ? encoded.length : i + 70),
+      );
     }
 
     return '-----BEGIN OPENSSH PRIVATE KEY-----\n${lines.join('\n')}\n-----END OPENSSH PRIVATE KEY-----';
@@ -706,8 +744,9 @@ class SshKeyService {
     final encoded = base64Encode(derBytes);
     final lines = <String>[];
     for (var i = 0; i < encoded.length; i += 64) {
-      lines.add(encoded.substring(
-          i, i + 64 > encoded.length ? encoded.length : i + 64));
+      lines.add(
+        encoded.substring(i, i + 64 > encoded.length ? encoded.length : i + 64),
+      );
     }
     return '-----BEGIN $label-----\n${lines.join('\n')}\n-----END $label-----';
   }

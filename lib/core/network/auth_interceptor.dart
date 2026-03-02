@@ -86,13 +86,10 @@ class AuthInterceptor extends Interceptor {
     _refreshCompleter = completer;
     try {
       final refreshResult = await _storage.getRefreshToken();
-      final refreshToken =
-          refreshResult.isSuccess ? refreshResult.value : null;
+      final refreshToken = refreshResult.isSuccess ? refreshResult.value : null;
       if (refreshToken == null) {
         await _handleAuthExpired();
-        completer.completeError(
-          StateError('No refresh token available'),
-        );
+        completer.completeError(StateError('No refresh token available'));
         return handler.next(err);
       }
 
@@ -104,9 +101,7 @@ class AuthInterceptor extends Interceptor {
       final data = response.data;
       if (data == null) {
         await _handleAuthExpired();
-        completer.completeError(
-          StateError('Empty refresh response'),
-        );
+        completer.completeError(StateError('Empty refresh response'));
         return handler.next(err);
       }
       final newAccessToken = data['access_token'] as String;
@@ -115,8 +110,9 @@ class AuthInterceptor extends Interceptor {
       final rawExpiry = data['expires_at'];
       if (rawExpiry is int) {
         expiresAt = DateTime.fromMillisecondsSinceEpoch(
-                rawExpiry * 1000, isUtc: true)
-            .toIso8601String();
+          rawExpiry * 1000,
+          isUtc: true,
+        ).toIso8601String();
       } else if (rawExpiry is String) {
         expiresAt = rawExpiry;
       }
@@ -138,9 +134,7 @@ class AuthInterceptor extends Interceptor {
     } on DioException {
       await _handleAuthExpired();
       if (!completer.isCompleted) {
-        completer.completeError(
-          StateError('Token refresh failed'),
-        );
+        completer.completeError(StateError('Token refresh failed'));
       }
       return handler.next(err);
     } finally {

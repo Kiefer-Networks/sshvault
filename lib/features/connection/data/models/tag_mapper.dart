@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:shellvault/core/storage/database.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+
 abstract final class TagMapper {
   static TagEntity fromDrift(Tag row) {
     return TagEntity(

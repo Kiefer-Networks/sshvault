@@ -8,8 +8,10 @@ part 'server_dao.g.dart';
 class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
   ServerDao(super.db);
 
-  static String _escapeLike(String input) =>
-      input.replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_');
+  static String _escapeLike(String input) => input
+      .replaceAll('\\', '\\\\')
+      .replaceAll('%', '\\%')
+      .replaceAll('_', '\\_');
 
   Future<List<Server>> getAllServers() => select(servers).get();
 
@@ -24,14 +26,13 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
 
   Future<List<Server>> searchServers(String query) {
     final escaped = _escapeLike(query);
-    return (select(servers)
-          ..where(
-            (s) =>
-                s.name.like('%$escaped%') |
-                s.hostname.like('%$escaped%') |
-                s.username.like('%$escaped%') |
-                s.notes.like('%$escaped%'),
-          ))
+    return (select(servers)..where(
+          (s) =>
+              s.name.like('%$escaped%') |
+              s.hostname.like('%$escaped%') |
+              s.username.like('%$escaped%') |
+              s.notes.like('%$escaped%'),
+        ))
         .get();
   }
 
@@ -62,17 +63,17 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
       query = query..where((s) => s.isActive.equals(isActive));
     }
 
-    query = query
-      ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]);
+    query = query..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]);
 
     var results = await query.get();
 
     if (tagIds != null && tagIds.isNotEmpty) {
-      final serverIdsWithTags = await (select(serverTags)
-            ..where((st) => st.tagId.isIn(tagIds)))
-          .get();
-      final matchingServerIds =
-          serverIdsWithTags.map((st) => st.serverId).toSet();
+      final serverIdsWithTags = await (select(
+        serverTags,
+      )..where((st) => st.tagId.isIn(tagIds))).get();
+      final matchingServerIds = serverIdsWithTags
+          .map((st) => st.serverId)
+          .toSet();
       results = results.where((s) => matchingServerIds.contains(s.id)).toList();
     }
 
@@ -89,20 +90,20 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
       (delete(servers)..where((s) => s.id.equals(id))).go();
 
   Future<void> setServerTags(String serverId, List<String> tagIds) async {
-    await (delete(serverTags)..where((st) => st.serverId.equals(serverId)))
-        .go();
+    await (delete(
+      serverTags,
+    )..where((st) => st.serverId.equals(serverId))).go();
     for (final tagId in tagIds) {
-      await into(serverTags).insert(
-        ServerTagsCompanion.insert(serverId: serverId, tagId: tagId),
-      );
+      await into(
+        serverTags,
+      ).insert(ServerTagsCompanion.insert(serverId: serverId, tagId: tagId));
     }
   }
 
   Future<List<Tag>> getTagsForServer(String serverId) async {
     final query = select(serverTags).join([
       innerJoin(tags, tags.id.equalsExp(serverTags.tagId)),
-    ])
-      ..where(serverTags.serverId.equals(serverId));
+    ])..where(serverTags.serverId.equals(serverId));
 
     final rows = await query.get();
     return rows.map((row) => row.readTable(tags)).toList();

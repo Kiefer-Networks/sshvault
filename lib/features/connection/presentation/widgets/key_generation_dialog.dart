@@ -27,7 +27,9 @@ class KeyGenerationDialog extends StatefulWidget {
 class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
   SshKeyType _selectedType = SshKeyType.ed25519;
   int _selectedBits = 0;
-  final _commentController = TextEditingController(text: 'shellvault-generated');
+  final _commentController = TextEditingController(
+    text: 'shellvault-generated',
+  );
 
   bool _generating = false;
   SshKeyPair? _result;
@@ -100,10 +102,10 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                 isDense: true,
               ),
               items: SshKeyType.values
-                  .map((t) => DropdownMenuItem(
-                        value: t,
-                        child: Text(t.displayName),
-                      ))
+                  .map(
+                    (t) =>
+                        DropdownMenuItem(value: t, child: Text(t.displayName)),
+                  )
                   .toList(),
               onChanged: _generating
                   ? null
@@ -130,10 +132,12 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                   isDense: true,
                 ),
                 items: _selectedType.allowedBitLengths
-                    .map((b) => DropdownMenuItem(
-                          value: b,
-                          child: Text(l10n.keyGenKeySizeBit(b)),
-                        ))
+                    .map(
+                      (b) => DropdownMenuItem(
+                        value: b,
+                        child: Text(l10n.keyGenKeySizeBit(b)),
+                      ),
+                    )
                     .toList(),
                 onChanged: _generating
                     ? null
@@ -150,9 +154,11 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline,
-                        size: 16,
-                        color: theme.colorScheme.onSurfaceVariant),
+                    Icon(
+                      Icons.info_outline,
+                      size: 16,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       _selectedType.keySizeLabel,
@@ -180,10 +186,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
 
             if (_error != null) ...[
               const SizedBox(height: 16),
-              Text(
-                _error!,
-                style: TextStyle(color: theme.colorScheme.error),
-              ),
+              Text(_error!, style: TextStyle(color: theme.colorScheme.error)),
             ],
           ],
         ),
@@ -202,7 +205,9 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.auto_fix_high, size: 18),
-          label: Text(_generating ? l10n.keyGenGenerating : l10n.keyGenGenerate),
+          label: Text(
+            _generating ? l10n.keyGenGenerating : l10n.keyGenGenerate,
+          ),
         ),
       ],
     );
@@ -251,8 +256,11 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
             // Info
             Row(
               children: [
-                Icon(Icons.info_outline,
-                    size: 14, color: theme.colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -325,7 +333,11 @@ class _KeyPreviewCard extends StatelessWidget {
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: value));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(AppLocalizations.of(context)!.keyGenCopied(label))),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)!.keyGenCopied(label),
+                        ),
+                      ),
                     );
                   },
                   visualDensity: VisualDensity.compact,

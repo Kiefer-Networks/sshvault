@@ -164,7 +164,8 @@ class ServerFormFields extends StatelessWidget {
                   labelText: l10n.serverFormPrivateKeyLabel,
                   prefixIcon: const Icon(Icons.vpn_key),
                   hintText: l10n.serverFormPrivateKeyHint,
-                  suffixIcon: onExtractPublicKey != null &&
+                  suffixIcon:
+                      onExtractPublicKey != null &&
                           privateKeyController.text.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.key, size: 20),
@@ -175,7 +176,9 @@ class ServerFormFields extends StatelessWidget {
                 ),
                 keyboardType: TextInputType.multiline,
                 maxLines: 3,
-                validator: useManagedKey ? null : Validators.sshKeyValidator(l10n),
+                validator: useManagedKey
+                    ? null
+                    : Validators.sshKeyValidator(l10n),
               ),
               const SizedBox(height: 16),
               TextFormField(

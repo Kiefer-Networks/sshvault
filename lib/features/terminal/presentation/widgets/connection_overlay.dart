@@ -56,9 +56,7 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
               isError ? Icons.error_outline : Icons.link_off,
               size: 40,
             ),
-            title: Text(
-              isError ? l10n.connectionError : l10n.connectionLost,
-            ),
+            title: Text(isError ? l10n.connectionError : l10n.connectionLost),
             content: isError && widget.errorMessage != null
                 ? Text(widget.errorMessage!)
                 : null,
@@ -73,9 +71,7 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
                 onPressed: () {
                   Navigator.of(ctx).pop('retry');
                 },
-                child: Text(
-                  isError ? l10n.retry : l10n.connectionReconnect,
-                ),
+                child: Text(isError ? l10n.retry : l10n.connectionReconnect),
               ),
             ],
           );
@@ -97,34 +93,34 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
 
     return switch (widget.status) {
       SshConnectionStatus.connecting ||
-      SshConnectionStatus.authenticating =>
-        Center(
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(height: 16),
-                  Text(
-                    widget.status == SshConnectionStatus.authenticating
-                        ? l10n.connectionAuthenticating
-                        : l10n.connectionConnecting(
-                            widget.serverName ?? 'server'),
-                  ),
-                ],
-              ),
+      SshConnectionStatus.authenticating => Center(
+        child: Card(
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: 16),
+                Text(
+                  widget.status == SshConnectionStatus.authenticating
+                      ? l10n.connectionAuthenticating
+                      : l10n.connectionConnecting(
+                          widget.serverName ?? 'server',
+                        ),
+                ),
+              ],
             ),
           ),
         ),
-      SshConnectionStatus.error ||
-      SshConnectionStatus.disconnected =>
-        Builder(builder: (_) {
+      ),
+      SshConnectionStatus.error || SshConnectionStatus.disconnected => Builder(
+        builder: (_) {
           _showStatusDialog();
           return const SizedBox.shrink();
-        }),
+        },
+      ),
       SshConnectionStatus.connected => const SizedBox.shrink(),
     };
   }

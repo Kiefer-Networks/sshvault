@@ -48,11 +48,11 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
               decoration: InputDecoration(
                 labelText: l10n.exportPasswordLabel,
                 suffixIcon: IconButton(
-                  icon: Icon(_obscurePassword
-                      ? Icons.visibility_off
-                      : Icons.visibility),
-                  onPressed: () => setState(
-                      () => _obscurePassword = !_obscurePassword),
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
                 ),
               ),
               keyboardType: TextInputType.visiblePassword,
@@ -65,11 +65,11 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
               decoration: InputDecoration(
                 labelText: l10n.exportPasswordConfirmLabel,
                 suffixIcon: IconButton(
-                  icon: Icon(_obscureConfirm
-                      ? Icons.visibility_off
-                      : Icons.visibility),
-                  onPressed: () => setState(
-                      () => _obscureConfirm = !_obscureConfirm),
+                  icon: Icon(
+                    _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscureConfirm = !_obscureConfirm),
                 ),
               ),
               keyboardType: TextInputType.visiblePassword,

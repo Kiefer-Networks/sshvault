@@ -97,8 +97,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                               child: Text(
                                 snippet.language,
                                 style: theme.textTheme.labelSmall?.copyWith(
-                                  color:
-                                      theme.colorScheme.onSecondaryContainer,
+                                  color: theme.colorScheme.onSecondaryContainer,
                                 ),
                               ),
                             ),
@@ -119,16 +118,17 @@ class SnippetDetailScreen extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(l10n.snippetDetailContent, style: theme.textTheme.titleSmall),
+                          Text(
+                            l10n.snippetDetailContent,
+                            style: theme.textTheme.titleSmall,
+                          ),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (snippet.variables.isNotEmpty)
                                 TextButton.icon(
-                                  onPressed: () => VariableFillDialog.show(
-                                    context,
-                                    snippet,
-                                  ),
+                                  onPressed: () =>
+                                      VariableFillDialog.show(context, snippet),
                                   icon: const Icon(Icons.tune, size: 18),
                                   label: Text(l10n.snippetDetailFillVariables),
                                 ),
@@ -176,14 +176,15 @@ class SnippetDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.snippetDetailDescription,
-                            style: theme.textTheme.titleSmall),
+                        Text(
+                          l10n.snippetDetailDescription,
+                          style: theme.textTheme.titleSmall,
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           snippet.description,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color:
-                                theme.colorScheme.onSurface.withAlpha(179),
+                            color: theme.colorScheme.onSurface.withAlpha(179),
                           ),
                         ),
                       ],
@@ -199,8 +200,10 @@ class SnippetDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.snippetDetailVariables,
-                            style: theme.textTheme.titleSmall),
+                        Text(
+                          l10n.snippetDetailVariables,
+                          style: theme.textTheme.titleSmall,
+                        ),
                         const SizedBox(height: 8),
                         ...snippet.variables.map(
                           (v) => Padding(
@@ -209,8 +212,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   '{{${v.name}}}',
-                                  style:
-                                      theme.textTheme.bodyMedium?.copyWith(
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     fontFamily: 'monospace',
                                     color: theme.colorScheme.primary,
                                   ),
@@ -219,8 +221,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                                   const SizedBox(width: 8),
                                   Text(
                                     '= ${v.defaultValue}',
-                                    style: theme.textTheme.bodySmall
-                                        ?.copyWith(
+                                    style: theme.textTheme.bodySmall?.copyWith(
                                       color: theme.colorScheme.onSurface
                                           .withAlpha(128),
                                     ),
@@ -243,7 +244,10 @@ class SnippetDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.snippetDetailTags, style: theme.textTheme.titleSmall),
+                        Text(
+                          l10n.snippetDetailTags,
+                          style: theme.textTheme.titleSmall,
+                        ),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -264,7 +268,10 @@ class SnippetDetailScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.snippetDetailInfo, style: theme.textTheme.titleSmall),
+                      Text(
+                        l10n.snippetDetailInfo,
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 12),
                       InfoRow(
                         icon: Icons.calendar_today,
@@ -288,5 +295,4 @@ class SnippetDetailScreen extends ConsumerWidget {
       ),
     );
   }
-
 }

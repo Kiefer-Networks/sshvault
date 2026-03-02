@@ -24,13 +24,8 @@ class TagChip extends StatelessWidget {
       onDeleted: onDelete,
       backgroundColor: Color(tag.color).withAlpha(26),
       selectedColor: Color(tag.color).withAlpha(51),
-      side: BorderSide(
-        color: Color(tag.color).withAlpha(77),
-      ),
-      labelStyle: TextStyle(
-        color: Color(tag.color),
-        fontSize: 12,
-      ),
+      side: BorderSide(color: Color(tag.color).withAlpha(77)),
+      labelStyle: TextStyle(color: Color(tag.color), fontSize: 12),
     );
   }
 }

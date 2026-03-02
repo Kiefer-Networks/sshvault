@@ -43,10 +43,7 @@ abstract final class IconConstants {
 
   static IconData getIcon(String name) {
     return serverIcons
-        .firstWhere(
-          (i) => i.name == name,
-          orElse: () => serverIcons.first,
-        )
+        .firstWhere((i) => i.name == name, orElse: () => serverIcons.first)
         .icon;
   }
 }

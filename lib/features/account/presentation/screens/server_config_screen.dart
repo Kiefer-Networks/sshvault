@@ -10,8 +10,7 @@ class ServerConfigScreen extends ConsumerStatefulWidget {
   const ServerConfigScreen({super.key});
 
   @override
-  ConsumerState<ServerConfigScreen> createState() =>
-      _ServerConfigScreenState();
+  ConsumerState<ServerConfigScreen> createState() => _ServerConfigScreenState();
 }
 
 class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
@@ -24,8 +23,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
   void initState() {
     super.initState();
     final settings = ref.read(settingsProvider).valueOrNull;
-    _urlController.text =
-        settings?.serverUrl ?? AppConstants.defaultServerUrl;
+    _urlController.text = settings?.serverUrl ?? AppConstants.defaultServerUrl;
   }
 
   @override
@@ -103,8 +101,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: FilledButton(
-                onPressed: () =>
-                    _saveUrl(_urlController.text.trim()),
+                onPressed: () => _saveUrl(_urlController.text.trim()),
                 child: Text(l10n.save),
               ),
             ),

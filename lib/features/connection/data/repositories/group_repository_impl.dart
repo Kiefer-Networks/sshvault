@@ -11,7 +11,7 @@ class GroupRepositoryImpl implements GroupRepository {
   final Uuid _uuid;
 
   GroupRepositoryImpl(this._groupDao, {Uuid? uuid})
-      : _uuid = uuid ?? const Uuid();
+    : _uuid = uuid ?? const Uuid();
 
   @override
   Future<Result<List<GroupEntity>>> getGroups() async {
@@ -89,8 +89,7 @@ class GroupRepositoryImpl implements GroupRepository {
         allEntities.add(GroupMapper.fromDrift(row, serverCount: count));
       }
 
-      final rootGroups =
-          allEntities.where((g) => g.parentId == null).toList();
+      final rootGroups = allEntities.where((g) => g.parentId == null).toList();
       final tree = rootGroups
           .map((root) => _buildTree(root, allEntities))
           .toList();

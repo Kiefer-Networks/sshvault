@@ -43,8 +43,7 @@ final tagRepositoryProvider = Provider<TagRepository>((ref) {
   return TagRepositoryImpl(db.tagDao, db.serverDao);
 });
 
-final exportImportRepositoryProvider =
-    Provider<ExportImportRepository>((ref) {
+final exportImportRepositoryProvider = Provider<ExportImportRepository>((ref) {
   final db = ref.watch(databaseProvider);
   final secureStorage = ref.watch(secureStorageProvider);
   final encryptionService = ref.watch(encryptionServiceProvider);

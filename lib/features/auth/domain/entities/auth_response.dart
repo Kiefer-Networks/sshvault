@@ -17,8 +17,10 @@ class AuthResponse {
     String? expiresAt;
     final raw = json['expires_at'];
     if (raw is int) {
-      expiresAt = DateTime.fromMillisecondsSinceEpoch(raw * 1000, isUtc: true)
-          .toIso8601String();
+      expiresAt = DateTime.fromMillisecondsSinceEpoch(
+        raw * 1000,
+        isUtc: true,
+      ).toIso8601String();
     } else if (raw is String) {
       expiresAt = raw;
     }

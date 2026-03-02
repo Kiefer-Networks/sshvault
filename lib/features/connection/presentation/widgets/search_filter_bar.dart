@@ -56,27 +56,26 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                         : null,
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                   ),
                   keyboardType: TextInputType.text,
                   onChanged: (value) {
-                    ref.read(serverFilterProvider.notifier).state =
-                        filter.copyWith(searchQuery: value);
+                    ref.read(serverFilterProvider.notifier).state = filter
+                        .copyWith(searchQuery: value);
                   },
                 ),
               ),
               const SizedBox(width: 8),
               IconButton(
                 icon: Icon(
-                  _showFilters
-                      ? Icons.filter_list_off
-                      : Icons.filter_list,
+                  _showFilters ? Icons.filter_list_off : Icons.filter_list,
                   color: _hasActiveFilters(filter)
                       ? theme.colorScheme.primary
                       : null,
                 ),
-                onPressed: () =>
-                    setState(() => _showFilters = !_showFilters),
+                onPressed: () => setState(() => _showFilters = !_showFilters),
               ),
             ],
           ),
@@ -112,8 +111,9 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
               label: Text(l10n.filterAllGroups),
               selected: filter.groupId == null,
               onSelected: (_) {
-                ref.read(serverFilterProvider.notifier).state =
-                    filter.copyWith(groupId: null);
+                ref.read(serverFilterProvider.notifier).state = filter.copyWith(
+                  groupId: null,
+                );
               },
             ),
             const SizedBox(width: 8),
@@ -124,11 +124,10 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                   group: group,
                   selected: filter.groupId == group.id,
                   onTap: () {
-                    ref.read(serverFilterProvider.notifier).state =
-                        filter.copyWith(
-                      groupId:
-                          filter.groupId == group.id ? null : group.id,
-                    );
+                    ref.read(serverFilterProvider.notifier).state = filter
+                        .copyWith(
+                          groupId: filter.groupId == group.id ? null : group.id,
+                        );
                   },
                 ),
               ),
@@ -163,8 +162,8 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                       } else {
                         newTagIds.add(tag.id);
                       }
-                      ref.read(serverFilterProvider.notifier).state =
-                          filter.copyWith(tagIds: newTagIds);
+                      ref.read(serverFilterProvider.notifier).state = filter
+                          .copyWith(tagIds: newTagIds);
                     },
                   ),
                 ),
@@ -186,8 +185,9 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
             label: Text(l10n.filterAll),
             selected: filter.isActive == null,
             onSelected: (_) {
-              ref.read(serverFilterProvider.notifier).state =
-                  filter.copyWith(isActive: null);
+              ref.read(serverFilterProvider.notifier).state = filter.copyWith(
+                isActive: null,
+              );
             },
           ),
           const SizedBox(width: 8),
@@ -195,8 +195,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
             label: Text(l10n.filterActive),
             selected: filter.isActive == true,
             onSelected: (_) {
-              ref.read(serverFilterProvider.notifier).state =
-                  filter.copyWith(
+              ref.read(serverFilterProvider.notifier).state = filter.copyWith(
                 isActive: filter.isActive == true ? null : true,
               );
             },
@@ -206,8 +205,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
             label: Text(l10n.filterInactive),
             selected: filter.isActive == false,
             onSelected: (_) {
-              ref.read(serverFilterProvider.notifier).state =
-                  filter.copyWith(
+              ref.read(serverFilterProvider.notifier).state = filter.copyWith(
                 isActive: filter.isActive == false ? null : false,
               );
             },

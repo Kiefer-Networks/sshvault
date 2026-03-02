@@ -13,32 +13,32 @@ enum SshKeyType {
 
   /// Valid bit lengths for this key type (empty = fixed size).
   List<int> get allowedBitLengths => switch (this) {
-        SshKeyType.rsa => [2048, 3072, 4096],
-        _ => [],
-      };
+    SshKeyType.rsa => [2048, 3072, 4096],
+    _ => [],
+  };
 
   /// Default bit length (0 = fixed size).
   int get defaultBitLength => switch (this) {
-        SshKeyType.rsa => 4096,
-        _ => 0,
-      };
+    SshKeyType.rsa => 4096,
+    _ => 0,
+  };
 
   /// Human-readable key size description.
   String get keySizeLabel => switch (this) {
-        SshKeyType.rsa => 'Variable (2048–4096 bit)',
-        SshKeyType.ecdsa256 => '256 bit (fixed)',
-        SshKeyType.ecdsa384 => '384 bit (fixed)',
-        SshKeyType.ecdsa521 => '521 bit (fixed)',
-        SshKeyType.ed25519 => '256 bit (fixed)',
-      };
+    SshKeyType.rsa => 'Variable (2048–4096 bit)',
+    SshKeyType.ecdsa256 => '256 bit (fixed)',
+    SshKeyType.ecdsa384 => '384 bit (fixed)',
+    SshKeyType.ecdsa521 => '521 bit (fixed)',
+    SshKeyType.ed25519 => '256 bit (fixed)',
+  };
 
   /// OpenSSH curve identifier (only for ECDSA).
   String? get curveName => switch (this) {
-        SshKeyType.ecdsa256 => 'nistp256',
-        SshKeyType.ecdsa384 => 'nistp384',
-        SshKeyType.ecdsa521 => 'nistp521',
-        _ => null,
-      };
+    SshKeyType.ecdsa256 => 'nistp256',
+    SshKeyType.ecdsa384 => 'nistp384',
+    SshKeyType.ecdsa521 => 'nistp521',
+    _ => null,
+  };
 }
 
 /// Options for SSH key generation.

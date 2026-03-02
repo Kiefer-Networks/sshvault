@@ -12,8 +12,8 @@ import 'package:shellvault/features/settings/domain/entities/app_settings_entity
 
 final settingsProvider =
     AsyncNotifierProvider<SettingsNotifier, AppSettingsEntity>(
-  SettingsNotifier.new,
-);
+      SettingsNotifier.new,
+    );
 
 class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _tag = 'Settings';
@@ -59,7 +59,9 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
 
     // Migrate legacy plaintext PIN to hash if present
     final legacyPin = await dao.getValue('pin_code');
-    if (legacyPin != null && legacyPin.isNotEmpty && (pinHash == null || pinHash.isEmpty)) {
+    if (legacyPin != null &&
+        legacyPin.isNotEmpty &&
+        (pinHash == null || pinHash.isEmpty)) {
       final hashResult = _hashPin(legacyPin);
       await dao.setValue(_keyPinHash, hashResult.hash);
       await dao.setValue(_keyPinSalt, hashResult.salt);
@@ -154,10 +156,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     final hash = Uint8List(32);
     argon2.deriveKey(Uint8List.fromList(utf8.encode(pin)), 0, hash, 0);
 
-    return _PinHashResult(
-      hash: base64Encode(hash),
-      salt: base64Encode(salt),
-    );
+    return _PinHashResult(hash: base64Encode(hash), salt: base64Encode(salt));
   }
 
   /// Verifies a PIN against stored hash and salt with brute-force protection.
@@ -237,7 +236,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   }
 
   Future<void> setEncryptExportByDefault(bool enabled) async {
-    _log.info(_tag, 'Encrypt export default ${enabled ? 'enabled' : 'disabled'}');
+    _log.info(
+      _tag,
+      'Encrypt export default ${enabled ? 'enabled' : 'disabled'}',
+    );
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyEncryptExportDefault, enabled.toString());
     ref.invalidateSelf();

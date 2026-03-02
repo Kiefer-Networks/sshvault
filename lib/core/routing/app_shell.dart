@@ -131,8 +131,7 @@ class AppShellState extends ConsumerState<AppShell> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        icon: const Icon(Icons.shield_outlined,
-            color: Colors.orange, size: 40),
+        icon: const Icon(Icons.shield_outlined, color: Colors.orange, size: 40),
         title: Text(l10n.settingsSectionSecurity),
         content: Text(l10n.securityBannerMessage),
         actions: [
@@ -330,8 +329,7 @@ class _DesktopScaffold extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.info_outline),
                         tooltip: l10n.navAbout,
-                        onPressed: () =>
-                            app.showAppAboutDialog(context),
+                        onPressed: () => app.showAppAboutDialog(context),
                       ),
                     ],
                   ),
@@ -379,8 +377,7 @@ class _SyncStatusIcon extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    final isAuthenticated =
-        authState.valueOrNull == AuthStatus.authenticated;
+    final isAuthenticated = authState.valueOrNull == AuthStatus.authenticated;
     if (!isAuthenticated) return const SizedBox.shrink();
 
     final syncState = ref.watch(syncProvider);
@@ -423,8 +420,7 @@ class _SyncRailButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authProvider);
-    final isAuthenticated =
-        authState.valueOrNull == AuthStatus.authenticated;
+    final isAuthenticated = authState.valueOrNull == AuthStatus.authenticated;
     final syncState = ref.watch(syncProvider);
     final billingActive =
         ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
@@ -573,8 +569,7 @@ class _SyncDrawerItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authProvider);
-    final isAuthenticated =
-        authState.valueOrNull == AuthStatus.authenticated;
+    final isAuthenticated = authState.valueOrNull == AuthStatus.authenticated;
     final syncState = ref.watch(syncProvider);
     final billingActive =
         ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
@@ -597,12 +592,12 @@ class _SyncDrawerItem extends ConsumerWidget {
     final subtitle = !isAuthenticated
         ? l10n.settingsSyncNotLoggedIn
         : isSyncing
-            ? l10n.syncSyncing
-            : hasError
-                ? l10n.syncError
-                : billingActive
-                    ? l10n.syncSuccess
-                    : l10n.accountPaymentInactive;
+        ? l10n.syncSyncing
+        : hasError
+        ? l10n.syncError
+        : billingActive
+        ? l10n.syncSuccess
+        : l10n.accountPaymentInactive;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
@@ -615,9 +610,7 @@ class _SyncDrawerItem extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.bodySmall,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         onTap: () {
           Navigator.pop(context);
           if (isAuthenticated) {
@@ -651,15 +644,13 @@ class _DrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color =
-        selected ? theme.colorScheme.primary : theme.colorScheme.onSurface;
+    final color = selected
+        ? theme.colorScheme.primary
+        : theme.colorScheme.onSurface;
 
     Widget iconWidget = Icon(selected ? selectedIcon : icon, color: color);
     if (badge != null) {
-      iconWidget = Badge(
-        label: Text('$badge'),
-        child: iconWidget,
-      );
+      iconWidget = Badge(label: Text('$badge'), child: iconWidget);
     }
 
     return Padding(

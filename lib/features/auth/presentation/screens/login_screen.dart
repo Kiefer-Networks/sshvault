@@ -39,9 +39,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _checkSyncPasswordAndNavigate();
       }
       if (next.hasError && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error.toString())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error.toString())));
       }
     });
 
@@ -68,18 +68,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     l10n.authWhyLogin,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Card(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primaryContainer
-                        .withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       child: Column(
                         children: [
                           Text(
@@ -87,26 +88,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               isNativeIapPlatform ? '€12.99' : '€9.99',
                             ),
                             textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
+                            style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             l10n.authPricingHint,
                             textAlign: TextAlign.center,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
-                                    ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                         ],
                       ),
@@ -144,11 +143,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       labelText: l10n.authPasswordLabel,
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
-                        icon: Icon(_obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined),
-                        onPressed: () =>
-                            setState(() => _obscurePassword = !_obscurePassword),
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
                       ),
                     ),
                     validator: (v) {
@@ -177,8 +179,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ? const SizedBox(
                             height: 20,
                             width: 20,
-                            child:
-                                CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : Text(l10n.authLogin),
                   ),
@@ -191,8 +192,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         const Expanded(child: Divider()),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(l10n.authOrContinueWith,
-                              style: Theme.of(context).textTheme.bodySmall),
+                          child: Text(
+                            l10n.authOrContinueWith,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ),
                         const Expanded(child: Divider()),
                       ],
@@ -209,8 +212,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             label: 'Apple',
                             onPressed: isLoading
                                 ? null
-                                : () =>
-                                    ref.read(authProvider.notifier).loginWithApple(),
+                                : () => ref
+                                      .read(authProvider.notifier)
+                                      .loginWithApple(),
                           ),
                         if (showAppleSignIn) const SizedBox(width: 16),
                         _OAuthButton(
@@ -218,8 +222,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           label: 'Google',
                           onPressed: isLoading
                               ? null
-                              : () =>
-                                  ref.read(authProvider.notifier).loginWithGoogle(),
+                              : () => ref
+                                    .read(authProvider.notifier)
+                                    .loginWithGoogle(),
                         ),
                       ],
                     ),
@@ -256,10 +261,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authProvider.notifier).login(
-          _emailController.text.trim(),
-          _passwordController.text,
-        );
+    await ref
+        .read(authProvider.notifier)
+        .login(_emailController.text.trim(), _passwordController.text);
   }
 
   Future<void> _checkSyncPasswordAndNavigate() async {

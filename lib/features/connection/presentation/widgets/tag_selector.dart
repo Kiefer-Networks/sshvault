@@ -23,7 +23,10 @@ class TagSelector extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.tagSelectorLabel, style: Theme.of(context).textTheme.titleSmall),
+        Text(
+          l10n.tagSelectorLabel,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
         const SizedBox(height: 8),
         tagsAsync.when(
           data: (tags) {
@@ -31,11 +34,8 @@ class TagSelector extends ConsumerWidget {
               return Text(
                 l10n.tagSelectorEmpty,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withAlpha(102),
-                    ),
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(102),
+                ),
               );
             }
             return Wrap(

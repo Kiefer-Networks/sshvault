@@ -8,8 +8,7 @@ class SyncPasswordScreen extends ConsumerStatefulWidget {
   const SyncPasswordScreen({super.key});
 
   @override
-  ConsumerState<SyncPasswordScreen> createState() =>
-      _SyncPasswordScreenState();
+  ConsumerState<SyncPasswordScreen> createState() => _SyncPasswordScreenState();
 }
 
 class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
@@ -44,8 +43,11 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(Icons.enhanced_encryption_outlined,
-                      size: 64, color: theme.colorScheme.primary),
+                  Icon(
+                    Icons.enhanced_encryption_outlined,
+                    size: 64,
+                    color: theme.colorScheme.primary,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     l10n.syncPasswordDescription,
@@ -59,8 +61,10 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                       padding: const EdgeInsets.all(12),
                       child: Row(
                         children: [
-                          Icon(Icons.warning_amber_rounded,
-                              color: theme.colorScheme.onErrorContainer),
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: theme.colorScheme.onErrorContainer,
+                          ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -82,11 +86,12 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                       labelText: l10n.syncPasswordLabel,
                       prefixIcon: const Icon(Icons.key_outlined),
                       suffixIcon: IconButton(
-                        icon: Icon(_obscure
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined),
-                        onPressed: () =>
-                            setState(() => _obscure = !_obscure),
+                        icon: Icon(
+                          _obscure
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                        onPressed: () => setState(() => _obscure = !_obscure),
                       ),
                     ),
                     validator: (v) {

@@ -58,11 +58,11 @@ class ServerDetailScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'connectFab',
         onPressed: () async {
-          await ref
-              .read(sessionManagerProvider.notifier)
-              .openSession(serverId);
+          await ref.read(sessionManagerProvider.notifier).openSession(serverId);
           if (context.mounted) {
-            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
+            ref
+                .read(shellNavigationProvider)
+                ?.goBranch(AppConstants.terminalBranchIndex);
           }
         },
         icon: const Icon(Icons.terminal),
@@ -103,8 +103,7 @@ class ServerDetailScreen extends ConsumerWidget {
                                 Expanded(
                                   child: Text(
                                     server.name,
-                                    style:
-                                        theme.textTheme.titleLarge?.copyWith(
+                                    style: theme.textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -115,14 +114,14 @@ class ServerDetailScreen extends ConsumerWidget {
                             const SizedBox(height: 4),
                             Text(
                               switch (server.authMethod) {
-                                AuthMethod.password =>
-                                  l10n.authMethodPassword,
+                                AuthMethod.password => l10n.authMethodPassword,
                                 AuthMethod.key => l10n.authMethodKey,
                                 AuthMethod.both => l10n.authMethodBoth,
                               },
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface
-                                    .withAlpha(128),
+                                color: theme.colorScheme.onSurface.withAlpha(
+                                  128,
+                                ),
                               ),
                             ),
                           ],
@@ -139,8 +138,10 @@ class ServerDetailScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.serverDetailConnection,
-                          style: theme.textTheme.titleSmall),
+                      Text(
+                        l10n.serverDetailConnection,
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 12),
                       InfoRow(
                         icon: Icons.dns_outlined,
@@ -185,7 +186,10 @@ class ServerDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.serverDetailTags, style: theme.textTheme.titleSmall),
+                        Text(
+                          l10n.serverDetailTags,
+                          style: theme.textTheme.titleSmall,
+                        ),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -207,13 +211,15 @@ class ServerDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.serverDetailNotes, style: theme.textTheme.titleSmall),
+                        Text(
+                          l10n.serverDetailNotes,
+                          style: theme.textTheme.titleSmall,
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           server.notes,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface
-                                .withAlpha(179),
+                            color: theme.colorScheme.onSurface.withAlpha(179),
                           ),
                         ),
                       ],
@@ -228,7 +234,10 @@ class ServerDetailScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.serverDetailInfo, style: theme.textTheme.titleSmall),
+                      Text(
+                        l10n.serverDetailInfo,
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 12),
                       InfoRow(
                         icon: Icons.calendar_today,
@@ -333,8 +342,7 @@ class _DistroSection extends ConsumerWidget {
         .firstOrNull;
 
     final effectiveId = session?.distroInfo?.id ?? distroId;
-    final effectiveName =
-        session?.distroInfo?.displayName ?? distroName;
+    final effectiveName = session?.distroInfo?.displayName ?? distroName;
 
     if (effectiveId == null || effectiveName == null) {
       return const SizedBox.shrink();
@@ -357,10 +365,7 @@ class _DistroSection extends ConsumerWidget {
                 _DistroLogo(distroId: effectiveId),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    effectiveName,
-                    style: theme.textTheme.bodyLarge,
-                  ),
+                  child: Text(effectiveName, style: theme.textTheme.bodyLarge),
                 ),
               ],
             ),
@@ -394,7 +399,11 @@ class _DistroLogo extends StatelessWidget {
 
   static IconData _distroIcon(String id) {
     return switch (id) {
-      'ubuntu' || 'kubuntu' || 'xubuntu' || 'lubuntu' || 'pop' => Icons.circle_outlined,
+      'ubuntu' ||
+      'kubuntu' ||
+      'xubuntu' ||
+      'lubuntu' ||
+      'pop' => Icons.circle_outlined,
       'debian' => Icons.hexagon_outlined,
       'fedora' => Icons.donut_large,
       'centos' || 'rhel' || 'rocky' || 'almalinux' => Icons.shield_outlined,
@@ -412,7 +421,11 @@ class _DistroLogo extends StatelessWidget {
 
   static Color _distroColor(String id) {
     return switch (id) {
-      'ubuntu' || 'kubuntu' || 'xubuntu' || 'lubuntu' || 'pop' => const Color(0xFFE95420),
+      'ubuntu' ||
+      'kubuntu' ||
+      'xubuntu' ||
+      'lubuntu' ||
+      'pop' => const Color(0xFFE95420),
       'debian' => const Color(0xFFD70A53),
       'fedora' => const Color(0xFF3C6EB4),
       'centos' || 'rhel' || 'rocky' || 'almalinux' => const Color(0xFFEE0000),

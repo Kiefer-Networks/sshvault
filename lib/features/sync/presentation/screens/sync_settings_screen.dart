@@ -23,8 +23,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final authState = ref.watch(authProvider);
-    final isAuthenticated =
-        authState.valueOrNull == AuthStatus.authenticated;
+    final isAuthenticated = authState.valueOrNull == AuthStatus.authenticated;
     final syncState = ref.watch(syncProvider);
     final settingsAsync = ref.watch(settingsProvider);
     final settings = settingsAsync.valueOrNull;
@@ -59,21 +58,23 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           ],
 
           // ── 3. SYNC CONTROLS ──
-          Builder(builder: (context) {
-            final billingActive = ref.watch(billingStatusProvider)
-                .valueOrNull?.active ?? false;
-            return SwitchListTile(
-              secondary: const Icon(Icons.sync),
-              title: Text(l10n.syncAutoSync),
-              subtitle: Text(l10n.syncAutoSyncDescription),
-              value: billingActive && (settings?.autoSync ?? true),
-              onChanged: billingActive
-                  ? (v) {
-                      ref.read(settingsProvider.notifier).setAutoSync(v);
-                    }
-                  : null,
-            );
-          }),
+          Builder(
+            builder: (context) {
+              final billingActive =
+                  ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
+              return SwitchListTile(
+                secondary: const Icon(Icons.sync),
+                title: Text(l10n.syncAutoSync),
+                subtitle: Text(l10n.syncAutoSyncDescription),
+                value: billingActive && (settings?.autoSync ?? true),
+                onChanged: billingActive
+                    ? (v) {
+                        ref.read(settingsProvider.notifier).setAutoSync(v);
+                      }
+                    : null,
+              );
+            },
+          ),
           const Divider(),
           ListTile(
             leading: isSyncing
@@ -116,10 +117,14 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               onTap: () => _changePassword(l10n),
             ),
             ListTile(
-              leading: Icon(Icons.delete_forever,
-                  color: theme.colorScheme.error),
-              title: Text(l10n.accountDeleteAccount,
-                  style: TextStyle(color: theme.colorScheme.error)),
+              leading: Icon(
+                Icons.delete_forever,
+                color: theme.colorScheme.error,
+              ),
+              title: Text(
+                l10n.accountDeleteAccount,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
               onTap: () => _deleteAccount(l10n),
             ),
             const Divider(),
@@ -148,24 +153,30 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               children: [
                 CircleAvatar(
                   backgroundColor: theme.colorScheme.primaryContainer,
-                  child: Icon(Icons.person,
-                      color: theme.colorScheme.onPrimaryContainer),
+                  child: Icon(
+                    Icons.person,
+                    color: theme.colorScheme.onPrimaryContainer,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(user.email,
-                          style: theme.textTheme.titleMedium),
+                      Text(user.email, style: theme.textTheme.titleMedium),
                       if (user.verified)
                         Row(
                           children: [
-                            Icon(Icons.verified,
-                                size: 16, color: Colors.green.shade600),
+                            Icon(
+                              Icons.verified,
+                              size: 16,
+                              color: Colors.green.shade600,
+                            ),
                             const SizedBox(width: 4),
-                            Text(l10n.accountVerified,
-                                style: theme.textTheme.bodySmall),
+                            Text(
+                              l10n.accountVerified,
+                              style: theme.textTheme.bodySmall,
+                            ),
                           ],
                         ),
                       if (user.createdAt != null)
@@ -191,22 +202,21 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       data: (billing) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.accountPaymentStatus,
-              style: theme.textTheme.titleSmall),
+          Text(l10n.accountPaymentStatus, style: theme.textTheme.titleSmall),
           const SizedBox(height: 8),
           Row(
             children: [
               Icon(
-                billing.active
-                    ? Icons.check_circle
-                    : Icons.cancel_outlined,
+                billing.active ? Icons.check_circle : Icons.cancel_outlined,
                 color: billing.active ? Colors.green : Colors.orange,
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(billing.active
-                    ? l10n.accountPaymentActive
-                    : l10n.accountPaymentInactive),
+                child: Text(
+                  billing.active
+                      ? l10n.accountPaymentActive
+                      : l10n.accountPaymentInactive,
+                ),
               ),
             ],
           ),
@@ -217,9 +227,11 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               child: FilledButton.icon(
                 onPressed: _checkout,
                 icon: const Icon(Icons.payment),
-                label: Text(l10n.accountActivateSyncPrice(
-                  isNativeIapPlatform ? '€12.99' : '€9.99',
-                )),
+                label: Text(
+                  l10n.accountActivateSyncPrice(
+                    isNativeIapPlatform ? '€12.99' : '€9.99',
+                  ),
+                ),
               ),
             ),
             if (isNativeIapPlatform) ...[
@@ -253,20 +265,22 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               ? Text(l10n.accountNoDevices)
               : Column(
                   children: devices
-                      .map((d) => ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: Icon(_platformIcon(d.platform)),
-                            title: Text(d.name),
-                            subtitle: d.lastSync != null
-                                ? Text(
-                                    '${l10n.accountLastSync}: ${formatDate(d.lastSync!)}')
-                                : null,
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete_outline,
-                                  size: 20),
-                              onPressed: () => _deleteDevice(d.id),
-                            ),
-                          ))
+                      .map(
+                        (d) => ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(_platformIcon(d.platform)),
+                          title: Text(d.name),
+                          subtitle: d.lastSync != null
+                              ? Text(
+                                  '${l10n.accountLastSync}: ${formatDate(d.lastSync!)}',
+                                )
+                              : null,
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete_outline, size: 20),
+                            onPressed: () => _deleteDevice(d.id),
+                          ),
+                        ),
+                      )
                       .toList(),
                 ),
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -323,8 +337,8 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.error(e.toString()))),
+            content: Text(AppLocalizations.of(context)!.error(e.toString())),
+          ),
         );
       }
     }
@@ -339,8 +353,8 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.error(e.toString()))),
+            content: Text(AppLocalizations.of(context)!.error(e.toString())),
+          ),
         );
       }
     }
@@ -359,15 +373,13 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
             TextField(
               controller: oldPw,
               obscureText: true,
-              decoration:
-                  InputDecoration(labelText: l10n.accountOldPassword),
+              decoration: InputDecoration(labelText: l10n.accountOldPassword),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: newPw,
               obscureText: true,
-              decoration:
-                  InputDecoration(labelText: l10n.accountNewPassword),
+              decoration: InputDecoration(labelText: l10n.accountNewPassword),
             ),
           ],
         ),
@@ -387,8 +399,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       if (oldPw.text.isEmpty || newPw.text.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(l10n.error(l10n.validatorPasswordRequired))),
+            SnackBar(content: Text(l10n.error(l10n.validatorPasswordRequired))),
           );
         }
         oldPw.dispose();
@@ -399,15 +410,15 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         final repo = ref.read(accountRepositoryProvider);
         await repo.changePassword(oldPw.text, newPw.text);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.accountChangePassword)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.accountChangePassword)));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.error(e.toString()))),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
         }
       }
     }
@@ -444,9 +455,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         if (mounted) context.go('/');
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.error(e.toString()))),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
         }
       }
     }

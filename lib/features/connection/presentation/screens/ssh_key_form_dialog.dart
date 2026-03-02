@@ -17,10 +17,7 @@ class SshKeyFormDialog extends ConsumerStatefulWidget {
 
   bool get isEditing => existingKey != null;
 
-  static Future<bool?> show(
-    BuildContext context, {
-    SshKeyEntity? existingKey,
-  }) {
+  static Future<bool?> show(BuildContext context, {SshKeyEntity? existingKey}) {
     return showDialog<bool>(
       context: context,
       builder: (_) => SshKeyFormDialog(existingKey: existingKey),
@@ -35,7 +32,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _nameController = TextEditingController();
-  final _commentController = TextEditingController(text: 'shellvault-generated');
+  final _commentController = TextEditingController(
+    text: 'shellvault-generated',
+  );
   final _privateKeyController = TextEditingController();
   final _passphraseController = TextEditingController();
 
@@ -70,7 +69,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Future<void> _saveGenerate() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired);
+      setState(
+        () => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired,
+      );
       return;
     }
 
@@ -112,10 +113,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         updatedAt: now,
       );
 
-      await ref.read(sshKeyListProvider.notifier).createSshKey(
-            entity,
-            privateKey: keyPair.privateKey,
-          );
+      await ref
+          .read(sshKeyListProvider.notifier)
+          .createSshKey(entity, privateKey: keyPair.privateKey);
 
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
@@ -131,12 +131,17 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Future<void> _saveImport() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired);
+      setState(
+        () => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired,
+      );
       return;
     }
     final privateKey = _privateKeyController.text.trim();
     if (privateKey.isEmpty) {
-      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormPrivateKeyRequired);
+      setState(
+        () =>
+            _error = AppLocalizations.of(context)!.sshKeyFormPrivateKeyRequired,
+      );
       return;
     }
 
@@ -168,7 +173,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       );
 
       final passphrase = _passphraseController.text.trim();
-      await ref.read(sshKeyListProvider.notifier).createSshKey(
+      await ref
+          .read(sshKeyListProvider.notifier)
+          .createSshKey(
             entity,
             privateKey: privateKey,
             passphrase: passphrase.isEmpty ? null : passphrase,
@@ -188,7 +195,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Future<void> _saveEdit() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired);
+      setState(
+        () => _error = AppLocalizations.of(context)!.sshKeyFormNameRequired,
+      );
       return;
     }
 
@@ -223,10 +232,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     if (widget.isEditing) {
       return AlertDialog(
         title: Text(l10n.sshKeyFormTitleEdit),
-        content: SizedBox(
-          width: 480,
-          child: _buildEditForm(theme),
-        ),
+        content: SizedBox(width: 480, child: _buildEditForm(theme)),
         actions: _buildActions(onSave: _saveEdit),
       );
     }
@@ -250,10 +256,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
               height: 380,
               child: TabBarView(
                 controller: _tabController,
-                children: [
-                  _buildGenerateForm(theme),
-                  _buildImportForm(theme),
-                ],
+                children: [_buildGenerateForm(theme), _buildImportForm(theme)],
               ),
             ),
           ],
@@ -295,10 +298,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
               prefixIcon: const Icon(Icons.vpn_key),
             ),
             items: SshKeyType.values
-                .map((t) => DropdownMenuItem(
-                      value: t,
-                      child: Text(t.displayName),
-                    ))
+                .map(
+                  (t) => DropdownMenuItem(value: t, child: Text(t.displayName)),
+                )
                 .toList(),
             onChanged: _saving
                 ? null
@@ -321,10 +323,12 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
                 prefixIcon: const Icon(Icons.memory),
               ),
               items: _selectedType.allowedBitLengths
-                  .map((b) => DropdownMenuItem(
-                        value: b,
-                        child: Text(l10n.sshKeyFormKeySizeBit(b)),
-                      ))
+                  .map(
+                    (b) => DropdownMenuItem(
+                      value: b,
+                      child: Text(l10n.sshKeyFormKeySizeBit(b)),
+                    ),
+                  )
                   .toList(),
               onChanged: _saving
                   ? null
@@ -335,9 +339,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           else
             Row(
               children: [
-                Icon(Icons.info_outline,
-                    size: 16,
-                    color: theme.colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   _selectedType.keySizeLabel,
@@ -380,12 +386,16 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       } else if (file.path != null) {
         content = await File(file.path!).readAsString();
       } else {
-        setState(() => _error = AppLocalizations.of(context)!.sshKeyFormFileReadError);
+        setState(
+          () => _error = AppLocalizations.of(context)!.sshKeyFormFileReadError,
+        );
         return;
       }
 
       if (!content.contains('-----BEGIN')) {
-        setState(() => _error = AppLocalizations.of(context)!.sshKeyFormInvalidFormat);
+        setState(
+          () => _error = AppLocalizations.of(context)!.sshKeyFormInvalidFormat,
+        );
         return;
       }
 
@@ -411,7 +421,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         _error = null;
       });
     } catch (e) {
-      setState(() => _error = AppLocalizations.of(context)!.sshKeyFormFileError(e.toString()));
+      setState(
+        () => _error = AppLocalizations.of(
+          context,
+        )!.sshKeyFormFileError(e.toString()),
+      );
     }
   }
 
@@ -504,8 +518,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           const SizedBox(height: 16),
           Row(
             children: [
-              Icon(Icons.info_outline,
-                  size: 16, color: theme.colorScheme.onSurfaceVariant),
+              Icon(
+                Icons.info_outline,
+                size: 16,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(

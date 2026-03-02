@@ -19,8 +19,8 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
     this._secureStorage, {
     SshKeyService? sshKeyService,
     Uuid? uuid,
-  })  : _sshKeyService = sshKeyService ?? SshKeyService(),
-        _uuid = uuid ?? const Uuid();
+  }) : _sshKeyService = sshKeyService ?? SshKeyService(),
+       _uuid = uuid ?? const Uuid();
 
   @override
   Future<Result<List<SshKeyEntity>>> getAllSshKeys() async {
@@ -64,8 +64,7 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
       // Extract public key if not provided
       String publicKey = key.publicKey;
       if (publicKey.isEmpty) {
-        final extractResult =
-            await _sshKeyService.extractPublicKey(privateKey);
+        final extractResult = await _sshKeyService.extractPublicKey(privateKey);
         if (extractResult.isSuccess) {
           publicKey = extractResult.value;
         } else {
@@ -117,10 +116,12 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
     try {
       final count = await _sshKeyDao.countServersUsingSshKey(id);
       if (count > 0) {
-        return Err(ValidationFailure(
-          'Cannot delete SSH key. It is used by $count server(s). '
-          'Unlink from all servers first.',
-        ));
+        return Err(
+          ValidationFailure(
+            'Cannot delete SSH key. It is used by $count server(s). '
+            'Unlink from all servers first.',
+          ),
+        );
       }
       await _sshKeyDao.deleteSshKeyById(id);
       await _secureStorage.deleteSshKeySecrets(id);

@@ -27,8 +27,9 @@ final syncUseCasesProvider = Provider<SyncUseCases>((ref) {
   );
 });
 
-final syncProvider =
-    AsyncNotifierProvider<SyncNotifier, SyncStatus>(SyncNotifier.new);
+final syncProvider = AsyncNotifierProvider<SyncNotifier, SyncStatus>(
+  SyncNotifier.new,
+);
 
 class SyncNotifier extends AsyncNotifier<SyncStatus> {
   @override
@@ -38,10 +39,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     // Check auth status
     final authStatus = ref.read(authProvider).valueOrNull;
     if (authStatus != AuthStatus.authenticated) {
-      state = AsyncValue.error(
-        'Not authenticated',
-        StackTrace.current,
-      );
+      state = AsyncValue.error('Not authenticated', StackTrace.current);
       return;
     }
 
@@ -50,10 +48,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     final syncPwResult = await storage.getSyncPassword();
     final syncPassword = syncPwResult.isSuccess ? syncPwResult.value : null;
     if (syncPassword == null || syncPassword.isEmpty) {
-      state = AsyncValue.error(
-        'Sync password not set',
-        StackTrace.current,
-      );
+      state = AsyncValue.error('Sync password not set', StackTrace.current);
       return;
     }
 

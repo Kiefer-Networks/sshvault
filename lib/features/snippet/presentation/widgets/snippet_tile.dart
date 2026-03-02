@@ -61,10 +61,7 @@ class SnippetTile extends StatelessWidget {
         title: Row(
           children: [
             Expanded(
-              child: Text(
-                snippet.name,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: Text(snippet.name, overflow: TextOverflow.ellipsis),
             ),
             const SizedBox(width: 8),
             Container(

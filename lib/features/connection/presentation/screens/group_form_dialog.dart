@@ -15,10 +15,7 @@ class GroupFormDialog extends ConsumerStatefulWidget {
 
   bool get isEditing => group != null;
 
-  static Future<void> show(
-    BuildContext context, {
-    GroupEntity? group,
-  }) {
+  static Future<void> show(BuildContext context, {GroupEntity? group}) {
     return showDialog(
       context: context,
       builder: (_) => GroupFormDialog(group: group),
@@ -59,7 +56,9 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
     final l10n = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: Text(widget.isEditing ? l10n.groupFormTitleEdit : l10n.groupFormTitleNew),
+      title: Text(
+        widget.isEditing ? l10n.groupFormTitleEdit : l10n.groupFormTitleNew,
+      ),
       content: SizedBox(
         width: 400,
         child: SingleChildScrollView(
@@ -94,10 +93,8 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
                         child: Text(l10n.groupFormParentNone),
                       ),
                       ...availableGroups.map(
-                        (g) => DropdownMenuItem(
-                          value: g.id,
-                          child: Text(g.name),
-                        ),
+                        (g) =>
+                            DropdownMenuItem(value: g.id, child: Text(g.name)),
                       ),
                     ],
                     onChanged: (v) => setState(() => _parentId = v),
@@ -142,22 +139,26 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
     final notifier = ref.read(groupListProvider.notifier);
 
     if (widget.isEditing) {
-      await notifier.updateGroup(widget.group!.copyWith(
-        name: name,
-        color: _color,
-        iconName: _iconName,
-        parentId: _parentId,
-      ));
+      await notifier.updateGroup(
+        widget.group!.copyWith(
+          name: name,
+          color: _color,
+          iconName: _iconName,
+          parentId: _parentId,
+        ),
+      );
     } else {
-      await notifier.createGroup(GroupEntity(
-        id: '',
-        name: name,
-        color: _color,
-        iconName: _iconName,
-        parentId: _parentId,
-        createdAt: now,
-        updatedAt: now,
-      ));
+      await notifier.createGroup(
+        GroupEntity(
+          id: '',
+          name: name,
+          color: _color,
+          iconName: _iconName,
+          parentId: _parentId,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
     }
 
     if (mounted) Navigator.of(context).pop();

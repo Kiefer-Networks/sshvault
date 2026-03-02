@@ -34,8 +34,10 @@ class ExportImportScreen extends ConsumerWidget {
                   children: [
                     Icon(Icons.upload, color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
-                    Text(l10n.exportSectionTitle,
-                        style: theme.textTheme.titleMedium),
+                    Text(
+                      l10n.exportSectionTitle,
+                      style: theme.textTheme.titleMedium,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -71,8 +73,10 @@ class ExportImportScreen extends ConsumerWidget {
                   children: [
                     Icon(Icons.download, color: theme.colorScheme.secondary),
                     const SizedBox(width: 8),
-                    Text(l10n.importSectionTitle,
-                        style: theme.textTheme.titleMedium),
+                    Text(
+                      l10n.importSectionTitle,
+                      style: theme.textTheme.titleMedium,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -225,9 +229,7 @@ class ExportImportScreen extends ConsumerWidget {
           content: TextField(
             controller: controller,
             obscureText: true,
-            decoration: InputDecoration(
-              labelText: l10n.importPasswordLabel,
-            ),
+            decoration: InputDecoration(labelText: l10n.importPasswordLabel),
             keyboardType: TextInputType.visiblePassword,
             autofocus: true,
           ),

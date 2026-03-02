@@ -12,14 +12,16 @@ class SnippetRepositoryImpl implements SnippetRepository {
   final Uuid _uuid;
 
   SnippetRepositoryImpl(this._snippetDao, {Uuid? uuid})
-      : _uuid = uuid ?? const Uuid();
+    : _uuid = uuid ?? const Uuid();
 
   Future<SnippetEntity> _enrichWithRelations(SnippetEntity snippet) async {
     final tags = await _snippetDao.getTagsForSnippet(snippet.id);
     final variables = await _snippetDao.getVariablesForSnippet(snippet.id);
     return snippet.copyWith(
       tags: tags.map((t) => TagMapper.fromDrift(t)).toList(),
-      variables: variables.map((v) => SnippetMapper.variableFromDrift(v)).toList(),
+      variables: variables
+          .map((v) => SnippetMapper.variableFromDrift(v))
+          .toList(),
     );
   }
 
@@ -44,8 +46,7 @@ class SnippetRepositoryImpl implements SnippetRepository {
       if (row == null) {
         return Err(NotFoundFailure('Snippet not found: $id'));
       }
-      final snippet =
-          await _enrichWithRelations(SnippetMapper.fromDrift(row));
+      final snippet = await _enrichWithRelations(SnippetMapper.fromDrift(row));
       return Success(snippet);
     } catch (e) {
       return Err(DatabaseFailure('Failed to load snippet', cause: e));
@@ -114,10 +115,12 @@ class SnippetRepositoryImpl implements SnippetRepository {
       // Set variables
       if (snippet.variables.isNotEmpty) {
         final varCompanions = snippet.variables
-            .map((v) => SnippetMapper.variableToCompanion(
-                  v.copyWith(id: _uuid.v4()),
-                  newSnippet.id,
-                ))
+            .map(
+              (v) => SnippetMapper.variableToCompanion(
+                v.copyWith(id: _uuid.v4()),
+                newSnippet.id,
+              ),
+            )
             .toList();
         await _snippetDao.setSnippetVariables(newSnippet.id, varCompanions);
       }

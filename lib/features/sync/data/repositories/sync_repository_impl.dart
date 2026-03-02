@@ -24,9 +24,13 @@ class SyncRepositoryImpl implements SyncRepository {
         if (f is NetworkFailure && f.statusCode == 404) {
           return const Success(VaultEntity(version: 0));
         }
-        return Err(SyncFailure(f.message,
+        return Err(
+          SyncFailure(
+            f.message,
             statusCode: f is NetworkFailure ? f.statusCode : null,
-            cause: f.cause));
+            cause: f.cause,
+          ),
+        );
       },
     );
   }
@@ -39,11 +43,7 @@ class SyncRepositoryImpl implements SyncRepository {
   }) async {
     final result = await _apiClient.put(
       '/v1/vault',
-      data: {
-        'version': version,
-        'blob': blob,
-        'checksum': checksum,
-      },
+      data: {'version': version, 'blob': blob, 'checksum': checksum},
     );
     return result.fold(
       onSuccess: (data) {
@@ -55,12 +55,20 @@ class SyncRepositoryImpl implements SyncRepository {
       },
       onFailure: (f) {
         if (f is NetworkFailure && f.statusCode == 409) {
-          return Err(SyncFailure('Conflict: server has a newer version',
-              conflictVersion: version));
+          return Err(
+            SyncFailure(
+              'Conflict: server has a newer version',
+              conflictVersion: version,
+            ),
+          );
         }
-        return Err(SyncFailure(f.message,
+        return Err(
+          SyncFailure(
+            f.message,
             statusCode: f is NetworkFailure ? f.statusCode : null,
-            cause: f.cause));
+            cause: f.cause,
+          ),
+        );
       },
     );
   }
@@ -81,9 +89,13 @@ class SyncRepositoryImpl implements SyncRepository {
           return Err(SyncFailure('Invalid history response', cause: e));
         }
       },
-      onFailure: (f) => Err(SyncFailure(f.message,
-            statusCode: f is NetworkFailure ? f.statusCode : null,
-            cause: f.cause)),
+      onFailure: (f) => Err(
+        SyncFailure(
+          f.message,
+          statusCode: f is NetworkFailure ? f.statusCode : null,
+          cause: f.cause,
+        ),
+      ),
     );
   }
 
@@ -98,9 +110,13 @@ class SyncRepositoryImpl implements SyncRepository {
           return Err(SyncFailure('Invalid vault response', cause: e));
         }
       },
-      onFailure: (f) => Err(SyncFailure(f.message,
-            statusCode: f is NetworkFailure ? f.statusCode : null,
-            cause: f.cause)),
+      onFailure: (f) => Err(
+        SyncFailure(
+          f.message,
+          statusCode: f is NetworkFailure ? f.statusCode : null,
+          cause: f.cause,
+        ),
+      ),
     );
   }
 }

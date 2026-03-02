@@ -30,9 +30,7 @@ class SshKeyboardToolbar extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             border: Border(
-              top: BorderSide(
-                color: theme.colorScheme.outline.withAlpha(51),
-              ),
+              top: BorderSide(color: theme.colorScheme.outline.withAlpha(51)),
             ),
           ),
           child: SafeArea(

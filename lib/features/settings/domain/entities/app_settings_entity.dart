@@ -52,8 +52,7 @@ class AppSettingsEntity {
     return remaining.isNegative ? Duration.zero : remaining;
   }
 
-  bool get shouldLockout =>
-      failedPinAttempts >= AppConstants.maxPinAttempts;
+  bool get shouldLockout => failedPinAttempts >= AppConstants.maxPinAttempts;
 
   AppSettingsEntity copyWith({
     ThemeMode? themeMode,

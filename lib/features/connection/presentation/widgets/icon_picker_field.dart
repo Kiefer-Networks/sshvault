@@ -20,7 +20,10 @@ class IconPickerField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.iconPickerLabel, style: theme.textTheme.titleSmall),
+        Text(
+          AppLocalizations.of(context)!.iconPickerLabel,
+          style: theme.textTheme.titleSmall,
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 6,
@@ -39,13 +42,8 @@ class IconPickerField extends StatelessWidget {
                       : Colors.white.withAlpha(8),
                   borderRadius: BorderRadius.circular(8),
                   border: isSelected
-                      ? Border.all(
-                          color: Color(accentColor),
-                          width: 2,
-                        )
-                      : Border.all(
-                          color: Colors.white.withAlpha(13),
-                        ),
+                      ? Border.all(color: Color(accentColor), width: 2)
+                      : Border.all(color: Colors.white.withAlpha(13)),
                 ),
                 child: Icon(
                   si.icon,

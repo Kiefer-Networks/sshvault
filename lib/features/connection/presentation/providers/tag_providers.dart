@@ -2,8 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 
-final tagListProvider =
-    AsyncNotifierProvider<TagListNotifier, List<TagEntity>>(
+final tagListProvider = AsyncNotifierProvider<TagListNotifier, List<TagEntity>>(
   TagListNotifier.new,
 );
 

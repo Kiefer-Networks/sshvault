@@ -8,13 +8,14 @@ enum ViewMode { list, grid }
 
 final viewModeProvider = StateProvider<ViewMode>((ref) => ViewMode.list);
 
-final serverFilterProvider =
-    StateProvider<ServerFilter>((ref) => const ServerFilter());
+final serverFilterProvider = StateProvider<ServerFilter>(
+  (ref) => const ServerFilter(),
+);
 
 final serverListProvider =
     AsyncNotifierProvider<ServerListNotifier, List<ServerEntity>>(
-  ServerListNotifier.new,
-);
+      ServerListNotifier.new,
+    );
 
 class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
   @override
@@ -86,18 +87,20 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
 /// Servers belonging to a specific group.
 final serversByGroupProvider =
     FutureProvider.family<List<ServerEntity>, String>((ref, groupId) async {
-  final useCases = ref.watch(serverUseCasesProvider);
-  final result = await useCases.getServers(
-    filter: ServerFilter(groupId: groupId),
-  );
-  return result.fold(
-    onSuccess: (servers) => servers,
-    onFailure: (failure) => throw Exception(failure.message),
-  );
-});
+      final useCases = ref.watch(serverUseCasesProvider);
+      final result = await useCases.getServers(
+        filter: ServerFilter(groupId: groupId),
+      );
+      return result.fold(
+        onSuccess: (servers) => servers,
+        onFailure: (failure) => throw Exception(failure.message),
+      );
+    });
 
-final serverDetailProvider =
-    FutureProvider.family<ServerEntity, String>((ref, id) async {
+final serverDetailProvider = FutureProvider.family<ServerEntity, String>((
+  ref,
+  id,
+) async {
   final useCases = ref.watch(serverUseCasesProvider);
   final result = await useCases.getServer(id);
   return result.fold(
@@ -108,10 +111,10 @@ final serverDetailProvider =
 
 final serverCredentialsProvider =
     FutureProvider.family<ServerCredentials, String>((ref, serverId) async {
-  final useCases = ref.watch(serverUseCasesProvider);
-  final result = await useCases.getCredentials(serverId);
-  return result.fold(
-    onSuccess: (creds) => creds,
-    onFailure: (failure) => throw Exception(failure.message),
-  );
-});
+      final useCases = ref.watch(serverUseCasesProvider);
+      final result = await useCases.getCredentials(serverId);
+      return result.fold(
+        onSuccess: (creds) => creds,
+        onFailure: (failure) => throw Exception(failure.message),
+      );
+    });

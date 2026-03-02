@@ -41,7 +41,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     this._secureStorage,
     this._encryptionService, {
     Uuid? uuid,
-  })  : _uuid = uuid ?? const Uuid();
+  }) : _uuid = uuid ?? const Uuid();
 
   Future<Map<String, dynamic>> buildExportData({
     bool includeCredentials = false,
@@ -76,13 +76,11 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       final entity = SshKeyMapper.fromDrift(sshKey);
       final json = entity.toJson();
       if (includeCredentials) {
-        final privResult =
-            await _secureStorage.getSshKeyPrivateKey(sshKey.id);
+        final privResult = await _secureStorage.getSshKeyPrivateKey(sshKey.id);
         if (privResult.isSuccess && privResult.value != null) {
           json['privateKey'] = privResult.value;
         }
-        final passResult =
-            await _secureStorage.getSshKeyPassphrase(sshKey.id);
+        final passResult = await _secureStorage.getSshKeyPassphrase(sshKey.id);
         if (passResult.isSuccess && passResult.value != null) {
           json['passphrase'] = passResult.value;
         }
@@ -124,18 +122,22 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       final data = await buildExportData(includeCredentials: true);
       final jsonString = const JsonEncoder.withIndent('  ').convert(data);
 
-      final envelopeResult =
-          _encryptionService.encryptForExport(jsonString, password);
+      final envelopeResult = _encryptionService.encryptForExport(
+        jsonString,
+        password,
+      );
       if (envelopeResult.isFailure) {
         return Err(envelopeResult.failure);
       }
 
       final envelopeJson = jsonEncode(envelopeResult.value.toJson());
       final archive = Archive();
-      archive.addFile(ArchiveFile.bytes(
-        AppConstants.encryptedDataFile,
-        utf8.encode(envelopeJson),
-      ));
+      archive.addFile(
+        ArchiveFile.bytes(
+          AppConstants.encryptedDataFile,
+          utf8.encode(envelopeJson),
+        ),
+      );
 
       final encoded = ZipEncoder().encode(archive);
 
@@ -169,7 +171,8 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       if (filePath.endsWith('.zip') || _isZip(bytes)) {
         if (password == null) {
           return const Err(
-              ImportFailure('Password required for encrypted import'));
+            ImportFailure('Password required for encrypted import'),
+          );
         }
         final jsonResult = await _decryptZip(bytes, password);
         if (jsonResult.isFailure) return Err(jsonResult.failure);
@@ -202,7 +205,8 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
 
       final envelopeJson = utf8.decode(encFile.content as List<int>);
       final envelope = ExportEnvelope.fromJson(
-          jsonDecode(envelopeJson) as Map<String, dynamic>);
+        jsonDecode(envelopeJson) as Map<String, dynamic>,
+      );
 
       return _encryptionService.decryptFromExport(envelope, password);
     } catch (e) {
@@ -218,7 +222,9 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     bool includeCredentials = false,
   }) async {
     try {
-      final data = await buildExportData(includeCredentials: includeCredentials);
+      final data = await buildExportData(
+        includeCredentials: includeCredentials,
+      );
       return Success(const JsonEncoder.withIndent('  ').convert(data));
     } catch (e) {
       return Err(ExportFailure('Failed to export JSON string', cause: e));
@@ -233,7 +239,11 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   }) async {
     try {
       final data = jsonDecode(jsonString) as Map<String, dynamic>;
-      return _importData(data, strategy, includeCredentials: includeCredentials);
+      return _importData(
+        data,
+        strategy,
+        includeCredentials: includeCredentials,
+      );
     } catch (e) {
       return Err(ImportFailure('Failed to import from JSON string', cause: e));
     }
@@ -265,14 +275,12 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               continue;
             case ImportConflictStrategy.overwrite:
               final entity = GroupEntity.fromJson(map);
-              await _groupDao
-                  .updateGroup(GroupMapper.toCompanion(entity));
+              await _groupDao.updateGroup(GroupMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
               map['id'] = _uuid.v4();
               map['name'] = '${map['name']} (Imported)';
               final entity = GroupEntity.fromJson(map);
-              await _groupDao
-                  .insertGroup(GroupMapper.toCompanion(entity));
+              await _groupDao.insertGroup(GroupMapper.toCompanion(entity));
           }
         } else {
           final entity = GroupEntity.fromJson(map);
@@ -338,20 +346,17 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               continue;
             case ImportConflictStrategy.overwrite:
               final entity = SshKeyEntity.fromJson(map);
-              await _sshKeyDao
-                  .updateSshKey(SshKeyMapper.toCompanion(entity));
+              await _sshKeyDao.updateSshKey(SshKeyMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
               sshKeyId = _uuid.v4();
               map['id'] = sshKeyId;
               map['name'] = '${map['name']} (Imported)';
               final entity = SshKeyEntity.fromJson(map);
-              await _sshKeyDao
-                  .insertSshKey(SshKeyMapper.toCompanion(entity));
+              await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(entity));
           }
         } else {
           final entity = SshKeyEntity.fromJson(map);
-          await _sshKeyDao
-              .insertSshKey(SshKeyMapper.toCompanion(entity));
+          await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(entity));
         }
 
         // Restore secrets
@@ -387,25 +392,21 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               continue;
             case ImportConflictStrategy.overwrite:
               final entity = ServerEntity.fromJson(map);
-              await _serverDao
-                  .updateServer(ServerMapper.toCompanion(entity));
+              await _serverDao.updateServer(ServerMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
               serverId = _uuid.v4();
               map['id'] = serverId;
               map['name'] = '${map['name']} (Imported)';
               final entity = ServerEntity.fromJson(map);
-              await _serverDao
-                  .insertServer(ServerMapper.toCompanion(entity));
+              await _serverDao.insertServer(ServerMapper.toCompanion(entity));
           }
         } else {
           final entity = ServerEntity.fromJson(map);
-          await _serverDao
-              .insertServer(ServerMapper.toCompanion(entity));
+          await _serverDao.insertServer(ServerMapper.toCompanion(entity));
         }
 
         // Restore tags
-        final tagIds =
-            (map['tagIds'] as List<dynamic>?)?.cast<String>() ?? [];
+        final tagIds = (map['tagIds'] as List<dynamic>?)?.cast<String>() ?? [];
         if (tagIds.isNotEmpty) {
           await _serverDao.setServerTags(serverId, tagIds);
         }
@@ -415,19 +416,27 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
           final creds = map['credentials'] as Map<String, dynamic>;
           if (creds['password'] != null) {
             await _secureStorage.savePassword(
-                serverId, creds['password'] as String);
+              serverId,
+              creds['password'] as String,
+            );
           }
           if (creds['privateKey'] != null) {
             await _secureStorage.savePrivateKey(
-                serverId, creds['privateKey'] as String);
+              serverId,
+              creds['privateKey'] as String,
+            );
           }
           if (creds['publicKey'] != null) {
             await _secureStorage.savePublicKey(
-                serverId, creds['publicKey'] as String);
+              serverId,
+              creds['publicKey'] as String,
+            );
           }
           if (creds['passphrase'] != null) {
             await _secureStorage.savePassphrase(
-                serverId, creds['passphrase'] as String);
+              serverId,
+              creds['passphrase'] as String,
+            );
           }
         }
 
@@ -437,13 +446,15 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       }
     }
 
-    return Success(ImportResult(
-      serversImported: serversImported,
-      groupsImported: groupsImported,
-      tagsImported: tagsImported,
-      sshKeysImported: sshKeysImported,
-      skipped: skipped,
-      errors: errors,
-    ));
+    return Success(
+      ImportResult(
+        serversImported: serversImported,
+        groupsImported: groupsImported,
+        tagsImported: tagsImported,
+        sshKeysImported: sshKeysImported,
+        skipped: skipped,
+        errors: errors,
+      ),
+    );
   }
 }

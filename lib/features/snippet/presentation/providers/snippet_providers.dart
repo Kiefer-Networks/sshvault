@@ -39,8 +39,8 @@ class SnippetFilter {
 
 final snippetListProvider =
     AsyncNotifierProvider<SnippetListNotifier, List<SnippetEntity>>(
-  SnippetListNotifier.new,
-);
+      SnippetListNotifier.new,
+    );
 
 class SnippetListNotifier extends AsyncNotifier<List<SnippetEntity>> {
   @override
@@ -87,8 +87,10 @@ class SnippetListNotifier extends AsyncNotifier<List<SnippetEntity>> {
   }
 }
 
-final snippetDetailProvider =
-    FutureProvider.family<SnippetEntity, String>((ref, id) async {
+final snippetDetailProvider = FutureProvider.family<SnippetEntity, String>((
+  ref,
+  id,
+) async {
   final useCases = ref.watch(snippetUseCasesProvider);
   final result = await useCases.getSnippet(id);
   return result.fold(

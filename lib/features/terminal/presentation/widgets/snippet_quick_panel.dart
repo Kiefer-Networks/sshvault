@@ -67,7 +67,10 @@ class _SnippetQuickPanelContentState
         // Title
         Padding(
           padding: const EdgeInsets.all(16),
-          child: Text(l10n.snippetQuickPanelTitle, style: theme.textTheme.titleMedium),
+          child: Text(
+            l10n.snippetQuickPanelTitle,
+            style: theme.textTheme.titleMedium,
+          ),
         ),
         // Search
         Padding(
@@ -94,14 +97,16 @@ class _SnippetQuickPanelContentState
               final filtered = _searchQuery.isEmpty
                   ? snippets
                   : snippets
-                      .where((s) =>
-                          s.name
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase()) ||
-                          s.content
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase()))
-                      .toList();
+                        .where(
+                          (s) =>
+                              s.name.toLowerCase().contains(
+                                _searchQuery.toLowerCase(),
+                              ) ||
+                              s.content.toLowerCase().contains(
+                                _searchQuery.toLowerCase(),
+                              ),
+                        )
+                        .toList();
 
               if (filtered.isEmpty) {
                 return Center(
@@ -120,8 +125,7 @@ class _SnippetQuickPanelContentState
                 controller: widget.scrollController,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: filtered.length,
-                separatorBuilder: (_, _) =>
-                    const Divider(height: 1),
+                separatorBuilder: (_, _) => const Divider(height: 1),
                 itemBuilder: (context, index) {
                   final snippet = filtered[index];
                   return _SnippetTile(
@@ -170,9 +174,7 @@ class _SnippetTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       title: Row(
         children: [
-          Expanded(
-            child: Text(snippet.name, overflow: TextOverflow.ellipsis),
-          ),
+          Expanded(child: Text(snippet.name, overflow: TextOverflow.ellipsis)),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(

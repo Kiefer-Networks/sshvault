@@ -21,9 +21,7 @@ class SessionTabBar extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface.withAlpha(204),
         border: Border(
-          bottom: BorderSide(
-            color: theme.colorScheme.outline.withAlpha(51),
-          ),
+          bottom: BorderSide(color: theme.colorScheme.outline.withAlpha(51)),
         ),
       ),
       child: ListView.builder(
@@ -57,8 +55,9 @@ class SessionTabBar extends ConsumerWidget {
                     child: Text(
                       session.title,
                       style: theme.textTheme.labelMedium?.copyWith(
-                        fontWeight:
-                            isActive ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight: isActive
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                         color: isActive
                             ? theme.colorScheme.onPrimaryContainer
                             : theme.colorScheme.onSurface.withAlpha(179),
@@ -95,9 +94,9 @@ class _StatusDot extends StatelessWidget {
     final color = switch (status) {
       SshConnectionStatus.connected => Colors.green,
       SshConnectionStatus.connecting ||
-      SshConnectionStatus.authenticating =>
-        Colors.amber,
-      SshConnectionStatus.error || SshConnectionStatus.disconnected => Colors.red,
+      SshConnectionStatus.authenticating => Colors.amber,
+      SshConnectionStatus.error ||
+      SshConnectionStatus.disconnected => Colors.red,
     };
 
     return Container(

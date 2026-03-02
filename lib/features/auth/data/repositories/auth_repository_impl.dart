@@ -28,7 +28,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<AuthResponse>> login(String email, String password, {String? deviceName}) async {
+  Future<Result<AuthResponse>> login(
+    String email,
+    String password, {
+    String? deviceName,
+  }) async {
     final result = await _apiClient.post(
       '/v1/auth/login',
       data: {
@@ -51,7 +55,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Result<AuthResponse>> oauthLogin(
-      String provider, String idToken) async {
+    String provider,
+    String idToken,
+  ) async {
     final result = await _apiClient.post(
       '/v1/auth/oauth/$provider',
       data: {'id_token': idToken},

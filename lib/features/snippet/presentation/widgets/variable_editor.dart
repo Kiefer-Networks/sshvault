@@ -64,11 +64,9 @@ class VariableEditor extends StatelessWidget {
 
   void _addVariable() {
     final newList = List<SnippetVariableEntity>.from(variables);
-    newList.add(SnippetVariableEntity(
-      id: '',
-      name: '',
-      sortOrder: newList.length,
-    ));
+    newList.add(
+      SnippetVariableEntity(id: '', name: '', sortOrder: newList.length),
+    );
     onChanged(newList);
   }
 }
@@ -96,7 +94,9 @@ class _VariableRow extends StatelessWidget {
             child: TextFormField(
               initialValue: variable.name,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.variableEditorNameLabel,
+                labelText: AppLocalizations.of(
+                  context,
+                )!.variableEditorNameLabel,
                 hintText: AppLocalizations.of(context)!.variableEditorNameHint,
                 isDense: true,
               ),
@@ -110,8 +110,12 @@ class _VariableRow extends StatelessWidget {
             child: TextFormField(
               initialValue: variable.defaultValue,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.variableEditorDefaultLabel,
-                hintText: AppLocalizations.of(context)!.variableEditorDefaultHint,
+                labelText: AppLocalizations.of(
+                  context,
+                )!.variableEditorDefaultLabel,
+                hintText: AppLocalizations.of(
+                  context,
+                )!.variableEditorDefaultHint,
                 isDense: true,
               ),
               keyboardType: TextInputType.text,

@@ -28,10 +28,7 @@ class AccountRepositoryImpl implements AccountRepository {
 
   @override
   Future<Result<UserEntity>> updateProfile({String? email}) async {
-    final result = await _apiClient.put(
-      '/v1/user',
-      data: {'email': ?email},
-    );
+    final result = await _apiClient.put('/v1/user', data: {'email': ?email});
     return result.fold(
       onSuccess: (data) {
         try {
@@ -46,7 +43,9 @@ class AccountRepositoryImpl implements AccountRepository {
 
   @override
   Future<Result<void>> changePassword(
-      String oldPassword, String newPassword) async {
+    String oldPassword,
+    String newPassword,
+  ) async {
     final result = await _apiClient.put(
       '/v1/user/password',
       data: {'current_password': oldPassword, 'new_password': newPassword},

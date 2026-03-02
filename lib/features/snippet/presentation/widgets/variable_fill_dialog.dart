@@ -20,10 +20,8 @@ class VariableFillDialog extends StatefulWidget {
   }) {
     return showDialog<String>(
       context: context,
-      builder: (context) => VariableFillDialog(
-        snippet: snippet,
-        returnContent: returnContent,
-      ),
+      builder: (context) =>
+          VariableFillDialog(snippet: snippet, returnContent: returnContent),
     );
   }
 

@@ -22,8 +22,8 @@ final sshServiceProvider = Provider<SshService>((ref) => SshService());
 
 final sessionManagerProvider =
     NotifierProvider<SessionManagerNotifier, List<SshSessionEntity>>(
-  SessionManagerNotifier.new,
-);
+      SessionManagerNotifier.new,
+    );
 
 class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
   static const _uuid = Uuid();
@@ -78,8 +78,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       _notifyChange();
 
       // Load credentials
-      final credsResult =
-          await serverUseCases.getCredentials(session.serverId);
+      final credsResult = await serverUseCases.getCredentials(session.serverId);
       final credentials = credsResult.fold(
         onSuccess: (c) => c,
         onFailure: (f) => throw Exception(f.message),
@@ -88,16 +87,17 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       // Load managed key if applicable
       String? managedPrivateKey;
       String? managedPassphrase;
-      if (server.sshKeyId != null &&
-          server.authMethod != AuthMethod.password) {
-        final keyResult =
-            await sshKeyUseCases.getSshKeyPrivateKey(server.sshKeyId!);
+      if (server.sshKeyId != null && server.authMethod != AuthMethod.password) {
+        final keyResult = await sshKeyUseCases.getSshKeyPrivateKey(
+          server.sshKeyId!,
+        );
         managedPrivateKey = keyResult.fold(
           onSuccess: (k) => k,
           onFailure: (_) => null,
         );
-        final passphraseResult =
-            await sshKeyUseCases.getSshKeyPassphrase(server.sshKeyId!);
+        final passphraseResult = await sshKeyUseCases.getSshKeyPassphrase(
+          server.sshKeyId!,
+        );
         managedPassphrase = passphraseResult.fold(
           onSuccess: (p) => p,
           onFailure: (_) => null,
@@ -267,8 +267,8 @@ final activeSessionProvider = Provider<SshSessionEntity?>((ref) {
 
 final terminalThemeKeyProvider =
     AsyncNotifierProvider<TerminalThemeKeyNotifier, TerminalThemeKey>(
-  TerminalThemeKeyNotifier.new,
-);
+      TerminalThemeKeyNotifier.new,
+    );
 
 class TerminalThemeKeyNotifier extends AsyncNotifier<TerminalThemeKey> {
   static const _key = 'terminal_theme';
@@ -297,8 +297,8 @@ class TerminalThemeKeyNotifier extends AsyncNotifier<TerminalThemeKey> {
 
 final terminalFontSizeProvider =
     AsyncNotifierProvider<TerminalFontSizeNotifier, double>(
-  TerminalFontSizeNotifier.new,
-);
+      TerminalFontSizeNotifier.new,
+    );
 
 class TerminalFontSizeNotifier extends AsyncNotifier<double> {
   static const _key = 'terminal_font_size';

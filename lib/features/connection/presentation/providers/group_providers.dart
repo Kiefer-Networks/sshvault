@@ -4,8 +4,8 @@ import 'package:shellvault/features/connection/presentation/providers/repository
 
 final groupListProvider =
     AsyncNotifierProvider<GroupListNotifier, List<GroupEntity>>(
-  GroupListNotifier.new,
-);
+      GroupListNotifier.new,
+    );
 
 class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
   @override
@@ -55,8 +55,7 @@ class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
   }
 }
 
-final groupTreeProvider =
-    FutureProvider<List<GroupEntity>>((ref) async {
+final groupTreeProvider = FutureProvider<List<GroupEntity>>((ref) async {
   final useCases = ref.watch(groupUseCasesProvider);
   final result = await useCases.getGroupTree();
   return result.fold(

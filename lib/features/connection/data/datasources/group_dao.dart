@@ -20,8 +20,7 @@ class GroupDao extends DatabaseAccessor<AppDatabase> with _$GroupDaoMixin {
   Future<List<Group>> getRootGroups() =>
       (select(groups)..where((g) => g.parentId.isNull())).get();
 
-  Future<int> insertGroup(GroupsCompanion group) =>
-      into(groups).insert(group);
+  Future<int> insertGroup(GroupsCompanion group) => into(groups).insert(group);
 
   Future<bool> updateGroup(GroupsCompanion group) =>
       update(groups).replace(group);

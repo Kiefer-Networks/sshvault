@@ -53,5 +53,5 @@ class ExportImportNotifier extends Notifier<AsyncValue<String?>> {
 
 final exportImportNotifierProvider =
     NotifierProvider<ExportImportNotifier, AsyncValue<String?>>(
-  ExportImportNotifier.new,
-);
+      ExportImportNotifier.new,
+    );

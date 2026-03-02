@@ -131,9 +131,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
                         TerminalView(
                           activeSession.terminal,
                           theme: terminalTheme,
-                          textStyle: TerminalStyle(
-                            fontSize: fontSize,
-                          ),
+                          textStyle: TerminalStyle(fontSize: fontSize),
                           autofocus: true,
                           keyboardAppearance: Brightness.dark,
                           deleteDetection: true,

@@ -64,8 +64,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
   }
 
   Future<void> _loadSnippet() async {
-    final snippet =
-        await ref.read(snippetDetailProvider(widget.snippetId!).future);
+    final snippet = await ref.read(
+      snippetDetailProvider(widget.snippetId!).future,
+    );
     if (!mounted) return;
     _nameController.text = snippet.name;
     _contentController.text = snippet.content;
@@ -93,7 +94,11 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isEditing ? l10n.snippetFormTitleEdit : l10n.snippetFormTitleNew),
+        title: Text(
+          widget.isEditing
+              ? l10n.snippetFormTitleEdit
+              : l10n.snippetFormTitleNew,
+        ),
       ),
       body: Form(
         key: _formKey,
@@ -109,8 +114,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                 prefixIcon: const Icon(Icons.label_outline),
               ),
               keyboardType: TextInputType.text,
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? l10n.snippetFormNameRequired : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? l10n.snippetFormNameRequired
+                  : null,
             ),
             const SizedBox(height: 16),
 
@@ -178,10 +184,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                       child: Text(l10n.snippetFormNoGroup),
                     ),
                     ...groups.map(
-                      (g) => DropdownMenuItem(
-                        value: g.id,
-                        child: Text(g.name),
-                      ),
+                      (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
                     ),
                   ],
                   onChanged: (v) => setState(() => _groupId = v),
@@ -217,7 +220,10 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                     )
                   : const Icon(Icons.save),
               label: Text(
-                  widget.isEditing ? l10n.snippetFormUpdateButton : l10n.snippetFormCreateButton),
+                widget.isEditing
+                    ? l10n.snippetFormUpdateButton
+                    : l10n.snippetFormCreateButton,
+              ),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(double.infinity, 52),
               ),
@@ -240,8 +246,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     try {
       final tagsAsync = ref.read(tagListProvider);
       final allTags = tagsAsync.valueOrNull ?? [];
-      final selectedTags =
-          allTags.where((t) => _selectedTagIds.contains(t.id)).toList();
+      final selectedTags = allTags
+          .where((t) => _selectedTagIds.contains(t.id))
+          .toList();
 
       final now = DateTime.now();
       final snippet = SnippetEntity(
@@ -268,9 +275,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
         context.pop();
       }
     } catch (e) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.error(e.toString()))),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
     } finally {
       if (mounted) setState(() => _saving = false);
     }

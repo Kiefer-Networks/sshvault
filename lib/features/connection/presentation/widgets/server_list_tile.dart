@@ -78,12 +78,7 @@ class ServerListTile extends StatelessWidget {
         ),
         title: Row(
           children: [
-            Expanded(
-              child: Text(
-                server.name,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            Expanded(child: Text(server.name, overflow: TextOverflow.ellipsis)),
             const SizedBox(width: 8),
             StatusBadge(isActive: server.isActive),
           ],

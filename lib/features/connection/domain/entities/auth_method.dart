@@ -1,5 +1,1 @@
-enum AuthMethod {
-  password,
-  key,
-  both,
-}
+enum AuthMethod { password, key, both }

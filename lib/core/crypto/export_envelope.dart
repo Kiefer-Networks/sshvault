@@ -17,12 +17,12 @@ class ExportEnvelope {
   });
 
   Map<String, dynamic> toJson() => {
-        'version': version,
-        'salt': salt,
-        'nonce': nonce,
-        'encryptedData': encryptedData,
-        'checksum': checksum,
-      };
+    'version': version,
+    'salt': salt,
+    'nonce': nonce,
+    'encryptedData': encryptedData,
+    'checksum': checksum,
+  };
 
   factory ExportEnvelope.fromJson(Map<String, dynamic> json) {
     return ExportEnvelope(

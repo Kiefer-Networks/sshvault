@@ -30,8 +30,10 @@ class SupportScreen extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.favorite_outlined,
-                          color: theme.colorScheme.onPrimaryContainer),
+                      Icon(
+                        Icons.favorite_outlined,
+                        color: theme.colorScheme.onPrimaryContainer,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(

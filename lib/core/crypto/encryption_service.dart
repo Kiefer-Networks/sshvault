@@ -46,12 +46,7 @@ class EncryptionService {
     final cipher = GCMBlockCipher(AESEngine());
     cipher.init(
       true,
-      AEADParameters(
-        KeyParameter(key),
-        128,
-        nonce,
-        Uint8List(0),
-      ),
+      AEADParameters(KeyParameter(key), 128, nonce, Uint8List(0)),
     );
 
     final output = Uint8List(cipher.getOutputSize(plaintext.length));
@@ -69,17 +64,17 @@ class EncryptionService {
     final cipher = GCMBlockCipher(AESEngine());
     cipher.init(
       false,
-      AEADParameters(
-        KeyParameter(key),
-        128,
-        nonce,
-        Uint8List(0),
-      ),
+      AEADParameters(KeyParameter(key), 128, nonce, Uint8List(0)),
     );
 
     final output = Uint8List(cipher.getOutputSize(ciphertext.length));
-    final len =
-        cipher.processBytes(ciphertext, 0, ciphertext.length, output, 0);
+    final len = cipher.processBytes(
+      ciphertext,
+      0,
+      ciphertext.length,
+      output,
+      0,
+    );
     cipher.doFinal(output, len);
 
     return output;
@@ -93,13 +88,15 @@ class EncryptionService {
       final checksum = _sha256Hex(plaintext);
       final payload = _encrypt(plaintext, key);
 
-      return Success(ExportEnvelope(
-        version: AppConstants.exportVersion,
-        salt: base64Encode(salt),
-        nonce: base64Encode(payload.nonce),
-        encryptedData: base64Encode(payload.ciphertext),
-        checksum: checksum,
-      ));
+      return Success(
+        ExportEnvelope(
+          version: AppConstants.exportVersion,
+          salt: base64Encode(salt),
+          nonce: base64Encode(payload.nonce),
+          encryptedData: base64Encode(payload.ciphertext),
+          checksum: checksum,
+        ),
+      );
     } catch (e) {
       return Err(CryptoFailure('Encryption failed', cause: e));
     }

@@ -75,10 +75,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   value: settings.locale.isEmpty ? '' : settings.locale,
                   underline: const SizedBox.shrink(),
                   items: [
-                    DropdownMenuItem(value: '', child: Text(l10n.settingsLanguageSystem)),
-                    DropdownMenuItem(value: 'en', child: Text(l10n.settingsLanguageEn)),
-                    DropdownMenuItem(value: 'de', child: Text(l10n.settingsLanguageDe)),
-                    DropdownMenuItem(value: 'es', child: Text(l10n.settingsLanguageEs)),
+                    DropdownMenuItem(
+                      value: '',
+                      child: Text(l10n.settingsLanguageSystem),
+                    ),
+                    DropdownMenuItem(
+                      value: 'en',
+                      child: Text(l10n.settingsLanguageEn),
+                    ),
+                    DropdownMenuItem(
+                      value: 'de',
+                      child: Text(l10n.settingsLanguageDe),
+                    ),
+                    DropdownMenuItem(
+                      value: 'es',
+                      child: Text(l10n.settingsLanguageEs),
+                    ),
                   ],
                   onChanged: (v) {
                     if (v != null) {
@@ -91,49 +103,57 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               // Terminal
               _SectionHeader(title: l10n.settingsSectionTerminal),
-              Builder(builder: (context) {
-                final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
-                return ListTile(
-                  leading: const Icon(Icons.color_lens_outlined),
-                  title: Text(l10n.settingsTerminalTheme),
-                  subtitle: Text(themeKeyAsync.when(
-                    data: (key) => key.displayName,
-                    loading: () => l10n.loading,
-                    error: (_, _) => l10n.settingsTerminalThemeDefault,
-                  )),
-                  onTap: () => TerminalThemePicker.show(context),
-                );
-              }),
-              Builder(builder: (context) {
-                final fontSizeAsync = ref.watch(terminalFontSizeProvider);
-                final fontSize = fontSizeAsync.valueOrNull ?? 14.0;
-                return ListTile(
-                  leading: const Icon(Icons.text_fields_outlined),
-                  title: Text(l10n.settingsFontSize),
-                  subtitle: Text(l10n.settingsFontSizeValue(fontSize.toInt())),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: fontSize <= 8
-                            ? null
-                            : () => ref
-                                .read(terminalFontSizeProvider.notifier)
-                                .decrease(),
+              Builder(
+                builder: (context) {
+                  final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
+                  return ListTile(
+                    leading: const Icon(Icons.color_lens_outlined),
+                    title: Text(l10n.settingsTerminalTheme),
+                    subtitle: Text(
+                      themeKeyAsync.when(
+                        data: (key) => key.displayName,
+                        loading: () => l10n.loading,
+                        error: (_, _) => l10n.settingsTerminalThemeDefault,
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: fontSize >= 24
-                            ? null
-                            : () => ref
-                                .read(terminalFontSizeProvider.notifier)
-                                .increase(),
-                      ),
-                    ],
-                  ),
-                );
-              }),
+                    ),
+                    onTap: () => TerminalThemePicker.show(context),
+                  );
+                },
+              ),
+              Builder(
+                builder: (context) {
+                  final fontSizeAsync = ref.watch(terminalFontSizeProvider);
+                  final fontSize = fontSizeAsync.valueOrNull ?? 14.0;
+                  return ListTile(
+                    leading: const Icon(Icons.text_fields_outlined),
+                    title: Text(l10n.settingsFontSize),
+                    subtitle: Text(
+                      l10n.settingsFontSizeValue(fontSize.toInt()),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: fontSize <= 8
+                              ? null
+                              : () => ref
+                                    .read(terminalFontSizeProvider.notifier)
+                                    .decrease(),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: fontSize >= 24
+                              ? null
+                              : () => ref
+                                    .read(terminalFontSizeProvider.notifier)
+                                    .increase(),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
               const Divider(),
 
               // SSH Defaults
@@ -157,75 +177,98 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ListTile(
                 leading: const Icon(Icons.lock_clock_outlined),
                 title: Text(l10n.settingsAutoLock),
-                subtitle: Text(settings.autoLockMinutes == 0
-                    ? l10n.settingsAutoLockDisabled
-                    : l10n.settingsAutoLockMinutes(settings.autoLockMinutes)),
+                subtitle: Text(
+                  settings.autoLockMinutes == 0
+                      ? l10n.settingsAutoLockDisabled
+                      : l10n.settingsAutoLockMinutes(settings.autoLockMinutes),
+                ),
                 trailing: DropdownButton<int>(
                   value: settings.autoLockMinutes,
                   underline: const SizedBox.shrink(),
                   items: [
-                    DropdownMenuItem(value: 0, child: Text(l10n.settingsAutoLockOff)),
-                    DropdownMenuItem(value: 1, child: Text(l10n.settingsAutoLock1Min)),
-                    DropdownMenuItem(value: 5, child: Text(l10n.settingsAutoLock5Min)),
-                    DropdownMenuItem(value: 15, child: Text(l10n.settingsAutoLock15Min)),
-                    DropdownMenuItem(value: 30, child: Text(l10n.settingsAutoLock30Min)),
+                    DropdownMenuItem(
+                      value: 0,
+                      child: Text(l10n.settingsAutoLockOff),
+                    ),
+                    DropdownMenuItem(
+                      value: 1,
+                      child: Text(l10n.settingsAutoLock1Min),
+                    ),
+                    DropdownMenuItem(
+                      value: 5,
+                      child: Text(l10n.settingsAutoLock5Min),
+                    ),
+                    DropdownMenuItem(
+                      value: 15,
+                      child: Text(l10n.settingsAutoLock15Min),
+                    ),
+                    DropdownMenuItem(
+                      value: 30,
+                      child: Text(l10n.settingsAutoLock30Min),
+                    ),
                   ],
                   onChanged: (v) {
                     if (v != null) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setAutoLockMinutes(v);
+                      ref.read(settingsProvider.notifier).setAutoLockMinutes(v);
                     }
                   },
                 ),
               ),
-              Builder(builder: (context) {
-                final biometricAvailable =
-                    ref.watch(biometricAvailableProvider);
-                return SwitchListTile(
-                  secondary: const Icon(Icons.fingerprint),
-                  title: Text(l10n.settingsBiometricUnlock),
-                  subtitle: biometricAvailable.when(
-                    data: (available) {
-                      if (!available) return Text(l10n.settingsBiometricNotAvailable);
-                      if (!settings.hasPin) return Text(l10n.settingsBiometricRequiresPin);
-                      return null;
-                    },
-                    loading: () => null,
-                    error: (_, _) => Text(l10n.settingsBiometricError),
-                  ),
-                  value: settings.biometricUnlock,
-                  onChanged: biometricAvailable.maybeWhen(
-                    data: (available) => available && settings.hasPin
-                        ? (v) async {
-                            if (v) {
-                              final service =
-                                  ref.read(biometricServiceProvider);
-                              final success = await service.authenticate(
-                                reason: l10n.settingsBiometricReason,
-                              );
-                              if (success) {
+              Builder(
+                builder: (context) {
+                  final biometricAvailable = ref.watch(
+                    biometricAvailableProvider,
+                  );
+                  return SwitchListTile(
+                    secondary: const Icon(Icons.fingerprint),
+                    title: Text(l10n.settingsBiometricUnlock),
+                    subtitle: biometricAvailable.when(
+                      data: (available) {
+                        if (!available)
+                          return Text(l10n.settingsBiometricNotAvailable);
+                        if (!settings.hasPin)
+                          return Text(l10n.settingsBiometricRequiresPin);
+                        return null;
+                      },
+                      loading: () => null,
+                      error: (_, _) => Text(l10n.settingsBiometricError),
+                    ),
+                    value: settings.biometricUnlock,
+                    onChanged: biometricAvailable.maybeWhen(
+                      data: (available) => available && settings.hasPin
+                          ? (v) async {
+                              if (v) {
+                                final service = ref.read(
+                                  biometricServiceProvider,
+                                );
+                                final success = await service.authenticate(
+                                  reason: l10n.settingsBiometricReason,
+                                );
+                                if (success) {
+                                  ref
+                                      .read(settingsProvider.notifier)
+                                      .setBiometricUnlock(true);
+                                }
+                              } else {
                                 ref
                                     .read(settingsProvider.notifier)
-                                    .setBiometricUnlock(true);
+                                    .setBiometricUnlock(false);
                               }
-                            } else {
-                              ref
-                                  .read(settingsProvider.notifier)
-                                  .setBiometricUnlock(false);
                             }
-                          }
-                        : null,
-                    orElse: () => null,
-                  ),
-                );
-              }),
+                          : null,
+                      orElse: () => null,
+                    ),
+                  );
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.pin),
                 title: Text(l10n.settingsPinCode),
-                subtitle: Text(settings.hasPin
-                    ? l10n.settingsPinIsSet
-                    : l10n.settingsPinNotConfigured),
+                subtitle: Text(
+                  settings.hasPin
+                      ? l10n.settingsPinIsSet
+                      : l10n.settingsPinNotConfigured,
+                ),
                 trailing: settings.hasPin
                     ? TextButton(
                         onPressed: () => _confirmRemovePin(l10n),
@@ -235,9 +278,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 onTap: () async {
                   final pin = await PinDialog.showSetPin(context);
                   if (pin != null) {
-                    await ref
-                        .read(settingsProvider.notifier)
-                        .setPinCode(pin);
+                    await ref.read(settingsProvider.notifier).setPinCode(pin);
                   }
                 },
               ),
@@ -259,27 +300,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               // Sync
               _SectionHeader(title: l10n.settingsSectionSync),
-              Builder(builder: (context) {
-                final authState = ref.watch(authProvider);
-                final isAuthenticated =
-                    authState.valueOrNull == AuthStatus.authenticated;
-                return ListTile(
-                  leading: const Icon(Icons.account_circle_outlined),
-                  title: Text(l10n.settingsSyncAccount),
-                  subtitle: FutureBuilder<String>(
-                    future: _getUserEmail(ref),
-                    builder: (_, snap) => Text(
-                      isAuthenticated
-                          ? (snap.data ?? l10n.loading)
-                          : l10n.settingsSyncNotLoggedIn,
+              Builder(
+                builder: (context) {
+                  final authState = ref.watch(authProvider);
+                  final isAuthenticated =
+                      authState.valueOrNull == AuthStatus.authenticated;
+                  return ListTile(
+                    leading: const Icon(Icons.account_circle_outlined),
+                    title: Text(l10n.settingsSyncAccount),
+                    subtitle: FutureBuilder<String>(
+                      future: _getUserEmail(ref),
+                      builder: (_, snap) => Text(
+                        isAuthenticated
+                            ? (snap.data ?? l10n.loading)
+                            : l10n.settingsSyncNotLoggedIn,
+                      ),
                     ),
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push(
-                    isAuthenticated ? '/sync-settings' : '/login',
-                  ),
-                );
-              }),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push(
+                      isAuthenticated ? '/sync-settings' : '/login',
+                    ),
+                  );
+                },
+              ),
               SwitchListTile(
                 secondary: const Icon(Icons.sync_outlined),
                 title: Text(l10n.syncAutoSync),
@@ -291,25 +334,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ListTile(
                 leading: const Icon(Icons.dns_outlined),
                 title: Text(l10n.settingsSyncServerUrl),
-                subtitle: Text(settings.serverUrl.isEmpty
-                    ? l10n.settingsSyncDefaultServer
-                    : settings.serverUrl),
+                subtitle: Text(
+                  settings.serverUrl.isEmpty
+                      ? l10n.settingsSyncDefaultServer
+                      : settings.serverUrl,
+                ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push('/server-config'),
               ),
-              Builder(builder: (context) {
-                final authState = ref.watch(authProvider);
-                final isAuthenticated =
-                    authState.valueOrNull == AuthStatus.authenticated;
-                if (!isAuthenticated) return const SizedBox.shrink();
-                return ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: Text(l10n.accountLogout),
-                  onTap: () async {
-                    await ref.read(authProvider.notifier).logout();
-                  },
-                );
-              }),
+              Builder(
+                builder: (context) {
+                  final authState = ref.watch(authProvider);
+                  final isAuthenticated =
+                      authState.valueOrNull == AuthStatus.authenticated;
+                  if (!isAuthenticated) return const SizedBox.shrink();
+                  return ListTile(
+                    leading: const Icon(Icons.logout),
+                    title: Text(l10n.accountLogout),
+                    onTap: () async {
+                      await ref.read(authProvider.notifier).logout();
+                    },
+                  );
+                },
+              ),
               const Divider(),
 
               // Support
@@ -403,8 +450,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _editPort(AppLocalizations l10n, int currentPort) async {
-    final controller =
-        TextEditingController(text: currentPort.toString());
+    final controller = TextEditingController(text: currentPort.toString());
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -438,7 +484,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  Future<void> _editUsername(AppLocalizations l10n, String currentUsername) async {
+  Future<void> _editUsername(
+    AppLocalizations l10n,
+    String currentUsername,
+  ) async {
     final controller = TextEditingController(text: currentUsername);
     final result = await showDialog<String>(
       context: context,
@@ -466,9 +515,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
     controller.dispose();
     if (result != null && result.trim().isNotEmpty) {
-      ref
-          .read(settingsProvider.notifier)
-          .setDefaultUsername(result.trim());
+      ref.read(settingsProvider.notifier).setDefaultUsername(result.trim());
     }
   }
 
@@ -477,9 +524,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     if (logger.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.settingsLogsEmpty)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.settingsLogsEmpty)));
       return;
     }
 
@@ -489,9 +536,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await Share.shareXFiles([XFile(filePath)]);
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.settingsLogsSaved)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.settingsLogsSaved)));
   }
 
   Future<void> _sendLogsToSupport(AppLocalizations l10n) async {
@@ -522,7 +569,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         await Share.shareXFiles(
           [XFile(filePath)],
           subject: 'SSH Vault Support Request',
-          text: 'Please describe your issue:\n\n'
+          text:
+              'Please describe your issue:\n\n'
               '---\n'
               'App Version: ${AppConstants.appVersion}\n'
               'Platform: $platform\n'
@@ -538,7 +586,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       path: 'support@sshvault.app',
       queryParameters: {
         'subject': 'SSH Vault Support Request',
-        'body': 'Please describe your issue:\n\n'
+        'body':
+            'Please describe your issue:\n\n'
             '---\n'
             'App Version: ${AppConstants.appVersion}\n'
             'Platform: $platform\n'
@@ -564,8 +613,8 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         title,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
     );
   }
