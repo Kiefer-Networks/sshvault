@@ -372,9 +372,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         );
       } else {
         // iOS + macOS → Apple App Store
-        storeUri = Uri.parse(
-          'https://apps.apple.com/account/subscriptions',
-        );
+        storeUri = Uri.parse('https://apps.apple.com/account/subscriptions');
       }
       await launchUrl(storeUri, mode: LaunchMode.externalApplication);
       return;
