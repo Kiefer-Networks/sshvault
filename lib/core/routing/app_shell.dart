@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -102,12 +104,30 @@ class AppShell extends ConsumerStatefulWidget {
 class AppShellState extends ConsumerState<AppShell> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool _securityDialogShown = false;
+  late final AppLifecycleListener _lifecycleListener;
+  Timer? _billingRefreshTimer;
+
+  /// How often to re-check billing status from the server.
+  static const _billingRefreshInterval = Duration(minutes: 15);
 
   void openDrawer() => scaffoldKey.currentState?.openDrawer();
 
   @override
   void initState() {
     super.initState();
+
+    // Refresh billing/device providers on app resume (e.g. returning from
+    // browser after subscription purchase, or after extended background).
+    _lifecycleListener = AppLifecycleListener(
+      onResume: _refreshAccountProviders,
+    );
+
+    // Periodic billing refresh so an expired subscription is reflected
+    // even if the user never leaves/returns to the app.
+    _billingRefreshTimer = Timer.periodic(_billingRefreshInterval, (_) {
+      _refreshAccountProviders();
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ref.read(shellNavigationProvider.notifier).state =
@@ -123,6 +143,20 @@ class AppShellState extends ConsumerState<AppShell> {
         }, fireImmediately: true);
       }
     });
+  }
+
+  void _refreshAccountProviders() {
+    final auth = ref.read(authProvider).valueOrNull;
+    if (auth != AuthStatus.authenticated) return;
+    ref.invalidate(billingStatusProvider);
+    ref.invalidate(deviceListProvider);
+  }
+
+  @override
+  void dispose() {
+    _billingRefreshTimer?.cancel();
+    _lifecycleListener.dispose();
+    super.dispose();
   }
 
   Future<void> _showSecurityDialog() async {
