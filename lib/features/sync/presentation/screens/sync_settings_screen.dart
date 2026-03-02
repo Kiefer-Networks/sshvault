@@ -24,6 +24,7 @@ class SyncSettingsScreen extends ConsumerStatefulWidget {
 class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   late final AppLifecycleListener _lifecycleListener;
   Timer? _billingPollTimer;
+  bool _pollTimedOut = false;
 
   @override
   void initState() {
@@ -44,15 +45,20 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
 
   void _startBillingPoll() {
     _billingPollTimer?.cancel();
+    setState(() => _pollTimedOut = false);
     var attempts = 0;
     _billingPollTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       attempts++;
       ref.invalidate(billingStatusProvider);
-      // Stop after 2 minutes (24 attempts × 5s)
       final billing = ref.read(billingStatusProvider).valueOrNull;
-      if ((billing?.active ?? false) || attempts >= 24) {
+      if (billing?.active ?? false) {
         timer.cancel();
         _billingPollTimer = null;
+      } else if (attempts >= 60) {
+        // Stop after 5 minutes (60 × 5s), show manual refresh
+        timer.cancel();
+        _billingPollTimer = null;
+        if (mounted) setState(() => _pollTimedOut = true);
       }
     });
   }
@@ -257,6 +263,15 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                       : l10n.accountPaymentInactive,
                 ),
               ),
+              if (!billing.active && _pollTimedOut)
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: l10n.syncNow,
+                  onPressed: () {
+                    setState(() => _pollTimedOut = false);
+                    ref.invalidate(billingStatusProvider);
+                  },
+                ),
             ],
           ),
           if (!billing.active) ...[
