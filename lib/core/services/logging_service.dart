@@ -277,9 +277,4 @@ class LoggingService {
     return file.path;
   }
 
-  /// Get the path where the log file would be saved (temp directory).
-  Future<String> getLogFilePath() async {
-    final dir = await getTemporaryDirectory();
-    return '${dir.path}/sshvault_logs.txt';
-  }
 }

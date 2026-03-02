@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -63,7 +64,7 @@ class AccountInfoScreen extends ConsumerWidget {
                                       ),
                                     if (user.createdAt != null)
                                       Text(
-                                        '${l10n.accountMemberSince} ${_formatDate(user.createdAt!)}',
+                                        '${l10n.accountMemberSince} ${formatDate(user.createdAt!)}',
                                         style: theme.textTheme.bodySmall,
                                       ),
                                   ],
@@ -109,7 +110,7 @@ class AccountInfoScreen extends ConsumerWidget {
                     if (!billing.active) ...[
                       const SizedBox(height: 12),
                       FilledButton.icon(
-                        onPressed: () => _checkout(ref),
+                        onPressed: () => _checkout(context, ref),
                         icon: const Icon(Icons.payment),
                         label: Text(l10n.accountUnlockSync),
                       ),
@@ -145,14 +146,14 @@ class AccountInfoScreen extends ConsumerWidget {
                                       title: Text(d.name),
                                       subtitle: d.lastSync != null
                                           ? Text(
-                                              '${l10n.accountLastSync}: ${_formatDate(d.lastSync!)}')
+                                              '${l10n.accountLastSync}: ${formatDate(d.lastSync!)}')
                                           : null,
                                       trailing: IconButton(
                                         icon: const Icon(
                                             Icons.delete_outline,
                                             size: 20),
                                         onPressed: () =>
-                                            _deleteDevice(ref, d.id),
+                                            _deleteDevice(context, ref, d.id),
                                       ),
                                     ))
                                 .toList(),
@@ -206,23 +207,35 @@ class AccountInfoScreen extends ConsumerWidget {
     };
   }
 
-  String _formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}.${dt.month.toString().padLeft(2, '0')}.${dt.year}';
-  }
-
-  Future<void> _checkout(WidgetRef ref) async {
-    final repo = ref.read(accountRepositoryProvider);
-    final result = await repo.createCheckout();
-    if (result.isSuccess && result.value.isNotEmpty) {
-      final uri = Uri.tryParse(result.value);
-      if (uri != null) await launchUrl(uri, mode: LaunchMode.externalApplication);
+  Future<void> _checkout(BuildContext context, WidgetRef ref) async {
+    try {
+      final repo = ref.read(accountRepositoryProvider);
+      final result = await repo.createCheckout();
+      if (result.isSuccess && result.value.isNotEmpty) {
+        final uri = Uri.tryParse(result.value);
+        if (uri != null) await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.error(e.toString()))),
+        );
+      }
     }
   }
 
-  Future<void> _deleteDevice(WidgetRef ref, String deviceId) async {
-    final repo = ref.read(accountRepositoryProvider);
-    await repo.deleteDevice(deviceId);
-    ref.invalidate(deviceListProvider);
+  Future<void> _deleteDevice(BuildContext context, WidgetRef ref, String deviceId) async {
+    try {
+      final repo = ref.read(accountRepositoryProvider);
+      await repo.deleteDevice(deviceId);
+      ref.invalidate(deviceListProvider);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.error(e.toString()))),
+        );
+      }
+    }
   }
 
   Future<void> _changePassword(
@@ -267,8 +280,31 @@ class AccountInfoScreen extends ConsumerWidget {
       ),
     );
     if (result == true) {
-      final repo = ref.read(accountRepositoryProvider);
-      await repo.changePassword(oldPw.text, newPw.text);
+      if (oldPw.text.isEmpty || newPw.text.isEmpty) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.error(l10n.validatorPasswordRequired))),
+          );
+        }
+        oldPw.dispose();
+        newPw.dispose();
+        return;
+      }
+      try {
+        final repo = ref.read(accountRepositoryProvider);
+        await repo.changePassword(oldPw.text, newPw.text);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.accountChangePassword)),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.error(e.toString()))),
+          );
+        }
+      }
     }
     oldPw.dispose();
     newPw.dispose();
@@ -300,10 +336,18 @@ class AccountInfoScreen extends ConsumerWidget {
       ),
     );
     if (confirmed == true) {
-      final repo = ref.read(accountRepositoryProvider);
-      await repo.deleteAccount();
-      await ref.read(authProvider.notifier).logout();
-      if (context.mounted) context.go('/');
+      try {
+        final repo = ref.read(accountRepositoryProvider);
+        await repo.deleteAccount();
+        await ref.read(authProvider.notifier).logout();
+        if (context.mounted) context.go('/');
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.error(e.toString()))),
+          );
+        }
+      }
     }
   }
 }

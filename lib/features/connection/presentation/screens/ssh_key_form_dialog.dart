@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/crypto/crypto_provider.dart';
-import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/crypto/ssh_key_type.dart';
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
@@ -396,7 +395,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       }
 
       // Extract comment from key if possible
-      final keyService = SshKeyService();
+      final keyService = ref.read(sshKeyServiceProvider);
       final infoResult = await keyService.extractKeyInfo(content.trim());
       if (infoResult.isSuccess) {
         final info = infoResult.value;

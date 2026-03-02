@@ -72,7 +72,7 @@ class SupportScreen extends ConsumerWidget {
 
           // IAP buttons or fallback
           if (isNativeIapPlatform)
-            _NativeIapSection(ref: ref, l10n: l10n)
+            _NativeIapSection(l10n: l10n)
           else
             _FallbackSection(l10n: l10n),
         ],
@@ -116,14 +116,13 @@ class _StatusBanner extends StatelessWidget {
   }
 }
 
-class _NativeIapSection extends StatelessWidget {
-  final WidgetRef ref;
+class _NativeIapSection extends ConsumerWidget {
   final AppLocalizations l10n;
 
-  const _NativeIapSection({required this.ref, required this.l10n});
+  const _NativeIapSection({required this.l10n});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final storeAsync = ref.watch(supportStoreProvider);
 
     return storeAsync.when(

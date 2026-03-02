@@ -5,8 +5,8 @@ import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart'
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
 import 'package:shellvault/features/snippet/presentation/widgets/variable_fill_dialog.dart';
 
-class SnippetQuickPanel extends ConsumerStatefulWidget {
-  const SnippetQuickPanel({super.key});
+class SnippetQuickPanel {
+  SnippetQuickPanel._();
 
   static Future<String?> show(BuildContext context) {
     return showModalBottomSheet<String>(
@@ -22,16 +22,6 @@ class SnippetQuickPanel extends ConsumerStatefulWidget {
             _SnippetQuickPanelContent(scrollController: scrollController),
       ),
     );
-  }
-
-  @override
-  ConsumerState<SnippetQuickPanel> createState() => _SnippetQuickPanelState();
-}
-
-class _SnippetQuickPanelState extends ConsumerState<SnippetQuickPanel> {
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox.shrink();
   }
 }
 

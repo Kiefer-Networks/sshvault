@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -542,7 +543,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           subject: 'SSH Vault Support Request',
           text: 'Please describe your issue:\n\n'
               '---\n'
-              'App Version: 0.1.0\n'
+              'App Version: ${AppConstants.appVersion}\n'
               'Platform: $platform\n'
               '---\n',
         );
@@ -558,7 +559,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         'subject': 'SSH Vault Support Request',
         'body': 'Please describe your issue:\n\n'
             '---\n'
-            'App Version: 0.1.0\n'
+            'App Version: ${AppConstants.appVersion}\n'
             'Platform: $platform\n'
             '---\n',
       },
