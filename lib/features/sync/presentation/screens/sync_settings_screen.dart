@@ -21,6 +21,25 @@ class SyncSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
+  late final AppLifecycleListener _lifecycleListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycleListener = AppLifecycleListener(
+      onResume: () {
+        // Refresh billing status when returning from browser (Stripe checkout)
+        ref.invalidate(billingStatusProvider);
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
