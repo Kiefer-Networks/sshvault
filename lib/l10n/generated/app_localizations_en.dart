@@ -1207,6 +1207,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Price on mobile & macOS includes App Store / Play Store fees.';
 
   @override
+  String get accountManageSubscription => 'Manage Subscription & Invoices';
+
+  @override
   String get settingsSectionSync => 'Synchronization';
 
   @override

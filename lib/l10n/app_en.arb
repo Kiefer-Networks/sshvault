@@ -439,6 +439,7 @@
   "accountActivateSyncPrice": "Activate Sync — {price}/year",
   "@accountActivateSyncPrice": { "placeholders": { "price": { "type": "String" } } },
   "accountStoreFeeNote": "Price on mobile & macOS includes App Store / Play Store fees.",
+  "accountManageSubscription": "Manage Subscription & Invoices",
 
   "settingsSectionSync": "Synchronization",
   "settingsSyncAccount": "Account",

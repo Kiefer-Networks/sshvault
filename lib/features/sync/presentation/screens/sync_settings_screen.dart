@@ -244,6 +244,17 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               ),
             ],
           ],
+          if (billing.active) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _openBillingPortal,
+                icon: const Icon(Icons.receipt_long_outlined),
+                label: Text(l10n.accountManageSubscription),
+              ),
+            ),
+          ],
         ],
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -327,6 +338,27 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     try {
       final repo = ref.read(accountRepositoryProvider);
       final result = await repo.createCheckout();
+      if (result.isSuccess && result.value.isNotEmpty) {
+        final uri = Uri.tryParse(result.value);
+        if (uri != null) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.error(e.toString())),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _openBillingPortal() async {
+    try {
+      final repo = ref.read(accountRepositoryProvider);
+      final result = await repo.createPortal();
       if (result.isSuccess && result.value.isNotEmpty) {
         final uri = Uri.tryParse(result.value);
         if (uri != null) {

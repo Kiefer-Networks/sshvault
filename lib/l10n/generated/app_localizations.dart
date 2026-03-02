@@ -2308,6 +2308,12 @@ abstract class AppLocalizations {
   /// **'Price on mobile & macOS includes App Store / Play Store fees.'**
   String get accountStoreFeeNote;
 
+  /// No description provided for @accountManageSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Subscription & Invoices'**
+  String get accountManageSubscription;
+
   /// No description provided for @settingsSectionSync.
   ///
   /// In en, this message translates to:
