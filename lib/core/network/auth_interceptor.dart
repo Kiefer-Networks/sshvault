@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:shellvault/core/storage/secure_storage_service.dart';
 
@@ -8,33 +10,51 @@ class AuthInterceptor extends Interceptor {
   final Dio _dio;
   final OnAuthExpired? onAuthExpired;
   bool _isRefreshing = false;
+  Completer<void>? _refreshCompleter;
 
   AuthInterceptor(this._storage, this._dio, {this.onAuthExpired});
+
+  /// Endpoints that do not require an Authorization header.
+  static const _publicPaths = [
+    '/auth/refresh',
+    '/auth/login',
+    '/auth/register',
+    '/health',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+    '/auth/verify-email',
+    '/auth/oauth',
+  ];
+
+  bool _isPublicPath(String path) {
+    return _publicPaths.any((p) => path.contains(p));
+  }
 
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    // Skip auth for refresh endpoint
-    if (options.path.contains('/auth/refresh') ||
-        options.path.contains('/auth/login') ||
-        options.path.contains('/auth/register') ||
-        options.path.contains('/health')) {
-      return handler.next(options);
-    }
+    try {
+      if (_isPublicPath(options.path)) {
+        return handler.next(options);
+      }
 
-    final tokenResult = await _storage.getAccessToken();
-    final token = tokenResult.isSuccess ? tokenResult.value : null;
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
+      final tokenResult = await _storage.getAccessToken();
+      final token = tokenResult.isSuccess ? tokenResult.value : null;
+      if (token != null) {
+        options.headers['Authorization'] = 'Bearer $token';
+      }
+      handler.next(options);
+    } catch (_) {
+      // On any error, let the request proceed without auth header.
+      handler.next(options);
     }
-    handler.next(options);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode != 401 || _isRefreshing) {
+    if (err.response?.statusCode != 401) {
       return handler.next(err);
     }
 
@@ -44,13 +64,34 @@ class AuthInterceptor extends Interceptor {
       return handler.next(err);
     }
 
+    // If another refresh is already in progress, wait for it and retry.
+    if (_isRefreshing) {
+      try {
+        await _refreshCompleter!.future;
+        // Refresh succeeded — retry with the new token.
+        final tokenResult = await _storage.getAccessToken();
+        final token = tokenResult.isSuccess ? tokenResult.value : null;
+        final opts = err.requestOptions;
+        opts.headers['Authorization'] = 'Bearer $token';
+        final retryResponse = await _dio.fetch(opts);
+        return handler.resolve(retryResponse);
+      } catch (_) {
+        // Refresh failed — propagate the original error.
+        return handler.next(err);
+      }
+    }
+
     _isRefreshing = true;
+    _refreshCompleter = Completer<void>();
     try {
       final refreshResult = await _storage.getRefreshToken();
       final refreshToken =
           refreshResult.isSuccess ? refreshResult.value : null;
       if (refreshToken == null) {
         await _handleAuthExpired();
+        _refreshCompleter!.completeError(
+          StateError('No refresh token available'),
+        );
         return handler.next(err);
       }
 
@@ -62,6 +103,9 @@ class AuthInterceptor extends Interceptor {
       final data = response.data;
       if (data == null) {
         await _handleAuthExpired();
+        _refreshCompleter!.completeError(
+          StateError('Empty refresh response'),
+        );
         return handler.next(err);
       }
       final newAccessToken = data['access_token'] as String;
@@ -82,6 +126,9 @@ class AuthInterceptor extends Interceptor {
         await _storage.saveTokenExpiry(expiresAt);
       }
 
+      // Signal waiting requests that the refresh succeeded.
+      _refreshCompleter!.complete();
+
       // Retry original request with new token
       final opts = err.requestOptions;
       opts.headers['Authorization'] = 'Bearer $newAccessToken';
@@ -89,6 +136,9 @@ class AuthInterceptor extends Interceptor {
       return handler.resolve(retryResponse);
     } on DioException {
       await _handleAuthExpired();
+      _refreshCompleter!.completeError(
+        StateError('Token refresh failed'),
+      );
       return handler.next(err);
     } finally {
       _isRefreshing = false;

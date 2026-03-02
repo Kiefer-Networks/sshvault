@@ -270,13 +270,6 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     ref.invalidateSelf();
   }
 
-  /// No-op — field encryption has been removed.
-  /// Kept for API compatibility with lock screen.
-  Future<void> loadDekAfterUnlock() async {
-    // No-op: field-level encryption removed
-    return;
-  }
-
   Future<void> setDismissedSecurityHint(bool dismissed) async {
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyDismissedSecurityHint, dismissed.toString());
