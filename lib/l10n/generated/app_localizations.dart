@@ -2119,8 +2119,8 @@ abstract class AppLocalizations {
   /// No description provided for @authPricingInfo.
   ///
   /// In en, this message translates to:
-  /// **'Cloud sync for all your devices — €9.99/year'**
-  String get authPricingInfo;
+  /// **'Cloud sync for all your devices — {price}/year'**
+  String authPricingInfo(String price);
 
   /// No description provided for @authPricingHint.
   ///
@@ -2290,6 +2290,24 @@ abstract class AppLocalizations {
   /// **'Vault Version'**
   String get syncVaultVersion;
 
+  /// No description provided for @syncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get syncTitle;
+
+  /// No description provided for @accountActivateSyncPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Sync — {price}/year'**
+  String accountActivateSyncPrice(String price);
+
+  /// No description provided for @accountStoreFeeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Price on mobile & macOS includes App Store / Play Store fees.'**
+  String get accountStoreFeeNote;
+
   /// No description provided for @settingsSectionSync.
   ///
   /// In en, this message translates to:
@@ -2371,7 +2389,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountUnlockSync.
   ///
   /// In en, this message translates to:
-  /// **'Unlock Sync'**
+  /// **'Activate Sync'**
   String get accountUnlockSync;
 
   /// No description provided for @accountDevices.

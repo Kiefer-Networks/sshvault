@@ -1105,8 +1105,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Inicia sesión para habilitar la sincronización cifrada en la nube en todos tus dispositivos. La app funciona completamente sin conexión sin una cuenta.';
 
   @override
-  String get authPricingInfo =>
-      'Sincronización en la nube para todos tus dispositivos — 9,99 €/año';
+  String authPricingInfo(String price) {
+    return 'Sincronización en la nube para todos tus dispositivos — $price/año';
+  }
 
   @override
   String get authPricingHint =>
@@ -1199,6 +1200,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get syncVaultVersion => 'Versión del vault';
 
   @override
+  String get syncTitle => 'Sync';
+
+  @override
+  String accountActivateSyncPrice(String price) {
+    return 'Activar Sync — $price/año';
+  }
+
+  @override
+  String get accountStoreFeeNote =>
+      'El precio en móviles y macOS incluye tarifas de App Store / Play Store.';
+
+  @override
   String get settingsSectionSync => 'Sincronización';
 
   @override
@@ -1238,7 +1251,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountPaymentInactive => 'Sync aún no comprado';
 
   @override
-  String get accountUnlockSync => 'Desbloquear Sync';
+  String get accountUnlockSync => 'Activar Sync';
 
   @override
   String get accountDevices => 'Dispositivos';

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/routing/app_router.dart';
 import 'package:shellvault/core/theme/app_theme.dart';
 import 'package:shellvault/core/widgets/lock_screen.dart';
+import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
@@ -34,10 +35,15 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     final authStatus = ref.read(authProvider).valueOrNull;
     final settings = ref.read(settingsProvider).valueOrNull;
 
-    if (authStatus == AuthStatus.authenticated &&
-        (settings?.autoSync ?? true)) {
-      ref.read(syncProvider.notifier).sync();
-    }
+    if (authStatus != AuthStatus.authenticated) return;
+    if (!(settings?.autoSync ?? true)) return;
+
+    // Only auto-sync if billing is active; fetch asynchronously
+    ref.read(billingStatusProvider.future).then((billing) {
+      if (billing.active && mounted) {
+        ref.read(syncProvider.notifier).sync();
+      }
+    }).catchError((_) {});
   }
 
   @override

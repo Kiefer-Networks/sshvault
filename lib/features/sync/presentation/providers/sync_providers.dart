@@ -81,7 +81,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         state = const AsyncValue.data(SyncStatus.success);
       },
       onFailure: (f) {
-        state = AsyncValue.error(f.message, StackTrace.current);
+        state = AsyncValue.error(f, StackTrace.current);
       },
     );
   }
@@ -106,7 +106,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         state = const AsyncValue.data(SyncStatus.success);
       },
       onFailure: (f) {
-        state = AsyncValue.error(f.message, StackTrace.current);
+        state = AsyncValue.error(f, StackTrace.current);
       },
     );
   }

@@ -16,7 +16,6 @@ import 'package:shellvault/features/auth/presentation/providers/auth_providers.d
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
     as app;
-import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:shellvault/features/terminal/presentation/widgets/terminal_theme_picker.dart';
 
@@ -277,26 +276,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push(
-                    isAuthenticated ? '/account' : '/login',
+                    isAuthenticated ? '/sync-settings' : '/login',
                   ),
-                );
-              }),
-              Builder(builder: (context) {
-                final syncState = ref.watch(syncProvider);
-                final isSyncing =
-                    syncState.valueOrNull == SyncStatus.syncing;
-                return ListTile(
-                  leading: isSyncing
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child:
-                              CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.sync),
-                  title: Text(l10n.settingsSyncStatus),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push('/sync-settings'),
                 );
               }),
               SwitchListTile(

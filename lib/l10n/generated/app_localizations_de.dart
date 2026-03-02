@@ -1108,8 +1108,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Melde dich an, um verschlüsselte Cloud-Synchronisation auf allen Geräten zu aktivieren. Die App funktioniert auch ohne Konto komplett offline.';
 
   @override
-  String get authPricingInfo =>
-      'Cloud-Sync für alle deine Geräte — 9,99 €/Jahr';
+  String authPricingInfo(String price) {
+    return 'Cloud-Sync für alle deine Geräte — $price/Jahr';
+  }
 
   @override
   String get authPricingHint =>
@@ -1202,6 +1203,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get syncVaultVersion => 'Vault-Version';
 
   @override
+  String get syncTitle => 'Sync';
+
+  @override
+  String accountActivateSyncPrice(String price) {
+    return 'Sync aktivieren — $price/Jahr';
+  }
+
+  @override
+  String get accountStoreFeeNote =>
+      'Der Preis auf Mobilgeräten & macOS beinhaltet App Store / Play Store Gebühren.';
+
+  @override
   String get settingsSectionSync => 'Synchronisierung';
 
   @override
@@ -1241,7 +1254,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get accountPaymentInactive => 'Sync noch nicht erworben';
 
   @override
-  String get accountUnlockSync => 'Sync freischalten';
+  String get accountUnlockSync => 'Sync aktivieren';
 
   @override
   String get accountDevices => 'Geräte';

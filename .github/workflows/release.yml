@@ -1,0 +1,368 @@
+name: Release — Build & Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: stable
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Pre-flight: extract version, run lint (gate)
+  # ─────────────────────────────────────────────────────────────────────────
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build_number: ${{ steps.version.outputs.build_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: version
+        name: Extract version from pubspec.yaml
+        run: |
+          FULL=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION=$(echo "$FULL" | cut -d'+' -f1)
+          BUILD=$(echo "$FULL" | cut -d'+' -f2)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build_number=$BUILD" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION+$BUILD"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - run: flutter analyze --no-fatal-infos
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Android APK
+  # ─────────────────────────────────────────────────────────────────────────
+  build-android:
+    name: Android (APK)
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+
+      # Signing — expects base64-encoded keystore in secrets
+      - name: Decode keystore
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+
+      - name: Create key.properties
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          cat > android/key.properties <<EOF
+          storePassword=$STORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=keystore.jks
+          EOF
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Linux (deb, rpm, AppImage)
+  # ─────────────────────────────────────────────────────────────────────────
+  build-linux:
+    name: Linux (${{ matrix.format }})
+    needs: preflight
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        format: [deb, rpm, appimage]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang cmake ninja-build pkg-config \
+            libgtk-3-dev liblzma-dev libstdc++-12-dev \
+            libsecret-1-dev libjsoncpp-dev
+
+      - run: flutter pub get
+
+      - name: Build Linux bundle
+        run: flutter build linux --release
+
+      - name: Install packaging tools
+        run: |
+          if [ "${{ matrix.format }}" = "deb" ]; then
+            sudo apt-get install -y dpkg-dev
+          elif [ "${{ matrix.format }}" = "rpm" ]; then
+            sudo apt-get install -y rpm
+          elif [ "${{ matrix.format }}" = "appimage" ]; then
+            sudo apt-get install -y libfuse2
+            wget -q "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage" -O /usr/local/bin/appimagetool
+            chmod +x /usr/local/bin/appimagetool
+          fi
+
+      - name: Package ${{ matrix.format }}
+        env:
+          VERSION: ${{ needs.preflight.outputs.version }}
+        run: |
+          BUNDLE_DIR="build/linux/x64/release/bundle"
+          PKG_DIR="packaging/${{ matrix.format }}"
+          mkdir -p "$PKG_DIR"
+
+          if [ "${{ matrix.format }}" = "deb" ]; then
+            mkdir -p "$PKG_DIR/DEBIAN"
+            mkdir -p "$PKG_DIR/usr/bin"
+            mkdir -p "$PKG_DIR/usr/lib/shellvault"
+            mkdir -p "$PKG_DIR/usr/share/applications"
+
+            # Copy bundle
+            cp "$BUNDLE_DIR/shellvault" "$PKG_DIR/usr/bin/"
+            cp -r "$BUNDLE_DIR/lib/"* "$PKG_DIR/usr/lib/shellvault/"
+            cp -r "$BUNDLE_DIR/data" "$PKG_DIR/usr/lib/shellvault/"
+
+            # Wrapper script so libs are found
+            mv "$PKG_DIR/usr/bin/shellvault" "$PKG_DIR/usr/lib/shellvault/shellvault"
+            cat > "$PKG_DIR/usr/bin/shellvault" <<'WRAPPER'
+          #!/bin/sh
+          exec /usr/lib/shellvault/shellvault "$@"
+          WRAPPER
+            chmod +x "$PKG_DIR/usr/bin/shellvault"
+
+            # Set RPATH-compatible LD_LIBRARY_PATH
+            cat > "$PKG_DIR/usr/bin/shellvault" <<'WRAPPER'
+          #!/bin/sh
+          export LD_LIBRARY_PATH=/usr/lib/shellvault:$LD_LIBRARY_PATH
+          exec /usr/lib/shellvault/shellvault "$@"
+          WRAPPER
+            chmod +x "$PKG_DIR/usr/bin/shellvault"
+
+            # Desktop entry
+            cat > "$PKG_DIR/usr/share/applications/shellvault.desktop" <<DESKTOP
+          [Desktop Entry]
+          Type=Application
+          Name=ShellVault
+          Comment=Secure SSH Client
+          Exec=shellvault
+          Icon=shellvault
+          Terminal=false
+          Categories=Network;RemoteAccess;
+          DESKTOP
+
+            # Control file
+            cat > "$PKG_DIR/DEBIAN/control" <<CTRL
+          Package: shellvault
+          Version: $VERSION
+          Section: net
+          Priority: optional
+          Architecture: amd64
+          Depends: libgtk-3-0, libsecret-1-0
+          Maintainer: Kiefer Networks <support@sshvault.app>
+          Description: ShellVault — Secure, Self-Hosted SSH Client
+           Zero-knowledge encrypted SSH credential manager with cloud sync.
+          CTRL
+
+            dpkg-deb --build "$PKG_DIR" "shellvault_${VERSION}_amd64.deb"
+
+          elif [ "${{ matrix.format }}" = "rpm" ]; then
+            mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+            # Create tarball
+            TAR_DIR="shellvault-$VERSION"
+            mkdir -p "$TAR_DIR"
+            cp -r "$BUNDLE_DIR"/* "$TAR_DIR/"
+            tar czf "rpmbuild/SOURCES/shellvault-$VERSION.tar.gz" "$TAR_DIR"
+            rm -rf "$TAR_DIR"
+
+            cat > rpmbuild/SPECS/shellvault.spec <<SPEC
+          Name:     shellvault
+          Version:  $VERSION
+          Release:  1
+          Summary:  Secure, Self-Hosted SSH Client
+          License:  Proprietary
+          URL:      https://sshvault.app
+          Source0:  shellvault-%{version}.tar.gz
+
+          Requires: gtk3, libsecret
+
+          %description
+          Zero-knowledge encrypted SSH credential manager with cloud sync.
+
+          %prep
+          %setup -q
+
+          %install
+          mkdir -p %{buildroot}/usr/lib/shellvault
+          mkdir -p %{buildroot}/usr/bin
+          mkdir -p %{buildroot}/usr/share/applications
+
+          cp -r * %{buildroot}/usr/lib/shellvault/
+
+          cat > %{buildroot}/usr/bin/shellvault <<'WRAPPER'
+          #!/bin/sh
+          export LD_LIBRARY_PATH=/usr/lib/shellvault:"\$LD_LIBRARY_PATH"
+          exec /usr/lib/shellvault/shellvault "\$@"
+          WRAPPER
+          chmod +x %{buildroot}/usr/bin/shellvault
+
+          cat > %{buildroot}/usr/share/applications/shellvault.desktop <<'DESK'
+          [Desktop Entry]
+          Type=Application
+          Name=ShellVault
+          Comment=Secure SSH Client
+          Exec=shellvault
+          Icon=shellvault
+          Terminal=false
+          Categories=Network;RemoteAccess;
+          DESK
+
+          %files
+          /usr/lib/shellvault
+          /usr/bin/shellvault
+          /usr/share/applications/shellvault.desktop
+          SPEC
+
+            rpmbuild --define "_topdir $(pwd)/rpmbuild" -bb rpmbuild/SPECS/shellvault.spec
+            cp rpmbuild/RPMS/x86_64/*.rpm "shellvault-${VERSION}.x86_64.rpm"
+
+          elif [ "${{ matrix.format }}" = "appimage" ]; then
+            APP_DIR="ShellVault.AppDir"
+            mkdir -p "$APP_DIR/usr/bin" "$APP_DIR/usr/lib" "$APP_DIR/usr/share/applications"
+
+            cp -r "$BUNDLE_DIR"/* "$APP_DIR/usr/bin/"
+            cp -r "$BUNDLE_DIR/lib/"* "$APP_DIR/usr/lib/" 2>/dev/null || true
+
+            # AppRun
+            cat > "$APP_DIR/AppRun" <<'APPRUN'
+          #!/bin/sh
+          SELF=$(readlink -f "$0")
+          HERE=${SELF%/*}
+          export LD_LIBRARY_PATH="${HERE}/usr/lib:${HERE}/usr/bin/lib:${LD_LIBRARY_PATH}"
+          exec "${HERE}/usr/bin/shellvault" "$@"
+          APPRUN
+            chmod +x "$APP_DIR/AppRun"
+
+            # Desktop entry
+            cat > "$APP_DIR/shellvault.desktop" <<DESKTOP
+          [Desktop Entry]
+          Type=Application
+          Name=ShellVault
+          Comment=Secure SSH Client
+          Exec=shellvault
+          Icon=shellvault
+          Terminal=false
+          Categories=Network;RemoteAccess;
+          DESKTOP
+
+            # Placeholder icon (required by appimagetool)
+            touch "$APP_DIR/shellvault.png"
+
+            ARCH=x86_64 appimagetool "$APP_DIR" "ShellVault-${VERSION}-x86_64.AppImage"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.format }}
+          path: |
+            *.deb
+            *.rpm
+            *.AppImage
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Windows (MSIX)
+  # ─────────────────────────────────────────────────────────────────────────
+  build-windows:
+    name: Windows (MSIX)
+    needs: preflight
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Build Windows
+        run: flutter build windows --release
+
+      - name: Create MSIX
+        run: |
+          dart pub global activate msix
+          dart pub global run msix:create --build-windows false
+        continue-on-error: true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-msix
+          path: |
+            build/windows/x64/runner/Release/**
+            build/windows/x64/*.msix
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # GitHub Release
+  # ─────────────────────────────────────────────────────────────────────────
+  release:
+    name: Create GitHub Release
+    needs: [preflight, build-android, build-linux, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: List artifacts
+        run: find artifacts/ -type f | head -50
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ShellVault ${{ needs.preflight.outputs.version }}
+          draft: true
+          generate_release_notes: true
+          files: |
+            artifacts/android-apk/*.apk
+            artifacts/linux-deb/*.deb
+            artifacts/linux-rpm/*.rpm
+            artifacts/linux-appimage/*.AppImage
+            artifacts/windows-msix/*.msix

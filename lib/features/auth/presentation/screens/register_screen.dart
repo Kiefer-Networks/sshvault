@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -72,7 +73,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: Column(
                         children: [
                           Text(
-                            l10n.authPricingInfo,
+                            l10n.authPricingInfo(
+                              isNativeIapPlatform ? '€12.99' : '€9.99',
+                            ),
                             textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme

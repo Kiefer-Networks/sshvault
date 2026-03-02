@@ -51,5 +51,7 @@ final class AuthFailure extends Failure {
 
 final class SyncFailure extends Failure {
   final int? conflictVersion;
-  const SyncFailure(super.message, {this.conflictVersion, super.cause});
+  final int? statusCode;
+  const SyncFailure(super.message,
+      {this.conflictVersion, this.statusCode, super.cause});
 }

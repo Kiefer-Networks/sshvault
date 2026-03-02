@@ -3,6 +3,7 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
+import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
@@ -383,24 +384,36 @@ class _SyncStatusIcon extends ConsumerWidget {
     if (!isAuthenticated) return const SizedBox.shrink();
 
     final syncState = ref.watch(syncProvider);
+    final billingActive =
+        ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
     final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
     final hasError = syncState.hasError;
 
+    final IconData icon;
+    final Color color;
+    if (isSyncing) {
+      return const Padding(
+        padding: EdgeInsets.only(left: 8),
+        child: SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      );
+    } else if (hasError) {
+      icon = Icons.cloud_off;
+      color = Theme.of(context).colorScheme.error;
+    } else if (billingActive && syncState.valueOrNull == SyncStatus.success) {
+      icon = Icons.cloud_done_outlined;
+      color = Theme.of(context).colorScheme.primary;
+    } else {
+      icon = Icons.cloud_outlined;
+      color = Theme.of(context).colorScheme.onSurfaceVariant;
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: 8),
-      child: isSyncing
-          ? const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : Icon(
-              hasError ? Icons.cloud_off : Icons.cloud_done_outlined,
-              size: 20,
-              color: hasError
-                  ? Theme.of(context).colorScheme.error
-                  : Theme.of(context).colorScheme.primary,
-            ),
+      child: Icon(icon, size: 20, color: color),
     );
   }
 }
@@ -413,16 +426,25 @@ class _SyncRailButton extends ConsumerWidget {
     final isAuthenticated =
         authState.valueOrNull == AuthStatus.authenticated;
     final syncState = ref.watch(syncProvider);
+    final billingActive =
+        ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
     final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
     final hasError = syncState.hasError;
 
     final IconData icon;
+    final Color? color;
     if (!isAuthenticated) {
       icon = Icons.cloud_off_outlined;
+      color = null;
     } else if (hasError) {
       icon = Icons.cloud_off;
-    } else {
+      color = Theme.of(context).colorScheme.error;
+    } else if (billingActive && syncState.valueOrNull == SyncStatus.success) {
       icon = Icons.cloud_done_outlined;
+      color = null;
+    } else {
+      icon = Icons.cloud_outlined;
+      color = null;
     }
 
     return IconButton(
@@ -432,12 +454,7 @@ class _SyncRailButton extends ConsumerWidget {
               height: 24,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Icon(
-              icon,
-              color: hasError
-                  ? Theme.of(context).colorScheme.error
-                  : null,
-            ),
+          : Icon(icon, color: color),
       tooltip: l10n.settingsSectionSync,
       onPressed: () {
         if (isAuthenticated) {
@@ -559,6 +576,8 @@ class _SyncDrawerItem extends ConsumerWidget {
     final isAuthenticated =
         authState.valueOrNull == AuthStatus.authenticated;
     final syncState = ref.watch(syncProvider);
+    final billingActive =
+        ref.watch(billingStatusProvider).valueOrNull?.active ?? false;
     final isSyncing = syncState.valueOrNull == SyncStatus.syncing;
     final hasError = syncState.hasError;
 
@@ -569,8 +588,10 @@ class _SyncDrawerItem extends ConsumerWidget {
       icon = Icons.cloud_sync_outlined;
     } else if (hasError) {
       icon = Icons.cloud_off;
-    } else {
+    } else if (billingActive && syncState.valueOrNull == SyncStatus.success) {
       icon = Icons.cloud_done_outlined;
+    } else {
+      icon = Icons.cloud_outlined;
     }
 
     final subtitle = !isAuthenticated
@@ -579,7 +600,9 @@ class _SyncDrawerItem extends ConsumerWidget {
             ? l10n.syncSyncing
             : hasError
                 ? l10n.syncError
-                : l10n.syncSuccess;
+                : billingActive
+                    ? l10n.syncSuccess
+                    : l10n.accountPaymentInactive;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),

@@ -1100,7 +1100,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.';
 
   @override
-  String get authPricingInfo => 'Cloud sync for all your devices — €9.99/year';
+  String authPricingInfo(String price) {
+    return 'Cloud sync for all your devices — $price/year';
+  }
 
   @override
   String get authPricingHint =>
@@ -1193,6 +1195,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncVaultVersion => 'Vault Version';
 
   @override
+  String get syncTitle => 'Sync';
+
+  @override
+  String accountActivateSyncPrice(String price) {
+    return 'Activate Sync — $price/year';
+  }
+
+  @override
+  String get accountStoreFeeNote =>
+      'Price on mobile & macOS includes App Store / Play Store fees.';
+
+  @override
   String get settingsSectionSync => 'Synchronization';
 
   @override
@@ -1232,7 +1246,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountPaymentInactive => 'Sync not yet purchased';
 
   @override
-  String get accountUnlockSync => 'Unlock Sync';
+  String get accountUnlockSync => 'Activate Sync';
 
   @override
   String get accountDevices => 'Devices';

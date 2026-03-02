@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/app_shell.dart';
-import 'package:shellvault/features/account/presentation/screens/account_info_screen.dart';
 import 'package:shellvault/features/account/presentation/screens/server_config_screen.dart';
 import 'package:shellvault/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:shellvault/features/auth/presentation/screens/login_screen.dart';
@@ -186,7 +185,7 @@ abstract final class AppRouter {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/account',
-        builder: (context, state) => const AccountInfoScreen(),
+        redirect: (_, _) => '/sync-settings',
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
