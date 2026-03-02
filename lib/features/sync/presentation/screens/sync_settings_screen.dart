@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -22,13 +23,13 @@ class SyncSettingsScreen extends ConsumerStatefulWidget {
 
 class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   late final AppLifecycleListener _lifecycleListener;
+  Timer? _billingPollTimer;
 
   @override
   void initState() {
     super.initState();
     _lifecycleListener = AppLifecycleListener(
       onResume: () {
-        // Refresh billing status when returning from browser (Stripe checkout)
         ref.invalidate(billingStatusProvider);
       },
     );
@@ -36,8 +37,24 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
 
   @override
   void dispose() {
+    _billingPollTimer?.cancel();
     _lifecycleListener.dispose();
     super.dispose();
+  }
+
+  void _startBillingPoll() {
+    _billingPollTimer?.cancel();
+    var attempts = 0;
+    _billingPollTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      attempts++;
+      ref.invalidate(billingStatusProvider);
+      // Stop after 2 minutes (24 attempts × 5s)
+      final billing = ref.read(billingStatusProvider).valueOrNull;
+      if ((billing?.active ?? false) || attempts >= 24) {
+        timer.cancel();
+        _billingPollTimer = null;
+      }
+    });
   }
 
   @override
@@ -368,6 +385,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         final uri = Uri.tryParse(result.value);
         if (uri != null) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
+          _startBillingPoll();
         }
       }
     } catch (e) {
