@@ -93,7 +93,9 @@ class ExportImportScreen extends ConsumerWidget {
                 Text(
                   l10n.importSupportedFormats,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
+                    color: theme.colorScheme.onSurface.withAlpha(
+                      AppConstants.alpha102,
+                    ),
                   ),
                 ),
               ],

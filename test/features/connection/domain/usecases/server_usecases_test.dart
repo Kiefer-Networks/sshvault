@@ -38,8 +38,9 @@ void main() {
 
   group('ServerUseCases', () {
     test('getServers delegates to repository', () async {
-      when(() => mockRepo.getServers())
-          .thenAnswer((_) async => Success([validServer]));
+      when(
+        () => mockRepo.getServers(),
+      ).thenAnswer((_) async => Success([validServer]));
 
       final result = await sut.getServers();
 
@@ -86,8 +87,9 @@ void main() {
     });
 
     test('createServer succeeds with valid data', () async {
-      when(() => mockRepo.createServer(any(), any()))
-          .thenAnswer((_) async => Success(validServer));
+      when(
+        () => mockRepo.createServer(any(), any()),
+      ).thenAnswer((_) async => Success(validServer));
 
       final result = await sut.createServer(validServer, null);
 
@@ -105,8 +107,9 @@ void main() {
     });
 
     test('deleteServer delegates to repository', () async {
-      when(() => mockRepo.deleteServer('1'))
-          .thenAnswer((_) async => const Success(null));
+      when(
+        () => mockRepo.deleteServer('1'),
+      ).thenAnswer((_) async => const Success(null));
 
       final result = await sut.deleteServer('1');
 

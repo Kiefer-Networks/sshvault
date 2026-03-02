@@ -28,7 +28,9 @@ abstract final class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: colorScheme.outlineVariant.withAlpha(AppConstants.alpha77)),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withAlpha(AppConstants.alpha77),
+          ),
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -39,14 +41,20 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceContainerHighest.withAlpha(AppConstants.alpha77),
+        fillColor: colorScheme.surfaceContainerHighest.withAlpha(
+          AppConstants.alpha77,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withAlpha(AppConstants.alpha77)),
+          borderSide: BorderSide(
+            color: colorScheme.outline.withAlpha(AppConstants.alpha77),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withAlpha(AppConstants.alpha77)),
+          borderSide: BorderSide(
+            color: colorScheme.outline.withAlpha(AppConstants.alpha77),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -143,11 +151,15 @@ abstract final class AppTheme {
         fillColor: Colors.white.withAlpha(AppConstants.alpha8),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withAlpha(AppConstants.alpha26)),
+          borderSide: BorderSide(
+            color: Colors.white.withAlpha(AppConstants.alpha26),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withAlpha(AppConstants.alpha26)),
+          borderSide: BorderSide(
+            color: Colors.white.withAlpha(AppConstants.alpha26),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

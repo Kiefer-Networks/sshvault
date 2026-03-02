@@ -232,7 +232,9 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
             subtitle: Text(
               l10n.groupServerCount(group.serverCount),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                color: theme.colorScheme.onSurface.withAlpha(
+                  AppConstants.alpha153,
+                ),
               ),
             ),
             trailing: Row(

@@ -22,7 +22,9 @@ class SessionTabBar extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface.withAlpha(AppConstants.alpha204),
         border: Border(
-          bottom: BorderSide(color: theme.colorScheme.outline.withAlpha(AppConstants.alpha51)),
+          bottom: BorderSide(
+            color: theme.colorScheme.outline.withAlpha(AppConstants.alpha51),
+          ),
         ),
       ),
       child: ListView.builder(
@@ -43,7 +45,9 @@ class SessionTabBar extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: isActive
-                    ? theme.colorScheme.primaryContainer.withAlpha(AppConstants.alpha153)
+                    ? theme.colorScheme.primaryContainer.withAlpha(
+                        AppConstants.alpha153,
+                      )
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -61,7 +65,9 @@ class SessionTabBar extends ConsumerWidget {
                             : FontWeight.normal,
                         color: isActive
                             ? theme.colorScheme.onPrimaryContainer
-                            : theme.colorScheme.onSurface.withAlpha(AppConstants.alpha179),
+                            : theme.colorScheme.onSurface.withAlpha(
+                                AppConstants.alpha179,
+                              ),
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -137,7 +143,9 @@ class _CloseButton extends StatelessWidget {
         child: Icon(
           Icons.close,
           size: 14,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(AppConstants.alpha128),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withAlpha(AppConstants.alpha128),
         ),
       ),
     );

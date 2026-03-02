@@ -44,14 +44,18 @@ class IconPickerField extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   border: isSelected
                       ? Border.all(color: Color(accentColor), width: 2)
-                      : Border.all(color: Colors.white.withAlpha(AppConstants.alpha13)),
+                      : Border.all(
+                          color: Colors.white.withAlpha(AppConstants.alpha13),
+                        ),
                 ),
                 child: Icon(
                   si.icon,
                   size: 20,
                   color: isSelected
                       ? Color(accentColor)
-                      : theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
+                      : theme.colorScheme.onSurface.withAlpha(
+                          AppConstants.alpha128,
+                        ),
                 ),
               ),
             );

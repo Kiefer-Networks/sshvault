@@ -666,7 +666,9 @@ class _DrawerItem extends StatelessWidget {
           ),
         ),
         selected: selected,
-        selectedTileColor: theme.colorScheme.primary.withAlpha(AppConstants.alpha26),
+        selectedTileColor: theme.colorScheme.primary.withAlpha(
+          AppConstants.alpha26,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         onTap: onTap,
       ),

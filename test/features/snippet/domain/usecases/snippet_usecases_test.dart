@@ -34,8 +34,9 @@ void main() {
 
   group('SnippetUseCases', () {
     test('getSnippets delegates to repository', () async {
-      when(() => mockRepo.getSnippets())
-          .thenAnswer((_) async => Success([validSnippet]));
+      when(
+        () => mockRepo.getSnippets(),
+      ).thenAnswer((_) async => Success([validSnippet]));
 
       final result = await sut.getSnippets();
 
@@ -64,8 +65,9 @@ void main() {
     });
 
     test('createSnippet succeeds with valid data', () async {
-      when(() => mockRepo.createSnippet(any()))
-          .thenAnswer((_) async => Success(validSnippet));
+      when(
+        () => mockRepo.createSnippet(any()),
+      ).thenAnswer((_) async => Success(validSnippet));
 
       final result = await sut.createSnippet(validSnippet);
 
@@ -92,8 +94,9 @@ void main() {
     });
 
     test('deleteSnippet delegates to repository', () async {
-      when(() => mockRepo.deleteSnippet('1'))
-          .thenAnswer((_) async => const Success(null));
+      when(
+        () => mockRepo.deleteSnippet('1'),
+      ).thenAnswer((_) async => const Success(null));
 
       final result = await sut.deleteSnippet('1');
 
@@ -102,8 +105,9 @@ void main() {
     });
 
     test('getSnippetsByGroupId delegates to repository', () async {
-      when(() => mockRepo.getSnippetsByGroupId('g1'))
-          .thenAnswer((_) async => Success([validSnippet]));
+      when(
+        () => mockRepo.getSnippetsByGroupId('g1'),
+      ).thenAnswer((_) async => Success([validSnippet]));
 
       final result = await sut.getSnippetsByGroupId('g1');
 

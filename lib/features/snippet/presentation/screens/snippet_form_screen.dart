@@ -148,7 +148,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
               keyboardType: TextInputType.multiline,
               maxLines: 10,
               minLines: 5,
-              style: const TextStyle(fontFamily: AppConstants.monospaceFontFamily),
+              style: const TextStyle(
+                fontFamily: AppConstants.monospaceFontFamily,
+              ),
               validator: (v) => (v == null || v.trim().isEmpty)
                   ? l10n.snippetFormContentRequired
                   : null,

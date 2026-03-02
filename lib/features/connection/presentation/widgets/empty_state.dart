@@ -27,13 +27,17 @@ class EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 72,
-              color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha51),
+              color: theme.colorScheme.onSurface.withAlpha(
+                AppConstants.alpha51,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
               title,
               style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha179),
+                color: theme.colorScheme.onSurface.withAlpha(
+                  AppConstants.alpha179,
+                ),
               ),
               textAlign: TextAlign.center,
             ),
@@ -41,7 +45,9 @@ class EmptyState extends StatelessWidget {
             Text(
               subtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
+                color: theme.colorScheme.onSurface.withAlpha(
+                  AppConstants.alpha102,
+                ),
               ),
               textAlign: TextAlign.center,
             ),

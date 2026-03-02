@@ -35,7 +35,7 @@ class SyncUseCases {
     _log.debug(
       _tag,
       'Export completed (${exportResult.value.length} chars) '
-          'in ${sw.elapsedMilliseconds}ms',
+      'in ${sw.elapsedMilliseconds}ms',
     );
 
     // 2. Encrypt with sync password
@@ -44,7 +44,10 @@ class SyncUseCases {
       syncPassword,
     );
     if (envelopeResult.isFailure) {
-      _log.error(_tag, 'Push failed: encryption error — ${envelopeResult.failure}');
+      _log.error(
+        _tag,
+        'Push failed: encryption error — ${envelopeResult.failure}',
+      );
       return Err(envelopeResult.failure);
     }
 
@@ -101,7 +104,10 @@ class SyncUseCases {
 
     final vault = vaultResult.value;
     if (vault.blob == null || vault.blob!.isEmpty) {
-      _log.info(_tag, 'Pull completed: server vault is empty (version=${vault.version})');
+      _log.info(
+        _tag,
+        'Pull completed: server vault is empty (version=${vault.version})',
+      );
       return Success(vault.version); // Nothing to pull
     }
     _log.debug(
@@ -136,7 +142,10 @@ class SyncUseCases {
       syncPassword,
     );
     if (decryptResult.isFailure) {
-      _log.error(_tag, 'Pull failed: decryption error — ${decryptResult.failure}');
+      _log.error(
+        _tag,
+        'Pull failed: decryption error — ${decryptResult.failure}',
+      );
       return Err(decryptResult.failure);
     }
     _log.debug(
@@ -169,13 +178,19 @@ class SyncUseCases {
 
     final vaultResult = await _syncRepo.getVault();
     if (vaultResult.isFailure) {
-      _log.error(_tag, 'Password validation failed: fetch error — ${vaultResult.failure}');
+      _log.error(
+        _tag,
+        'Password validation failed: fetch error — ${vaultResult.failure}',
+      );
       return Err(vaultResult.failure);
     }
 
     final vault = vaultResult.value;
     if (vault.blob == null || vault.blob!.isEmpty) {
-      _log.info(_tag, 'No vault on server — any password is valid (new account)');
+      _log.info(
+        _tag,
+        'No vault on server — any password is valid (new account)',
+      );
       return const Success(true);
     }
 
@@ -210,7 +225,10 @@ class SyncUseCases {
     }
 
     final remoteVersion = pullResult.value;
-    _log.debug(_tag, 'Pull phase done (remoteVersion=$remoteVersion), starting push');
+    _log.debug(
+      _tag,
+      'Pull phase done (remoteVersion=$remoteVersion), starting push',
+    );
 
     // 2. Push merged local data back to server
     final pushResult = await pushWithRetry(syncPassword, remoteVersion);

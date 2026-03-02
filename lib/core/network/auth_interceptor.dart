@@ -67,11 +67,17 @@ class AuthInterceptor extends Interceptor {
     // Skip refresh for auth endpoints
     if (err.requestOptions.path.contains('/auth/refresh') ||
         err.requestOptions.path.contains('/auth/login')) {
-      _log.warning(_tag, '401 on auth endpoint ${err.requestOptions.path} — not refreshing');
+      _log.warning(
+        _tag,
+        '401 on auth endpoint ${err.requestOptions.path} — not refreshing',
+      );
       return handler.next(err);
     }
 
-    _log.info(_tag, '401 on ${err.requestOptions.path} — attempting token refresh');
+    _log.info(
+      _tag,
+      '401 on ${err.requestOptions.path} — attempting token refresh',
+    );
 
     // If another refresh is already in progress, wait for it and retry.
     if (_isRefreshing) {

@@ -65,7 +65,9 @@ class SnippetDetailScreen extends ConsumerWidget {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withAlpha(AppConstants.alpha38),
+                          color: theme.colorScheme.primary.withAlpha(
+                            AppConstants.alpha38,
+                          ),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
@@ -185,7 +187,9 @@ class SnippetDetailScreen extends ConsumerWidget {
                         Text(
                           snippet.description,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha179),
+                            color: theme.colorScheme.onSurface.withAlpha(
+                              AppConstants.alpha179,
+                            ),
                           ),
                         ),
                       ],
@@ -214,7 +218,8 @@ class SnippetDetailScreen extends ConsumerWidget {
                                 Text(
                                   '{{${v.name}}}',
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontFamily: AppConstants.monospaceFontFamily,
+                                    fontFamily:
+                                        AppConstants.monospaceFontFamily,
                                     color: theme.colorScheme.primary,
                                   ),
                                 ),

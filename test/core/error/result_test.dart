@@ -33,9 +33,7 @@ void main() {
 
     test('flatMapAsync transforms data', () async {
       const result = Success(5);
-      final mapped = await result.flatMapAsync(
-        (d) async => Success(d * 3),
-      );
+      final mapped = await result.flatMapAsync((d) async => Success(d * 3));
       expect(mapped.isSuccess, isTrue);
       expect(mapped.value, 15);
     });
@@ -80,9 +78,7 @@ void main() {
 
     test('flatMapAsync preserves error', () async {
       const result = Err<int>(CryptoFailure('key error'));
-      final mapped = await result.flatMapAsync(
-        (d) async => Success(d * 2),
-      );
+      final mapped = await result.flatMapAsync((d) async => Success(d * 2));
       expect(mapped.isFailure, isTrue);
       expect(mapped.failure.message, 'key error');
     });
@@ -102,11 +98,7 @@ void main() {
     });
 
     test('SyncFailure has conflictVersion and statusCode', () {
-      const f = SyncFailure(
-        'conflict',
-        conflictVersion: 5,
-        statusCode: 409,
-      );
+      const f = SyncFailure('conflict', conflictVersion: 5, statusCode: 409);
       expect(f.conflictVersion, 5);
       expect(f.statusCode, 409);
     });

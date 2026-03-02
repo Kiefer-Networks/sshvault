@@ -44,7 +44,9 @@ class TerminalThemePicker extends ConsumerWidget {
                         : BorderSide.none,
                   ),
                   tileColor: isSelected
-                      ? theme.colorScheme.primaryContainer.withAlpha(AppConstants.alpha51)
+                      ? theme.colorScheme.primaryContainer.withAlpha(
+                          AppConstants.alpha51,
+                        )
                       : null,
                   leading: _ColorSwatchPreview(
                     background: preset.background,

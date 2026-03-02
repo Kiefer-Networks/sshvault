@@ -105,13 +105,17 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: theme.colorScheme.outline.withAlpha(AppConstants.alpha51),
+                    color: theme.colorScheme.outline.withAlpha(
+                      AppConstants.alpha51,
+                    ),
                   ),
                 ),
                 child: Text(
                   l10n.variableFillPreview,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
+                    color: theme.colorScheme.onSurface.withAlpha(
+                      AppConstants.alpha102,
+                    ),
                   ),
                 ),
               ),

@@ -32,8 +32,9 @@ void main() {
 
   group('GroupUseCases', () {
     test('getGroups delegates to repository', () async {
-      when(() => mockRepo.getGroups())
-          .thenAnswer((_) async => Success([validGroup]));
+      when(
+        () => mockRepo.getGroups(),
+      ).thenAnswer((_) async => Success([validGroup]));
 
       final result = await sut.getGroups();
 
@@ -62,8 +63,9 @@ void main() {
     });
 
     test('createGroup succeeds with valid name', () async {
-      when(() => mockRepo.createGroup(any()))
-          .thenAnswer((_) async => Success(validGroup));
+      when(
+        () => mockRepo.createGroup(any()),
+      ).thenAnswer((_) async => Success(validGroup));
 
       final result = await sut.createGroup(validGroup);
 
@@ -81,8 +83,9 @@ void main() {
     });
 
     test('deleteGroup delegates to repository', () async {
-      when(() => mockRepo.deleteGroup('1'))
-          .thenAnswer((_) async => const Success(null));
+      when(
+        () => mockRepo.deleteGroup('1'),
+      ).thenAnswer((_) async => const Success(null));
 
       final result = await sut.deleteGroup('1');
 
@@ -91,8 +94,9 @@ void main() {
     });
 
     test('getGroupTree delegates to repository', () async {
-      when(() => mockRepo.getGroupTree())
-          .thenAnswer((_) async => Success([validGroup]));
+      when(
+        () => mockRepo.getGroupTree(),
+      ).thenAnswer((_) async => Success([validGroup]));
 
       final result = await sut.getGroupTree();
 

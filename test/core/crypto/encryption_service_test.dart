@@ -28,36 +28,42 @@ void main() {
 
     test('wrong password fails decryption', () async {
       const plaintext = 'secret data';
-      final encrypted =
-          await sut.encryptForExport(plaintext, 'correct-password');
+      final encrypted = await sut.encryptForExport(
+        plaintext,
+        'correct-password',
+      );
       expect(encrypted.isSuccess, isTrue);
 
-      final decrypted =
-          await sut.decryptFromExport(encrypted.value, 'wrong-password');
+      final decrypted = await sut.decryptFromExport(
+        encrypted.value,
+        'wrong-password',
+      );
       expect(decrypted.isFailure, isTrue);
     });
 
-    test('same plaintext produces different ciphertext (random nonce/salt)',
-        () async {
-      const password = 'password123';
-      const plaintext = 'same-data';
+    test(
+      'same plaintext produces different ciphertext (random nonce/salt)',
+      () async {
+        const password = 'password123';
+        const plaintext = 'same-data';
 
-      final enc1 = await sut.encryptForExport(plaintext, password);
-      final enc2 = await sut.encryptForExport(plaintext, password);
+        final enc1 = await sut.encryptForExport(plaintext, password);
+        final enc2 = await sut.encryptForExport(plaintext, password);
 
-      expect(enc1.isSuccess, isTrue);
-      expect(enc2.isSuccess, isTrue);
+        expect(enc1.isSuccess, isTrue);
+        expect(enc2.isSuccess, isTrue);
 
-      // Salts should differ (each call generates random salt)
-      expect(enc1.value.salt, isNot(equals(enc2.value.salt)));
-      // Nonces should differ
-      expect(enc1.value.nonce, isNot(equals(enc2.value.nonce)));
-      // Ciphertext should differ
-      expect(
-        enc1.value.encryptedData,
-        isNot(equals(enc2.value.encryptedData)),
-      );
-    });
+        // Salts should differ (each call generates random salt)
+        expect(enc1.value.salt, isNot(equals(enc2.value.salt)));
+        // Nonces should differ
+        expect(enc1.value.nonce, isNot(equals(enc2.value.nonce)));
+        // Ciphertext should differ
+        expect(
+          enc1.value.encryptedData,
+          isNot(equals(enc2.value.encryptedData)),
+        );
+      },
+    );
 
     test('tampered checksum is detected on decryption', () async {
       const password = 'password123';
@@ -88,8 +94,7 @@ void main() {
         version: env.version,
         salt: env.salt,
         nonce: env.nonce,
-        encryptedData:
-            'AAAA${env.encryptedData.substring(4)}', // Corrupt data
+        encryptedData: 'AAAA${env.encryptedData.substring(4)}', // Corrupt data
         checksum: env.checksum,
       );
 
@@ -120,8 +125,7 @@ void main() {
       final encrypted = await sut.encryptForExport(plaintext, password);
       expect(encrypted.isSuccess, isTrue);
 
-      final decrypted =
-          await sut.decryptFromExport(encrypted.value, password);
+      final decrypted = await sut.decryptFromExport(encrypted.value, password);
       expect(decrypted.isSuccess, isTrue);
       expect(decrypted.value, equals(plaintext));
     });

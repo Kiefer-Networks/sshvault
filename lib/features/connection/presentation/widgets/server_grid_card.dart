@@ -67,7 +67,9 @@ class ServerGridCard extends StatelessWidget {
             Text(
               '${server.username}@${server.hostname}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
+                color: theme.colorScheme.onSurface.withAlpha(
+                  AppConstants.alpha128,
+                ),
                 fontFamily: AppConstants.monospaceFontFamily,
                 fontSize: 11,
               ),
@@ -105,7 +107,9 @@ class ServerGridCard extends StatelessWidget {
                       icon: Icon(
                         Icons.info_outlined,
                         size: 18,
-                        color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                        color: theme.colorScheme.onSurface.withAlpha(
+                          AppConstants.alpha153,
+                        ),
                       ),
                       onPressed: onDetail,
                       tooltip: l10n.serverDetails,
@@ -121,7 +125,9 @@ class ServerGridCard extends StatelessWidget {
                       icon: Icon(
                         Icons.edit_outlined,
                         size: 18,
-                        color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                        color: theme.colorScheme.onSurface.withAlpha(
+                          AppConstants.alpha153,
+                        ),
                       ),
                       onPressed: onEdit,
                       tooltip: l10n.edit,

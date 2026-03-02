@@ -26,7 +26,9 @@ class GroupChip extends StatelessWidget {
         color: Color(group.color),
       ),
       onSelected: onTap != null ? (_) => onTap!() : null,
-      side: BorderSide(color: Color(group.color).withAlpha(AppConstants.alpha77)),
+      side: BorderSide(
+        color: Color(group.color).withAlpha(AppConstants.alpha77),
+      ),
     );
   }
 }

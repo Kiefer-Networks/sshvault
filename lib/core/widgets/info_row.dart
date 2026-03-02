@@ -37,7 +37,9 @@ class InfoRow extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
+              color: theme.colorScheme.onSurface.withAlpha(
+                AppConstants.alpha128,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -57,7 +59,9 @@ class InfoRow extends StatelessWidget {
               child: Icon(
                 Icons.copy,
                 size: 16,
-                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
+                color: theme.colorScheme.onSurface.withAlpha(
+                  AppConstants.alpha102,
+                ),
               ),
             ),
           ],

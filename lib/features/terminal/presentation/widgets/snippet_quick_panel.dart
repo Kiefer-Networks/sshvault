@@ -116,7 +116,9 @@ class _SnippetQuickPanelContentState
                         ? l10n.snippetQuickPanelEmpty
                         : l10n.snippetQuickPanelNoMatch,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
+                      color: theme.colorScheme.onSurface.withAlpha(
+                        AppConstants.alpha128,
+                      ),
                     ),
                   ),
                 );

@@ -87,17 +87,11 @@ void main() {
     });
 
     test('rejects too-long usernames (>32 chars)', () {
-      expect(
-        Validators.validateUsername('a' * 33),
-        isNotNull,
-      );
+      expect(Validators.validateUsername('a' * 33), isNotNull);
     });
 
     test('accepts max-length username (32 chars)', () {
-      expect(
-        Validators.validateUsername('a' * 32),
-        isNull,
-      );
+      expect(Validators.validateUsername('a' * 32), isNull);
     });
   });
 

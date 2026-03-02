@@ -104,7 +104,9 @@ class SshKeyTile extends StatelessWidget {
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: AppConstants.monospaceFontFamily,
                   fontSize: 11,
-                  color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                  color: theme.colorScheme.onSurface.withAlpha(
+                    AppConstants.alpha153,
+                  ),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -116,7 +118,9 @@ class SshKeyTile extends StatelessWidget {
                 child: Text(
                   l10n.sshKeyTileLinkedServers(sshKey.linkedServerCount),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                    color: theme.colorScheme.onSurface.withAlpha(
+                      AppConstants.alpha153,
+                    ),
                   ),
                 ),
               ),

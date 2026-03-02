@@ -19,7 +19,9 @@ void showAppAboutDialog(BuildContext context) {
       Text(
         l10n.settingsAboutDescription,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(AppConstants.alpha179),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withAlpha(AppConstants.alpha179),
         ),
         textAlign: TextAlign.center,
       ),

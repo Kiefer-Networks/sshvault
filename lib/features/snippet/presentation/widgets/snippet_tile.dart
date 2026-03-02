@@ -88,7 +88,9 @@ class SnippetTile extends StatelessWidget {
               Text(
                 snippet.description,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                  color: theme.colorScheme.onSurface.withAlpha(
+                    AppConstants.alpha153,
+                  ),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -101,7 +103,9 @@ class SnippetTile extends StatelessWidget {
                     : snippet.content,
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: AppConstants.monospaceFontFamily,
-                  color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                  color: theme.colorScheme.onSurface.withAlpha(
+                    AppConstants.alpha153,
+                  ),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

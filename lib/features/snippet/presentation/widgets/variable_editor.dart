@@ -37,7 +37,9 @@ class VariableEditor extends StatelessWidget {
           Text(
             l10n.variableEditorEmpty,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
+              color: theme.colorScheme.onSurface.withAlpha(
+                AppConstants.alpha102,
+              ),
             ),
           )
         else

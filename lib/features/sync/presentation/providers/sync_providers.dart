@@ -99,7 +99,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
       _log.warning(
         _tag,
         'Pull decryption failed — falling back to push-only '
-            'to re-encrypt server vault',
+        'to re-encrypt server vault',
       );
       result = await useCases.push(syncPassword, localVersion);
     }

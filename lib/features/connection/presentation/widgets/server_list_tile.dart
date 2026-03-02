@@ -90,7 +90,9 @@ class ServerListTile extends StatelessWidget {
             Text(
               '${server.username}@${server.hostname}:${server.port}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                color: theme.colorScheme.onSurface.withAlpha(
+                  AppConstants.alpha153,
+                ),
                 fontFamily: AppConstants.monospaceFontFamily,
               ),
               overflow: TextOverflow.ellipsis,

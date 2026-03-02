@@ -97,10 +97,7 @@ class EncryptionService {
     try {
       final salt = _generateSecureBytes(AppConstants.saltLength);
       final key = await _deriveKey(password, salt);
-      _log.debug(
-        'Crypto',
-        'Key derived in ${sw.elapsedMilliseconds}ms',
-      );
+      _log.debug('Crypto', 'Key derived in ${sw.elapsedMilliseconds}ms');
 
       final plaintext = Uint8List.fromList(utf8.encode(jsonData));
       final checksum = _sha256Hex(plaintext);
@@ -124,7 +121,10 @@ class EncryptionService {
       );
     } catch (e) {
       sw.stop();
-      _log.error('Crypto', 'Encryption failed after ${sw.elapsedMilliseconds}ms: $e');
+      _log.error(
+        'Crypto',
+        'Encryption failed after ${sw.elapsedMilliseconds}ms: $e',
+      );
       return Err(CryptoFailure('Encryption failed', cause: e));
     }
   }
@@ -143,10 +143,7 @@ class EncryptionService {
     try {
       final salt = envelope.saltBytes;
       final key = await _deriveKey(password, salt);
-      _log.debug(
-        'Crypto',
-        'Key derived in ${sw.elapsedMilliseconds}ms',
-      );
+      _log.debug('Crypto', 'Key derived in ${sw.elapsedMilliseconds}ms');
 
       final plaintext = _decrypt(
         envelope.encryptedBytes,
