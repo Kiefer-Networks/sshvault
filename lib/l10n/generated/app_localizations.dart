@@ -2218,11 +2218,29 @@ abstract class AppLocalizations {
   /// **'Sync Password'**
   String get syncPasswordTitle;
 
+  /// No description provided for @syncPasswordTitleCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Sync Password'**
+  String get syncPasswordTitleCreate;
+
+  /// No description provided for @syncPasswordTitleEnter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Sync Password'**
+  String get syncPasswordTitleEnter;
+
   /// No description provided for @syncPasswordDescription.
   ///
   /// In en, this message translates to:
   /// **'Set a separate password to encrypt your vault data. This password never leaves your device — the server only stores encrypted data.'**
   String get syncPasswordDescription;
+
+  /// No description provided for @syncPasswordHintEnter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the password you set when creating your account.'**
+  String get syncPasswordHintEnter;
 
   /// No description provided for @syncPasswordWarning.
   ///
@@ -2235,6 +2253,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync Password'**
   String get syncPasswordLabel;
+
+  /// No description provided for @syncPasswordWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password. Please try again.'**
+  String get syncPasswordWrong;
+
+  /// No description provided for @firstSyncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing Data Found'**
+  String get firstSyncTitle;
+
+  /// No description provided for @firstSyncMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This device has existing data and the server has a vault. How should we proceed?'**
+  String get firstSyncMessage;
+
+  /// No description provided for @firstSyncMerge.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge (server wins)'**
+  String get firstSyncMerge;
+
+  /// No description provided for @firstSyncOverwriteLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite local data'**
+  String get firstSyncOverwriteLocal;
+
+  /// No description provided for @firstSyncKeepLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep local & push'**
+  String get firstSyncKeepLocal;
+
+  /// No description provided for @firstSyncDeleteLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete local & pull'**
+  String get firstSyncDeleteLocal;
+
+  /// No description provided for @changeEncryptionPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change encryption password'**
+  String get changeEncryptionPassword;
+
+  /// No description provided for @changeEncryptionWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be logged out on all other devices.'**
+  String get changeEncryptionWarning;
+
+  /// No description provided for @changeEncryptionOldPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get changeEncryptionOldPassword;
+
+  /// No description provided for @changeEncryptionNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get changeEncryptionNewPassword;
+
+  /// No description provided for @changeEncryptionSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully.'**
+  String get changeEncryptionSuccess;
+
+  /// No description provided for @logoutAllDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out from all devices'**
+  String get logoutAllDevices;
+
+  /// No description provided for @logoutAllDevicesConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This will revoke all active sessions. You will need to log in again on all devices.'**
+  String get logoutAllDevicesConfirm;
+
+  /// No description provided for @logoutAllDevicesSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'All devices logged out.'**
+  String get logoutAllDevicesSuccess;
 
   /// No description provided for @syncSettingsTitle.
   ///

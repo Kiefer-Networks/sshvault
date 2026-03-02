@@ -49,4 +49,5 @@ abstract final class AppConstants {
   static const String syncPasswordKey = 'sv_sync_password';
   static const String userEmailKey = 'sv_user_email';
   static const String serverUrlKey = 'sv_server_url';
+  static const String deviceIdKey = 'sv_device_id';
 }

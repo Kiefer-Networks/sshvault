@@ -12,6 +12,7 @@ import 'package:shellvault/features/account/presentation/providers/account_provi
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
+import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class SyncSettingsScreen extends ConsumerStatefulWidget {
@@ -160,6 +161,16 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               leading: const Icon(Icons.lock_outlined),
               title: Text(l10n.accountChangePassword),
               onTap: () => _changePassword(l10n),
+            ),
+            ListTile(
+              leading: const Icon(Icons.vpn_key_outlined),
+              title: Text(l10n.changeEncryptionPassword),
+              onTap: () => _changeEncryptionPassword(l10n),
+            ),
+            ListTile(
+              leading: const Icon(Icons.devices_other),
+              title: Text(l10n.logoutAllDevices),
+              onTap: () => _logoutAllDevices(l10n),
             ),
             ListTile(
               leading: Icon(
@@ -531,6 +542,178 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     }
     oldPw.dispose();
     newPw.dispose();
+  }
+
+  Future<void> _changeEncryptionPassword(AppLocalizations l10n) async {
+    final oldPw = TextEditingController();
+    final newPw = TextEditingController();
+    final confirmPw = TextEditingController();
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.changeEncryptionPassword),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              l10n.changeEncryptionWarning,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: oldPw,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: l10n.changeEncryptionOldPassword,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: newPw,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: l10n.changeEncryptionNewPassword,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: confirmPw,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: l10n.authConfirmPasswordLabel,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+    if (result == true) {
+      if (oldPw.text.isEmpty || newPw.text.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.error(l10n.validatorPasswordRequired))),
+          );
+        }
+      } else if (newPw.text != confirmPw.text) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.authPasswordMismatch)),
+          );
+        }
+      } else if (newPw.text.length < 8) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                l10n.error('Password must be at least 8 characters'),
+              ),
+            ),
+          );
+        }
+      } else {
+        try {
+          final useCases = ref.read(syncUseCasesProvider);
+          final changeResult = await useCases.changeEncryptionPassword(
+            oldPw.text,
+            newPw.text,
+          );
+          changeResult.fold(
+            onSuccess: (_) async {
+              // Save new password in secure storage
+              final storage = ref.read(secureStorageProvider);
+              await storage.saveSyncPassword(newPw.text);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.changeEncryptionSuccess)),
+                );
+              }
+            },
+            onFailure: (f) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.error(f.toString()))),
+                );
+              }
+            },
+          );
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(l10n.error(e.toString()))),
+            );
+          }
+        }
+      }
+    }
+    oldPw.dispose();
+    newPw.dispose();
+    confirmPw.dispose();
+  }
+
+  Future<void> _logoutAllDevices(AppLocalizations l10n) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.logoutAllDevices),
+        content: Text(l10n.logoutAllDevicesConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.logoutAllDevices),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      try {
+        final repo = ref.read(accountRepositoryProvider);
+        final result = await repo.logoutAllDevices();
+        result.fold(
+          onSuccess: (_) async {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(l10n.logoutAllDevicesSuccess)),
+              );
+            }
+            // Logout locally as well
+            await ref.read(authProvider.notifier).logout();
+            if (mounted) context.go('/');
+          },
+          onFailure: (f) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(l10n.error(f.toString()))),
+              );
+            }
+          },
+        );
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.error(e.toString()))),
+          );
+        }
+      }
+    }
   }
 
   Future<void> _deleteAccount(AppLocalizations l10n) async {

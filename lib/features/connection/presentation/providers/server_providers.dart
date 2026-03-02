@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 
 enum ViewMode { list, grid }
 
@@ -34,6 +37,16 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     if (serverId != null) {
       ref.invalidate(serverDetailProvider(serverId));
       ref.invalidate(serverCredentialsProvider(serverId));
+    }
+    _triggerAutoSync();
+  }
+
+  void _triggerAutoSync() {
+    final authStatus = ref.read(authProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).valueOrNull;
+    if (authStatus == AuthStatus.authenticated &&
+        (settings?.autoSync ?? false)) {
+      ref.read(syncProvider.notifier).schedulePush();
     }
   }
 

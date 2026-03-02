@@ -272,9 +272,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final syncPw = syncPwResult.isSuccess ? syncPwResult.value : null;
     if (!mounted) return;
     if (syncPw == null || syncPw.isEmpty) {
-      context.go('/sync-password');
+      context.go('/sync-password?mode=enter');
     } else {
-      context.pop();
+      context.go('/');
     }
   }
 }

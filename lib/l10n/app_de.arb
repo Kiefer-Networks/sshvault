@@ -397,9 +397,30 @@
   "authBackToLogin": "Zurück zur Anmeldung",
 
   "syncPasswordTitle": "Sync-Passwort",
+  "syncPasswordTitleCreate": "Sync-Passwort festlegen",
+  "syncPasswordTitleEnter": "Sync-Passwort eingeben",
   "syncPasswordDescription": "Lege ein separates Passwort fest, um deine Vault-Daten zu verschlüsseln. Dieses Passwort verlässt niemals dein Gerät — der Server speichert nur verschlüsselte Daten.",
+  "syncPasswordHintEnter": "Gib das Passwort ein, das du bei der Kontoerstellung festgelegt hast.",
   "syncPasswordWarning": "Wenn du dieses Passwort vergisst, können deine synchronisierten Daten nicht wiederhergestellt werden. Es gibt keine Rücksetz-Option.",
   "syncPasswordLabel": "Sync-Passwort",
+  "syncPasswordWrong": "Falsches Passwort. Bitte erneut versuchen.",
+
+  "firstSyncTitle": "Vorhandene Daten gefunden",
+  "firstSyncMessage": "Dieses Gerät hat vorhandene Daten und der Server hat einen Vault. Wie sollen wir fortfahren?",
+  "firstSyncMerge": "Zusammenführen (Server hat Priorität)",
+  "firstSyncOverwriteLocal": "Lokale Daten überschreiben",
+  "firstSyncKeepLocal": "Lokal behalten & hochladen",
+  "firstSyncDeleteLocal": "Lokal löschen & herunterladen",
+
+  "changeEncryptionPassword": "Verschlüsselungspasswort ändern",
+  "changeEncryptionWarning": "Du wirst auf allen anderen Geräten abgemeldet.",
+  "changeEncryptionOldPassword": "Aktuelles Passwort",
+  "changeEncryptionNewPassword": "Neues Passwort",
+  "changeEncryptionSuccess": "Passwort erfolgreich geändert.",
+
+  "logoutAllDevices": "Von allen Geräten abmelden",
+  "logoutAllDevicesConfirm": "Dies widerruft alle aktiven Sitzungen. Du musst dich auf allen Geräten erneut anmelden.",
+  "logoutAllDevicesSuccess": "Alle Geräte abgemeldet.",
 
   "syncSettingsTitle": "Sync-Einstellungen",
   "syncAutoSync": "Auto-Sync",

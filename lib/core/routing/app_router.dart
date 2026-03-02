@@ -178,7 +178,13 @@ abstract final class AppRouter {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/sync-password',
-        builder: (context, state) => const SyncPasswordScreen(),
+        builder: (context, state) {
+          final modeParam = state.uri.queryParameters['mode'];
+          final mode = modeParam == 'enter'
+              ? SyncPasswordMode.enter
+              : SyncPasswordMode.create;
+          return SyncPasswordScreen(mode: mode);
+        },
       ),
 
       // Account / Sync routes

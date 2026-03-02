@@ -422,9 +422,30 @@
   "authBackToLogin": "Back to Login",
 
   "syncPasswordTitle": "Sync Password",
+  "syncPasswordTitleCreate": "Set Sync Password",
+  "syncPasswordTitleEnter": "Enter Sync Password",
   "syncPasswordDescription": "Set a separate password to encrypt your vault data. This password never leaves your device — the server only stores encrypted data.",
+  "syncPasswordHintEnter": "Enter the password you set when creating your account.",
   "syncPasswordWarning": "If you forget this password, your synced data cannot be recovered. There is no reset option.",
   "syncPasswordLabel": "Sync Password",
+  "syncPasswordWrong": "Wrong password. Please try again.",
+
+  "firstSyncTitle": "Existing Data Found",
+  "firstSyncMessage": "This device has existing data and the server has a vault. How should we proceed?",
+  "firstSyncMerge": "Merge (server wins)",
+  "firstSyncOverwriteLocal": "Overwrite local data",
+  "firstSyncKeepLocal": "Keep local & push",
+  "firstSyncDeleteLocal": "Delete local & pull",
+
+  "changeEncryptionPassword": "Change encryption password",
+  "changeEncryptionWarning": "You will be logged out on all other devices.",
+  "changeEncryptionOldPassword": "Current password",
+  "changeEncryptionNewPassword": "New password",
+  "changeEncryptionSuccess": "Password changed successfully.",
+
+  "logoutAllDevices": "Log out from all devices",
+  "logoutAllDevicesConfirm": "This will revoke all active sessions. You will need to log in again on all devices.",
+  "logoutAllDevicesSuccess": "All devices logged out.",
 
   "syncSettingsTitle": "Sync Settings",
   "syncAutoSync": "Auto-Sync",

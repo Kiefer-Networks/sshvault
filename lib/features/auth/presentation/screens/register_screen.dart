@@ -35,7 +35,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     ref.listen(authProvider, (prev, next) {
       if (next.valueOrNull == AuthStatus.authenticated && mounted) {
-        context.go('/sync-password');
+        context.go('/sync-password?mode=create');
       }
       if (next.hasError && mounted) {
         ScaffoldMessenger.of(

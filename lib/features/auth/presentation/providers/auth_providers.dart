@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/network/api_provider.dart';
+import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:shellvault/features/auth/data/services/apple_auth_service.dart';
 import 'package:shellvault/features/auth/data/services/google_auth_service.dart';
@@ -77,6 +78,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.expiresAt,
           auth.user.email,
         );
+        await _registerDeviceIfNeeded();
         return const AsyncValue.data(AuthStatus.authenticated);
       },
       onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
@@ -96,6 +98,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.expiresAt,
           auth.user.email,
         );
+        await _registerDeviceIfNeeded();
         return const AsyncValue.data(AuthStatus.authenticated);
       },
       onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
@@ -124,6 +127,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.expiresAt,
           auth.user.email,
         );
+        await _registerDeviceIfNeeded();
         return const AsyncValue.data(AuthStatus.authenticated);
       },
       onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
@@ -150,6 +154,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.expiresAt,
           auth.user.email,
         );
+        await _registerDeviceIfNeeded();
         return const AsyncValue.data(AuthStatus.authenticated);
       },
       onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
@@ -193,6 +198,40 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       await storage.saveTokenExpiry(expiresAt);
     }
     await storage.saveUserEmail(email);
+  }
+
+  /// Register this device if not already registered
+  Future<void> _registerDeviceIfNeeded() async {
+    final storage = ref.read(secureStorageProvider);
+    final existingIdResult = await storage.getDeviceId();
+    final existingId =
+        existingIdResult.isSuccess ? existingIdResult.value : null;
+    if (existingId != null && existingId.isNotEmpty) return;
+
+    final deviceName = await _getDeviceName() ?? 'Unknown Device';
+    final platform = _getPlatformName();
+
+    try {
+      final repo = ref.read(accountRepositoryProvider);
+      final result = await repo.registerDevice(deviceName, platform);
+      if (result.isSuccess && result.value.isNotEmpty) {
+        await storage.saveDeviceId(result.value);
+      }
+    } catch (_) {
+      // Non-critical, don't block login flow
+    }
+  }
+
+  String _getPlatformName() {
+    if (kIsWeb) return 'web';
+    try {
+      if (Platform.isIOS) return 'ios';
+      if (Platform.isAndroid) return 'android';
+      if (Platform.isMacOS) return 'macos';
+      if (Platform.isLinux) return 'linux';
+      if (Platform.isWindows) return 'windows';
+    } catch (_) {}
+    return 'unknown';
   }
 }
 

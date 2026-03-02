@@ -397,9 +397,30 @@
   "authBackToLogin": "Volver al inicio de sesión",
 
   "syncPasswordTitle": "Contraseña de sincronización",
+  "syncPasswordTitleCreate": "Establecer contraseña de sincronización",
+  "syncPasswordTitleEnter": "Ingresar contraseña de sincronización",
   "syncPasswordDescription": "Establece una contraseña separada para cifrar tus datos del vault. Esta contraseña nunca sale de tu dispositivo — el servidor solo almacena datos cifrados.",
+  "syncPasswordHintEnter": "Ingresa la contraseña que estableciste al crear tu cuenta.",
   "syncPasswordWarning": "Si olvidas esta contraseña, tus datos sincronizados no se pueden recuperar. No hay opción de restablecimiento.",
   "syncPasswordLabel": "Contraseña de sincronización",
+  "syncPasswordWrong": "Contraseña incorrecta. Inténtalo de nuevo.",
+
+  "firstSyncTitle": "Datos existentes encontrados",
+  "firstSyncMessage": "Este dispositivo tiene datos existentes y el servidor tiene un vault. ¿Cómo proceder?",
+  "firstSyncMerge": "Fusionar (servidor tiene prioridad)",
+  "firstSyncOverwriteLocal": "Sobrescribir datos locales",
+  "firstSyncKeepLocal": "Mantener local y subir",
+  "firstSyncDeleteLocal": "Eliminar local y descargar",
+
+  "changeEncryptionPassword": "Cambiar contraseña de cifrado",
+  "changeEncryptionWarning": "Se cerrará la sesión en todos los demás dispositivos.",
+  "changeEncryptionOldPassword": "Contraseña actual",
+  "changeEncryptionNewPassword": "Nueva contraseña",
+  "changeEncryptionSuccess": "Contraseña cambiada exitosamente.",
+
+  "logoutAllDevices": "Cerrar sesión en todos los dispositivos",
+  "logoutAllDevicesConfirm": "Esto revocará todas las sesiones activas. Necesitarás iniciar sesión nuevamente en todos los dispositivos.",
+  "logoutAllDevicesSuccess": "Todos los dispositivos desconectados.",
 
   "syncSettingsTitle": "Ajustes de sincronización",
   "syncAutoSync": "Sincronización automática",

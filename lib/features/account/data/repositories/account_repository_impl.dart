@@ -86,6 +86,27 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
+  Future<Result<String>> registerDevice(String name, String platform) async {
+    final result = await _apiClient.post(
+      '/v1/devices',
+      data: {'name': name, 'platform': platform},
+    );
+    return result.fold(
+      onSuccess: (data) => Success(data['id'] as String? ?? ''),
+      onFailure: (f) => Err(f),
+    );
+  }
+
+  @override
+  Future<Result<int>> logoutAllDevices() async {
+    final result = await _apiClient.post('/v1/auth/logout-all');
+    return result.fold(
+      onSuccess: (data) => Success(data['revoked'] as int? ?? 0),
+      onFailure: (f) => Err(f),
+    );
+  }
+
+  @override
   Future<Result<void>> deleteDevice(String deviceId) async {
     final result = await _apiClient.delete('/v1/devices/$deviceId');
     return result.fold(

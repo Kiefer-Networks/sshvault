@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 
 final sshKeyListProvider =
     AsyncNotifierProvider<SshKeyListNotifier, List<SshKeyEntity>>(
@@ -18,6 +21,15 @@ class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>> {
     );
   }
 
+  void _triggerAutoSync() {
+    final authStatus = ref.read(authProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).valueOrNull;
+    if (authStatus == AuthStatus.authenticated &&
+        (settings?.autoSync ?? false)) {
+      ref.read(syncProvider.notifier).schedulePush();
+    }
+  }
+
   Future<void> createSshKey(
     SshKeyEntity key, {
     required String privateKey,
@@ -30,7 +42,10 @@ class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>> {
       passphrase: passphrase,
     );
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        _triggerAutoSync();
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -39,7 +54,10 @@ class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>> {
     final useCases = ref.read(sshKeyUseCasesProvider);
     final result = await useCases.updateSshKey(key);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        _triggerAutoSync();
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -48,7 +66,10 @@ class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>> {
     final useCases = ref.read(sshKeyUseCasesProvider);
     final result = await useCases.deleteSshKey(id);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        _triggerAutoSync();
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }

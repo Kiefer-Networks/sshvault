@@ -343,4 +343,33 @@ class SecureStorageService {
       return Err(StorageFailure('Failed to clear auth tokens', cause: e));
     }
   }
+
+  // --- Device ID ---
+
+  Future<Result<void>> saveDeviceId(String id) async {
+    try {
+      await _storage.write(key: AppConstants.deviceIdKey, value: id);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to save device ID', cause: e));
+    }
+  }
+
+  Future<Result<String?>> getDeviceId() async {
+    try {
+      final value = await _storage.read(key: AppConstants.deviceIdKey);
+      return Success(value);
+    } catch (e) {
+      return Err(StorageFailure('Failed to read device ID', cause: e));
+    }
+  }
+
+  Future<Result<void>> deleteDeviceId() async {
+    try {
+      await _storage.delete(key: AppConstants.deviceIdKey);
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to delete device ID', cause: e));
+    }
+  }
 }

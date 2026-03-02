@@ -1164,8 +1164,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get syncPasswordTitle => 'Sync-Passwort';
 
   @override
+  String get syncPasswordTitleCreate => 'Sync-Passwort festlegen';
+
+  @override
+  String get syncPasswordTitleEnter => 'Sync-Passwort eingeben';
+
+  @override
   String get syncPasswordDescription =>
       'Lege ein separates Passwort fest, um deine Vault-Daten zu verschlüsseln. Dieses Passwort verlässt niemals dein Gerät — der Server speichert nur verschlüsselte Daten.';
+
+  @override
+  String get syncPasswordHintEnter =>
+      'Gib das Passwort ein, das du bei der Kontoerstellung festgelegt hast.';
 
   @override
   String get syncPasswordWarning =>
@@ -1173,6 +1183,54 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get syncPasswordLabel => 'Sync-Passwort';
+
+  @override
+  String get syncPasswordWrong => 'Falsches Passwort. Bitte erneut versuchen.';
+
+  @override
+  String get firstSyncTitle => 'Vorhandene Daten gefunden';
+
+  @override
+  String get firstSyncMessage =>
+      'Dieses Gerät hat vorhandene Daten und der Server hat einen Vault. Wie sollen wir fortfahren?';
+
+  @override
+  String get firstSyncMerge => 'Zusammenführen (Server hat Priorität)';
+
+  @override
+  String get firstSyncOverwriteLocal => 'Lokale Daten überschreiben';
+
+  @override
+  String get firstSyncKeepLocal => 'Lokal behalten & hochladen';
+
+  @override
+  String get firstSyncDeleteLocal => 'Lokal löschen & herunterladen';
+
+  @override
+  String get changeEncryptionPassword => 'Verschlüsselungspasswort ändern';
+
+  @override
+  String get changeEncryptionWarning =>
+      'Du wirst auf allen anderen Geräten abgemeldet.';
+
+  @override
+  String get changeEncryptionOldPassword => 'Aktuelles Passwort';
+
+  @override
+  String get changeEncryptionNewPassword => 'Neues Passwort';
+
+  @override
+  String get changeEncryptionSuccess => 'Passwort erfolgreich geändert.';
+
+  @override
+  String get logoutAllDevices => 'Von allen Geräten abmelden';
+
+  @override
+  String get logoutAllDevicesConfirm =>
+      'Dies widerruft alle aktiven Sitzungen. Du musst dich auf allen Geräten erneut anmelden.';
+
+  @override
+  String get logoutAllDevicesSuccess => 'Alle Geräte abgemeldet.';
 
   @override
   String get syncSettingsTitle => 'Sync-Einstellungen';

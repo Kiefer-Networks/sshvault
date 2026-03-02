@@ -22,6 +22,9 @@ import 'package:shellvault/features/connection/domain/entities/server_entity.dar
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
+import 'package:shellvault/features/snippet/data/datasources/snippet_dao.dart';
+import 'package:shellvault/features/snippet/data/models/snippet_mapper.dart';
+import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 import 'package:uuid/uuid.dart';
 
 class ExportImportRepositoryImpl implements ExportImportRepository {
@@ -29,6 +32,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   final GroupDao _groupDao;
   final TagDao _tagDao;
   final SshKeyDao _sshKeyDao;
+  final SnippetDao _snippetDao;
   final SecureStorageService _secureStorage;
   final EncryptionService _encryptionService;
   final Uuid _uuid;
@@ -38,6 +42,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     this._groupDao,
     this._tagDao,
     this._sshKeyDao,
+    this._snippetDao,
     this._secureStorage,
     this._encryptionService, {
     Uuid? uuid,
@@ -88,6 +93,22 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       sshKeyList.add(json);
     }
 
+    // Export snippets
+    final snippets = await _snippetDao.getAllSnippets();
+    final snippetList = <Map<String, dynamic>>[];
+    for (final snippet in snippets) {
+      final tagRows = await _snippetDao.getTagsForSnippet(snippet.id);
+      final variables = await _snippetDao.getVariablesForSnippet(snippet.id);
+      final entity = SnippetMapper.fromDrift(snippet).copyWith(
+        tags: tagRows.map((t) => TagMapper.fromDrift(t)).toList(),
+        variables:
+            variables.map((v) => SnippetMapper.variableFromDrift(v)).toList(),
+      );
+      final json = entity.toJson();
+      json['tagIds'] = tagRows.map((t) => t.id).toList();
+      snippetList.add(json);
+    }
+
     return {
       'version': AppConstants.exportVersion,
       'exportedAt': DateTime.now().toIso8601String(),
@@ -95,6 +116,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       'groups': groups.map((g) => GroupMapper.fromDrift(g).toJson()).toList(),
       'tags': tags.map((t) => TagMapper.fromDrift(t).toJson()).toList(),
       'sshKeys': sshKeyList,
+      'snippets': snippetList,
     };
   }
 
@@ -274,6 +296,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
+            case ImportConflictStrategy.mergeServerWins:
               final entity = GroupEntity.fromJson(map);
               await _groupDao.updateGroup(GroupMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
@@ -306,6 +329,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
+            case ImportConflictStrategy.mergeServerWins:
               final entity = TagEntity.fromJson(map);
               await _tagDao.updateTag(TagMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
@@ -345,6 +369,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
+            case ImportConflictStrategy.mergeServerWins:
               final entity = SshKeyEntity.fromJson(map);
               await _sshKeyDao.updateSshKey(SshKeyMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
@@ -391,6 +416,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
+            case ImportConflictStrategy.mergeServerWins:
               final entity = ServerEntity.fromJson(map);
               await _serverDao.updateServer(ServerMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
@@ -446,12 +472,78 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       }
     }
 
+    // Import snippets
+    final snippetsData = (data['snippets'] as List<dynamic>?) ?? [];
+    var snippetsImported = 0;
+    for (final snippetJson in snippetsData) {
+      try {
+        final map = Map<String, dynamic>.from(snippetJson as Map);
+        final id = map['id'] as String;
+        final existing = await _snippetDao.getSnippetById(id);
+
+        // Extract tag IDs and variables before creating entity
+        final snippetTagIds =
+            (map.remove('tagIds') as List<dynamic>?)?.cast<String>() ?? [];
+        final variablesData =
+            (map['variables'] as List<dynamic>?)
+                ?.map((v) => Map<String, dynamic>.from(v as Map))
+                .toList() ??
+            [];
+
+        String snippetId = id;
+
+        if (existing != null) {
+          switch (strategy) {
+            case ImportConflictStrategy.skip:
+              skipped++;
+              continue;
+            case ImportConflictStrategy.overwrite:
+            case ImportConflictStrategy.mergeServerWins:
+              final entity = SnippetEntity.fromJson(map);
+              await _snippetDao.updateSnippet(
+                SnippetMapper.toCompanion(entity),
+              );
+            case ImportConflictStrategy.rename:
+              snippetId = _uuid.v4();
+              map['id'] = snippetId;
+              map['name'] = '${map['name']} (Imported)';
+              final entity = SnippetEntity.fromJson(map);
+              await _snippetDao.insertSnippet(
+                SnippetMapper.toCompanion(entity),
+              );
+          }
+        } else {
+          final entity = SnippetEntity.fromJson(map);
+          await _snippetDao.insertSnippet(SnippetMapper.toCompanion(entity));
+        }
+
+        // Restore snippet tags
+        if (snippetTagIds.isNotEmpty) {
+          await _snippetDao.setSnippetTags(snippetId, snippetTagIds);
+        }
+
+        // Restore variables
+        if (variablesData.isNotEmpty) {
+          final varCompanions = variablesData.map((v) {
+            final varEntity = SnippetVariableEntity.fromJson(v);
+            return SnippetMapper.variableToCompanion(varEntity, snippetId);
+          }).toList();
+          await _snippetDao.setSnippetVariables(snippetId, varCompanions);
+        }
+
+        snippetsImported++;
+      } catch (e) {
+        errors.add('Snippet import error: $e');
+      }
+    }
+
     return Success(
       ImportResult(
         serversImported: serversImported,
         groupsImported: groupsImported,
         tagsImported: tagsImported,
         sshKeysImported: sshKeysImported,
+        snippetsImported: snippetsImported,
         skipped: skipped,
         errors: errors,
       ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/crypto/crypto_provider.dart';
 import 'package:shellvault/core/network/api_provider.dart';
@@ -32,8 +34,42 @@ final syncProvider = AsyncNotifierProvider<SyncNotifier, SyncStatus>(
 );
 
 class SyncNotifier extends AsyncNotifier<SyncStatus> {
+  Timer? _debounceTimer;
+  Timer? _periodicSyncTimer;
+
   @override
-  Future<SyncStatus> build() async => SyncStatus.idle;
+  Future<SyncStatus> build() async {
+    ref.onDispose(() {
+      _debounceTimer?.cancel();
+      _periodicSyncTimer?.cancel();
+    });
+
+    // Start periodic sync timer
+    _startPeriodicSync();
+
+    return SyncStatus.idle;
+  }
+
+  /// Schedule a debounced push (called by CRUD providers)
+  void schedulePush() {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(seconds: 3), () {
+      pushOnly();
+    });
+  }
+
+  /// Start periodic background sync (every 5 minutes)
+  void _startPeriodicSync() {
+    _periodicSyncTimer?.cancel();
+    _periodicSyncTimer = Timer.periodic(const Duration(minutes: 5), (_) {
+      final authStatus = ref.read(authProvider).valueOrNull;
+      final settings = ref.read(settingsProvider).valueOrNull;
+      if (authStatus == AuthStatus.authenticated &&
+          (settings?.autoSync ?? false)) {
+        sync();
+      }
+    });
+  }
 
   Future<void> sync() async {
     // Check auth status
@@ -82,6 +118,10 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
   }
 
   Future<void> pushOnly() async {
+    // Auth guard
+    final authStatus = ref.read(authProvider).valueOrNull;
+    if (authStatus != AuthStatus.authenticated) return;
+
     final storage = ref.read(secureStorageProvider);
     final syncPwResult = await storage.getSyncPassword();
     final syncPassword = syncPwResult.isSuccess ? syncPwResult.value : null;
@@ -93,11 +133,44 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     final localVersion = settings?.localVaultVersion ?? 0;
 
     final useCases = ref.read(syncUseCasesProvider);
-    final result = await useCases.push(syncPassword, localVersion);
+    final result = await useCases.pushWithRetry(syncPassword, localVersion);
 
     result.fold(
       onSuccess: (newVersion) {
         ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
+        state = const AsyncValue.data(SyncStatus.success);
+      },
+      onFailure: (f) {
+        state = AsyncValue.error(f, StackTrace.current);
+      },
+    );
+  }
+
+  Future<void> pullOnly() async {
+    // Auth guard
+    final authStatus = ref.read(authProvider).valueOrNull;
+    if (authStatus != AuthStatus.authenticated) return;
+
+    final storage = ref.read(secureStorageProvider);
+    final syncPwResult = await storage.getSyncPassword();
+    final syncPassword = syncPwResult.isSuccess ? syncPwResult.value : null;
+    if (syncPassword == null || syncPassword.isEmpty) return;
+
+    state = const AsyncValue.data(SyncStatus.syncing);
+
+    final useCases = ref.read(syncUseCasesProvider);
+    final result = await useCases.pull(syncPassword);
+
+    result.fold(
+      onSuccess: (newVersion) {
+        ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
+
+        ref.invalidate(serverListProvider);
+        ref.invalidate(groupListProvider);
+        ref.invalidate(tagListProvider);
+        ref.invalidate(sshKeyListProvider);
+        ref.invalidate(snippetListProvider);
+
         state = const AsyncValue.data(SyncStatus.success);
       },
       onFailure: (f) {

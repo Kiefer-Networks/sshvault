@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
+import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 
 final snippetFilterProvider = StateProvider<SnippetFilter>(
   (ref) => const SnippetFilter(),
@@ -59,11 +62,23 @@ class SnippetListNotifier extends AsyncNotifier<List<SnippetEntity>> {
     );
   }
 
+  void _triggerAutoSync() {
+    final authStatus = ref.read(authProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).valueOrNull;
+    if (authStatus == AuthStatus.authenticated &&
+        (settings?.autoSync ?? false)) {
+      ref.read(syncProvider.notifier).schedulePush();
+    }
+  }
+
   Future<void> createSnippet(SnippetEntity snippet) async {
     final useCases = ref.read(snippetUseCasesProvider);
     final result = await useCases.createSnippet(snippet);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        _triggerAutoSync();
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -72,7 +87,10 @@ class SnippetListNotifier extends AsyncNotifier<List<SnippetEntity>> {
     final useCases = ref.read(snippetUseCasesProvider);
     final result = await useCases.updateSnippet(snippet);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        _triggerAutoSync();
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }
@@ -81,7 +99,10 @@ class SnippetListNotifier extends AsyncNotifier<List<SnippetEntity>> {
     final useCases = ref.read(snippetUseCasesProvider);
     final result = await useCases.deleteSnippet(id);
     result.fold(
-      onSuccess: (_) => ref.invalidateSelf(),
+      onSuccess: (_) {
+        ref.invalidateSelf();
+        _triggerAutoSync();
+      },
       onFailure: (failure) => throw Exception(failure.message),
     );
   }

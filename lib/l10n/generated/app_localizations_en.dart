@@ -1156,8 +1156,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncPasswordTitle => 'Sync Password';
 
   @override
+  String get syncPasswordTitleCreate => 'Set Sync Password';
+
+  @override
+  String get syncPasswordTitleEnter => 'Enter Sync Password';
+
+  @override
   String get syncPasswordDescription =>
       'Set a separate password to encrypt your vault data. This password never leaves your device — the server only stores encrypted data.';
+
+  @override
+  String get syncPasswordHintEnter =>
+      'Enter the password you set when creating your account.';
 
   @override
   String get syncPasswordWarning =>
@@ -1165,6 +1175,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncPasswordLabel => 'Sync Password';
+
+  @override
+  String get syncPasswordWrong => 'Wrong password. Please try again.';
+
+  @override
+  String get firstSyncTitle => 'Existing Data Found';
+
+  @override
+  String get firstSyncMessage =>
+      'This device has existing data and the server has a vault. How should we proceed?';
+
+  @override
+  String get firstSyncMerge => 'Merge (server wins)';
+
+  @override
+  String get firstSyncOverwriteLocal => 'Overwrite local data';
+
+  @override
+  String get firstSyncKeepLocal => 'Keep local & push';
+
+  @override
+  String get firstSyncDeleteLocal => 'Delete local & pull';
+
+  @override
+  String get changeEncryptionPassword => 'Change encryption password';
+
+  @override
+  String get changeEncryptionWarning =>
+      'You will be logged out on all other devices.';
+
+  @override
+  String get changeEncryptionOldPassword => 'Current password';
+
+  @override
+  String get changeEncryptionNewPassword => 'New password';
+
+  @override
+  String get changeEncryptionSuccess => 'Password changed successfully.';
+
+  @override
+  String get logoutAllDevices => 'Log out from all devices';
+
+  @override
+  String get logoutAllDevicesConfirm =>
+      'This will revoke all active sessions. You will need to log in again on all devices.';
+
+  @override
+  String get logoutAllDevicesSuccess => 'All devices logged out.';
 
   @override
   String get syncSettingsTitle => 'Sync Settings';

@@ -1,12 +1,13 @@
 import 'package:shellvault/core/error/result.dart';
 
-enum ImportConflictStrategy { skip, overwrite, rename }
+enum ImportConflictStrategy { skip, overwrite, rename, mergeServerWins }
 
 class ImportResult {
   final int serversImported;
   final int groupsImported;
   final int tagsImported;
   final int sshKeysImported;
+  final int snippetsImported;
   final int skipped;
   final List<String> errors;
 
@@ -15,6 +16,7 @@ class ImportResult {
     this.groupsImported = 0,
     this.tagsImported = 0,
     this.sshKeysImported = 0,
+    this.snippetsImported = 0,
     this.skipped = 0,
     this.errors = const [],
   });
