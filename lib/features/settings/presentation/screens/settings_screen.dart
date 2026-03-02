@@ -224,10 +224,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     title: Text(l10n.settingsBiometricUnlock),
                     subtitle: biometricAvailable.when(
                       data: (available) {
-                        if (!available)
+                        if (!available) {
                           return Text(l10n.settingsBiometricNotAvailable);
-                        if (!settings.hasPin)
+                        }
+                        if (!settings.hasPin) {
                           return Text(l10n.settingsBiometricRequiresPin);
+                        }
                         return null;
                       },
                       loading: () => null,

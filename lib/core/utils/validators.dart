@@ -123,8 +123,9 @@ abstract final class Validators {
 
   static String? validateUsername(String? value) {
     if (value == null || value.trim().isEmpty) return 'Username is required';
-    if (!_usernameRegex.hasMatch(value.trim()))
+    if (!_usernameRegex.hasMatch(value.trim())) {
       return 'Invalid username format';
+    }
     return null;
   }
 

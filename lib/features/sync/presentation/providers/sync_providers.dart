@@ -1,33 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/crypto/crypto_provider.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/sync/data/repositories/sync_repository_impl.dart';
-import 'package:shellvault/features/sync/domain/repositories/sync_repository.dart';
-import 'package:shellvault/features/sync/domain/usecases/sync_usecases.dart';
+import 'package:shellvault/features/sync/presentation/providers/sync_repository_providers.dart';
+
+export 'package:shellvault/features/sync/presentation/providers/sync_repository_providers.dart';
 
 enum SyncStatus { idle, syncing, success, error }
-
-final syncRepositoryProvider = Provider<SyncRepository>((ref) {
-  return SyncRepositoryImpl(ref.watch(apiClientProvider));
-});
-
-final syncUseCasesProvider = Provider<SyncUseCases>((ref) {
-  return SyncUseCases(
-    ref.watch(syncRepositoryProvider),
-    ref.watch(exportImportRepositoryProvider),
-    ref.watch(encryptionServiceProvider),
-  );
-});
 
 final syncProvider = AsyncNotifierProvider<SyncNotifier, SyncStatus>(
   SyncNotifier.new,

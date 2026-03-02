@@ -70,7 +70,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       final serverResult = await serverUseCases.getServer(session.serverId);
       final server = serverResult.fold(
         onSuccess: (s) => s,
-        onFailure: (f) => throw Exception(f.message),
+        onFailure: (f) => throw f,
       );
 
       // Update title
@@ -81,7 +81,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       final credsResult = await serverUseCases.getCredentials(session.serverId);
       final credentials = credsResult.fold(
         onSuccess: (c) => c,
-        onFailure: (f) => throw Exception(f.message),
+        onFailure: (f) => throw f,
       );
 
       // Load managed key if applicable

@@ -188,8 +188,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               leading: const Icon(Icons.logout),
               title: Text(l10n.accountLogout),
               onTap: () async {
+                final router = GoRouter.of(context);
                 await ref.read(authProvider.notifier).logout();
-                if (mounted) context.go('/');
+                if (mounted) router.go('/');
               },
             ),
           ],
@@ -689,14 +690,15 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         final result = await repo.logoutAllDevices();
         result.fold(
           onSuccess: (_) async {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.logoutAllDevicesSuccess)),
-              );
-            }
+            if (!mounted) return;
+            final messenger = ScaffoldMessenger.of(context);
+            final router = GoRouter.of(context);
+            messenger.showSnackBar(
+              SnackBar(content: Text(l10n.logoutAllDevicesSuccess)),
+            );
             // Logout locally as well
             await ref.read(authProvider.notifier).logout();
-            if (mounted) context.go('/');
+            if (mounted) router.go('/');
           },
           onFailure: (f) {
             if (mounted) {

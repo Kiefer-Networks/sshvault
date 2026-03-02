@@ -5,24 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
-import 'package:shellvault/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:shellvault/features/auth/data/services/apple_auth_service.dart';
-import 'package:shellvault/features/auth/data/services/google_auth_service.dart';
-import 'package:shellvault/features/auth/domain/repositories/auth_repository.dart';
+import 'package:shellvault/features/auth/presentation/providers/auth_repository_providers.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
-
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepositoryImpl(ref.watch(apiClientProvider));
-});
-
-final appleAuthServiceProvider = Provider<AppleAuthService>((ref) {
-  return AppleAuthService();
-});
-
-final googleAuthServiceProvider = Provider<GoogleAuthService>((ref) {
-  return GoogleAuthService();
-});
 
 final authProvider = AsyncNotifierProvider<AuthNotifier, AuthStatus>(
   AuthNotifier.new,

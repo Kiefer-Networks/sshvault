@@ -1,33 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:shellvault/core/utils/auto_sync_mixin.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 
 final groupListProvider =
     AsyncNotifierProvider<GroupListNotifier, List<GroupEntity>>(
       GroupListNotifier.new,
     );
 
-class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
+class GroupListNotifier extends AsyncNotifier<List<GroupEntity>>
+    with AutoSyncMixin {
   @override
   Future<List<GroupEntity>> build() async {
     final useCases = ref.watch(groupUseCasesProvider);
     final result = await useCases.getGroups();
     return result.fold(
       onSuccess: (groups) => groups,
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
-  }
-
-  void _triggerAutoSync() {
-    final authStatus = ref.read(authProvider).valueOrNull;
-    final settings = ref.read(settingsProvider).valueOrNull;
-    if (authStatus == AuthStatus.authenticated &&
-        (settings?.autoSync ?? false)) {
-      ref.read(syncProvider.notifier).schedulePush();
-    }
   }
 
   Future<void> createGroup(GroupEntity group) async {
@@ -37,9 +27,9 @@ class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
       onSuccess: (_) {
         ref.invalidateSelf();
         ref.invalidate(groupTreeProvider);
-        _triggerAutoSync();
+        triggerAutoSync();
       },
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
   }
 
@@ -50,9 +40,9 @@ class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
       onSuccess: (_) {
         ref.invalidateSelf();
         ref.invalidate(groupTreeProvider);
-        _triggerAutoSync();
+        triggerAutoSync();
       },
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
   }
 
@@ -63,9 +53,9 @@ class GroupListNotifier extends AsyncNotifier<List<GroupEntity>> {
       onSuccess: (_) {
         ref.invalidateSelf();
         ref.invalidate(groupTreeProvider);
-        _triggerAutoSync();
+        triggerAutoSync();
       },
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
   }
 }
@@ -75,6 +65,6 @@ final groupTreeProvider = FutureProvider<List<GroupEntity>>((ref) async {
   final result = await useCases.getGroupTree();
   return result.fold(
     onSuccess: (tree) => tree,
-    onFailure: (failure) => throw Exception(failure.message),
+    onFailure: (failure) => throw failure,
   );
 });

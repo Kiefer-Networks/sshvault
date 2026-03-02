@@ -1,14 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/network/api_provider.dart';
-import 'package:shellvault/features/account/data/repositories/account_repository_impl.dart';
 import 'package:shellvault/features/account/domain/entities/billing_status.dart';
 import 'package:shellvault/features/account/domain/entities/device_entity.dart';
-import 'package:shellvault/features/account/domain/repositories/account_repository.dart';
-import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
+import 'package:shellvault/features/account/presentation/providers/account_repository_providers.dart';
 
-final accountRepositoryProvider = Provider<AccountRepository>((ref) {
-  return AccountRepositoryImpl(ref.watch(apiClientProvider));
-});
+export 'package:shellvault/features/account/presentation/providers/account_repository_providers.dart';
+import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
 
 final userProfileProvider = FutureProvider<UserEntity?>((ref) async {
   final repo = ref.watch(accountRepositoryProvider);

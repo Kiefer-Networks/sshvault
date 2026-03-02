@@ -1,11 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:shellvault/core/utils/auto_sync_mixin.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 
 enum ViewMode { list, grid }
 
@@ -20,7 +18,8 @@ final serverListProvider =
       ServerListNotifier.new,
     );
 
-class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
+class ServerListNotifier extends AsyncNotifier<List<ServerEntity>>
+    with AutoSyncMixin {
   @override
   Future<List<ServerEntity>> build() async {
     final filter = ref.watch(serverFilterProvider);
@@ -28,7 +27,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final result = await useCases.getServers(filter: filter);
     return result.fold(
       onSuccess: (servers) => servers,
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
   }
 
@@ -38,16 +37,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
       ref.invalidate(serverDetailProvider(serverId));
       ref.invalidate(serverCredentialsProvider(serverId));
     }
-    _triggerAutoSync();
-  }
-
-  void _triggerAutoSync() {
-    final authStatus = ref.read(authProvider).valueOrNull;
-    final settings = ref.read(settingsProvider).valueOrNull;
-    if (authStatus == AuthStatus.authenticated &&
-        (settings?.autoSync ?? false)) {
-      ref.read(syncProvider.notifier).schedulePush();
-    }
+    triggerAutoSync();
   }
 
   Future<void> createServer(
@@ -58,7 +48,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final result = await useCases.createServer(server, credentials);
     result.fold(
       onSuccess: (created) => _invalidateAll(serverId: created.id),
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
   }
 
@@ -70,7 +60,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final result = await useCases.updateServer(server, credentials);
     result.fold(
       onSuccess: (_) => _invalidateAll(serverId: server.id),
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
   }
 
@@ -79,7 +69,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final result = await useCases.deleteServer(id);
     result.fold(
       onSuccess: (_) => _invalidateAll(serverId: id),
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
   }
 
@@ -88,7 +78,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>> {
     final result = await useCases.duplicateServer(id, copySuffix: copySuffix);
     result.fold(
       onSuccess: (dup) => _invalidateAll(serverId: dup.id),
-      onFailure: (failure) => throw Exception(failure.message),
+      onFailure: (failure) => throw failure,
     );
   }
 
@@ -106,7 +96,7 @@ final serversByGroupProvider =
       );
       return result.fold(
         onSuccess: (servers) => servers,
-        onFailure: (failure) => throw Exception(failure.message),
+        onFailure: (failure) => throw failure,
       );
     });
 
@@ -118,7 +108,7 @@ final serverDetailProvider = FutureProvider.family<ServerEntity, String>((
   final result = await useCases.getServer(id);
   return result.fold(
     onSuccess: (server) => server,
-    onFailure: (failure) => throw Exception(failure.message),
+    onFailure: (failure) => throw failure,
   );
 });
 
@@ -128,6 +118,6 @@ final serverCredentialsProvider =
       final result = await useCases.getCredentials(serverId);
       return result.fold(
         onSuccess: (creds) => creds,
-        onFailure: (failure) => throw Exception(failure.message),
+        onFailure: (failure) => throw failure,
       );
     });

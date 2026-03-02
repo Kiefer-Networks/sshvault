@@ -38,6 +38,7 @@ class AuthRepositoryImpl implements AuthRepository {
       data: {
         'email': email,
         'password': password,
+        // ignore: use_null_aware_elements
         if (deviceName != null) 'device_name': deviceName,
       },
     );
