@@ -69,6 +69,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.user.email,
         );
         await _registerDeviceIfNeeded();
+        _invalidateAccountProviders();
         _log.info(_tag, 'Login successful');
         return const AsyncValue.data(AuthStatus.authenticated);
       },
@@ -94,6 +95,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.user.email,
         );
         await _registerDeviceIfNeeded();
+        _invalidateAccountProviders();
         _log.info(_tag, 'Registration successful');
         return const AsyncValue.data(AuthStatus.authenticated);
       },
@@ -129,6 +131,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.user.email,
         );
         await _registerDeviceIfNeeded();
+        _invalidateAccountProviders();
         _log.info(_tag, 'Apple OAuth login successful');
         return const AsyncValue.data(AuthStatus.authenticated);
       },
@@ -162,6 +165,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.user.email,
         );
         await _registerDeviceIfNeeded();
+        _invalidateAccountProviders();
         _log.info(_tag, 'Google OAuth login successful');
         return const AsyncValue.data(AuthStatus.authenticated);
       },
@@ -186,7 +190,8 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
     await storage.clearAuthTokens();
     ref.read(googleAuthServiceProvider).signOut();
-    _log.info(_tag, 'Logout completed — tokens cleared');
+    _invalidateAccountProviders();
+    _log.info(_tag, 'Logout completed — tokens and device ID cleared');
     state = const AsyncValue.data(AuthStatus.unauthenticated);
   }
 
@@ -217,6 +222,19 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     _log.debug(_tag, 'Auth tokens persisted');
   }
 
+  /// Invalidate account-related providers so they re-fetch from server.
+  /// Called after login to ensure billing status, device list and profile
+  /// reflect the current account (subscription is account-wide, not per-device).
+  void _invalidateAccountProviders() {
+    ref.invalidate(billingStatusProvider);
+    ref.invalidate(deviceListProvider);
+    ref.invalidate(userProfileProvider);
+    _log.debug(
+      _tag,
+      'Account providers invalidated (billing, devices, profile)',
+    );
+  }
+
   /// Register this device if not already registered
   Future<void> _registerDeviceIfNeeded() async {
     final storage = ref.read(secureStorageProvider);
@@ -224,20 +242,36 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     final existingId = existingIdResult.isSuccess
         ? existingIdResult.value
         : null;
-    if (existingId != null && existingId.isNotEmpty) return;
+    if (existingId != null && existingId.isNotEmpty) {
+      _log.debug(
+        _tag,
+        'Device already registered (id=${existingId.substring(0, 8)}...)',
+      );
+      return;
+    }
 
     final deviceName = await _getDeviceName() ?? 'Unknown Device';
     final platform = _getPlatformName();
+    _log.info(_tag, 'Registering device: $deviceName ($platform)');
 
     try {
       final repo = ref.read(accountRepositoryProvider);
       final result = await repo.registerDevice(deviceName, platform);
-      if (result.isSuccess && result.value.isNotEmpty) {
-        await storage.saveDeviceId(result.value);
-        _log.info(_tag, 'Device registered: $deviceName ($platform)');
-      }
+      result.fold(
+        onSuccess: (id) async {
+          if (id.isNotEmpty) {
+            await storage.saveDeviceId(id);
+            _log.info(_tag, 'Device registered: $deviceName ($platform) → $id');
+          } else {
+            _log.warning(_tag, 'Device registration returned empty ID');
+          }
+        },
+        onFailure: (f) {
+          _log.error(_tag, 'Device registration failed: $f');
+        },
+      );
     } catch (e) {
-      _log.warning(_tag, 'Device registration failed (non-critical): $e');
+      _log.error(_tag, 'Device registration threw: $e');
     }
   }
 

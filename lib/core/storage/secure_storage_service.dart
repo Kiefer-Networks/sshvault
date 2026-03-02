@@ -340,6 +340,7 @@ class SecureStorageService {
       await _storage.delete(key: AppConstants.userEmailKey);
       await _storage.delete(key: AppConstants.syncPasswordKey);
       await _storage.delete(key: AppConstants.dekStorageKey);
+      await _storage.delete(key: AppConstants.deviceIdKey);
       return const Success(null);
     } catch (e) {
       return Err(StorageFailure('Failed to clear auth tokens', cause: e));
