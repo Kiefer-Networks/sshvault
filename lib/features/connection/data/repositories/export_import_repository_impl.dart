@@ -101,8 +101,9 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       final variables = await _snippetDao.getVariablesForSnippet(snippet.id);
       final entity = SnippetMapper.fromDrift(snippet).copyWith(
         tags: tagRows.map((t) => TagMapper.fromDrift(t)).toList(),
-        variables:
-            variables.map((v) => SnippetMapper.variableFromDrift(v)).toList(),
+        variables: variables
+            .map((v) => SnippetMapper.variableFromDrift(v))
+            .toList(),
       );
       final json = entity.toJson();
       json['tagIds'] = tagRows.map((t) => t.id).toList();

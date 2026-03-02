@@ -204,8 +204,9 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
   Future<void> _registerDeviceIfNeeded() async {
     final storage = ref.read(secureStorageProvider);
     final existingIdResult = await storage.getDeviceId();
-    final existingId =
-        existingIdResult.isSuccess ? existingIdResult.value : null;
+    final existingId = existingIdResult.isSuccess
+        ? existingIdResult.value
+        : null;
     if (existingId != null && existingId.isNotEmpty) return;
 
     final deviceName = await _getDeviceName() ?? 'Unknown Device';

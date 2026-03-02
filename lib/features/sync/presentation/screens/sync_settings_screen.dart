@@ -608,9 +608,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         }
       } else if (newPw.text != confirmPw.text) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.authPasswordMismatch)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.authPasswordMismatch)));
         }
       } else if (newPw.text.length < 8) {
         if (mounted) {
@@ -650,9 +650,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           );
         } catch (e) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.error(e.toString()))),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
           }
         }
       }
@@ -700,17 +700,17 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           },
           onFailure: (f) {
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.error(f.toString()))),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(l10n.error(f.toString()))));
             }
           },
         );
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.error(e.toString()))),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
         }
       }
     }

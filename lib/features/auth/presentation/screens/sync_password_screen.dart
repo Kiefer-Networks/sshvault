@@ -12,10 +12,7 @@ enum SyncPasswordMode { create, enter }
 class SyncPasswordScreen extends ConsumerStatefulWidget {
   final SyncPasswordMode mode;
 
-  const SyncPasswordScreen({
-    super.key,
-    this.mode = SyncPasswordMode.create,
-  });
+  const SyncPasswordScreen({super.key, this.mode = SyncPasswordMode.create});
 
   @override
   ConsumerState<SyncPasswordScreen> createState() => _SyncPasswordScreenState();
@@ -229,7 +226,8 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
     // Check if remote vault has data
     final syncRepo = ref.read(syncRepositoryProvider);
     final vaultResult = await syncRepo.getVault();
-    final hasRemoteData = vaultResult.isSuccess &&
+    final hasRemoteData =
+        vaultResult.isSuccess &&
         vaultResult.value.blob != null &&
         vaultResult.value.blob!.isNotEmpty;
 
