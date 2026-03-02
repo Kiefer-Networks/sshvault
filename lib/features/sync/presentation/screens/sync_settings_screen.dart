@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -249,8 +252,12 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: _openBillingPortal,
-                icon: const Icon(Icons.receipt_long_outlined),
+                onPressed: _openSubscriptionManagement,
+                icon: Icon(
+                  isNativeIapPlatform
+                      ? Icons.store_outlined
+                      : Icons.receipt_long_outlined,
+                ),
                 label: Text(l10n.accountManageSubscription),
               ),
             ),
@@ -355,7 +362,25 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     }
   }
 
-  Future<void> _openBillingPortal() async {
+  Future<void> _openSubscriptionManagement() async {
+    if (isNativeIapPlatform) {
+      // Open the respective store's subscription management
+      final Uri storeUri;
+      if (!kIsWeb && Platform.isAndroid) {
+        storeUri = Uri.parse(
+          'https://play.google.com/store/account/subscriptions',
+        );
+      } else {
+        // iOS + macOS → Apple App Store
+        storeUri = Uri.parse(
+          'https://apps.apple.com/account/subscriptions',
+        );
+      }
+      await launchUrl(storeUri, mode: LaunchMode.externalApplication);
+      return;
+    }
+
+    // Desktop / Web → Stripe Billing Portal
     try {
       final repo = ref.read(accountRepositoryProvider);
       final result = await repo.createPortal();
