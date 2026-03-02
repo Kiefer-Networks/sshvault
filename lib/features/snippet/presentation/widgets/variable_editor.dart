@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 
@@ -36,7 +37,7 @@ class VariableEditor extends StatelessWidget {
           Text(
             l10n.variableEditorEmpty,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(102),
+              color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
             ),
           )
         else

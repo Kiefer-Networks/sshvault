@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 
 /// A reusable row that displays an icon, label, and value.
 ///
@@ -30,13 +31,13 @@ class InfoRow extends StatelessWidget {
           Icon(
             icon,
             size: 18,
-            color: theme.colorScheme.onSurface.withAlpha(102),
+            color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
           ),
           const SizedBox(width: 8),
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(128),
+              color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
             ),
           ),
           const SizedBox(width: 12),
@@ -44,7 +45,7 @@ class InfoRow extends StatelessWidget {
             child: Text(
               value,
               style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: 'monospace',
+                fontFamily: AppConstants.monospaceFontFamily,
               ),
               textAlign: TextAlign.end,
             ),
@@ -56,7 +57,7 @@ class InfoRow extends StatelessWidget {
               child: Icon(
                 Icons.copy,
                 size: 16,
-                color: theme.colorScheme.onSurface.withAlpha(102),
+                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
               ),
             ),
           ],

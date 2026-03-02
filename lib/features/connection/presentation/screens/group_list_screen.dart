@@ -219,7 +219,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: Color(group.color).withAlpha(26),
+                color: Color(group.color).withAlpha(AppConstants.alpha26),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -232,7 +232,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
             subtitle: Text(
               l10n.groupServerCount(group.serverCount),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(153),
+                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
               ),
             ),
             trailing: Row(
@@ -358,9 +358,9 @@ class _ServerSubTile extends StatelessWidget {
       subtitle: Text(
         '${server.username}@${server.hostname}',
         style: theme.textTheme.bodySmall?.copyWith(
-          fontFamily: 'monospace',
+          fontFamily: AppConstants.monospaceFontFamily,
           fontSize: 11,
-          color: theme.colorScheme.onSurface.withAlpha(128),
+          color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
         ),
         overflow: TextOverflow.ellipsis,
       ),

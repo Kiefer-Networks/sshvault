@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 
 class StatusBadge extends StatelessWidget {
   final bool isActive;
@@ -17,7 +18,7 @@ class StatusBadge extends StatelessWidget {
         boxShadow: isActive
             ? [
                 BoxShadow(
-                  color: Colors.greenAccent.withAlpha(128),
+                  color: Colors.greenAccent.withAlpha(AppConstants.alpha128),
                   blurRadius: 6,
                   spreadRadius: 1,
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -65,7 +66,7 @@ class SshKeyTile extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withAlpha(26),
+            color: theme.colorScheme.primary.withAlpha(AppConstants.alpha26),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -101,9 +102,9 @@ class SshKeyTile extends StatelessWidget {
               Text(
                 sshKey.fingerprint,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
+                  fontFamily: AppConstants.monospaceFontFamily,
                   fontSize: 11,
-                  color: theme.colorScheme.onSurface.withAlpha(153),
+                  color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -115,7 +116,7 @@ class SshKeyTile extends StatelessWidget {
                 child: Text(
                   l10n.sshKeyTileLinkedServers(sshKey.linkedServerCount),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withAlpha(153),
+                    color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
                   ),
                 ),
               ),

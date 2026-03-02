@@ -84,7 +84,7 @@ class ServerDetailScreen extends ConsumerWidget {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: Color(server.color).withAlpha(38),
+                          color: Color(server.color).withAlpha(AppConstants.alpha38),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
@@ -120,7 +120,7 @@ class ServerDetailScreen extends ConsumerWidget {
                               },
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurface.withAlpha(
-                                  128,
+                                  AppConstants.alpha128,
                                 ),
                               ),
                             ),
@@ -219,7 +219,7 @@ class ServerDetailScreen extends ConsumerWidget {
                         Text(
                           server.notes,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withAlpha(179),
+                            color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha179),
                           ),
                         ),
                       ],
@@ -299,7 +299,7 @@ class _GroupSection extends ConsumerWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: Color(group.color).withAlpha(38),
+                      color: Color(group.color).withAlpha(AppConstants.alpha38),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -390,7 +390,7 @@ class _DistroLogo extends StatelessWidget {
       width: 36,
       height: 36,
       decoration: BoxDecoration(
-        color: color.withAlpha(30),
+        color: color.withAlpha(AppConstants.alpha30),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Icon(icon, color: color, size: 22),

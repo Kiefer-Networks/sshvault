@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 
 class GlassmorphicContainer extends StatelessWidget {
   final Widget child;
@@ -31,9 +32,9 @@ class GlassmorphicContainer extends StatelessWidget {
           child: Container(
             padding: padding ?? const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: backgroundColor ?? Colors.white.withAlpha(13),
+              color: backgroundColor ?? Colors.white.withAlpha(AppConstants.alpha13),
               borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(color: Colors.white.withAlpha(26)),
+              border: Border.all(color: Colors.white.withAlpha(AppConstants.alpha26)),
             ),
             child: child,
           ),

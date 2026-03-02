@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 
@@ -25,7 +26,7 @@ class GroupChip extends StatelessWidget {
         color: Color(group.color),
       ),
       onSelected: onTap != null ? (_) => onTap!() : null,
-      side: BorderSide(color: Color(group.color).withAlpha(77)),
+      side: BorderSide(color: Color(group.color).withAlpha(AppConstants.alpha77)),
     );
   }
 }

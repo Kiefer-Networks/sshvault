@@ -2,14 +2,17 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:pointycastle/export.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/crypto/encrypted_payload.dart';
 import 'package:shellvault/core/crypto/export_envelope.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 
 class EncryptionService {
+  static final _log = LoggingService.instance;
   final Random _secureRandom = Random.secure();
 
   Uint8List _generateSecureBytes(int length) {
@@ -18,21 +21,25 @@ class EncryptionService {
     );
   }
 
-  Uint8List _deriveKey(String password, Uint8List salt) {
-    final argon2 = Argon2BytesGenerator();
-    final params = Argon2Parameters(
-      Argon2Parameters.ARGON2_id,
-      salt,
-      desiredKeyLength: AppConstants.aesKeyLength,
-      iterations: AppConstants.argon2Iterations,
+  /// Derives an AES-256 key from [password] and [salt] using Argon2id.
+  ///
+  /// Uses the `cryptography` package which produces deterministic results
+  /// regardless of parallelism setting (unlike pointycastle's implementation).
+  Future<Uint8List> _deriveKey(String password, Uint8List salt) async {
+    final argon2 = crypto.Argon2id(
       memory: AppConstants.argon2MemoryKB,
-      lanes: AppConstants.argon2Parallelism,
+      iterations: AppConstants.argon2Iterations,
+      parallelism: AppConstants.argon2Parallelism,
+      hashLength: AppConstants.aesKeyLength,
     );
-    argon2.init(params);
 
-    final key = Uint8List(AppConstants.aesKeyLength);
-    argon2.deriveKey(Uint8List.fromList(utf8.encode(password)), 0, key, 0);
-    return key;
+    final secretKey = await argon2.deriveKey(
+      secretKey: crypto.SecretKey(utf8.encode(password)),
+      nonce: salt,
+    );
+
+    final keyBytes = await secretKey.extractBytes();
+    return Uint8List.fromList(keyBytes);
   }
 
   String _sha256Hex(Uint8List data) {
@@ -51,10 +58,10 @@ class EncryptionService {
 
     final output = Uint8List(cipher.getOutputSize(plaintext.length));
     final len = cipher.processBytes(plaintext, 0, plaintext.length, output, 0);
-    cipher.doFinal(output, len);
+    final finalLen = cipher.doFinal(output, len);
 
     return EncryptedPayload(
-      ciphertext: output,
+      ciphertext: Uint8List.fromList(output.sublist(0, len + finalLen)),
       nonce: nonce,
       salt: Uint8List(0), // Salt managed at envelope level
     );
@@ -75,18 +82,36 @@ class EncryptionService {
       output,
       0,
     );
-    cipher.doFinal(output, len);
+    final finalLen = cipher.doFinal(output, len);
 
-    return output;
+    return Uint8List.fromList(output.sublist(0, len + finalLen));
   }
 
-  Result<ExportEnvelope> encryptForExport(String jsonData, String password) {
+  Future<Result<ExportEnvelope>> encryptForExport(
+    String jsonData,
+    String password,
+  ) async {
+    final sw = Stopwatch()..start();
+    _log.info('Crypto', 'Encrypting data (${jsonData.length} chars)');
+
     try {
       final salt = _generateSecureBytes(AppConstants.saltLength);
-      final key = _deriveKey(password, salt);
+      final key = await _deriveKey(password, salt);
+      _log.debug(
+        'Crypto',
+        'Key derived in ${sw.elapsedMilliseconds}ms',
+      );
+
       final plaintext = Uint8List.fromList(utf8.encode(jsonData));
       final checksum = _sha256Hex(plaintext);
       final payload = _encrypt(plaintext, key);
+
+      sw.stop();
+      _log.info(
+        'Crypto',
+        'Encryption completed in ${sw.elapsedMilliseconds}ms '
+            '(${plaintext.length} bytes → ${payload.ciphertext.length} bytes)',
+      );
 
       return Success(
         ExportEnvelope(
@@ -98,34 +123,79 @@ class EncryptionService {
         ),
       );
     } catch (e) {
+      sw.stop();
+      _log.error('Crypto', 'Encryption failed after ${sw.elapsedMilliseconds}ms: $e');
       return Err(CryptoFailure('Encryption failed', cause: e));
     }
   }
 
-  Result<String> decryptFromExport(ExportEnvelope envelope, String password) {
+  Future<Result<String>> decryptFromExport(
+    ExportEnvelope envelope,
+    String password,
+  ) async {
+    final sw = Stopwatch()..start();
+    _log.info(
+      'Crypto',
+      'Decrypting envelope v${envelope.version} '
+          '(${envelope.encryptedData.length} chars base64)',
+    );
+
     try {
       final salt = envelope.saltBytes;
-      final key = _deriveKey(password, salt);
+      final key = await _deriveKey(password, salt);
+      _log.debug(
+        'Crypto',
+        'Key derived in ${sw.elapsedMilliseconds}ms',
+      );
+
       final plaintext = _decrypt(
         envelope.encryptedBytes,
         key,
         envelope.nonceBytes,
       );
+      _log.debug(
+        'Crypto',
+        'AES-GCM decrypt completed (${plaintext.length} bytes)',
+      );
 
       // Verify checksum
       final checksum = _sha256Hex(plaintext);
       if (checksum != envelope.checksum) {
+        sw.stop();
+        _log.error(
+          'Crypto',
+          'Checksum mismatch after ${sw.elapsedMilliseconds}ms '
+              '(expected ${envelope.checksum.substring(0, 8)}..., '
+              'got ${checksum.substring(0, 8)}...)',
+        );
         return const Err(
           CryptoFailure('Checksum verification failed — data may be corrupted'),
         );
       }
 
+      sw.stop();
+      _log.info(
+        'Crypto',
+        'Decryption completed in ${sw.elapsedMilliseconds}ms '
+            '(${plaintext.length} bytes)',
+      );
       return Success(utf8.decode(plaintext));
-    } on ArgumentError {
+    } on ArgumentError catch (e) {
+      sw.stop();
+      _log.error(
+        'Crypto',
+        'Decryption failed (GCM auth tag mismatch) '
+            'after ${sw.elapsedMilliseconds}ms: $e',
+      );
       return const Err(
         CryptoFailure('Decryption failed — wrong password or corrupted data'),
       );
     } catch (e) {
+      sw.stop();
+      _log.error(
+        'Crypto',
+        'Decryption failed after ${sw.elapsedMilliseconds}ms: $e',
+      );
       return Err(CryptoFailure('Decryption failed', cause: e));
     }
   }

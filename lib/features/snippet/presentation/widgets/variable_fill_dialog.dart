@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
@@ -104,13 +105,13 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: theme.colorScheme.outline.withAlpha(51),
+                    color: theme.colorScheme.outline.withAlpha(AppConstants.alpha51),
                   ),
                 ),
                 child: Text(
                   l10n.variableFillPreview,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withAlpha(102),
+                    color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
                   ),
                 ),
               ),

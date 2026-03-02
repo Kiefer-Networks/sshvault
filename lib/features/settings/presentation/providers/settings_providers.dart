@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pointycastle/export.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
@@ -62,7 +62,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     if (legacyPin != null &&
         legacyPin.isNotEmpty &&
         (pinHash == null || pinHash.isEmpty)) {
-      final hashResult = _hashPin(legacyPin);
+      final hashResult = await _hashPin(legacyPin);
       await dao.setValue(_keyPinHash, hashResult.hash);
       await dao.setValue(_keyPinSalt, hashResult.salt);
       await dao.deleteValue('pin_code');
@@ -131,7 +131,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   }
 
   /// Hashes a PIN with Argon2id. Returns the hash and salt as base64 strings.
-  _PinHashResult _hashPin(String pin, {Uint8List? existingSalt}) {
+  ///
+  /// Uses the `cryptography` package for deterministic key derivation
+  /// (pointycastle's Argon2id with lanes>1 is non-deterministic).
+  Future<_PinHashResult> _hashPin(String pin, {Uint8List? existingSalt}) async {
     final Uint8List salt;
     if (existingSalt != null) {
       salt = existingSalt;
@@ -142,21 +145,23 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       );
     }
 
-    final argon2 = Argon2BytesGenerator();
-    final params = Argon2Parameters(
-      Argon2Parameters.ARGON2_id,
-      salt,
-      desiredKeyLength: 32,
-      iterations: AppConstants.argon2Iterations,
+    final argon2 = crypto.Argon2id(
       memory: AppConstants.argon2MemoryKB,
-      lanes: AppConstants.argon2Parallelism,
+      iterations: AppConstants.argon2Iterations,
+      parallelism: AppConstants.argon2Parallelism,
+      hashLength: 32,
     );
-    argon2.init(params);
 
-    final hash = Uint8List(32);
-    argon2.deriveKey(Uint8List.fromList(utf8.encode(pin)), 0, hash, 0);
+    final secretKey = await argon2.deriveKey(
+      secretKey: crypto.SecretKey(utf8.encode(pin)),
+      nonce: salt,
+    );
+    final hashBytes = await secretKey.extractBytes();
 
-    return _PinHashResult(hash: base64Encode(hash), salt: base64Encode(salt));
+    return _PinHashResult(
+      hash: base64Encode(hashBytes),
+      salt: base64Encode(salt),
+    );
   }
 
   /// Verifies a PIN against stored hash and salt with brute-force protection.
@@ -170,7 +175,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     if (current.isLockedOut) return false;
 
     final salt = base64Decode(current.pinSalt);
-    final result = _hashPin(pin, existingSalt: salt);
+    final result = await _hashPin(pin, existingSalt: salt);
 
     final dao = ref.read(databaseProvider).appSettingsDao;
 
@@ -249,7 +254,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   Future<void> setPinCode(String pin) async {
     _log.info(_tag, 'PIN code set');
     final dao = ref.read(databaseProvider).appSettingsDao;
-    final hashResult = _hashPin(pin);
+    final hashResult = await _hashPin(pin);
 
     await dao.setValue(_keyPinHash, hashResult.hash);
     await dao.setValue(_keyPinSalt, hashResult.salt);

@@ -13,7 +13,7 @@ abstract final class AppConstants {
   // Crypto
   static const int argon2Iterations = 3;
   static const int argon2MemoryKB = 65536; // 64 MiB
-  static const int argon2Parallelism = 4;
+  static const int argon2Parallelism = 1;
   static const int aesKeyLength = 32; // 256 bit
   static const int aesNonceLength = 12; // 96 bit for GCM
   static const int saltLength = 32;
@@ -50,4 +50,22 @@ abstract final class AppConstants {
   static const String userEmailKey = 'sv_user_email';
   static const String serverUrlKey = 'sv_server_url';
   static const String deviceIdKey = 'sv_device_id';
+
+  // Typography
+  static const String monospaceFontFamily = 'monospace';
+
+  // Alpha values for Color.withAlpha()
+  static const int alpha8 = 8;
+  static const int alpha13 = 13;
+  static const int alpha26 = 26;
+  static const int alpha30 = 30;
+  static const int alpha38 = 38;
+  static const int alpha51 = 51;
+  static const int alpha77 = 77;
+  static const int alpha102 = 102;
+  static const int alpha128 = 128;
+  static const int alpha153 = 153;
+  static const int alpha179 = 179;
+  static const int alpha200 = 200;
+  static const int alpha204 = 204;
 }

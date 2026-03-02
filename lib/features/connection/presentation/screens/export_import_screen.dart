@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -92,7 +93,7 @@ class ExportImportScreen extends ConsumerWidget {
                 Text(
                   l10n.importSupportedFormats,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withAlpha(102),
+                    color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
                   ),
                 ),
               ],
@@ -105,7 +106,7 @@ class ExportImportScreen extends ConsumerWidget {
             const Center(child: CircularProgressIndicator()),
           if (exportState.hasError)
             Card(
-              color: theme.colorScheme.error.withAlpha(26),
+              color: theme.colorScheme.error.withAlpha(AppConstants.alpha26),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(
@@ -116,7 +117,7 @@ class ExportImportScreen extends ConsumerWidget {
             ),
           if (exportState.hasValue && exportState.value != null)
             Card(
-              color: Colors.green.withAlpha(26),
+              color: Colors.green.withAlpha(AppConstants.alpha26),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(

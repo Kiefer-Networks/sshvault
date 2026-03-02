@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/secure_storage_service.dart';
 
 typedef OnAuthExpired = void Function();
 
 class AuthInterceptor extends Interceptor {
+  static final _log = LoggingService.instance;
+  static const _tag = 'Auth';
+
   final SecureStorageService _storage;
   final Dio _dio;
   final OnAuthExpired? onAuthExpired;
@@ -44,6 +48,8 @@ class AuthInterceptor extends Interceptor {
       final token = tokenResult.isSuccess ? tokenResult.value : null;
       if (token != null) {
         options.headers['Authorization'] = 'Bearer $token';
+      } else {
+        _log.warning(_tag, 'No access token for ${options.path}');
       }
       handler.next(options);
     } catch (_) {
@@ -61,11 +67,15 @@ class AuthInterceptor extends Interceptor {
     // Skip refresh for auth endpoints
     if (err.requestOptions.path.contains('/auth/refresh') ||
         err.requestOptions.path.contains('/auth/login')) {
+      _log.warning(_tag, '401 on auth endpoint ${err.requestOptions.path} — not refreshing');
       return handler.next(err);
     }
 
+    _log.info(_tag, '401 on ${err.requestOptions.path} — attempting token refresh');
+
     // If another refresh is already in progress, wait for it and retry.
     if (_isRefreshing) {
+      _log.debug(_tag, 'Token refresh already in progress, waiting');
       try {
         await _refreshCompleter!.future;
         // Refresh succeeded — retry with the new token.
@@ -88,11 +98,13 @@ class AuthInterceptor extends Interceptor {
       final refreshResult = await _storage.getRefreshToken();
       final refreshToken = refreshResult.isSuccess ? refreshResult.value : null;
       if (refreshToken == null) {
+        _log.warning(_tag, 'No refresh token available — session expired');
         await _handleAuthExpired();
         completer.completeError(StateError('No refresh token available'));
         return handler.next(err);
       }
 
+      _log.debug(_tag, 'Refreshing access token');
       final response = await _dio.post<Map<String, dynamic>>(
         '/v1/auth/refresh',
         data: {'refresh_token': refreshToken},
@@ -100,6 +112,7 @@ class AuthInterceptor extends Interceptor {
 
       final data = response.data;
       if (data == null) {
+        _log.error(_tag, 'Token refresh returned empty response');
         await _handleAuthExpired();
         completer.completeError(StateError('Empty refresh response'));
         return handler.next(err);
@@ -123,6 +136,8 @@ class AuthInterceptor extends Interceptor {
         await _storage.saveTokenExpiry(expiresAt);
       }
 
+      _log.info(_tag, 'Token refreshed successfully');
+
       // Signal waiting requests that the refresh succeeded.
       completer.complete();
 
@@ -131,7 +146,11 @@ class AuthInterceptor extends Interceptor {
       opts.headers['Authorization'] = 'Bearer $newAccessToken';
       final retryResponse = await _dio.fetch(opts);
       return handler.resolve(retryResponse);
-    } on DioException {
+    } on DioException catch (e) {
+      _log.error(
+        _tag,
+        'Token refresh failed: ${e.response?.statusCode ?? 'N/A'} ${e.message}',
+      );
       await _handleAuthExpired();
       if (!completer.isCompleted) {
         completer.completeError(StateError('Token refresh failed'));
@@ -143,6 +162,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<void> _handleAuthExpired() async {
+    _log.warning(_tag, 'Auth expired — clearing tokens');
     await _storage.clearAuthTokens();
     onAuthExpired?.call();
   }

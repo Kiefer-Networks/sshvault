@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -128,7 +129,7 @@ class _TagTile extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: Color(tag.color).withAlpha(26),
+            color: Color(tag.color).withAlpha(AppConstants.alpha26),
             shape: BoxShape.circle,
           ),
           child: Icon(Icons.label, color: Color(tag.color), size: 22),
@@ -137,8 +138,8 @@ class _TagTile extends StatelessWidget {
         subtitle: Text(
           _colorHex(tag.color),
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withAlpha(153),
-            fontFamily: 'monospace',
+            color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+            fontFamily: AppConstants.monospaceFontFamily,
           ),
         ),
         trailing: Row(

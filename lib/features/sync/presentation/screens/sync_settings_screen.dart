@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -430,7 +429,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     if (isNativeIapPlatform) {
       // Open the respective store's subscription management
       final Uri storeUri;
-      if (!kIsWeb && Platform.isAndroid) {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
         storeUri = Uri.parse(
           'https://play.google.com/store/account/subscriptions',
         );

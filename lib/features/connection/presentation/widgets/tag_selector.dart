@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
@@ -34,7 +35,7 @@ class TagSelector extends ConsumerWidget {
               return Text(
                 l10n.tagSelectorEmpty,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(102),
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(AppConstants.alpha102),
                 ),
               );
             }

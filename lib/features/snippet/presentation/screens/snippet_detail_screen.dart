@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,7 +65,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withAlpha(38),
+                          color: theme.colorScheme.primary.withAlpha(AppConstants.alpha38),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
@@ -154,13 +155,13 @@ class SnippetDetailScreen extends ConsumerWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.black.withAlpha(51),
+                          color: Colors.black.withAlpha(AppConstants.alpha51),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: SelectableText(
                           snippet.content,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            fontFamily: 'monospace',
+                            fontFamily: AppConstants.monospaceFontFamily,
                           ),
                         ),
                       ),
@@ -184,7 +185,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                         Text(
                           snippet.description,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withAlpha(179),
+                            color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha179),
                           ),
                         ),
                       ],
@@ -213,7 +214,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                                 Text(
                                   '{{${v.name}}}',
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontFamily: 'monospace',
+                                    fontFamily: AppConstants.monospaceFontFamily,
                                     color: theme.colorScheme.primary,
                                   ),
                                 ),
@@ -223,7 +224,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                                     '= ${v.defaultValue}',
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: theme.colorScheme.onSurface
-                                          .withAlpha(128),
+                                          .withAlpha(AppConstants.alpha128),
                                     ),
                                   ),
                                 ],

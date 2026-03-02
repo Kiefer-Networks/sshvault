@@ -1,9 +1,8 @@
-import 'dart:io' show Platform;
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/network/api_provider.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_repository_providers.dart';
 
@@ -14,13 +13,18 @@ final authProvider = AsyncNotifierProvider<AuthNotifier, AuthStatus>(
 );
 
 class AuthNotifier extends AsyncNotifier<AuthStatus> {
+  static final _log = LoggingService.instance;
+  static const _tag = 'Auth';
+
   @override
   Future<AuthStatus> build() async {
     final tokenResult = await ref.watch(secureStorageProvider).getAccessToken();
     final token = tokenResult.isSuccess ? tokenResult.value : null;
-    return token != null
+    final status = token != null
         ? AuthStatus.authenticated
         : AuthStatus.unauthenticated;
+    _log.info(_tag, 'Auth state initialized: ${status.name}');
+    return status;
   }
 
   Future<String?> _getDeviceName() async {
@@ -29,19 +33,19 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       if (kIsWeb) {
         final web = await info.webBrowserInfo;
         return web.browserName.name;
-      } else if (Platform.isAndroid) {
+      } else if (defaultTargetPlatform == TargetPlatform.android) {
         final android = await info.androidInfo;
         return android.model;
-      } else if (Platform.isIOS) {
+      } else if (defaultTargetPlatform == TargetPlatform.iOS) {
         final ios = await info.iosInfo;
         return ios.name;
-      } else if (Platform.isMacOS) {
+      } else if (defaultTargetPlatform == TargetPlatform.macOS) {
         final macos = await info.macOsInfo;
         return macos.computerName;
-      } else if (Platform.isLinux) {
+      } else if (defaultTargetPlatform == TargetPlatform.linux) {
         final linux = await info.linuxInfo;
         return linux.prettyName;
-      } else if (Platform.isWindows) {
+      } else if (defaultTargetPlatform == TargetPlatform.windows) {
         final windows = await info.windowsInfo;
         return windows.computerName;
       }
@@ -50,6 +54,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
   }
 
   Future<void> login(String email, String password) async {
+    _log.info(_tag, 'Login attempt');
     state = const AsyncValue.loading();
     final repo = ref.read(authRepositoryProvider);
     final deviceName = await _getDeviceName();
@@ -64,13 +69,18 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.user.email,
         );
         await _registerDeviceIfNeeded();
+        _log.info(_tag, 'Login successful');
         return const AsyncValue.data(AuthStatus.authenticated);
       },
-      onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
+      onFailure: (f) async {
+        _log.error(_tag, 'Login failed: $f');
+        return AsyncValue.error(f, StackTrace.current);
+      },
     );
   }
 
   Future<void> register(String email, String password) async {
+    _log.info(_tag, 'Registration attempt');
     state = const AsyncValue.loading();
     final repo = ref.read(authRepositoryProvider);
 
@@ -84,21 +94,27 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.user.email,
         );
         await _registerDeviceIfNeeded();
+        _log.info(_tag, 'Registration successful');
         return const AsyncValue.data(AuthStatus.authenticated);
       },
-      onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
+      onFailure: (f) async {
+        _log.error(_tag, 'Registration failed: $f');
+        return AsyncValue.error(f, StackTrace.current);
+      },
     );
   }
 
   Future<void> loginWithApple() async {
     if (!showAppleSignIn) return;
 
+    _log.info(_tag, 'Apple OAuth login attempt');
     state = const AsyncValue.loading();
     final appleService = ref.read(appleAuthServiceProvider);
     final repo = ref.read(authRepositoryProvider);
 
     final appleResult = await appleService.signIn();
     if (appleResult.isFailure) {
+      _log.error(_tag, 'Apple sign-in failed: ${appleResult.failure}');
       state = AsyncValue.error(appleResult.failure, StackTrace.current);
       return;
     }
@@ -113,19 +129,25 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.user.email,
         );
         await _registerDeviceIfNeeded();
+        _log.info(_tag, 'Apple OAuth login successful');
         return const AsyncValue.data(AuthStatus.authenticated);
       },
-      onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
+      onFailure: (f) async {
+        _log.error(_tag, 'Apple OAuth login failed: $f');
+        return AsyncValue.error(f, StackTrace.current);
+      },
     );
   }
 
   Future<void> loginWithGoogle() async {
+    _log.info(_tag, 'Google OAuth login attempt');
     state = const AsyncValue.loading();
     final googleService = ref.read(googleAuthServiceProvider);
     final repo = ref.read(authRepositoryProvider);
 
     final googleResult = await googleService.signIn();
     if (googleResult.isFailure) {
+      _log.error(_tag, 'Google sign-in failed: ${googleResult.failure}');
       state = AsyncValue.error(googleResult.failure, StackTrace.current);
       return;
     }
@@ -140,13 +162,18 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
           auth.user.email,
         );
         await _registerDeviceIfNeeded();
+        _log.info(_tag, 'Google OAuth login successful');
         return const AsyncValue.data(AuthStatus.authenticated);
       },
-      onFailure: (f) async => AsyncValue.error(f, StackTrace.current),
+      onFailure: (f) async {
+        _log.error(_tag, 'Google OAuth login failed: $f');
+        return AsyncValue.error(f, StackTrace.current);
+      },
     );
   }
 
   Future<void> logout() async {
+    _log.info(_tag, 'Logout initiated');
     state = const AsyncValue.loading();
     final repo = ref.read(authRepositoryProvider);
     final storage = ref.read(secureStorageProvider);
@@ -159,15 +186,19 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
 
     await storage.clearAuthTokens();
     ref.read(googleAuthServiceProvider).signOut();
+    _log.info(_tag, 'Logout completed — tokens cleared');
     state = const AsyncValue.data(AuthStatus.unauthenticated);
   }
 
   Future<void> forgotPassword(String email) async {
+    _log.info(_tag, 'Forgot password request');
     final repo = ref.read(authRepositoryProvider);
     final result = await repo.forgotPassword(email);
     if (result.isFailure) {
+      _log.error(_tag, 'Forgot password failed: ${result.failure}');
       throw result.failure;
     }
+    _log.info(_tag, 'Forgot password email sent');
   }
 
   Future<void> _persistTokens(
@@ -183,6 +214,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       await storage.saveTokenExpiry(expiresAt);
     }
     await storage.saveUserEmail(email);
+    _log.debug(_tag, 'Auth tokens persisted');
   }
 
   /// Register this device if not already registered
@@ -202,20 +234,21 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       final result = await repo.registerDevice(deviceName, platform);
       if (result.isSuccess && result.value.isNotEmpty) {
         await storage.saveDeviceId(result.value);
+        _log.info(_tag, 'Device registered: $deviceName ($platform)');
       }
-    } catch (_) {
-      // Non-critical, don't block login flow
+    } catch (e) {
+      _log.warning(_tag, 'Device registration failed (non-critical): $e');
     }
   }
 
   String _getPlatformName() {
     if (kIsWeb) return 'web';
     try {
-      if (Platform.isIOS) return 'ios';
-      if (Platform.isAndroid) return 'android';
-      if (Platform.isMacOS) return 'macos';
-      if (Platform.isLinux) return 'linux';
-      if (Platform.isWindows) return 'windows';
+      if (defaultTargetPlatform == TargetPlatform.iOS) return 'ios';
+      if (defaultTargetPlatform == TargetPlatform.android) return 'android';
+      if (defaultTargetPlatform == TargetPlatform.macOS) return 'macos';
+      if (defaultTargetPlatform == TargetPlatform.linux) return 'linux';
+      if (defaultTargetPlatform == TargetPlatform.windows) return 'windows';
     } catch (_) {}
     return 'unknown';
   }

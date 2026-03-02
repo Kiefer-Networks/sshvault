@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 
 class EmptyState extends StatelessWidget {
   final IconData icon;
@@ -26,13 +27,13 @@ class EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 72,
-              color: theme.colorScheme.onSurface.withAlpha(51),
+              color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha51),
             ),
             const SizedBox(height: 16),
             Text(
               title,
               style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(179),
+                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha179),
               ),
               textAlign: TextAlign.center,
             ),
@@ -40,7 +41,7 @@ class EmptyState extends StatelessWidget {
             Text(
               subtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(102),
+                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
               ),
               textAlign: TextAlign.center,
             ),

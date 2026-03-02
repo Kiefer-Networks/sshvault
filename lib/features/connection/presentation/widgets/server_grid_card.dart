@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/theme/glassmorphism.dart';
@@ -40,7 +41,7 @@ class ServerGridCard extends StatelessWidget {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: Color(server.color).withAlpha(26),
+                    color: Color(server.color).withAlpha(AppConstants.alpha26),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -66,8 +67,8 @@ class ServerGridCard extends StatelessWidget {
             Text(
               '${server.username}@${server.hostname}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(128),
-                fontFamily: 'monospace',
+                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
+                fontFamily: AppConstants.monospaceFontFamily,
                 fontSize: 11,
               ),
               maxLines: 1,
@@ -85,7 +86,7 @@ class ServerGridCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(tag.color).withAlpha(26),
+                      color: Color(tag.color).withAlpha(AppConstants.alpha26),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -104,7 +105,7 @@ class ServerGridCard extends StatelessWidget {
                       icon: Icon(
                         Icons.info_outlined,
                         size: 18,
-                        color: theme.colorScheme.onSurface.withAlpha(153),
+                        color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
                       ),
                       onPressed: onDetail,
                       tooltip: l10n.serverDetails,
@@ -120,7 +121,7 @@ class ServerGridCard extends StatelessWidget {
                       icon: Icon(
                         Icons.edit_outlined,
                         size: 18,
-                        color: theme.colorScheme.onSurface.withAlpha(153),
+                        color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
                       ),
                       onPressed: onEdit,
                       tooltip: l10n.edit,

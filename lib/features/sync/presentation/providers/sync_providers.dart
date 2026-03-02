@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/network/api_provider.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
@@ -20,6 +22,9 @@ final syncProvider = AsyncNotifierProvider<SyncNotifier, SyncStatus>(
 );
 
 class SyncNotifier extends AsyncNotifier<SyncStatus> {
+  static final _log = LoggingService.instance;
+  static const _tag = 'Sync';
+
   Timer? _debounceTimer;
   Timer? _periodicSyncTimer;
 
@@ -40,6 +45,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
   void schedulePush() {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(seconds: 3), () {
+      _log.debug(_tag, 'Debounced push triggered');
       pushOnly();
     });
   }
@@ -52,6 +58,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
       final settings = ref.read(settingsProvider).valueOrNull;
       if (authStatus == AuthStatus.authenticated &&
           (settings?.autoSync ?? false)) {
+        _log.debug(_tag, 'Periodic sync triggered');
         sync();
       }
     });
@@ -61,6 +68,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     // Check auth status
     final authStatus = ref.read(authProvider).valueOrNull;
     if (authStatus != AuthStatus.authenticated) {
+      _log.warning(_tag, 'Sync aborted: not authenticated');
       state = AsyncValue.error('Not authenticated', StackTrace.current);
       return;
     }
@@ -70,18 +78,31 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     final syncPwResult = await storage.getSyncPassword();
     final syncPassword = syncPwResult.isSuccess ? syncPwResult.value : null;
     if (syncPassword == null || syncPassword.isEmpty) {
+      _log.warning(_tag, 'Sync aborted: sync password not set');
       state = AsyncValue.error('Sync password not set', StackTrace.current);
       return;
     }
 
     state = const AsyncValue.data(SyncStatus.syncing);
+    _log.info(_tag, 'Sync initiated by user');
 
     // Get local vault version from settings
     final settings = ref.read(settingsProvider).valueOrNull;
     final localVersion = settings?.localVaultVersion ?? 0;
 
     final useCases = ref.read(syncUseCasesProvider);
-    final result = await useCases.sync(syncPassword, localVersion);
+    var result = await useCases.sync(syncPassword, localVersion);
+
+    // If pull decryption failed (corrupted server vault from old crypto bug),
+    // fall back to push-only to overwrite with correctly encrypted local data.
+    if (result.isFailure && result.failure is CryptoFailure) {
+      _log.warning(
+        _tag,
+        'Pull decryption failed — falling back to push-only '
+            'to re-encrypt server vault',
+      );
+      result = await useCases.push(syncPassword, localVersion);
+    }
 
     result.fold(
       onSuccess: (newVersion) {
@@ -95,9 +116,11 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         ref.invalidate(sshKeyListProvider);
         ref.invalidate(snippetListProvider);
 
+        _log.info(_tag, 'Sync successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
       },
       onFailure: (f) {
+        _log.error(_tag, 'Sync failed: $f');
         state = AsyncValue.error(f, StackTrace.current);
       },
     );
@@ -114,6 +137,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     if (syncPassword == null || syncPassword.isEmpty) return;
 
     state = const AsyncValue.data(SyncStatus.syncing);
+    _log.info(_tag, 'Push-only initiated');
 
     final settings = ref.read(settingsProvider).valueOrNull;
     final localVersion = settings?.localVaultVersion ?? 0;
@@ -124,9 +148,11 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     result.fold(
       onSuccess: (newVersion) {
         ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
+        _log.info(_tag, 'Push-only successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
       },
       onFailure: (f) {
+        _log.error(_tag, 'Push-only failed: $f');
         state = AsyncValue.error(f, StackTrace.current);
       },
     );
@@ -143,6 +169,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     if (syncPassword == null || syncPassword.isEmpty) return;
 
     state = const AsyncValue.data(SyncStatus.syncing);
+    _log.info(_tag, 'Pull-only initiated');
 
     final useCases = ref.read(syncUseCasesProvider);
     final result = await useCases.pull(syncPassword);
@@ -157,9 +184,11 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         ref.invalidate(sshKeyListProvider);
         ref.invalidate(snippetListProvider);
 
+        _log.info(_tag, 'Pull-only successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
       },
       onFailure: (f) {
+        _log.error(_tag, 'Pull-only failed: $f');
         state = AsyncValue.error(f, StackTrace.current);
       },
     );

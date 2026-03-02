@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data.dart';
@@ -43,7 +44,7 @@ class TerminalThemePicker extends ConsumerWidget {
                         : BorderSide.none,
                   ),
                   tileColor: isSelected
-                      ? theme.colorScheme.primaryContainer.withAlpha(51)
+                      ? theme.colorScheme.primaryContainer.withAlpha(AppConstants.alpha51)
                       : null,
                   leading: _ColorSwatchPreview(
                     background: preset.background,
@@ -119,7 +120,7 @@ class _ColorSwatchPreview extends StatelessWidget {
             children: [
               _dot(blue),
               _dot(yellow),
-              _dot(foreground.withAlpha(102)),
+              _dot(foreground.withAlpha(AppConstants.alpha102)),
             ],
           ),
         ],

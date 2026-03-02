@@ -145,7 +145,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       final data = await buildExportData(includeCredentials: true);
       final jsonString = const JsonEncoder.withIndent('  ').convert(data);
 
-      final envelopeResult = _encryptionService.encryptForExport(
+      final envelopeResult = await _encryptionService.encryptForExport(
         jsonString,
         password,
       );
@@ -231,7 +231,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
         jsonDecode(envelopeJson) as Map<String, dynamic>,
       );
 
-      return _encryptionService.decryptFromExport(envelope, password);
+      return await _encryptionService.decryptFromExport(envelope, password);
     } catch (e) {
       if (e is FormatException) {
         return Err(ImportFailure(e.message));

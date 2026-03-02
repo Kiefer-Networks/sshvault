@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
@@ -67,7 +68,7 @@ class ServerListTile extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: Color(server.color).withAlpha(26),
+            color: Color(server.color).withAlpha(AppConstants.alpha26),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -89,8 +90,8 @@ class ServerListTile extends StatelessWidget {
             Text(
               '${server.username}@${server.hostname}:${server.port}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(153),
-                fontFamily: 'monospace',
+                color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                fontFamily: AppConstants.monospaceFontFamily,
               ),
               overflow: TextOverflow.ellipsis,
             ),

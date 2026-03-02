@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/crypto/ssh_key_service.dart';
@@ -348,7 +349,7 @@ class _KeyPreviewCard extends StatelessWidget {
             Text(
               displayValue,
               style: theme.textTheme.bodySmall?.copyWith(
-                fontFamily: 'monospace',
+                fontFamily: AppConstants.monospaceFontFamily,
                 fontSize: 11,
               ),
               maxLines: 3,

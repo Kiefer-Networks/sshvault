@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 
 abstract final class AppTheme {
   static const _seedColor = Color(0xFF1A1A2E);
@@ -27,7 +28,7 @@ abstract final class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: colorScheme.outlineVariant.withAlpha(77)),
+          side: BorderSide(color: colorScheme.outlineVariant.withAlpha(AppConstants.alpha77)),
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -38,14 +39,14 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceContainerHighest.withAlpha(77),
+        fillColor: colorScheme.surfaceContainerHighest.withAlpha(AppConstants.alpha77),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withAlpha(77)),
+          borderSide: BorderSide(color: colorScheme.outline.withAlpha(AppConstants.alpha77)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withAlpha(77)),
+          borderSide: BorderSide(color: colorScheme.outline.withAlpha(AppConstants.alpha77)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -63,7 +64,7 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       dividerTheme: DividerThemeData(
-        color: colorScheme.outlineVariant.withAlpha(77),
+        color: colorScheme.outlineVariant.withAlpha(AppConstants.alpha77),
         thickness: 1,
       ),
       snackBarTheme: SnackBarThemeData(
@@ -73,7 +74,7 @@ abstract final class AppTheme {
       navigationRailTheme: NavigationRailThemeData(
         selectedIconTheme: IconThemeData(color: colorScheme.primary),
         unselectedIconTheme: IconThemeData(
-          color: colorScheme.onSurface.withAlpha(179),
+          color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
         ),
         selectedLabelTextStyle: TextStyle(
           color: colorScheme.primary,
@@ -81,10 +82,10 @@ abstract final class AppTheme {
           fontSize: 13,
         ),
         unselectedLabelTextStyle: TextStyle(
-          color: colorScheme.onSurface.withAlpha(179),
+          color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
           fontSize: 13,
         ),
-        indicatorColor: colorScheme.primary.withAlpha(26),
+        indicatorColor: colorScheme.primary.withAlpha(AppConstants.alpha26),
         indicatorShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -124,11 +125,11 @@ abstract final class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        color: const Color(0xFF1A1A2E).withAlpha(200),
+        color: const Color(0xFF1A1A2E).withAlpha(AppConstants.alpha200),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.white.withAlpha(13)),
+          side: BorderSide(color: Colors.white.withAlpha(AppConstants.alpha13)),
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -139,14 +140,14 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white.withAlpha(8),
+        fillColor: Colors.white.withAlpha(AppConstants.alpha8),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withAlpha(26)),
+          borderSide: BorderSide(color: Colors.white.withAlpha(AppConstants.alpha26)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withAlpha(26)),
+          borderSide: BorderSide(color: Colors.white.withAlpha(AppConstants.alpha26)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -162,11 +163,11 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: Colors.white.withAlpha(13),
+        backgroundColor: Colors.white.withAlpha(AppConstants.alpha13),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       dividerTheme: DividerThemeData(
-        color: Colors.white.withAlpha(13),
+        color: Colors.white.withAlpha(AppConstants.alpha13),
         thickness: 1,
       ),
       snackBarTheme: SnackBarThemeData(
@@ -177,7 +178,7 @@ abstract final class AppTheme {
         backgroundColor: const Color(0xFF0F0F1A),
         selectedIconTheme: IconThemeData(color: colorScheme.primary),
         unselectedIconTheme: IconThemeData(
-          color: colorScheme.onSurface.withAlpha(179),
+          color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
         ),
         selectedLabelTextStyle: TextStyle(
           color: colorScheme.primary,
@@ -185,10 +186,10 @@ abstract final class AppTheme {
           fontSize: 13,
         ),
         unselectedLabelTextStyle: TextStyle(
-          color: colorScheme.onSurface.withAlpha(179),
+          color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
           fontSize: 13,
         ),
-        indicatorColor: colorScheme.primary.withAlpha(26),
+        indicatorColor: colorScheme.primary.withAlpha(AppConstants.alpha26),
         indicatorShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

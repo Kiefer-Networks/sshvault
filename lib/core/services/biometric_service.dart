@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -9,10 +7,10 @@ class BiometricService {
   /// Returns true if the current platform supports biometric/local auth.
   static bool get isPlatformSupported {
     if (kIsWeb) return false;
-    return Platform.isAndroid ||
-        Platform.isIOS ||
-        Platform.isMacOS ||
-        Platform.isWindows;
+    return defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.windows;
   }
 
   /// Checks if the device supports biometric or device credential authentication.

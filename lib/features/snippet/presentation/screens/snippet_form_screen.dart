@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -147,7 +148,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
               keyboardType: TextInputType.multiline,
               maxLines: 10,
               minLines: 5,
-              style: const TextStyle(fontFamily: 'monospace'),
+              style: const TextStyle(fontFamily: AppConstants.monospaceFontFamily),
               validator: (v) => (v == null || v.trim().isEmpty)
                   ? l10n.snippetFormContentRequired
                   : null,

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/crypto/crypto_provider.dart';
@@ -529,7 +530,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
                   '${widget.existingKey!.keyType.displayName}'
                   '${widget.existingKey!.fingerprint.isNotEmpty ? ' · ${widget.existingKey!.fingerprint}' : ''}',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
+                    fontFamily: AppConstants.monospaceFontFamily,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                   overflow: TextOverflow.ellipsis,

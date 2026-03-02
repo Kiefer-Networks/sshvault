@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -665,7 +666,7 @@ class _DrawerItem extends StatelessWidget {
           ),
         ),
         selected: selected,
-        selectedTileColor: theme.colorScheme.primary.withAlpha(26),
+        selectedTileColor: theme.colorScheme.primary.withAlpha(AppConstants.alpha26),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         onTap: onTap,
       ),

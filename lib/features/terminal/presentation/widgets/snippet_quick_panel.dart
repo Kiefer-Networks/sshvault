@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
@@ -60,7 +61,7 @@ class _SnippetQuickPanelContentState
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onSurface.withAlpha(51),
+            color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha51),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -115,7 +116,7 @@ class _SnippetQuickPanelContentState
                         ? l10n.snippetQuickPanelEmpty
                         : l10n.snippetQuickPanelNoMatch,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withAlpha(128),
+                      color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
                     ),
                   ),
                 );
@@ -195,8 +196,8 @@ class _SnippetTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.bodySmall?.copyWith(
-          fontFamily: 'monospace',
-          color: theme.colorScheme.onSurface.withAlpha(128),
+          fontFamily: AppConstants.monospaceFontFamily,
+          color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
         ),
       ),
     );

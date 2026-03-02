@@ -1,8 +1,10 @@
-import 'dart:io';
+import 'dart:io' show File;
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -535,7 +537,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final filePath = await logger.exportToFile();
     if (filePath == null || !mounted) return;
 
-    await Share.shareXFiles([XFile(filePath)]);
+    if (isDesktopPlatform) {
+      final savePath = await FilePicker.platform.saveFile(
+        dialogTitle: l10n.settingsDownloadLogs,
+        fileName: 'shellvault_logs.txt',
+      );
+      if (savePath == null || !mounted) return;
+      await File(filePath).copy(savePath);
+    } else {
+      await Share.shareXFiles([XFile(filePath)]);
+    }
 
     if (!mounted) return;
     ScaffoldMessenger.of(
@@ -550,22 +561,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     String platform;
     if (kIsWeb) {
       platform = 'Web';
-    } else if (Platform.isIOS) {
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       platform = 'iOS';
-    } else if (Platform.isAndroid) {
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
       platform = 'Android';
-    } else if (Platform.isMacOS) {
+    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       platform = 'macOS';
-    } else if (Platform.isWindows) {
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
       platform = 'Windows';
-    } else if (Platform.isLinux) {
+    } else if (defaultTargetPlatform == TargetPlatform.linux) {
       platform = 'Linux';
     } else {
       platform = 'Unknown';
     }
 
     // If logs exist, export and share via share_plus with email intent
-    if (!logger.isEmpty) {
+    if (!logger.isEmpty && !isDesktopPlatform) {
       final filePath = await logger.exportToFile();
       if (filePath != null && mounted) {
         await Share.shareXFiles(

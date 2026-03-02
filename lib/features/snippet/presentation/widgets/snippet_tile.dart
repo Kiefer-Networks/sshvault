@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
@@ -53,7 +54,7 @@ class SnippetTile extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withAlpha(26),
+            color: theme.colorScheme.primary.withAlpha(AppConstants.alpha26),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(Icons.code, color: theme.colorScheme.primary, size: 22),
@@ -87,7 +88,7 @@ class SnippetTile extends StatelessWidget {
               Text(
                 snippet.description,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withAlpha(153),
+                  color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -99,8 +100,8 @@ class SnippetTile extends StatelessWidget {
                     ? '${snippet.content.substring(0, 80)}...'
                     : snippet.content,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                  color: theme.colorScheme.onSurface.withAlpha(153),
+                  fontFamily: AppConstants.monospaceFontFamily,
+                  color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

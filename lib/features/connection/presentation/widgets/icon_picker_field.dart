@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 
@@ -38,19 +39,19 @@ class IconPickerField extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Color(accentColor).withAlpha(51)
-                      : Colors.white.withAlpha(8),
+                      ? Color(accentColor).withAlpha(AppConstants.alpha51)
+                      : Colors.white.withAlpha(AppConstants.alpha8),
                   borderRadius: BorderRadius.circular(8),
                   border: isSelected
                       ? Border.all(color: Color(accentColor), width: 2)
-                      : Border.all(color: Colors.white.withAlpha(13)),
+                      : Border.all(color: Colors.white.withAlpha(AppConstants.alpha13)),
                 ),
                 child: Icon(
                   si.icon,
                   size: 20,
                   color: isSelected
                       ? Color(accentColor)
-                      : theme.colorScheme.onSurface.withAlpha(128),
+                      : theme.colorScheme.onSurface.withAlpha(AppConstants.alpha128),
                 ),
               ),
             );

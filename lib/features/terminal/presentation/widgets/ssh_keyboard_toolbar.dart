@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:xterm/xterm.dart';
 
 import 'package:shellvault/features/terminal/presentation/widgets/virtual_keyboard.dart';
@@ -30,7 +31,7 @@ class SshKeyboardToolbar extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             border: Border(
-              top: BorderSide(color: theme.colorScheme.outline.withAlpha(51)),
+              top: BorderSide(color: theme.colorScheme.outline.withAlpha(AppConstants.alpha51)),
             ),
           ),
           child: SafeArea(
@@ -183,7 +184,7 @@ class _KeyButton extends StatelessWidget {
                 : Text(
                     label!,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      fontFamily: 'monospace',
+                      fontFamily: AppConstants.monospaceFontFamily,
                     ),
                   ),
           ),
@@ -224,7 +225,7 @@ class _ModifierButton extends StatelessWidget {
             child: Text(
               label,
               style: theme.textTheme.labelSmall?.copyWith(
-                fontFamily: 'monospace',
+                fontFamily: AppConstants.monospaceFontFamily,
                 color: isActive
                     ? theme.colorScheme.onPrimary
                     : theme.colorScheme.onSurface,

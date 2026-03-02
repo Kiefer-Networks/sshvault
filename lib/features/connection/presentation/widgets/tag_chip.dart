@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 
 class TagChip extends StatelessWidget {
@@ -22,9 +23,9 @@ class TagChip extends StatelessWidget {
       label: Text(tag.name),
       onSelected: onTap != null ? (_) => onTap!() : null,
       onDeleted: onDelete,
-      backgroundColor: Color(tag.color).withAlpha(26),
-      selectedColor: Color(tag.color).withAlpha(51),
-      side: BorderSide(color: Color(tag.color).withAlpha(77)),
+      backgroundColor: Color(tag.color).withAlpha(AppConstants.alpha26),
+      selectedColor: Color(tag.color).withAlpha(AppConstants.alpha51),
+      side: BorderSide(color: Color(tag.color).withAlpha(AppConstants.alpha77)),
       labelStyle: TextStyle(color: Color(tag.color), fontSize: 12),
     );
   }
