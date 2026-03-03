@@ -29,10 +29,7 @@ class AdaptiveSwitchTile extends StatelessWidget {
         leading: secondary,
         title: Text(title),
         subtitle: subtitle != null ? Text(subtitle!) : null,
-        trailing: CupertinoSwitch(
-          value: value,
-          onChanged: onChanged,
-        ),
+        trailing: CupertinoSwitch(value: value, onChanged: onChanged),
       );
     }
 

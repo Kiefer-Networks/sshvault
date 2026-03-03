@@ -35,9 +35,10 @@ class _GroupFormReactiveState {
   }
 }
 
-final _groupFormStateProvider = StateProvider.autoDispose<_GroupFormReactiveState>(
-  (ref) => const _GroupFormReactiveState(),
-);
+final _groupFormStateProvider =
+    StateProvider.autoDispose<_GroupFormReactiveState>(
+      (ref) => const _GroupFormReactiveState(),
+    );
 
 class GroupFormDialog extends ConsumerStatefulWidget {
   final GroupEntity? group;
@@ -79,7 +80,9 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
     if (_initialized) return;
     _initialized = true;
     if (widget.group != null) {
-      ref.read(_groupFormStateProvider.notifier).state = _GroupFormReactiveState(
+      ref
+          .read(_groupFormStateProvider.notifier)
+          .state = _GroupFormReactiveState(
         color: widget.group!.color,
         iconName: widget.group!.iconName,
         parentId: widget.group!.parentId,
@@ -134,13 +137,12 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
                       child: Text(l10n.groupFormParentNone),
                     ),
                     ...availableGroups.map(
-                      (g) =>
-                          DropdownMenuItem(value: g.id, child: Text(g.name)),
+                      (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
                     ),
                   ],
-                  onChanged: (v) => ref
-                      .read(_groupFormStateProvider.notifier)
-                      .state = formState.copyWith(parentId: () => v),
+                  onChanged: (v) =>
+                      ref.read(_groupFormStateProvider.notifier).state =
+                          formState.copyWith(parentId: () => v),
                 );
               },
               loading: () => const SizedBox.shrink(),
@@ -149,16 +151,16 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
             const SizedBox(height: 16),
             ColorPickerField(
               selectedColor: formState.color,
-              onColorChanged: (c) => ref
-                  .read(_groupFormStateProvider.notifier)
-                  .state = formState.copyWith(color: c),
+              onColorChanged: (c) =>
+                  ref.read(_groupFormStateProvider.notifier).state = formState
+                      .copyWith(color: c),
             ),
             const SizedBox(height: 16),
             IconPickerField(
               selectedIcon: formState.iconName,
-              onIconChanged: (i) => ref
-                  .read(_groupFormStateProvider.notifier)
-                  .state = formState.copyWith(iconName: i),
+              onIconChanged: (i) =>
+                  ref.read(_groupFormStateProvider.notifier).state = formState
+                      .copyWith(iconName: i),
               accentColor: formState.color,
             ),
           ],
@@ -192,10 +194,7 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: Text(l10n.cancel),
         ),
-        FilledButton(
-          onPressed: _save,
-          child: Text(saveText),
-        ),
+        FilledButton(onPressed: _save, child: Text(saveText)),
       ],
     );
   }

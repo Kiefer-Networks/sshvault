@@ -13,11 +13,7 @@ class _ConnectionTestState {
   final String? result;
   final bool? success;
 
-  const _ConnectionTestState({
-    this.testing = false,
-    this.result,
-    this.success,
-  });
+  const _ConnectionTestState({this.testing = false, this.result, this.success});
 }
 
 final _connectionTestProvider = StateProvider.autoDispose<_ConnectionTestState>(
@@ -145,8 +141,9 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
       result.fold(
         onSuccess: (_) {
           if (mounted) {
-            ref.read(_connectionTestProvider.notifier).state =
-                const _ConnectionTestState(
+            ref
+                .read(_connectionTestProvider.notifier)
+                .state = const _ConnectionTestState(
               result: 'Connection successful',
               success: true,
             );
@@ -154,8 +151,9 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
         },
         onFailure: (f) {
           if (mounted) {
-            ref.read(_connectionTestProvider.notifier).state =
-                _ConnectionTestState(
+            ref
+                .read(_connectionTestProvider.notifier)
+                .state = _ConnectionTestState(
               result: 'Connection failed: ${f.message}',
               success: false,
             );
@@ -164,8 +162,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
       );
     } catch (e) {
       if (mounted) {
-        ref.read(_connectionTestProvider.notifier).state =
-            _ConnectionTestState(
+        ref.read(_connectionTestProvider.notifier).state = _ConnectionTestState(
           result: 'Connection failed: $e',
           success: false,
         );

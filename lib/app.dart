@@ -91,8 +91,9 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     final cupertinoTheme = brightness == Brightness.dark
         ? AppTheme.cupertinoDark
         : AppTheme.cupertinoLight;
-    final materialTheme =
-        brightness == Brightness.dark ? AppTheme.dark : AppTheme.light;
+    final materialTheme = brightness == Brightness.dark
+        ? AppTheme.dark
+        : AppTheme.light;
 
     return CupertinoApp.router(
       debugShowCheckedModeBanner: false,
@@ -142,8 +143,7 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     return switch (mode) {
       ThemeMode.dark => Brightness.dark,
       ThemeMode.light => Brightness.light,
-      ThemeMode.system =>
-        PlatformDispatcher.instance.platformBrightness,
+      ThemeMode.system => PlatformDispatcher.instance.platformBrightness,
     };
   }
 }

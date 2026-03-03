@@ -26,8 +26,8 @@ class CertificatePinningService {
   CertificatePinningService({
     required Map<String, List<CertificatePin>> pins,
     bool enforceInDebug = false,
-  })  : _pins = Map.unmodifiable(pins),
-        _enforceInDebug = enforceInDebug;
+  }) : _pins = Map.unmodifiable(pins),
+       _enforceInDebug = enforceInDebug;
 
   /// Whether pinning is configured for any host.
   bool get hasPins => _pins.isNotEmpty;
@@ -128,22 +128,18 @@ class CertificatePin {
   /// Expiry date — after this date, the pin is ignored.
   final DateTime? expiresAt;
 
-  const CertificatePin({
-    required this.hash,
-    this.label,
-    this.expiresAt,
-  });
+  const CertificatePin({required this.hash, this.label, this.expiresAt});
 
   /// Creates a pin from a base64-encoded SHA-256 hash string.
   const CertificatePin.sha256(this.hash, {this.label, this.expiresAt});
 
   /// Whether this pin has expired.
-  bool get isExpired =>
-      expiresAt != null && DateTime.now().isAfter(expiresAt!);
+  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
 
   /// Whether this pin is currently valid.
   bool get isValid => !isExpired;
 
   @override
-  String toString() => 'CertificatePin($hash${label != null ? ", $label" : ""})';
+  String toString() =>
+      'CertificatePin($hash${label != null ? ", $label" : ""})';
 }

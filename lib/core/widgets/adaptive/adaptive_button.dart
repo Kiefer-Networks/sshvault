@@ -66,7 +66,8 @@ class AdaptiveButton extends StatelessWidget {
       onPressed: onPressed,
       icon: icon,
       label: label,
-      style: style ??
+      style:
+          style ??
           (color != null
               ? FilledButton.styleFrom(backgroundColor: color)
               : null),

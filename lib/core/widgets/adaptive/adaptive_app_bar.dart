@@ -22,14 +22,12 @@ PreferredSizeWidget buildAdaptiveAppBar(
       leading: leading,
       automaticallyImplyLeading: automaticallyImplyLeading,
       trailing: actions != null && actions.isNotEmpty
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: actions,
-            )
+          ? Row(mainAxisSize: MainAxisSize.min, children: actions)
           : null,
       border: null,
-      backgroundColor:
-          CupertinoTheme.of(context).barBackgroundColor.withAlpha(230),
+      backgroundColor: CupertinoTheme.of(
+        context,
+      ).barBackgroundColor.withAlpha(230),
     );
   }
 

@@ -11,9 +11,7 @@ final _auditCategoryProvider = StateProvider.autoDispose<String?>(
   (ref) => null,
 );
 
-final _auditOffsetProvider = StateProvider.autoDispose<int>(
-  (ref) => 0,
-);
+final _auditOffsetProvider = StateProvider.autoDispose<int>((ref) => 0);
 
 class AuditLogScreen extends ConsumerWidget {
   const AuditLogScreen({super.key});
@@ -93,9 +91,7 @@ class AuditLogScreen extends ConsumerWidget {
                               onPressed: offset > 0
                                   ? () {
                                       ref
-                                          .read(
-                                            _auditOffsetProvider.notifier,
-                                          )
+                                          .read(_auditOffsetProvider.notifier)
                                           .state = (offset - result.limit)
                                           .clamp(0, result.total);
                                     }
@@ -110,10 +106,11 @@ class AuditLogScreen extends ConsumerWidget {
                               onPressed: offset + result.limit < result.total
                                   ? () {
                                       ref
-                                          .read(
-                                            _auditOffsetProvider.notifier,
-                                          )
-                                          .state = offset + result.limit;
+                                              .read(
+                                                _auditOffsetProvider.notifier,
+                                              )
+                                              .state =
+                                          offset + result.limit;
                                     }
                                   : null,
                             ),
@@ -123,7 +120,8 @@ class AuditLogScreen extends ConsumerWidget {
                   ],
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+              loading: () =>
+                  const Center(child: CircularProgressIndicator.adaptive()),
               error: (e, _) => Center(child: Text(l10n.error(e.toString()))),
             ),
           ),

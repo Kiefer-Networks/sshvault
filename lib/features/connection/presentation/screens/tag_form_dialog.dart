@@ -120,10 +120,7 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: Text(l10n.cancel),
         ),
-        FilledButton(
-          onPressed: _save,
-          child: Text(saveText),
-        ),
+        FilledButton(onPressed: _save, child: Text(saveText)),
       ],
     );
   }

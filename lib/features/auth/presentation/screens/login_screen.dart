@@ -43,10 +43,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _checkSyncPasswordAndNavigate();
       }
       if (next.hasError && mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: next.error.toString(),
-        );
+        AdaptiveNotification.show(context, message: next.error.toString());
       }
     });
 
@@ -153,9 +150,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
                         ),
-                        onPressed: () => ref
-                            .read(_obscurePasswordProvider.notifier)
-                            .state = !obscurePassword,
+                        onPressed: () =>
+                            ref.read(_obscurePasswordProvider.notifier).state =
+                                !obscurePassword,
                       ),
                     ),
                     validator: (v) {

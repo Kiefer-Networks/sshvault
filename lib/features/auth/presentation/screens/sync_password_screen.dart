@@ -35,8 +35,7 @@ class _SyncPasswordFormState {
   }
 }
 
-class _SyncPasswordFormNotifier
-    extends Notifier<_SyncPasswordFormState> {
+class _SyncPasswordFormNotifier extends Notifier<_SyncPasswordFormState> {
   @override
   _SyncPasswordFormState build() => const _SyncPasswordFormState();
 
@@ -61,10 +60,11 @@ class _SyncPasswordFormNotifier
   }
 }
 
-final _syncPasswordFormProvider = NotifierProvider.autoDispose<
-    _SyncPasswordFormNotifier, _SyncPasswordFormState>(
-  _SyncPasswordFormNotifier.new,
-);
+final _syncPasswordFormProvider =
+    NotifierProvider.autoDispose<
+      _SyncPasswordFormNotifier,
+      _SyncPasswordFormState
+    >(_SyncPasswordFormNotifier.new);
 
 class SyncPasswordScreen extends ConsumerStatefulWidget {
   final SyncPasswordMode mode;
@@ -249,9 +249,9 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
         final validResult = await useCases.validatePassword(password);
 
         if (validResult.isFailure || !validResult.value) {
-          ref.read(_syncPasswordFormProvider.notifier).setError(
-            l10n.syncPasswordWrong,
-          );
+          ref
+              .read(_syncPasswordFormProvider.notifier)
+              .setError(l10n.syncPasswordWrong);
           ref.read(_syncPasswordFormProvider.notifier).setSaving(false);
           return;
         }

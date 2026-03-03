@@ -32,8 +32,9 @@ void main() {
 
   group('getTags', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.getTags())
-          .thenAnswer((_) async => Success([validTag]));
+      when(
+        () => mockRepo.getTags(),
+      ).thenAnswer((_) async => Success([validTag]));
 
       final result = await sut.getTags();
       expect(result.isSuccess, isTrue);
@@ -44,8 +45,9 @@ void main() {
 
   group('getTag', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.getTag('1'))
-          .thenAnswer((_) async => Success(validTag));
+      when(
+        () => mockRepo.getTag('1'),
+      ).thenAnswer((_) async => Success(validTag));
 
       final result = await sut.getTag('1');
       expect(result.isSuccess, isTrue);
@@ -55,8 +57,9 @@ void main() {
 
   group('createTag', () {
     test('creates tag when name is valid', () async {
-      when(() => mockRepo.createTag(any()))
-          .thenAnswer((_) async => Success(validTag));
+      when(
+        () => mockRepo.createTag(any()),
+      ).thenAnswer((_) async => Success(validTag));
 
       final result = await sut.createTag(validTag);
       expect(result.isSuccess, isTrue);
@@ -81,8 +84,9 @@ void main() {
 
   group('updateTag', () {
     test('updates tag when name is valid', () async {
-      when(() => mockRepo.updateTag(any()))
-          .thenAnswer((_) async => Success(validTag));
+      when(
+        () => mockRepo.updateTag(any()),
+      ).thenAnswer((_) async => Success(validTag));
 
       final result = await sut.updateTag(validTag);
       expect(result.isSuccess, isTrue);
@@ -99,8 +103,9 @@ void main() {
 
   group('deleteTag', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.deleteTag('1'))
-          .thenAnswer((_) async => const Success(null));
+      when(
+        () => mockRepo.deleteTag('1'),
+      ).thenAnswer((_) async => const Success(null));
 
       final result = await sut.deleteTag('1');
       expect(result.isSuccess, isTrue);
@@ -110,8 +115,9 @@ void main() {
 
   group('getTagsForServer', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.getTagsForServer('server-1'))
-          .thenAnswer((_) async => Success([validTag]));
+      when(
+        () => mockRepo.getTagsForServer('server-1'),
+      ).thenAnswer((_) async => Success([validTag]));
 
       final result = await sut.getTagsForServer('server-1');
       expect(result.isSuccess, isTrue);
@@ -121,13 +127,15 @@ void main() {
 
   group('setServerTags', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.setServerTags('server-1', ['tag-1', 'tag-2']))
-          .thenAnswer((_) async => const Success(null));
+      when(
+        () => mockRepo.setServerTags('server-1', ['tag-1', 'tag-2']),
+      ).thenAnswer((_) async => const Success(null));
 
       final result = await sut.setServerTags('server-1', ['tag-1', 'tag-2']);
       expect(result.isSuccess, isTrue);
-      verify(() => mockRepo.setServerTags('server-1', ['tag-1', 'tag-2']))
-          .called(1);
+      verify(
+        () => mockRepo.setServerTags('server-1', ['tag-1', 'tag-2']),
+      ).called(1);
     });
   });
 }

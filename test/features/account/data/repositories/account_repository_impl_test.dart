@@ -11,11 +11,7 @@ void main() {
   late MockApiClient mockApi;
   late AccountRepositoryImpl sut;
 
-  final userJson = {
-    'id': 'u1',
-    'email': 'test@example.com',
-    'verified': true,
-  };
+  final userJson = {'id': 'u1', 'email': 'test@example.com', 'verified': true};
 
   setUp(() {
     mockApi = MockApiClient();
@@ -24,8 +20,9 @@ void main() {
 
   group('getProfile', () {
     test('returns UserEntity on success', () async {
-      when(() => mockApi.get('/v1/user'))
-          .thenAnswer((_) async => Success(userJson));
+      when(
+        () => mockApi.get('/v1/user'),
+      ).thenAnswer((_) async => Success(userJson));
 
       final result = await sut.getProfile();
       expect(result.isSuccess, isTrue);
@@ -45,17 +42,18 @@ void main() {
 
   group('updateProfile', () {
     test('returns updated UserEntity on success', () async {
-      when(() => mockApi.put('/v1/user', data: any(named: 'data')))
-          .thenAnswer((_) async => Success(userJson));
+      when(
+        () => mockApi.put('/v1/user', data: any(named: 'data')),
+      ).thenAnswer((_) async => Success(userJson));
 
       final result = await sut.updateProfile(email: 'new@test.com');
       expect(result.isSuccess, isTrue);
     });
 
     test('returns failure on error', () async {
-      when(() => mockApi.put('/v1/user', data: any(named: 'data')))
-          .thenAnswer(
-        (_) async => const Err(NetworkFailure('invalid email', statusCode: 422)),
+      when(() => mockApi.put('/v1/user', data: any(named: 'data'))).thenAnswer(
+        (_) async =>
+            const Err(NetworkFailure('invalid email', statusCode: 422)),
       );
 
       final result = await sut.updateProfile(email: 'bad');
@@ -65,28 +63,34 @@ void main() {
 
   group('changePassword', () {
     test('returns Success on password change', () async {
-      when(() => mockApi.put('/v1/user/password', data: any(named: 'data')))
-          .thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () => mockApi.put('/v1/user/password', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.changePassword('old-pass', 'new-pass');
       expect(result.isSuccess, isTrue);
     });
 
     test('sends correct payload', () async {
-      when(() => mockApi.put('/v1/user/password', data: any(named: 'data')))
-          .thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () => mockApi.put('/v1/user/password', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       await sut.changePassword('old', 'new');
-      verify(() => mockApi.put(
-            '/v1/user/password',
-            data: {'current_password': 'old', 'new_password': 'new'},
-          )).called(1);
+      verify(
+        () => mockApi.put(
+          '/v1/user/password',
+          data: {'current_password': 'old', 'new_password': 'new'},
+        ),
+      ).called(1);
     });
 
     test('returns failure on wrong password', () async {
-      when(() => mockApi.put('/v1/user/password', data: any(named: 'data')))
-          .thenAnswer(
-        (_) async => const Err(NetworkFailure('wrong password', statusCode: 401)),
+      when(
+        () => mockApi.put('/v1/user/password', data: any(named: 'data')),
+      ).thenAnswer(
+        (_) async =>
+            const Err(NetworkFailure('wrong password', statusCode: 401)),
       );
 
       final result = await sut.changePassword('wrong', 'new');
@@ -96,8 +100,9 @@ void main() {
 
   group('deleteAccount', () {
     test('returns Success', () async {
-      when(() => mockApi.delete('/v1/user'))
-          .thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () => mockApi.delete('/v1/user'),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.deleteAccount();
       expect(result.isSuccess, isTrue);
@@ -132,9 +137,9 @@ void main() {
     });
 
     test('returns empty list when no devices', () async {
-      when(() => mockApi.get('/v1/devices')).thenAnswer(
-        (_) async => const Success(<String, dynamic>{}),
-      );
+      when(
+        () => mockApi.get('/v1/devices'),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.getDevices();
       expect(result.isSuccess, isTrue);
@@ -142,9 +147,9 @@ void main() {
     });
 
     test('returns failure on error', () async {
-      when(() => mockApi.get('/v1/devices')).thenAnswer(
-        (_) async => const Err(NetworkFailure('offline')),
-      );
+      when(
+        () => mockApi.get('/v1/devices'),
+      ).thenAnswer((_) async => const Err(NetworkFailure('offline')));
 
       final result = await sut.getDevices();
       expect(result.isFailure, isTrue);
@@ -153,8 +158,9 @@ void main() {
 
   group('registerDevice', () {
     test('returns device ID on success', () async {
-      when(() => mockApi.post('/v1/devices', data: any(named: 'data')))
-          .thenAnswer((_) async => const Success({'id': 'new-device-id'}));
+      when(
+        () => mockApi.post('/v1/devices', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success({'id': 'new-device-id'}));
 
       final result = await sut.registerDevice('My Phone', 'android');
       expect(result.isSuccess, isTrue);
@@ -162,21 +168,25 @@ void main() {
     });
 
     test('sends name and platform', () async {
-      when(() => mockApi.post('/v1/devices', data: any(named: 'data')))
-          .thenAnswer((_) async => const Success({'id': 'x'}));
+      when(
+        () => mockApi.post('/v1/devices', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success({'id': 'x'}));
 
       await sut.registerDevice('iPad', 'ios');
-      verify(() => mockApi.post(
-            '/v1/devices',
-            data: {'name': 'iPad', 'platform': 'ios'},
-          )).called(1);
+      verify(
+        () => mockApi.post(
+          '/v1/devices',
+          data: {'name': 'iPad', 'platform': 'ios'},
+        ),
+      ).called(1);
     });
   });
 
   group('deleteDevice', () {
     test('returns Success', () async {
-      when(() => mockApi.delete('/v1/devices/d1'))
-          .thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () => mockApi.delete('/v1/devices/d1'),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.deleteDevice('d1');
       expect(result.isSuccess, isTrue);
@@ -185,8 +195,9 @@ void main() {
 
   group('logoutAllDevices', () {
     test('returns revoked count', () async {
-      when(() => mockApi.post('/v1/auth/logout-all'))
-          .thenAnswer((_) async => const Success({'revoked': 5}));
+      when(
+        () => mockApi.post('/v1/auth/logout-all'),
+      ).thenAnswer((_) async => const Success({'revoked': 5}));
 
       final result = await sut.logoutAllDevices();
       expect(result.isSuccess, isTrue);
@@ -211,9 +222,9 @@ void main() {
     });
 
     test('returns failure on error', () async {
-      when(() => mockApi.get('/v1/billing/status')).thenAnswer(
-        (_) async => const Err(NetworkFailure('offline')),
-      );
+      when(
+        () => mockApi.get('/v1/billing/status'),
+      ).thenAnswer((_) async => const Err(NetworkFailure('offline')));
 
       final result = await sut.getBillingStatus();
       expect(result.isFailure, isTrue);
@@ -246,10 +257,12 @@ void main() {
 
   group('getAuditLogs', () {
     test('returns AuditLogResult on success', () async {
-      when(() => mockApi.get(
-            '/v1/audit',
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer(
+      when(
+        () => mockApi.get(
+          '/v1/audit',
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
         (_) async => const Success({
           'audit_logs': [
             {
@@ -274,10 +287,12 @@ void main() {
     });
 
     test('passes query parameters', () async {
-      when(() => mockApi.get(
-            '/v1/audit',
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer(
+      when(
+        () => mockApi.get(
+          '/v1/audit',
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
         (_) async => const Success({
           'audit_logs': [],
           'total': 0,
@@ -286,26 +301,22 @@ void main() {
         }),
       );
 
-      await sut.getAuditLogs(
-        category: 'AUTH',
-        limit: 25,
-        offset: 10,
-      );
-      verify(() => mockApi.get(
-            '/v1/audit',
-            queryParameters: {
-              'limit': '25',
-              'offset': '10',
-              'category': 'AUTH',
-            },
-          )).called(1);
+      await sut.getAuditLogs(category: 'AUTH', limit: 25, offset: 10);
+      verify(
+        () => mockApi.get(
+          '/v1/audit',
+          queryParameters: {'limit': '25', 'offset': '10', 'category': 'AUTH'},
+        ),
+      ).called(1);
     });
 
     test('returns failure on error', () async {
-      when(() => mockApi.get(
-            '/v1/audit',
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer(
+      when(
+        () => mockApi.get(
+          '/v1/audit',
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
         (_) async => const Err(NetworkFailure('unauthorized', statusCode: 401)),
       );
 

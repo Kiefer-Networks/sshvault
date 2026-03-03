@@ -43,9 +43,7 @@ class AdaptiveSegmentedControl<T extends Object> extends StatelessWidget {
 
     return SegmentedButton<T>(
       segments: segments.entries
-          .map(
-            (e) => ButtonSegment<T>(value: e.key, label: Text(e.value)),
-          )
+          .map((e) => ButtonSegment<T>(value: e.key, label: Text(e.value)))
           .toList(),
       selected: {selected},
       onSelectionChanged: (s) => onChanged(s.first),

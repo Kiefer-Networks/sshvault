@@ -22,7 +22,10 @@ void main() {
   group('SecureStorageService — password', () {
     test('savePassword writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.savePassword('server1', 'mypass');
@@ -57,7 +60,10 @@ void main() {
 
     test('savePassword returns StorageFailure on error', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenThrow(Exception('storage error'));
 
       final result = await sut.savePassword('server1', 'mypass');
@@ -79,7 +85,10 @@ void main() {
   group('SecureStorageService — private key', () {
     test('savePrivateKey writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.savePrivateKey('server1', 'pem-key');
@@ -106,7 +115,10 @@ void main() {
   group('SecureStorageService — public key', () {
     test('savePublicKey writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.savePublicKey('server1', 'ssh-ed25519 AAAA...');
@@ -127,7 +139,10 @@ void main() {
   group('SecureStorageService — passphrase', () {
     test('savePassphrase writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.savePassphrase('server1', 'my-passphrase');
@@ -174,9 +189,9 @@ void main() {
 
   group('SecureStorageService — getAllCredentials', () {
     test('returns map of all credential values', () async {
-      when(
-        () => mockStorage.read(key: any(named: 'key')),
-      ).thenAnswer((invocation) async {
+      when(() => mockStorage.read(key: any(named: 'key'))).thenAnswer((
+        invocation,
+      ) async {
         final key = invocation.namedArguments[#key] as String;
         if (key.endsWith('_password')) return 'pass123';
         if (key.endsWith('_key')) return 'private-key';
@@ -197,7 +212,10 @@ void main() {
   group('SecureStorageService — SSH key secrets', () {
     test('saveSshKeyPrivateKey writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.saveSshKeyPrivateKey('key1', 'pem-data');
@@ -222,7 +240,10 @@ void main() {
 
     test('saveSshKeyPassphrase writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.saveSshKeyPassphrase('key1', 'phrase');
@@ -256,7 +277,10 @@ void main() {
   group('SecureStorageService — DEK', () {
     test('saveDek encodes and writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final dek = Uint8List.fromList([1, 2, 3, 4, 5, 6, 7, 8]);
@@ -298,14 +322,19 @@ void main() {
 
       final result = await sut.deleteDek();
       expect(result.isSuccess, isTrue);
-      verify(() => mockStorage.delete(key: AppConstants.dekStorageKey)).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.dekStorageKey),
+      ).called(1);
     });
   });
 
   group('SecureStorageService — auth tokens', () {
     test('saveAccessToken writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.saveAccessToken('jwt-token');
@@ -330,7 +359,10 @@ void main() {
 
     test('saveRefreshToken writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.saveRefreshToken('refresh-token');
@@ -349,7 +381,10 @@ void main() {
 
     test('saveTokenExpiry writes ISO date', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.saveTokenExpiry('2025-12-31T23:59:59Z');
@@ -370,7 +405,10 @@ void main() {
   group('SecureStorageService — sync password and email', () {
     test('saveSyncPassword writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.saveSyncPassword('sync-pass');
@@ -389,7 +427,10 @@ void main() {
 
     test('saveUserEmail writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.saveUserEmail('user@example.com');
@@ -416,12 +457,24 @@ void main() {
       final result = await sut.clearAuthTokens();
       expect(result.isSuccess, isTrue);
 
-      verify(() => mockStorage.delete(key: AppConstants.accessTokenKey)).called(1);
-      verify(() => mockStorage.delete(key: AppConstants.refreshTokenKey)).called(1);
-      verify(() => mockStorage.delete(key: AppConstants.tokenExpiryKey)).called(1);
-      verify(() => mockStorage.delete(key: AppConstants.userEmailKey)).called(1);
-      verify(() => mockStorage.delete(key: AppConstants.syncPasswordKey)).called(1);
-      verify(() => mockStorage.delete(key: AppConstants.dekStorageKey)).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.accessTokenKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.refreshTokenKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.tokenExpiryKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.userEmailKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.syncPasswordKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.dekStorageKey),
+      ).called(1);
       verify(() => mockStorage.delete(key: AppConstants.deviceIdKey)).called(1);
     });
 
@@ -439,7 +492,10 @@ void main() {
   group('SecureStorageService — device ID', () {
     test('saveDeviceId writes to storage', () async {
       when(
-        () => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')),
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
       ).thenAnswer((_) async {});
 
       final result = await sut.saveDeviceId('device-uuid');

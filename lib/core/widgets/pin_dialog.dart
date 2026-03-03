@@ -240,8 +240,9 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
     } else {
       _attempts++;
       ref.read(_pinVerifyingProvider.notifier).state = false;
-      ref.read(_pinVerifyErrorProvider.notifier).state =
-          l10n.pinDialogWrongPin(_attempts);
+      ref.read(_pinVerifyErrorProvider.notifier).state = l10n.pinDialogWrongPin(
+        _attempts,
+      );
       _controller.clear();
       if (_attempts >= AppConstants.maxPinAttempts) {
         Navigator.of(context).pop();

@@ -23,8 +23,9 @@ void main() {
 
   group('exportToJson', () {
     test('delegates to repository and returns JSON', () async {
-      when(() => mockRepo.exportToJson())
-          .thenAnswer((_) async => const Success('{"servers":[]}'));
+      when(
+        () => mockRepo.exportToJson(),
+      ).thenAnswer((_) async => const Success('{"servers":[]}'));
 
       final result = await sut.exportToJson();
       expect(result.isSuccess, isTrue);
@@ -33,8 +34,9 @@ void main() {
     });
 
     test('propagates failure', () async {
-      when(() => mockRepo.exportToJson())
-          .thenAnswer((_) async => const Err(ExportFailure('export error')));
+      when(
+        () => mockRepo.exportToJson(),
+      ).thenAnswer((_) async => const Err(ExportFailure('export error')));
 
       final result = await sut.exportToJson();
       expect(result.isFailure, isTrue);
@@ -44,8 +46,9 @@ void main() {
 
   group('exportToEncryptedZip', () {
     test('delegates to repository with password', () async {
-      when(() => mockRepo.exportToEncryptedZip('my-pass'))
-          .thenAnswer((_) async => const Success('/tmp/export.zip'));
+      when(
+        () => mockRepo.exportToEncryptedZip('my-pass'),
+      ).thenAnswer((_) async => const Success('/tmp/export.zip'));
 
       final result = await sut.exportToEncryptedZip('my-pass');
       expect(result.isSuccess, isTrue);
@@ -53,8 +56,9 @@ void main() {
     });
 
     test('propagates failure', () async {
-      when(() => mockRepo.exportToEncryptedZip(any()))
-          .thenAnswer((_) async => const Err(ExportFailure('zip error')));
+      when(
+        () => mockRepo.exportToEncryptedZip(any()),
+      ).thenAnswer((_) async => const Err(ExportFailure('zip error')));
 
       final result = await sut.exportToEncryptedZip('pass');
       expect(result.isFailure, isTrue);
@@ -68,11 +72,13 @@ void main() {
         groupsImported: 1,
         tagsImported: 2,
       );
-      when(() => mockRepo.importFromFile(
-            '/tmp/data.zip',
-            ImportConflictStrategy.overwrite,
-            password: 'pass',
-          )).thenAnswer((_) async => const Success(importResult));
+      when(
+        () => mockRepo.importFromFile(
+          '/tmp/data.zip',
+          ImportConflictStrategy.overwrite,
+          password: 'pass',
+        ),
+      ).thenAnswer((_) async => const Success(importResult));
 
       final result = await sut.importFromFile(
         '/tmp/data.zip',
@@ -86,11 +92,13 @@ void main() {
     });
 
     test('propagates failure', () async {
-      when(() => mockRepo.importFromFile(
-            any(),
-            any(),
-            password: any(named: 'password'),
-          )).thenAnswer((_) async => const Err(ImportFailure('import error')));
+      when(
+        () => mockRepo.importFromFile(
+          any(),
+          any(),
+          password: any(named: 'password'),
+        ),
+      ).thenAnswer((_) async => const Err(ImportFailure('import error')));
 
       final result = await sut.importFromFile(
         '/tmp/bad.zip',

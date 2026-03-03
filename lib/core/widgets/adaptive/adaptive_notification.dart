@@ -32,10 +32,7 @@ class AdaptiveNotification {
         content: Text(message),
         duration: duration,
         action: actionLabel != null
-            ? SnackBarAction(
-                label: actionLabel,
-                onPressed: onAction ?? () {},
-              )
+            ? SnackBarAction(label: actionLabel, onPressed: onAction ?? () {})
             : null,
       ),
     );

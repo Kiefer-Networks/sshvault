@@ -14,9 +14,7 @@ Future<ExportEnvelope> _buildV1Envelope(
   String password,
 ) async {
   final rng = Random.secure();
-  final salt = Uint8List.fromList(
-    List.generate(32, (_) => rng.nextInt(256)),
-  );
+  final salt = Uint8List.fromList(List.generate(32, (_) => rng.nextInt(256)));
 
   // v1 KDF: 64 MiB
   final argon2 = crypto.Argon2id(
@@ -32,9 +30,7 @@ Future<ExportEnvelope> _buildV1Envelope(
   final key = Uint8List.fromList(await secretKey.extractBytes());
 
   // Encrypt with AES-256-GCM
-  final nonce = Uint8List.fromList(
-    List.generate(12, (_) => rng.nextInt(256)),
-  );
+  final nonce = Uint8List.fromList(List.generate(12, (_) => rng.nextInt(256)));
   final plaintextBytes = Uint8List.fromList(utf8.encode(plaintext));
   final cipher = GCMBlockCipher(AESEngine());
   cipher.init(
@@ -43,7 +39,11 @@ Future<ExportEnvelope> _buildV1Envelope(
   );
   final output = Uint8List(cipher.getOutputSize(plaintextBytes.length));
   final len = cipher.processBytes(
-    plaintextBytes, 0, plaintextBytes.length, output, 0,
+    plaintextBytes,
+    0,
+    plaintextBytes.length,
+    output,
+    0,
   );
   final finalLen = cipher.doFinal(output, len);
   final ciphertext = Uint8List.fromList(output.sublist(0, len + finalLen));
@@ -51,9 +51,7 @@ Future<ExportEnvelope> _buildV1Envelope(
   // SHA-256 checksum
   final digest = SHA256Digest();
   final hash = digest.process(plaintextBytes);
-  final checksum = hash
-      .map((b) => b.toRadixString(16).padLeft(2, '0'))
-      .join();
+  final checksum = hash.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
 
   return ExportEnvelope(
     version: 1,

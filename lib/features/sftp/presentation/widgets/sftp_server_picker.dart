@@ -128,7 +128,10 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
                           icon: const Icon(Icons.clear),
                           onPressed: () {
                             _searchController.clear();
-                            ref.read(_serverPickerQueryProvider.notifier).state = '';
+                            ref
+                                    .read(_serverPickerQueryProvider.notifier)
+                                    .state =
+                                '';
                           },
                         )
                       : null,
@@ -150,7 +153,8 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
                   final groups = groupsAsync.value ?? [];
                   return _buildList(context, servers, groups, query);
                 },
-                loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+                loading: () =>
+                    const Center(child: CircularProgressIndicator.adaptive()),
                 error: (_, _) => const SizedBox.shrink(),
               ),
             ),

@@ -35,8 +35,9 @@ void main() {
 
   group('getAllSshKeys', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.getAllSshKeys())
-          .thenAnswer((_) async => Success([validKey]));
+      when(
+        () => mockRepo.getAllSshKeys(),
+      ).thenAnswer((_) async => Success([validKey]));
 
       final result = await sut.getAllSshKeys();
       expect(result.isSuccess, isTrue);
@@ -47,8 +48,9 @@ void main() {
 
   group('getSshKey', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.getSshKey('1'))
-          .thenAnswer((_) async => Success(validKey));
+      when(
+        () => mockRepo.getSshKey('1'),
+      ).thenAnswer((_) async => Success(validKey));
 
       final result = await sut.getSshKey('1');
       expect(result.isSuccess, isTrue);
@@ -58,11 +60,13 @@ void main() {
 
   group('createSshKey', () {
     test('creates key when valid', () async {
-      when(() => mockRepo.createSshKey(
-            any(),
-            privateKey: any(named: 'privateKey'),
-            passphrase: any(named: 'passphrase'),
-          )).thenAnswer((_) async => Success(validKey));
+      when(
+        () => mockRepo.createSshKey(
+          any(),
+          privateKey: any(named: 'privateKey'),
+          passphrase: any(named: 'passphrase'),
+        ),
+      ).thenAnswer((_) async => Success(validKey));
 
       final result = await sut.createSshKey(
         validKey,
@@ -73,25 +77,21 @@ void main() {
 
     test('returns ValidationFailure when name is empty', () async {
       final invalidKey = validKey.copyWith(name: '');
-      final result = await sut.createSshKey(
-        invalidKey,
-        privateKey: 'some-key',
-      );
+      final result = await sut.createSshKey(invalidKey, privateKey: 'some-key');
       expect(result.isFailure, isTrue);
       expect(result.failure, isA<ValidationFailure>());
-      verifyNever(() => mockRepo.createSshKey(
-            any(),
-            privateKey: any(named: 'privateKey'),
-            passphrase: any(named: 'passphrase'),
-          ));
+      verifyNever(
+        () => mockRepo.createSshKey(
+          any(),
+          privateKey: any(named: 'privateKey'),
+          passphrase: any(named: 'passphrase'),
+        ),
+      );
     });
 
     test('returns ValidationFailure when name is whitespace', () async {
       final invalidKey = validKey.copyWith(name: '   ');
-      final result = await sut.createSshKey(
-        invalidKey,
-        privateKey: 'some-key',
-      );
+      final result = await sut.createSshKey(invalidKey, privateKey: 'some-key');
       expect(result.isFailure, isTrue);
       expect(result.failure, isA<ValidationFailure>());
     });
@@ -109,29 +109,34 @@ void main() {
     });
 
     test('passes passphrase to repository', () async {
-      when(() => mockRepo.createSshKey(
-            any(),
-            privateKey: any(named: 'privateKey'),
-            passphrase: any(named: 'passphrase'),
-          )).thenAnswer((_) async => Success(validKey));
+      when(
+        () => mockRepo.createSshKey(
+          any(),
+          privateKey: any(named: 'privateKey'),
+          passphrase: any(named: 'passphrase'),
+        ),
+      ).thenAnswer((_) async => Success(validKey));
 
       await sut.createSshKey(
         validKey,
         privateKey: 'key-data',
         passphrase: 'my-phrase',
       );
-      verify(() => mockRepo.createSshKey(
-            any(),
-            privateKey: 'key-data',
-            passphrase: 'my-phrase',
-          )).called(1);
+      verify(
+        () => mockRepo.createSshKey(
+          any(),
+          privateKey: 'key-data',
+          passphrase: 'my-phrase',
+        ),
+      ).called(1);
     });
   });
 
   group('updateSshKey', () {
     test('updates key when valid', () async {
-      when(() => mockRepo.updateSshKey(any()))
-          .thenAnswer((_) async => Success(validKey));
+      when(
+        () => mockRepo.updateSshKey(any()),
+      ).thenAnswer((_) async => Success(validKey));
 
       final result = await sut.updateSshKey(validKey);
       expect(result.isSuccess, isTrue);
@@ -148,8 +153,9 @@ void main() {
 
   group('deleteSshKey', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.deleteSshKey('1'))
-          .thenAnswer((_) async => const Success(null));
+      when(
+        () => mockRepo.deleteSshKey('1'),
+      ).thenAnswer((_) async => const Success(null));
 
       final result = await sut.deleteSshKey('1');
       expect(result.isSuccess, isTrue);
@@ -159,8 +165,9 @@ void main() {
 
   group('countServersUsingSshKey', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.countServersUsingSshKey('1'))
-          .thenAnswer((_) async => const Success(3));
+      when(
+        () => mockRepo.countServersUsingSshKey('1'),
+      ).thenAnswer((_) async => const Success(3));
 
       final result = await sut.countServersUsingSshKey('1');
       expect(result.isSuccess, isTrue);
@@ -170,8 +177,9 @@ void main() {
 
   group('getSshKeyPrivateKey', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.getSshKeyPrivateKey('1'))
-          .thenAnswer((_) async => const Success('pem-data'));
+      when(
+        () => mockRepo.getSshKeyPrivateKey('1'),
+      ).thenAnswer((_) async => const Success('pem-data'));
 
       final result = await sut.getSshKeyPrivateKey('1');
       expect(result.isSuccess, isTrue);
@@ -181,8 +189,9 @@ void main() {
 
   group('getSshKeyPassphrase', () {
     test('delegates to repository', () async {
-      when(() => mockRepo.getSshKeyPassphrase('1'))
-          .thenAnswer((_) async => const Success('phrase'));
+      when(
+        () => mockRepo.getSshKeyPassphrase('1'),
+      ).thenAnswer((_) async => const Success('phrase'));
 
       final result = await sut.getSshKeyPassphrase('1');
       expect(result.isSuccess, isTrue);

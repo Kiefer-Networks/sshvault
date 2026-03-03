@@ -162,8 +162,8 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                   .toList(),
               onChanged: (v) {
                 if (v != null) {
-                  ref.read(_snippetFormProvider.notifier).state =
-                      formState.copyWith(language: v);
+                  ref.read(_snippetFormProvider.notifier).state = formState
+                      .copyWith(language: v);
                 }
               },
             ),
@@ -223,8 +223,8 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                     ),
                   ],
                   onChanged: (v) =>
-                      ref.read(_snippetFormProvider.notifier).state =
-                          formState.copyWith(groupId: () => v),
+                      ref.read(_snippetFormProvider.notifier).state = formState
+                          .copyWith(groupId: () => v),
                 );
               },
               loading: () => const SizedBox.shrink(),
@@ -236,8 +236,8 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
             TagSelector(
               selectedTagIds: formState.selectedTagIds,
               onChanged: (ids) =>
-                  ref.read(_snippetFormProvider.notifier).state =
-                      formState.copyWith(selectedTagIds: ids),
+                  ref.read(_snippetFormProvider.notifier).state = formState
+                      .copyWith(selectedTagIds: ids),
             ),
             const SizedBox(height: 24),
 
@@ -245,8 +245,8 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
             VariableEditor(
               variables: formState.variables,
               onChanged: (vars) =>
-                  ref.read(_snippetFormProvider.notifier).state =
-                      formState.copyWith(variables: vars),
+                  ref.read(_snippetFormProvider.notifier).state = formState
+                      .copyWith(variables: vars),
             ),
             const SizedBox(height: 32),
 
@@ -280,8 +280,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final formState = ref.read(_snippetFormProvider);
-    ref.read(_snippetFormProvider.notifier).state =
-        formState.copyWith(saving: true);
+    ref.read(_snippetFormProvider.notifier).state = formState.copyWith(
+      saving: true,
+    );
 
     final l10n = AppLocalizations.of(context)!;
     try {
@@ -322,8 +323,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     } finally {
       if (mounted) {
         final current = ref.read(_snippetFormProvider);
-        ref.read(_snippetFormProvider.notifier).state =
-            current.copyWith(saving: false);
+        ref.read(_snippetFormProvider.notifier).state = current.copyWith(
+          saving: false,
+        );
       }
     }
   }

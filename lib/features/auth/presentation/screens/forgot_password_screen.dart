@@ -18,8 +18,7 @@ class _ForgotPasswordState {
   }
 }
 
-class _ForgotPasswordNotifier
-    extends Notifier<_ForgotPasswordState> {
+class _ForgotPasswordNotifier extends Notifier<_ForgotPasswordState> {
   @override
   _ForgotPasswordState build() => const _ForgotPasswordState();
 
@@ -32,10 +31,10 @@ class _ForgotPasswordNotifier
   }
 }
 
-final _forgotPasswordProvider = NotifierProvider.autoDispose<
-    _ForgotPasswordNotifier, _ForgotPasswordState>(
-  _ForgotPasswordNotifier.new,
-);
+final _forgotPasswordProvider =
+    NotifierProvider.autoDispose<_ForgotPasswordNotifier, _ForgotPasswordState>(
+      _ForgotPasswordNotifier.new,
+    );
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});

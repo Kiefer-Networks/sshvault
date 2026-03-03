@@ -137,23 +137,14 @@ void main() {
     });
 
     test('redacts passwd, pass, pwd variants', () {
-      expect(
-        LogSanitizer.sanitize('passwd=abc'),
-        contains('[REDACTED]'),
-      );
-      expect(
-        LogSanitizer.sanitize('pwd=xyz'),
-        contains('[REDACTED]'),
-      );
+      expect(LogSanitizer.sanitize('passwd=abc'), contains('[REDACTED]'));
+      expect(LogSanitizer.sanitize('pwd=xyz'), contains('[REDACTED]'));
     });
   });
 
   group('LogSanitizer — token patterns', () {
     test('redacts token=value', () {
-      expect(
-        LogSanitizer.sanitize('token=abc123'),
-        contains('[REDACTED]'),
-      );
+      expect(LogSanitizer.sanitize('token=abc123'), contains('[REDACTED]'));
     });
 
     test('redacts api_key=value', () {
@@ -164,29 +155,29 @@ void main() {
     });
 
     test('redacts secret=value', () {
-      expect(
-        LogSanitizer.sanitize('secret=mysecret'),
-        contains('[REDACTED]'),
-      );
+      expect(LogSanitizer.sanitize('secret=mysecret'), contains('[REDACTED]'));
     });
   });
 
   group('LogSanitizer — PEM blocks', () {
     test('redacts RSA private key blocks', () {
-      const pem = '-----BEGIN RSA PRIVATE KEY-----\nMIIEow...\n-----END RSA PRIVATE KEY-----';
+      const pem =
+          '-----BEGIN RSA PRIVATE KEY-----\nMIIEow...\n-----END RSA PRIVATE KEY-----';
       final result = LogSanitizer.sanitize('Key: $pem');
       expect(result, contains('[REDACTED:PRIVATE_KEY]'));
       expect(result, isNot(contains('MIIEow')));
     });
 
     test('redacts OPENSSH PRIVATE KEY blocks', () {
-      const pem = '-----BEGIN OPENSSH PRIVATE KEY-----\nb3Blbn...\n-----END OPENSSH PRIVATE KEY-----';
+      const pem =
+          '-----BEGIN OPENSSH PRIVATE KEY-----\nb3Blbn...\n-----END OPENSSH PRIVATE KEY-----';
       final result = LogSanitizer.sanitize(pem);
       expect(result, contains('[REDACTED:PRIVATE_KEY]'));
     });
 
     test('redacts certificate blocks', () {
-      const cert = '-----BEGIN CERTIFICATE-----\nMIIC...\n-----END CERTIFICATE-----';
+      const cert =
+          '-----BEGIN CERTIFICATE-----\nMIIC...\n-----END CERTIFICATE-----';
       final result = LogSanitizer.sanitize(cert);
       expect(result, contains('[REDACTED:CERTIFICATE]'));
     });
@@ -200,7 +191,9 @@ void main() {
     });
 
     test('redacts IPv6 addresses', () {
-      final result = LogSanitizer.sanitize('Host: 2001:0db8:85a3:0000:0000:8a2e:0370:7334');
+      final result = LogSanitizer.sanitize(
+        'Host: 2001:0db8:85a3:0000:0000:8a2e:0370:7334',
+      );
       expect(result, contains('[REDACTED:IP]'));
     });
   });
@@ -209,7 +202,8 @@ void main() {
     test('redacts JWT tokens', () {
       // Note: "Token: jwt" matches the KV pattern first (token=...).
       // Use a non-KV context to test JWT-specific redaction.
-      const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U';
+      const jwt =
+          'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U';
       final result = LogSanitizer.sanitize('Received $jwt in response');
       expect(result, contains('[REDACTED'));
       expect(result, isNot(contains('eyJhbGci')));
@@ -262,10 +256,7 @@ void main() {
 
   group('LogSanitizer — pin and passphrase', () {
     test('redacts pin=value', () {
-      expect(
-        LogSanitizer.sanitize('pin=1234'),
-        contains('[REDACTED]'),
-      );
+      expect(LogSanitizer.sanitize('pin=1234'), contains('[REDACTED]'));
     });
 
     test('redacts passphrase=value', () {

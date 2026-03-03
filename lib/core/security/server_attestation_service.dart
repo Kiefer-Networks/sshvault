@@ -33,8 +33,8 @@ class ServerAttestationService {
   ServerAttestationService({
     required String expectedServerId,
     required Uint8List hmacKey,
-  })  : _expectedServerId = expectedServerId,
-        _hmacKey = hmacKey;
+  }) : _expectedServerId = expectedServerId,
+       _hmacKey = hmacKey;
 
   /// Verify a server attestation response.
   ///
@@ -102,12 +102,11 @@ class ServerAttestationService {
 
       // 4. Verify nonce if provided
       if (expectedNonce != null && attestation.nonce != expectedNonce) {
-        _log.error(
-          _tag,
-          'Attestation nonce mismatch (possible replay attack)',
-        );
+        _log.error(_tag, 'Attestation nonce mismatch (possible replay attack)');
         return const Err(
-          NetworkFailure('Server attestation nonce mismatch (replay detected).'),
+          NetworkFailure(
+            'Server attestation nonce mismatch (replay detected).',
+          ),
         );
       }
 
@@ -133,9 +132,7 @@ class ServerAttestationService {
       return Success(attestation);
     } catch (e) {
       _log.error(_tag, 'Failed to parse server attestation: $e');
-      return Err(
-        NetworkFailure('Invalid server attestation format', cause: e),
-      );
+      return Err(NetworkFailure('Invalid server attestation format', cause: e));
     }
   }
 
@@ -194,10 +191,10 @@ class ServerAttestation {
   }
 
   Map<String, dynamic> toJson() => {
-        'server_id': serverId,
-        'timestamp': timestamp.toIso8601String(),
-        'api_version': apiVersion,
-        'nonce': nonce,
-        'signature': signature,
-      };
+    'server_id': serverId,
+    'timestamp': timestamp.toIso8601String(),
+    'api_version': apiVersion,
+    'nonce': nonce,
+    'signature': signature,
+  };
 }

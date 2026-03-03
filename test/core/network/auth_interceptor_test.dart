@@ -58,21 +58,25 @@ void main() {
       expect(handler.nextCalled, isTrue);
     });
 
-    test('does not add Authorization header for /auth/forgot-password', () async {
-      final options = RequestOptions(path: '/v1/auth/forgot-password');
-      final handler = _MockRequestHandler();
+    test(
+      'does not add Authorization header for /auth/forgot-password',
+      () async {
+        final options = RequestOptions(path: '/v1/auth/forgot-password');
+        final handler = _MockRequestHandler();
 
-      sut.onRequest(options, handler);
-      await Future<void>.delayed(Duration.zero);
+        sut.onRequest(options, handler);
+        await Future<void>.delayed(Duration.zero);
 
-      expect(handler.nextCalled, isTrue);
-    });
+        expect(handler.nextCalled, isTrue);
+      },
+    );
   });
 
   group('AuthInterceptor — authenticated requests', () {
     test('adds Bearer token for protected paths', () async {
-      when(() => mockStorage.getAccessToken())
-          .thenAnswer((_) async => const Success('jwt-token-123'));
+      when(
+        () => mockStorage.getAccessToken(),
+      ).thenAnswer((_) async => const Success('jwt-token-123'));
 
       final options = RequestOptions(path: '/v1/vault');
       final handler = _MockRequestHandler();
@@ -88,8 +92,9 @@ void main() {
     });
 
     test('proceeds without auth header when no token stored', () async {
-      when(() => mockStorage.getAccessToken())
-          .thenAnswer((_) async => const Success(null));
+      when(
+        () => mockStorage.getAccessToken(),
+      ).thenAnswer((_) async => const Success(null));
 
       final options = RequestOptions(path: '/v1/vault');
       final handler = _MockRequestHandler();
@@ -168,35 +173,43 @@ void main() {
   });
 
   group('AuthInterceptor — 401 token refresh', () {
-    test('clears tokens and calls onAuthExpired when no refresh token', () async {
-      when(() => mockStorage.getRefreshToken())
-          .thenAnswer((_) async => const Success(null));
-      when(() => mockStorage.clearAuthTokens())
-          .thenAnswer((_) async => const Success(null));
+    test(
+      'clears tokens and calls onAuthExpired when no refresh token',
+      () async {
+        when(
+          () => mockStorage.getRefreshToken(),
+        ).thenAnswer((_) async => const Success(null));
+        when(
+          () => mockStorage.clearAuthTokens(),
+        ).thenAnswer((_) async => const Success(null));
 
-      final err = DioException(
-        requestOptions: RequestOptions(path: '/v1/vault'),
-        response: Response(
+        final err = DioException(
           requestOptions: RequestOptions(path: '/v1/vault'),
-          statusCode: 401,
-        ),
-      );
-      final handler = _MockErrorHandler();
+          response: Response(
+            requestOptions: RequestOptions(path: '/v1/vault'),
+            statusCode: 401,
+          ),
+        );
+        final handler = _MockErrorHandler();
 
-      // The interceptor internally completes a Completer with error
-      // when no refresh token is available. We need to catch the
-      // unhandled async error from the completer's future.
-      await runZonedGuarded(() async {
-        sut.onError(err, handler);
-        await Future<void>.delayed(const Duration(milliseconds: 200));
-      }, (error, stack) {
-        // Expected: StateError from completer.completeError
-      });
+        // The interceptor internally completes a Completer with error
+        // when no refresh token is available. We need to catch the
+        // unhandled async error from the completer's future.
+        await runZonedGuarded(
+          () async {
+            sut.onError(err, handler);
+            await Future<void>.delayed(const Duration(milliseconds: 200));
+          },
+          (error, stack) {
+            // Expected: StateError from completer.completeError
+          },
+        );
 
-      expect(handler.nextCalled, isTrue);
-      expect(authExpiredCalled, isTrue);
-      verify(() => mockStorage.clearAuthTokens()).called(1);
-    });
+        expect(handler.nextCalled, isTrue);
+        expect(authExpiredCalled, isTrue);
+        verify(() => mockStorage.clearAuthTokens()).called(1);
+      },
+    );
   });
 }
 

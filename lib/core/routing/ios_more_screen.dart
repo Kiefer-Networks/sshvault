@@ -24,9 +24,7 @@ class IosMoreScreen extends ConsumerWidget {
         ref.watch(authProvider).value == AuthStatus.authenticated;
 
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(l10n.navMore),
-      ),
+      navigationBar: CupertinoNavigationBar(middle: Text(l10n.navMore)),
       child: SafeArea(
         child: ListView(
           children: [

@@ -12,11 +12,7 @@ void main() {
   late AuthRepositoryImpl sut;
 
   final authResponseData = {
-    'user': {
-      'id': 'u1',
-      'email': 'test@example.com',
-      'verified': true,
-    },
+    'user': {'id': 'u1', 'email': 'test@example.com', 'verified': true},
     'access_token': 'access-123',
     'refresh_token': 'refresh-456',
     'expires_at': '2025-12-31T23:59:59Z',
@@ -29,10 +25,9 @@ void main() {
 
   group('register', () {
     test('returns AuthResponse on success', () async {
-      when(() => mockApi.post(
-            '/v1/auth/register',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => Success(authResponseData));
+      when(
+        () => mockApi.post('/v1/auth/register', data: any(named: 'data')),
+      ).thenAnswer((_) async => Success(authResponseData));
 
       final result = await sut.register('test@example.com', 'password123');
       expect(result.isSuccess, isTrue);
@@ -42,11 +37,11 @@ void main() {
     });
 
     test('returns AuthFailure on network error', () async {
-      when(() => mockApi.post(
-            '/v1/auth/register',
-            data: any(named: 'data'),
-          )).thenAnswer(
-        (_) async => const Err(NetworkFailure('email already exists', statusCode: 409)),
+      when(
+        () => mockApi.post('/v1/auth/register', data: any(named: 'data')),
+      ).thenAnswer(
+        (_) async =>
+            const Err(NetworkFailure('email already exists', statusCode: 409)),
       );
 
       final result = await sut.register('test@example.com', 'password123');
@@ -56,25 +51,25 @@ void main() {
     });
 
     test('sends correct data payload', () async {
-      when(() => mockApi.post(
-            '/v1/auth/register',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => Success(authResponseData));
+      when(
+        () => mockApi.post('/v1/auth/register', data: any(named: 'data')),
+      ).thenAnswer((_) async => Success(authResponseData));
 
       await sut.register('user@test.com', 'pass');
-      verify(() => mockApi.post(
-            '/v1/auth/register',
-            data: {'email': 'user@test.com', 'password': 'pass'},
-          )).called(1);
+      verify(
+        () => mockApi.post(
+          '/v1/auth/register',
+          data: {'email': 'user@test.com', 'password': 'pass'},
+        ),
+      ).called(1);
     });
   });
 
   group('login', () {
     test('returns AuthResponse on success', () async {
-      when(() => mockApi.post(
-            '/v1/auth/login',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => Success(authResponseData));
+      when(
+        () => mockApi.post('/v1/auth/login', data: any(named: 'data')),
+      ).thenAnswer((_) async => Success(authResponseData));
 
       final result = await sut.login('test@example.com', 'password123');
       expect(result.isSuccess, isTrue);
@@ -82,32 +77,29 @@ void main() {
     });
 
     test('includes device_name when provided', () async {
-      when(() => mockApi.post(
-            '/v1/auth/login',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => Success(authResponseData));
+      when(
+        () => mockApi.post('/v1/auth/login', data: any(named: 'data')),
+      ).thenAnswer((_) async => Success(authResponseData));
 
-      await sut.login(
-        'test@example.com',
-        'pass',
-        deviceName: 'iPhone 15',
-      );
-      verify(() => mockApi.post(
-            '/v1/auth/login',
-            data: {
-              'email': 'test@example.com',
-              'password': 'pass',
-              'device_name': 'iPhone 15',
-            },
-          )).called(1);
+      await sut.login('test@example.com', 'pass', deviceName: 'iPhone 15');
+      verify(
+        () => mockApi.post(
+          '/v1/auth/login',
+          data: {
+            'email': 'test@example.com',
+            'password': 'pass',
+            'device_name': 'iPhone 15',
+          },
+        ),
+      ).called(1);
     });
 
     test('returns AuthFailure on wrong credentials', () async {
-      when(() => mockApi.post(
-            '/v1/auth/login',
-            data: any(named: 'data'),
-          )).thenAnswer(
-        (_) async => const Err(NetworkFailure('invalid credentials', statusCode: 401)),
+      when(
+        () => mockApi.post('/v1/auth/login', data: any(named: 'data')),
+      ).thenAnswer(
+        (_) async =>
+            const Err(NetworkFailure('invalid credentials', statusCode: 401)),
       );
 
       final result = await sut.login('test@example.com', 'wrong');
@@ -118,58 +110,54 @@ void main() {
 
   group('oauthLogin', () {
     test('returns AuthResponse on success', () async {
-      when(() => mockApi.post(
-            '/v1/auth/oauth/google',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => Success(authResponseData));
+      when(
+        () => mockApi.post('/v1/auth/oauth/google', data: any(named: 'data')),
+      ).thenAnswer((_) async => Success(authResponseData));
 
       final result = await sut.oauthLogin('google', 'id-token-123');
       expect(result.isSuccess, isTrue);
     });
 
     test('sends correct data payload', () async {
-      when(() => mockApi.post(
-            '/v1/auth/oauth/apple',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => Success(authResponseData));
+      when(
+        () => mockApi.post('/v1/auth/oauth/apple', data: any(named: 'data')),
+      ).thenAnswer((_) async => Success(authResponseData));
 
       await sut.oauthLogin('apple', 'token');
-      verify(() => mockApi.post(
-            '/v1/auth/oauth/apple',
-            data: {'id_token': 'token'},
-          )).called(1);
+      verify(
+        () => mockApi.post('/v1/auth/oauth/apple', data: {'id_token': 'token'}),
+      ).called(1);
     });
   });
 
   group('logout', () {
     test('returns Success on successful logout', () async {
-      when(() => mockApi.post(
-            '/v1/auth/logout',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () => mockApi.post('/v1/auth/logout', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.logout('refresh-token');
       expect(result.isSuccess, isTrue);
     });
 
     test('sends refresh token', () async {
-      when(() => mockApi.post(
-            '/v1/auth/logout',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () => mockApi.post('/v1/auth/logout', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       await sut.logout('my-refresh');
-      verify(() => mockApi.post(
-            '/v1/auth/logout',
-            data: {'refresh_token': 'my-refresh'},
-          )).called(1);
+      verify(
+        () => mockApi.post(
+          '/v1/auth/logout',
+          data: {'refresh_token': 'my-refresh'},
+        ),
+      ).called(1);
     });
 
     test('returns AuthFailure on error', () async {
-      when(() => mockApi.post(
-            '/v1/auth/logout',
-            data: any(named: 'data'),
-          )).thenAnswer(
+      when(
+        () => mockApi.post('/v1/auth/logout', data: any(named: 'data')),
+      ).thenAnswer(
         (_) async => const Err(NetworkFailure('server error', statusCode: 500)),
       );
 
@@ -181,20 +169,20 @@ void main() {
 
   group('forgotPassword', () {
     test('returns Success', () async {
-      when(() => mockApi.post(
-            '/v1/auth/forgot-password',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () =>
+            mockApi.post('/v1/auth/forgot-password', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.forgotPassword('user@test.com');
       expect(result.isSuccess, isTrue);
     });
 
     test('returns AuthFailure on error', () async {
-      when(() => mockApi.post(
-            '/v1/auth/forgot-password',
-            data: any(named: 'data'),
-          )).thenAnswer(
+      when(
+        () =>
+            mockApi.post('/v1/auth/forgot-password', data: any(named: 'data')),
+      ).thenAnswer(
         (_) async => const Err(NetworkFailure('rate limited', statusCode: 429)),
       );
 
@@ -205,34 +193,34 @@ void main() {
 
   group('resetPassword', () {
     test('returns Success', () async {
-      when(() => mockApi.post(
-            '/v1/auth/reset-password',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () => mockApi.post('/v1/auth/reset-password', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.resetPassword('reset-token', 'new-pass');
       expect(result.isSuccess, isTrue);
     });
 
     test('sends token and new_password', () async {
-      when(() => mockApi.post(
-            '/v1/auth/reset-password',
-            data: any(named: 'data'),
-          )).thenAnswer((_) async => const Success(<String, dynamic>{}));
+      when(
+        () => mockApi.post('/v1/auth/reset-password', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       await sut.resetPassword('tok', 'pass');
-      verify(() => mockApi.post(
-            '/v1/auth/reset-password',
-            data: {'token': 'tok', 'new_password': 'pass'},
-          )).called(1);
+      verify(
+        () => mockApi.post(
+          '/v1/auth/reset-password',
+          data: {'token': 'tok', 'new_password': 'pass'},
+        ),
+      ).called(1);
     });
   });
 
   group('verifyEmail', () {
     test('returns Success', () async {
-      when(() => mockApi.get(any())).thenAnswer(
-        (_) async => const Success(<String, dynamic>{}),
-      );
+      when(
+        () => mockApi.get(any()),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.verifyEmail('verify-token');
       expect(result.isSuccess, isTrue);
@@ -240,7 +228,8 @@ void main() {
 
     test('returns AuthFailure on error', () async {
       when(() => mockApi.get(any())).thenAnswer(
-        (_) async => const Err(NetworkFailure('token expired', statusCode: 410)),
+        (_) async =>
+            const Err(NetworkFailure('token expired', statusCode: 410)),
       );
 
       final result = await sut.verifyEmail('expired-token');

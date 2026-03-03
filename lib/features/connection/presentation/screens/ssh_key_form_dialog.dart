@@ -40,9 +40,10 @@ class _SshKeyFormReactiveState {
   }
 }
 
-final _sshKeyFormStateProvider = StateProvider.autoDispose<_SshKeyFormReactiveState>(
-  (ref) => const _SshKeyFormReactiveState(),
-);
+final _sshKeyFormStateProvider =
+    StateProvider.autoDispose<_SshKeyFormReactiveState>(
+      (ref) => const _SshKeyFormReactiveState(),
+    );
 
 class SshKeyFormDialog extends ConsumerStatefulWidget {
   final SshKeyEntity? existingKey;
@@ -100,7 +101,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     if (name.isEmpty) {
       ref.read(_sshKeyFormStateProvider.notifier).state = ref
           .read(_sshKeyFormStateProvider)
-          .copyWith(error: () => AppLocalizations.of(context)!.sshKeyFormNameRequired);
+          .copyWith(
+            error: () => AppLocalizations.of(context)!.sshKeyFormNameRequired,
+          );
       return;
     }
 
@@ -160,7 +163,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     if (name.isEmpty) {
       ref.read(_sshKeyFormStateProvider.notifier).state = ref
           .read(_sshKeyFormStateProvider)
-          .copyWith(error: () => AppLocalizations.of(context)!.sshKeyFormNameRequired);
+          .copyWith(
+            error: () => AppLocalizations.of(context)!.sshKeyFormNameRequired,
+          );
       return;
     }
     final privateKey = _privateKeyController.text.trim();
@@ -168,7 +173,8 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       ref.read(_sshKeyFormStateProvider.notifier).state = ref
           .read(_sshKeyFormStateProvider)
           .copyWith(
-            error: () => AppLocalizations.of(context)!.sshKeyFormPrivateKeyRequired,
+            error: () =>
+                AppLocalizations.of(context)!.sshKeyFormPrivateKeyRequired,
           );
       return;
     }
@@ -222,7 +228,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     if (name.isEmpty) {
       ref.read(_sshKeyFormStateProvider.notifier).state = ref
           .read(_sshKeyFormStateProvider)
-          .copyWith(error: () => AppLocalizations.of(context)!.sshKeyFormNameRequired);
+          .copyWith(
+            error: () => AppLocalizations.of(context)!.sshKeyFormNameRequired,
+          );
       return;
     }
 
@@ -302,7 +310,10 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     );
   }
 
-  Widget _buildGenerateForm(ThemeData theme, _SshKeyFormReactiveState formState) {
+  Widget _buildGenerateForm(
+    ThemeData theme,
+    _SshKeyFormReactiveState formState,
+  ) {
     final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       child: Column(
@@ -334,8 +345,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
                 ? null
                 : (type) {
                     if (type == null) return;
-                    ref.read(_sshKeyFormStateProvider.notifier).state =
-                        formState.copyWith(
+                    ref
+                        .read(_sshKeyFormStateProvider.notifier)
+                        .state = formState.copyWith(
                       selectedType: type,
                       selectedBits: type.defaultBitLength,
                     );
@@ -397,7 +409,10 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           ),
           if (formState.error != null) ...[
             const SizedBox(height: 16),
-            Text(formState.error!, style: TextStyle(color: theme.colorScheme.error)),
+            Text(
+              formState.error!,
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
           ],
         ],
       ),
@@ -419,14 +434,20 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       } else {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
             .read(_sshKeyFormStateProvider)
-            .copyWith(error: () => AppLocalizations.of(context)!.sshKeyFormFileReadError);
+            .copyWith(
+              error: () =>
+                  AppLocalizations.of(context)!.sshKeyFormFileReadError,
+            );
         return;
       }
 
       if (!content.contains('-----BEGIN')) {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
             .read(_sshKeyFormStateProvider)
-            .copyWith(error: () => AppLocalizations.of(context)!.sshKeyFormInvalidFormat);
+            .copyWith(
+              error: () =>
+                  AppLocalizations.of(context)!.sshKeyFormInvalidFormat,
+            );
         return;
       }
 
@@ -453,7 +474,8 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       ref.read(_sshKeyFormStateProvider.notifier).state = ref
           .read(_sshKeyFormStateProvider)
           .copyWith(
-            error: () => AppLocalizations.of(context)!.sshKeyFormFileError(e.toString()),
+            error: () =>
+                AppLocalizations.of(context)!.sshKeyFormFileError(e.toString()),
           );
     }
   }
@@ -512,7 +534,10 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           ),
           if (formState.error != null) ...[
             const SizedBox(height: 16),
-            Text(formState.error!, style: TextStyle(color: theme.colorScheme.error)),
+            Text(
+              formState.error!,
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
           ],
         ],
       ),
@@ -569,7 +594,10 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         ],
         if (formState.error != null) ...[
           const SizedBox(height: 16),
-          Text(formState.error!, style: TextStyle(color: theme.colorScheme.error)),
+          Text(
+            formState.error!,
+            style: TextStyle(color: theme.colorScheme.error),
+          ),
         ],
       ],
     );

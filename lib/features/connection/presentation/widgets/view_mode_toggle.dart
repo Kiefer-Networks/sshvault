@@ -11,10 +11,7 @@ class ViewModeToggle extends ConsumerWidget {
     final viewMode = ref.watch(viewModeProvider);
     return AdaptiveSegmentedControl<ViewMode>(
       selected: viewMode,
-      segments: const {
-        ViewMode.list: 'List',
-        ViewMode.grid: 'Grid',
-      },
+      segments: const {ViewMode.list: 'List', ViewMode.grid: 'Grid'},
       onChanged: (mode) {
         ref.read(viewModeProvider.notifier).state = mode;
       },

@@ -36,10 +36,7 @@ void main() {
     });
 
     test('solution hash length is 64 hex chars (SHA-256)', () async {
-      const challenge = ProofOfWorkChallenge(
-        prefix: 'test',
-        difficulty: 1,
-      );
+      const challenge = ProofOfWorkChallenge(prefix: 'test', difficulty: 1);
 
       final result = await sut.solve(challenge);
       expect(result.isSuccess, isTrue);
@@ -146,10 +143,7 @@ void main() {
     });
 
     test('isExpired returns false when no expiry set', () {
-      const challenge = ProofOfWorkChallenge(
-        prefix: 'test',
-        difficulty: 1,
-      );
+      const challenge = ProofOfWorkChallenge(prefix: 'test', difficulty: 1);
       expect(challenge.isExpired, isFalse);
     });
 

@@ -32,8 +32,7 @@ Future<FirstSyncStrategy?> showFirstSyncDialog(BuildContext context) {
             child: Text(l10n.firstSyncOverwriteLocal),
           ),
           CupertinoDialogAction(
-            onPressed: () =>
-                Navigator.pop(ctx, FirstSyncStrategy.keepLocal),
+            onPressed: () => Navigator.pop(ctx, FirstSyncStrategy.keepLocal),
             child: Text(l10n.firstSyncKeepLocal),
           ),
           CupertinoDialogAction(

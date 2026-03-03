@@ -137,16 +137,10 @@ class AdaptiveTextField extends StatelessWidget {
       controller: controller,
       placeholder: effectivePlaceholder,
       prefix: prefixIcon != null
-          ? Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: prefixIcon,
-            )
+          ? Padding(padding: const EdgeInsets.only(left: 8), child: prefixIcon)
           : null,
       suffix: suffixIcon != null
-          ? Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: suffixIcon,
-            )
+          ? Padding(padding: const EdgeInsets.only(right: 8), child: suffixIcon)
           : null,
       obscureText: obscureText,
       readOnly: readOnly,

@@ -19,8 +19,7 @@ class AuthMethodSelector extends StatelessWidget {
     return AdaptiveSegmentedControl<AuthMethod>(
       selected: selected,
       segments: {
-        for (final method in AuthMethod.values)
-          method: _label(l10n, method),
+        for (final method in AuthMethod.values) method: _label(l10n, method),
       },
       onChanged: onChanged,
     );
@@ -33,5 +32,4 @@ class AuthMethodSelector extends StatelessWidget {
       AuthMethod.both => l10n.authMethodBoth,
     };
   }
-
 }

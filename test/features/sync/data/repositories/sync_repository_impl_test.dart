@@ -19,11 +19,8 @@ void main() {
   group('getVault', () {
     test('returns VaultEntity on success', () async {
       when(() => mockApi.get('/v1/vault')).thenAnswer(
-        (_) async => const Success({
-          'version': 3,
-          'blob': 'abc',
-          'checksum': 'def',
-        }),
+        (_) async =>
+            const Success({'version': 3, 'blob': 'abc', 'checksum': 'def'}),
       );
 
       final result = await sut.getVault();
@@ -68,10 +65,7 @@ void main() {
 
   group('putVault', () {
     test('returns updated VaultEntity on success', () async {
-      when(() => mockApi.put(
-            '/v1/vault',
-            data: any(named: 'data'),
-          )).thenAnswer(
+      when(() => mockApi.put('/v1/vault', data: any(named: 'data'))).thenAnswer(
         (_) async => const Success({
           'version': 4,
           'blob': 'new-blob',
@@ -89,10 +83,7 @@ void main() {
     });
 
     test('returns SyncFailure with conflictVersion on 409', () async {
-      when(() => mockApi.put(
-            '/v1/vault',
-            data: any(named: 'data'),
-          )).thenAnswer(
+      when(() => mockApi.put('/v1/vault', data: any(named: 'data'))).thenAnswer(
         (_) async => const Err(NetworkFailure('conflict', statusCode: 409)),
       );
 
@@ -107,10 +98,7 @@ void main() {
     });
 
     test('returns SyncFailure on other error', () async {
-      when(() => mockApi.put(
-            '/v1/vault',
-            data: any(named: 'data'),
-          )).thenAnswer(
+      when(() => mockApi.put('/v1/vault', data: any(named: 'data'))).thenAnswer(
         (_) async => const Err(NetworkFailure('server error', statusCode: 500)),
       );
 
@@ -124,22 +112,17 @@ void main() {
     });
 
     test('sends correct data payload', () async {
-      when(() => mockApi.put(
-            '/v1/vault',
-            data: any(named: 'data'),
-          )).thenAnswer(
-        (_) async => const Success({'version': 5}),
-      );
+      when(
+        () => mockApi.put('/v1/vault', data: any(named: 'data')),
+      ).thenAnswer((_) async => const Success({'version': 5}));
 
       await sut.putVault(version: 5, blob: 'my-blob', checksum: 'my-check');
-      verify(() => mockApi.put(
-            '/v1/vault',
-            data: {
-              'version': 5,
-              'blob': 'my-blob',
-              'checksum': 'my-check',
-            },
-          )).called(1);
+      verify(
+        () => mockApi.put(
+          '/v1/vault',
+          data: {'version': 5, 'blob': 'my-blob', 'checksum': 'my-check'},
+        ),
+      ).called(1);
     });
   });
 
@@ -162,9 +145,9 @@ void main() {
     });
 
     test('returns empty list when history is null', () async {
-      when(() => mockApi.get('/v1/vault/history')).thenAnswer(
-        (_) async => const Success(<String, dynamic>{}),
-      );
+      when(
+        () => mockApi.get('/v1/vault/history'),
+      ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
       final result = await sut.getVaultHistory();
       expect(result.isSuccess, isTrue);
@@ -172,9 +155,9 @@ void main() {
     });
 
     test('returns SyncFailure on network error', () async {
-      when(() => mockApi.get('/v1/vault/history')).thenAnswer(
-        (_) async => const Err(NetworkFailure('offline')),
-      );
+      when(
+        () => mockApi.get('/v1/vault/history'),
+      ).thenAnswer((_) async => const Err(NetworkFailure('offline')));
 
       final result = await sut.getVaultHistory();
       expect(result.isFailure, isTrue);
@@ -184,10 +167,7 @@ void main() {
   group('getVaultVersion', () {
     test('returns specific vault version', () async {
       when(() => mockApi.get('/v1/vault/history/3')).thenAnswer(
-        (_) async => const Success({
-          'version': 3,
-          'blob': 'old-blob',
-        }),
+        (_) async => const Success({'version': 3, 'blob': 'old-blob'}),
       );
 
       final result = await sut.getVaultVersion(3);

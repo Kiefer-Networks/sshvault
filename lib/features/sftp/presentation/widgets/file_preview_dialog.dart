@@ -15,17 +15,9 @@ class _FilePreviewState {
   final String? error;
   final String? content;
 
-  const _FilePreviewState({
-    this.loading = true,
-    this.error,
-    this.content,
-  });
+  const _FilePreviewState({this.loading = true, this.error, this.content});
 
-  _FilePreviewState copyWith({
-    bool? loading,
-    String? error,
-    String? content,
-  }) {
+  _FilePreviewState copyWith({bool? loading, String? error, String? content}) {
     return _FilePreviewState(
       loading: loading ?? this.loading,
       error: error ?? this.error,
@@ -79,7 +71,9 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
           result.fold(
             onSuccess: (bytes) {
               if (mounted) {
-                ref.read(_filePreviewProvider.notifier).state = _FilePreviewState(
+                ref
+                    .read(_filePreviewProvider.notifier)
+                    .state = _FilePreviewState(
                   loading: false,
                   content: const Utf8Decoder(
                     allowMalformed: true,
@@ -89,10 +83,8 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
             },
             onFailure: (f) {
               if (mounted) {
-                ref.read(_filePreviewProvider.notifier).state = _FilePreviewState(
-                  loading: false,
-                  error: f.message,
-                );
+                ref.read(_filePreviewProvider.notifier).state =
+                    _FilePreviewState(loading: false, error: f.message);
               }
             },
           );

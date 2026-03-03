@@ -150,10 +150,10 @@ class ProofOfWorkChallenge {
   }
 
   Map<String, dynamic> toJson() => {
-        'prefix': prefix,
-        'difficulty': difficulty,
-        if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
-      };
+    'prefix': prefix,
+    'difficulty': difficulty,
+    if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
+  };
 }
 
 /// The solution to a proof-of-work challenge.
@@ -177,8 +177,5 @@ class ProofOfWorkSolution {
     required this.durationMs,
   });
 
-  Map<String, dynamic> toJson() => {
-        'nonce': nonce,
-        'hash': hash,
-      };
+  Map<String, dynamic> toJson() => {'nonce': nonce, 'hash': hash};
 }

@@ -10,11 +10,7 @@ class AdaptiveListSection extends StatelessWidget {
   final String? header;
   final List<Widget> children;
 
-  const AdaptiveListSection({
-    super.key,
-    this.header,
-    required this.children,
-  });
+  const AdaptiveListSection({super.key, this.header, required this.children});
 
   @override
   Widget build(BuildContext context) {

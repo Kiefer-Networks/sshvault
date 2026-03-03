@@ -59,20 +59,21 @@ void main() {
 
   group('push', () {
     test('exports, encrypts, and pushes successfully', () async {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
 
-      when(() => mockEncryption.encryptForExport(jsonData, syncPassword))
-          .thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockEncryption.encryptForExport(jsonData, syncPassword),
+      ).thenAnswer((_) async => Success(envelope));
 
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer(
-        (_) async => const Success(VaultEntity(version: 2)),
-      );
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer((_) async => const Success(VaultEntity(version: 2)));
 
       final result = await sut.push(syncPassword, 1);
       expect(result.isSuccess, isTrue);
@@ -80,93 +81,95 @@ void main() {
     });
 
     test('returns failure when export fails', () async {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer(
-        (_) async => const Err(ExportFailure('export failed')),
-      );
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Err(ExportFailure('export failed')));
 
       final result = await sut.push(syncPassword, 1);
       expect(result.isFailure, isTrue);
     });
 
     test('returns failure when encryption fails', () async {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
 
-      when(() => mockEncryption.encryptForExport(any(), any()))
-          .thenAnswer(
-        (_) async => const Err(CryptoFailure('encryption failed')),
-      );
+      when(
+        () => mockEncryption.encryptForExport(any(), any()),
+      ).thenAnswer((_) async => const Err(CryptoFailure('encryption failed')));
 
       final result = await sut.push(syncPassword, 1);
       expect(result.isFailure, isTrue);
     });
 
     test('returns failure when putVault fails', () async {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
 
-      when(() => mockEncryption.encryptForExport(any(), any()))
-          .thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockEncryption.encryptForExport(any(), any()),
+      ).thenAnswer((_) async => Success(envelope));
 
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer(
-        (_) async => const Err(SyncFailure('server error')),
-      );
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer((_) async => const Err(SyncFailure('server error')));
 
       final result = await sut.push(syncPassword, 1);
       expect(result.isFailure, isTrue);
     });
 
     test('increments version by 1', () async {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
 
-      when(() => mockEncryption.encryptForExport(any(), any()))
-          .thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockEncryption.encryptForExport(any(), any()),
+      ).thenAnswer((_) async => Success(envelope));
 
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer(
-        (_) async => const Success(VaultEntity(version: 6)),
-      );
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer((_) async => const Success(VaultEntity(version: 6)));
 
       await sut.push(syncPassword, 5);
-      verify(() => mockSyncRepo.putVault(
-            version: 6,
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).called(1);
+      verify(
+        () => mockSyncRepo.putVault(
+          version: 6,
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).called(1);
     });
   });
 
   group('pull', () {
     test('fetches, decrypts, and imports successfully', () async {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 3,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 3, blob: validBlob, checksum: validChecksum),
+        ),
       );
 
-      when(() => mockEncryption.decryptFromExport(any(), syncPassword))
-          .thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.decryptFromExport(any(), syncPassword),
+      ).thenAnswer((_) async => const Success(jsonData));
 
-      when(() => mockExportImportRepo.importFromJsonString(
-            any(),
-            any(),
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(importResult));
+      when(
+        () => mockExportImportRepo.importFromJsonString(
+          any(),
+          any(),
+          includeCredentials: true,
+        ),
+      ).thenAnswer((_) async => const Success(importResult));
 
       final result = await sut.pull(syncPassword);
       expect(result.isSuccess, isTrue);
@@ -174,9 +177,9 @@ void main() {
     });
 
     test('returns version when vault is empty', () async {
-      when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => const Success(VaultEntity(version: 0)),
-      );
+      when(
+        () => mockSyncRepo.getVault(),
+      ).thenAnswer((_) async => const Success(VaultEntity(version: 0)));
 
       final result = await sut.pull(syncPassword);
       expect(result.isSuccess, isTrue);
@@ -185,9 +188,9 @@ void main() {
     });
 
     test('returns failure when getVault fails', () async {
-      when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => const Err(SyncFailure('network error')),
-      );
+      when(
+        () => mockSyncRepo.getVault(),
+      ).thenAnswer((_) async => const Err(SyncFailure('network error')));
 
       final result = await sut.pull(syncPassword);
       expect(result.isFailure, isTrue);
@@ -195,11 +198,9 @@ void main() {
 
     test('returns failure on checksum mismatch', () async {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 3,
-          blob: validBlob,
-          checksum: 'wrong-checksum',
-        )),
+        (_) async => Success(
+          VaultEntity(version: 3, blob: validBlob, checksum: 'wrong-checksum'),
+        ),
       );
 
       final result = await sut.pull(syncPassword);
@@ -210,17 +211,14 @@ void main() {
 
     test('returns failure when decryption fails', () async {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 3,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 3, blob: validBlob, checksum: validChecksum),
+        ),
       );
 
-      when(() => mockEncryption.decryptFromExport(any(), any()))
-          .thenAnswer(
-        (_) async => const Err(CryptoFailure('wrong password')),
-      );
+      when(
+        () => mockEncryption.decryptFromExport(any(), any()),
+      ).thenAnswer((_) async => const Err(CryptoFailure('wrong password')));
 
       final result = await sut.pull(syncPassword);
       expect(result.isFailure, isTrue);
@@ -228,23 +226,22 @@ void main() {
 
     test('returns failure when import fails', () async {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 3,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 3, blob: validBlob, checksum: validChecksum),
+        ),
       );
 
-      when(() => mockEncryption.decryptFromExport(any(), any()))
-          .thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.decryptFromExport(any(), any()),
+      ).thenAnswer((_) async => const Success(jsonData));
 
-      when(() => mockExportImportRepo.importFromJsonString(
-            any(),
-            any(),
-            includeCredentials: true,
-          )).thenAnswer(
-        (_) async => const Err(ImportFailure('import error')),
-      );
+      when(
+        () => mockExportImportRepo.importFromJsonString(
+          any(),
+          any(),
+          includeCredentials: true,
+        ),
+      ).thenAnswer((_) async => const Err(ImportFailure('import error')));
 
       final result = await sut.pull(syncPassword);
       expect(result.isFailure, isTrue);
@@ -253,9 +250,9 @@ void main() {
 
   group('validatePassword', () {
     test('returns true when vault is empty', () async {
-      when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => const Success(VaultEntity(version: 0)),
-      );
+      when(
+        () => mockSyncRepo.getVault(),
+      ).thenAnswer((_) async => const Success(VaultEntity(version: 0)));
 
       final result = await sut.validatePassword(syncPassword);
       expect(result.isSuccess, isTrue);
@@ -264,15 +261,14 @@ void main() {
 
     test('returns true when decryption succeeds', () async {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 1,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 1, blob: validBlob, checksum: validChecksum),
+        ),
       );
 
-      when(() => mockEncryption.decryptFromExport(any(), syncPassword))
-          .thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.decryptFromExport(any(), syncPassword),
+      ).thenAnswer((_) async => const Success(jsonData));
 
       final result = await sut.validatePassword(syncPassword);
       expect(result.isSuccess, isTrue);
@@ -281,17 +277,14 @@ void main() {
 
     test('returns false when decryption fails', () async {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 1,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 1, blob: validBlob, checksum: validChecksum),
+        ),
       );
 
-      when(() => mockEncryption.decryptFromExport(any(), any()))
-          .thenAnswer(
-        (_) async => const Err(CryptoFailure('wrong password')),
-      );
+      when(
+        () => mockEncryption.decryptFromExport(any(), any()),
+      ).thenAnswer((_) async => const Err(CryptoFailure('wrong password')));
 
       final result = await sut.validatePassword('wrong-password');
       expect(result.isSuccess, isTrue);
@@ -299,9 +292,9 @@ void main() {
     });
 
     test('returns failure when getVault fails', () async {
-      when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => const Err(SyncFailure('network error')),
-      );
+      when(
+        () => mockSyncRepo.getVault(),
+      ).thenAnswer((_) async => const Err(SyncFailure('network error')));
 
       final result = await sut.validatePassword(syncPassword);
       expect(result.isFailure, isTrue);
@@ -311,34 +304,36 @@ void main() {
   group('sync', () {
     void stubSuccessfulPull() {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 3,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 3, blob: validBlob, checksum: validChecksum),
+        ),
       );
-      when(() => mockEncryption.decryptFromExport(any(), syncPassword))
-          .thenAnswer((_) async => const Success(jsonData));
-      when(() => mockExportImportRepo.importFromJsonString(
-            any(),
-            any(),
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(importResult));
+      when(
+        () => mockEncryption.decryptFromExport(any(), syncPassword),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockExportImportRepo.importFromJsonString(
+          any(),
+          any(),
+          includeCredentials: true,
+        ),
+      ).thenAnswer((_) async => const Success(importResult));
     }
 
     void stubSuccessfulPush() {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
-      when(() => mockEncryption.encryptForExport(any(), any()))
-          .thenAnswer((_) async => Success(envelope));
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer(
-        (_) async => const Success(VaultEntity(version: 4)),
-      );
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.encryptForExport(any(), any()),
+      ).thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer((_) async => const Success(VaultEntity(version: 4)));
     }
 
     test('pulls then pushes successfully', () async {
@@ -351,9 +346,9 @@ void main() {
     });
 
     test('returns failure when pull fails', () async {
-      when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => const Err(SyncFailure('pull error')),
-      );
+      when(
+        () => mockSyncRepo.getVault(),
+      ).thenAnswer((_) async => const Err(SyncFailure('pull error')));
 
       final result = await sut.sync(syncPassword, 2);
       expect(result.isFailure, isTrue);
@@ -363,34 +358,36 @@ void main() {
   group('pushWithRetry', () {
     void stubSuccessfulPull() {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 5,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 5, blob: validBlob, checksum: validChecksum),
+        ),
       );
-      when(() => mockEncryption.decryptFromExport(any(), syncPassword))
-          .thenAnswer((_) async => const Success(jsonData));
-      when(() => mockExportImportRepo.importFromJsonString(
-            any(),
-            any(),
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(importResult));
+      when(
+        () => mockEncryption.decryptFromExport(any(), syncPassword),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockExportImportRepo.importFromJsonString(
+          any(),
+          any(),
+          includeCredentials: true,
+        ),
+      ).thenAnswer((_) async => const Success(importResult));
     }
 
     test('succeeds on first attempt', () async {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
-      when(() => mockEncryption.encryptForExport(any(), any()))
-          .thenAnswer((_) async => Success(envelope));
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer(
-        (_) async => const Success(VaultEntity(version: 4)),
-      );
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.encryptForExport(any(), any()),
+      ).thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer((_) async => const Success(VaultEntity(version: 4)));
 
       final result = await sut.pushWithRetry(syncPassword, 3);
       expect(result.isSuccess, isTrue);
@@ -400,23 +397,23 @@ void main() {
     test('retries on 409 conflict', () async {
       var callCount = 0;
 
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
-      when(() => mockEncryption.encryptForExport(any(), any()))
-          .thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.encryptForExport(any(), any()),
+      ).thenAnswer((_) async => Success(envelope));
 
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer((_) async {
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer((_) async {
         callCount++;
         if (callCount == 1) {
-          return const Err(SyncFailure(
-            'Conflict',
-            conflictVersion: 3,
-          ));
+          return const Err(SyncFailure('Conflict', conflictVersion: 3));
         }
         return const Success(VaultEntity(version: 6));
       });
@@ -428,20 +425,20 @@ void main() {
     });
 
     test('returns failure after max retries', () async {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
-      when(() => mockEncryption.encryptForExport(any(), any()))
-          .thenAnswer((_) async => Success(envelope));
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer(
-        (_) async => const Err(SyncFailure(
-          'Conflict',
-          conflictVersion: 3,
-        )),
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.encryptForExport(any(), any()),
+      ).thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer(
+        (_) async => const Err(SyncFailure('Conflict', conflictVersion: 3)),
       );
 
       stubSuccessfulPull();
@@ -451,26 +448,29 @@ void main() {
     });
 
     test('aborts immediately on non-conflict failure', () async {
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
-      when(() => mockEncryption.encryptForExport(any(), any()))
-          .thenAnswer((_) async => Success(envelope));
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer(
-        (_) async => const Err(SyncFailure('server error')),
-      );
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.encryptForExport(any(), any()),
+      ).thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer((_) async => const Err(SyncFailure('server error')));
 
       final result = await sut.pushWithRetry(syncPassword, 3);
       expect(result.isFailure, isTrue);
-      verify(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).called(1); // Only 1 attempt, no retries
+      verify(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).called(1); // Only 1 attempt, no retries
     });
   });
 
@@ -478,55 +478,52 @@ void main() {
     test('pulls with old password and pushes with new password', () async {
       // Pull with old password
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 3,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 3, blob: validBlob, checksum: validChecksum),
+        ),
       );
-      when(() => mockEncryption.decryptFromExport(any(), 'old-pass'))
-          .thenAnswer((_) async => const Success(jsonData));
-      when(() => mockExportImportRepo.importFromJsonString(
-            any(),
-            any(),
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(importResult));
+      when(
+        () => mockEncryption.decryptFromExport(any(), 'old-pass'),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockExportImportRepo.importFromJsonString(
+          any(),
+          any(),
+          includeCredentials: true,
+        ),
+      ).thenAnswer((_) async => const Success(importResult));
 
       // Push with new password
-      when(() => mockExportImportRepo.exportToJsonString(
-            includeCredentials: true,
-          )).thenAnswer((_) async => const Success(jsonData));
-      when(() => mockEncryption.encryptForExport(jsonData, 'new-pass'))
-          .thenAnswer((_) async => Success(envelope));
-      when(() => mockSyncRepo.putVault(
-            version: any(named: 'version'),
-            blob: any(named: 'blob'),
-            checksum: any(named: 'checksum'),
-          )).thenAnswer(
-        (_) async => const Success(VaultEntity(version: 4)),
-      );
+      when(
+        () => mockExportImportRepo.exportToJsonString(includeCredentials: true),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockEncryption.encryptForExport(jsonData, 'new-pass'),
+      ).thenAnswer((_) async => Success(envelope));
+      when(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      ).thenAnswer((_) async => const Success(VaultEntity(version: 4)));
 
-      final result =
-          await sut.changeEncryptionPassword('old-pass', 'new-pass');
+      final result = await sut.changeEncryptionPassword('old-pass', 'new-pass');
       expect(result.isSuccess, isTrue);
       expect(result.value, 4);
     });
 
     test('returns failure when old password is wrong', () async {
       when(() => mockSyncRepo.getVault()).thenAnswer(
-        (_) async => Success(VaultEntity(
-          version: 3,
-          blob: validBlob,
-          checksum: validChecksum,
-        )),
+        (_) async => Success(
+          VaultEntity(version: 3, blob: validBlob, checksum: validChecksum),
+        ),
       );
-      when(() => mockEncryption.decryptFromExport(any(), 'wrong'))
-          .thenAnswer(
-        (_) async => const Err(CryptoFailure('wrong password')),
-      );
+      when(
+        () => mockEncryption.decryptFromExport(any(), 'wrong'),
+      ).thenAnswer((_) async => const Err(CryptoFailure('wrong password')));
 
-      final result =
-          await sut.changeEncryptionPassword('wrong', 'new-pass');
+      final result = await sut.changeEncryptionPassword('wrong', 'new-pass');
       expect(result.isFailure, isTrue);
     });
   });

@@ -18,9 +18,7 @@ import 'package:shellvault/features/sync/presentation/providers/sync_providers.d
 import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
-final _pollTimedOutProvider = StateProvider.autoDispose<bool>(
-  (ref) => false,
-);
+final _pollTimedOutProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class SyncSettingsScreen extends ConsumerStatefulWidget {
   const SyncSettingsScreen({super.key});
@@ -425,7 +423,8 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                       )
                       .toList(),
                 ),
-          loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+          loading: () =>
+              const Center(child: CircularProgressIndicator.adaptive()),
           error: (e, _) => Text(l10n.error(e.toString())),
         ),
       ],
@@ -612,10 +611,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         }
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(
-            context,
-            message: l10n.error(e.toString()),
-          );
+          AdaptiveNotification.show(context, message: l10n.error(e.toString()));
         }
       }
     }
@@ -656,9 +652,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         TextField(
           controller: confirmPw,
           obscureText: true,
-          decoration: InputDecoration(
-            labelText: l10n.authConfirmPasswordLabel,
-          ),
+          decoration: InputDecoration(labelText: l10n.authConfirmPasswordLabel),
         ),
       ],
     );
@@ -789,10 +783,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         );
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(
-            context,
-            message: l10n.error(e.toString()),
-          );
+          AdaptiveNotification.show(context, message: l10n.error(e.toString()));
         }
       }
     }
@@ -815,10 +806,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         if (mounted) context.go('/');
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(
-            context,
-            message: l10n.error(e.toString()),
-          );
+          AdaptiveNotification.show(context, message: l10n.error(e.toString()));
         }
       }
     }

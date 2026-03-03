@@ -68,7 +68,8 @@ class TerminalThemePicker extends ConsumerWidget {
               },
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+          loading: () =>
+              const Center(child: CircularProgressIndicator.adaptive()),
           error: (e, _) => Text('Error: $e'),
         ),
       ),

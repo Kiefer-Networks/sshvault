@@ -28,8 +28,8 @@ class _ExportPasswordVisibility {
 
 final _exportPasswordVisibilityProvider =
     StateProvider.autoDispose<_ExportPasswordVisibility>(
-  (ref) => const _ExportPasswordVisibility(),
-);
+      (ref) => const _ExportPasswordVisibility(),
+    );
 
 class ExportPasswordDialog extends ConsumerStatefulWidget {
   const ExportPasswordDialog({super.key});
@@ -81,11 +81,12 @@ class _ExportPasswordDialogState extends ConsumerState<ExportPasswordDialog> {
                       ? Icons.visibility_off
                       : Icons.visibility,
                 ),
-                onPressed: () => ref
-                    .read(_exportPasswordVisibilityProvider.notifier)
-                    .state = visibility.copyWith(
-                  obscurePassword: !visibility.obscurePassword,
-                ),
+                onPressed: () =>
+                    ref
+                        .read(_exportPasswordVisibilityProvider.notifier)
+                        .state = visibility.copyWith(
+                      obscurePassword: !visibility.obscurePassword,
+                    ),
               ),
             ),
             keyboardType: TextInputType.visiblePassword,
@@ -103,11 +104,12 @@ class _ExportPasswordDialogState extends ConsumerState<ExportPasswordDialog> {
                       ? Icons.visibility_off
                       : Icons.visibility,
                 ),
-                onPressed: () => ref
-                    .read(_exportPasswordVisibilityProvider.notifier)
-                    .state = visibility.copyWith(
-                  obscureConfirm: !visibility.obscureConfirm,
-                ),
+                onPressed: () =>
+                    ref
+                        .read(_exportPasswordVisibilityProvider.notifier)
+                        .state = visibility.copyWith(
+                      obscureConfirm: !visibility.obscureConfirm,
+                    ),
               ),
             ),
             keyboardType: TextInputType.visiblePassword,

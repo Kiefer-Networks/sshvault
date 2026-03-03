@@ -34,10 +34,10 @@ class AdaptiveScaffold extends StatelessWidget {
     required this.body,
     this.floatingActionButton,
     this.backgroundColor,
-  })  : title = null,
-        actions = null,
-        leading = null,
-        automaticallyImplyLeading = true;
+  }) : title = null,
+       actions = null,
+       leading = null,
+       automaticallyImplyLeading = true;
 
   final String? title;
   final List<Widget>? actions;
@@ -53,7 +53,8 @@ class AdaptiveScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedAppBar = appBar ??
+    final resolvedAppBar =
+        appBar ??
         buildAdaptiveAppBar(
           context,
           title: title!,

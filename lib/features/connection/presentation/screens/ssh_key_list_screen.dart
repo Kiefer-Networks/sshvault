@@ -72,7 +72,8 @@ class SshKeyListScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+        loading: () =>
+            const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => ErrorState(
           error: error,
           onRetry: () => ref.invalidate(sshKeyListProvider),
@@ -132,10 +133,7 @@ class SshKeyListScreen extends ConsumerWidget {
         await ref.read(sshKeyListProvider.notifier).deleteSshKey(key.id);
       } catch (e) {
         if (context.mounted) {
-          AdaptiveNotification.show(
-            context,
-            message: l10n.error(e.toString()),
-          );
+          AdaptiveNotification.show(context, message: l10n.error(e.toString()));
         }
       }
     }

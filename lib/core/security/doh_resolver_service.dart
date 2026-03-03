@@ -23,9 +23,9 @@ class DohResolverService {
     DohProvider provider = DohProvider.cloudflare,
     Duration cacheTtl = const Duration(minutes: 5),
     HttpClient? httpClient,
-  })  : _provider = provider,
-        _cacheTtl = cacheTtl,
-        _httpClient = httpClient ?? HttpClient();
+  }) : _provider = provider,
+       _cacheTtl = cacheTtl,
+       _httpClient = httpClient ?? HttpClient();
 
   /// Resolve a hostname to a list of IP addresses using DNS-over-HTTPS.
   ///
@@ -79,9 +79,7 @@ class DohResolverService {
           _tag,
           'DoH query for $hostname returned status $status (RCODE)',
         );
-        return Err(
-          NetworkFailure('DNS query failed with RCODE $status'),
-        );
+        return Err(NetworkFailure('DNS query failed with RCODE $status'));
       }
 
       final answers = (json['Answer'] as List<dynamic>?) ?? [];
@@ -92,9 +90,7 @@ class DohResolverService {
 
       if (addresses.isEmpty) {
         _log.warning(_tag, 'No ${type.name} records found for $hostname');
-        return Err(
-          NetworkFailure('No DNS records found for $hostname'),
-        );
+        return Err(NetworkFailure('No DNS records found for $hostname'));
       }
 
       // Cache result
@@ -110,14 +106,10 @@ class DohResolverService {
       return Success(addresses);
     } on SocketException catch (e) {
       _log.error(_tag, 'DoH connection failed for $hostname: $e');
-      return Err(
-        NetworkFailure('DoH connection failed', cause: e),
-      );
+      return Err(NetworkFailure('DoH connection failed', cause: e));
     } catch (e) {
       _log.error(_tag, 'DoH resolution failed for $hostname: $e');
-      return Err(
-        NetworkFailure('DNS resolution failed', cause: e),
-      );
+      return Err(NetworkFailure('DNS resolution failed', cause: e));
     }
   }
 

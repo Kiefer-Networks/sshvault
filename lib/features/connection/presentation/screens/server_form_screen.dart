@@ -68,9 +68,10 @@ class _ServerFormReactiveState {
   }
 }
 
-final _serverFormStateProvider = StateProvider.autoDispose<_ServerFormReactiveState>(
-  (ref) => const _ServerFormReactiveState(),
-);
+final _serverFormStateProvider =
+    StateProvider.autoDispose<_ServerFormReactiveState>(
+      (ref) => const _ServerFormReactiveState(),
+    );
 
 class ServerFormScreen extends ConsumerStatefulWidget {
   final String? serverId;
@@ -116,7 +117,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     _portController.text = result.port.toString();
     _usernameController.text = result.username;
     _notesController.text = result.notes;
-    ref.read(_serverFormStateProvider.notifier).state = _ServerFormReactiveState(
+    ref
+        .read(_serverFormStateProvider.notifier)
+        .state = _ServerFormReactiveState(
       authMethod: result.authMethod,
       color: result.color,
       iconName: result.iconName,
@@ -199,7 +202,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return AdaptiveScaffold(
-      title: widget.isEditing ? l10n.serverFormTitleEdit : l10n.serverFormTitleAdd,
+      title: widget.isEditing
+          ? l10n.serverFormTitleEdit
+          : l10n.serverFormTitleAdd,
       actions: [
         if (widget.isEditing)
           Row(
@@ -207,9 +212,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
               Text(l10n.serverActive),
               Switch(
                 value: formState.isActive,
-                onChanged: (v) => ref
-                    .read(_serverFormStateProvider.notifier)
-                    .state = formState.copyWith(isActive: v),
+                onChanged: (v) =>
+                    ref.read(_serverFormStateProvider.notifier).state =
+                        formState.copyWith(isActive: v),
               ),
             ],
           ),
@@ -230,22 +235,22 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
               passphraseController: _passphraseController,
               notesController: _notesController,
               authMethod: formState.authMethod,
-              onAuthMethodChanged: (m) => ref
-                  .read(_serverFormStateProvider.notifier)
-                  .state = formState.copyWith(authMethod: m),
+              onAuthMethodChanged: (m) =>
+                  ref.read(_serverFormStateProvider.notifier).state = formState
+                      .copyWith(authMethod: m),
               onGenerateKeyPair: _generateKeyPair,
               onExtractPublicKey: _extractPublicKey,
               useManagedKey: formState.useManagedKey,
-              onUseManagedKeyChanged: (v) => ref
-                  .read(_serverFormStateProvider.notifier)
-                  .state = formState.copyWith(
-                useManagedKey: v,
-                sshKeyId: v ? null : () => null,
-              ),
+              onUseManagedKeyChanged: (v) =>
+                  ref.read(_serverFormStateProvider.notifier).state = formState
+                      .copyWith(
+                        useManagedKey: v,
+                        sshKeyId: v ? null : () => null,
+                      ),
               selectedSshKeyId: formState.sshKeyId,
-              onSshKeyChanged: (id) => ref
-                  .read(_serverFormStateProvider.notifier)
-                  .state = formState.copyWith(sshKeyId: () => id),
+              onSshKeyChanged: (id) =>
+                  ref.read(_serverFormStateProvider.notifier).state = formState
+                      .copyWith(sshKeyId: () => id),
             ),
             const SizedBox(height: 24),
 
@@ -267,9 +272,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                       (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
                     ),
                   ],
-                  onChanged: (v) => ref
-                      .read(_serverFormStateProvider.notifier)
-                      .state = formState.copyWith(groupId: () => v),
+                  onChanged: (v) =>
+                      ref.read(_serverFormStateProvider.notifier).state =
+                          formState.copyWith(groupId: () => v),
                 );
               },
               loading: () => const SizedBox.shrink(),
@@ -279,25 +284,25 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
             TagSelector(
               selectedTagIds: formState.selectedTagIds,
-              onChanged: (ids) => ref
-                  .read(_serverFormStateProvider.notifier)
-                  .state = formState.copyWith(selectedTagIds: ids),
+              onChanged: (ids) =>
+                  ref.read(_serverFormStateProvider.notifier).state = formState
+                      .copyWith(selectedTagIds: ids),
             ),
             const SizedBox(height: 24),
 
             ColorPickerField(
               selectedColor: formState.color,
-              onColorChanged: (c) => ref
-                  .read(_serverFormStateProvider.notifier)
-                  .state = formState.copyWith(color: c),
+              onColorChanged: (c) =>
+                  ref.read(_serverFormStateProvider.notifier).state = formState
+                      .copyWith(color: c),
             ),
             const SizedBox(height: 24),
 
             IconPickerField(
               selectedIcon: formState.iconName,
-              onIconChanged: (i) => ref
-                  .read(_serverFormStateProvider.notifier)
-                  .state = formState.copyWith(iconName: i),
+              onIconChanged: (i) =>
+                  ref.read(_serverFormStateProvider.notifier).state = formState
+                      .copyWith(iconName: i),
               accentColor: formState.color,
             ),
             const SizedBox(height: 32),
@@ -397,8 +402,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       }
     } finally {
       if (mounted) {
-        ref.read(_serverFormStateProvider.notifier).state =
-            ref.read(_serverFormStateProvider).copyWith(saving: false);
+        ref.read(_serverFormStateProvider.notifier).state = ref
+            .read(_serverFormStateProvider)
+            .copyWith(saving: false);
       }
     }
   }

@@ -11,26 +11,32 @@ void main() {
     });
 
     test('hasPins returns true when pins are configured', () {
-      final sut = CertificatePinningService(pins: {
-        'api.sshvault.app': [const CertificatePin.sha256('abc123')],
-      });
+      final sut = CertificatePinningService(
+        pins: {
+          'api.sshvault.app': [const CertificatePin.sha256('abc123')],
+        },
+      );
       expect(sut.hasPins, isTrue);
     });
 
     test('pinsForHost returns pins for configured host', () {
-      final sut = CertificatePinningService(pins: {
-        'api.sshvault.app': [
-          const CertificatePin.sha256('pin1'),
-          const CertificatePin.sha256('pin2'),
-        ],
-      });
+      final sut = CertificatePinningService(
+        pins: {
+          'api.sshvault.app': [
+            const CertificatePin.sha256('pin1'),
+            const CertificatePin.sha256('pin2'),
+          ],
+        },
+      );
       expect(sut.pinsForHost('api.sshvault.app'), hasLength(2));
     });
 
     test('pinsForHost returns empty list for unknown host', () {
-      final sut = CertificatePinningService(pins: {
-        'api.sshvault.app': [const CertificatePin.sha256('pin1')],
-      });
+      final sut = CertificatePinningService(
+        pins: {
+          'api.sshvault.app': [const CertificatePin.sha256('pin1')],
+        },
+      );
       expect(sut.pinsForHost('unknown.host'), isEmpty);
     });
   });
@@ -48,10 +54,7 @@ void main() {
     });
 
     test('isExpired returns true for past date', () {
-      final pin = CertificatePin(
-        hash: 'abc',
-        expiresAt: DateTime(2020, 1, 1),
-      );
+      final pin = CertificatePin(hash: 'abc', expiresAt: DateTime(2020, 1, 1));
       expect(pin.isExpired, isTrue);
       expect(pin.isValid, isFalse);
     });
@@ -85,9 +88,7 @@ void main() {
 
   group('CertificatePinningService — computePin', () {
     test('computes consistent SHA-256 pin from DER bytes', () {
-      final derBytes = Uint8List.fromList(
-        List.generate(256, (i) => i % 256),
-      );
+      final derBytes = Uint8List.fromList(List.generate(256, (i) => i % 256));
       final pin1 = CertificatePinningService.computePin(
         Uint8List.fromList(derBytes),
       );

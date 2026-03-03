@@ -98,18 +98,12 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
       onSuccess: (keyPair) {
         ref.read(_keyGenStateProvider.notifier).state = ref
             .read(_keyGenStateProvider)
-            .copyWith(
-              result: () => keyPair,
-              generating: false,
-            );
+            .copyWith(result: () => keyPair, generating: false);
       },
       onFailure: (failure) {
         ref.read(_keyGenStateProvider.notifier).state = ref
             .read(_keyGenStateProvider)
-            .copyWith(
-              error: () => failure.message,
-              generating: false,
-            );
+            .copyWith(error: () => failure.message, generating: false);
       },
     );
   }
@@ -150,11 +144,11 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                   ? null
                   : (type) {
                       if (type == null) return;
-                      ref.read(_keyGenStateProvider.notifier).state =
-                          genState.copyWith(
-                        selectedType: type,
-                        selectedBits: type.defaultBitLength,
-                      );
+                      ref.read(_keyGenStateProvider.notifier).state = genState
+                          .copyWith(
+                            selectedType: type,
+                            selectedBits: type.defaultBitLength,
+                          );
                     },
             ),
             const SizedBox(height: 16),
@@ -377,7 +371,9 @@ class _KeyPreviewCard extends StatelessWidget {
                     Clipboard.setData(ClipboardData(text: value));
                     AdaptiveNotification.show(
                       context,
-                      message: AppLocalizations.of(context)!.keyGenCopied(label),
+                      message: AppLocalizations.of(
+                        context,
+                      )!.keyGenCopied(label),
                     );
                   },
                   visualDensity: VisualDensity.compact,

@@ -78,7 +78,8 @@ class ServerListScreen extends ConsumerWidget {
                       : _buildGrid(context, ref, servers),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+              loading: () =>
+                  const Center(child: CircularProgressIndicator.adaptive()),
               error: (error, _) => ErrorState(
                 error: error,
                 onRetry: () => ref.invalidate(serverListProvider),
@@ -218,10 +219,7 @@ class ServerListScreen extends ConsumerWidget {
           onPressed: () async {
             await ref
                 .read(serverListProvider.notifier)
-                .duplicateServer(
-                  server.id,
-                  copySuffix: l10n.serverCopySuffix,
-                );
+                .duplicateServer(server.id, copySuffix: l10n.serverCopySuffix);
           },
         ),
         AdaptiveAction(

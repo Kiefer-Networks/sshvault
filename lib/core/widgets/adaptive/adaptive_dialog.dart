@@ -52,10 +52,10 @@ Future<bool?> showAdaptiveConfirmDialog(
           style: confirmColor != null
               ? FilledButton.styleFrom(backgroundColor: confirmColor)
               : isDestructive
-                  ? FilledButton.styleFrom(
-                      backgroundColor: Theme.of(ctx).colorScheme.error,
-                    )
-                  : null,
+              ? FilledButton.styleFrom(
+                  backgroundColor: Theme.of(ctx).colorScheme.error,
+                )
+              : null,
           child: Text(confirmLabel),
         ),
       ],
@@ -94,10 +94,7 @@ Future<void> showAdaptiveAlert(
       title: Text(title),
       content: Text(message),
       actions: [
-        FilledButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: Text(label),
-        ),
+        FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(label)),
       ],
     ),
   );
@@ -120,10 +117,7 @@ Future<T?> showAdaptiveFormDialog<T>(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
         title: Text(title),
-        content: Material(
-          color: Colors.transparent,
-          child: content,
-        ),
+        content: Material(color: Colors.transparent, child: content),
         actions: cupertinoActions,
       ),
     );

@@ -19,10 +19,7 @@ PreferredSizeWidget buildShellAppBar(
     return CupertinoNavigationBar(
       middle: Text(title),
       trailing: actions != null && actions.isNotEmpty
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: actions,
-            )
+          ? Row(mainAxisSize: MainAxisSize.min, children: actions)
           : null,
     );
   }

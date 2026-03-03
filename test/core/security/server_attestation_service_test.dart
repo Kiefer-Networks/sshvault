@@ -7,7 +7,9 @@ import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/security/server_attestation_service.dart';
 
 void main() {
-  final hmacKey = Uint8List.fromList(utf8.encode('test-hmac-secret-key-32bytes!!'));
+  final hmacKey = Uint8List.fromList(
+    utf8.encode('test-hmac-secret-key-32bytes!!'),
+  );
   const serverId = 'sshvault-api-prod';
 
   late ServerAttestationService sut;
@@ -66,9 +68,9 @@ void main() {
     });
 
     test('rejects expired timestamp (clock skew)', () {
-      final oldTime = DateTime.now()
-          .toUtc()
-          .subtract(const Duration(seconds: 600));
+      final oldTime = DateTime.now().toUtc().subtract(
+        const Duration(seconds: 600),
+      );
       final json = buildValidAttestation(timestampOverride: oldTime);
       final result = sut.verify(json);
       expect(result.isFailure, isTrue);
@@ -76,9 +78,9 @@ void main() {
     });
 
     test('accepts timestamp within allowed skew', () {
-      final slightlyOld = DateTime.now()
-          .toUtc()
-          .subtract(const Duration(seconds: 60));
+      final slightlyOld = DateTime.now().toUtc().subtract(
+        const Duration(seconds: 60),
+      );
       final json = buildValidAttestation(timestampOverride: slightlyOld);
       final result = sut.verify(json);
       expect(result.isSuccess, isTrue);
@@ -166,5 +168,4 @@ void main() {
       expect(n2, isNotEmpty);
     });
   });
-
 }

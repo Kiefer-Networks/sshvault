@@ -31,7 +31,8 @@ class AdaptiveListTile extends StatelessWidget {
         leading: leading,
         title: title,
         subtitle: subtitle,
-        trailing: trailing ??
+        trailing:
+            trailing ??
             (showChevron && onTap != null
                 ? const CupertinoListTileChevron()
                 : null),

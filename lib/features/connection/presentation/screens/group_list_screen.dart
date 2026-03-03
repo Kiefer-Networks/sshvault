@@ -23,11 +23,11 @@ import 'package:shellvault/features/connection/presentation/widgets/confirm_dial
 import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
-final _groupTileExpandedProvider =
-    StateProvider.autoDispose.family<bool, String>((ref, groupId) => false);
+final _groupTileExpandedProvider = StateProvider.autoDispose
+    .family<bool, String>((ref, groupId) => false);
 
-final _groupTileConnectingProvider =
-    StateProvider.autoDispose.family<bool, String>((ref, groupId) => false);
+final _groupTileConnectingProvider = StateProvider.autoDispose
+    .family<bool, String>((ref, groupId) => false);
 
 class GroupListScreen extends ConsumerWidget {
   const GroupListScreen({super.key});
@@ -82,7 +82,8 @@ class GroupListScreen extends ConsumerWidget {
             itemBuilder: (_, index) => widgets[index],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+        loading: () =>
+            const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => ErrorState(
           error: error,
           onRetry: () => ref.invalidate(groupTreeProvider),
@@ -273,9 +274,13 @@ class _GroupTile extends ConsumerWidget {
                     icon: Icon(
                       expanded ? Icons.expand_less : Icons.expand_more,
                     ),
-                    onPressed: () => ref
-                        .read(_groupTileExpandedProvider(group.id).notifier)
-                        .state = !expanded,
+                    onPressed: () =>
+                        ref
+                                .read(
+                                  _groupTileExpandedProvider(group.id).notifier,
+                                )
+                                .state =
+                            !expanded,
                     tooltip: expanded
                         ? l10n.groupCollapse
                         : l10n.groupShowHosts,
@@ -284,9 +289,13 @@ class _GroupTile extends ConsumerWidget {
               ],
             ),
             onTap: group.serverCount > 0
-                ? () => ref
-                    .read(_groupTileExpandedProvider(group.id).notifier)
-                    .state = !expanded
+                ? () =>
+                      ref
+                              .read(
+                                _groupTileExpandedProvider(group.id).notifier,
+                              )
+                              .state =
+                          !expanded
                 : null,
           ),
         ),

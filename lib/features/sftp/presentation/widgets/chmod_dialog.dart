@@ -51,7 +51,6 @@ class _ChmodDialogState extends ConsumerState<ChmodDialog> {
 
   int _toOctal() => ref.read(_chmodPermissionsProvider);
 
-
   void _toggleBit(int bit, bool value) {
     final current = ref.read(_chmodPermissionsProvider);
     final updated = value ? (current | bit) : (current & ~bit);

@@ -306,7 +306,8 @@ class ServerDetailScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+        loading: () =>
+            const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );

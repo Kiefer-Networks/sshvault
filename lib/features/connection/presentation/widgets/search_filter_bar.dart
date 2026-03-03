@@ -79,9 +79,8 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                       ? theme.colorScheme.primary
                       : null,
                 ),
-                onPressed: () => ref
-                    .read(_showFiltersProvider.notifier)
-                    .state = !showFilters,
+                onPressed: () => ref.read(_showFiltersProvider.notifier).state =
+                    !showFilters,
               ),
             ],
           ),

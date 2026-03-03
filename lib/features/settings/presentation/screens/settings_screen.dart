@@ -410,7 +410,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+        loading: () =>
+            const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );
@@ -555,8 +556,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         title: Text(l10n.settingsLanguage),
         actions: options.map((o) {
           return CupertinoActionSheetAction(
-            isDefaultAction: o.$1 == currentLocale ||
-                (o.$1 == '' && currentLocale.isEmpty),
+            isDefaultAction:
+                o.$1 == currentLocale || (o.$1 == '' && currentLocale.isEmpty),
             onPressed: () {
               Navigator.pop(ctx);
               ref.read(settingsProvider.notifier).setLocale(o.$1);

@@ -73,7 +73,8 @@ class TagListScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+        loading: () =>
+            const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => ErrorState(
           error: error,
           onRetry: () => ref.invalidate(tagListProvider),

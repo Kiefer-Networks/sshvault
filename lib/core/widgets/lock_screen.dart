@@ -183,7 +183,9 @@ class _LockScreenState extends ConsumerState<LockScreen>
     if (settings != null && settings.isLockedOut) return;
 
     if (_pinController.text.length != 6) {
-      ref.read(_lockStateProvider.notifier).setPinError(l10n.pinDialogErrorLength);
+      ref
+          .read(_lockStateProvider.notifier)
+          .setPinError(l10n.pinDialogErrorLength);
       return;
     }
 
@@ -281,7 +283,9 @@ class _LockScreenState extends ConsumerState<LockScreen>
                 ),
                 const SizedBox(height: 16),
                 AdaptiveButton.filledIcon(
-                  onPressed: isLockedOut || lockState.isVerifying ? null : _verifyPin,
+                  onPressed: isLockedOut || lockState.isVerifying
+                      ? null
+                      : _verifyPin,
                   icon: lockState.isVerifying
                       ? const SizedBox(
                           width: 18,

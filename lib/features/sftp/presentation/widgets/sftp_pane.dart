@@ -241,10 +241,7 @@ class SftpPane extends ConsumerWidget {
     await ref.read(sftpPaneProvider(side).notifier).downloadToLocal(entry);
 
     if (context.mounted) {
-      AdaptiveNotification.show(
-        context,
-        message: l10n.sftpDownloadStarted(1),
-      );
+      AdaptiveNotification.show(context, message: l10n.sftpDownloadStarted(1));
     }
   }
 

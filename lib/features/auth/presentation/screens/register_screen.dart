@@ -42,10 +42,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         context.go('/sync-password?mode=create');
       }
       if (next.hasError && mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: next.error.toString(),
-        );
+        AdaptiveNotification.show(context, message: next.error.toString());
       }
     });
 
@@ -135,9 +132,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
                         ),
-                        onPressed: () => ref
-                            .read(_obscurePasswordProvider.notifier)
-                            .state = !obscurePassword,
+                        onPressed: () =>
+                            ref.read(_obscurePasswordProvider.notifier).state =
+                                !obscurePassword,
                       ),
                     ),
                     validator: (v) {
