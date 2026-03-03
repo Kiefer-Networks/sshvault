@@ -3,7 +3,7 @@ import UIKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
-  private var secureField: UITextField?
+  private var secureFields: [UIWindowScene: UITextField] = [:]
 
   override func application(
     _ application: UIApplication,
@@ -40,21 +40,25 @@ import UIKit
   }
 
   private func enableScreenProtection() {
-    guard secureField == nil else { return }
-    guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-          let window = scene.windows.first else { return }
-    let field = UITextField()
-    field.isSecureTextEntry = true
-    window.addSubview(field)
-    field.centerYAnchor.constraint(equalTo: window.centerYAnchor).isActive = true
-    field.centerXAnchor.constraint(equalTo: window.centerXAnchor).isActive = true
-    window.layer.superlayer?.addSublayer(field.layer)
-    field.layer.sublayers?.last?.addSublayer(window.layer)
-    secureField = field
+    for scene in UIApplication.shared.connectedScenes {
+      guard let windowScene = scene as? UIWindowScene,
+            secureFields[windowScene] == nil,
+            let window = windowScene.windows.first else { continue }
+      let field = UITextField()
+      field.isSecureTextEntry = true
+      window.addSubview(field)
+      field.centerYAnchor.constraint(equalTo: window.centerYAnchor).isActive = true
+      field.centerXAnchor.constraint(equalTo: window.centerXAnchor).isActive = true
+      window.layer.superlayer?.addSublayer(field.layer)
+      field.layer.sublayers?.last?.addSublayer(window.layer)
+      secureFields[windowScene] = field
+    }
   }
 
   private func disableScreenProtection() {
-    secureField?.removeFromSuperview()
-    secureField = nil
+    for (scene, field) in secureFields {
+      field.removeFromSuperview()
+      secureFields.removeValue(forKey: scene)
+    }
   }
 }
