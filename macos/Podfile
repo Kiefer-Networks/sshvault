@@ -26,6 +26,21 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_macos_podfile_setup
 
+# Fix: cupertino_native_better ships a macOS podspec named
+# "cupertino_native_plus" (upstream fork oversight). Flutter expects
+# the podspec name to match the plugin name.
+plugin_macos = File.join(
+  File.dirname(__FILE__), 'Flutter', 'ephemeral', '.symlinks',
+  'plugins', 'cupertino_native_better', 'macos'
+)
+wrong = File.join(plugin_macos, 'cupertino_native_plus.podspec')
+right = File.join(plugin_macos, 'cupertino_native_better.podspec')
+if File.exist?(wrong) && !File.exist?(right)
+  content = File.read(wrong)
+  content.gsub!("'cupertino_native_plus'", "'cupertino_native_better'")
+  File.write(right, content)
+end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
