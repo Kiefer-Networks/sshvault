@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 
-/// A single action for an adaptive action sheet / bottom sheet.
+/// A single action for a bottom sheet.
 class AdaptiveAction {
   final String label;
   final IconData? icon;
@@ -19,10 +17,7 @@ class AdaptiveAction {
   });
 }
 
-/// Shows a platform-adaptive action sheet.
-///
-/// On iOS/macOS: [CupertinoActionSheet] via [showCupertinoModalPopup].
-/// On Android/Desktop: [showModalBottomSheet] with [ListTile] items.
+/// Shows a modal bottom sheet with action items.
 Future<void> showAdaptiveActionSheet(
   BuildContext context, {
   String? title,
@@ -30,33 +25,6 @@ Future<void> showAdaptiveActionSheet(
   required List<AdaptiveAction> actions,
   String? cancelLabel,
 }) {
-  if (useCupertinoDesign) {
-    return showCupertinoModalPopup(
-      context: context,
-      builder: (ctx) => CupertinoActionSheet(
-        title: title != null ? Text(title) : null,
-        message: message != null ? Text(message) : null,
-        actions: actions.map((a) {
-          return CupertinoActionSheetAction(
-            isDestructiveAction: a.isDestructive,
-            isDefaultAction: a.isDefault,
-            onPressed: () {
-              Navigator.pop(ctx);
-              a.onPressed();
-            },
-            child: Text(a.label),
-          );
-        }).toList(),
-        cancelButton: cancelLabel != null
-            ? CupertinoActionSheetAction(
-                onPressed: () => Navigator.pop(ctx),
-                child: Text(cancelLabel),
-              )
-            : null,
-      ),
-    );
-  }
-
   return showModalBottomSheet(
     context: context,
     builder: (ctx) => SafeArea(

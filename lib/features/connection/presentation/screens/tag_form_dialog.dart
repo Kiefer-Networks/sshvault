@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -93,24 +91,6 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
         ),
       ),
     );
-
-    if (useCupertinoDesign) {
-      return CupertinoAlertDialog(
-        title: Text(titleText),
-        content: Material(color: Colors.transparent, child: formContent),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: _save,
-            child: Text(saveText),
-          ),
-        ],
-      );
-    }
 
     return AlertDialog(
       title: Text(titleText),

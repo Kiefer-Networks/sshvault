@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 final _pinDialogErrorProvider = StateProvider.autoDispose<String?>((_) => null);
@@ -29,17 +27,6 @@ class PinDialog extends ConsumerStatefulWidget {
   /// Show dialog to set a new PIN. Returns the PIN or null if cancelled.
   static Future<String?> showSetPin(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (useCupertinoDesign) {
-      return showCupertinoDialog<String>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => PinDialog(
-          title: l10n.pinDialogSetTitle,
-          subtitle: l10n.pinDialogSetSubtitle,
-          confirm: true,
-        ),
-      );
-    }
     return showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -57,13 +44,6 @@ class PinDialog extends ConsumerStatefulWidget {
     BuildContext context, {
     required Future<bool> Function(String pin) verifier,
   }) async {
-    if (useCupertinoDesign) {
-      return showCupertinoDialog<String>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => _PinVerifyDialog(verifier: verifier),
-      );
-    }
     return showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -162,27 +142,6 @@ class _PinDialogState extends ConsumerState<PinDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
-    if (useCupertinoDesign) {
-      return CupertinoAlertDialog(
-        title: Text(widget.title),
-        content: Material(
-          color: Colors.transparent,
-          child: _buildContent(context),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: _submit,
-            child: Text(l10n.save),
-          ),
-        ],
-      );
-    }
 
     return AlertDialog(
       title: Text(widget.title),
@@ -288,29 +247,6 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final verifying = ref.watch(_pinVerifyingProvider);
-
-    if (useCupertinoDesign) {
-      return CupertinoAlertDialog(
-        title: Text(l10n.pinDialogVerifyTitle),
-        content: Material(
-          color: Colors.transparent,
-          child: _buildVerifyContent(context),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: verifying ? null : () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: verifying ? null : _verify,
-            child: verifying
-                ? const CupertinoActivityIndicator()
-                : Text(l10n.lockScreenUnlock),
-          ),
-        ],
-      );
-    }
 
     return AlertDialog(
       title: Text(l10n.pinDialogVerifyTitle),

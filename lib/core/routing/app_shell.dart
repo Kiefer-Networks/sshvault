@@ -1,15 +1,10 @@
 import 'dart:async';
 
-import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/routing/ios_more_screen.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/services/terminal_notification_service.dart';
@@ -263,16 +258,6 @@ class AppShellState extends ConsumerState<AppShell> {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
 
-        // iOS/iPadOS: Always use Cupertino tab bar — even on iPad's wider screens.
-        if (isCupertinoMobile) {
-          return _CupertinoMobileScaffold(
-            currentIndex: widget.navigationShell.currentIndex,
-            onDestinationSelected: _onDestinationSelected,
-            sessionCount: sessionCount,
-            child: widget.navigationShell,
-          );
-        }
-
         if (width < ShellBreakpoints.mobile) {
           return _MobileScaffold(
             scaffoldKey: scaffoldKey,
@@ -324,116 +309,6 @@ class _MobileScaffold extends StatelessWidget {
         sessionCount: sessionCount,
       ),
       body: child,
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// iOS Mobile: CupertinoTabBar with 5 tabs
-// ---------------------------------------------------------------------------
-
-/// Maps GoRouter branch index → iOS tab index.
-///
-/// Branches 0-2 map to tabs 0-2 (Hosts, SFTP, Snippets).
-/// Branch 7 (Terminal) maps to tab 3.
-/// Branches 3-6 (SSH Keys, Groups, Tags, Export/Import) map to tab 4 (More).
-int _branchToTab(int branchIndex) {
-  if (branchIndex <= 2) return branchIndex;
-  if (branchIndex == 7) return 3;
-  return 4; // branches 3–6 → More
-}
-
-/// Maps iOS tab index → GoRouter branch index (for primary tabs only).
-int _tabToBranch(int tabIndex) {
-  if (tabIndex <= 2) return tabIndex;
-  if (tabIndex == 3) return 7; // Terminal
-  return -1; // More — not a branch
-}
-
-final _showMoreProvider = StateProvider.autoDispose<bool>((_) => false);
-
-class _CupertinoMobileScaffold extends ConsumerWidget {
-  final int currentIndex;
-  final ValueChanged<int> onDestinationSelected;
-  final int sessionCount;
-  final Widget child;
-
-  const _CupertinoMobileScaffold({
-    required this.currentIndex,
-    required this.onDestinationSelected,
-    required this.sessionCount,
-    required this.child,
-  });
-
-  int _currentTab(bool showMore) {
-    if (showMore) return 4;
-    return _branchToTab(currentIndex);
-  }
-
-  void _onTabTapped(WidgetRef ref, int tabIndex) {
-    if (tabIndex == 4) {
-      ref.read(_showMoreProvider.notifier).state = true;
-      return;
-    }
-    ref.read(_showMoreProvider.notifier).state = false;
-    final branchIndex = _tabToBranch(tabIndex);
-    if (branchIndex >= 0) {
-      onDestinationSelected(branchIndex);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final showMore = ref.watch(_showMoreProvider);
-
-    final content = showMore
-        ? IosMoreScreen(
-            onBranchSelected: (branchIndex) {
-              ref.read(_showMoreProvider.notifier).state = false;
-              onDestinationSelected(branchIndex);
-            },
-          )
-        : child;
-
-    return ColoredBox(
-      color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-      child: Column(
-        children: [
-          Expanded(child: content),
-          CNTabBar(
-            currentIndex: _currentTab(showMore),
-            onTap: (index) => _onTabTapped(ref, index),
-            items: [
-              CNTabBarItem(
-                icon: const CNSymbol('desktopcomputer'),
-                activeIcon: const CNSymbol('desktopcomputer'),
-                label: l10n.navHosts,
-              ),
-              CNTabBarItem(
-                icon: const CNSymbol('folder'),
-                activeIcon: const CNSymbol('folder.fill'),
-                label: l10n.navSftp,
-              ),
-              CNTabBarItem(
-                icon: const CNSymbol('chevron.left.forwardslash.chevron.right'),
-                label: l10n.navSnippets,
-              ),
-              CNTabBarItem(
-                icon: const CNSymbol('terminal'),
-                activeIcon: const CNSymbol('terminal.fill'),
-                badge: sessionCount > 0 ? '$sessionCount' : null,
-                label: l10n.navTerminal,
-              ),
-              CNTabBarItem(
-                icon: const CNSymbol('ellipsis.circle'),
-                activeIcon: const CNSymbol('ellipsis.circle.fill'),
-                label: l10n.navMore,
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

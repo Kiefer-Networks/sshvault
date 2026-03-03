@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 
-/// A platform-adaptive list section.
-///
-/// On iOS/macOS: [CupertinoListSection.insetGrouped] with header.
-/// On Android/Desktop: [Column] with section header and children.
+/// A list section with an optional header.
 class AdaptiveListSection extends StatelessWidget {
   final String? header;
   final List<Widget> children;
@@ -14,13 +9,6 @@ class AdaptiveListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (useCupertinoDesign) {
-      return CupertinoListSection.insetGrouped(
-        header: header != null ? Text(header!) : null,
-        children: children,
-      );
-    }
-
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

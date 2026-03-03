@@ -1,18 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive_app_bar.dart';
 
-/// A platform-adaptive scaffold.
+/// A scaffold that builds its app bar from [title] or accepts a pre-built one.
 ///
-/// On iOS/macOS: renders [CupertinoPageScaffold] with [CupertinoNavigationBar].
-/// On Android/Linux/Windows: renders Material [Scaffold] with [AppBar].
-///
-/// Use the default constructor when a simple title-based app bar suffices.
-/// Use [AdaptiveScaffold.withAppBar] when passing a pre-built app bar
-/// (e.g. from [buildShellAppBar] or custom platform logic).
+/// Uses Material [Scaffold] with [AppBar] on all platforms.
 class AdaptiveScaffold extends StatelessWidget {
-  /// Creates an adaptive scaffold that builds its app bar from [title].
+  /// Creates a scaffold that builds its app bar from [title].
   const AdaptiveScaffold({
     super.key,
     required String this.title,
@@ -24,10 +17,7 @@ class AdaptiveScaffold extends StatelessWidget {
     this.backgroundColor,
   }) : appBar = null;
 
-  /// Creates an adaptive scaffold with a pre-built [appBar].
-  ///
-  /// On Cupertino the [appBar] must be an [ObstructingPreferredSizeWidget]
-  /// (e.g. [CupertinoNavigationBar]).
+  /// Creates a scaffold with a pre-built [appBar].
   const AdaptiveScaffold.withAppBar({
     super.key,
     required PreferredSizeWidget this.appBar,
@@ -45,10 +35,7 @@ class AdaptiveScaffold extends StatelessWidget {
   final bool automaticallyImplyLeading;
   final PreferredSizeWidget? appBar;
   final Widget body;
-
-  /// Only rendered on Material platforms; ignored on Cupertino.
   final Widget? floatingActionButton;
-
   final Color? backgroundColor;
 
   @override
@@ -62,14 +49,6 @@ class AdaptiveScaffold extends StatelessWidget {
           leading: leading,
           automaticallyImplyLeading: automaticallyImplyLeading,
         );
-
-    if (useCupertinoDesign) {
-      return CupertinoPageScaffold(
-        navigationBar: resolvedAppBar as ObstructingPreferredSizeWidget,
-        backgroundColor: backgroundColor,
-        child: Material(type: MaterialType.transparency, child: body),
-      );
-    }
 
     return Scaffold(
       appBar: resolvedAppBar,

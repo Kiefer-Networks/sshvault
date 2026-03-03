@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 
-/// A platform-adaptive list tile.
-///
-/// On iOS/macOS: [CupertinoListTile] with chevron.
-/// On Android/Desktop: [ListTile].
+/// A list tile using Material [ListTile].
 class AdaptiveListTile extends StatelessWidget {
   final Widget? leading;
   final Widget title;
@@ -26,20 +21,6 @@ class AdaptiveListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (useCupertinoDesign) {
-      return CupertinoListTile(
-        leading: leading,
-        title: title,
-        subtitle: subtitle,
-        trailing:
-            trailing ??
-            (showChevron && onTap != null
-                ? const CupertinoListTileChevron()
-                : null),
-        onTap: onTap,
-      );
-    }
-
     return ListTile(
       leading: leading,
       title: title,

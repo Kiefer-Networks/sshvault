@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -8,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/routing/app_router.dart';
 import 'package:shellvault/core/services/screen_protection_service.dart';
 import 'package:shellvault/core/theme/app_theme.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/lock_screen.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
@@ -76,46 +72,6 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     final localeSetting = settingsAsync.value?.locale ?? '';
     final locale = localeSetting.isEmpty ? null : Locale(localeSetting);
 
-    if (useCupertinoDesign) {
-      return _buildCupertinoApp(settingsAsync, themeMode, locale);
-    }
-    return _buildMaterialApp(settingsAsync, themeMode, locale);
-  }
-
-  Widget _buildCupertinoApp(
-    AsyncValue settingsAsync,
-    ThemeMode themeMode,
-    Locale? locale,
-  ) {
-    final brightness = _resolveBrightness(themeMode);
-    final cupertinoTheme = brightness == Brightness.dark
-        ? AppTheme.cupertinoDark
-        : AppTheme.cupertinoLight;
-    final materialTheme = brightness == Brightness.dark
-        ? AppTheme.dark
-        : AppTheme.light;
-
-    return CupertinoApp.router(
-      debugShowCheckedModeBanner: false,
-      theme: cupertinoTheme,
-      locale: locale,
-      localizationsDelegates: _localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      routerConfig: AppRouter.router,
-      builder: (context, child) {
-        return Theme(
-          data: materialTheme,
-          child: _wrapWithLock(settingsAsync, child),
-        );
-      },
-    );
-  }
-
-  Widget _buildMaterialApp(
-    AsyncValue settingsAsync,
-    ThemeMode themeMode,
-    Locale? locale,
-  ) {
     return MaterialApp.router(
       title: 'ShellVault',
       debugShowCheckedModeBanner: false,
@@ -137,13 +93,5 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
       return LockScreen(child: content);
     }
     return content;
-  }
-
-  Brightness _resolveBrightness(ThemeMode mode) {
-    return switch (mode) {
-      ThemeMode.dark => Brightness.dark,
-      ThemeMode.light => Brightness.light,
-      ThemeMode.system => PlatformDispatcher.instance.platformBrightness,
-    };
   }
 }

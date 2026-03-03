@@ -67,9 +67,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 leading: const Icon(Icons.language),
                 title: Text(l10n.settingsLanguage),
                 subtitle: Text(_localeLabel(l10n, settings.locale)),
-                trailing: useCupertinoDesign
-                    ? const CupertinoListTileChevron()
-                    : DropdownButton<String>(
+                trailing: DropdownButton<String>(
                         value: settings.locale.isEmpty ? '' : settings.locale,
                         underline: const SizedBox.shrink(),
                         items: [
@@ -96,9 +94,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           }
                         },
                       ),
-                onTap: useCupertinoDesign
-                    ? () => _showLanguagePicker(l10n, settings.locale)
-                    : null,
               ),
               const Divider(),
 
@@ -183,9 +178,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ? l10n.settingsAutoLockDisabled
                       : l10n.settingsAutoLockMinutes(settings.autoLockMinutes),
                 ),
-                trailing: useCupertinoDesign
-                    ? const CupertinoListTileChevron()
-                    : DropdownButton<int>(
+                trailing: DropdownButton<int>(
                         value: settings.autoLockMinutes,
                         underline: const SizedBox.shrink(),
                         items: [
@@ -218,9 +211,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           }
                         },
                       ),
-                onTap: useCupertinoDesign
-                    ? () => _showAutoLockPicker(l10n, settings.autoLockMinutes)
-                    : null,
               ),
               Builder(
                 builder: (context) {
@@ -540,68 +530,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (result != null && result.trim().isNotEmpty) {
       ref.read(settingsProvider.notifier).setDefaultUsername(result.trim());
     }
-  }
-
-  void _showLanguagePicker(AppLocalizations l10n, String currentLocale) {
-    final options = [
-      ('', l10n.settingsLanguageSystem),
-      ('en', l10n.settingsLanguageEn),
-      ('de', l10n.settingsLanguageDe),
-      ('es', l10n.settingsLanguageEs),
-    ];
-
-    showCupertinoModalPopup(
-      context: context,
-      builder: (ctx) => CupertinoActionSheet(
-        title: Text(l10n.settingsLanguage),
-        actions: options.map((o) {
-          return CupertinoActionSheetAction(
-            isDefaultAction:
-                o.$1 == currentLocale || (o.$1 == '' && currentLocale.isEmpty),
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref.read(settingsProvider.notifier).setLocale(o.$1);
-            },
-            child: Text(o.$2),
-          );
-        }).toList(),
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.pop(ctx),
-          child: Text(l10n.cancel),
-        ),
-      ),
-    );
-  }
-
-  void _showAutoLockPicker(AppLocalizations l10n, int currentMinutes) {
-    final options = [
-      (0, l10n.settingsAutoLockOff),
-      (1, l10n.settingsAutoLock1Min),
-      (5, l10n.settingsAutoLock5Min),
-      (15, l10n.settingsAutoLock15Min),
-      (30, l10n.settingsAutoLock30Min),
-    ];
-
-    showCupertinoModalPopup(
-      context: context,
-      builder: (ctx) => CupertinoActionSheet(
-        title: Text(l10n.settingsAutoLock),
-        actions: options.map((o) {
-          return CupertinoActionSheetAction(
-            isDefaultAction: o.$1 == currentMinutes,
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref.read(settingsProvider.notifier).setAutoLockMinutes(o.$1);
-            },
-            child: Text(o.$2),
-          );
-        }).toList(),
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.pop(ctx),
-          child: Text(l10n.cancel),
-        ),
-      ),
-    );
   }
 
   Future<void> _downloadLogs(AppLocalizations l10n) async {

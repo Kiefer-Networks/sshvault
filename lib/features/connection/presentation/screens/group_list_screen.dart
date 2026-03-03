@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,19 +40,9 @@ class GroupListScreen extends ConsumerWidget {
       appBar: buildShellAppBar(
         context,
         title: l10n.groupListTitle,
-        actions: useCupertinoDesign
-            ? [
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () => _showGroupForm(context, ref),
-                  child: const Icon(CupertinoIcons.add),
-                ),
-              ]
-            : null,
+        actions: null,
       ),
-      floatingActionButton: useCupertinoDesign
-          ? null
-          : FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
               heroTag: 'addGroupFab',
               onPressed: () => _showGroupForm(context, ref),
               child: const Icon(Icons.add),

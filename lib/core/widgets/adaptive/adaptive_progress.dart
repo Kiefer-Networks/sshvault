@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 
-/// A platform-adaptive progress indicator.
-///
-/// On iOS/macOS: [CupertinoActivityIndicator].
-/// On Android/Desktop: [CircularProgressIndicator].
+/// A progress indicator using [CircularProgressIndicator.adaptive].
 class AdaptiveProgressIndicator extends StatelessWidget {
   final double? radius;
 
@@ -13,9 +8,6 @@ class AdaptiveProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (useCupertinoDesign) {
-      return CupertinoActivityIndicator(radius: radius ?? 10);
-    }
     return const CircularProgressIndicator.adaptive();
   }
 }

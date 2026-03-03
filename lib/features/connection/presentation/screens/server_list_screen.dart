@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,19 +32,10 @@ class ServerListScreen extends ConsumerWidget {
         title: l10n.serverListTitle,
         actions: [
           const ViewModeToggle(),
-          if (useCupertinoDesign)
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () => context.push('/server/new'),
-              child: const Icon(CupertinoIcons.add),
-            )
-          else
-            const SizedBox(width: 8),
+          const SizedBox(width: 8),
         ],
       ),
-      floatingActionButton: useCupertinoDesign
-          ? null
-          : FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
               heroTag: 'addServerFab',
               onPressed: () => context.push('/server/new'),
               child: const Icon(Icons.add),

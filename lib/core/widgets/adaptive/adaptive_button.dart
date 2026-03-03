@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 
-/// A platform-adaptive button.
-///
-/// On iOS/macOS: [CupertinoButton] / [CupertinoButton.filled].
-/// On Android/Desktop: [FilledButton] / [TextButton] / [OutlinedButton].
+/// A button using Material [FilledButton] / [TextButton].
 class AdaptiveButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget child;
@@ -45,23 +40,6 @@ class AdaptiveButton extends StatelessWidget {
     Color? color,
     ButtonStyle? style,
   }) {
-    if (useCupertinoDesign) {
-      return CupertinoButton.filled(
-        onPressed: onPressed,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconTheme(
-              data: const IconThemeData(color: CupertinoColors.white, size: 18),
-              child: icon,
-            ),
-            const SizedBox(width: 8),
-            label,
-          ],
-        ),
-      );
-    }
     return FilledButton.icon(
       onPressed: onPressed,
       icon: icon,
@@ -81,26 +59,6 @@ class AdaptiveButton extends StatelessWidget {
     required Widget label,
     Color? color,
   }) {
-    if (useCupertinoDesign) {
-      return CupertinoButton(
-        onPressed: onPressed,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconTheme(
-              data: IconThemeData(
-                color: color ?? CupertinoColors.activeBlue,
-                size: 18,
-              ),
-              child: icon,
-            ),
-            const SizedBox(width: 8),
-            label,
-          ],
-        ),
-      );
-    }
     return TextButton.icon(
       onPressed: onPressed,
       icon: icon,
@@ -113,23 +71,6 @@ class AdaptiveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (useCupertinoDesign) {
-      switch (_style) {
-        case _AdaptiveButtonStyle.filled:
-          return CupertinoButton.filled(
-            onPressed: onPressed,
-            padding: padding,
-            child: child,
-          );
-        case _AdaptiveButtonStyle.text:
-          return CupertinoButton(
-            onPressed: onPressed,
-            padding: padding,
-            child: child,
-          );
-      }
-    }
-
     switch (_style) {
       case _AdaptiveButtonStyle.filled:
         return FilledButton(

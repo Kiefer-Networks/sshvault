@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 
-/// A platform-adaptive text field.
-///
-/// On iOS/macOS: [CupertinoTextField] with matching styling.
-/// On Android/Desktop: [TextFormField] with Material styling.
+/// A text field using Material [TextFormField].
 class AdaptiveTextField extends StatelessWidget {
   final TextEditingController? controller;
   final String? labelText;
@@ -54,119 +49,6 @@ class AdaptiveTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (useCupertinoDesign) {
-      return _buildCupertino(context);
-    }
-    return _buildMaterial(context);
-  }
-
-  Widget _buildCupertino(BuildContext context) {
-    final effectivePlaceholder = placeholder ?? labelText ?? hintText;
-
-    // Wrap with FormField if validator is provided
-    if (validator != null) {
-      return FormField<String>(
-        initialValue: controller?.text ?? '',
-        validator: validator,
-        builder: (field) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CupertinoTextField(
-                controller: controller,
-                placeholder: effectivePlaceholder,
-                prefix: prefixIcon != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: prefixIcon,
-                      )
-                    : null,
-                suffix: suffixIcon != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: suffixIcon,
-                      )
-                    : null,
-                obscureText: obscureText,
-                readOnly: readOnly,
-                autofocus: autofocus,
-                enabled: enabled,
-                maxLines: maxLines,
-                minLines: minLines,
-                keyboardType: keyboardType,
-                textInputAction: textInputAction,
-                onChanged: (v) {
-                  field.didChange(v);
-                  onChanged?.call(v);
-                },
-                onSubmitted: onSubmitted,
-                onTap: onTap,
-                focusNode: focusNode,
-                textCapitalization: textCapitalization,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: CupertinoDynamicColor.resolve(
-                    CupertinoColors.tertiarySystemFill,
-                    context,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              if (field.hasError)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4, left: 4),
-                  child: Text(
-                    field.errorText!,
-                    style: const TextStyle(
-                      color: CupertinoColors.destructiveRed,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-            ],
-          );
-        },
-      );
-    }
-
-    return CupertinoTextField(
-      controller: controller,
-      placeholder: effectivePlaceholder,
-      prefix: prefixIcon != null
-          ? Padding(padding: const EdgeInsets.only(left: 8), child: prefixIcon)
-          : null,
-      suffix: suffixIcon != null
-          ? Padding(padding: const EdgeInsets.only(right: 8), child: suffixIcon)
-          : null,
-      obscureText: obscureText,
-      readOnly: readOnly,
-      autofocus: autofocus,
-      enabled: enabled,
-      maxLines: maxLines,
-      minLines: minLines,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
-      onChanged: onChanged,
-      onSubmitted: onSubmitted,
-      onTap: onTap,
-      focusNode: focusNode,
-      textCapitalization: textCapitalization,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      decoration: BoxDecoration(
-        color: CupertinoDynamicColor.resolve(
-          CupertinoColors.tertiarySystemFill,
-          context,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-    );
-  }
-
-  Widget _buildMaterial(BuildContext context) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(

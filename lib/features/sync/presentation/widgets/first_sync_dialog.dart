@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 enum FirstSyncStrategy { merge, overwriteLocal, keepLocal, deleteLocalAndPull }
@@ -8,43 +6,6 @@ enum FirstSyncStrategy { merge, overwriteLocal, keepLocal, deleteLocalAndPull }
 Future<FirstSyncStrategy?> showFirstSyncDialog(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
   final theme = Theme.of(context);
-
-  if (useCupertinoDesign) {
-    return showCupertinoDialog<FirstSyncStrategy>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => CupertinoAlertDialog(
-        title: Text(l10n.firstSyncTitle),
-        content: Text(l10n.firstSyncMessage),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(ctx, FirstSyncStrategy.merge),
-            child: Text(l10n.firstSyncMerge),
-          ),
-          CupertinoDialogAction(
-            onPressed: () =>
-                Navigator.pop(ctx, FirstSyncStrategy.overwriteLocal),
-            child: Text(l10n.firstSyncOverwriteLocal),
-          ),
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(ctx, FirstSyncStrategy.keepLocal),
-            child: Text(l10n.firstSyncKeepLocal),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () =>
-                Navigator.pop(ctx, FirstSyncStrategy.deleteLocalAndPull),
-            child: Text(l10n.firstSyncDeleteLocal),
-          ),
-        ],
-      ),
-    );
-  }
 
   return showDialog<FirstSyncStrategy>(
     context: context,

@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 final _chmodPermissionsProvider = StateProvider.autoDispose<int>(
@@ -93,24 +91,6 @@ class _ChmodDialogState extends ConsumerState<ChmodDialog> {
         ],
       ),
     );
-
-    if (useCupertinoDesign) {
-      return CupertinoAlertDialog(
-        title: Text(l10n.sftpChmodTitle),
-        content: Material(color: Colors.transparent, child: content),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context, _toOctal()),
-            child: Text(l10n.save),
-          ),
-        ],
-      );
-    }
 
     return AlertDialog(
       title: Text(l10n.sftpChmodTitle),

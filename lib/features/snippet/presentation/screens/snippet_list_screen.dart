@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,19 +37,9 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
       appBar: buildShellAppBar(
         context,
         title: l10n.snippetListTitle,
-        actions: useCupertinoDesign
-            ? [
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () => context.push('/snippet/new'),
-                  child: const Icon(CupertinoIcons.add),
-                ),
-              ]
-            : null,
+        actions: null,
       ),
-      floatingActionButton: useCupertinoDesign
-          ? null
-          : FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
               heroTag: 'addSnippetFab',
               onPressed: () => context.push('/snippet/new'),
               child: const Icon(Icons.add),

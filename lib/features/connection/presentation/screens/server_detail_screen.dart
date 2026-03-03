@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,46 +40,7 @@ class ServerDetailScreen extends ConsumerWidget {
     }
 
     return AdaptiveScaffold.withAppBar(
-      appBar: useCupertinoDesign
-          ? CupertinoNavigationBar(
-              middle: Text(l10n.serverDetailTitle),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: connect,
-                    child: const Icon(Icons.terminal),
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () => context.push('/server/$serverId/edit'),
-                    child: const Icon(CupertinoIcons.pencil),
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () async {
-                      final confirmed = await ConfirmDialog.show(
-                        context,
-                        title: l10n.serverDeleteTitle,
-                        message: l10n.serverDetailDeleteMessage,
-                      );
-                      if (confirmed == true && context.mounted) {
-                        await ref
-                            .read(serverListProvider.notifier)
-                            .deleteServer(serverId);
-                        if (context.mounted) context.pop();
-                      }
-                    },
-                    child: const Icon(
-                      CupertinoIcons.delete,
-                      color: CupertinoColors.destructiveRed,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : AppBar(
+      appBar: AppBar(
               title: Text(l10n.serverDetailTitle),
               actions: [
                 IconButton(
@@ -106,9 +65,7 @@ class ServerDetailScreen extends ConsumerWidget {
                 ),
               ],
             ),
-      floatingActionButton: useCupertinoDesign
-          ? null
-          : FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton.extended(
               heroTag: 'connectFab',
               onPressed: connect,
               icon: const Icon(Icons.terminal),
