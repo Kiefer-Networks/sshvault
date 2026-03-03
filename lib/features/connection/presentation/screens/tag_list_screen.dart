@@ -28,10 +28,10 @@ class TagListScreen extends ConsumerWidget {
         actions: null,
       ),
       floatingActionButton: FloatingActionButton(
-              heroTag: 'addTagFab',
-              onPressed: () => _showTagForm(context, ref),
-              child: const Icon(Icons.add),
-            ),
+        heroTag: 'addTagFab',
+        onPressed: () => _showTagForm(context, ref),
+        child: const Icon(Icons.add),
+      ),
       body: tagsAsync.when(
         data: (tags) {
           if (tags.isEmpty) {

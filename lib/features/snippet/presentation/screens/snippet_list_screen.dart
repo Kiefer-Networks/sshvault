@@ -40,10 +40,10 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
         actions: null,
       ),
       floatingActionButton: FloatingActionButton(
-              heroTag: 'addSnippetFab',
-              onPressed: () => context.push('/snippet/new'),
-              child: const Icon(Icons.add),
-            ),
+        heroTag: 'addSnippetFab',
+        onPressed: () => context.push('/snippet/new'),
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
           // Search bar

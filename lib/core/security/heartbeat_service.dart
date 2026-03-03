@@ -57,7 +57,10 @@ class HeartbeatService {
       final result = await _apiClient.get('/health');
       if (result is Success) {
         if (_consecutiveFailures > 0) {
-          _log.info(_tag, 'Heartbeat recovered after $_consecutiveFailures failure(s)');
+          _log.info(
+            _tag,
+            'Heartbeat recovered after $_consecutiveFailures failure(s)',
+          );
         }
         _consecutiveFailures = 0;
       } else {
@@ -76,10 +79,7 @@ class HeartbeatService {
     );
 
     if (_consecutiveFailures >= maxFailures) {
-      _log.error(
-        _tag,
-        'Max heartbeat failures reached, terminating session',
-      );
+      _log.error(_tag, 'Max heartbeat failures reached, terminating session');
       stop();
       onSessionExpired?.call();
     }

@@ -57,13 +57,21 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       await dao.setValue(_keyPinSalt, hashResult.salt);
       await dao.deleteValue('pin_code');
 
-      return _buildEntity(all, pinHash: hashResult.hash, pinSalt: hashResult.salt);
+      return _buildEntity(
+        all,
+        pinHash: hashResult.hash,
+        pinSalt: hashResult.salt,
+      );
     }
 
     return _buildEntity(all);
   }
 
-  AppSettingsEntity _buildEntity(Map<String, String> all, {String? pinHash, String? pinSalt}) {
+  AppSettingsEntity _buildEntity(
+    Map<String, String> all, {
+    String? pinHash,
+    String? pinSalt,
+  }) {
     return AppSettingsEntity(
       themeMode: _parseThemeMode(all[_keyThemeMode]),
       defaultSshPort: int.tryParse(all[_keyDefaultSshPort] ?? '') ?? 22,

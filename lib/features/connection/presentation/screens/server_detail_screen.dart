@@ -41,36 +41,36 @@ class ServerDetailScreen extends ConsumerWidget {
 
     return AdaptiveScaffold.withAppBar(
       appBar: AppBar(
-              title: Text(l10n.serverDetailTitle),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => context.push('/server/$serverId/edit'),
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: theme.colorScheme.error),
-                  onPressed: () async {
-                    final confirmed = await ConfirmDialog.show(
-                      context,
-                      title: l10n.serverDeleteTitle,
-                      message: l10n.serverDetailDeleteMessage,
-                    );
-                    if (confirmed == true && context.mounted) {
-                      await ref
-                          .read(serverListProvider.notifier)
-                          .deleteServer(serverId);
-                      if (context.mounted) context.pop();
-                    }
-                  },
-                ),
-              ],
-            ),
+        title: Text(l10n.serverDetailTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => context.push('/server/$serverId/edit'),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete, color: theme.colorScheme.error),
+            onPressed: () async {
+              final confirmed = await ConfirmDialog.show(
+                context,
+                title: l10n.serverDeleteTitle,
+                message: l10n.serverDetailDeleteMessage,
+              );
+              if (confirmed == true && context.mounted) {
+                await ref
+                    .read(serverListProvider.notifier)
+                    .deleteServer(serverId);
+                if (context.mounted) context.pop();
+              }
+            },
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
-              heroTag: 'connectFab',
-              onPressed: connect,
-              icon: const Icon(Icons.terminal),
-              label: Text(l10n.serverConnect),
-            ),
+        heroTag: 'connectFab',
+        onPressed: connect,
+        icon: const Icon(Icons.terminal),
+        label: Text(l10n.serverConnect),
+      ),
       body: serverAsync.when(
         data: (server) {
           return SingleChildScrollView(

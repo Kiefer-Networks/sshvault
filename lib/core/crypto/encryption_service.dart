@@ -17,7 +17,8 @@ class EncryptionService {
   final Random _secureRandom = Random.secure();
   final NonceCounter? _nonceCounter;
 
-  EncryptionService({NonceCounter? nonceCounter}) : _nonceCounter = nonceCounter;
+  EncryptionService({NonceCounter? nonceCounter})
+    : _nonceCounter = nonceCounter;
 
   Uint8List _generateSecureBytes(int length) {
     return Uint8List.fromList(
@@ -64,7 +65,11 @@ class EncryptionService {
     return hash.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
   }
 
-  EncryptedPayload _encryptWithNonce(Uint8List plaintext, Uint8List key, Uint8List nonce) {
+  EncryptedPayload _encryptWithNonce(
+    Uint8List plaintext,
+    Uint8List key,
+    Uint8List nonce,
+  ) {
     final cipher = GCMBlockCipher(AESEngine());
     cipher.init(
       true,
@@ -82,7 +87,11 @@ class EncryptionService {
     );
   }
 
-  Future<EncryptedPayload> _encrypt(Uint8List plaintext, Uint8List key, {String? keyId}) async {
+  Future<EncryptedPayload> _encrypt(
+    Uint8List plaintext,
+    Uint8List key, {
+    String? keyId,
+  }) async {
     final Uint8List nonce;
     if (_nonceCounter != null && keyId != null) {
       nonce = await _nonceCounter.next(keyId);

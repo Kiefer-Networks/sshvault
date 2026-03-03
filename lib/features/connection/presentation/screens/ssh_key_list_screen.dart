@@ -27,10 +27,10 @@ class SshKeyListScreen extends ConsumerWidget {
         actions: null,
       ),
       floatingActionButton: FloatingActionButton(
-              heroTag: 'addSshKeyFab',
-              onPressed: () => _addKey(context, ref),
-              child: const Icon(Icons.add),
-            ),
+        heroTag: 'addSshKeyFab',
+        onPressed: () => _addKey(context, ref),
+        child: const Icon(Icons.add),
+      ),
       body: keysAsync.when(
         data: (keys) {
           if (keys.isEmpty) {

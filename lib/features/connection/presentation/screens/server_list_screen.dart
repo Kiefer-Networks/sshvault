@@ -30,16 +30,13 @@ class ServerListScreen extends ConsumerWidget {
       appBar: buildShellAppBar(
         context,
         title: l10n.serverListTitle,
-        actions: [
-          const ViewModeToggle(),
-          const SizedBox(width: 8),
-        ],
+        actions: [const ViewModeToggle(), const SizedBox(width: 8)],
       ),
       floatingActionButton: FloatingActionButton(
-              heroTag: 'addServerFab',
-              onPressed: () => context.push('/server/new'),
-              child: const Icon(Icons.add),
-            ),
+        heroTag: 'addServerFab',
+        onPressed: () => context.push('/server/new'),
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
           const SearchFilterBar(),

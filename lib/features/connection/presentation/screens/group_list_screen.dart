@@ -43,10 +43,10 @@ class GroupListScreen extends ConsumerWidget {
         actions: null,
       ),
       floatingActionButton: FloatingActionButton(
-              heroTag: 'addGroupFab',
-              onPressed: () => _showGroupForm(context, ref),
-              child: const Icon(Icons.add),
-            ),
+        heroTag: 'addGroupFab',
+        onPressed: () => _showGroupForm(context, ref),
+        child: const Icon(Icons.add),
+      ),
       body: groupsAsync.when(
         data: (groups) {
           if (groups.isEmpty) {

@@ -65,7 +65,10 @@ class NonceCounter {
   }
 
   Future<void> _savePrefix(String keyId, Uint8List prefix) async {
-    await _storage.write(key: '$_storageKeyPrefix$keyId', value: _bytesToHex(prefix));
+    await _storage.write(
+      key: '$_storageKeyPrefix$keyId',
+      value: _bytesToHex(prefix),
+    );
   }
 
   Future<int> _loadCounter(String keyId) async {
@@ -75,14 +78,15 @@ class NonceCounter {
   }
 
   Future<void> _saveCounter(String keyId, int counter) async {
-    await _storage.write(key: '$_storageKeyCounter$keyId', value: counter.toString());
+    await _storage.write(
+      key: '$_storageKeyCounter$keyId',
+      value: counter.toString(),
+    );
   }
 
   static Uint8List _randomBytes(int length) {
     final rng = Random.secure();
-    return Uint8List.fromList(
-      List.generate(length, (_) => rng.nextInt(256)),
-    );
+    return Uint8List.fromList(List.generate(length, (_) => rng.nextInt(256)));
   }
 
   static void _writeUint64BE(Uint8List buf, int offset, int value) {

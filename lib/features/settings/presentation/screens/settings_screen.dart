@@ -112,8 +112,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   Builder(
                     builder: (context) {
-                      final themeKeyAsync =
-                          ref.watch(terminalThemeKeyProvider);
+                      final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
                       return _SettingsTile(
                         icon: Icons.color_lens_outlined,
                         iconColor: Colors.deepPurple,
@@ -121,8 +120,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         subtitleText: themeKeyAsync.when(
                           data: (key) => key.displayName,
                           loading: () => l10n.loading,
-                          error: (_, _) =>
-                              l10n.settingsTerminalThemeDefault,
+                          error: (_, _) => l10n.settingsTerminalThemeDefault,
                         ),
                         onTap: () => TerminalThemePicker.show(context),
                       );
@@ -130,8 +128,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   Builder(
                     builder: (context) {
-                      final fontSizeAsync =
-                          ref.watch(terminalFontSizeProvider);
+                      final fontSizeAsync = ref.watch(terminalFontSizeProvider);
                       final fontSize = fontSizeAsync.value ?? 14.0;
                       return _SettingsTile(
                         icon: Icons.text_fields_outlined,
@@ -148,9 +145,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               onPressed: fontSize <= 8
                                   ? null
                                   : () => ref
-                                        .read(
-                                          terminalFontSizeProvider.notifier,
-                                        )
+                                        .read(terminalFontSizeProvider.notifier)
                                         .decrease(),
                             ),
                             IconButton(
@@ -158,9 +153,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               onPressed: fontSize >= 24
                                   ? null
                                   : () => ref
-                                        .read(
-                                          terminalFontSizeProvider.notifier,
-                                        )
+                                        .read(terminalFontSizeProvider.notifier)
                                         .increase(),
                             ),
                           ],
@@ -180,16 +173,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     iconColor: Colors.orange,
                     title: l10n.settingsDefaultPort,
                     subtitleText: settings.defaultSshPort.toString(),
-                    onTap: () =>
-                        _editPort(l10n, settings.defaultSshPort),
+                    onTap: () => _editPort(l10n, settings.defaultSshPort),
                   ),
                   _SettingsTile(
                     icon: Icons.person_outline,
                     iconColor: Colors.blue,
                     title: l10n.settingsDefaultUsername,
                     subtitleText: settings.defaultUsername,
-                    onTap: () =>
-                        _editUsername(l10n, settings.defaultUsername),
+                    onTap: () => _editUsername(l10n, settings.defaultUsername),
                   ),
                 ],
               ),
@@ -266,34 +257,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         subtitleText: subtitleText,
                         value: settings.biometricUnlock,
                         onChanged: biometricAvailable.maybeWhen(
-                          data: (available) =>
-                              available && settings.hasPin
-                                  ? (v) async {
-                                      if (v) {
-                                        final service = ref.read(
-                                          biometricServiceProvider,
-                                        );
-                                        final success =
-                                            await service.authenticate(
-                                          reason:
-                                              l10n.settingsBiometricReason,
-                                        );
-                                        if (success) {
-                                          ref
-                                              .read(
-                                                settingsProvider.notifier,
-                                              )
-                                              .setBiometricUnlock(true);
-                                        }
-                                      } else {
-                                        ref
-                                            .read(
-                                              settingsProvider.notifier,
-                                            )
-                                            .setBiometricUnlock(false);
-                                      }
+                          data: (available) => available && settings.hasPin
+                              ? (v) async {
+                                  if (v) {
+                                    final service = ref.read(
+                                      biometricServiceProvider,
+                                    );
+                                    final success = await service.authenticate(
+                                      reason: l10n.settingsBiometricReason,
+                                    );
+                                    if (success) {
+                                      ref
+                                          .read(settingsProvider.notifier)
+                                          .setBiometricUnlock(true);
                                     }
-                                  : null,
+                                  } else {
+                                    ref
+                                        .read(settingsProvider.notifier)
+                                        .setBiometricUnlock(false);
+                                  }
+                                }
+                              : null,
                           orElse: () => null,
                         ),
                       );
@@ -326,8 +310,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       icon: Icons.screenshot_monitor_outlined,
                       iconColor: Colors.amber.shade800,
                       title: l10n.settingsPreventScreenshots,
-                      subtitleText:
-                          l10n.settingsPreventScreenshotsDescription,
+                      subtitleText: l10n.settingsPreventScreenshotsDescription,
                       value: settings.preventScreenshots,
                       onChanged: (v) {
                         ref
@@ -349,8 +332,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     subtitleText: settings.dnsServers.isEmpty
                         ? l10n.settingsDnsDefault
                         : settings.dnsServers,
-                    onTap: () =>
-                        _editDnsServers(l10n, settings.dnsServers),
+                    onTap: () => _editDnsServers(l10n, settings.dnsServers),
                   ),
                 ],
               ),
@@ -392,12 +374,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             isAuthenticated
                                 ? (snap.data ?? l10n.loading)
                                 : l10n.settingsSyncNotLoggedIn,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
                         ),
                         trailing: const Icon(Icons.chevron_right),
@@ -489,8 +467,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         },
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) =>
-            Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );
   }
@@ -619,10 +596,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  Future<void> _editDnsServers(
-    AppLocalizations l10n,
-    String current,
-  ) async {
+  Future<void> _editDnsServers(AppLocalizations l10n, String current) async {
     final controller = TextEditingController(text: current);
     final result = await showAdaptiveFormDialog<String>(
       context,
@@ -838,7 +812,8 @@ class _SettingsTile extends StatelessWidget {
     return ListTile(
       leading: _CircleIcon(icon: icon, color: iconColor),
       title: Text(title),
-      subtitle: subtitle ??
+      subtitle:
+          subtitle ??
           (subtitleText != null
               ? Text(
                   subtitleText!,

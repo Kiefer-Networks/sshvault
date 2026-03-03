@@ -192,11 +192,13 @@ class DohResolverService {
           'DNS divergence detected for $hostname: '
           'resolver[0]=$first, resolver[$i]=${successResults[i]}',
         );
-        return Err(DnsDivergence(
-          hostname: hostname,
-          cloudflareIPs: first.toList(),
-          googleIPs: successResults[i].toList(),
-        ));
+        return Err(
+          DnsDivergence(
+            hostname: hostname,
+            cloudflareIPs: first.toList(),
+            googleIPs: successResults[i].toList(),
+          ),
+        );
       }
     }
 
