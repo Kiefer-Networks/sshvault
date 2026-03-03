@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
+import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -135,118 +136,138 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // Name
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: l10n.snippetFormNameLabel,
-                hintText: l10n.snippetFormNameHint,
-                prefixIcon: const Icon(Icons.label_outline),
-              ),
-              keyboardType: TextInputType.text,
-              validator: (v) => (v == null || v.trim().isEmpty)
-                  ? l10n.snippetFormNameRequired
-                  : null,
-            ),
-            const SizedBox(height: 16),
-
-            // Language
-            DropdownButtonFormField<String>(
-              initialValue: formState.language,
-              decoration: InputDecoration(
-                labelText: l10n.snippetFormLanguageLabel,
-                prefixIcon: const Icon(Icons.code),
-              ),
-              items: _languages
-                  .map((l) => DropdownMenuItem(value: l, child: Text(l)))
-                  .toList(),
-              onChanged: (v) {
-                if (v != null) {
-                  ref.read(_snippetFormProvider.notifier).state = formState
-                      .copyWith(language: v);
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-
-            // Content
-            TextFormField(
-              controller: _contentController,
-              decoration: InputDecoration(
-                labelText: l10n.snippetFormContentLabel,
-                hintText: l10n.snippetFormContentHint,
-                alignLabelWithHint: true,
-              ),
-              keyboardType: TextInputType.multiline,
-              maxLines: 10,
-              minLines: 5,
-              style: const TextStyle(
-                fontFamily: AppConstants.monospaceFontFamily,
-              ),
-              validator: (v) => (v == null || v.trim().isEmpty)
-                  ? l10n.snippetFormContentRequired
-                  : null,
-            ),
-            const SizedBox(height: 16),
-
-            // Description
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: l10n.snippetFormDescriptionLabel,
-                hintText: l10n.snippetFormDescriptionHint,
-                prefixIcon: const Icon(Icons.description_outlined),
-              ),
-              keyboardType: TextInputType.multiline,
-              maxLines: 3,
-              minLines: 1,
-            ),
-            const SizedBox(height: 24),
-
-            // Group selector
-            groupsAsync.when(
-              data: (groups) {
-                if (groups.isEmpty) return const SizedBox.shrink();
-                return DropdownButtonFormField<String?>(
-                  initialValue: formState.groupId,
-                  decoration: InputDecoration(
-                    labelText: l10n.snippetFormGroupLabel,
-                    prefixIcon: const Icon(Icons.folder_outlined),
+            SectionCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Name
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: l10n.snippetFormNameLabel,
+                      hintText: l10n.snippetFormNameHint,
+                      prefixIcon: const Icon(Icons.label_outline),
+                    ),
+                    keyboardType: TextInputType.text,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l10n.snippetFormNameRequired
+                        : null,
                   ),
-                  items: [
-                    DropdownMenuItem(
-                      value: null,
-                      child: Text(l10n.snippetFormNoGroup),
-                    ),
-                    ...groups.map(
-                      (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
-                    ),
-                  ],
-                  onChanged: (v) =>
-                      ref.read(_snippetFormProvider.notifier).state = formState
-                          .copyWith(groupId: () => v),
-                );
-              },
-              loading: () => const SizedBox.shrink(),
-              error: (_, _) => const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
-            // Tags
-            TagSelector(
-              selectedTagIds: formState.selectedTagIds,
-              onChanged: (ids) =>
-                  ref.read(_snippetFormProvider.notifier).state = formState
-                      .copyWith(selectedTagIds: ids),
+                  // Language
+                  DropdownButtonFormField<String>(
+                    initialValue: formState.language,
+                    decoration: InputDecoration(
+                      labelText: l10n.snippetFormLanguageLabel,
+                      prefixIcon: const Icon(Icons.code),
+                    ),
+                    items: _languages
+                        .map((l) => DropdownMenuItem(value: l, child: Text(l)))
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        ref.read(_snippetFormProvider.notifier).state =
+                            formState.copyWith(language: v);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Content
+                  TextFormField(
+                    controller: _contentController,
+                    decoration: InputDecoration(
+                      labelText: l10n.snippetFormContentLabel,
+                      hintText: l10n.snippetFormContentHint,
+                      alignLabelWithHint: true,
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 10,
+                    minLines: 5,
+                    style: const TextStyle(
+                      fontFamily: AppConstants.monospaceFontFamily,
+                    ),
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l10n.snippetFormContentRequired
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Description
+                  TextFormField(
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                      labelText: l10n.snippetFormDescriptionLabel,
+                      hintText: l10n.snippetFormDescriptionHint,
+                      prefixIcon: const Icon(Icons.description_outlined),
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 3,
+                    minLines: 1,
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+
+            SectionCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Group selector
+                  groupsAsync.when(
+                    data: (groups) {
+                      if (groups.isEmpty) return const SizedBox.shrink();
+                      return DropdownButtonFormField<String?>(
+                        initialValue: formState.groupId,
+                        decoration: InputDecoration(
+                          labelText: l10n.snippetFormGroupLabel,
+                          prefixIcon: const Icon(Icons.folder_outlined),
+                        ),
+                        items: [
+                          DropdownMenuItem(
+                            value: null,
+                            child: Text(l10n.snippetFormNoGroup),
+                          ),
+                          ...groups.map(
+                            (g) => DropdownMenuItem(
+                              value: g.id,
+                              child: Text(g.name),
+                            ),
+                          ),
+                        ],
+                        onChanged: (v) =>
+                            ref.read(_snippetFormProvider.notifier).state =
+                                formState.copyWith(groupId: () => v),
+                      );
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Tags
+                  TagSelector(
+                    selectedTagIds: formState.selectedTagIds,
+                    onChanged: (ids) =>
+                        ref.read(_snippetFormProvider.notifier).state =
+                            formState.copyWith(selectedTagIds: ids),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
 
             // Variables
-            VariableEditor(
-              variables: formState.variables,
-              onChanged: (vars) =>
-                  ref.read(_snippetFormProvider.notifier).state = formState
-                      .copyWith(variables: vars),
+            SectionCard(
+              padding: const EdgeInsets.all(16),
+              child: VariableEditor(
+                variables: formState.variables,
+                onChanged: (vars) =>
+                    ref.read(_snippetFormProvider.notifier).state = formState
+                        .copyWith(variables: vars),
+              ),
             ),
             const SizedBox(height: 32),
 

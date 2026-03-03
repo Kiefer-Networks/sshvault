@@ -1770,4 +1770,61 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get notificationTerminalTap => 'Tippen zum Terminal wechseln';
+
+  @override
+  String get settingsAccountAndSync => 'Konto & Sync';
+
+  @override
+  String get settingsAccountSubtitleAuth => 'Angemeldet';
+
+  @override
+  String get settingsAccountSubtitleUnauth => 'Nicht angemeldet';
+
+  @override
+  String get settingsSecuritySubtitle => 'Auto-Sperre, Biometrie, PIN';
+
+  @override
+  String get settingsSshSubtitle => 'Port 22, Benutzer root';
+
+  @override
+  String get settingsAppearanceSubtitle => 'Design, Sprache, Terminal';
+
+  @override
+  String get settingsNetworkSubtitle => 'DNS-over-HTTPS';
+
+  @override
+  String get settingsExportSubtitle => 'Verschlüsselte Export-Standards';
+
+  @override
+  String get settingsSupportSubtitle => 'Protokolle & Projekt';
+
+  @override
+  String get settingsAboutSubtitle => 'Version, Lizenzen';
+
+  @override
+  String get settingsSearchHint => 'Einstellungen durchsuchen...';
+
+  @override
+  String get settingsSearchNoResults => 'Keine Einstellungen gefunden';
+
+  @override
+  String get aboutDeveloper => 'Entwickelt von Kiefer Networks';
+
+  @override
+  String get aboutPrivacyPolicy => 'Datenschutzerklärung';
+
+  @override
+  String get aboutTermsOfService => 'Nutzungsbedingungen';
+
+  @override
+  String get aboutOpenSourceLicenses => 'Open-Source-Lizenzen';
+
+  @override
+  String get aboutWebsite => 'Webseite';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutBuild => 'Build';
 }

@@ -82,7 +82,7 @@ class ServerListScreen extends ConsumerWidget {
       key: const ValueKey('list'),
       padding: const EdgeInsets.only(bottom: 80),
       itemCount: servers.length,
-      separatorBuilder: (_, _) => const Divider(height: 1, indent: 72),
+      separatorBuilder: (_, _) => const SizedBox(height: 4),
       itemBuilder: (context, index) {
         final server = servers[index];
         return ServerListTile(

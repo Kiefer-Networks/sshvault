@@ -601,5 +601,26 @@
   "sftpFileSaved": "Datei gespeichert",
 
   "notificationTerminalTitle": "{count, plural, =1{SSH-Sitzung aktiv} other{{count} SSH-Sitzungen aktiv}}",
-  "notificationTerminalTap": "Tippen zum Terminal wechseln"
+  "notificationTerminalTap": "Tippen zum Terminal wechseln",
+
+  "settingsAccountAndSync": "Konto & Sync",
+  "settingsAccountSubtitleAuth": "Angemeldet",
+  "settingsAccountSubtitleUnauth": "Nicht angemeldet",
+  "settingsSecuritySubtitle": "Auto-Sperre, Biometrie, PIN",
+  "settingsSshSubtitle": "Port 22, Benutzer root",
+  "settingsAppearanceSubtitle": "Design, Sprache, Terminal",
+  "settingsNetworkSubtitle": "DNS-over-HTTPS",
+  "settingsExportSubtitle": "Verschlüsselte Export-Standards",
+  "settingsSupportSubtitle": "Protokolle & Projekt",
+  "settingsAboutSubtitle": "Version, Lizenzen",
+  "settingsSearchHint": "Einstellungen durchsuchen...",
+  "settingsSearchNoResults": "Keine Einstellungen gefunden",
+
+  "aboutDeveloper": "Entwickelt von Kiefer Networks",
+  "aboutPrivacyPolicy": "Datenschutzerklärung",
+  "aboutTermsOfService": "Nutzungsbedingungen",
+  "aboutOpenSourceLicenses": "Open-Source-Lizenzen",
+  "aboutWebsite": "Webseite",
+  "aboutVersion": "Version",
+  "aboutBuild": "Build"
 }

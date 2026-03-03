@@ -1764,4 +1764,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationTerminalTap => 'Tap to open terminal';
+
+  @override
+  String get settingsAccountAndSync => 'Account & Sync';
+
+  @override
+  String get settingsAccountSubtitleAuth => 'Signed in';
+
+  @override
+  String get settingsAccountSubtitleUnauth => 'Not signed in';
+
+  @override
+  String get settingsSecuritySubtitle => 'Auto-Lock, Biometrics, PIN';
+
+  @override
+  String get settingsSshSubtitle => 'Port 22, User root';
+
+  @override
+  String get settingsAppearanceSubtitle => 'Theme, Language, Terminal';
+
+  @override
+  String get settingsNetworkSubtitle => 'DNS-over-HTTPS';
+
+  @override
+  String get settingsExportSubtitle => 'Encrypted export defaults';
+
+  @override
+  String get settingsSupportSubtitle => 'Logs & Project';
+
+  @override
+  String get settingsAboutSubtitle => 'Version, Licenses';
+
+  @override
+  String get settingsSearchHint => 'Search settings...';
+
+  @override
+  String get settingsSearchNoResults => 'No settings found';
+
+  @override
+  String get aboutDeveloper => 'Developed by Kiefer Networks';
+
+  @override
+  String get aboutPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get aboutTermsOfService => 'Terms of Service';
+
+  @override
+  String get aboutOpenSourceLicenses => 'Open Source Licenses';
+
+  @override
+  String get aboutWebsite => 'Website';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutBuild => 'Build';
 }

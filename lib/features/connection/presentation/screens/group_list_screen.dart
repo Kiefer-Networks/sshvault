@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
+import 'package:shellvault/core/widgets/settings/circle_icon.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/error_state.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
@@ -66,7 +67,7 @@ class GroupListScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.only(bottom: 80),
             itemCount: widgets.length,
-            separatorBuilder: (_, _) => const Divider(height: 1, indent: 72),
+            separatorBuilder: (_, _) => const SizedBox(height: 4),
             itemBuilder: (_, index) => widgets[index],
           );
         },
@@ -219,18 +220,10 @@ class _GroupTile extends ConsumerWidget {
               left: 16.0 + depth * 24.0,
               right: 16.0,
             ),
-            leading: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: Color(group.color).withAlpha(AppConstants.alpha26),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                IconConstants.getIcon(group.iconName),
-                color: Color(group.color),
-                size: 22,
-              ),
+            leading: CircleIcon(
+              icon: IconConstants.getIcon(group.iconName),
+              color: Color(group.color),
+              size: 44,
             ),
             title: Text(group.name),
             subtitle: Text(

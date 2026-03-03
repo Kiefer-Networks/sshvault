@@ -3,6 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 
+@Deprecated(
+  'Use SectionCard from core/widgets/settings/section_card.dart instead',
+)
 class GlassmorphicContainer extends StatelessWidget {
   final Widget child;
   final double borderRadius;

@@ -10,7 +10,7 @@ import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/core/widgets/info_row.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
-import 'package:shellvault/core/theme/glassmorphism.dart';
+import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -79,7 +79,7 @@ class ServerDetailScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header Card
-                GlassmorphicContainer(
+                SectionCard(
                   padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
@@ -138,7 +138,7 @@ class ServerDetailScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
 
                 // Connection Info
-                GlassmorphicContainer(
+                SectionCard(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +186,7 @@ class ServerDetailScreen extends ConsumerWidget {
 
                 // Tags
                 if (server.tags.isNotEmpty) ...[
-                  GlassmorphicContainer(
+                  SectionCard(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +211,7 @@ class ServerDetailScreen extends ConsumerWidget {
 
                 // Notes
                 if (server.notes.isNotEmpty) ...[
-                  GlassmorphicContainer(
+                  SectionCard(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +236,7 @@ class ServerDetailScreen extends ConsumerWidget {
                 ],
 
                 // Metadata
-                GlassmorphicContainer(
+                SectionCard(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,7 +295,7 @@ class _GroupSection extends ConsumerWidget {
         final group = allGroups.where((g) => g.id == groupId).firstOrNull;
         if (group == null) return const SizedBox.shrink();
 
-        return GlassmorphicContainer(
+        return SectionCard(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,7 +362,7 @@ class _DistroSection extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.only(top: 16),
-      child: GlassmorphicContainer(
+      child: SectionCard(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -627,5 +627,26 @@
 
   "notificationTerminalTitle": "{count, plural, =1{SSH session active} other{{count} SSH sessions active}}",
   "@notificationTerminalTitle": { "placeholders": { "count": { "type": "int" } } },
-  "notificationTerminalTap": "Tap to open terminal"
+  "notificationTerminalTap": "Tap to open terminal",
+
+  "settingsAccountAndSync": "Account & Sync",
+  "settingsAccountSubtitleAuth": "Signed in",
+  "settingsAccountSubtitleUnauth": "Not signed in",
+  "settingsSecuritySubtitle": "Auto-Lock, Biometrics, PIN",
+  "settingsSshSubtitle": "Port 22, User root",
+  "settingsAppearanceSubtitle": "Theme, Language, Terminal",
+  "settingsNetworkSubtitle": "DNS-over-HTTPS",
+  "settingsExportSubtitle": "Encrypted export defaults",
+  "settingsSupportSubtitle": "Logs & Project",
+  "settingsAboutSubtitle": "Version, Licenses",
+  "settingsSearchHint": "Search settings...",
+  "settingsSearchNoResults": "No settings found",
+
+  "aboutDeveloper": "Developed by Kiefer Networks",
+  "aboutPrivacyPolicy": "Privacy Policy",
+  "aboutTermsOfService": "Terms of Service",
+  "aboutOpenSourceLicenses": "Open Source Licenses",
+  "aboutWebsite": "Website",
+  "aboutVersion": "Version",
+  "aboutBuild": "Build"
 }

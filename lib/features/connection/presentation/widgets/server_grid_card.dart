@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
-import 'package:shellvault/core/theme/glassmorphism.dart';
+import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/presentation/widgets/status_badge.dart';
 
@@ -30,7 +30,7 @@ class ServerGridCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
-      child: GlassmorphicContainer(
+      child: SectionCard(
         padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -5,7 +5,7 @@ import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shellvault/core/theme/glassmorphism.dart';
+import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/providers/export_import_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
@@ -27,7 +27,7 @@ class ExportImportScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: [
           // Export Section
-          GlassmorphicContainer(
+          SectionCard(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +66,7 @@ class ExportImportScreen extends ConsumerWidget {
           const SizedBox(height: 16),
 
           // Import Section
-          GlassmorphicContainer(
+          SectionCard(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

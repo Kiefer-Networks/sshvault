@@ -114,8 +114,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                 return ListView.separated(
                   padding: const EdgeInsets.only(bottom: 80),
                   itemCount: snippets.length,
-                  separatorBuilder: (_, _) =>
-                      const Divider(height: 1, indent: 72),
+                  separatorBuilder: (_, _) => const SizedBox(height: 4),
                   itemBuilder: (context, index) {
                     final snippet = snippets[index];
                     return SnippetTile(

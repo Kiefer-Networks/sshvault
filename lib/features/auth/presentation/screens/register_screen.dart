@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
+import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -102,73 +103,86 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    autofillHints: const [AutofillHints.email],
-                    decoration: InputDecoration(
-                      labelText: l10n.authEmailLabel,
-                      prefixIcon: const Icon(Icons.email_outlined),
-                    ),
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) {
-                        return l10n.authEmailRequired;
-                      }
-                      if (!v.contains('@')) return l10n.authEmailInvalid;
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: obscurePassword,
-                    autofillHints: const [AutofillHints.newPassword],
-                    decoration: InputDecoration(
-                      labelText: l10n.authPasswordLabel,
-                      prefixIcon: const Icon(Icons.lock_outlined),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                  SectionCard(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          autofillHints: const [AutofillHints.email],
+                          decoration: InputDecoration(
+                            labelText: l10n.authEmailLabel,
+                            prefixIcon: const Icon(Icons.email_outlined),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return l10n.authEmailRequired;
+                            }
+                            if (!v.contains('@')) return l10n.authEmailInvalid;
+                            return null;
+                          },
                         ),
-                        onPressed: () =>
-                            ref.read(_obscurePasswordProvider.notifier).state =
-                                !obscurePassword,
-                      ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: obscurePassword,
+                          autofillHints: const [AutofillHints.newPassword],
+                          decoration: InputDecoration(
+                            labelText: l10n.authPasswordLabel,
+                            prefixIcon: const Icon(Icons.lock_outlined),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                              ),
+                              onPressed: () =>
+                                  ref
+                                          .read(
+                                            _obscurePasswordProvider.notifier,
+                                          )
+                                          .state =
+                                      !obscurePassword,
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.length < 8) {
+                              return l10n.validatorPasswordLength;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _confirmController,
+                          obscureText: obscurePassword,
+                          decoration: InputDecoration(
+                            labelText: l10n.authConfirmPasswordLabel,
+                            prefixIcon: const Icon(Icons.lock_outlined),
+                          ),
+                          validator: (v) {
+                            if (v != _passwordController.text) {
+                              return l10n.authPasswordMismatch;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        AdaptiveButton.filled(
+                          onPressed: isLoading ? null : _register,
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(l10n.authRegister),
+                        ),
+                      ],
                     ),
-                    validator: (v) {
-                      if (v == null || v.length < 8) {
-                        return l10n.validatorPasswordLength;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _confirmController,
-                    obscureText: obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: l10n.authConfirmPasswordLabel,
-                      prefixIcon: const Icon(Icons.lock_outlined),
-                    ),
-                    validator: (v) {
-                      if (v != _passwordController.text) {
-                        return l10n.authPasswordMismatch;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  AdaptiveButton.filled(
-                    onPressed: isLoading ? null : _register,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.authRegister),
                   ),
                   const SizedBox(height: 16),
                   Row(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/widgets/settings/circle_icon.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -64,18 +65,10 @@ class SshKeyTile extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withAlpha(AppConstants.alpha26),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            Icons.vpn_key_outlined,
-            color: theme.colorScheme.primary,
-            size: 22,
-          ),
+        leading: CircleIcon(
+          icon: Icons.vpn_key_outlined,
+          color: theme.colorScheme.primary,
+          size: 44,
         ),
         title: Row(
           children: [

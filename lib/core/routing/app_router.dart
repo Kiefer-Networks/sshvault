@@ -14,12 +14,19 @@ import 'package:shellvault/features/connection/presentation/screens/server_form_
 import 'package:shellvault/features/connection/presentation/screens/server_list_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/ssh_key_list_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/tag_list_screen.dart';
-import 'package:shellvault/features/settings/presentation/screens/settings_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/about_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/account_sync_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/appearance_settings_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/export_settings_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/network_settings_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/security_settings_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/settings_hub_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/ssh_settings_screen.dart';
+import 'package:shellvault/features/settings/presentation/screens/support_settings_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_detail_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_form_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_list_screen.dart';
 import 'package:shellvault/features/support/presentation/screens/support_screen.dart';
-import 'package:shellvault/features/sync/presentation/screens/sync_settings_screen.dart';
 import 'package:shellvault/features/sftp/presentation/screens/sftp_browser_screen.dart';
 import 'package:shellvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
@@ -165,10 +172,54 @@ abstract final class AppRouter {
           return SnippetFormScreen(snippetId: id);
         },
       ),
+
+      // Settings hub + sub-routes
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
+        builder: (context, state) => const SettingsHubScreen(),
+        routes: [
+          GoRoute(
+            path: 'account',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const AccountSyncScreen(),
+          ),
+          GoRoute(
+            path: 'security',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const SecuritySettingsScreen(),
+          ),
+          GoRoute(
+            path: 'ssh',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const SshSettingsScreen(),
+          ),
+          GoRoute(
+            path: 'appearance',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const AppearanceSettingsScreen(),
+          ),
+          GoRoute(
+            path: 'network',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const NetworkSettingsScreen(),
+          ),
+          GoRoute(
+            path: 'export',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const ExportSettingsScreen(),
+          ),
+          GoRoute(
+            path: 'support',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const SupportSettingsScreen(),
+          ),
+          GoRoute(
+            path: 'about',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const AboutScreen(),
+          ),
+        ],
       ),
 
       // Auth routes
@@ -199,21 +250,22 @@ abstract final class AppRouter {
         },
       ),
 
-      // Account / Sync routes
+      // Redirects for backward compatibility
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/account',
-        redirect: (_, _) => '/sync-settings',
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/server-config',
-        builder: (context, state) => const ServerConfigScreen(),
+        redirect: (_, _) => '/settings/account',
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/sync-settings',
-        builder: (context, state) => const SyncSettingsScreen(),
+        redirect: (_, _) => '/settings/account',
+      ),
+
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/server-config',
+        builder: (context, state) => const ServerConfigScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

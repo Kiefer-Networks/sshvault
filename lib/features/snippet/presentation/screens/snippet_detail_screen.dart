@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/core/widgets/info_row.dart';
-import 'package:shellvault/core/theme/glassmorphism.dart';
+import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
@@ -56,7 +56,7 @@ class SnippetDetailScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
-                GlassmorphicContainer(
+                SectionCard(
                   padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
@@ -112,7 +112,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
 
                 // Content
-                GlassmorphicContainer(
+                SectionCard(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +172,7 @@ class SnippetDetailScreen extends ConsumerWidget {
 
                 // Description
                 if (snippet.description.isNotEmpty) ...[
-                  GlassmorphicContainer(
+                  SectionCard(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,7 +198,7 @@ class SnippetDetailScreen extends ConsumerWidget {
 
                 // Variables
                 if (snippet.variables.isNotEmpty) ...[
-                  GlassmorphicContainer(
+                  SectionCard(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,7 +243,7 @@ class SnippetDetailScreen extends ConsumerWidget {
 
                 // Tags
                 if (snippet.tags.isNotEmpty) ...[
-                  GlassmorphicContainer(
+                  SectionCard(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,7 +267,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                 ],
 
                 // Metadata
-                GlassmorphicContainer(
+                SectionCard(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

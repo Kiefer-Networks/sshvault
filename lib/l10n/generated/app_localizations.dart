@@ -3255,6 +3255,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap to open terminal'**
   String get notificationTerminalTap;
+
+  /// No description provided for @settingsAccountAndSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Account & Sync'**
+  String get settingsAccountAndSync;
+
+  /// No description provided for @settingsAccountSubtitleAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in'**
+  String get settingsAccountSubtitleAuth;
+
+  /// No description provided for @settingsAccountSubtitleUnauth.
+  ///
+  /// In en, this message translates to:
+  /// **'Not signed in'**
+  String get settingsAccountSubtitleUnauth;
+
+  /// No description provided for @settingsSecuritySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Lock, Biometrics, PIN'**
+  String get settingsSecuritySubtitle;
+
+  /// No description provided for @settingsSshSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Port 22, User root'**
+  String get settingsSshSubtitle;
+
+  /// No description provided for @settingsAppearanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme, Language, Terminal'**
+  String get settingsAppearanceSubtitle;
+
+  /// No description provided for @settingsNetworkSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS-over-HTTPS'**
+  String get settingsNetworkSubtitle;
+
+  /// No description provided for @settingsExportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted export defaults'**
+  String get settingsExportSubtitle;
+
+  /// No description provided for @settingsSupportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs & Project'**
+  String get settingsSupportSubtitle;
+
+  /// No description provided for @settingsAboutSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Version, Licenses'**
+  String get settingsAboutSubtitle;
+
+  /// No description provided for @settingsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search settings...'**
+  String get settingsSearchHint;
+
+  /// No description provided for @settingsSearchNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No settings found'**
+  String get settingsSearchNoResults;
+
+  /// No description provided for @aboutDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Developed by Kiefer Networks'**
+  String get aboutDeveloper;
+
+  /// No description provided for @aboutPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get aboutPrivacyPolicy;
+
+  /// No description provided for @aboutTermsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get aboutTermsOfService;
+
+  /// No description provided for @aboutOpenSourceLicenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Source Licenses'**
+  String get aboutOpenSourceLicenses;
+
+  /// No description provided for @aboutWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get aboutWebsite;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get aboutVersion;
+
+  /// No description provided for @aboutBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Build'**
+  String get aboutBuild;
 }
 
 class _AppLocalizationsDelegate

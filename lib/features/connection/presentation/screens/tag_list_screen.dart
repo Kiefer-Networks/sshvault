@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
+import 'package:shellvault/core/widgets/settings/circle_icon.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -50,7 +51,7 @@ class TagListScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.only(bottom: 80),
             itemCount: tags.length,
-            separatorBuilder: (_, _) => const Divider(height: 1, indent: 72),
+            separatorBuilder: (_, _) => const SizedBox(height: 4),
             itemBuilder: (context, index) {
               final tag = tags[index];
               return _TagTile(
@@ -131,14 +132,10 @@ class _TagTile extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: Color(tag.color).withAlpha(AppConstants.alpha26),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(Icons.label, color: Color(tag.color), size: 22),
+        leading: CircleIcon(
+          icon: Icons.label,
+          color: Color(tag.color),
+          size: 44,
         ),
         title: Text(tag.name),
         subtitle: Text(

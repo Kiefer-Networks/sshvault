@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/widgets/settings/circle_icon.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
@@ -64,18 +65,10 @@ class ServerListTile extends StatelessWidget {
       ),
       child: ListTile(
         onTap: onTap,
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: Color(server.color).withAlpha(AppConstants.alpha26),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            IconConstants.getIcon(server.iconName),
-            color: Color(server.color),
-            size: 22,
-          ),
+        leading: CircleIcon(
+          icon: IconConstants.getIcon(server.iconName),
+          color: Color(server.color),
+          size: 44,
         ),
         title: Row(
           children: [

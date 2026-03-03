@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
+import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -114,75 +115,88 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Email field
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    autofillHints: const [AutofillHints.email],
-                    decoration: InputDecoration(
-                      labelText: l10n.authEmailLabel,
-                      prefixIcon: const Icon(Icons.email_outlined),
-                    ),
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) {
-                        return l10n.authEmailRequired;
-                      }
-                      if (!v.contains('@')) {
-                        return l10n.authEmailInvalid;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Password field
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: obscurePassword,
-                    autofillHints: const [AutofillHints.password],
-                    decoration: InputDecoration(
-                      labelText: l10n.authPasswordLabel,
-                      prefixIcon: const Icon(Icons.lock_outlined),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                  SectionCard(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        // Email field
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          autofillHints: const [AutofillHints.email],
+                          decoration: InputDecoration(
+                            labelText: l10n.authEmailLabel,
+                            prefixIcon: const Icon(Icons.email_outlined),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return l10n.authEmailRequired;
+                            }
+                            if (!v.contains('@')) {
+                              return l10n.authEmailInvalid;
+                            }
+                            return null;
+                          },
                         ),
-                        onPressed: () =>
-                            ref.read(_obscurePasswordProvider.notifier).state =
-                                !obscurePassword,
-                      ),
-                    ),
-                    validator: (v) {
-                      if (v == null || v.isEmpty) {
-                        return l10n.validatorPasswordRequired;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 8),
+                        const SizedBox(height: 16),
 
-                  // Forgot password link
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: AdaptiveButton.text(
-                      onPressed: () => context.push('/forgot-password'),
-                      child: Text(l10n.authForgotPassword),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                        // Password field
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: obscurePassword,
+                          autofillHints: const [AutofillHints.password],
+                          decoration: InputDecoration(
+                            labelText: l10n.authPasswordLabel,
+                            prefixIcon: const Icon(Icons.lock_outlined),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                              ),
+                              onPressed: () =>
+                                  ref
+                                          .read(
+                                            _obscurePasswordProvider.notifier,
+                                          )
+                                          .state =
+                                      !obscurePassword,
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) {
+                              return l10n.validatorPasswordRequired;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8),
 
-                  // Login button
-                  AdaptiveButton.filled(
-                    onPressed: isLoading ? null : _login,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.authLogin),
+                        // Forgot password link
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: AdaptiveButton.text(
+                            onPressed: () => context.push('/forgot-password'),
+                            child: Text(l10n.authForgotPassword),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Login button
+                        AdaptiveButton.filled(
+                          onPressed: isLoading ? null : _login,
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(l10n.authLogin),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 

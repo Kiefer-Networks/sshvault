@@ -34,11 +34,25 @@ abstract final class AppTheme {
           ),
         ),
       ),
+      listTileTheme: ListTileThemeData(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        minLeadingWidth: 40,
+      ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      searchBarTheme: SearchBarThemeData(
+        elevation: const WidgetStatePropertyAll(0),
+        backgroundColor: WidgetStatePropertyAll(
+          colorScheme.surfaceContainerHigh,
+        ),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -134,9 +148,9 @@ abstract final class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: const Color(0xFF0F0F1A),
+      scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF0F0F1A),
+        backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
@@ -146,8 +160,13 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
+      listTileTheme: ListTileThemeData(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        minLeadingWidth: 40,
+      ),
       cardTheme: CardThemeData(
-        color: const Color(0xFF1A1A2E).withAlpha(AppConstants.alpha200),
+        color: colorScheme.surfaceContainerLow,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -155,10 +174,19 @@ abstract final class AppTheme {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      searchBarTheme: SearchBarThemeData(
+        elevation: const WidgetStatePropertyAll(0),
+        backgroundColor: WidgetStatePropertyAll(
+          colorScheme.surfaceContainerHigh,
+        ),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -185,7 +213,7 @@ abstract final class AppTheme {
         ),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: colorScheme.surfaceContainerHigh,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       chipTheme: ChipThemeData(
@@ -201,7 +229,7 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: const Color(0xFF0F0F1A),
+        backgroundColor: colorScheme.surface,
         selectedIconTheme: IconThemeData(color: colorScheme.primary),
         unselectedIconTheme: IconThemeData(
           color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
@@ -220,15 +248,15 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      drawerTheme: const DrawerThemeData(
-        backgroundColor: Color(0xFF0F0F1A),
-        shape: RoundedRectangleBorder(
+      drawerTheme: DrawerThemeData(
+        backgroundColor: colorScheme.surface,
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(16),
             bottomRight: Radius.circular(16),
           ),
         ),
-        surfaceTintColor: Color(0x00000000),
+        surfaceTintColor: const Color(0x00000000),
       ),
       cupertinoOverrideTheme: CupertinoThemeData(
         brightness: Brightness.dark,

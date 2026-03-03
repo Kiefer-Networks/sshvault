@@ -7,6 +7,7 @@ import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
+import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/core/crypto/crypto_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/presentation/widgets/key_generation_dialog.dart';
@@ -224,86 +225,107 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            ServerFormFields(
-              nameController: _nameController,
-              hostnameController: _hostnameController,
-              portController: _portController,
-              usernameController: _usernameController,
-              passwordController: _passwordController,
-              privateKeyController: _privateKeyController,
-              publicKeyController: _publicKeyController,
-              passphraseController: _passphraseController,
-              notesController: _notesController,
-              authMethod: formState.authMethod,
-              onAuthMethodChanged: (m) =>
-                  ref.read(_serverFormStateProvider.notifier).state = formState
-                      .copyWith(authMethod: m),
-              onGenerateKeyPair: _generateKeyPair,
-              onExtractPublicKey: _extractPublicKey,
-              useManagedKey: formState.useManagedKey,
-              onUseManagedKeyChanged: (v) =>
-                  ref.read(_serverFormStateProvider.notifier).state = formState
-                      .copyWith(
-                        useManagedKey: v,
-                        sshKeyId: v ? null : () => null,
-                      ),
-              selectedSshKeyId: formState.sshKeyId,
-              onSshKeyChanged: (id) =>
-                  ref.read(_serverFormStateProvider.notifier).state = formState
-                      .copyWith(sshKeyId: () => id),
+            SectionCard(
+              padding: const EdgeInsets.all(16),
+              child: ServerFormFields(
+                nameController: _nameController,
+                hostnameController: _hostnameController,
+                portController: _portController,
+                usernameController: _usernameController,
+                passwordController: _passwordController,
+                privateKeyController: _privateKeyController,
+                publicKeyController: _publicKeyController,
+                passphraseController: _passphraseController,
+                notesController: _notesController,
+                authMethod: formState.authMethod,
+                onAuthMethodChanged: (m) =>
+                    ref.read(_serverFormStateProvider.notifier).state =
+                        formState.copyWith(authMethod: m),
+                onGenerateKeyPair: _generateKeyPair,
+                onExtractPublicKey: _extractPublicKey,
+                useManagedKey: formState.useManagedKey,
+                onUseManagedKeyChanged: (v) =>
+                    ref
+                        .read(_serverFormStateProvider.notifier)
+                        .state = formState.copyWith(
+                      useManagedKey: v,
+                      sshKeyId: v ? null : () => null,
+                    ),
+                selectedSshKeyId: formState.sshKeyId,
+                onSshKeyChanged: (id) =>
+                    ref.read(_serverFormStateProvider.notifier).state =
+                        formState.copyWith(sshKeyId: () => id),
+              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-            groupsAsync.when(
-              data: (groups) {
-                if (groups.isEmpty) return const SizedBox.shrink();
-                return DropdownButtonFormField<String?>(
-                  initialValue: formState.groupId,
-                  decoration: InputDecoration(
-                    labelText: l10n.navGroups,
-                    prefixIcon: const Icon(Icons.folder_outlined),
+            SectionCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  groupsAsync.when(
+                    data: (groups) {
+                      if (groups.isEmpty) return const SizedBox.shrink();
+                      return DropdownButtonFormField<String?>(
+                        initialValue: formState.groupId,
+                        decoration: InputDecoration(
+                          labelText: l10n.navGroups,
+                          prefixIcon: const Icon(Icons.folder_outlined),
+                        ),
+                        items: [
+                          DropdownMenuItem(
+                            value: null,
+                            child: Text(l10n.serverNoGroup),
+                          ),
+                          ...groups.map(
+                            (g) => DropdownMenuItem(
+                              value: g.id,
+                              child: Text(g.name),
+                            ),
+                          ),
+                        ],
+                        onChanged: (v) =>
+                            ref.read(_serverFormStateProvider.notifier).state =
+                                formState.copyWith(groupId: () => v),
+                      );
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
                   ),
-                  items: [
-                    DropdownMenuItem(
-                      value: null,
-                      child: Text(l10n.serverNoGroup),
-                    ),
-                    ...groups.map(
-                      (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
-                    ),
-                  ],
-                  onChanged: (v) =>
-                      ref.read(_serverFormStateProvider.notifier).state =
-                          formState.copyWith(groupId: () => v),
-                );
-              },
-              loading: () => const SizedBox.shrink(),
-              error: (_, _) => const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
-            TagSelector(
-              selectedTagIds: formState.selectedTagIds,
-              onChanged: (ids) =>
-                  ref.read(_serverFormStateProvider.notifier).state = formState
-                      .copyWith(selectedTagIds: ids),
+                  TagSelector(
+                    selectedTagIds: formState.selectedTagIds,
+                    onChanged: (ids) =>
+                        ref.read(_serverFormStateProvider.notifier).state =
+                            formState.copyWith(selectedTagIds: ids),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-            ColorPickerField(
-              selectedColor: formState.color,
-              onColorChanged: (c) =>
-                  ref.read(_serverFormStateProvider.notifier).state = formState
-                      .copyWith(color: c),
-            ),
-            const SizedBox(height: 24),
+            SectionCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  ColorPickerField(
+                    selectedColor: formState.color,
+                    onColorChanged: (c) =>
+                        ref.read(_serverFormStateProvider.notifier).state =
+                            formState.copyWith(color: c),
+                  ),
+                  const SizedBox(height: 16),
 
-            IconPickerField(
-              selectedIcon: formState.iconName,
-              onIconChanged: (i) =>
-                  ref.read(_serverFormStateProvider.notifier).state = formState
-                      .copyWith(iconName: i),
-              accentColor: formState.color,
+                  IconPickerField(
+                    selectedIcon: formState.iconName,
+                    onIconChanged: (i) =>
+                        ref.read(_serverFormStateProvider.notifier).state =
+                            formState.copyWith(iconName: i),
+                    accentColor: formState.color,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 32),
 
