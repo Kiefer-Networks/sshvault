@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 
@@ -107,6 +108,23 @@ abstract final class AppTheme {
         ),
         surfaceTintColor: Color(0x00000000),
       ),
+      cupertinoOverrideTheme: CupertinoThemeData(
+        primaryColor: colorScheme.primary,
+        barBackgroundColor: colorScheme.surface.withAlpha(230),
+        scaffoldBackgroundColor: colorScheme.surface,
+        textTheme: CupertinoTextThemeData(
+          primaryColor: colorScheme.primary,
+        ),
+      ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 
@@ -215,6 +233,24 @@ abstract final class AppTheme {
           ),
         ),
         surfaceTintColor: Color(0x00000000),
+      ),
+      cupertinoOverrideTheme: CupertinoThemeData(
+        brightness: Brightness.dark,
+        primaryColor: colorScheme.primary,
+        barBackgroundColor: const Color(0xFF0F0F1A).withAlpha(230),
+        scaffoldBackgroundColor: const Color(0xFF0F0F1A),
+        textTheme: CupertinoTextThemeData(
+          primaryColor: colorScheme.primary,
+        ),
+      ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+        },
       ),
     );
   }
