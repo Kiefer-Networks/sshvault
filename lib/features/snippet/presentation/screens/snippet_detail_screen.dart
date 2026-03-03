@@ -24,32 +24,30 @@ class SnippetDetailScreen extends ConsumerWidget {
     final snippetAsync = ref.watch(snippetDetailProvider(snippetId));
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.snippetDetailTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => context.push('/snippet/$snippetId/edit'),
-          ),
-          IconButton(
-            icon: Icon(Icons.delete, color: theme.colorScheme.error),
-            onPressed: () async {
-              final confirmed = await ConfirmDialog.show(
-                context,
-                title: l10n.snippetDetailDeleteTitle,
-                message: l10n.snippetDetailDeleteMessage,
-              );
-              if (confirmed == true && context.mounted) {
-                await ref
-                    .read(snippetListProvider.notifier)
-                    .deleteSnippet(snippetId);
-                if (context.mounted) context.pop();
-              }
-            },
-          ),
-        ],
-      ),
+    return AdaptiveScaffold(
+      title: l10n.snippetDetailTitle,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.edit),
+          onPressed: () => context.push('/snippet/$snippetId/edit'),
+        ),
+        IconButton(
+          icon: Icon(Icons.delete, color: theme.colorScheme.error),
+          onPressed: () async {
+            final confirmed = await ConfirmDialog.show(
+              context,
+              title: l10n.snippetDetailDeleteTitle,
+              message: l10n.snippetDetailDeleteMessage,
+            );
+            if (confirmed == true && context.mounted) {
+              await ref
+                  .read(snippetListProvider.notifier)
+                  .deleteSnippet(snippetId);
+              if (context.mounted) context.pop();
+            }
+          },
+        ),
+      ],
       body: snippetAsync.when(
         data: (snippet) {
           return SingleChildScrollView(

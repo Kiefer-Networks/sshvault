@@ -126,14 +126,10 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     final groupsAsync = ref.watch(groupListProvider);
     final formState = ref.watch(_snippetFormProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.isEditing
-              ? l10n.snippetFormTitleEdit
-              : l10n.snippetFormTitleNew,
-        ),
-      ),
+    return AdaptiveScaffold(
+      title: widget.isEditing
+          ? l10n.snippetFormTitleEdit
+          : l10n.snippetFormTitleNew,
       body: Form(
         key: _formKey,
         child: ListView(
