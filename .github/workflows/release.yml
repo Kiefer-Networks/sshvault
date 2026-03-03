@@ -13,7 +13,7 @@ env:
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────
-  # Pre-flight: extract version, run lint (gate)
+  # Pre-flight: extract version, run lint + tests (gate)
   # ─────────────────────────────────────────────────────────────────────────
   preflight:
     name: Preflight
@@ -155,20 +155,8 @@ jobs:
             mkdir -p "$PKG_DIR/usr/lib/shellvault"
             mkdir -p "$PKG_DIR/usr/share/applications"
 
-            # Copy bundle
-            cp "$BUNDLE_DIR/shellvault" "$PKG_DIR/usr/bin/"
-            cp -r "$BUNDLE_DIR/lib/"* "$PKG_DIR/usr/lib/shellvault/"
-            cp -r "$BUNDLE_DIR/data" "$PKG_DIR/usr/lib/shellvault/"
+            cp -r "$BUNDLE_DIR"/* "$PKG_DIR/usr/lib/shellvault/"
 
-            # Wrapper script so libs are found
-            mv "$PKG_DIR/usr/bin/shellvault" "$PKG_DIR/usr/lib/shellvault/shellvault"
-            cat > "$PKG_DIR/usr/bin/shellvault" <<'WRAPPER'
-          #!/bin/sh
-          exec /usr/lib/shellvault/shellvault "$@"
-          WRAPPER
-            chmod +x "$PKG_DIR/usr/bin/shellvault"
-
-            # Set RPATH-compatible LD_LIBRARY_PATH
             cat > "$PKG_DIR/usr/bin/shellvault" <<'WRAPPER'
           #!/bin/sh
           export LD_LIBRARY_PATH=/usr/lib/shellvault:$LD_LIBRARY_PATH
@@ -176,19 +164,9 @@ jobs:
           WRAPPER
             chmod +x "$PKG_DIR/usr/bin/shellvault"
 
-            # Desktop entry
-            cat > "$PKG_DIR/usr/share/applications/shellvault.desktop" <<DESKTOP
-          [Desktop Entry]
-          Type=Application
-          Name=ShellVault
-          Comment=Secure SSH Client
-          Exec=shellvault
-          Icon=shellvault
-          Terminal=false
-          Categories=Network;RemoteAccess;
-          DESKTOP
+            cp linux/de.kiefer_networks.shellvault.desktop \
+               "$PKG_DIR/usr/share/applications/shellvault.desktop"
 
-            # Control file
             cat > "$PKG_DIR/DEBIAN/control" <<CTRL
           Package: shellvault
           Version: $VERSION
@@ -206,7 +184,6 @@ jobs:
           elif [ "${{ matrix.format }}" = "rpm" ]; then
             mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-            # Create tarball
             TAR_DIR="shellvault-$VERSION"
             mkdir -p "$TAR_DIR"
             cp -r "$BUNDLE_DIR"/* "$TAR_DIR/"
@@ -271,7 +248,6 @@ jobs:
             cp -r "$BUNDLE_DIR"/* "$APP_DIR/usr/bin/"
             cp -r "$BUNDLE_DIR/lib/"* "$APP_DIR/usr/lib/" 2>/dev/null || true
 
-            # AppRun
             cat > "$APP_DIR/AppRun" <<'APPRUN'
           #!/bin/sh
           SELF=$(readlink -f "$0")
@@ -281,20 +257,8 @@ jobs:
           APPRUN
             chmod +x "$APP_DIR/AppRun"
 
-            # Desktop entry
-            cat > "$APP_DIR/shellvault.desktop" <<DESKTOP
-          [Desktop Entry]
-          Type=Application
-          Name=ShellVault
-          Comment=Secure SSH Client
-          Exec=shellvault
-          Icon=shellvault
-          Terminal=false
-          Categories=Network;RemoteAccess;
-          DESKTOP
-
-            # Placeholder icon (required by appimagetool)
-            touch "$APP_DIR/shellvault.png"
+            cp linux/de.kiefer_networks.shellvault.desktop "$APP_DIR/shellvault.desktop"
+            cp linux/icons/128x128.png "$APP_DIR/shellvault.png"
 
             ARCH=x86_64 appimagetool "$APP_DIR" "ShellVault-${VERSION}-x86_64.AppImage"
           fi
@@ -306,6 +270,63 @@ jobs:
             *.deb
             *.rpm
             *.AppImage
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Linux Flatpak
+  # ─────────────────────────────────────────────────────────────────────────
+  build-flatpak:
+    name: Linux (Flatpak)
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang cmake ninja-build pkg-config \
+            libgtk-3-dev liblzma-dev libstdc++-12-dev \
+            libsecret-1-dev libjsoncpp-dev \
+            flatpak flatpak-builder
+
+      - name: Set up Flatpak
+        run: |
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08
+
+      - run: flutter pub get
+
+      - name: Build Linux bundle
+        run: flutter build linux --release
+
+      - name: Prepare Flatpak dist
+        run: |
+          mkdir -p linux/flatpak-dist
+          cp -r build/linux/x64/release/bundle/* linux/flatpak-dist/
+          cp linux/de.kiefer_networks.shellvault.desktop linux/flatpak-dist/
+          cp linux/de.kiefer_networks.shellvault.metainfo.xml linux/flatpak-dist/
+          mkdir -p linux/flatpak-dist/icons
+          cp linux/icons/*.png linux/flatpak-dist/icons/
+
+      - name: Build Flatpak
+        env:
+          VERSION: ${{ needs.preflight.outputs.version }}
+        run: |
+          cd linux
+          flatpak-builder --force-clean --repo=repo build-dir de.kiefer_networks.shellvault.yml
+          flatpak build-bundle repo "ShellVault-${VERSION}.flatpak" de.kiefer_networks.shellvault
+          mv "ShellVault-${VERSION}.flatpak" ../
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-flatpak
+          path: '*.flatpak'
 
   # ─────────────────────────────────────────────────────────────────────────
   # Windows (MSIX)
@@ -345,9 +366,13 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   release:
     name: Create GitHub Release
-    needs: [preflight, build-android, build-linux, build-windows]
+    needs: [preflight, build-android, build-linux, build-flatpak, build-windows]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/download-artifact@v4
         with:
           path: artifacts/
@@ -355,15 +380,95 @@ jobs:
       - name: List artifacts
         run: find artifacts/ -type f | head -50
 
+      - name: Rename artifacts
+        env:
+          VERSION: ${{ needs.preflight.outputs.version }}
+        run: |
+          mkdir -p release-assets
+
+          # Android
+          cp artifacts/android-apk/app-release.apk \
+             "release-assets/ShellVault-${VERSION}-android.apk" 2>/dev/null || true
+
+          # Linux
+          cp artifacts/linux-deb/*.deb release-assets/ 2>/dev/null || true
+          cp artifacts/linux-rpm/*.rpm release-assets/ 2>/dev/null || true
+          cp artifacts/linux-appimage/*.AppImage release-assets/ 2>/dev/null || true
+          cp artifacts/linux-flatpak/*.flatpak release-assets/ 2>/dev/null || true
+
+          # Windows
+          cp artifacts/windows-msix/*.msix \
+             "release-assets/ShellVault-${VERSION}-windows.msix" 2>/dev/null || true
+
+          ls -lh release-assets/
+
+      - name: Generate release notes
+        id: notes
+        env:
+          VERSION: ${{ needs.preflight.outputs.version }}
+        run: |
+          PREV_TAG=$(git tag --sort=-version:refname | grep '^v' | head -2 | tail -1)
+          if [ -z "$PREV_TAG" ]; then
+            PREV_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          cat > release-notes.md <<'NOTES'
+          ## ShellVault ${{ needs.preflight.outputs.version }}
+
+          ### Highlights
+
+          - **Liquid Glass** — Native iOS 26+ / macOS 26+ Liquid Glass design via `cupertino_native_better`
+          - **Platform Hardening** — Android network security, iOS/macOS entitlements, R8/ProGuard
+          - **Security Module** — Certificate pinning, DNS-over-HTTPS, proof-of-work, server attestation
+          - **Argon2id Upgrade** — KDF memory increased to 256 MiB (envelope v2)
+          - **Comprehensive Tests** — 348 unit tests across all layers
+          - **CI/CD Pipeline** — Automated lint, analyze, test, and multi-platform builds
+
+          ### Platform Design
+
+          | Platform | Design System |
+          |----------|---------------|
+          | iOS / iPadOS | Cupertino + Liquid Glass (iOS 26+) |
+          | macOS | macOS HIG + Liquid Glass |
+          | Android | Material 3 |
+          | Linux / Windows | Material 3 |
+
+          ### Downloads
+
+          | Platform | File |
+          |----------|------|
+          | Android | `ShellVault-*-android.apk` |
+          | Linux (Debian/Ubuntu) | `shellvault_*_amd64.deb` |
+          | Linux (Fedora/RHEL) | `shellvault-*.x86_64.rpm` |
+          | Linux (AppImage) | `ShellVault-*-x86_64.AppImage` |
+          | Linux (Flatpak) | `ShellVault-*.flatpak` |
+          | Windows | `ShellVault-*-windows.msix` |
+
+          ### Install
+
+          **Android:** Download and install the APK (enable "Unknown sources" if needed).
+
+          **Linux Flatpak:**
+          ```bash
+          flatpak install ShellVault-*.flatpak
+          flatpak run de.kiefer_networks.shellvault
+          ```
+
+          **Linux deb:**
+          ```bash
+          sudo dpkg -i shellvault_*_amd64.deb
+          ```
+
+          **Linux rpm:**
+          ```bash
+          sudo dnf install shellvault-*.x86_64.rpm
+          ```
+          NOTES
+
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ShellVault ${{ needs.preflight.outputs.version }}
           draft: true
-          generate_release_notes: true
-          files: |
-            artifacts/android-apk/*.apk
-            artifacts/linux-deb/*.deb
-            artifacts/linux-rpm/*.rpm
-            artifacts/linux-appimage/*.AppImage
-            artifacts/windows-msix/*.msix
+          body_path: release-notes.md
+          files: release-assets/*
