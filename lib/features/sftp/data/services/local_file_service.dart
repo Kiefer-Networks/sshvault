@@ -104,7 +104,9 @@ class LocalFileService {
     Directory dir;
     if (Platform.isAndroid) {
       final dl = await getDownloadsDirectory();
-      dir = Directory(p.join(dl?.path ?? '/storage/emulated/0/Download', 'ShellVault'));
+      dir = Directory(
+        p.join(dl?.path ?? '/storage/emulated/0/Download', 'ShellVault'),
+      );
     } else if (Platform.isIOS) {
       final docs = await getApplicationDocumentsDirectory();
       dir = Directory(p.join(docs.path, 'ShellVault'));
@@ -137,8 +139,7 @@ class LocalFileService {
 
     // macOS, Linux, Windows — use home directory
     final home =
-        Platform.environment['HOME'] ??
-        Platform.environment['USERPROFILE'];
+        Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
     if (home != null && await Directory(home).exists()) return home;
 
     // Final fallback

@@ -237,7 +237,9 @@ class _SelectionToolbar extends ConsumerWidget {
       final paneState = ref.read(sftpPaneProvider(side));
       for (final selectedPath in paneState.selectedPaths) {
         // Find the entry to preserve file type bits
-        final entry = paneState.entries.where((e) => e.path == selectedPath).firstOrNull;
+        final entry = paneState.entries
+            .where((e) => e.path == selectedPath)
+            .firstOrNull;
         final fileTypeBits = (entry?.permissions ?? 0) & ~0x1FF;
         final fullMode = fileTypeBits | (permissions & 0x1FF);
         await ref

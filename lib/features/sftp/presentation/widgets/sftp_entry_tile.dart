@@ -45,43 +45,51 @@ class SftpEntryTile extends ConsumerWidget {
     // Start action pane (swipe right): Transfer / Download / Preview
     final startActions = <SlidableAction>[];
     if (isFile && isWideMode) {
-      startActions.add(SlidableAction(
-        onPressed: (_) => onTransfer(),
-        backgroundColor: theme.colorScheme.tertiary,
-        foregroundColor: theme.colorScheme.onTertiary,
-        icon: Icons.swap_horiz,
-        label: l10n.sftpCopyToOtherPane,
-      ));
+      startActions.add(
+        SlidableAction(
+          onPressed: (_) => onTransfer(),
+          backgroundColor: theme.colorScheme.tertiary,
+          foregroundColor: theme.colorScheme.onTertiary,
+          icon: Icons.swap_horiz,
+          label: l10n.sftpCopyToOtherPane,
+        ),
+      );
     }
     if (isFile && !isWideMode && isRemote && onDownload != null) {
-      startActions.add(SlidableAction(
-        onPressed: (_) => onDownload!(),
-        backgroundColor: theme.colorScheme.tertiary,
-        foregroundColor: theme.colorScheme.onTertiary,
-        icon: Icons.download,
-        label: l10n.sftpDownload,
-      ));
+      startActions.add(
+        SlidableAction(
+          onPressed: (_) => onDownload!(),
+          backgroundColor: theme.colorScheme.tertiary,
+          foregroundColor: theme.colorScheme.onTertiary,
+          icon: Icons.download,
+          label: l10n.sftpDownload,
+        ),
+      );
     }
     if (isFile) {
-      startActions.add(SlidableAction(
-        onPressed: (_) => showDialog(
-          context: context,
-          builder: (_) => FilePreviewDialog(entry: entry, side: side),
+      startActions.add(
+        SlidableAction(
+          onPressed: (_) => showDialog(
+            context: context,
+            builder: (_) => FilePreviewDialog(entry: entry, side: side),
+          ),
+          backgroundColor: theme.colorScheme.secondary,
+          foregroundColor: theme.colorScheme.onSecondary,
+          icon: Icons.visibility,
+          label: l10n.sftpFilePreview,
         ),
-        backgroundColor: theme.colorScheme.secondary,
-        foregroundColor: theme.colorScheme.onSecondary,
-        icon: Icons.visibility,
-        label: l10n.sftpFilePreview,
-      ));
+      );
     }
     if (isFile && ArchiveService.isArchive(entry.name)) {
-      startActions.add(SlidableAction(
-        onPressed: (_) => _extractArchive(context, ref),
-        backgroundColor: theme.colorScheme.primaryContainer,
-        foregroundColor: theme.colorScheme.onPrimaryContainer,
-        icon: Icons.unarchive,
-        label: l10n.sftpExtractArchive,
-      ));
+      startActions.add(
+        SlidableAction(
+          onPressed: (_) => _extractArchive(context, ref),
+          backgroundColor: theme.colorScheme.primaryContainer,
+          foregroundColor: theme.colorScheme.onPrimaryContainer,
+          icon: Icons.unarchive,
+          label: l10n.sftpExtractArchive,
+        ),
+      );
     }
 
     // End action pane (swipe left): Rename, [Chmod], Delete
@@ -95,28 +103,29 @@ class SftpEntryTile extends ConsumerWidget {
       ),
     ];
     if (isRemote) {
-      endActions.add(SlidableAction(
-        onPressed: (_) => _showChmodDialog(context, ref),
-        backgroundColor: theme.colorScheme.inversePrimary,
-        foregroundColor: theme.colorScheme.onPrimaryContainer,
-        icon: Icons.security,
-        label: l10n.sftpChmod,
-      ));
+      endActions.add(
+        SlidableAction(
+          onPressed: (_) => _showChmodDialog(context, ref),
+          backgroundColor: theme.colorScheme.inversePrimary,
+          foregroundColor: theme.colorScheme.onPrimaryContainer,
+          icon: Icons.security,
+          label: l10n.sftpChmod,
+        ),
+      );
     }
-    endActions.add(SlidableAction(
-      onPressed: (_) => _confirmDelete(context, ref),
-      backgroundColor: theme.colorScheme.error,
-      foregroundColor: theme.colorScheme.onError,
-      icon: Icons.delete,
-      label: l10n.sftpDelete,
-    ));
+    endActions.add(
+      SlidableAction(
+        onPressed: (_) => _confirmDelete(context, ref),
+        backgroundColor: theme.colorScheme.error,
+        foregroundColor: theme.colorScheme.onError,
+        icon: Icons.delete,
+        label: l10n.sftpDelete,
+      ),
+    );
 
     final tile = Slidable(
       startActionPane: startActions.isNotEmpty
-          ? ActionPane(
-              motion: const BehindMotion(),
-              children: startActions,
-            )
+          ? ActionPane(motion: const BehindMotion(), children: startActions)
           : null,
       endActionPane: ActionPane(
         motion: const BehindMotion(),
@@ -151,8 +160,7 @@ class SftpEntryTile extends ConsumerWidget {
     );
   }
 
-  void _showContextMenu(
-      BuildContext context, WidgetRef ref, Offset position) {
+  void _showContextMenu(BuildContext context, WidgetRef ref, Offset position) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final paneSource = ref.read(sftpPaneProvider(side)).source;
@@ -164,138 +172,162 @@ class SftpEntryTile extends ConsumerWidget {
 
     // Directory: Open
     if (isDirectory) {
-      items.add(PopupMenuItem(
-        value: 'open',
-        child: ListTile(
-          leading: const Icon(Icons.folder_open),
-          title: Text(l10n.sftpOpen),
-          dense: true,
-          contentPadding: EdgeInsets.zero,
+      items.add(
+        PopupMenuItem(
+          value: 'open',
+          child: ListTile(
+            leading: const Icon(Icons.folder_open),
+            title: Text(l10n.sftpOpen),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
         ),
-      ));
+      );
     }
 
     // File: Transfer (only wide mode)
     if (isFile && isWideMode) {
-      items.add(PopupMenuItem(
-        value: 'transfer',
-        child: ListTile(
-          leading: const Icon(Icons.swap_horiz),
-          title: Text(l10n.sftpCopyToOtherPane),
-          dense: true,
-          contentPadding: EdgeInsets.zero,
+      items.add(
+        PopupMenuItem(
+          value: 'transfer',
+          child: ListTile(
+            leading: const Icon(Icons.swap_horiz),
+            title: Text(l10n.sftpCopyToOtherPane),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
         ),
-      ));
+      );
     }
 
     // File: Download (mobile + remote only)
     if (isFile && !isWideMode && isRemote) {
-      items.add(PopupMenuItem(
-        value: 'download',
-        child: ListTile(
-          leading: const Icon(Icons.download),
-          title: Text(l10n.sftpDownload),
-          dense: true,
-          contentPadding: EdgeInsets.zero,
+      items.add(
+        PopupMenuItem(
+          value: 'download',
+          child: ListTile(
+            leading: const Icon(Icons.download),
+            title: Text(l10n.sftpDownload),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
         ),
-      ));
+      );
     }
 
     // File: Preview
     if (isFile) {
-      items.add(PopupMenuItem(
-        value: 'preview',
-        child: ListTile(
-          leading: const Icon(Icons.visibility),
-          title: Text(l10n.sftpFilePreview),
-          dense: true,
-          contentPadding: EdgeInsets.zero,
+      items.add(
+        PopupMenuItem(
+          value: 'preview',
+          child: ListTile(
+            leading: const Icon(Icons.visibility),
+            title: Text(l10n.sftpFilePreview),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
         ),
-      ));
+      );
     }
 
     // Extract (archive files only)
     if (isFile && ArchiveService.isArchive(entry.name)) {
-      items.add(PopupMenuItem(
-        value: 'extract',
-        child: ListTile(
-          leading: const Icon(Icons.unarchive),
-          title: Text(l10n.sftpExtractArchive),
-          dense: true,
-          contentPadding: EdgeInsets.zero,
+      items.add(
+        PopupMenuItem(
+          value: 'extract',
+          child: ListTile(
+            leading: const Icon(Icons.unarchive),
+            title: Text(l10n.sftpExtractArchive),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
         ),
-      ));
+      );
     }
 
     // Select
-    items.add(PopupMenuItem(
-      value: 'select',
-      child: ListTile(
-        leading: const Icon(Icons.check_circle_outline),
-        title: Text(l10n.sftpSelect),
-        dense: true,
-        contentPadding: EdgeInsets.zero,
-      ),
-    ));
-
-    // Rename
-    items.add(PopupMenuItem(
-      value: 'rename',
-      child: ListTile(
-        leading: const Icon(Icons.edit),
-        title: Text(l10n.sftpRename),
-        dense: true,
-        contentPadding: EdgeInsets.zero,
-      ),
-    ));
-
-    // Chmod (remote only)
-    if (isRemote) {
-      items.add(PopupMenuItem(
-        value: 'chmod',
+    items.add(
+      PopupMenuItem(
+        value: 'select',
         child: ListTile(
-          leading: const Icon(Icons.security),
-          title: Text(l10n.sftpChmod),
+          leading: const Icon(Icons.check_circle_outline),
+          title: Text(l10n.sftpSelect),
           dense: true,
           contentPadding: EdgeInsets.zero,
         ),
-      ));
+      ),
+    );
+
+    // Rename
+    items.add(
+      PopupMenuItem(
+        value: 'rename',
+        child: ListTile(
+          leading: const Icon(Icons.edit),
+          title: Text(l10n.sftpRename),
+          dense: true,
+          contentPadding: EdgeInsets.zero,
+        ),
+      ),
+    );
+
+    // Chmod (remote only)
+    if (isRemote) {
+      items.add(
+        PopupMenuItem(
+          value: 'chmod',
+          child: ListTile(
+            leading: const Icon(Icons.security),
+            title: Text(l10n.sftpChmod),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+      );
     }
 
     // Symlink (remote + directory only)
     if (isRemote && isDirectory) {
-      items.add(PopupMenuItem(
-        value: 'symlink',
-        child: ListTile(
-          leading: const Icon(Icons.link),
-          title: Text(l10n.sftpCreateSymlink),
-          dense: true,
-          contentPadding: EdgeInsets.zero,
+      items.add(
+        PopupMenuItem(
+          value: 'symlink',
+          child: ListTile(
+            leading: const Icon(Icons.link),
+            title: Text(l10n.sftpCreateSymlink),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
         ),
-      ));
+      );
     }
 
     // Divider before delete
     items.add(const PopupMenuDivider());
 
     // Delete
-    items.add(PopupMenuItem(
-      value: 'delete',
-      child: ListTile(
-        leading: Icon(Icons.delete, color: theme.colorScheme.error),
-        title: Text(
-          l10n.sftpDelete,
-          style: TextStyle(color: theme.colorScheme.error),
+    items.add(
+      PopupMenuItem(
+        value: 'delete',
+        child: ListTile(
+          leading: Icon(Icons.delete, color: theme.colorScheme.error),
+          title: Text(
+            l10n.sftpDelete,
+            style: TextStyle(color: theme.colorScheme.error),
+          ),
+          dense: true,
+          contentPadding: EdgeInsets.zero,
         ),
-        dense: true,
-        contentPadding: EdgeInsets.zero,
       ),
-    ));
+    );
 
     showMenu<String>(
       context: context,
       position: RelativeRect.fromLTRB(
-          position.dx, position.dy, position.dx, position.dy),
+        position.dx,
+        position.dy,
+        position.dx,
+        position.dy,
+      ),
       items: items,
     ).then((value) {
       if (value != null && context.mounted) {
@@ -452,9 +484,7 @@ class SftpEntryTile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
 
-    messenger.showSnackBar(
-      SnackBar(content: Text(l10n.sftpExtracting)),
-    );
+    messenger.showSnackBar(SnackBar(content: Text(l10n.sftpExtracting)));
 
     final result = await ref
         .read(sftpPaneProvider(side).notifier)

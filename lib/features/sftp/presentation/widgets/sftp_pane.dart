@@ -48,9 +48,7 @@ class SftpPane extends ConsumerWidget {
               Text(
                 paneState.error!,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                ),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               const SizedBox(height: 16),
               FilledButton.icon(
@@ -67,8 +65,7 @@ class SftpPane extends ConsumerWidget {
       fileList = const SftpEmptyState();
     } else {
       fileList = RefreshIndicator(
-        onRefresh: () =>
-            ref.read(sftpPaneProvider(side).notifier).refresh(),
+        onRefresh: () => ref.read(sftpPaneProvider(side).notifier).refresh(),
         child: ListView.builder(
           itemCount: paneState.entries.length,
           itemBuilder: (context, index) {
@@ -83,7 +80,10 @@ class SftpPane extends ConsumerWidget {
               isWideMode: isWide,
               onTap: () => _handleTap(context, ref, entry, paneState),
               onTransfer: () => _handleFileTransfer(context, ref, entry),
-              onDownload: (!isWide && isRemoteSource && entry.type == SftpEntryType.file)
+              onDownload:
+                  (!isWide &&
+                      isRemoteSource &&
+                      entry.type == SftpEntryType.file)
                   ? () => _handleMobileDownload(context, ref, entry)
                   : null,
               side: side,
@@ -210,9 +210,7 @@ class SftpPane extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
 
-    messenger.showSnackBar(
-      SnackBar(content: Text(l10n.sftpExtracting)),
-    );
+    messenger.showSnackBar(SnackBar(content: Text(l10n.sftpExtracting)));
 
     final result = await ref
         .read(sftpPaneProvider(side).notifier)
@@ -245,9 +243,9 @@ class SftpPane extends ConsumerWidget {
     await ref.read(sftpPaneProvider(side).notifier).downloadToLocal(entry);
 
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.sftpDownloadStarted(1))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.sftpDownloadStarted(1))));
     }
   }
 
@@ -260,9 +258,9 @@ class SftpPane extends ConsumerWidget {
 
     // In narrow mode, no opposite pane available
     if (!isWide) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.sftpNoPaneSelected)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.sftpNoPaneSelected)));
       return;
     }
 

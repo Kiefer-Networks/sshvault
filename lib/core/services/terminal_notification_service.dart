@@ -31,10 +31,7 @@ class TerminalNotificationService {
     );
 
     await _plugin.initialize(
-      const InitializationSettings(
-        android: androidSettings,
-        iOS: iosSettings,
-      ),
+      const InitializationSettings(android: androidSettings, iOS: iosSettings),
       onDidReceiveNotificationResponse: (_) {
         onNotificationTapped?.call();
       },
@@ -44,21 +41,20 @@ class TerminalNotificationService {
     if (Platform.isIOS) {
       await _plugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.requestPermissions(alert: true, badge: true);
     } else if (Platform.isAndroid) {
       await _plugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.requestNotificationsPermission();
     }
   }
 
   /// Show or update the ongoing session notification.
-  Future<void> show({
-    required String title,
-    required String body,
-  }) async {
+  Future<void> show({required String title, required String body}) async {
     if (!Platform.isAndroid && !Platform.isIOS) return;
     await _ensureInitialized();
 
@@ -84,10 +80,7 @@ class TerminalNotificationService {
       _notificationId,
       title,
       body,
-      const NotificationDetails(
-        android: androidDetails,
-        iOS: iosDetails,
-      ),
+      const NotificationDetails(android: androidDetails, iOS: iosDetails),
     );
   }
 

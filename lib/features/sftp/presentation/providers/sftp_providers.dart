@@ -328,7 +328,11 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
     if (clientResult.isFailure) return;
 
     final sftpService = ref.read(sftpServiceProvider);
-    final result = await sftpService.chmod(clientResult.value, path, permissions);
+    final result = await sftpService.chmod(
+      clientResult.value,
+      path,
+      permissions,
+    );
     if (result.isFailure) {
       state = state.copyWith(error: result.failure.message);
     }
@@ -414,9 +418,7 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
     if (!await sftpTemp.exists()) {
       await sftpTemp.create(recursive: true);
     }
-    final localPath = await _uniqueLocalPath(
-      p.join(sftpTemp.path, entry.name),
-    );
+    final localPath = await _uniqueLocalPath(p.join(sftpTemp.path, entry.name));
 
     final transferManager = ref.read(transferManagerProvider.notifier);
     await transferManager.enqueueDownload(
@@ -475,7 +477,7 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
     final ext = p.extension(path);
     final base = p.basenameWithoutExtension(path);
 
-    for (var i = 1;; i++) {
+    for (var i = 1; ; i++) {
       final candidate = p.join(dir, '$base ($i)$ext');
       if (!await File(candidate).exists()) return candidate;
     }

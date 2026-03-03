@@ -183,12 +183,14 @@ class AppShellState extends ConsumerState<AppShell> {
 
   void _updateSessionNotification(List<SshSessionEntity> sessions) {
     final service = ref.read(terminalNotificationProvider);
-    final active = sessions.where(
-      (s) =>
-          s.status == SshConnectionStatus.connected ||
-          s.status == SshConnectionStatus.connecting ||
-          s.status == SshConnectionStatus.authenticating,
-    ).toList();
+    final active = sessions
+        .where(
+          (s) =>
+              s.status == SshConnectionStatus.connected ||
+              s.status == SshConnectionStatus.connecting ||
+              s.status == SshConnectionStatus.authenticating,
+        )
+        .toList();
 
     if (active.isEmpty) {
       service.dismiss();

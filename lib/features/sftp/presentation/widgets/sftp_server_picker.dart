@@ -31,9 +31,8 @@ class SftpServerPicker extends ConsumerWidget {
         onTap: () async {
           final result = await showDialog<SftpPaneSource>(
             context: context,
-            builder: (_) => _ServerPickerDialog(
-              currentSource: paneState.source,
-            ),
+            builder: (_) =>
+                _ServerPickerDialog(currentSource: paneState.source),
           );
           if (result != null) {
             ref.read(sftpPaneProvider(side).notifier).setSource(result);
@@ -145,8 +144,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
                   final groups = groupsAsync.value ?? [];
                   return _buildList(context, servers, groups);
                 },
-                loading: () =>
-                    const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: CircularProgressIndicator()),
                 error: (_, _) => const SizedBox.shrink(),
               ),
             ),
@@ -175,9 +173,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
           }).toList();
 
     // Build group map for labels
-    final groupMap = <String, String>{
-      for (final g in allGroups) g.id: g.name,
-    };
+    final groupMap = <String, String>{for (final g in allGroups) g.id: g.name};
 
     // Group servers by groupId
     final grouped = <String?, List<ServerEntity>>{};
@@ -197,8 +193,8 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
 
     // Check if local matches search
     final localLabel = l10n.sftpLocalDevice;
-    final showLocal = lowerQuery.isEmpty ||
-        localLabel.toLowerCase().contains(lowerQuery);
+    final showLocal =
+        lowerQuery.isEmpty || localLabel.toLowerCase().contains(lowerQuery);
 
     if (!showLocal && filtered.isEmpty) {
       return Center(
@@ -219,8 +215,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
       padding: const EdgeInsets.only(bottom: 8),
       children: [
         // Local device option
-        if (showLocal)
-          _buildLocalTile(context, theme, l10n),
+        if (showLocal) _buildLocalTile(context, theme, l10n),
         // Grouped servers
         for (final groupId in sortedGroupIds) ...[
           if (sortedGroupIds.length > 1 || groupId != null)
@@ -284,7 +279,8 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
     ThemeData theme,
     ServerEntity server,
   ) {
-    final isSelected = widget.currentSource is SftpPaneSourceRemote &&
+    final isSelected =
+        widget.currentSource is SftpPaneSourceRemote &&
         (widget.currentSource as SftpPaneSourceRemote).serverId == server.id;
 
     return ListTile(
@@ -314,10 +310,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
       dense: true,
       onTap: () => Navigator.pop(
         context,
-        SftpPaneSource.remote(
-          serverId: server.id,
-          serverName: server.name,
-        ),
+        SftpPaneSource.remote(serverId: server.id, serverName: server.name),
       ),
     );
   }

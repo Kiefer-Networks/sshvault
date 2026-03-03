@@ -59,9 +59,7 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
               title: Text(l10n.share),
               onTap: () {
                 Navigator.pop(ctx);
-                SharePlus.instance.share(
-                  ShareParams(files: [XFile(filePath)]),
-                );
+                SharePlus.instance.share(ShareParams(files: [XFile(filePath)]));
               },
             ),
             ListTile(
@@ -104,9 +102,7 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
       await _restorePaneIfNeeded(savedPaneSource, savedPanePath);
 
       if (savedPath != null && context.mounted) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(l10n.sftpFileSaved)),
-        );
+        messenger.showSnackBar(SnackBar(content: Text(l10n.sftpFileSaved)));
       }
     } catch (e) {
       // Still restore pane even on error
@@ -160,8 +156,7 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
           }
 
           // On narrow screens, show save/share options for completed downloads
-          if (item.direction == TransferDirection.download &&
-              context.mounted) {
+          if (item.direction == TransferDirection.download && context.mounted) {
             final screenWidth = MediaQuery.of(context).size.width;
             if (screenWidth < 600) {
               _showDownloadCompleteSheet(context, item.destinationPath);
@@ -184,17 +179,11 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
                     ? const Row(
                         children: [
                           Expanded(
-                            child: SftpPane(
-                              side: PaneSide.left,
-                              isWide: true,
-                            ),
+                            child: SftpPane(side: PaneSide.left, isWide: true),
                           ),
                           VerticalDivider(width: 1),
                           Expanded(
-                            child: SftpPane(
-                              side: PaneSide.right,
-                              isWide: true,
-                            ),
+                            child: SftpPane(side: PaneSide.right, isWide: true),
                           ),
                         ],
                       )

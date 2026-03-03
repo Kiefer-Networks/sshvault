@@ -71,7 +71,9 @@ class ArchiveService {
     String remotePath,
     String remoteTargetDir,
   ) async {
-    final tempDir = await Directory.systemTemp.createTemp('shellvault_extract_');
+    final tempDir = await Directory.systemTemp.createTemp(
+      'shellvault_extract_',
+    );
     try {
       // Download archive to temp
       final localArchive = p.join(tempDir.path, p.posix.basename(remotePath));

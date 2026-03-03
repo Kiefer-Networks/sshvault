@@ -111,8 +111,8 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                           ),
                         ],
                       ),
-                      backgroundColor:
-                          theme.colorScheme.errorContainer.withAlpha(77),
+                      backgroundColor: theme.colorScheme.errorContainer
+                          .withAlpha(77),
                       actions: [
                         TextButton(
                           onPressed: () =>
