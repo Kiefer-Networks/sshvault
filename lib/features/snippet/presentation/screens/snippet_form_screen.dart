@@ -3,6 +3,7 @@ import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
@@ -10,6 +11,42 @@ import 'package:shellvault/features/connection/presentation/widgets/tag_selector
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
 import 'package:shellvault/features/snippet/presentation/widgets/variable_editor.dart';
+
+class _SnippetFormState {
+  final String language;
+  final String? groupId;
+  final List<String> selectedTagIds;
+  final List<SnippetVariableEntity> variables;
+  final bool saving;
+
+  const _SnippetFormState({
+    this.language = 'bash',
+    this.groupId,
+    this.selectedTagIds = const [],
+    this.variables = const [],
+    this.saving = false,
+  });
+
+  _SnippetFormState copyWith({
+    String? language,
+    String? Function()? groupId,
+    List<String>? selectedTagIds,
+    List<SnippetVariableEntity>? variables,
+    bool? saving,
+  }) {
+    return _SnippetFormState(
+      language: language ?? this.language,
+      groupId: groupId != null ? groupId() : this.groupId,
+      selectedTagIds: selectedTagIds ?? this.selectedTagIds,
+      variables: variables ?? this.variables,
+      saving: saving ?? this.saving,
+    );
+  }
+}
+
+final _snippetFormProvider = StateProvider.autoDispose<_SnippetFormState>(
+  (ref) => const _SnippetFormState(),
+);
 
 class SnippetFormScreen extends ConsumerStatefulWidget {
   final String? snippetId;
@@ -27,12 +64,6 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
   final _nameController = TextEditingController();
   final _contentController = TextEditingController();
   final _descriptionController = TextEditingController();
-
-  String _language = 'bash';
-  String? _groupId;
-  List<String> _selectedTagIds = [];
-  List<SnippetVariableEntity> _variables = [];
-  bool _saving = false;
 
   static const _languages = [
     'bash',
@@ -73,12 +104,12 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     _nameController.text = snippet.name;
     _contentController.text = snippet.content;
     _descriptionController.text = snippet.description;
-    setState(() {
-      _language = snippet.language;
-      _groupId = snippet.groupId;
-      _selectedTagIds = snippet.tags.map((t) => t.id).toList();
-      _variables = List.from(snippet.variables);
-    });
+    ref.read(_snippetFormProvider.notifier).state = _SnippetFormState(
+      language: snippet.language,
+      groupId: snippet.groupId,
+      selectedTagIds: snippet.tags.map((t) => t.id).toList(),
+      variables: List.from(snippet.variables),
+    );
   }
 
   @override
@@ -93,6 +124,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final groupsAsync = ref.watch(groupListProvider);
+    final formState = ref.watch(_snippetFormProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -124,7 +156,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
 
             // Language
             DropdownButtonFormField<String>(
-              initialValue: _language,
+              initialValue: formState.language,
               decoration: InputDecoration(
                 labelText: l10n.snippetFormLanguageLabel,
                 prefixIcon: const Icon(Icons.code),
@@ -133,7 +165,10 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                   .map((l) => DropdownMenuItem(value: l, child: Text(l)))
                   .toList(),
               onChanged: (v) {
-                if (v != null) setState(() => _language = v);
+                if (v != null) {
+                  ref.read(_snippetFormProvider.notifier).state =
+                      formState.copyWith(language: v);
+                }
               },
             ),
             const SizedBox(height: 16),
@@ -177,7 +212,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
               data: (groups) {
                 if (groups.isEmpty) return const SizedBox.shrink();
                 return DropdownButtonFormField<String?>(
-                  initialValue: _groupId,
+                  initialValue: formState.groupId,
                   decoration: InputDecoration(
                     labelText: l10n.snippetFormGroupLabel,
                     prefixIcon: const Icon(Icons.folder_outlined),
@@ -191,7 +226,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                       (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
                     ),
                   ],
-                  onChanged: (v) => setState(() => _groupId = v),
+                  onChanged: (v) =>
+                      ref.read(_snippetFormProvider.notifier).state =
+                          formState.copyWith(groupId: () => v),
                 );
               },
               loading: () => const SizedBox.shrink(),
@@ -201,22 +238,26 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
 
             // Tags
             TagSelector(
-              selectedTagIds: _selectedTagIds,
-              onChanged: (ids) => setState(() => _selectedTagIds = ids),
+              selectedTagIds: formState.selectedTagIds,
+              onChanged: (ids) =>
+                  ref.read(_snippetFormProvider.notifier).state =
+                      formState.copyWith(selectedTagIds: ids),
             ),
             const SizedBox(height: 24),
 
             // Variables
             VariableEditor(
-              variables: _variables,
-              onChanged: (vars) => setState(() => _variables = vars),
+              variables: formState.variables,
+              onChanged: (vars) =>
+                  ref.read(_snippetFormProvider.notifier).state =
+                      formState.copyWith(variables: vars),
             ),
             const SizedBox(height: 32),
 
             // Save button
             AdaptiveButton.filledIcon(
-              onPressed: _saving ? null : _save,
-              icon: _saving
+              onPressed: formState.saving ? null : _save,
+              icon: formState.saving
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -242,14 +283,16 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _saving = true);
+    final formState = ref.read(_snippetFormProvider);
+    ref.read(_snippetFormProvider.notifier).state =
+        formState.copyWith(saving: true);
 
     final l10n = AppLocalizations.of(context)!;
     try {
       final tagsAsync = ref.read(tagListProvider);
       final allTags = tagsAsync.value ?? [];
       final selectedTags = allTags
-          .where((t) => _selectedTagIds.contains(t.id))
+          .where((t) => formState.selectedTagIds.contains(t.id))
           .toList();
 
       final now = DateTime.now();
@@ -257,11 +300,11 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
         id: widget.snippetId ?? '',
         name: _nameController.text.trim(),
         content: _contentController.text,
-        language: _language,
+        language: formState.language,
         description: _descriptionController.text.trim(),
-        groupId: _groupId,
+        groupId: formState.groupId,
         tags: selectedTags,
-        variables: _variables,
+        variables: formState.variables,
         createdAt: now,
         updatedAt: now,
       );
@@ -281,7 +324,11 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
         AdaptiveNotification.show(context, message: l10n.error(e.toString()));
       }
     } finally {
-      if (mounted) setState(() => _saving = false);
+      if (mounted) {
+        final current = ref.read(_snippetFormProvider);
+        ref.read(_snippetFormProvider.notifier).state =
+            current.copyWith(saving: false);
+      }
     }
   }
 }

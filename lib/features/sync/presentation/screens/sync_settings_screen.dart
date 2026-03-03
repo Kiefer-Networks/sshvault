@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
@@ -17,6 +18,10 @@ import 'package:shellvault/features/sync/presentation/providers/sync_providers.d
 import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
+final _pollTimedOutProvider = StateProvider.autoDispose<bool>(
+  (ref) => false,
+);
+
 class SyncSettingsScreen extends ConsumerStatefulWidget {
   const SyncSettingsScreen({super.key});
 
@@ -27,7 +32,6 @@ class SyncSettingsScreen extends ConsumerStatefulWidget {
 class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   late final AppLifecycleListener _lifecycleListener;
   Timer? _billingPollTimer;
-  bool _pollTimedOut = false;
 
   @override
   void initState() {
@@ -49,7 +53,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
 
   void _startBillingPoll() {
     _billingPollTimer?.cancel();
-    setState(() => _pollTimedOut = false);
+    ref.read(_pollTimedOutProvider.notifier).state = false;
     var attempts = 0;
     _billingPollTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       attempts++;
@@ -59,10 +63,11 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         timer.cancel();
         _billingPollTimer = null;
       } else if (attempts >= 60) {
-        // Stop after 5 minutes (60 × 5s), show manual refresh
         timer.cancel();
         _billingPollTimer = null;
-        if (mounted) setState(() => _pollTimedOut = true);
+        if (mounted) {
+          ref.read(_pollTimedOutProvider.notifier).state = true;
+        }
       }
     });
   }
@@ -310,6 +315,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
 
   Widget _buildBillingCard(AppLocalizations l10n, ThemeData theme) {
     final billingAsync = ref.watch(billingStatusProvider);
+    final pollTimedOut = ref.watch(_pollTimedOutProvider);
     return billingAsync.when(
       data: (billing) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,12 +336,12 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                       : l10n.accountPaymentInactive,
                 ),
               ),
-              if (!billing.active && _pollTimedOut)
+              if (!billing.active && pollTimedOut)
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   tooltip: l10n.syncNow,
                   onPressed: () {
-                    setState(() => _pollTimedOut = false);
+                    ref.read(_pollTimedOutProvider.notifier).state = false;
                     ref.invalidate(billingStatusProvider);
                   },
                 ),

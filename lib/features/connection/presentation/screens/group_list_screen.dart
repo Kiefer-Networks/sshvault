@@ -4,6 +4,7 @@ import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
@@ -21,6 +22,12 @@ import 'package:shellvault/features/connection/presentation/screens/group_form_d
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
+
+final _groupTileExpandedProvider =
+    StateProvider.autoDispose.family<bool, String>((ref, groupId) => false);
+
+final _groupTileConnectingProvider =
+    StateProvider.autoDispose.family<bool, String>((ref, groupId) => false);
 
 class GroupListScreen extends ConsumerWidget {
   const GroupListScreen({super.key});
@@ -134,7 +141,7 @@ class GroupListScreen extends ConsumerWidget {
   }
 }
 
-class _GroupTile extends ConsumerStatefulWidget {
+class _GroupTile extends ConsumerWidget {
   final GroupEntity group;
   final int depth;
   final VoidCallback onEdit;
@@ -147,20 +154,13 @@ class _GroupTile extends ConsumerStatefulWidget {
     required this.onDelete,
   });
 
-  @override
-  ConsumerState<_GroupTile> createState() => _GroupTileState();
-}
-
-class _GroupTileState extends ConsumerState<_GroupTile> {
-  bool _expanded = false;
-  bool _connectingAll = false;
-
-  Future<void> _connectAllServers() async {
-    if (_connectingAll) return;
-    setState(() => _connectingAll = true);
+  Future<void> _connectAllServers(BuildContext context, WidgetRef ref) async {
+    final connectingAll = ref.read(_groupTileConnectingProvider(group.id));
+    if (connectingAll) return;
+    ref.read(_groupTileConnectingProvider(group.id).notifier).state = true;
 
     try {
-      final groupId = widget.group.id;
+      final groupId = group.id;
       final useCases = ref.read(serverUseCasesProvider);
       final result = await useCases.getServers(
         filter: ServerFilter(groupId: groupId),
@@ -177,30 +177,29 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
         await sessionManager.openSession(server.id);
       }
 
-      if (mounted) {
+      if (context.mounted) {
         ref
             .read(shellNavigationProvider)
             ?.goBranch(AppConstants.terminalBranchIndex);
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         AdaptiveNotification.show(
           context,
           message: AppLocalizations.of(context)!.error(e.toString()),
         );
       }
     } finally {
-      if (mounted) {
-        setState(() => _connectingAll = false);
-      }
+      ref.read(_groupTileConnectingProvider(group.id).notifier).state = false;
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final group = widget.group;
     final l10n = AppLocalizations.of(context)!;
+    final expanded = ref.watch(_groupTileExpandedProvider(group.id));
+    final connectingAll = ref.watch(_groupTileConnectingProvider(group.id));
 
     return Column(
       children: [
@@ -209,7 +208,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
             motion: const DrawerMotion(),
             children: [
               SlidableAction(
-                onPressed: (_) => widget.onEdit(),
+                onPressed: (_) => onEdit(),
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
                 icon: Icons.edit,
@@ -217,7 +216,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
                 borderRadius: BorderRadius.circular(12),
               ),
               SlidableAction(
-                onPressed: (_) => widget.onDelete(),
+                onPressed: (_) => onDelete(),
                 backgroundColor: theme.colorScheme.error,
                 foregroundColor: Colors.white,
                 icon: Icons.delete,
@@ -228,7 +227,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
           ),
           child: ListTile(
             contentPadding: EdgeInsets.only(
-              left: 16.0 + widget.depth * 24.0,
+              left: 16.0 + depth * 24.0,
               right: 16.0,
             ),
             leading: Container(
@@ -257,7 +256,7 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (group.serverCount > 0)
-                  _connectingAll
+                  connectingAll
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -265,17 +264,19 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
                         )
                       : IconButton(
                           icon: const Icon(Icons.play_circle_outline),
-                          onPressed: _connectAllServers,
+                          onPressed: () => _connectAllServers(context, ref),
                           tooltip: l10n.groupConnectAll,
                           visualDensity: VisualDensity.compact,
                         ),
                 if (group.serverCount > 0)
                   IconButton(
                     icon: Icon(
-                      _expanded ? Icons.expand_less : Icons.expand_more,
+                      expanded ? Icons.expand_less : Icons.expand_more,
                     ),
-                    onPressed: () => setState(() => _expanded = !_expanded),
-                    tooltip: _expanded
+                    onPressed: () => ref
+                        .read(_groupTileExpandedProvider(group.id).notifier)
+                        .state = !expanded,
+                    tooltip: expanded
                         ? l10n.groupCollapse
                         : l10n.groupShowHosts,
                     visualDensity: VisualDensity.compact,
@@ -283,11 +284,13 @@ class _GroupTileState extends ConsumerState<_GroupTile> {
               ],
             ),
             onTap: group.serverCount > 0
-                ? () => setState(() => _expanded = !_expanded)
+                ? () => ref
+                    .read(_groupTileExpandedProvider(group.id).notifier)
+                    .state = !expanded
                 : null,
           ),
         ),
-        if (_expanded) _GroupServerList(groupId: group.id, depth: widget.depth),
+        if (expanded) _GroupServerList(groupId: group.id, depth: depth),
       ],
     );
   }

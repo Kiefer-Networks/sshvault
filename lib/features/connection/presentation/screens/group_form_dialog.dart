@@ -3,12 +3,41 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
 import 'package:shellvault/features/connection/presentation/widgets/icon_picker_field.dart';
+
+class _GroupFormReactiveState {
+  final int color;
+  final String iconName;
+  final String? parentId;
+
+  const _GroupFormReactiveState({
+    this.color = ColorConstants.defaultServerColor,
+    this.iconName = IconConstants.defaultIconName,
+    this.parentId,
+  });
+
+  _GroupFormReactiveState copyWith({
+    int? color,
+    String? iconName,
+    String? Function()? parentId,
+  }) {
+    return _GroupFormReactiveState(
+      color: color ?? this.color,
+      iconName: iconName ?? this.iconName,
+      parentId: parentId != null ? parentId() : this.parentId,
+    );
+  }
+}
+
+final _groupFormStateProvider = StateProvider.autoDispose<_GroupFormReactiveState>(
+  (ref) => const _GroupFormReactiveState(),
+);
 
 class GroupFormDialog extends ConsumerStatefulWidget {
   final GroupEntity? group;
@@ -30,18 +59,13 @@ class GroupFormDialog extends ConsumerStatefulWidget {
 
 class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
   final _nameController = TextEditingController();
-  int _color = ColorConstants.defaultServerColor;
-  String _iconName = IconConstants.defaultIconName;
-  String? _parentId;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.group != null) {
       _nameController.text = widget.group!.name;
-      _color = widget.group!.color;
-      _iconName = widget.group!.iconName;
-      _parentId = widget.group!.parentId;
     }
   }
 
@@ -51,8 +75,22 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
     super.dispose();
   }
 
+  void _ensureInitialized() {
+    if (_initialized) return;
+    _initialized = true;
+    if (widget.group != null) {
+      ref.read(_groupFormStateProvider.notifier).state = _GroupFormReactiveState(
+        color: widget.group!.color,
+        iconName: widget.group!.iconName,
+        parentId: widget.group!.parentId,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _ensureInitialized();
+    final formState = ref.watch(_groupFormStateProvider);
     final groupsAsync = ref.watch(groupListProvider);
 
     final l10n = AppLocalizations.of(context)!;
@@ -85,7 +123,7 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
                     .toList();
                 if (availableGroups.isEmpty) return const SizedBox.shrink();
                 return DropdownButtonFormField<String?>(
-                  initialValue: _parentId,
+                  initialValue: formState.parentId,
                   decoration: InputDecoration(
                     labelText: l10n.groupFormParentLabel,
                     prefixIcon: const Icon(Icons.account_tree),
@@ -100,7 +138,9 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
                           DropdownMenuItem(value: g.id, child: Text(g.name)),
                     ),
                   ],
-                  onChanged: (v) => setState(() => _parentId = v),
+                  onChanged: (v) => ref
+                      .read(_groupFormStateProvider.notifier)
+                      .state = formState.copyWith(parentId: () => v),
                 );
               },
               loading: () => const SizedBox.shrink(),
@@ -108,14 +148,18 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
             ),
             const SizedBox(height: 16),
             ColorPickerField(
-              selectedColor: _color,
-              onColorChanged: (c) => setState(() => _color = c),
+              selectedColor: formState.color,
+              onColorChanged: (c) => ref
+                  .read(_groupFormStateProvider.notifier)
+                  .state = formState.copyWith(color: c),
             ),
             const SizedBox(height: 16),
             IconPickerField(
-              selectedIcon: _iconName,
-              onIconChanged: (i) => setState(() => _iconName = i),
-              accentColor: _color,
+              selectedIcon: formState.iconName,
+              onIconChanged: (i) => ref
+                  .read(_groupFormStateProvider.notifier)
+                  .state = formState.copyWith(iconName: i),
+              accentColor: formState.color,
             ),
           ],
         ),
@@ -160,6 +204,7 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
 
+    final formState = ref.read(_groupFormStateProvider);
     final now = DateTime.now();
     final notifier = ref.read(groupListProvider.notifier);
 
@@ -167,9 +212,9 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
       await notifier.updateGroup(
         widget.group!.copyWith(
           name: name,
-          color: _color,
-          iconName: _iconName,
-          parentId: _parentId,
+          color: formState.color,
+          iconName: formState.iconName,
+          parentId: formState.parentId,
         ),
       );
     } else {
@@ -177,9 +222,9 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
         GroupEntity(
           id: '',
           name: name,
-          color: _color,
-          iconName: _iconName,
-          parentId: _parentId,
+          color: formState.color,
+          iconName: formState.iconName,
+          parentId: formState.parentId,
           createdAt: now,
           updatedAt: now,
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
@@ -67,6 +68,10 @@ class SftpServerPicker extends ConsumerWidget {
   }
 }
 
+final _serverPickerQueryProvider = StateProvider.autoDispose<String>(
+  (ref) => '',
+);
+
 class _ServerPickerDialog extends ConsumerStatefulWidget {
   final SftpPaneSource currentSource;
 
@@ -79,7 +84,6 @@ class _ServerPickerDialog extends ConsumerStatefulWidget {
 
 class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
   final _searchController = TextEditingController();
-  String _query = '';
 
   @override
   void dispose() {
@@ -93,6 +97,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
     final theme = Theme.of(context);
     final serversAsync = ref.watch(serverListProvider);
     final groupsAsync = ref.watch(groupListProvider);
+    final query = ref.watch(_serverPickerQueryProvider);
 
     return Dialog(
       clipBehavior: Clip.antiAlias,
@@ -118,12 +123,12 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
                 decoration: InputDecoration(
                   hintText: l10n.searchServers,
                   prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _query.isNotEmpty
+                  suffixIcon: query.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.clear),
                           onPressed: () {
                             _searchController.clear();
-                            setState(() => _query = '');
+                            ref.read(_serverPickerQueryProvider.notifier).state = '';
                           },
                         )
                       : null,
@@ -133,7 +138,8 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
-                onChanged: (value) => setState(() => _query = value),
+                onChanged: (value) =>
+                    ref.read(_serverPickerQueryProvider.notifier).state = value,
               ),
             ),
             const Divider(height: 1),
@@ -142,7 +148,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
               child: serversAsync.when(
                 data: (servers) {
                   final groups = groupsAsync.value ?? [];
-                  return _buildList(context, servers, groups);
+                  return _buildList(context, servers, groups, query);
                 },
                 loading: () => const Center(child: CircularProgressIndicator.adaptive()),
                 error: (_, _) => const SizedBox.shrink(),
@@ -158,10 +164,11 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
     BuildContext context,
     List<ServerEntity> allServers,
     List<GroupEntity> allGroups,
+    String query,
   ) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final lowerQuery = _query.toLowerCase();
+    final lowerQuery = query.toLowerCase();
 
     // Filter servers by search query
     final filtered = lowerQuery.isEmpty

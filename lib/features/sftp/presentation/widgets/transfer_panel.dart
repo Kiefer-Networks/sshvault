@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/features/sftp/domain/entities/transfer_item.dart';
 import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
-class TransferPanel extends ConsumerStatefulWidget {
+final _transferPanelExpandedProvider = StateProvider.autoDispose<bool>(
+  (ref) => false,
+);
+
+class TransferPanel extends ConsumerWidget {
   const TransferPanel({super.key});
 
   @override
-  ConsumerState<TransferPanel> createState() => _TransferPanelState();
-}
-
-class _TransferPanelState extends ConsumerState<TransferPanel> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final transfers = ref.watch(transferManagerProvider);
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final expanded = ref.watch(_transferPanelExpandedProvider);
 
     final activeCount = transfers
         .where((t) => t.status == TransferStatus.active)
@@ -52,7 +51,8 @@ class _TransferPanelState extends ConsumerState<TransferPanel> {
         const Divider(height: 1),
         // Header bar — always visible
         InkWell(
-          onTap: () => setState(() => _expanded = !_expanded),
+          onTap: () => ref.read(_transferPanelExpandedProvider.notifier).state =
+              !expanded,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -84,7 +84,7 @@ class _TransferPanelState extends ConsumerState<TransferPanel> {
                     child: Text(l10n.sftpClearCompleted),
                   ),
                 Icon(
-                  _expanded ? Icons.expand_more : Icons.expand_less,
+                  expanded ? Icons.expand_more : Icons.expand_less,
                   size: 20,
                 ),
               ],
@@ -93,14 +93,14 @@ class _TransferPanelState extends ConsumerState<TransferPanel> {
         ),
 
         // Active transfer progress
-        if (!_expanded && activeCount > 0)
+        if (!expanded && activeCount > 0)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: LinearProgressIndicator(value: _overallProgress(transfers)),
           ),
 
         // Expanded transfer list
-        if (_expanded)
+        if (expanded)
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 200),
             child: ListView.builder(

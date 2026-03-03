@@ -3,15 +3,52 @@ import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/crypto/ssh_key_type.dart';
 
-class KeyGenerationDialog extends StatefulWidget {
+class _KeyGenReactiveState {
+  final SshKeyType selectedType;
+  final int selectedBits;
+  final bool generating;
+  final SshKeyPair? result;
+  final String? error;
+
+  const _KeyGenReactiveState({
+    this.selectedType = SshKeyType.ed25519,
+    this.selectedBits = 0,
+    this.generating = false,
+    this.result,
+    this.error,
+  });
+
+  _KeyGenReactiveState copyWith({
+    SshKeyType? selectedType,
+    int? selectedBits,
+    bool? generating,
+    SshKeyPair? Function()? result,
+    String? Function()? error,
+  }) {
+    return _KeyGenReactiveState(
+      selectedType: selectedType ?? this.selectedType,
+      selectedBits: selectedBits ?? this.selectedBits,
+      generating: generating ?? this.generating,
+      result: result != null ? result() : this.result,
+      error: error != null ? error() : this.error,
+    );
+  }
+}
+
+final _keyGenStateProvider = StateProvider.autoDispose<_KeyGenReactiveState>(
+  (ref) => const _KeyGenReactiveState(),
+);
+
+class KeyGenerationDialog extends ConsumerStatefulWidget {
   final SshKeyService sshKeyService;
 
   const KeyGenerationDialog({super.key, required this.sshKeyService});
 
-  /// Show the dialog and return a [SshKeyPair] or null if cancelled.
   static Future<SshKeyPair?> show(
     BuildContext context,
     SshKeyService sshKeyService,
@@ -23,19 +60,14 @@ class KeyGenerationDialog extends StatefulWidget {
   }
 
   @override
-  State<KeyGenerationDialog> createState() => _KeyGenerationDialogState();
+  ConsumerState<KeyGenerationDialog> createState() =>
+      _KeyGenerationDialogState();
 }
 
-class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
-  SshKeyType _selectedType = SshKeyType.ed25519;
-  int _selectedBits = 0;
+class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
   final _commentController = TextEditingController(
     text: 'shellvault-generated',
   );
-
-  bool _generating = false;
-  SshKeyPair? _result;
-  String? _error;
 
   @override
   void dispose() {
@@ -44,15 +76,16 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
   }
 
   Future<void> _generate() async {
-    setState(() {
-      _generating = true;
-      _error = null;
-      _result = null;
-    });
+    final genState = ref.read(_keyGenStateProvider);
+    ref.read(_keyGenStateProvider.notifier).state = genState.copyWith(
+      generating: true,
+      error: () => null,
+      result: () => null,
+    );
 
     final options = SshKeyOptions(
-      type: _selectedType,
-      bits: _selectedBits,
+      type: ref.read(_keyGenStateProvider).selectedType,
+      bits: ref.read(_keyGenStateProvider).selectedBits,
       comment: _commentController.text.trim().isEmpty
           ? 'shellvault-generated'
           : _commentController.text.trim(),
@@ -63,16 +96,20 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
 
     result.fold(
       onSuccess: (keyPair) {
-        setState(() {
-          _result = keyPair;
-          _generating = false;
-        });
+        ref.read(_keyGenStateProvider.notifier).state = ref
+            .read(_keyGenStateProvider)
+            .copyWith(
+              result: () => keyPair,
+              generating: false,
+            );
       },
       onFailure: (failure) {
-        setState(() {
-          _error = failure.message;
-          _generating = false;
-        });
+        ref.read(_keyGenStateProvider.notifier).state = ref
+            .read(_keyGenStateProvider)
+            .copyWith(
+              error: () => failure.message,
+              generating: false,
+            );
       },
     );
   }
@@ -81,9 +118,10 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final genState = ref.watch(_keyGenStateProvider);
 
-    if (_result != null) {
-      return _buildResultView(theme, l10n);
+    if (genState.result != null) {
+      return _buildResultView(theme, l10n, genState);
     }
 
     return AlertDialog(
@@ -94,11 +132,10 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Key Type
             Text(l10n.keyGenKeyType, style: theme.textTheme.titleSmall),
             const SizedBox(height: 8),
             DropdownButtonFormField<SshKeyType>(
-              initialValue: _selectedType,
+              initialValue: genState.selectedType,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.vpn_key),
                 isDense: true,
@@ -109,31 +146,31 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                         DropdownMenuItem(value: t, child: Text(t.displayName)),
                   )
                   .toList(),
-              onChanged: _generating
+              onChanged: genState.generating
                   ? null
                   : (type) {
                       if (type == null) return;
-                      setState(() {
-                        _selectedType = type;
-                        _selectedBits = type.defaultBitLength;
-                      });
+                      ref.read(_keyGenStateProvider.notifier).state =
+                          genState.copyWith(
+                        selectedType: type,
+                        selectedBits: type.defaultBitLength,
+                      );
                     },
             ),
             const SizedBox(height: 16),
 
-            // Key Size (only for RSA)
-            if (_selectedType.allowedBitLengths.isNotEmpty) ...[
+            if (genState.selectedType.allowedBitLengths.isNotEmpty) ...[
               Text(l10n.keyGenKeySize, style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               DropdownButtonFormField<int>(
-                initialValue: _selectedBits > 0
-                    ? _selectedBits
-                    : _selectedType.defaultBitLength,
+                initialValue: genState.selectedBits > 0
+                    ? genState.selectedBits
+                    : genState.selectedType.defaultBitLength,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.memory),
                   isDense: true,
                 ),
-                items: _selectedType.allowedBitLengths
+                items: genState.selectedType.allowedBitLengths
                     .map(
                       (b) => DropdownMenuItem(
                         value: b,
@@ -141,17 +178,19 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                       ),
                     )
                     .toList(),
-                onChanged: _generating
+                onChanged: genState.generating
                     ? null
                     : (bits) {
-                        if (bits != null) setState(() => _selectedBits = bits);
+                        if (bits != null) {
+                          ref.read(_keyGenStateProvider.notifier).state =
+                              genState.copyWith(selectedBits: bits);
+                        }
                       },
               ),
               const SizedBox(height: 16),
             ],
 
-            // Key size info for fixed-size types
-            if (_selectedType.allowedBitLengths.isEmpty)
+            if (genState.selectedType.allowedBitLengths.isEmpty)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Row(
@@ -163,7 +202,7 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _selectedType.keySizeLabel,
+                      genState.selectedType.keySizeLabel,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -172,12 +211,11 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                 ),
               ),
 
-            // Comment
             Text(l10n.keyGenComment, style: theme.textTheme.titleSmall),
             const SizedBox(height: 8),
             TextFormField(
               controller: _commentController,
-              enabled: !_generating,
+              enabled: !genState.generating,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.comment_outlined),
                 hintText: l10n.keyGenCommentHint,
@@ -186,21 +224,24 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
               keyboardType: TextInputType.text,
             ),
 
-            if (_error != null) ...[
+            if (genState.error != null) ...[
               const SizedBox(height: 16),
-              Text(_error!, style: TextStyle(color: theme.colorScheme.error)),
+              Text(
+                genState.error!,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
             ],
           ],
         ),
       ),
       actions: [
         TextButton(
-          onPressed: _generating ? null : () => Navigator.pop(context),
+          onPressed: genState.generating ? null : () => Navigator.pop(context),
           child: Text(l10n.cancel),
         ),
         FilledButton.icon(
-          onPressed: _generating ? null : _generate,
-          icon: _generating
+          onPressed: genState.generating ? null : _generate,
+          icon: genState.generating
               ? const SizedBox(
                   width: 16,
                   height: 16,
@@ -208,15 +249,19 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
                 )
               : const Icon(Icons.auto_fix_high, size: 18),
           label: Text(
-            _generating ? l10n.keyGenGenerating : l10n.keyGenGenerate,
+            genState.generating ? l10n.keyGenGenerating : l10n.keyGenGenerate,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildResultView(ThemeData theme, AppLocalizations l10n) {
-    final result = _result!;
+  Widget _buildResultView(
+    ThemeData theme,
+    AppLocalizations l10n,
+    _KeyGenReactiveState genState,
+  ) {
+    final result = genState.result!;
     return AlertDialog(
       title: Row(
         children: [
@@ -236,7 +281,6 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Public Key
             _KeyPreviewCard(
               label: l10n.keyGenPublicKey,
               value: result.publicKey,
@@ -245,7 +289,6 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
             ),
             const SizedBox(height: 12),
 
-            // Private Key
             _KeyPreviewCard(
               label: l10n.keyGenPrivateKey,
               value: result.privateKey,
@@ -255,7 +298,6 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
             ),
             const SizedBox(height: 12),
 
-            // Info
             Row(
               children: [
                 Icon(
@@ -280,10 +322,9 @@ class _KeyGenerationDialogState extends State<KeyGenerationDialog> {
       actions: [
         TextButton(
           onPressed: () {
-            setState(() {
-              _result = null;
-              _error = null;
-            });
+            ref.read(_keyGenStateProvider.notifier).state = ref
+                .read(_keyGenStateProvider)
+                .copyWith(result: () => null, error: () => null);
           },
           child: Text(l10n.keyGenAnother),
         ),

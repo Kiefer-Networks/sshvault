@@ -10,6 +10,62 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 enum SyncPasswordMode { create, enter }
 
+class _SyncPasswordFormState {
+  final bool obscure;
+  final bool saving;
+  final String? errorMessage;
+
+  const _SyncPasswordFormState({
+    this.obscure = true,
+    this.saving = false,
+    this.errorMessage,
+  });
+
+  _SyncPasswordFormState copyWith({
+    bool? obscure,
+    bool? saving,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return _SyncPasswordFormState(
+      obscure: obscure ?? this.obscure,
+      saving: saving ?? this.saving,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    );
+  }
+}
+
+class _SyncPasswordFormNotifier
+    extends Notifier<_SyncPasswordFormState> {
+  @override
+  _SyncPasswordFormState build() => const _SyncPasswordFormState();
+
+  void toggleObscure() {
+    state = state.copyWith(obscure: !state.obscure);
+  }
+
+  void setSaving(bool value) {
+    state = state.copyWith(saving: value);
+  }
+
+  void setError(String? value) {
+    if (value == null) {
+      state = state.copyWith(clearError: true);
+    } else {
+      state = state.copyWith(errorMessage: value);
+    }
+  }
+
+  void startSaving() {
+    state = state.copyWith(saving: true, clearError: true);
+  }
+}
+
+final _syncPasswordFormProvider = NotifierProvider.autoDispose<
+    _SyncPasswordFormNotifier, _SyncPasswordFormState>(
+  _SyncPasswordFormNotifier.new,
+);
+
 class SyncPasswordScreen extends ConsumerStatefulWidget {
   final SyncPasswordMode mode;
 
@@ -23,9 +79,6 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
-  bool _obscure = true;
-  bool _saving = false;
-  String? _errorMessage;
 
   bool get _isCreateMode => widget.mode == SyncPasswordMode.create;
 
@@ -40,6 +93,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final formState = ref.watch(_syncPasswordFormProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -104,17 +158,19 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                   // Password field
                   TextFormField(
                     controller: _passwordController,
-                    obscureText: _obscure,
+                    obscureText: formState.obscure,
                     decoration: InputDecoration(
                       labelText: l10n.syncPasswordLabel,
                       prefixIcon: const Icon(Icons.key_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscure
+                          formState.obscure
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
                         ),
-                        onPressed: () => setState(() => _obscure = !_obscure),
+                        onPressed: () => ref
+                            .read(_syncPasswordFormProvider.notifier)
+                            .toggleObscure(),
                       ),
                     ),
                     validator: (v) {
@@ -130,7 +186,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _confirmController,
-                      obscureText: _obscure,
+                      obscureText: formState.obscure,
                       decoration: InputDecoration(
                         labelText: l10n.authConfirmPasswordLabel,
                         prefixIcon: const Icon(Icons.key_outlined),
@@ -145,10 +201,10 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                   ],
 
                   // Error message
-                  if (_errorMessage != null) ...[
+                  if (formState.errorMessage != null) ...[
                     const SizedBox(height: 12),
                     Text(
-                      _errorMessage!,
+                      formState.errorMessage!,
                       style: TextStyle(color: theme.colorScheme.error),
                       textAlign: TextAlign.center,
                     ),
@@ -156,8 +212,8 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
 
                   const SizedBox(height: 24),
                   AdaptiveButton.filled(
-                    onPressed: _saving ? null : _save,
-                    child: _saving
+                    onPressed: formState.saving ? null : _save,
+                    child: formState.saving
                         ? const SizedBox(
                             height: 20,
                             width: 20,
@@ -176,10 +232,8 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() {
-      _saving = true;
-      _errorMessage = null;
-    });
+    final l10n = AppLocalizations.of(context)!;
+    ref.read(_syncPasswordFormProvider.notifier).startSaving();
 
     try {
       final password = _passwordController.text;
@@ -199,10 +253,10 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
         final validResult = await useCases.validatePassword(password);
 
         if (validResult.isFailure || !validResult.value) {
-          setState(() {
-            _errorMessage = AppLocalizations.of(context)!.syncPasswordWrong;
-            _saving = false;
-          });
+          ref.read(_syncPasswordFormProvider.notifier).setError(
+            l10n.syncPasswordWrong,
+          );
+          ref.read(_syncPasswordFormProvider.notifier).setSaving(false);
           return;
         }
 
@@ -216,7 +270,9 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
         await _handleFirstSync(password);
       }
     } finally {
-      if (mounted) setState(() => _saving = false);
+      if (mounted) {
+        ref.read(_syncPasswordFormProvider.notifier).setSaving(false);
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
@@ -18,6 +19,58 @@ import 'package:shellvault/features/connection/presentation/widgets/color_picker
 import 'package:shellvault/features/connection/presentation/widgets/icon_picker_field.dart';
 import 'package:shellvault/features/connection/presentation/widgets/server_form_fields.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_selector.dart';
+
+class _ServerFormReactiveState {
+  final AuthMethod authMethod;
+  final int color;
+  final String iconName;
+  final String? groupId;
+  final String? sshKeyId;
+  final bool useManagedKey;
+  final List<String> selectedTagIds;
+  final bool isActive;
+  final bool saving;
+
+  const _ServerFormReactiveState({
+    this.authMethod = AuthMethod.password,
+    this.color = ColorConstants.defaultServerColor,
+    this.iconName = IconConstants.defaultIconName,
+    this.groupId,
+    this.sshKeyId,
+    this.useManagedKey = false,
+    this.selectedTagIds = const [],
+    this.isActive = true,
+    this.saving = false,
+  });
+
+  _ServerFormReactiveState copyWith({
+    AuthMethod? authMethod,
+    int? color,
+    String? iconName,
+    String? Function()? groupId,
+    String? Function()? sshKeyId,
+    bool? useManagedKey,
+    List<String>? selectedTagIds,
+    bool? isActive,
+    bool? saving,
+  }) {
+    return _ServerFormReactiveState(
+      authMethod: authMethod ?? this.authMethod,
+      color: color ?? this.color,
+      iconName: iconName ?? this.iconName,
+      groupId: groupId != null ? groupId() : this.groupId,
+      sshKeyId: sshKeyId != null ? sshKeyId() : this.sshKeyId,
+      useManagedKey: useManagedKey ?? this.useManagedKey,
+      selectedTagIds: selectedTagIds ?? this.selectedTagIds,
+      isActive: isActive ?? this.isActive,
+      saving: saving ?? this.saving,
+    );
+  }
+}
+
+final _serverFormStateProvider = StateProvider.autoDispose<_ServerFormReactiveState>(
+  (ref) => const _ServerFormReactiveState(),
+);
 
 class ServerFormScreen extends ConsumerStatefulWidget {
   final String? serverId;
@@ -42,16 +95,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   final _passphraseController = TextEditingController();
   final _notesController = TextEditingController();
 
-  AuthMethod _authMethod = AuthMethod.password;
-  int _color = ColorConstants.defaultServerColor;
-  String _iconName = IconConstants.defaultIconName;
-  String? _groupId;
-  String? _sshKeyId;
-  bool _useManagedKey = false;
-  List<String> _selectedTagIds = [];
-  bool _isActive = true;
-  bool _saving = false;
-
   @override
   void initState() {
     super.initState();
@@ -73,18 +116,17 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     _portController.text = result.port.toString();
     _usernameController.text = result.username;
     _notesController.text = result.notes;
-    setState(() {
-      _authMethod = result.authMethod;
-      _color = result.color;
-      _iconName = result.iconName;
-      _groupId = result.groupId;
-      _sshKeyId = result.sshKeyId;
-      _useManagedKey = result.sshKeyId != null;
-      _selectedTagIds = result.tags.map((t) => t.id).toList();
-      _isActive = result.isActive;
-    });
+    ref.read(_serverFormStateProvider.notifier).state = _ServerFormReactiveState(
+      authMethod: result.authMethod,
+      color: result.color,
+      iconName: result.iconName,
+      groupId: result.groupId,
+      sshKeyId: result.sshKeyId,
+      useManagedKey: result.sshKeyId != null,
+      selectedTagIds: result.tags.map((t) => t.id).toList(),
+      isActive: result.isActive,
+    );
 
-    // Load credentials
     final creds = await ref.read(
       serverCredentialsProvider(widget.serverId!).future,
     );
@@ -113,10 +155,8 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     final sshKeyService = ref.read(sshKeyServiceProvider);
     final result = await KeyGenerationDialog.show(context, sshKeyService);
     if (result != null && mounted) {
-      setState(() {
-        _privateKeyController.text = result.privateKey;
-        _publicKeyController.text = result.publicKey;
-      });
+      _privateKeyController.text = result.privateKey;
+      _publicKeyController.text = result.publicKey;
       AdaptiveNotification.show(
         context,
         message: AppLocalizations.of(
@@ -136,9 +176,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     final l10n = AppLocalizations.of(context)!;
     result.fold(
       onSuccess: (publicKey) {
-        setState(() {
-          _publicKeyController.text = publicKey;
-        });
+        _publicKeyController.text = publicKey;
         AdaptiveNotification.show(
           context,
           message: l10n.serverFormPublicKeyExtracted,
@@ -156,6 +194,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   @override
   Widget build(BuildContext context) {
     final groupsAsync = ref.watch(groupListProvider);
+    final formState = ref.watch(_serverFormStateProvider);
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -170,8 +209,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
               children: [
                 Text(l10n.serverActive),
                 Switch(
-                  value: _isActive,
-                  onChanged: (v) => setState(() => _isActive = v),
+                  value: formState.isActive,
+                  onChanged: (v) => ref
+                      .read(_serverFormStateProvider.notifier)
+                      .state = formState.copyWith(isActive: v),
                 ),
               ],
             ),
@@ -192,26 +233,31 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
               publicKeyController: _publicKeyController,
               passphraseController: _passphraseController,
               notesController: _notesController,
-              authMethod: _authMethod,
-              onAuthMethodChanged: (m) => setState(() => _authMethod = m),
+              authMethod: formState.authMethod,
+              onAuthMethodChanged: (m) => ref
+                  .read(_serverFormStateProvider.notifier)
+                  .state = formState.copyWith(authMethod: m),
               onGenerateKeyPair: _generateKeyPair,
               onExtractPublicKey: _extractPublicKey,
-              useManagedKey: _useManagedKey,
-              onUseManagedKeyChanged: (v) => setState(() {
-                _useManagedKey = v;
-                if (!v) _sshKeyId = null;
-              }),
-              selectedSshKeyId: _sshKeyId,
-              onSshKeyChanged: (id) => setState(() => _sshKeyId = id),
+              useManagedKey: formState.useManagedKey,
+              onUseManagedKeyChanged: (v) => ref
+                  .read(_serverFormStateProvider.notifier)
+                  .state = formState.copyWith(
+                useManagedKey: v,
+                sshKeyId: v ? null : () => null,
+              ),
+              selectedSshKeyId: formState.sshKeyId,
+              onSshKeyChanged: (id) => ref
+                  .read(_serverFormStateProvider.notifier)
+                  .state = formState.copyWith(sshKeyId: () => id),
             ),
             const SizedBox(height: 24),
 
-            // Group selector
             groupsAsync.when(
               data: (groups) {
                 if (groups.isEmpty) return const SizedBox.shrink();
                 return DropdownButtonFormField<String?>(
-                  initialValue: _groupId,
+                  initialValue: formState.groupId,
                   decoration: InputDecoration(
                     labelText: l10n.navGroups,
                     prefixIcon: const Icon(Icons.folder_outlined),
@@ -225,7 +271,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                       (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
                     ),
                   ],
-                  onChanged: (v) => setState(() => _groupId = v),
+                  onChanged: (v) => ref
+                      .read(_serverFormStateProvider.notifier)
+                      .state = formState.copyWith(groupId: () => v),
                 );
               },
               loading: () => const SizedBox.shrink(),
@@ -234,27 +282,33 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
             const SizedBox(height: 24),
 
             TagSelector(
-              selectedTagIds: _selectedTagIds,
-              onChanged: (ids) => setState(() => _selectedTagIds = ids),
+              selectedTagIds: formState.selectedTagIds,
+              onChanged: (ids) => ref
+                  .read(_serverFormStateProvider.notifier)
+                  .state = formState.copyWith(selectedTagIds: ids),
             ),
             const SizedBox(height: 24),
 
             ColorPickerField(
-              selectedColor: _color,
-              onColorChanged: (c) => setState(() => _color = c),
+              selectedColor: formState.color,
+              onColorChanged: (c) => ref
+                  .read(_serverFormStateProvider.notifier)
+                  .state = formState.copyWith(color: c),
             ),
             const SizedBox(height: 24),
 
             IconPickerField(
-              selectedIcon: _iconName,
-              onIconChanged: (i) => setState(() => _iconName = i),
-              accentColor: _color,
+              selectedIcon: formState.iconName,
+              onIconChanged: (i) => ref
+                  .read(_serverFormStateProvider.notifier)
+                  .state = formState.copyWith(iconName: i),
+              accentColor: formState.color,
             ),
             const SizedBox(height: 32),
 
             AdaptiveButton.filledIcon(
-              onPressed: _saving ? null : _save,
-              icon: _saving
+              onPressed: formState.saving ? null : _save,
+              icon: formState.saving
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -280,12 +334,15 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _saving = true);
+    final notifierState = ref.read(_serverFormStateProvider.notifier);
+    final formState = ref.read(_serverFormStateProvider);
+    notifierState.state = formState.copyWith(saving: true);
 
     try {
       final now = DateTime.now();
       final now0 = DateTime.fromMillisecondsSinceEpoch(0);
-      final tags = _selectedTagIds
+      final currentState = ref.read(_serverFormStateProvider);
+      final tags = currentState.selectedTagIds
           .map(
             (id) =>
                 TagEntity(id: id, name: '', createdAt: now0, updatedAt: now0),
@@ -298,13 +355,13 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         hostname: _hostnameController.text.trim(),
         port: int.parse(_portController.text.trim()),
         username: _usernameController.text.trim(),
-        authMethod: _authMethod,
+        authMethod: currentState.authMethod,
         notes: _notesController.text.trim(),
-        color: _color,
-        iconName: _iconName,
-        isActive: _isActive,
-        groupId: _groupId,
-        sshKeyId: _useManagedKey ? _sshKeyId : null,
+        color: currentState.color,
+        iconName: currentState.iconName,
+        isActive: currentState.isActive,
+        groupId: currentState.groupId,
+        sshKeyId: currentState.useManagedKey ? currentState.sshKeyId : null,
         tags: tags,
         createdAt: now,
         updatedAt: now,
@@ -343,7 +400,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         );
       }
     } finally {
-      if (mounted) setState(() => _saving = false);
+      if (mounted) {
+        ref.read(_serverFormStateProvider.notifier).state =
+            ref.read(_serverFormStateProvider).copyWith(saving: false);
+      }
     }
   }
 }

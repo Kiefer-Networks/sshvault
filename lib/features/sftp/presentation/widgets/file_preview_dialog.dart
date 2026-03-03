@@ -3,11 +3,40 @@ import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
+
+class _FilePreviewState {
+  final bool loading;
+  final String? error;
+  final String? content;
+
+  const _FilePreviewState({
+    this.loading = true,
+    this.error,
+    this.content,
+  });
+
+  _FilePreviewState copyWith({
+    bool? loading,
+    String? error,
+    String? content,
+  }) {
+    return _FilePreviewState(
+      loading: loading ?? this.loading,
+      error: error ?? this.error,
+      content: content ?? this.content,
+    );
+  }
+}
+
+final _filePreviewProvider = StateProvider.autoDispose<_FilePreviewState>(
+  (ref) => const _FilePreviewState(),
+);
 
 class FilePreviewDialog extends ConsumerStatefulWidget {
   final SftpEntry entry;
@@ -20,9 +49,6 @@ class FilePreviewDialog extends ConsumerStatefulWidget {
 }
 
 class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
-  String? _content;
-  bool _loading = true;
-  String? _error;
   bool _initialized = false;
 
   @override
@@ -53,49 +79,47 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
           result.fold(
             onSuccess: (bytes) {
               if (mounted) {
-                setState(() {
-                  _content = const Utf8Decoder(
+                ref.read(_filePreviewProvider.notifier).state = _FilePreviewState(
+                  loading: false,
+                  content: const Utf8Decoder(
                     allowMalformed: true,
-                  ).convert(bytes);
-                  _loading = false;
-                });
+                  ).convert(bytes),
+                );
               }
             },
             onFailure: (f) {
               if (mounted) {
-                setState(() {
-                  _error = f.message;
-                  _loading = false;
-                });
+                ref.read(_filePreviewProvider.notifier).state = _FilePreviewState(
+                  loading: false,
+                  error: f.message,
+                );
               }
             },
           );
         case Err(:final error):
           if (mounted) {
-            setState(() {
-              _error = error.message;
-              _loading = false;
-            });
+            ref.read(_filePreviewProvider.notifier).state = _FilePreviewState(
+              loading: false,
+              error: error.message,
+            );
           }
       }
     } else {
-      // Local file preview
       try {
         final bytes = await File(widget.entry.path).readAsBytes();
-        // Only read first 64KB
         final preview = bytes.length > 65536 ? bytes.sublist(0, 65536) : bytes;
         if (mounted) {
-          setState(() {
-            _content = const Utf8Decoder(allowMalformed: true).convert(preview);
-            _loading = false;
-          });
+          ref.read(_filePreviewProvider.notifier).state = _FilePreviewState(
+            loading: false,
+            content: const Utf8Decoder(allowMalformed: true).convert(preview),
+          );
         }
       } catch (e) {
         if (mounted) {
-          setState(() {
-            _error = e.toString();
-            _loading = false;
-          });
+          ref.read(_filePreviewProvider.notifier).state = _FilePreviewState(
+            loading: false,
+            error: e.toString(),
+          );
         }
       }
     }
@@ -105,6 +129,7 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final preview = ref.watch(_filePreviewProvider);
 
     return AlertDialog(
       title: Row(
@@ -119,9 +144,9 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
       content: SizedBox(
         width: double.maxFinite,
         height: 400,
-        child: _loading
+        child: preview.loading
             ? const Center(child: CircularProgressIndicator.adaptive())
-            : _error != null
+            : preview.error != null
             ? Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -130,7 +155,7 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
               )
             : SingleChildScrollView(
                 child: SelectableText(
-                  _content ?? '',
+                  preview.content ?? '',
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontFamily: 'monospace',
                   ),

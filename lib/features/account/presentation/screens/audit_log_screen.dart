@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
-class AuditLogScreen extends ConsumerStatefulWidget {
+final _auditCategoryProvider = StateProvider.autoDispose<String?>(
+  (ref) => null,
+);
+
+final _auditOffsetProvider = StateProvider.autoDispose<int>(
+  (ref) => 0,
+);
+
+class AuditLogScreen extends ConsumerWidget {
   const AuditLogScreen({super.key});
-
-  @override
-  ConsumerState<AuditLogScreen> createState() => _AuditLogScreenState();
-}
-
-class _AuditLogScreenState extends ConsumerState<AuditLogScreen> {
-  String? _selectedCategory;
-  int _offset = 0;
 
   static const _categories = [
     null,
@@ -26,10 +27,12 @@ class _AuditLogScreenState extends ConsumerState<AuditLogScreen> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final params = (category: _selectedCategory, offset: _offset);
+    final selectedCategory = ref.watch(_auditCategoryProvider);
+    final offset = ref.watch(_auditOffsetProvider);
+    final params = (category: selectedCategory, offset: offset);
     final logsAsync = ref.watch(auditLogsProvider(params));
 
     return Scaffold(
@@ -42,17 +45,15 @@ class _AuditLogScreenState extends ConsumerState<AuditLogScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: _categories.map((cat) {
-                final isSelected = cat == _selectedCategory;
+                final isSelected = cat == selectedCategory;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
                     label: Text(cat ?? l10n.auditLogAll),
                     selected: isSelected,
                     onSelected: (_) {
-                      setState(() {
-                        _selectedCategory = cat;
-                        _offset = 0;
-                      });
+                      ref.read(_auditCategoryProvider.notifier).state = cat;
+                      ref.read(_auditOffsetProvider.notifier).state = 0;
                     },
                   ),
                 );
@@ -88,25 +89,31 @@ class _AuditLogScreenState extends ConsumerState<AuditLogScreen> {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.chevron_left),
-                              onPressed: _offset > 0
-                                  ? () => setState(() {
-                                      _offset = (_offset - result.limit).clamp(
-                                        0,
-                                        result.total,
-                                      );
-                                    })
+                              onPressed: offset > 0
+                                  ? () {
+                                      ref
+                                          .read(
+                                            _auditOffsetProvider.notifier,
+                                          )
+                                          .state = (offset - result.limit)
+                                          .clamp(0, result.total);
+                                    }
                                   : null,
                             ),
                             Text(
-                              '${_offset + 1}–${(_offset + result.logs.length).clamp(0, result.total)} / ${result.total}',
+                              '${offset + 1}–${(offset + result.logs.length).clamp(0, result.total)} / ${result.total}',
                               style: theme.textTheme.bodySmall,
                             ),
                             IconButton(
                               icon: const Icon(Icons.chevron_right),
-                              onPressed: _offset + result.limit < result.total
-                                  ? () => setState(() {
-                                      _offset += result.limit;
-                                    })
+                              onPressed: offset + result.limit < result.total
+                                  ? () {
+                                      ref
+                                          .read(
+                                            _auditOffsetProvider.notifier,
+                                          )
+                                          .state = offset + result.limit;
+                                    }
                                   : null,
                             ),
                           ],

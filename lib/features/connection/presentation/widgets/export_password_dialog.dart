@@ -2,9 +2,36 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/utils/validators.dart';
 
-class ExportPasswordDialog extends StatefulWidget {
+class _ExportPasswordVisibility {
+  final bool obscurePassword;
+  final bool obscureConfirm;
+
+  const _ExportPasswordVisibility({
+    this.obscurePassword = true,
+    this.obscureConfirm = true,
+  });
+
+  _ExportPasswordVisibility copyWith({
+    bool? obscurePassword,
+    bool? obscureConfirm,
+  }) {
+    return _ExportPasswordVisibility(
+      obscurePassword: obscurePassword ?? this.obscurePassword,
+      obscureConfirm: obscureConfirm ?? this.obscureConfirm,
+    );
+  }
+}
+
+final _exportPasswordVisibilityProvider =
+    StateProvider.autoDispose<_ExportPasswordVisibility>(
+  (ref) => const _ExportPasswordVisibility(),
+);
+
+class ExportPasswordDialog extends ConsumerStatefulWidget {
   const ExportPasswordDialog({super.key});
 
   static Future<String?> show(BuildContext context) {
@@ -15,15 +42,14 @@ class ExportPasswordDialog extends StatefulWidget {
   }
 
   @override
-  State<ExportPasswordDialog> createState() => _ExportPasswordDialogState();
+  ConsumerState<ExportPasswordDialog> createState() =>
+      _ExportPasswordDialogState();
 }
 
-class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
+class _ExportPasswordDialogState extends ConsumerState<ExportPasswordDialog> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _obscureConfirm = true;
 
   @override
   void dispose() {
@@ -35,6 +61,7 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final visibility = ref.watch(_exportPasswordVisibilityProvider);
 
     final formContent = Form(
       key: _formKey,
@@ -45,15 +72,20 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
           const SizedBox(height: 16),
           TextFormField(
             controller: _passwordController,
-            obscureText: _obscurePassword,
+            obscureText: visibility.obscurePassword,
             decoration: InputDecoration(
               labelText: l10n.exportPasswordLabel,
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  visibility.obscurePassword
+                      ? Icons.visibility_off
+                      : Icons.visibility,
                 ),
-                onPressed: () =>
-                    setState(() => _obscurePassword = !_obscurePassword),
+                onPressed: () => ref
+                    .read(_exportPasswordVisibilityProvider.notifier)
+                    .state = visibility.copyWith(
+                  obscurePassword: !visibility.obscurePassword,
+                ),
               ),
             ),
             keyboardType: TextInputType.visiblePassword,
@@ -62,15 +94,20 @@ class _ExportPasswordDialogState extends State<ExportPasswordDialog> {
           const SizedBox(height: 12),
           TextFormField(
             controller: _confirmController,
-            obscureText: _obscureConfirm,
+            obscureText: visibility.obscureConfirm,
             decoration: InputDecoration(
               labelText: l10n.exportPasswordConfirmLabel,
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                  visibility.obscureConfirm
+                      ? Icons.visibility_off
+                      : Icons.visibility,
                 ),
-                onPressed: () =>
-                    setState(() => _obscureConfirm = !_obscureConfirm),
+                onPressed: () => ref
+                    .read(_exportPasswordVisibilityProvider.notifier)
+                    .state = visibility.copyWith(
+                  obscureConfirm: !visibility.obscureConfirm,
+                ),
               ),
             ),
             keyboardType: TextInputType.visiblePassword,

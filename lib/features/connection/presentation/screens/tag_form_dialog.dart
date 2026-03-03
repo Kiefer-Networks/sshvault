@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
+
+final _tagFormColorProvider = StateProvider.autoDispose<int>(
+  (ref) => ColorConstants.defaultServerColor,
+);
 
 class TagFormDialog extends ConsumerStatefulWidget {
   final TagEntity? tag;
@@ -28,14 +33,13 @@ class TagFormDialog extends ConsumerStatefulWidget {
 
 class _TagFormDialogState extends ConsumerState<TagFormDialog> {
   final _nameController = TextEditingController();
-  int _color = ColorConstants.defaultServerColor;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.tag != null) {
       _nameController.text = widget.tag!.name;
-      _color = widget.tag!.color;
     }
   }
 
@@ -45,8 +49,18 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
     super.dispose();
   }
 
+  void _ensureInitialized() {
+    if (_initialized) return;
+    _initialized = true;
+    if (widget.tag != null) {
+      ref.read(_tagFormColorProvider.notifier).state = widget.tag!.color;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _ensureInitialized();
+    final color = ref.watch(_tagFormColorProvider);
     final l10n = AppLocalizations.of(context)!;
 
     final titleText = widget.isEditing
@@ -71,8 +85,9 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
             ),
             const SizedBox(height: 16),
             ColorPickerField(
-              selectedColor: _color,
-              onColorChanged: (c) => setState(() => _color = c),
+              selectedColor: color,
+              onColorChanged: (c) =>
+                  ref.read(_tagFormColorProvider.notifier).state = c,
             ),
           ],
         ),
@@ -117,17 +132,18 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
 
+    final color = ref.read(_tagFormColorProvider);
     final now = DateTime.now();
     final notifier = ref.read(tagListProvider.notifier);
 
     if (widget.isEditing) {
-      await notifier.updateTag(widget.tag!.copyWith(name: name, color: _color));
+      await notifier.updateTag(widget.tag!.copyWith(name: name, color: color));
     } else {
       await notifier.createTag(
         TagEntity(
           id: '',
           name: name,
-          color: _color,
+          color: color,
           createdAt: now,
           updatedAt: now,
         ),

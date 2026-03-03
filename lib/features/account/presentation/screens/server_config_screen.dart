@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
+
+class _ConnectionTestState {
+  final bool testing;
+  final String? result;
+  final bool? success;
+
+  const _ConnectionTestState({
+    this.testing = false,
+    this.result,
+    this.success,
+  });
+}
+
+final _connectionTestProvider = StateProvider.autoDispose<_ConnectionTestState>(
+  (ref) => const _ConnectionTestState(),
+);
 
 class ServerConfigScreen extends ConsumerStatefulWidget {
   const ServerConfigScreen({super.key});
@@ -16,9 +33,6 @@ class ServerConfigScreen extends ConsumerStatefulWidget {
 
 class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
   final _urlController = TextEditingController();
-  bool _testing = false;
-  String? _testResult;
-  bool? _testSuccess;
 
   @override
   void initState() {
@@ -40,6 +54,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     final settingsAsync = ref.watch(settingsProvider);
     final settings = settingsAsync.value;
     final isSelfHosted = settings?.selfHosted ?? false;
+    final testState = ref.watch(_connectionTestProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.serverConfigTitle)),
@@ -72,7 +87,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
               hintText: 'https://your-server.example.com',
               prefixIcon: const Icon(Icons.link),
               suffixIcon: IconButton(
-                icon: _testing
+                icon: testState.testing
                     ? const SizedBox(
                         width: 20,
                         height: 20,
@@ -80,18 +95,18 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                       )
                     : const Icon(Icons.check_circle_outline),
                 tooltip: l10n.serverConfigTest,
-                onPressed: _testing ? null : _testConnection,
+                onPressed: testState.testing ? null : _testConnection,
               ),
             ),
             onSubmitted: (_) => _saveUrl(_urlController.text.trim()),
           ),
-          if (_testResult != null)
+          if (testState.result != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                _testResult!,
+                testState.result!,
                 style: TextStyle(
-                  color: _testSuccess == true
+                  color: testState.success == true
                       ? Colors.green
                       : theme.colorScheme.error,
                 ),
@@ -121,11 +136,8 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     final url = _urlController.text.trim();
     if (url.isEmpty) return;
 
-    setState(() {
-      _testing = true;
-      _testResult = null;
-      _testSuccess = null;
-    });
+    ref.read(_connectionTestProvider.notifier).state =
+        const _ConnectionTestState(testing: true);
 
     try {
       final client = ApiClient(url);
@@ -133,30 +145,31 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
       result.fold(
         onSuccess: (_) {
           if (mounted) {
-            setState(() {
-              _testResult = 'Connection successful';
-              _testSuccess = true;
-            });
+            ref.read(_connectionTestProvider.notifier).state =
+                const _ConnectionTestState(
+              result: 'Connection successful',
+              success: true,
+            );
           }
         },
         onFailure: (f) {
           if (mounted) {
-            setState(() {
-              _testResult = 'Connection failed: ${f.message}';
-              _testSuccess = false;
-            });
+            ref.read(_connectionTestProvider.notifier).state =
+                _ConnectionTestState(
+              result: 'Connection failed: ${f.message}',
+              success: false,
+            );
           }
         },
       );
     } catch (e) {
       if (mounted) {
-        setState(() {
-          _testResult = 'Connection failed: $e';
-          _testSuccess = false;
-        });
+        ref.read(_connectionTestProvider.notifier).state =
+            _ConnectionTestState(
+          result: 'Connection failed: $e',
+          success: false,
+        );
       }
-    } finally {
-      if (mounted) setState(() => _testing = false);
     }
   }
 }

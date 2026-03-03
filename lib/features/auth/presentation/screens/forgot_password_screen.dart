@@ -4,6 +4,39 @@ import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
+class _ForgotPasswordState {
+  final bool sent;
+  final bool loading;
+
+  const _ForgotPasswordState({this.sent = false, this.loading = false});
+
+  _ForgotPasswordState copyWith({bool? sent, bool? loading}) {
+    return _ForgotPasswordState(
+      sent: sent ?? this.sent,
+      loading: loading ?? this.loading,
+    );
+  }
+}
+
+class _ForgotPasswordNotifier
+    extends Notifier<_ForgotPasswordState> {
+  @override
+  _ForgotPasswordState build() => const _ForgotPasswordState();
+
+  void setLoading(bool value) {
+    state = state.copyWith(loading: value);
+  }
+
+  void setSent(bool value) {
+    state = state.copyWith(sent: value);
+  }
+}
+
+final _forgotPasswordProvider = NotifierProvider.autoDispose<
+    _ForgotPasswordNotifier, _ForgotPasswordState>(
+  _ForgotPasswordNotifier.new,
+);
+
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
@@ -15,8 +48,6 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  bool _sent = false;
-  bool _loading = false;
 
   @override
   void dispose() {
@@ -27,6 +58,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final fpState = ref.watch(_forgotPasswordProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.authForgotPassword)),
@@ -35,7 +67,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
-            child: _sent
+            child: fpState.sent
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -84,8 +116,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 24),
                         AdaptiveButton.filled(
-                          onPressed: _loading ? null : _sendReset,
-                          child: _loading
+                          onPressed: fpState.loading ? null : _sendReset,
+                          child: fpState.loading
                               ? const SizedBox(
                                   height: 20,
                                   width: 20,
@@ -106,18 +138,20 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   Future<void> _sendReset() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _loading = true);
+    ref.read(_forgotPasswordProvider.notifier).setLoading(true);
     try {
       await ref
           .read(authProvider.notifier)
           .forgotPassword(_emailController.text.trim());
-      if (mounted) setState(() => _sent = true);
+      if (mounted) ref.read(_forgotPasswordProvider.notifier).setSent(true);
     } catch (e) {
       if (mounted) {
         AdaptiveNotification.show(context, message: e.toString());
       }
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        ref.read(_forgotPasswordProvider.notifier).setLoading(false);
+      }
     }
   }
 }

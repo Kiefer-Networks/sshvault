@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/group_chip.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
+
+final _showFiltersProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class SearchFilterBar extends ConsumerStatefulWidget {
   const SearchFilterBar({super.key});
@@ -18,7 +21,6 @@ class SearchFilterBar extends ConsumerStatefulWidget {
 
 class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
   final _searchController = TextEditingController();
-  bool _showFilters = false;
 
   @override
   void dispose() {
@@ -31,6 +33,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
     final filter = ref.watch(serverFilterProvider);
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final showFilters = ref.watch(_showFiltersProvider);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -71,17 +74,19 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
               const SizedBox(width: 8),
               IconButton(
                 icon: Icon(
-                  _showFilters ? Icons.filter_list_off : Icons.filter_list,
+                  showFilters ? Icons.filter_list_off : Icons.filter_list,
                   color: _hasActiveFilters(filter)
                       ? theme.colorScheme.primary
                       : null,
                 ),
-                onPressed: () => setState(() => _showFilters = !_showFilters),
+                onPressed: () => ref
+                    .read(_showFiltersProvider.notifier)
+                    .state = !showFilters,
               ),
             ],
           ),
         ),
-        if (_showFilters) ...[
+        if (showFilters) ...[
           const SizedBox(height: 12),
           _buildGroupFilter(filter, l10n),
           const SizedBox(height: 8),
