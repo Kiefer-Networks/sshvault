@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -35,8 +36,8 @@ class AuditLogScreen extends ConsumerWidget {
     final params = (category: selectedCategory, offset: offset);
     final logsAsync = ref.watch(auditLogsProvider(params));
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.auditLogTitle)),
+    return AdaptiveScaffold(
+      title: l10n.auditLogTitle,
       body: Column(
         children: [
           // Category filter

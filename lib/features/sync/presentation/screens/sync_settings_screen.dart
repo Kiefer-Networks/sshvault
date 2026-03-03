@@ -84,8 +84,8 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     final isSyncing =
         syncState.value == SyncStatus.syncing || syncState.isLoading;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.syncTitle)),
+    return AdaptiveScaffold(
+      title: l10n.syncTitle,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

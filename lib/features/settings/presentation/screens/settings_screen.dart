@@ -37,8 +37,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final settingsAsync = ref.watch(settingsProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.settingsTitle)),
+    return AdaptiveScaffold(
+      title: l10n.settingsTitle,
       body: settingsAsync.when(
         data: (settings) {
           return ListView(

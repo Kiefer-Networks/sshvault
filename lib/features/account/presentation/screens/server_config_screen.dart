@@ -56,8 +56,8 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     final isSelfHosted = settings?.selfHosted ?? false;
     final testState = ref.watch(_connectionTestProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.serverConfigTitle)),
+    return AdaptiveScaffold(
+      title: l10n.serverConfigTitle,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

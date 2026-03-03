@@ -167,7 +167,7 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
       }
     });
 
-    return Scaffold(
+    return AdaptiveScaffold.withAppBar(
       appBar: buildShellAppBar(context, title: l10n.sftpTitle),
       body: LayoutBuilder(
         builder: (context, constraints) {

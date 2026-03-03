@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/features/support/presentation/providers/support_providers.dart';
@@ -15,8 +16,8 @@ class SupportScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final status = ref.watch(supportPurchaseStatusProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.supportProjectTitle)),
+    return AdaptiveScaffold(
+      title: l10n.supportProjectTitle,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

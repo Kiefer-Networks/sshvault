@@ -70,7 +70,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
 
     // Empty state — no sessions
     if (sessions.isEmpty) {
-      return Scaffold(
+      return AdaptiveScaffold.withAppBar(
         appBar: buildShellAppBar(context, title: l10n.terminalTitle),
         body: EmptyState(
           icon: Icons.terminal,
@@ -87,7 +87,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
       );
     }
 
-    return Scaffold(
+    return AdaptiveScaffold.withAppBar(
       backgroundColor: terminalTheme.background,
       appBar: buildShellAppBar(
         context,

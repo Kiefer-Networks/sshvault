@@ -385,43 +385,52 @@ class _CupertinoMobileScaffold extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final showMore = ref.watch(_showMoreProvider);
 
-    return Scaffold(
-      body: showMore
-          ? IosMoreScreen(
-              onBranchSelected: (branchIndex) {
-                ref.read(_showMoreProvider.notifier).state = false;
-                onDestinationSelected(branchIndex);
-              },
-            )
-          : child,
-      bottomNavigationBar: CupertinoTabBar(
-        currentIndex: _currentTab(showMore),
-        onTap: (index) => _onTabTapped(ref, index),
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(CupertinoIcons.device_desktop),
-            label: l10n.navHosts,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(CupertinoIcons.folder),
-            label: l10n.navSftp,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(CupertinoIcons.chevron_left_slash_chevron_right),
-            label: l10n.navSnippets,
-          ),
-          BottomNavigationBarItem(
-            icon: sessionCount > 0
-                ? Badge(
-                    label: Text('$sessionCount'),
-                    child: const Icon(Icons.terminal),
-                  )
-                : const Icon(Icons.terminal),
-            label: l10n.navTerminal,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(CupertinoIcons.ellipsis),
-            label: l10n.navMore,
+    final content = showMore
+        ? IosMoreScreen(
+            onBranchSelected: (branchIndex) {
+              ref.read(_showMoreProvider.notifier).state = false;
+              onDestinationSelected(branchIndex);
+            },
+          )
+        : child;
+
+    return ColoredBox(
+      color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+      child: Column(
+        children: [
+          Expanded(child: content),
+          CupertinoTabBar(
+            currentIndex: _currentTab(showMore),
+            onTap: (index) => _onTabTapped(ref, index),
+            items: [
+              BottomNavigationBarItem(
+                icon: const Icon(CupertinoIcons.device_desktop),
+                label: l10n.navHosts,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(CupertinoIcons.folder),
+                label: l10n.navSftp,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(
+                  CupertinoIcons.chevron_left_slash_chevron_right,
+                ),
+                label: l10n.navSnippets,
+              ),
+              BottomNavigationBarItem(
+                icon: sessionCount > 0
+                    ? Badge(
+                        label: Text('$sessionCount'),
+                        child: const Icon(Icons.terminal),
+                      )
+                    : const Icon(Icons.terminal),
+                label: l10n.navTerminal,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(CupertinoIcons.ellipsis),
+                label: l10n.navMore,
+              ),
+            ],
           ),
         ],
       ),
