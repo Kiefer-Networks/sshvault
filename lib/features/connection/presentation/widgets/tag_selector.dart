@@ -54,7 +54,7 @@ class TagSelector extends ConsumerWidget {
             );
           },
           loading: () =>
-              const SizedBox(height: 32, child: CircularProgressIndicator()),
+              const SizedBox(height: 32, child: CircularProgressIndicator.adaptive()),
           error: (_, _) => Text(l10n.tagSelectorError),
         ),
       ],

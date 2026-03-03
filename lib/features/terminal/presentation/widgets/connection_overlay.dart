@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 
@@ -47,41 +48,20 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
       final isError = widget.status == SshConnectionStatus.error;
       final l10n = AppLocalizations.of(context)!;
 
-      showDialog<String>(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) {
-          return AlertDialog(
-            icon: Icon(
-              isError ? Icons.error_outline : Icons.link_off,
-              size: 40,
-            ),
-            title: Text(isError ? l10n.connectionError : l10n.connectionLost),
-            content: isError && widget.errorMessage != null
-                ? Text(widget.errorMessage!)
-                : null,
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(ctx).pop('close');
-                },
-                child: Text(l10n.close),
-              ),
-              FilledButton(
-                onPressed: () {
-                  Navigator.of(ctx).pop('retry');
-                },
-                child: Text(isError ? l10n.retry : l10n.connectionReconnect),
-              ),
-            ],
-          );
-        },
+      showAdaptiveConfirmDialog(
+        context,
+        title: isError ? l10n.connectionError : l10n.connectionLost,
+        message: isError && widget.errorMessage != null
+            ? widget.errorMessage!
+            : '',
+        cancelLabel: l10n.close,
+        confirmLabel: isError ? l10n.retry : l10n.connectionReconnect,
       ).then((result) {
         if (!mounted) return;
-        if (result == 'close') {
-          widget.onClose?.call();
-        } else if (result == 'retry') {
+        if (result == true) {
           widget.onRetry?.call();
+        } else {
+          widget.onClose?.call();
         }
       });
     });
@@ -101,7 +81,7 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(),
+                const CircularProgressIndicator.adaptive(),
                 const SizedBox(height: 16),
                 Text(
                   widget.status == SshConnectionStatus.authenticating

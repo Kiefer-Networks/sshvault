@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +32,17 @@ class ServerListScreen extends ConsumerWidget {
       appBar: buildShellAppBar(
         context,
         title: l10n.serverListTitle,
-        actions: const [ViewModeToggle(), SizedBox(width: 8)],
+        actions: [
+          const ViewModeToggle(),
+          if (useCupertinoDesign)
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => context.push('/server/new'),
+              child: const Icon(CupertinoIcons.add),
+            )
+          else
+            const SizedBox(width: 8),
+        ],
       ),
       body: Column(
         children: [
@@ -58,7 +71,7 @@ class ServerListScreen extends ConsumerWidget {
                       : _buildGrid(context, ref, servers),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator.adaptive()),
               error: (error, _) => ErrorState(
                 error: error,
                 onRetry: () => ref.invalidate(serverListProvider),
@@ -67,11 +80,13 @@ class ServerListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addServerFab',
-        onPressed: () => context.push('/server/new'),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addServerFab',
+              onPressed: () => context.push('/server/new'),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 
@@ -112,9 +127,10 @@ class ServerListScreen extends ConsumerWidget {
                   copySuffix: l10nDup.serverCopySuffix,
                 );
             if (context.mounted) {
-              ScaffoldMessenger.of(
+              AdaptiveNotification.show(
                 context,
-              ).showSnackBar(SnackBar(content: Text(l10nDup.serverDuplicated)));
+                message: l10nDup.serverDuplicated,
+              );
             }
           },
           onDelete: () async {
@@ -170,80 +186,63 @@ class ServerListScreen extends ConsumerWidget {
 
   void _showServerActions(BuildContext context, WidgetRef ref, server) {
     final l10n = AppLocalizations.of(context)!;
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.terminal),
-              title: Text(l10n.serverConnect),
-              onTap: () async {
-                Navigator.pop(ctx);
-                await ref
-                    .read(sessionManagerProvider.notifier)
-                    .openSession(server.id);
-                ref
-                    .read(shellNavigationProvider)
-                    ?.goBranch(AppConstants.terminalBranchIndex);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outlined),
-              title: Text(l10n.serverDetails),
-              onTap: () {
-                Navigator.pop(ctx);
-                context.push('/server/${server.id}');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: Text(l10n.edit),
-              onTap: () {
-                Navigator.pop(ctx);
-                context.push('/server/${server.id}/edit');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.copy),
-              title: Text(l10n.serverDuplicate),
-              onTap: () async {
-                Navigator.pop(ctx);
-                await ref
-                    .read(serverListProvider.notifier)
-                    .duplicateServer(
-                      server.id,
-                      copySuffix: l10n.serverCopySuffix,
-                    );
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.delete,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              title: Text(
-                l10n.delete,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-              onTap: () async {
-                Navigator.pop(ctx);
-                final confirmed = await ConfirmDialog.show(
-                  context,
-                  title: l10n.serverDeleteTitle,
-                  message: l10n.serverDeleteShort(server.name),
-                );
-                if (confirmed == true) {
-                  await ref
-                      .read(serverListProvider.notifier)
-                      .deleteServer(server.id);
-                }
-              },
-            ),
-          ],
+    showAdaptiveActionSheet(
+      context,
+      title: server.name,
+      actions: [
+        AdaptiveAction(
+          label: l10n.serverConnect,
+          icon: Icons.terminal,
+          onPressed: () async {
+            await ref
+                .read(sessionManagerProvider.notifier)
+                .openSession(server.id);
+            ref
+                .read(shellNavigationProvider)
+                ?.goBranch(AppConstants.terminalBranchIndex);
+          },
         ),
-      ),
+        AdaptiveAction(
+          label: l10n.serverDetails,
+          icon: Icons.info_outlined,
+          onPressed: () => context.push('/server/${server.id}'),
+        ),
+        AdaptiveAction(
+          label: l10n.edit,
+          icon: Icons.edit,
+          onPressed: () => context.push('/server/${server.id}/edit'),
+        ),
+        AdaptiveAction(
+          label: l10n.serverDuplicate,
+          icon: Icons.copy,
+          onPressed: () async {
+            await ref
+                .read(serverListProvider.notifier)
+                .duplicateServer(
+                  server.id,
+                  copySuffix: l10n.serverCopySuffix,
+                );
+          },
+        ),
+        AdaptiveAction(
+          label: l10n.delete,
+          icon: Icons.delete,
+          isDestructive: true,
+          onPressed: () async {
+            final confirmed = await ConfirmDialog.show(
+              context,
+              title: l10n.serverDeleteTitle,
+              message: l10n.serverDeleteShort(server.name),
+            );
+            if (confirmed == true) {
+              await ref
+                  .read(serverListProvider.notifier)
+                  .deleteServer(server.id);
+            }
+          },
+        ),
+      ],
+      cancelLabel: l10n.cancel,
     );
   }
 }

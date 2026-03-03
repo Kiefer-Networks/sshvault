@@ -115,7 +115,7 @@ class _AuditLogScreenState extends ConsumerState<AuditLogScreen> {
                   ],
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator.adaptive()),
               error: (e, _) => Center(child: Text(l10n.error(e.toString()))),
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/network/api_provider.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -46,10 +47,10 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           // Self-hosted toggle
-          SwitchListTile(
+          AdaptiveSwitchTile(
             secondary: const Icon(Icons.dns_outlined),
-            title: Text(l10n.serverConfigSelfHosted),
-            subtitle: Text(l10n.serverConfigSelfHostedDescription),
+            title: l10n.serverConfigSelfHosted,
+            subtitle: l10n.serverConfigSelfHostedDescription,
             value: isSelfHosted,
             onChanged: (v) {
               ref.read(settingsProvider.notifier).setSelfHosted(v);
@@ -100,7 +101,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
           if (isSelfHosted)
             Align(
               alignment: Alignment.centerRight,
-              child: FilledButton(
+              child: AdaptiveButton.filled(
                 onPressed: () => _saveUrl(_urlController.text.trim()),
                 child: Text(l10n.save),
               ),

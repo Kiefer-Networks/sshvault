@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xterm/xterm.dart';
 
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
 import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data.dart';
@@ -75,7 +76,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
           icon: Icons.terminal,
           title: l10n.terminalEmpty,
           subtitle: l10n.terminalEmptySubtitle,
-          action: FilledButton.icon(
+          action: AdaptiveButton.filledIcon(
             onPressed: () {
               ref.read(shellNavigationProvider)?.goBranch(0);
             },
@@ -98,19 +99,26 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
               tooltip: l10n.snippetQuickPanelInsertTooltip,
               onPressed: _insertSnippet,
             ),
-          PopupMenuButton<String>(
+          IconButton(
             icon: const Icon(Icons.more_vert),
-            onSelected: (value) {
-              if (value == 'close_all') {
-                ref.read(sessionManagerProvider.notifier).closeAllSessions();
-              }
+            onPressed: () {
+              showAdaptiveActionSheet(
+                context,
+                actions: [
+                  AdaptiveAction(
+                    label: l10n.terminalCloseAll,
+                    icon: Icons.close,
+                    isDestructive: true,
+                    onPressed: () {
+                      ref
+                          .read(sessionManagerProvider.notifier)
+                          .closeAllSessions();
+                    },
+                  ),
+                ],
+                cancelLabel: l10n.cancel,
+              );
             },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'close_all',
-                child: Text(l10n.terminalCloseAll),
-              ),
-            ],
           ),
           const SizedBox(width: 4),
         ],
@@ -125,7 +133,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
             // Terminal + overlay
             Expanded(
               child: activeSession == null
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator.adaptive())
                   : Stack(
                       children: [
                         TerminalView(

@@ -6,6 +6,7 @@ import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/services/biometric_provider.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 
 class LockScreen extends ConsumerStatefulWidget {
@@ -213,7 +214,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                   ),
                 ),
                 const SizedBox(height: 16),
-                FilledButton.icon(
+                AdaptiveButton.filledIcon(
                   onPressed: isLockedOut || _isVerifying ? null : _verifyPin,
                   icon: _isVerifying
                       ? const SizedBox(
@@ -228,7 +229,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
               if (settings?.biometricUnlock ?? false) ...[
                 if (settings?.hasPin ?? false) const SizedBox(height: 16),
-                OutlinedButton.icon(
+                AdaptiveButton.textIcon(
                   onPressed: _isAuthenticating || isLockedOut
                       ? null
                       : _tryBiometric,

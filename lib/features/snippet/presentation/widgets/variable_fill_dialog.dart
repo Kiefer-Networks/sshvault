@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 
@@ -66,8 +67,9 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
     }
     Clipboard.setData(ClipboardData(text: resolved));
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
+    AdaptiveNotification.show(
+      context,
+      message: AppLocalizations.of(context)!.copiedToClipboard,
     );
   }
 

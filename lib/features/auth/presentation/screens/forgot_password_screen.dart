@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -50,7 +51,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(height: 24),
-                      FilledButton(
+                      AdaptiveButton.filled(
                         onPressed: () => Navigator.pop(context),
                         child: Text(l10n.authBackToLogin),
                       ),
@@ -82,7 +83,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                           },
                         ),
                         const SizedBox(height: 24),
-                        FilledButton(
+                        AdaptiveButton.filled(
                           onPressed: _loading ? null : _sendReset,
                           child: _loading
                               ? const SizedBox(
@@ -113,9 +114,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       if (mounted) setState(() => _sent = true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        AdaptiveNotification.show(context, message: e.toString());
       }
     } finally {
       if (mounted) setState(() => _loading = false);

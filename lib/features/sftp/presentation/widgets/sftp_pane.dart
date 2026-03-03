@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/sftp/data/services/archive_service.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
@@ -31,7 +32,7 @@ class SftpPane extends ConsumerWidget {
     Widget fileList;
 
     if (paneState.isLoading) {
-      fileList = const Center(child: CircularProgressIndicator());
+      fileList = const Center(child: CircularProgressIndicator.adaptive());
     } else if (paneState.error != null) {
       fileList = Center(
         child: Padding(
@@ -208,26 +209,23 @@ class SftpPane extends ConsumerWidget {
     SftpEntry entry,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final messenger = ScaffoldMessenger.of(context);
 
-    messenger.showSnackBar(SnackBar(content: Text(l10n.sftpExtracting)));
+    AdaptiveNotification.show(context, message: l10n.sftpExtracting);
 
     final result = await ref
         .read(sftpPaneProvider(side).notifier)
         .extractArchive(entry.path);
 
     if (!context.mounted) return;
-    messenger.hideCurrentSnackBar();
 
     result.fold(
       onSuccess: (_) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(l10n.sftpExtractSuccess)),
-        );
+        AdaptiveNotification.show(context, message: l10n.sftpExtractSuccess);
       },
       onFailure: (failure) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(l10n.sftpExtractFailed(failure.message))),
+        AdaptiveNotification.show(
+          context,
+          message: l10n.sftpExtractFailed(failure.message),
         );
       },
     );
@@ -243,9 +241,10 @@ class SftpPane extends ConsumerWidget {
     await ref.read(sftpPaneProvider(side).notifier).downloadToLocal(entry);
 
     if (context.mounted) {
-      ScaffoldMessenger.of(
+      AdaptiveNotification.show(
         context,
-      ).showSnackBar(SnackBar(content: Text(l10n.sftpDownloadStarted(1))));
+        message: l10n.sftpDownloadStarted(1),
+      );
     }
   }
 
@@ -258,16 +257,15 @@ class SftpPane extends ConsumerWidget {
 
     // In narrow mode, no opposite pane available
     if (!isWide) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.sftpNoPaneSelected)));
+      AdaptiveNotification.show(context, message: l10n.sftpNoPaneSelected);
       return;
     }
 
     // Directory transfers not yet supported
     if (entry.type == SftpEntryType.directory) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.sftpDirectoryTransferNotSupported)),
+      AdaptiveNotification.show(
+        context,
+        message: l10n.sftpDirectoryTransferNotSupported,
       );
       return;
     }
@@ -328,8 +326,9 @@ class SftpPane extends ConsumerWidget {
     }
 
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.sftpTransferStarted(entry.name))),
+      AdaptiveNotification.show(
+        context,
+        message: l10n.sftpTransferStarted(entry.name),
       );
     }
   }

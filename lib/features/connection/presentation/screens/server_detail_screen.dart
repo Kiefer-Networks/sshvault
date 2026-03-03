@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -29,45 +32,88 @@ class ServerDetailScreen extends ConsumerWidget {
 
     final l10n = AppLocalizations.of(context)!;
 
+    Future<void> connect() async {
+      await ref.read(sessionManagerProvider.notifier).openSession(serverId);
+      if (context.mounted) {
+        ref
+            .read(shellNavigationProvider)
+            ?.goBranch(AppConstants.terminalBranchIndex);
+      }
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.serverDetailTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => context.push('/server/$serverId/edit'),
-          ),
-          IconButton(
-            icon: Icon(Icons.delete, color: theme.colorScheme.error),
-            onPressed: () async {
-              final confirmed = await ConfirmDialog.show(
-                context,
-                title: l10n.serverDeleteTitle,
-                message: l10n.serverDetailDeleteMessage,
-              );
-              if (confirmed == true && context.mounted) {
-                await ref
-                    .read(serverListProvider.notifier)
-                    .deleteServer(serverId);
-                if (context.mounted) context.pop();
-              }
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'connectFab',
-        onPressed: () async {
-          await ref.read(sessionManagerProvider.notifier).openSession(serverId);
-          if (context.mounted) {
-            ref
-                .read(shellNavigationProvider)
-                ?.goBranch(AppConstants.terminalBranchIndex);
-          }
-        },
-        icon: const Icon(Icons.terminal),
-        label: Text(l10n.serverConnect),
-      ),
+      appBar: useCupertinoDesign
+          ? CupertinoNavigationBar(
+              middle: Text(l10n.serverDetailTitle),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: connect,
+                    child: const Icon(Icons.terminal),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => context.push('/server/$serverId/edit'),
+                    child: const Icon(CupertinoIcons.pencil),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () async {
+                      final confirmed = await ConfirmDialog.show(
+                        context,
+                        title: l10n.serverDeleteTitle,
+                        message: l10n.serverDetailDeleteMessage,
+                      );
+                      if (confirmed == true && context.mounted) {
+                        await ref
+                            .read(serverListProvider.notifier)
+                            .deleteServer(serverId);
+                        if (context.mounted) context.pop();
+                      }
+                    },
+                    child: const Icon(
+                      CupertinoIcons.delete,
+                      color: CupertinoColors.destructiveRed,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : AppBar(
+              title: Text(l10n.serverDetailTitle),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => context.push('/server/$serverId/edit'),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: theme.colorScheme.error),
+                  onPressed: () async {
+                    final confirmed = await ConfirmDialog.show(
+                      context,
+                      title: l10n.serverDeleteTitle,
+                      message: l10n.serverDetailDeleteMessage,
+                    );
+                    if (confirmed == true && context.mounted) {
+                      await ref
+                          .read(serverListProvider.notifier)
+                          .deleteServer(serverId);
+                      if (context.mounted) context.pop();
+                    }
+                  },
+                ),
+              ],
+            ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton.extended(
+              heroTag: 'connectFab',
+              onPressed: connect,
+              icon: const Icon(Icons.terminal),
+              label: Text(l10n.serverConnect),
+            ),
       body: serverAsync.when(
         data: (server) {
           return SingleChildScrollView(
@@ -260,7 +306,7 @@ class ServerDetailScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );
@@ -268,8 +314,9 @@ class ServerDetailScreen extends ConsumerWidget {
 
   void _copy(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
+    AdaptiveNotification.show(
+      context,
+      message: AppLocalizations.of(context)!.copiedToClipboard,
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:shellvault/features/sftp/domain/entities/transfer_item.dart';
@@ -81,7 +82,6 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
     String sourcePath,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final messenger = ScaffoldMessenger.of(context);
 
     // Save left pane state — file picker opens an Android Activity that
     // may cause the pane notifier to rebuild and lose remote state.
@@ -102,15 +102,16 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
       await _restorePaneIfNeeded(savedPaneSource, savedPanePath);
 
       if (savedPath != null && context.mounted) {
-        messenger.showSnackBar(SnackBar(content: Text(l10n.sftpFileSaved)));
+        AdaptiveNotification.show(context, message: l10n.sftpFileSaved);
       }
     } catch (e) {
       // Still restore pane even on error
       await _restorePaneIfNeeded(savedPaneSource, savedPanePath);
 
       if (context.mounted) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(l10n.sftpOperationFailed(e.toString()))),
+        AdaptiveNotification.show(
+          context,
+          message: l10n.sftpOperationFailed(e.toString()),
         );
       }
     }

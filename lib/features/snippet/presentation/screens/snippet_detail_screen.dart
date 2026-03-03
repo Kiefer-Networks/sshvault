@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -129,7 +130,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (snippet.variables.isNotEmpty)
-                                TextButton.icon(
+                                AdaptiveButton.textIcon(
                                   onPressed: () =>
                                       VariableFillDialog.show(context, snippet),
                                   icon: const Icon(Icons.tune, size: 18),
@@ -141,10 +142,9 @@ class SnippetDetailScreen extends ConsumerWidget {
                                   Clipboard.setData(
                                     ClipboardData(text: snippet.content),
                                   );
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(l10n.copiedToClipboard),
-                                    ),
+                                  AdaptiveNotification.show(
+                                    context,
+                                    message: l10n.copiedToClipboard,
                                   );
                                 },
                               ),
@@ -296,7 +296,7 @@ class SnippetDetailScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );

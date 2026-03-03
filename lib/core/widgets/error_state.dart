@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 /// A reusable error state widget showing an error icon, message, and retry
@@ -20,7 +21,7 @@ class ErrorState extends StatelessWidget {
           const SizedBox(height: 16),
           Text(l10n.error(error.toString())),
           const SizedBox(height: 16),
-          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
+          AdaptiveButton.filled(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

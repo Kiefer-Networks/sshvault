@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
@@ -212,7 +213,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           ),
           const Spacer(),
           if (_hasActiveFilters(filter))
-            TextButton.icon(
+            AdaptiveButton.textIcon(
               icon: const Icon(Icons.clear_all, size: 18),
               label: Text(l10n.filterClear),
               onPressed: () {

@@ -144,7 +144,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
                   final groups = groupsAsync.value ?? [];
                   return _buildList(context, servers, groups);
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: CircularProgressIndicator.adaptive()),
                 error: (_, _) => const SizedBox.shrink(),
               ),
             ),

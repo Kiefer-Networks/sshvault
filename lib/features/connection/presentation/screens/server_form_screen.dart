@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/crypto/crypto_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
@@ -116,14 +117,11 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         _privateKeyController.text = result.privateKey;
         _publicKeyController.text = result.publicKey;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(
-              context,
-            )!.serverFormKeyGenerated(result.type.displayName),
-          ),
-        ),
+      AdaptiveNotification.show(
+        context,
+        message: AppLocalizations.of(
+          context,
+        )!.serverFormKeyGenerated(result.type.displayName),
       );
     }
   }
@@ -141,15 +139,15 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         setState(() {
           _publicKeyController.text = publicKey;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.serverFormPublicKeyExtracted)),
+        AdaptiveNotification.show(
+          context,
+          message: l10n.serverFormPublicKeyExtracted,
         );
       },
       onFailure: (failure) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.serverFormPublicKeyError(failure.message)),
-          ),
+        AdaptiveNotification.show(
+          context,
+          message: l10n.serverFormPublicKeyError(failure.message),
         );
       },
     );
@@ -254,7 +252,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
             ),
             const SizedBox(height: 32),
 
-            FilledButton.icon(
+            AdaptiveButton.filledIcon(
               onPressed: _saving ? null : _save,
               icon: _saving
                   ? const SizedBox(
@@ -339,10 +337,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.error(e.toString())),
-          ),
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.error(e.toString()),
         );
       }
     } finally {

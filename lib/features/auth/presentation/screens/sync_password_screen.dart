@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/network/api_provider.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:shellvault/features/sync/presentation/widgets/first_sync_dialog.dart';
@@ -154,7 +155,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                   ],
 
                   const SizedBox(height: 24),
-                  FilledButton(
+                  AdaptiveButton.filled(
                     onPressed: _saving ? null : _save,
                     child: _saving
                         ? const SizedBox(

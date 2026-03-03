@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -21,7 +23,19 @@ class TagListScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: buildShellAppBar(context, title: l10n.tagListTitle),
+      appBar: buildShellAppBar(
+        context,
+        title: l10n.tagListTitle,
+        actions: useCupertinoDesign
+            ? [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => _showTagForm(context, ref),
+                  child: const Icon(CupertinoIcons.add),
+                ),
+              ]
+            : null,
+      ),
       body: tagsAsync.when(
         data: (tags) {
           if (tags.isEmpty) {
@@ -51,17 +65,19 @@ class TagListScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => ErrorState(
           error: error,
           onRetry: () => ref.invalidate(tagListProvider),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addTagFab',
-        onPressed: () => _showTagForm(context, ref),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addTagFab',
+              onPressed: () => _showTagForm(context, ref),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 

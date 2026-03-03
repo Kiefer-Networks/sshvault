@@ -145,7 +145,7 @@ class _NativeIapSection extends ConsumerWidget {
           }).toList(),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
       error: (_, _) => _FallbackSection(l10n: l10n),
     );
   }

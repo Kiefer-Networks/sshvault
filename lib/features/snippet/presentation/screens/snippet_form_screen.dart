@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -213,7 +214,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
             const SizedBox(height: 32),
 
             // Save button
-            FilledButton.icon(
+            AdaptiveButton.filledIcon(
               onPressed: _saving ? null : _save,
               icon: _saving
                   ? const SizedBox(
@@ -244,8 +245,6 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     setState(() => _saving = true);
 
     final l10n = AppLocalizations.of(context)!;
-    final messenger = ScaffoldMessenger.of(context);
-
     try {
       final tagsAsync = ref.read(tagListProvider);
       final allTags = tagsAsync.value ?? [];
@@ -278,7 +277,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
         context.pop();
       }
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
+      if (mounted) {
+        AdaptiveNotification.show(context, message: l10n.error(e.toString()));
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }

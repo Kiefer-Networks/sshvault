@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 
@@ -25,7 +26,7 @@ class VariableEditor extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(l10n.variableEditorTitle, style: theme.textTheme.titleSmall),
-            TextButton.icon(
+            AdaptiveButton.textIcon(
               onPressed: _addVariable,
               icon: const Icon(Icons.add, size: 18),
               label: Text(l10n.variableEditorAdd),

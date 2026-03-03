@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_state.dart';
@@ -60,29 +61,46 @@ class SftpToolbar extends ConsumerWidget {
             ),
           const Spacer(),
           // Sort menu
-          PopupMenuButton<SortField>(
+          IconButton(
             icon: const Icon(Icons.sort, size: 20),
             tooltip: l10n.sftpSortByName,
-            onSelected: (field) =>
-                ref.read(sftpPaneProvider(side).notifier).setSortField(field),
-            itemBuilder: (ctx) => [
-              PopupMenuItem(
-                value: SortField.name,
-                child: Text(l10n.sftpSortByName),
-              ),
-              PopupMenuItem(
-                value: SortField.size,
-                child: Text(l10n.sftpSortBySize),
-              ),
-              PopupMenuItem(
-                value: SortField.modified,
-                child: Text(l10n.sftpSortByDate),
-              ),
-              PopupMenuItem(
-                value: SortField.type,
-                child: Text(l10n.sftpSortByType),
-              ),
-            ],
+            onPressed: () {
+              showAdaptiveActionSheet(
+                context,
+                title: l10n.sftpSortByName,
+                actions: [
+                  AdaptiveAction(
+                    label: l10n.sftpSortByName,
+                    icon: Icons.sort_by_alpha,
+                    onPressed: () => ref
+                        .read(sftpPaneProvider(side).notifier)
+                        .setSortField(SortField.name),
+                  ),
+                  AdaptiveAction(
+                    label: l10n.sftpSortBySize,
+                    icon: Icons.storage,
+                    onPressed: () => ref
+                        .read(sftpPaneProvider(side).notifier)
+                        .setSortField(SortField.size),
+                  ),
+                  AdaptiveAction(
+                    label: l10n.sftpSortByDate,
+                    icon: Icons.calendar_today,
+                    onPressed: () => ref
+                        .read(sftpPaneProvider(side).notifier)
+                        .setSortField(SortField.modified),
+                  ),
+                  AdaptiveAction(
+                    label: l10n.sftpSortByType,
+                    icon: Icons.category,
+                    onPressed: () => ref
+                        .read(sftpPaneProvider(side).notifier)
+                        .setSortField(SortField.type),
+                  ),
+                ],
+                cancelLabel: l10n.cancel,
+              );
+            },
           ),
           IconButton(
             icon: Icon(
@@ -112,15 +130,15 @@ class SftpToolbar extends ConsumerWidget {
 
   void _handleUploadFromPicker(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
-    final messenger = ScaffoldMessenger.of(context);
 
     final count = await ref
         .read(sftpPaneProvider(side).notifier)
         .uploadFromPicker();
 
     if (count > 0 && context.mounted) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.sftpUploadStarted(count))),
+      AdaptiveNotification.show(
+        context,
+        message: l10n.sftpUploadStarted(count),
       );
     }
   }
@@ -205,7 +223,6 @@ class _SelectionToolbar extends ConsumerWidget {
 
   void _handleBulkDownload(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
-    final messenger = ScaffoldMessenger.of(context);
     final paneState = ref.read(sftpPaneProvider(side));
     final notifier = ref.read(sftpPaneProvider(side).notifier);
 
@@ -222,8 +239,9 @@ class _SelectionToolbar extends ConsumerWidget {
     notifier.clearSelection();
 
     if (count > 0 && context.mounted) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.sftpDownloadStarted(count))),
+      AdaptiveNotification.show(
+        context,
+        message: l10n.sftpDownloadStarted(count),
       );
     }
   }

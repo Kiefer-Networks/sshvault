@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -39,9 +40,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _checkSyncPasswordAndNavigate();
       }
       if (next.hasError && mounted) {
-        ScaffoldMessenger.of(
+        AdaptiveNotification.show(
           context,
-        ).showSnackBar(SnackBar(content: Text(next.error.toString())));
+          message: next.error.toString(),
+        );
       }
     });
 
@@ -165,7 +167,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // Forgot password link
                   Align(
                     alignment: Alignment.centerRight,
-                    child: TextButton(
+                    child: AdaptiveButton.text(
                       onPressed: () => context.push('/forgot-password'),
                       child: Text(l10n.authForgotPassword),
                     ),
@@ -173,7 +175,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 16),
 
                   // Login button
-                  FilledButton(
+                  AdaptiveButton.filled(
                     onPressed: isLoading ? null : _login,
                     child: isLoading
                         ? const SizedBox(
@@ -236,7 +238,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(l10n.authNoAccount),
-                      TextButton(
+                      AdaptiveButton.text(
                         onPressed: () => context.push('/register'),
                         child: Text(l10n.authRegister),
                       ),
@@ -245,10 +247,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 8),
 
                   // Self-hosted link
-                  TextButton.icon(
+                  AdaptiveButton.text(
                     onPressed: () => context.push('/server-config'),
-                    icon: const Icon(Icons.dns_outlined, size: 18),
-                    label: Text(l10n.authSelfHosted),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.dns_outlined, size: 18),
+                        const SizedBox(width: 8),
+                        Text(l10n.authSelfHosted),
+                      ],
+                    ),
                   ),
                 ],
               ),

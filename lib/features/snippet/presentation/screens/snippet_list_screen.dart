@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -33,7 +35,19 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
     final filter = ref.watch(snippetFilterProvider);
 
     return Scaffold(
-      appBar: buildShellAppBar(context, title: l10n.snippetListTitle),
+      appBar: buildShellAppBar(
+        context,
+        title: l10n.snippetListTitle,
+        actions: useCupertinoDesign
+            ? [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => context.push('/snippet/new'),
+                  child: const Icon(CupertinoIcons.add),
+                ),
+              ]
+            : null,
+      ),
       body: Column(
         children: [
           // Search bar
@@ -117,7 +131,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator.adaptive()),
               error: (error, _) => ErrorState(
                 error: error,
                 onRetry: () => ref.invalidate(snippetListProvider),
@@ -126,11 +140,13 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addSnippetFab',
-        onPressed: () => context.push('/snippet/new'),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addSnippetFab',
+              onPressed: () => context.push('/snippet/new'),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 

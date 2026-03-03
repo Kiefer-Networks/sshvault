@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -53,7 +54,7 @@ class ExportImportScreen extends ConsumerWidget {
                 const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
-                  child: FilledButton.icon(
+                  child: AdaptiveButton.filledIcon(
                     onPressed: () => _exportEncrypted(context, ref),
                     icon: const Icon(Icons.lock),
                     label: Text(l10n.exportZipButton),
@@ -105,7 +106,7 @@ class ExportImportScreen extends ConsumerWidget {
 
           // Status
           if (exportState.isLoading)
-            const Center(child: CircularProgressIndicator()),
+            const Center(child: CircularProgressIndicator.adaptive()),
           if (exportState.hasError)
             Card(
               color: theme.colorScheme.error.withAlpha(AppConstants.alpha26),
@@ -160,17 +161,14 @@ class ExportImportScreen extends ConsumerWidget {
 
   void _showShareOption(BuildContext context, String filePath) {
     final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.exportedTo(filePath)),
-        action: SnackBarAction(
-          label: l10n.share,
-          onPressed: () {
-            SharePlus.instance.share(ShareParams(files: [XFile(filePath)]));
-          },
-        ),
-        duration: const Duration(seconds: 5),
-      ),
+    AdaptiveNotification.show(
+      context,
+      message: l10n.exportedTo(filePath),
+      actionLabel: l10n.share,
+      onAction: () {
+        SharePlus.instance.share(ShareParams(files: [XFile(filePath)]));
+      },
+      duration: const Duration(seconds: 5),
     );
   }
 
@@ -205,17 +203,13 @@ class ExportImportScreen extends ConsumerWidget {
     if (importResult != null && context.mounted) {
       ref.invalidate(serverListProvider);
       final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            l10n.importResult(
-              importResult.serversImported,
-              importResult.groupsImported,
-              importResult.tagsImported,
-              importResult.skipped,
-            ),
-          ),
-          duration: const Duration(seconds: 5),
+      AdaptiveNotification.show(
+        context,
+        message: l10n.importResult(
+          importResult.serversImported,
+          importResult.groupsImported,
+          importResult.tagsImported,
+          importResult.skipped,
         ),
       );
     }

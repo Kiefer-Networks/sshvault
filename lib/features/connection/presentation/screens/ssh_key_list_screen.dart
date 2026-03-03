@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/widgets/error_state.dart';
@@ -20,7 +23,19 @@ class SshKeyListScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: buildShellAppBar(context, title: l10n.sshKeyListTitle),
+      appBar: buildShellAppBar(
+        context,
+        title: l10n.sshKeyListTitle,
+        actions: useCupertinoDesign
+            ? [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => _addKey(context, ref),
+                  child: const Icon(CupertinoIcons.add),
+                ),
+              ]
+            : null,
+      ),
       body: keysAsync.when(
         data: (keys) {
           if (keys.isEmpty) {
@@ -50,17 +65,19 @@ class SshKeyListScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => ErrorState(
           error: error,
           onRetry: () => ref.invalidate(sshKeyListProvider),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addSshKeyFab',
-        onPressed: () => _addKey(context, ref),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addSshKeyFab',
+              onPressed: () => _addKey(context, ref),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 
@@ -115,9 +132,10 @@ class SshKeyListScreen extends ConsumerWidget {
         await ref.read(sshKeyListProvider.notifier).deleteSshKey(key.id);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(
+          AdaptiveNotification.show(
             context,
-          ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
+            message: l10n.error(e.toString()),
+          );
         }
       }
     }

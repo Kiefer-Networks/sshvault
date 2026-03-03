@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -38,9 +39,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         context.go('/sync-password?mode=create');
       }
       if (next.hasError && mounted) {
-        ScaffoldMessenger.of(
+        AdaptiveNotification.show(
           context,
-        ).showSnackBar(SnackBar(content: Text(next.error.toString())));
+          message: next.error.toString(),
+        );
       }
     });
 
@@ -158,7 +160,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     },
                   ),
                   const SizedBox(height: 24),
-                  FilledButton(
+                  AdaptiveButton.filled(
                     onPressed: isLoading ? null : _register,
                     child: isLoading
                         ? const SizedBox(
@@ -173,7 +175,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(l10n.authHasAccount),
-                      TextButton(
+                      AdaptiveButton.text(
                         onPressed: () => context.pop(),
                         child: Text(l10n.authLogin),
                       ),

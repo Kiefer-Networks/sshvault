@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
@@ -40,8 +41,9 @@ class SshKeyTile extends StatelessWidget {
             SlidableAction(
               onPressed: (_) {
                 Clipboard.setData(ClipboardData(text: sshKey.publicKey));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.sshKeyTilePublicKeyCopied)),
+                AdaptiveNotification.show(
+                  context,
+                  message: l10n.sshKeyTilePublicKeyCopied,
                 );
               },
               backgroundColor: Colors.teal,
@@ -136,8 +138,9 @@ class SshKeyTile extends StatelessWidget {
                 tooltip: l10n.sshKeyTileCopyPublicKey,
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: sshKey.publicKey));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.sshKeyTilePublicKeyCopied)),
+                  AdaptiveNotification.show(
+                    context,
+                    message: l10n.sshKeyTilePublicKeyCopied,
                   );
                 },
                 visualDensity: VisualDensity.compact,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/sftp/data/services/archive_service.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
@@ -482,26 +483,23 @@ class SftpEntryTile extends ConsumerWidget {
 
   void _extractArchive(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
-    final messenger = ScaffoldMessenger.of(context);
 
-    messenger.showSnackBar(SnackBar(content: Text(l10n.sftpExtracting)));
+    AdaptiveNotification.show(context, message: l10n.sftpExtracting);
 
     final result = await ref
         .read(sftpPaneProvider(side).notifier)
         .extractArchive(entry.path);
 
     if (!context.mounted) return;
-    messenger.hideCurrentSnackBar();
 
     result.fold(
       onSuccess: (_) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(l10n.sftpExtractSuccess)),
-        );
+        AdaptiveNotification.show(context, message: l10n.sftpExtractSuccess);
       },
       onFailure: (failure) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(l10n.sftpExtractFailed(failure.message))),
+        AdaptiveNotification.show(
+          context,
+          message: l10n.sftpExtractFailed(failure.message),
         );
       },
     );
