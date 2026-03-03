@@ -198,26 +198,22 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.isEditing ? l10n.serverFormTitleEdit : l10n.serverFormTitleAdd,
-        ),
-        actions: [
-          if (widget.isEditing)
-            Row(
-              children: [
-                Text(l10n.serverActive),
-                Switch(
-                  value: formState.isActive,
-                  onChanged: (v) => ref
-                      .read(_serverFormStateProvider.notifier)
-                      .state = formState.copyWith(isActive: v),
-                ),
-              ],
-            ),
-        ],
-      ),
+    return AdaptiveScaffold(
+      title: widget.isEditing ? l10n.serverFormTitleEdit : l10n.serverFormTitleAdd,
+      actions: [
+        if (widget.isEditing)
+          Row(
+            children: [
+              Text(l10n.serverActive),
+              Switch(
+                value: formState.isActive,
+                onChanged: (v) => ref
+                    .read(_serverFormStateProvider.notifier)
+                    .state = formState.copyWith(isActive: v),
+              ),
+            ],
+          ),
+      ],
       body: Form(
         key: _formKey,
         child: ListView(

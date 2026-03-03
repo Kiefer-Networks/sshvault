@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -22,7 +23,7 @@ class TagListScreen extends ConsumerWidget {
 
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return AdaptiveScaffold.withAppBar(
       appBar: buildShellAppBar(
         context,
         title: l10n.tagListTitle,
@@ -36,6 +37,13 @@ class TagListScreen extends ConsumerWidget {
               ]
             : null,
       ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addTagFab',
+              onPressed: () => _showTagForm(context, ref),
+              child: const Icon(Icons.add),
+            ),
       body: tagsAsync.when(
         data: (tags) {
           if (tags.isEmpty) {
@@ -71,13 +79,6 @@ class TagListScreen extends ConsumerWidget {
           onRetry: () => ref.invalidate(tagListProvider),
         ),
       ),
-      floatingActionButton: useCupertinoDesign
-          ? null
-          : FloatingActionButton(
-              heroTag: 'addTagFab',
-              onPressed: () => _showTagForm(context, ref),
-              child: const Icon(Icons.add),
-            ),
     );
   }
 

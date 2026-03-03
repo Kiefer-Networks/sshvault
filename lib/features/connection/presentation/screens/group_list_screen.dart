@@ -38,7 +38,7 @@ class GroupListScreen extends ConsumerWidget {
 
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return AdaptiveScaffold.withAppBar(
       appBar: buildShellAppBar(
         context,
         title: l10n.groupListTitle,
@@ -52,6 +52,13 @@ class GroupListScreen extends ConsumerWidget {
               ]
             : null,
       ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addGroupFab',
+              onPressed: () => _showGroupForm(context, ref),
+              child: const Icon(Icons.add),
+            ),
       body: groupsAsync.when(
         data: (groups) {
           if (groups.isEmpty) {
@@ -81,13 +88,6 @@ class GroupListScreen extends ConsumerWidget {
           onRetry: () => ref.invalidate(groupTreeProvider),
         ),
       ),
-      floatingActionButton: useCupertinoDesign
-          ? null
-          : FloatingActionButton(
-              heroTag: 'addGroupFab',
-              onPressed: () => _showGroupForm(context, ref),
-              child: const Icon(Icons.add),
-            ),
     );
   }
 

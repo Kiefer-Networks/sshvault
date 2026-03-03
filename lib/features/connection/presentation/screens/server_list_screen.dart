@@ -28,7 +28,7 @@ class ServerListScreen extends ConsumerWidget {
 
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return AdaptiveScaffold.withAppBar(
       appBar: buildShellAppBar(
         context,
         title: l10n.serverListTitle,
@@ -44,6 +44,13 @@ class ServerListScreen extends ConsumerWidget {
             const SizedBox(width: 8),
         ],
       ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addServerFab',
+              onPressed: () => context.push('/server/new'),
+              child: const Icon(Icons.add),
+            ),
       body: Column(
         children: [
           const SearchFilterBar(),
@@ -80,13 +87,6 @@ class ServerListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      floatingActionButton: useCupertinoDesign
-          ? null
-          : FloatingActionButton(
-              heroTag: 'addServerFab',
-              onPressed: () => context.push('/server/new'),
-              child: const Icon(Icons.add),
-            ),
     );
   }
 

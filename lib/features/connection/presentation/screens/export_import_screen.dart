@@ -21,7 +21,7 @@ class ExportImportScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return AdaptiveScaffold.withAppBar(
       appBar: buildShellAppBar(context, title: l10n.exportImportTitle),
       body: ListView(
         padding: const EdgeInsets.all(16),

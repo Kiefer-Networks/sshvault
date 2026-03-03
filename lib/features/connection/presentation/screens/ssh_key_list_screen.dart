@@ -22,7 +22,7 @@ class SshKeyListScreen extends ConsumerWidget {
 
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return AdaptiveScaffold.withAppBar(
       appBar: buildShellAppBar(
         context,
         title: l10n.sshKeyListTitle,
@@ -36,6 +36,13 @@ class SshKeyListScreen extends ConsumerWidget {
               ]
             : null,
       ),
+      floatingActionButton: useCupertinoDesign
+          ? null
+          : FloatingActionButton(
+              heroTag: 'addSshKeyFab',
+              onPressed: () => _addKey(context, ref),
+              child: const Icon(Icons.add),
+            ),
       body: keysAsync.when(
         data: (keys) {
           if (keys.isEmpty) {
@@ -71,13 +78,6 @@ class SshKeyListScreen extends ConsumerWidget {
           onRetry: () => ref.invalidate(sshKeyListProvider),
         ),
       ),
-      floatingActionButton: useCupertinoDesign
-          ? null
-          : FloatingActionButton(
-              heroTag: 'addSshKeyFab',
-              onPressed: () => _addKey(context, ref),
-              child: const Icon(Icons.add),
-            ),
     );
   }
 

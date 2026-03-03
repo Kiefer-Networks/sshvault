@@ -41,7 +41,7 @@ class ServerDetailScreen extends ConsumerWidget {
       }
     }
 
-    return Scaffold(
+    return AdaptiveScaffold.withAppBar(
       appBar: useCupertinoDesign
           ? CupertinoNavigationBar(
               middle: Text(l10n.serverDetailTitle),
