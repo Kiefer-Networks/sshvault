@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
 import 'package:shellvault/features/snippet/presentation/widgets/variable_fill_dialog.dart';
+
+final _snippetSearchQueryProvider = StateProvider.autoDispose<String>(
+  (ref) => '',
+);
 
 class SnippetQuickPanel {
   SnippetQuickPanel._();
@@ -39,7 +44,6 @@ class _SnippetQuickPanelContent extends ConsumerStatefulWidget {
 class _SnippetQuickPanelContentState
     extends ConsumerState<_SnippetQuickPanelContent> {
   final _searchController = TextEditingController();
-  String _searchQuery = '';
 
   @override
   void dispose() {
@@ -52,6 +56,7 @@ class _SnippetQuickPanelContentState
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final snippetsAsync = ref.watch(snippetListProvider);
+    final searchQuery = ref.watch(_snippetSearchQueryProvider);
 
     return Column(
       children: [
@@ -87,7 +92,8 @@ class _SnippetQuickPanelContentState
               ),
             ),
             keyboardType: TextInputType.text,
-            onChanged: (value) => setState(() => _searchQuery = value),
+            onChanged: (value) =>
+                ref.read(_snippetSearchQueryProvider.notifier).state = value,
           ),
         ),
         const SizedBox(height: 8),
@@ -95,16 +101,16 @@ class _SnippetQuickPanelContentState
         Expanded(
           child: snippetsAsync.when(
             data: (snippets) {
-              final filtered = _searchQuery.isEmpty
+              final filtered = searchQuery.isEmpty
                   ? snippets
                   : snippets
                         .where(
                           (s) =>
                               s.name.toLowerCase().contains(
-                                _searchQuery.toLowerCase(),
+                                searchQuery.toLowerCase(),
                               ) ||
                               s.content.toLowerCase().contains(
-                                _searchQuery.toLowerCase(),
+                                searchQuery.toLowerCase(),
                               ),
                         )
                         .toList();
@@ -112,7 +118,7 @@ class _SnippetQuickPanelContentState
               if (filtered.isEmpty) {
                 return Center(
                   child: Text(
-                    _searchQuery.isEmpty
+                    searchQuery.isEmpty
                         ? l10n.snippetQuickPanelEmpty
                         : l10n.snippetQuickPanelNoMatch,
                     style: theme.textTheme.bodyMedium?.copyWith(
