@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
@@ -399,35 +400,33 @@ class _CupertinoMobileScaffold extends ConsumerWidget {
       child: Column(
         children: [
           Expanded(child: content),
-          CupertinoTabBar(
+          CNTabBar(
             currentIndex: _currentTab(showMore),
             onTap: (index) => _onTabTapped(ref, index),
             items: [
-              BottomNavigationBarItem(
-                icon: const Icon(CupertinoIcons.device_desktop),
+              CNTabBarItem(
+                icon: const CNSymbol('desktopcomputer'),
+                activeIcon: const CNSymbol('desktopcomputer'),
                 label: l10n.navHosts,
               ),
-              BottomNavigationBarItem(
-                icon: const Icon(CupertinoIcons.folder),
+              CNTabBarItem(
+                icon: const CNSymbol('folder'),
+                activeIcon: const CNSymbol('folder.fill'),
                 label: l10n.navSftp,
               ),
-              BottomNavigationBarItem(
-                icon: const Icon(
-                  CupertinoIcons.chevron_left_slash_chevron_right,
-                ),
+              CNTabBarItem(
+                icon: const CNSymbol('chevron.left.forwardslash.chevron.right'),
                 label: l10n.navSnippets,
               ),
-              BottomNavigationBarItem(
-                icon: sessionCount > 0
-                    ? Badge(
-                        label: Text('$sessionCount'),
-                        child: const Icon(Icons.terminal),
-                      )
-                    : const Icon(Icons.terminal),
+              CNTabBarItem(
+                icon: const CNSymbol('terminal'),
+                activeIcon: const CNSymbol('terminal.fill'),
+                badge: sessionCount > 0 ? '$sessionCount' : null,
                 label: l10n.navTerminal,
               ),
-              BottomNavigationBarItem(
-                icon: const Icon(CupertinoIcons.ellipsis),
+              CNTabBarItem(
+                icon: const CNSymbol('ellipsis.circle'),
+                activeIcon: const CNSymbol('ellipsis.circle.fill'),
                 label: l10n.navMore,
               ),
             ],

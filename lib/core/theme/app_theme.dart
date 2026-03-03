@@ -13,8 +13,6 @@ abstract final class AppTheme {
     return CupertinoThemeData(
       brightness: Brightness.light,
       primaryColor: colorScheme.primary,
-      barBackgroundColor: colorScheme.surface.withAlpha(230),
-      scaffoldBackgroundColor: colorScheme.surface,
       textTheme: CupertinoTextThemeData(primaryColor: colorScheme.primary),
     );
   }
@@ -27,8 +25,6 @@ abstract final class AppTheme {
     return CupertinoThemeData(
       brightness: Brightness.dark,
       primaryColor: colorScheme.primary,
-      barBackgroundColor: const Color(0xFF0F0F1A).withAlpha(230),
-      scaffoldBackgroundColor: const Color(0xFF0F0F1A),
       textTheme: CupertinoTextThemeData(primaryColor: colorScheme.primary),
     );
   }
@@ -138,8 +134,6 @@ abstract final class AppTheme {
       ),
       cupertinoOverrideTheme: CupertinoThemeData(
         primaryColor: colorScheme.primary,
-        barBackgroundColor: colorScheme.surface.withAlpha(230),
-        scaffoldBackgroundColor: colorScheme.surface,
         textTheme: CupertinoTextThemeData(primaryColor: colorScheme.primary),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
@@ -263,8 +257,6 @@ abstract final class AppTheme {
       cupertinoOverrideTheme: CupertinoThemeData(
         brightness: Brightness.dark,
         primaryColor: colorScheme.primary,
-        barBackgroundColor: const Color(0xFF0F0F1A).withAlpha(230),
-        scaffoldBackgroundColor: const Color(0xFF0F0F1A),
         textTheme: CupertinoTextThemeData(primaryColor: colorScheme.primary),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
