@@ -10,16 +10,19 @@ abstract final class AppConstants {
   static const int defaultSshPort = 22;
   static const String defaultUsername = 'root';
 
-  // Crypto
+  // Crypto — v2 KDF parameters (current)
   static const int argon2Iterations = 3;
-  static const int argon2MemoryKB = 65536; // 64 MiB
+  static const int argon2MemoryKB = 262144; // 256 MiB
   static const int argon2Parallelism = 1;
   static const int aesKeyLength = 32; // 256 bit
   static const int aesNonceLength = 12; // 96 bit for GCM
   static const int saltLength = 32;
 
+  // Crypto — v1 KDF parameters (legacy, for backward compatibility)
+  static const int argon2MemoryKBv1 = 65536; // 64 MiB
+
   // Export
-  static const int exportVersion = 1;
+  static const int exportVersion = 2;
   static const String exportFileName = 'shellvault_export';
   static const String encryptedDataFile = 'data.json.enc';
 

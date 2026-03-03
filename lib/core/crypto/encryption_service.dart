@@ -25,9 +25,21 @@ class EncryptionService {
   ///
   /// Uses the `cryptography` package which produces deterministic results
   /// regardless of parallelism setting (unlike pointycastle's implementation).
-  Future<Uint8List> _deriveKey(String password, Uint8List salt) async {
+  ///
+  /// [envelopeVersion] selects KDF parameters:
+  /// - v1: 64 MiB memory (legacy)
+  /// - v2+: 256 MiB memory (current)
+  Future<Uint8List> _deriveKey(
+    String password,
+    Uint8List salt, {
+    int envelopeVersion = 2,
+  }) async {
+    final memoryKB = envelopeVersion <= 1
+        ? AppConstants.argon2MemoryKBv1
+        : AppConstants.argon2MemoryKB;
+
     final argon2 = crypto.Argon2id(
-      memory: AppConstants.argon2MemoryKB,
+      memory: memoryKB,
       iterations: AppConstants.argon2Iterations,
       parallelism: AppConstants.argon2Parallelism,
       hashLength: AppConstants.aesKeyLength,
@@ -142,7 +154,11 @@ class EncryptionService {
 
     try {
       final salt = envelope.saltBytes;
-      final key = await _deriveKey(password, salt);
+      final key = await _deriveKey(
+        password,
+        salt,
+        envelopeVersion: envelope.version,
+      );
       _log.debug('Crypto', 'Key derived in ${sw.elapsedMilliseconds}ms');
 
       final plaintext = _decrypt(
