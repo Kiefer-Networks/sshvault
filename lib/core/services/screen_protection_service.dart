@@ -10,7 +10,7 @@ import 'package:shellvault/core/services/logging_service.dart';
 class ScreenProtectionService {
   static final _log = LoggingService.instance;
   static const _tag = 'ScreenProtection';
-  static const _channel = MethodChannel('com.shellvault/screen_protection');
+  static const _channel = MethodChannel('de.kiefer-networks.shellvault/screen_protection');
 
   bool _enabled = false;
 

@@ -1,4 +1,4 @@
-package com.shellvault.shellvault
+package de.kiefer_networks.shellvault
 
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -6,7 +6,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterFragmentActivity() {
-    private val channel = "com.shellvault/screen_protection"
+    private val channel = "de.kiefer-networks.shellvault/screen_protection"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

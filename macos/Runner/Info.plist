@@ -28,5 +28,12 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>SSH Vault connects to servers on your local network.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_ssh._tcp</string>
+		<string>_sftp-ssh._tcp</string>
+	</array>
 </dict>
 </plist>

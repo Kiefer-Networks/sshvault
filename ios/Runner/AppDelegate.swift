@@ -12,7 +12,7 @@ import UIKit
     let controller = window?.rootViewController as? FlutterViewController
     if let controller = controller {
       let channel = FlutterMethodChannel(
-        name: "com.shellvault/screen_protection",
+        name: "de.kiefer-networks.shellvault/screen_protection",
         binaryMessenger: controller.binaryMessenger)
       channel.setMethodCallHandler { [weak self] call, result in
         guard let self = self else { return }

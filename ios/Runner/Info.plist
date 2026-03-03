@@ -51,6 +51,23 @@
 	<string>SSH Vault uses Face ID to protect your SSH credentials.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>SSH Vault connects to servers on your local network.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_ssh._tcp</string>
+		<string>_sftp-ssh._tcp</string>
+	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>SSH Vault needs photo library access to upload files via SFTP.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<true/>
+	<key>ITSEncryptionExportComplianceCode</key>
+	<string></string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
