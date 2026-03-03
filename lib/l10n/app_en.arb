@@ -470,7 +470,7 @@
 
   "settingsSectionNetwork": "Network & DNS",
   "settingsDnsServers": "DNS-over-HTTPS Servers",
-  "settingsDnsDefault": "Default (Cloudflare + Google)",
+  "settingsDnsDefault": "Default (Quad9 + Mullvad)",
   "settingsDnsHint": "Enter custom DoH server URLs, separated by commas. At least 2 servers are needed for cross-check verification.",
   "settingsDnsLabel": "DoH Server URLs",
   "settingsDnsReset": "Reset to Default",
@@ -713,5 +713,14 @@
   "variableInsert": "Insert",
 
   "tagServerCount": "{count, plural, =1{1 server} other{{count} servers}}",
-  "@tagServerCount": { "placeholders": { "count": { "type": "int" } } }
+  "@tagServerCount": { "placeholders": { "count": { "type": "int" } } },
+
+  "accountDeleteSubscriptionWarning": "Your subscription must be cancelled manually in the App Store / Play Store. Deleting your account does not automatically cancel mobile subscriptions.",
+  "logoutAllDevicesSuccessCount": "{count, plural, =1{1 session revoked.} other{{count} sessions revoked.}} You have been logged out.",
+  "@logoutAllDevicesSuccessCount": { "placeholders": { "count": { "type": "int" } } },
+
+  "keyGenPassphrase": "Passphrase",
+  "keyGenPassphraseHint": "Optional — protects the private key",
+
+  "settingsDnsDefaultQuad9Mullvad": "Default (Quad9 + Mullvad)"
 }

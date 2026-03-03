@@ -46,11 +46,13 @@ class SshKeyOptions {
   final SshKeyType type;
   final int bits;
   final String comment;
+  final String passphrase;
 
   const SshKeyOptions({
     this.type = SshKeyType.ed25519,
     this.bits = 0,
-    this.comment = 'shellvault-generated',
+    this.comment = '',
+    this.passphrase = '',
   });
 
   /// Effective bit length (uses type default when 0).

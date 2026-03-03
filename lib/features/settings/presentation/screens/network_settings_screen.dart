@@ -11,8 +11,8 @@ class NetworkSettingsScreen extends ConsumerWidget {
   const NetworkSettingsScreen({super.key});
 
   static final _defaultServers = [
-    DohProvider.cloudflare.url,
-    DohProvider.google.url,
+    DohProvider.quad9.url,
+    DohProvider.mullvad.url,
   ];
 
   @override

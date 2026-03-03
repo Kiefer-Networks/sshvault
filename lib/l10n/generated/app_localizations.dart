@@ -2473,7 +2473,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDnsDefault.
   ///
   /// In en, this message translates to:
-  /// **'Default (Cloudflare + Google)'**
+  /// **'Default (Quad9 + Mullvad)'**
   String get settingsDnsDefault;
 
   /// No description provided for @settingsDnsHint.
@@ -3675,6 +3675,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 server} other{{count} servers}}'**
   String tagServerCount(int count);
+
+  /// No description provided for @accountDeleteSubscriptionWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription must be cancelled manually in the App Store / Play Store. Deleting your account does not automatically cancel mobile subscriptions.'**
+  String get accountDeleteSubscriptionWarning;
+
+  /// No description provided for @logoutAllDevicesSuccessCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 session revoked.} other{{count} sessions revoked.}} You have been logged out.'**
+  String logoutAllDevicesSuccessCount(int count);
+
+  /// No description provided for @keyGenPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase'**
+  String get keyGenPassphrase;
+
+  /// No description provided for @keyGenPassphraseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional — protects the private key'**
+  String get keyGenPassphraseHint;
+
+  /// No description provided for @settingsDnsDefaultQuad9Mullvad.
+  ///
+  /// In en, this message translates to:
+  /// **'Default (Quad9 + Mullvad)'**
+  String get settingsDnsDefaultQuad9Mullvad;
 }
 
 class _AppLocalizationsDelegate

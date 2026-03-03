@@ -445,7 +445,7 @@
 
   "settingsSectionNetwork": "Netzwerk & DNS",
   "settingsDnsServers": "DNS-over-HTTPS Server",
-  "settingsDnsDefault": "Standard (Cloudflare + Google)",
+  "settingsDnsDefault": "Standard (Quad9 + Mullvad)",
   "settingsDnsHint": "Gib benutzerdefinierte DoH-Server-URLs ein, getrennt durch Kommas. Mindestens 2 Server werden für die Kreuzprüfung benötigt.",
   "settingsDnsLabel": "DoH-Server-URLs",
   "settingsDnsReset": "Auf Standard zurücksetzen",
@@ -687,5 +687,14 @@
   "variableInsert": "Einfügen",
 
   "tagServerCount": "{count, plural, =1{1 Server} other{{count} Server}}",
-  "@tagServerCount": { "placeholders": { "count": { "type": "int" } } }
+  "@tagServerCount": { "placeholders": { "count": { "type": "int" } } },
+
+  "accountDeleteSubscriptionWarning": "Dein Abonnement muss manuell im App Store / Play Store gekündigt werden. Das Löschen deines Kontos kündigt mobile Abonnements nicht automatisch.",
+  "logoutAllDevicesSuccessCount": "{count, plural, =1{1 Sitzung widerrufen.} other{{count} Sitzungen widerrufen.}} Du wurdest abgemeldet.",
+  "@logoutAllDevicesSuccessCount": { "placeholders": { "count": { "type": "int" } } },
+
+  "keyGenPassphrase": "Passphrase",
+  "keyGenPassphraseHint": "Optional — schützt den privaten Schlüssel",
+
+  "settingsDnsDefaultQuad9Mullvad": "Standard (Quad9 + Mullvad)"
 }

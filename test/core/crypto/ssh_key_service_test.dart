@@ -17,7 +17,7 @@ void main() {
 
       final pair = result.value;
       expect(pair.type, SshKeyType.ed25519);
-      expect(pair.comment, 'shellvault-generated');
+      expect(pair.comment, '');
       expect(pair.publicKey, startsWith('ssh-ed25519 '));
       expect(pair.privateKey, contains('OPENSSH PRIVATE KEY'));
     });
@@ -225,7 +225,7 @@ void main() {
     test('defaults to Ed25519 with default comment', () {
       const options = SshKeyOptions();
       expect(options.type, SshKeyType.ed25519);
-      expect(options.comment, 'shellvault-generated');
+      expect(options.comment, '');
       expect(options.bits, 0);
     });
 

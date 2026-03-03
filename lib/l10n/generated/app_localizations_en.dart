@@ -1295,7 +1295,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDnsServers => 'DNS-over-HTTPS Servers';
 
   @override
-  String get settingsDnsDefault => 'Default (Cloudflare + Google)';
+  String get settingsDnsDefault => 'Default (Quad9 + Mullvad)';
 
   @override
   String get settingsDnsHint =>
@@ -2004,4 +2004,28 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get accountDeleteSubscriptionWarning =>
+      'Your subscription must be cancelled manually in the App Store / Play Store. Deleting your account does not automatically cancel mobile subscriptions.';
+
+  @override
+  String logoutAllDevicesSuccessCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sessions revoked.',
+      one: '1 session revoked.',
+    );
+    return '$_temp0 You have been logged out.';
+  }
+
+  @override
+  String get keyGenPassphrase => 'Passphrase';
+
+  @override
+  String get keyGenPassphraseHint => 'Optional — protects the private key';
+
+  @override
+  String get settingsDnsDefaultQuad9Mullvad => 'Default (Quad9 + Mullvad)';
 }

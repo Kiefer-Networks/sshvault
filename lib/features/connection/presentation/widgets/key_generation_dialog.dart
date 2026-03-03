@@ -53,8 +53,10 @@ class KeyGenerationDialog extends ConsumerStatefulWidget {
     BuildContext context,
     SshKeyService sshKeyService,
   ) {
-    return showDialog<SshKeyPair>(
+    return showModalBottomSheet<SshKeyPair>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) => KeyGenerationDialog(sshKeyService: sshKeyService),
     );
   }
@@ -65,14 +67,26 @@ class KeyGenerationDialog extends ConsumerStatefulWidget {
 }
 
 class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
-  final _commentController = TextEditingController(
-    text: 'shellvault-generated',
-  );
+  final _commentController = TextEditingController();
+  final _passphraseController = TextEditingController();
 
   @override
   void dispose() {
     _commentController.dispose();
+    _passphraseController.dispose();
     super.dispose();
+  }
+
+  Widget _buildDragHandle(ThemeData theme) {
+    return Container(
+      width: 32,
+      height: 4,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onSurfaceVariant.withAlpha(102),
+        borderRadius: BorderRadius.circular(2),
+      ),
+    );
   }
 
   Future<void> _generate() async {
@@ -86,9 +100,8 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
     final options = SshKeyOptions(
       type: ref.read(_keyGenStateProvider).selectedType,
       bits: ref.read(_keyGenStateProvider).selectedBits,
-      comment: _commentController.text.trim().isEmpty
-          ? 'shellvault-generated'
-          : _commentController.text.trim(),
+      comment: _commentController.text.trim(),
+      passphrase: _passphraseController.text,
     );
 
     final result = await widget.sshKeyService.generateKeyPair(options);
@@ -118,135 +131,183 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
       return _buildResultView(theme, l10n, genState);
     }
 
-    return AlertDialog(
-      title: Text(l10n.keyGenTitle),
-      content: SizedBox(
-        width: 480,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.keyGenKeyType, style: theme.textTheme.titleSmall),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<SshKeyType>(
-              initialValue: genState.selectedType,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.vpn_key),
-                isDense: true,
-              ),
-              items: SshKeyType.values
-                  .map(
-                    (t) =>
-                        DropdownMenuItem(value: t, child: Text(t.displayName)),
-                  )
-                  .toList(),
-              onChanged: genState.generating
-                  ? null
-                  : (type) {
-                      if (type == null) return;
-                      ref.read(_keyGenStateProvider.notifier).state = genState
-                          .copyWith(
-                            selectedType: type,
-                            selectedBits: type.defaultBitLength,
-                          );
-                    },
-            ),
-            const SizedBox(height: 16),
-
-            if (genState.selectedType.allowedBitLengths.isNotEmpty) ...[
-              Text(l10n.keyGenKeySize, style: theme.textTheme.titleSmall),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<int>(
-                initialValue: genState.selectedBits > 0
-                    ? genState.selectedBits
-                    : genState.selectedType.defaultBitLength,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.memory),
-                  isDense: true,
-                ),
-                items: genState.selectedType.allowedBitLengths
-                    .map(
-                      (b) => DropdownMenuItem(
-                        value: b,
-                        child: Text(l10n.keyGenKeySizeBit(b)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: genState.generating
-                    ? null
-                    : (bits) {
-                        if (bits != null) {
-                          ref.read(_keyGenStateProvider.notifier).state =
-                              genState.copyWith(selectedBits: bits);
-                        }
-                      },
-              ),
-              const SizedBox(height: 16),
-            ],
-
-            if (genState.selectedType.allowedBitLengths.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: 16,
-                      color: theme.colorScheme.onSurfaceVariant,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildDragHandle(theme),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(l10n.keyGenTitle, style: theme.textTheme.titleLarge),
+          ),
+          const SizedBox(height: 16),
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(l10n.keyGenKeyType, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<SshKeyType>(
+                    initialValue: genState.selectedType,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.vpn_key),
+                      isDense: true,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      genState.selectedType.keySizeLabel,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                    items: SshKeyType.values
+                        .map(
+                          (t) => DropdownMenuItem(
+                            value: t,
+                            child: Text(t.displayName),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: genState.generating
+                        ? null
+                        : (type) {
+                            if (type == null) return;
+                            ref
+                                .read(_keyGenStateProvider.notifier)
+                                .state = genState.copyWith(
+                              selectedType: type,
+                              selectedBits: type.defaultBitLength,
+                            );
+                          },
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (genState.selectedType.allowedBitLengths.isNotEmpty) ...[
+                    Text(l10n.keyGenKeySize, style: theme.textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<int>(
+                      initialValue: genState.selectedBits > 0
+                          ? genState.selectedBits
+                          : genState.selectedType.defaultBitLength,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.memory),
+                        isDense: true,
                       ),
+                      items: genState.selectedType.allowedBitLengths
+                          .map(
+                            (b) => DropdownMenuItem(
+                              value: b,
+                              child: Text(l10n.keyGenKeySizeBit(b)),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: genState.generating
+                          ? null
+                          : (bits) {
+                              if (bits != null) {
+                                ref.read(_keyGenStateProvider.notifier).state =
+                                    genState.copyWith(selectedBits: bits);
+                              }
+                            },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  if (genState.selectedType.allowedBitLengths.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 16,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            genState.selectedType.keySizeLabel,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  Text(l10n.keyGenComment, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _commentController,
+                    enabled: !genState.generating,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.comment_outlined),
+                      hintText: l10n.keyGenCommentHint,
+                      isDense: true,
+                    ),
+                    keyboardType: TextInputType.text,
+                  ),
+                  const SizedBox(height: 16),
+
+                  Text(
+                    l10n.keyGenPassphrase,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _passphraseController,
+                    enabled: !genState.generating,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock_outlined),
+                      hintText: l10n.keyGenPassphraseHint,
+                      isDense: true,
+                    ),
+                    keyboardType: TextInputType.visiblePassword,
+                  ),
+
+                  if (genState.error != null) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      genState.error!,
+                      style: TextStyle(color: theme.colorScheme.error),
                     ),
                   ],
-                ),
+                ],
               ),
-
-            Text(l10n.keyGenComment, style: theme.textTheme.titleSmall),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _commentController,
-              enabled: !genState.generating,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.comment_outlined),
-                hintText: l10n.keyGenCommentHint,
-                isDense: true,
-              ),
-              keyboardType: TextInputType.text,
             ),
-
-            if (genState.error != null) ...[
-              const SizedBox(height: 16),
-              Text(
-                genState.error!,
-                style: TextStyle(color: theme.colorScheme.error),
-              ),
-            ],
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: genState.generating ? null : () => Navigator.pop(context),
-          child: Text(l10n.cancel),
-        ),
-        FilledButton.icon(
-          onPressed: genState.generating ? null : _generate,
-          icon: genState.generating
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.auto_fix_high, size: 18),
-          label: Text(
-            genState.generating ? l10n.keyGenGenerating : l10n.keyGenGenerate,
           ),
-        ),
-      ],
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: genState.generating
+                      ? null
+                      : () => Navigator.pop(context),
+                  child: Text(l10n.cancel),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.icon(
+                  onPressed: genState.generating ? null : _generate,
+                  icon: genState.generating
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.auto_fix_high, size: 18),
+                  label: Text(
+                    genState.generating
+                        ? l10n.keyGenGenerating
+                        : l10n.keyGenGenerate,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -256,77 +317,98 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
     _KeyGenReactiveState genState,
   ) {
     final result = genState.result!;
-    return AlertDialog(
-      title: Row(
-        children: [
-          Icon(Icons.check_circle, color: theme.colorScheme.primary),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              l10n.keyGenResultTitle(result.type.displayName),
-              style: theme.textTheme.titleLarge,
-            ),
-          ),
-        ],
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      content: SizedBox(
-        width: 520,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _KeyPreviewCard(
-              label: l10n.keyGenPublicKey,
-              value: result.publicKey,
-              icon: Icons.key,
-              theme: theme,
-            ),
-            const SizedBox(height: 12),
-
-            _KeyPreviewCard(
-              label: l10n.keyGenPrivateKey,
-              value: result.privateKey,
-              icon: Icons.vpn_key,
-              theme: theme,
-              isPrivate: true,
-            ),
-            const SizedBox(height: 12),
-
-            Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildDragHandle(theme),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
               children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 14,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: 6),
+                Icon(Icons.check_circle, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    l10n.keyGenCommentInfo(result.comment),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
+                    l10n.keyGenResultTitle(result.type.displayName),
+                    style: theme.textTheme.titleLarge,
                   ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _KeyPreviewCard(
+                    label: l10n.keyGenPublicKey,
+                    value: result.publicKey,
+                    icon: Icons.key,
+                    theme: theme,
+                  ),
+                  const SizedBox(height: 12),
+                  _KeyPreviewCard(
+                    label: l10n.keyGenPrivateKey,
+                    value: result.privateKey,
+                    icon: Icons.vpn_key,
+                    theme: theme,
+                    isPrivate: true,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 14,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          l10n.keyGenCommentInfo(result.comment),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    ref.read(_keyGenStateProvider.notifier).state = ref
+                        .read(_keyGenStateProvider)
+                        .copyWith(result: () => null, error: () => null);
+                  },
+                  child: Text(l10n.keyGenAnother),
+                ),
+                const SizedBox(width: 8),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, result),
+                  child: Text(l10n.keyGenUseThisKey),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            ref.read(_keyGenStateProvider.notifier).state = ref
-                .read(_keyGenStateProvider)
-                .copyWith(result: () => null, error: () => null);
-          },
-          child: Text(l10n.keyGenAnother),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, result),
-          child: Text(l10n.keyGenUseThisKey),
-        ),
-      ],
     );
   }
 }

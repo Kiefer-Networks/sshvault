@@ -21,7 +21,7 @@ class DohResolverService {
 
   DohResolverService({
     String? url,
-    DohProvider provider = DohProvider.cloudflare,
+    DohProvider provider = DohProvider.quad9,
     Duration cacheTtl = const Duration(minutes: 5),
     HttpClient? httpClient,
   }) : _baseUrl = url ?? provider.url,
@@ -141,12 +141,9 @@ class DohResolverService {
           .toList();
     } else {
       resolvers = [
+        DohResolverService(provider: DohProvider.quad9, httpClient: httpClient),
         DohResolverService(
-          provider: DohProvider.cloudflare,
-          httpClient: httpClient,
-        ),
-        DohResolverService(
-          provider: DohProvider.google,
+          provider: DohProvider.mullvad,
           httpClient: httpClient,
         ),
       ];
@@ -241,9 +238,13 @@ enum DnsRecordType {
 }
 
 /// DoH provider endpoints.
+///
+/// Defaults are privacy-friendly European/non-profit providers:
+/// - Quad9: Swiss non-profit, no logging, GDPR-compliant
+/// - Mullvad: Swedish privacy company, no logging, GDPR-compliant
 enum DohProvider {
-  cloudflare('https://cloudflare-dns.com/dns-query'),
-  google('https://dns.google/resolve');
+  quad9('https://dns.quad9.net:5053/dns-query'),
+  mullvad('https://dns.mullvad.net/dns-query');
 
   final String url;
 

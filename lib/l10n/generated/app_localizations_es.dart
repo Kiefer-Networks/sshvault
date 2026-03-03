@@ -1301,7 +1301,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsDnsServers => 'Servidores DNS-over-HTTPS';
 
   @override
-  String get settingsDnsDefault => 'Predeterminado (Cloudflare + Google)';
+  String get settingsDnsDefault => 'Predeterminado (Quad9 + Mullvad)';
 
   @override
   String get settingsDnsHint =>
@@ -2012,4 +2012,29 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get accountDeleteSubscriptionWarning =>
+      'Tu suscripción debe cancelarse manualmente en el App Store / Play Store. Eliminar tu cuenta no cancela automáticamente las suscripciones móviles.';
+
+  @override
+  String logoutAllDevicesSuccessCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sesiones revocadas.',
+      one: '1 sesión revocada.',
+    );
+    return '$_temp0 Se ha cerrado tu sesión.';
+  }
+
+  @override
+  String get keyGenPassphrase => 'Passphrase';
+
+  @override
+  String get keyGenPassphraseHint => 'Opcional — protege la clave privada';
+
+  @override
+  String get settingsDnsDefaultQuad9Mullvad =>
+      'Predeterminado (Quad9 + Mullvad)';
 }

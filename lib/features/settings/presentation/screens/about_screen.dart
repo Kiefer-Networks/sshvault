@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
@@ -119,6 +120,24 @@ class AboutScreen extends StatelessWidget {
                   color: colorScheme.onSurfaceVariant,
                 ),
                 onTap: () => _launchUrl('https://sshvault.app'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Support
+          SectionHeader(title: l10n.settingsSectionSupport),
+          SettingsGroupCard(
+            children: [
+              SettingsTile(
+                icon: Icons.favorite_outlined,
+                iconColor: Colors.red,
+                title: l10n.supportProjectTitle,
+                trailing: Icon(
+                  Icons.chevron_right,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                onTap: () => context.push('/support'),
               ),
             ],
           ),

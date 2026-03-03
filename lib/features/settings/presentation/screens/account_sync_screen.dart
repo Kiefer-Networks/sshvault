@@ -837,12 +837,12 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         final repo = ref.read(accountRepositoryProvider);
         final result = await repo.logoutAllDevices();
         result.fold(
-          onSuccess: (_) async {
+          onSuccess: (revokedCount) async {
             if (!mounted) return;
             final router = GoRouter.of(context);
             AdaptiveNotification.show(
               context,
-              message: l10n.logoutAllDevicesSuccess,
+              message: l10n.logoutAllDevicesSuccessCount(revokedCount),
             );
             await ref.read(authProvider.notifier).logout();
             if (mounted) router.go('/');
@@ -865,10 +865,19 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   }
 
   Future<void> _deleteAccount(AppLocalizations l10n) async {
+    final billing = ref.read(billingStatusProvider).value;
+
+    String message = l10n.accountDeleteWarning;
+    if (billing?.active == true) {
+      if (billing!.provider == 'apple' || billing.provider == 'google') {
+        message += '\n\n${l10n.accountDeleteSubscriptionWarning}';
+      }
+    }
+
     final confirmed = await showAdaptiveConfirmDialog(
       context,
       title: l10n.accountDeleteAccount,
-      message: l10n.accountDeleteWarning,
+      message: message,
       confirmLabel: l10n.delete,
       cancelLabel: l10n.cancel,
       isDestructive: true,

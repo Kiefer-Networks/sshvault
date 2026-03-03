@@ -1,9 +1,11 @@
+// ignore_for_file: implementation_imports
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' show sha256;
 import 'package:cryptography/cryptography.dart' as crypto;
+import 'package:dartssh2/src/utils/bcrypt.dart' as openssh_bcrypt;
 import 'package:pointycastle/asn1.dart';
 import 'package:pointycastle/export.dart';
 import 'package:shellvault/core/crypto/ssh_key_type.dart';
@@ -298,6 +300,7 @@ class SshKeyService {
           privateKeyBytes,
           publicKeyBytes,
           options.comment,
+          passphrase: options.passphrase,
         ),
         publicKey: _ed25519ToOpenSshPublicKey(publicKeyBytes, options.comment),
         type: SshKeyType.ed25519,
@@ -657,11 +660,12 @@ class SshKeyService {
   String _ed25519ToOpenSshPrivateKey(
     Uint8List privateKey,
     Uint8List publicKey,
-    String comment,
-  ) {
-    // OpenSSH private key format (unencrypted)
+    String comment, {
+    String passphrase = '',
+  }) {
     final random = Random.secure();
     final checkInt = random.nextInt(0xFFFFFFFF);
+    final encrypt = passphrase.isNotEmpty;
 
     // Build public key blob
     final pubBlob = BytesBuilder();
@@ -690,9 +694,12 @@ class SshKeyService {
     final commentBytes = utf8.encode(comment);
     privSection.add(_uint32Bytes(commentBytes.length));
     privSection.add(commentBytes);
-    // Padding (1, 2, 3, ... until aligned to 8 bytes)
+
+    // Padding — block size is 8 for unencrypted, 16 for AES-256-CTR
+    final blockSize = encrypt ? 16 : 8;
     var privSectionBytes = privSection.toBytes();
-    final padLen = (8 - (privSectionBytes.length % 8)) % 8;
+    final padLen =
+        (blockSize - (privSectionBytes.length % blockSize)) % blockSize;
     if (padLen > 0) {
       final padded = BytesBuilder();
       padded.add(privSectionBytes);
@@ -702,20 +709,53 @@ class SshKeyService {
       privSectionBytes = padded.toBytes();
     }
 
+    // Encrypt private section if passphrase is provided
+    String cipherName = 'none';
+    String kdfName = 'none';
+    Uint8List kdfOptions = Uint8List(0);
+
+    if (encrypt) {
+      cipherName = 'aes256-ctr';
+      kdfName = 'bcrypt';
+      const rounds = 16;
+
+      // Generate salt
+      final salt = Uint8List(16);
+      for (var i = 0; i < salt.length; i++) {
+        salt[i] = random.nextInt(256);
+      }
+
+      // bcrypt_pbkdf: derive 48 bytes (32 key + 16 IV)
+      final derived = _bcryptPbkdf(utf8.encode(passphrase), salt, 48, rounds);
+      final aesKey = derived.sublist(0, 32);
+      final iv = derived.sublist(32, 48);
+
+      // AES-256-CTR encrypt
+      privSectionBytes = _aesCtrEncrypt(aesKey, iv, privSectionBytes);
+
+      // KDF options: salt (string) + rounds (uint32)
+      final kdfOptBuilder = BytesBuilder();
+      kdfOptBuilder.add(_uint32Bytes(salt.length));
+      kdfOptBuilder.add(salt);
+      kdfOptBuilder.add(_uint32Bytes(rounds));
+      kdfOptions = Uint8List.fromList(kdfOptBuilder.toBytes());
+    }
+
     // Assemble full key
     final output = BytesBuilder();
-    // Magic
     output.add(utf8.encode('openssh-key-v1'));
     output.addByte(0x00);
-    // ciphername: "none"
-    final noneBytes = utf8.encode('none');
-    output.add(_uint32Bytes(noneBytes.length));
-    output.add(noneBytes);
-    // kdfname: "none"
-    output.add(_uint32Bytes(noneBytes.length));
-    output.add(noneBytes);
-    // kdfoptions: empty
-    output.add(_uint32Bytes(0));
+    // ciphername
+    final cipherBytes = utf8.encode(cipherName);
+    output.add(_uint32Bytes(cipherBytes.length));
+    output.add(cipherBytes);
+    // kdfname
+    final kdfBytes = utf8.encode(kdfName);
+    output.add(_uint32Bytes(kdfBytes.length));
+    output.add(kdfBytes);
+    // kdfoptions
+    output.add(_uint32Bytes(kdfOptions.length));
+    output.add(kdfOptions);
     // number of keys: 1
     output.add(_uint32Bytes(1));
     // public key blob
@@ -734,6 +774,33 @@ class SshKeyService {
     }
 
     return '-----BEGIN OPENSSH PRIVATE KEY-----\n${lines.join('\n')}\n-----END OPENSSH PRIVATE KEY-----';
+  }
+
+  /// AES-256-CTR encryption using PointyCastle.
+  Uint8List _aesCtrEncrypt(Uint8List key, Uint8List iv, Uint8List data) {
+    final cipher = CTRStreamCipher(AESEngine())
+      ..init(true, ParametersWithIV(KeyParameter(key), iv));
+    return cipher.process(data);
+  }
+
+  /// Derive key material using OpenSSH's bcrypt_pbkdf (via dartssh2).
+  Uint8List _bcryptPbkdf(
+    List<int> password,
+    Uint8List salt,
+    int keyLen,
+    int rounds,
+  ) {
+    final key = Uint8List(keyLen);
+    openssh_bcrypt.bcrypt_pbkdf(
+      Uint8List.fromList(password),
+      password.length,
+      salt,
+      salt.length,
+      key,
+      keyLen,
+      rounds,
+    );
+    return key;
   }
 
   // ---------------------------------------------------------------------------

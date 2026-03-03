@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
@@ -41,16 +40,6 @@ class SupportSettingsScreen extends ConsumerWidget {
                 iconColor: Colors.pink,
                 title: l10n.settingsSendLogs,
                 onTap: () => _sendLogsToSupport(context, ref, l10n),
-              ),
-              SettingsTile(
-                icon: Icons.favorite_outlined,
-                iconColor: Colors.red,
-                title: l10n.supportProjectTitle,
-                trailing: Icon(
-                  Icons.chevron_right,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                onTap: () => context.push('/support'),
               ),
             ],
           ),

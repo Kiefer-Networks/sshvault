@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 abstract final class IconConstants {
   static const List<ServerIcon> serverIcons = [
@@ -37,6 +38,18 @@ abstract final class IconConstants {
     ServerIcon('media', Icons.perm_media),
     ServerIcon('iot', Icons.settings_remote),
     ServerIcon('terminal', Icons.terminal),
+
+    // Distro & Platform icons
+    ServerIcon('linux', FontAwesomeIcons.linux),
+    ServerIcon('ubuntu', FontAwesomeIcons.ubuntu),
+    ServerIcon('debian', FontAwesomeIcons.debian),
+    ServerIcon('fedora', FontAwesomeIcons.fedora),
+    ServerIcon('centos', FontAwesomeIcons.centos),
+    ServerIcon('redhat', FontAwesomeIcons.redhat),
+    ServerIcon('suse', FontAwesomeIcons.suse),
+    ServerIcon('freebsd', FontAwesomeIcons.freebsd),
+    ServerIcon('windows', FontAwesomeIcons.windows),
+    ServerIcon('apple', FontAwesomeIcons.apple),
   ];
 
   static const String defaultIconName = 'server';
