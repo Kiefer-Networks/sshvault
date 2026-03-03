@@ -49,8 +49,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       }
     });
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.authRegister)),
+    return AdaptiveScaffold(
+      title: l10n.authRegister,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),

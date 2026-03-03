@@ -50,8 +50,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     });
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.authLogin)),
+    return AdaptiveScaffold(
+      title: l10n.authLogin,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),

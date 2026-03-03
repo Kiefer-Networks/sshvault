@@ -95,14 +95,10 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
     final theme = Theme.of(context);
     final formState = ref.watch(_syncPasswordFormProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _isCreateMode
-              ? l10n.syncPasswordTitleCreate
-              : l10n.syncPasswordTitleEnter,
-        ),
-      ),
+    return AdaptiveScaffold(
+      title: _isCreateMode
+          ? l10n.syncPasswordTitleCreate
+          : l10n.syncPasswordTitleEnter,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),

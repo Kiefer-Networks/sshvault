@@ -60,8 +60,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     final l10n = AppLocalizations.of(context)!;
     final fpState = ref.watch(_forgotPasswordProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.authForgotPassword)),
+    return AdaptiveScaffold(
+      title: l10n.authForgotPassword,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
