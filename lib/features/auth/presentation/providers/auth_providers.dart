@@ -106,76 +106,6 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     );
   }
 
-  Future<void> loginWithApple() async {
-    if (!showAppleSignIn) return;
-
-    _log.info(_tag, 'Apple OAuth login attempt');
-    state = const AsyncValue.loading();
-    final appleService = ref.read(appleAuthServiceProvider);
-    final repo = ref.read(authRepositoryProvider);
-
-    final appleResult = await appleService.signIn();
-    if (appleResult.isFailure) {
-      _log.error(_tag, 'Apple sign-in failed: ${appleResult.failure}');
-      state = AsyncValue.error(appleResult.failure, StackTrace.current);
-      return;
-    }
-
-    final result = await repo.oauthLogin('apple', appleResult.value.idToken);
-    state = await result.fold(
-      onSuccess: (auth) async {
-        await _persistTokens(
-          auth.accessToken,
-          auth.refreshToken,
-          auth.expiresAt,
-          auth.user.email,
-        );
-        await _registerDeviceIfNeeded();
-        _invalidateAccountProviders();
-        _log.info(_tag, 'Apple OAuth login successful');
-        return const AsyncValue.data(AuthStatus.authenticated);
-      },
-      onFailure: (f) async {
-        _log.error(_tag, 'Apple OAuth login failed: $f');
-        return AsyncValue.error(f, StackTrace.current);
-      },
-    );
-  }
-
-  Future<void> loginWithGoogle() async {
-    _log.info(_tag, 'Google OAuth login attempt');
-    state = const AsyncValue.loading();
-    final googleService = ref.read(googleAuthServiceProvider);
-    final repo = ref.read(authRepositoryProvider);
-
-    final googleResult = await googleService.signIn();
-    if (googleResult.isFailure) {
-      _log.error(_tag, 'Google sign-in failed: ${googleResult.failure}');
-      state = AsyncValue.error(googleResult.failure, StackTrace.current);
-      return;
-    }
-
-    final result = await repo.oauthLogin('google', googleResult.value);
-    state = await result.fold(
-      onSuccess: (auth) async {
-        await _persistTokens(
-          auth.accessToken,
-          auth.refreshToken,
-          auth.expiresAt,
-          auth.user.email,
-        );
-        await _registerDeviceIfNeeded();
-        _invalidateAccountProviders();
-        _log.info(_tag, 'Google OAuth login successful');
-        return const AsyncValue.data(AuthStatus.authenticated);
-      },
-      onFailure: (f) async {
-        _log.error(_tag, 'Google OAuth login failed: $f');
-        return AsyncValue.error(f, StackTrace.current);
-      },
-    );
-  }
-
   Future<void> logout() async {
     _log.info(_tag, 'Logout initiated');
     state = const AsyncValue.loading();
@@ -189,7 +119,6 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     }
 
     await storage.clearAuthTokens();
-    ref.read(googleAuthServiceProvider).signOut();
     _invalidateAccountProviders();
     _log.info(_tag, 'Logout completed — tokens and device ID cleared');
     state = const AsyncValue.data(AuthStatus.unauthenticated);
@@ -286,9 +215,3 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     return 'unknown';
   }
 }
-
-/// Whether Apple Sign In should be shown (only iOS/macOS native)
-bool get showAppleSignIn =>
-    !kIsWeb &&
-    (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS);

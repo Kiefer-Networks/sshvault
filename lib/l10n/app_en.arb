@@ -416,7 +416,6 @@
   "authPasswordLabel": "Password",
   "authConfirmPasswordLabel": "Confirm Password",
   "authPasswordMismatch": "Passwords do not match",
-  "authOrContinueWith": "or continue with",
   "authNoAccount": "No account?",
   "authHasAccount": "Already have an account?",
   "authSelfHosted": "Self-Hosted Server",
@@ -468,6 +467,13 @@
   "@accountActivateSyncPrice": { "placeholders": { "price": { "type": "String" } } },
   "accountStoreFeeNote": "Price on mobile & macOS includes App Store / Play Store fees.",
   "accountManageSubscription": "Manage Subscription & Invoices",
+
+  "settingsSectionNetwork": "Network & DNS",
+  "settingsDnsServers": "DNS-over-HTTPS Servers",
+  "settingsDnsDefault": "Default (Cloudflare + Google)",
+  "settingsDnsHint": "Enter custom DoH server URLs, separated by commas. At least 2 servers are needed for cross-check verification.",
+  "settingsDnsLabel": "DoH Server URLs",
+  "settingsDnsReset": "Reset to Default",
 
   "settingsSectionSync": "Synchronization",
   "settingsSyncAccount": "Account",

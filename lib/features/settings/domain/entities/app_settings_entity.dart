@@ -19,6 +19,7 @@ class AppSettingsEntity {
   final bool autoSync;
   final int localVaultVersion;
   final bool preventScreenshots;
+  final String dnsServers;
 
   const AppSettingsEntity({
     this.themeMode = ThemeMode.system,
@@ -38,6 +39,7 @@ class AppSettingsEntity {
     this.autoSync = true,
     this.localVaultVersion = 0,
     this.preventScreenshots = false,
+    this.dnsServers = '',
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -75,6 +77,7 @@ class AppSettingsEntity {
     bool? autoSync,
     int? localVaultVersion,
     bool? preventScreenshots,
+    String? dnsServers,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -96,6 +99,18 @@ class AppSettingsEntity {
       autoSync: autoSync ?? this.autoSync,
       localVaultVersion: localVaultVersion ?? this.localVaultVersion,
       preventScreenshots: preventScreenshots ?? this.preventScreenshots,
+      dnsServers: dnsServers ?? this.dnsServers,
     );
+  }
+
+  /// Returns the list of configured DNS-over-HTTPS server URLs.
+  /// If empty, uses the built-in defaults (Cloudflare + Google).
+  List<String> get dnsServerList {
+    if (dnsServers.isEmpty) return const [];
+    return dnsServers
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
   }
 }

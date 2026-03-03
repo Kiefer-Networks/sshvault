@@ -8,7 +8,6 @@ abstract class AuthRepository {
     String password, {
     String? deviceName,
   });
-  Future<Result<AuthResponse>> oauthLogin(String provider, String idToken);
   Future<Result<void>> logout(String refreshToken);
   Future<Result<void>> forgotPassword(String email);
   Future<Result<void>> resetPassword(String token, String newPassword);

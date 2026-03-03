@@ -5,14 +5,4 @@
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    <!-- Certificate pinning for ShellVault sync API -->
-    <domain-config>
-        <domain includeSubdomains="true">api.sshvault.app</domain>
-        <pin-set expiration="2027-01-01">
-            <!-- Primary and backup SPKI SHA-256 pins -->
-            <!-- Replace with actual certificate pin hashes before release -->
-            <pin digest="SHA-256">BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=</pin>
-            <pin digest="SHA-256">CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=</pin>
-        </pin-set>
-    </domain-config>
 </network-security-config>

@@ -108,28 +108,6 @@ void main() {
     });
   });
 
-  group('oauthLogin', () {
-    test('returns AuthResponse on success', () async {
-      when(
-        () => mockApi.post('/v1/auth/oauth/google', data: any(named: 'data')),
-      ).thenAnswer((_) async => Success(authResponseData));
-
-      final result = await sut.oauthLogin('google', 'id-token-123');
-      expect(result.isSuccess, isTrue);
-    });
-
-    test('sends correct data payload', () async {
-      when(
-        () => mockApi.post('/v1/auth/oauth/apple', data: any(named: 'data')),
-      ).thenAnswer((_) async => Success(authResponseData));
-
-      await sut.oauthLogin('apple', 'token');
-      verify(
-        () => mockApi.post('/v1/auth/oauth/apple', data: {'id_token': 'token'}),
-      ).called(1);
-    });
-  });
-
   group('logout', () {
     test('returns Success on successful logout', () async {
       when(

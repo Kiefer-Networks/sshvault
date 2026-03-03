@@ -36,6 +36,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyAutoSync = 'auto_sync';
   static const _keyLocalVaultVersion = 'local_vault_version';
   static const _keyPreventScreenshots = 'prevent_screenshots';
+  static const _keyDnsServers = 'dns_servers';
 
   @override
   Future<AppSettingsEntity> build() async {
@@ -81,6 +82,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       autoSync: all[_keyAutoSync] != 'false',
       localVaultVersion: int.tryParse(all[_keyLocalVaultVersion] ?? '') ?? 0,
       preventScreenshots: all[_keyPreventScreenshots] == 'true',
+      dnsServers: all[_keyDnsServers] ?? '',
     );
   }
 
@@ -298,6 +300,13 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     _log.info(_tag, 'Prevent screenshots ${enabled ? 'enabled' : 'disabled'}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyPreventScreenshots, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setDnsServers(String servers) async {
+    _log.info(_tag, 'DNS servers changed');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyDnsServers, servers);
     ref.invalidateSelf();
   }
 }

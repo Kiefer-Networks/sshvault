@@ -55,27 +55,6 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<AuthResponse>> oauthLogin(
-    String provider,
-    String idToken,
-  ) async {
-    final result = await _apiClient.post(
-      '/v1/auth/oauth/$provider',
-      data: {'id_token': idToken},
-    );
-    return result.fold(
-      onSuccess: (data) {
-        try {
-          return Success(AuthResponse.fromJson(data));
-        } catch (e) {
-          return Err(AuthFailure('Invalid response format', cause: e));
-        }
-      },
-      onFailure: (f) => Err(AuthFailure(f.message, cause: f.cause)),
-    );
-  }
-
-  @override
   Future<Result<void>> logout(String refreshToken) async {
     final result = await _apiClient.post(
       '/v1/auth/logout',

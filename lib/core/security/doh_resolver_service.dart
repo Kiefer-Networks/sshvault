@@ -7,23 +7,24 @@ import 'package:shellvault/core/services/logging_service.dart';
 
 /// DNS-over-HTTPS resolver to prevent DNS spoofing and cache poisoning.
 ///
-/// Resolves hostnames using Cloudflare or Google DoH endpoints via JSON API.
+/// Resolves hostnames using configurable DoH endpoints via JSON API.
 /// Results are cached in memory with TTL support.
 class DohResolverService {
   static final _log = LoggingService.instance;
   static const _tag = 'DoH';
 
-  final DohProvider _provider;
+  final String _baseUrl;
   final Duration _cacheTtl;
   final HttpClient _httpClient;
 
   final Map<String, _CachedResult> _cache = {};
 
   DohResolverService({
+    String? url,
     DohProvider provider = DohProvider.cloudflare,
     Duration cacheTtl = const Duration(minutes: 5),
     HttpClient? httpClient,
-  }) : _provider = provider,
+  }) : _baseUrl = url ?? provider.url,
        _cacheTtl = cacheTtl,
        _httpClient = httpClient ?? HttpClient();
 
@@ -43,15 +44,10 @@ class DohResolverService {
       return Success(cached.addresses);
     }
 
-    _log.debug(
-      _tag,
-      'Resolving $hostname via ${_provider.name} (${type.name})',
-    );
+    _log.debug(_tag, 'Resolving $hostname via $_baseUrl (${type.name})');
 
     try {
-      final uri = Uri.parse(
-        '${_provider.url}?name=$hostname&type=${type.name}',
-      );
+      final uri = Uri.parse('$_baseUrl?name=$hostname&type=${type.name}');
 
       final request = await _httpClient.getUrl(uri);
       request.headers.set('Accept', 'application/dns-json');
@@ -122,72 +118,93 @@ class DohResolverService {
     return result.map((addresses) => addresses.first);
   }
 
-  /// Cross-check DNS resolution across Cloudflare and Google.
+  /// Cross-check DNS resolution across multiple providers.
   ///
-  /// Queries both providers in parallel and compares results.
+  /// Queries providers in parallel and compares results.
   /// Returns the resolved addresses if they agree, or a [DnsDivergence]
   /// failure if the IP sets differ (possible DNS spoofing).
+  ///
+  /// If [dnsServerUrls] is provided and has at least 2 entries,
+  /// those URLs are used instead of the built-in Cloudflare and Google
+  /// defaults. This allows users to configure custom DoH servers.
   static Future<Result<List<String>>> crossCheck(
     String hostname, {
     DnsRecordType type = DnsRecordType.a,
     HttpClient? httpClient,
+    List<String> dnsServerUrls = const [],
   }) async {
-    final cloudflare = DohResolverService(
-      provider: DohProvider.cloudflare,
-      httpClient: httpClient,
+    final List<DohResolverService> resolvers;
+
+    if (dnsServerUrls.length >= 2) {
+      resolvers = dnsServerUrls
+          .map((url) => DohResolverService(url: url, httpClient: httpClient))
+          .toList();
+    } else {
+      resolvers = [
+        DohResolverService(
+          provider: DohProvider.cloudflare,
+          httpClient: httpClient,
+        ),
+        DohResolverService(
+          provider: DohProvider.google,
+          httpClient: httpClient,
+        ),
+      ];
+    }
+
+    final results = await Future.wait(
+      resolvers.map((r) => r.resolve(hostname, type: type)),
     );
-    final google = DohResolverService(
-      provider: DohProvider.google,
-      httpClient: httpClient,
-    );
 
-    final results = await Future.wait([
-      cloudflare.resolve(hostname, type: type),
-      google.resolve(hostname, type: type),
-    ]);
-
-    final cfResult = results[0];
-    final gResult = results[1];
-
-    // If both fail, return the first error
-    if (cfResult is Err && gResult is Err) {
-      _log.error(_tag, 'Both DoH resolvers failed for $hostname');
-      return cfResult;
+    // Collect successful results
+    final successResults = <Set<String>>[];
+    Result<List<String>>? firstError;
+    for (final r in results) {
+      if (r is Success<List<String>>) {
+        successResults.add(r.value.toSet());
+      } else {
+        firstError ??= r;
+      }
     }
 
-    // If only one fails, return the successful one with a warning
-    if (cfResult is Err) {
-      _log.warning(_tag, 'Cloudflare DoH failed, using Google result only');
-      return gResult;
-    }
-    if (gResult is Err) {
-      _log.warning(_tag, 'Google DoH failed, using Cloudflare result only');
-      return cfResult;
+    // If all fail, return the first error
+    if (successResults.isEmpty) {
+      _log.error(_tag, 'All DoH resolvers failed for $hostname');
+      return firstError!;
     }
 
-    final cfAddresses = (cfResult as Success<List<String>>).value.toSet();
-    final gAddresses = (gResult as Success<List<String>>).value.toSet();
-
-    // Check if results overlap (at least one common IP)
-    final intersection = cfAddresses.intersection(gAddresses);
-    if (intersection.isEmpty) {
-      _log.error(
+    // If only one succeeded, return it with a warning
+    if (successResults.length == 1) {
+      _log.warning(
         _tag,
-        'DNS divergence detected for $hostname: '
-        'Cloudflare=$cfAddresses, Google=$gAddresses',
+        'Only 1 of ${resolvers.length} DoH resolvers succeeded for $hostname',
       );
-      return Err(DnsDivergence(
-        hostname: hostname,
-        cloudflareIPs: cfAddresses.toList(),
-        googleIPs: gAddresses.toList(),
-      ));
+      return Success(successResults.first.toList());
+    }
+
+    // Compare all successful results — check pairwise overlap
+    final first = successResults.first;
+    for (var i = 1; i < successResults.length; i++) {
+      final intersection = first.intersection(successResults[i]);
+      if (intersection.isEmpty) {
+        _log.error(
+          _tag,
+          'DNS divergence detected for $hostname: '
+          'resolver[0]=$first, resolver[$i]=${successResults[i]}',
+        );
+        return Err(DnsDivergence(
+          hostname: hostname,
+          cloudflareIPs: first.toList(),
+          googleIPs: successResults[i].toList(),
+        ));
+      }
     }
 
     _log.info(
       _tag,
-      'Cross-check passed for $hostname: ${intersection.length} common IP(s)',
+      'Cross-check passed for $hostname across ${successResults.length} resolvers',
     );
-    return Success(cfAddresses.toList());
+    return Success(first.toList());
   }
 
   /// Clear all cached DNS results.

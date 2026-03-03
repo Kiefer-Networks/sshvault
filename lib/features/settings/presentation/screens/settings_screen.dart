@@ -36,373 +36,461 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(settingsProvider);
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return AdaptiveScaffold(
       title: l10n.settingsTitle,
       body: settingsAsync.when(
         data: (settings) {
           return ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             children: [
-              // Appearance
-              _SectionHeader(title: l10n.settingsSectionAppearance),
-              ListTile(
-                leading: const Icon(Icons.palette_outlined),
-                title: Text(l10n.settingsTheme),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: AdaptiveSegmentedControl<ThemeMode>(
-                    selected: settings.themeMode,
-                    segments: {
-                      ThemeMode.system: l10n.settingsThemeSystem,
-                      ThemeMode.light: l10n.settingsThemeLight,
-                      ThemeMode.dark: l10n.settingsThemeDark,
-                    },
-                    onChanged: (mode) {
-                      ref.read(settingsProvider.notifier).setThemeMode(mode);
-                    },
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.language),
-                title: Text(l10n.settingsLanguage),
-                subtitle: Text(_localeLabel(l10n, settings.locale)),
-                trailing: DropdownButton<String>(
-                        value: settings.locale.isEmpty ? '' : settings.locale,
-                        underline: const SizedBox.shrink(),
-                        items: [
-                          DropdownMenuItem(
-                            value: '',
-                            child: Text(l10n.settingsLanguageSystem),
-                          ),
-                          DropdownMenuItem(
-                            value: 'en',
-                            child: Text(l10n.settingsLanguageEn),
-                          ),
-                          DropdownMenuItem(
-                            value: 'de',
-                            child: Text(l10n.settingsLanguageDe),
-                          ),
-                          DropdownMenuItem(
-                            value: 'es',
-                            child: Text(l10n.settingsLanguageEs),
-                          ),
-                        ],
-                        onChanged: (v) {
-                          if (v != null) {
-                            ref.read(settingsProvider.notifier).setLocale(v);
-                          }
+              // ── Appearance ──────────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionAppearance,
+                children: [
+                  _SettingsTile(
+                    icon: Icons.palette_outlined,
+                    iconColor: colorScheme.primary,
+                    title: l10n.settingsTheme,
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: AdaptiveSegmentedControl<ThemeMode>(
+                        selected: settings.themeMode,
+                        segments: {
+                          ThemeMode.system: l10n.settingsThemeSystem,
+                          ThemeMode.light: l10n.settingsThemeLight,
+                          ThemeMode.dark: l10n.settingsThemeDark,
+                        },
+                        onChanged: (mode) {
+                          ref
+                              .read(settingsProvider.notifier)
+                              .setThemeMode(mode);
                         },
                       ),
-              ),
-              const Divider(),
-
-              // Terminal
-              _SectionHeader(title: l10n.settingsSectionTerminal),
-              Builder(
-                builder: (context) {
-                  final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
-                  return ListTile(
-                    leading: const Icon(Icons.color_lens_outlined),
-                    title: Text(l10n.settingsTerminalTheme),
-                    subtitle: Text(
-                      themeKeyAsync.when(
-                        data: (key) => key.displayName,
-                        loading: () => l10n.loading,
-                        error: (_, _) => l10n.settingsTerminalThemeDefault,
-                      ),
                     ),
-                    onTap: () => TerminalThemePicker.show(context),
-                  );
-                },
-              ),
-              Builder(
-                builder: (context) {
-                  final fontSizeAsync = ref.watch(terminalFontSizeProvider);
-                  final fontSize = fontSizeAsync.value ?? 14.0;
-                  return ListTile(
-                    leading: const Icon(Icons.text_fields_outlined),
-                    title: Text(l10n.settingsFontSize),
-                    subtitle: Text(
-                      l10n.settingsFontSizeValue(fontSize.toInt()),
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove),
-                          onPressed: fontSize <= 8
-                              ? null
-                              : () => ref
-                                    .read(terminalFontSizeProvider.notifier)
-                                    .decrease(),
+                  ),
+                  _SettingsTile(
+                    icon: Icons.language,
+                    iconColor: colorScheme.tertiary,
+                    title: l10n.settingsLanguage,
+                    subtitleText: _localeLabel(l10n, settings.locale),
+                    trailing: DropdownButton<String>(
+                      value: settings.locale.isEmpty ? '' : settings.locale,
+                      underline: const SizedBox.shrink(),
+                      items: [
+                        DropdownMenuItem(
+                          value: '',
+                          child: Text(l10n.settingsLanguageSystem),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: fontSize >= 24
-                              ? null
-                              : () => ref
-                                    .read(terminalFontSizeProvider.notifier)
-                                    .increase(),
+                        DropdownMenuItem(
+                          value: 'en',
+                          child: Text(l10n.settingsLanguageEn),
+                        ),
+                        DropdownMenuItem(
+                          value: 'de',
+                          child: Text(l10n.settingsLanguageDe),
+                        ),
+                        DropdownMenuItem(
+                          value: 'es',
+                          child: Text(l10n.settingsLanguageEs),
                         ),
                       ],
+                      onChanged: (v) {
+                        if (v != null) {
+                          ref.read(settingsProvider.notifier).setLocale(v);
+                        }
+                      },
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
-              const Divider(),
 
-              // SSH Defaults
-              _SectionHeader(title: l10n.settingsSectionSshDefaults),
-              ListTile(
-                leading: const Icon(Icons.numbers),
-                title: Text(l10n.settingsDefaultPort),
-                subtitle: Text(settings.defaultSshPort.toString()),
-                onTap: () => _editPort(l10n, settings.defaultSshPort),
+              // ── Terminal ───────────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionTerminal,
+                children: [
+                  Builder(
+                    builder: (context) {
+                      final themeKeyAsync =
+                          ref.watch(terminalThemeKeyProvider);
+                      return _SettingsTile(
+                        icon: Icons.color_lens_outlined,
+                        iconColor: Colors.deepPurple,
+                        title: l10n.settingsTerminalTheme,
+                        subtitleText: themeKeyAsync.when(
+                          data: (key) => key.displayName,
+                          loading: () => l10n.loading,
+                          error: (_, _) =>
+                              l10n.settingsTerminalThemeDefault,
+                        ),
+                        onTap: () => TerminalThemePicker.show(context),
+                      );
+                    },
+                  ),
+                  Builder(
+                    builder: (context) {
+                      final fontSizeAsync =
+                          ref.watch(terminalFontSizeProvider);
+                      final fontSize = fontSizeAsync.value ?? 14.0;
+                      return _SettingsTile(
+                        icon: Icons.text_fields_outlined,
+                        iconColor: Colors.teal,
+                        title: l10n.settingsFontSize,
+                        subtitleText: l10n.settingsFontSizeValue(
+                          fontSize.toInt(),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              onPressed: fontSize <= 8
+                                  ? null
+                                  : () => ref
+                                        .read(
+                                          terminalFontSizeProvider.notifier,
+                                        )
+                                        .decrease(),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: fontSize >= 24
+                                  ? null
+                                  : () => ref
+                                        .read(
+                                          terminalFontSizeProvider.notifier,
+                                        )
+                                        .increase(),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-              ListTile(
-                leading: const Icon(Icons.person_outline),
-                title: Text(l10n.settingsDefaultUsername),
-                subtitle: Text(settings.defaultUsername),
-                onTap: () => _editUsername(l10n, settings.defaultUsername),
-              ),
-              const Divider(),
 
-              // Security
-              _SectionHeader(title: l10n.settingsSectionSecurity),
-              ListTile(
-                leading: const Icon(Icons.lock_clock_outlined),
-                title: Text(l10n.settingsAutoLock),
-                subtitle: Text(
-                  settings.autoLockMinutes == 0
-                      ? l10n.settingsAutoLockDisabled
-                      : l10n.settingsAutoLockMinutes(settings.autoLockMinutes),
-                ),
-                trailing: DropdownButton<int>(
-                        value: settings.autoLockMinutes,
-                        underline: const SizedBox.shrink(),
-                        items: [
-                          DropdownMenuItem(
-                            value: 0,
-                            child: Text(l10n.settingsAutoLockOff),
+              // ── SSH Defaults ───────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionSshDefaults,
+                children: [
+                  _SettingsTile(
+                    icon: Icons.numbers,
+                    iconColor: Colors.orange,
+                    title: l10n.settingsDefaultPort,
+                    subtitleText: settings.defaultSshPort.toString(),
+                    onTap: () =>
+                        _editPort(l10n, settings.defaultSshPort),
+                  ),
+                  _SettingsTile(
+                    icon: Icons.person_outline,
+                    iconColor: Colors.blue,
+                    title: l10n.settingsDefaultUsername,
+                    subtitleText: settings.defaultUsername,
+                    onTap: () =>
+                        _editUsername(l10n, settings.defaultUsername),
+                  ),
+                ],
+              ),
+
+              // ── Security ───────────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionSecurity,
+                children: [
+                  _SettingsTile(
+                    icon: Icons.lock_clock_outlined,
+                    iconColor: Colors.red,
+                    title: l10n.settingsAutoLock,
+                    subtitleText: settings.autoLockMinutes == 0
+                        ? l10n.settingsAutoLockDisabled
+                        : l10n.settingsAutoLockMinutes(
+                            settings.autoLockMinutes,
                           ),
-                          DropdownMenuItem(
-                            value: 1,
-                            child: Text(l10n.settingsAutoLock1Min),
-                          ),
-                          DropdownMenuItem(
-                            value: 5,
-                            child: Text(l10n.settingsAutoLock5Min),
-                          ),
-                          DropdownMenuItem(
-                            value: 15,
-                            child: Text(l10n.settingsAutoLock15Min),
-                          ),
-                          DropdownMenuItem(
-                            value: 30,
-                            child: Text(l10n.settingsAutoLock30Min),
-                          ),
-                        ],
-                        onChanged: (v) {
-                          if (v != null) {
-                            ref
-                                .read(settingsProvider.notifier)
-                                .setAutoLockMinutes(v);
+                    trailing: DropdownButton<int>(
+                      value: settings.autoLockMinutes,
+                      underline: const SizedBox.shrink(),
+                      items: [
+                        DropdownMenuItem(
+                          value: 0,
+                          child: Text(l10n.settingsAutoLockOff),
+                        ),
+                        DropdownMenuItem(
+                          value: 1,
+                          child: Text(l10n.settingsAutoLock1Min),
+                        ),
+                        DropdownMenuItem(
+                          value: 5,
+                          child: Text(l10n.settingsAutoLock5Min),
+                        ),
+                        DropdownMenuItem(
+                          value: 15,
+                          child: Text(l10n.settingsAutoLock15Min),
+                        ),
+                        DropdownMenuItem(
+                          value: 30,
+                          child: Text(l10n.settingsAutoLock30Min),
+                        ),
+                      ],
+                      onChanged: (v) {
+                        if (v != null) {
+                          ref
+                              .read(settingsProvider.notifier)
+                              .setAutoLockMinutes(v);
+                        }
+                      },
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) {
+                      final biometricAvailable = ref.watch(
+                        biometricAvailableProvider,
+                      );
+                      final subtitleText = biometricAvailable.when(
+                        data: (available) {
+                          if (!available) {
+                            return l10n.settingsBiometricNotAvailable;
                           }
+                          if (!settings.hasPin) {
+                            return l10n.settingsBiometricRequiresPin;
+                          }
+                          return null;
                         },
-                      ),
-              ),
-              Builder(
-                builder: (context) {
-                  final biometricAvailable = ref.watch(
-                    biometricAvailableProvider,
-                  );
-                  final subtitleText = biometricAvailable.when(
-                    data: (available) {
-                      if (!available) return l10n.settingsBiometricNotAvailable;
-                      if (!settings.hasPin) {
-                        return l10n.settingsBiometricRequiresPin;
-                      }
-                      return null;
+                        loading: () => null,
+                        error: (_, _) => l10n.settingsBiometricError,
+                      );
+                      return _SettingsSwitchTile(
+                        icon: Icons.fingerprint,
+                        iconColor: Colors.green,
+                        title: l10n.settingsBiometricUnlock,
+                        subtitleText: subtitleText,
+                        value: settings.biometricUnlock,
+                        onChanged: biometricAvailable.maybeWhen(
+                          data: (available) =>
+                              available && settings.hasPin
+                                  ? (v) async {
+                                      if (v) {
+                                        final service = ref.read(
+                                          biometricServiceProvider,
+                                        );
+                                        final success =
+                                            await service.authenticate(
+                                          reason:
+                                              l10n.settingsBiometricReason,
+                                        );
+                                        if (success) {
+                                          ref
+                                              .read(
+                                                settingsProvider.notifier,
+                                              )
+                                              .setBiometricUnlock(true);
+                                        }
+                                      } else {
+                                        ref
+                                            .read(
+                                              settingsProvider.notifier,
+                                            )
+                                            .setBiometricUnlock(false);
+                                      }
+                                    }
+                                  : null,
+                          orElse: () => null,
+                        ),
+                      );
                     },
-                    loading: () => null,
-                    error: (_, _) => l10n.settingsBiometricError,
-                  );
-                  return AdaptiveSwitchTile(
-                    secondary: const Icon(Icons.fingerprint),
-                    title: l10n.settingsBiometricUnlock,
-                    subtitle: subtitleText,
-                    value: settings.biometricUnlock,
-                    onChanged: biometricAvailable.maybeWhen(
-                      data: (available) => available && settings.hasPin
-                          ? (v) async {
-                              if (v) {
-                                final service = ref.read(
-                                  biometricServiceProvider,
-                                );
-                                final success = await service.authenticate(
-                                  reason: l10n.settingsBiometricReason,
-                                );
-                                if (success) {
-                                  ref
-                                      .read(settingsProvider.notifier)
-                                      .setBiometricUnlock(true);
-                                }
-                              } else {
-                                ref
-                                    .read(settingsProvider.notifier)
-                                    .setBiometricUnlock(false);
-                              }
-                            }
-                          : null,
-                      orElse: () => null,
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.pin),
-                title: Text(l10n.settingsPinCode),
-                subtitle: Text(
-                  settings.hasPin
-                      ? l10n.settingsPinIsSet
-                      : l10n.settingsPinNotConfigured,
-                ),
-                trailing: settings.hasPin
-                    ? TextButton(
-                        onPressed: () => _confirmRemovePin(l10n),
-                        child: Text(l10n.settingsPinRemove),
-                      )
-                    : null,
-                onTap: () async {
-                  final pin = await PinDialog.showSetPin(context);
-                  if (pin != null) {
-                    await ref.read(settingsProvider.notifier).setPinCode(pin);
-                  }
-                },
-              ),
-              if (ScreenProtectionService.isSupported)
-                AdaptiveSwitchTile(
-                  secondary: const Icon(Icons.screenshot_monitor_outlined),
-                  title: l10n.settingsPreventScreenshots,
-                  subtitle: l10n.settingsPreventScreenshotsDescription,
-                  value: settings.preventScreenshots,
-                  onChanged: (v) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .setPreventScreenshots(v);
-                  },
-                ),
-              const Divider(),
-
-              // Export
-              _SectionHeader(title: l10n.settingsSectionExport),
-              AdaptiveSwitchTile(
-                secondary: const Icon(Icons.enhanced_encryption_outlined),
-                title: l10n.settingsEncryptExport,
-                value: settings.encryptExportByDefault,
-                onChanged: (v) {
-                  ref
-                      .read(settingsProvider.notifier)
-                      .setEncryptExportByDefault(v);
-                },
-              ),
-              const Divider(),
-
-              // Sync
-              _SectionHeader(title: l10n.settingsSectionSync),
-              Builder(
-                builder: (context) {
-                  final authState = ref.watch(authProvider);
-                  final isAuthenticated =
-                      authState.value == AuthStatus.authenticated;
-                  return ListTile(
-                    leading: const Icon(Icons.account_circle_outlined),
-                    title: Text(l10n.settingsSyncAccount),
-                    subtitle: FutureBuilder<String>(
-                      future: _getUserEmail(ref),
-                      builder: (_, snap) => Text(
-                        isAuthenticated
-                            ? (snap.data ?? l10n.loading)
-                            : l10n.settingsSyncNotLoggedIn,
-                      ),
-                    ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push(
-                      isAuthenticated ? '/sync-settings' : '/login',
-                    ),
-                  );
-                },
-              ),
-              AdaptiveSwitchTile(
-                secondary: const Icon(Icons.sync_outlined),
-                title: l10n.syncAutoSync,
-                value: settings.autoSync,
-                onChanged: (v) {
-                  ref.read(settingsProvider.notifier).setAutoSync(v);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.dns_outlined),
-                title: Text(l10n.settingsSyncServerUrl),
-                subtitle: Text(
-                  settings.serverUrl.isEmpty
-                      ? l10n.settingsSyncDefaultServer
-                      : settings.serverUrl,
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push('/server-config'),
-              ),
-              Builder(
-                builder: (context) {
-                  final authState = ref.watch(authProvider);
-                  final isAuthenticated =
-                      authState.value == AuthStatus.authenticated;
-                  if (!isAuthenticated) return const SizedBox.shrink();
-                  return ListTile(
-                    leading: const Icon(Icons.logout),
-                    title: Text(l10n.accountLogout),
+                  ),
+                  _SettingsTile(
+                    icon: Icons.pin,
+                    iconColor: Colors.indigo,
+                    title: l10n.settingsPinCode,
+                    subtitleText: settings.hasPin
+                        ? l10n.settingsPinIsSet
+                        : l10n.settingsPinNotConfigured,
+                    trailing: settings.hasPin
+                        ? TextButton(
+                            onPressed: () => _confirmRemovePin(l10n),
+                            child: Text(l10n.settingsPinRemove),
+                          )
+                        : null,
                     onTap: () async {
-                      await ref.read(authProvider.notifier).logout();
+                      final pin = await PinDialog.showSetPin(context);
+                      if (pin != null) {
+                        await ref
+                            .read(settingsProvider.notifier)
+                            .setPinCode(pin);
+                      }
                     },
-                  );
-                },
+                  ),
+                  if (ScreenProtectionService.isSupported)
+                    _SettingsSwitchTile(
+                      icon: Icons.screenshot_monitor_outlined,
+                      iconColor: Colors.amber.shade800,
+                      title: l10n.settingsPreventScreenshots,
+                      subtitleText:
+                          l10n.settingsPreventScreenshotsDescription,
+                      value: settings.preventScreenshots,
+                      onChanged: (v) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setPreventScreenshots(v);
+                      },
+                    ),
+                ],
               ),
-              const Divider(),
 
-              // Support
-              _SectionHeader(title: l10n.settingsSectionSupport),
-              ListTile(
-                leading: const Icon(Icons.download_outlined),
-                title: Text(l10n.settingsDownloadLogs),
-                onTap: () => _downloadLogs(l10n),
+              // ── Network & DNS ──────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionNetwork,
+                children: [
+                  _SettingsTile(
+                    icon: Icons.dns_outlined,
+                    iconColor: Colors.cyan,
+                    title: l10n.settingsDnsServers,
+                    subtitleText: settings.dnsServers.isEmpty
+                        ? l10n.settingsDnsDefault
+                        : settings.dnsServers,
+                    onTap: () =>
+                        _editDnsServers(l10n, settings.dnsServers),
+                  ),
+                ],
               ),
-              ListTile(
-                leading: const Icon(Icons.email_outlined),
-                title: Text(l10n.settingsSendLogs),
-                onTap: () => _sendLogsToSupport(l10n),
-              ),
-              ListTile(
-                leading: const Icon(Icons.favorite_outlined),
-                title: Text(l10n.supportProjectTitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push('/support'),
-              ),
-              const Divider(),
 
-              // About
-              _SectionHeader(title: l10n.settingsSectionAbout),
-              ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: Text(l10n.settingsAbout),
-                onTap: () => app.showAppAboutDialog(context),
+              // ── Export ─────────────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionExport,
+                children: [
+                  _SettingsSwitchTile(
+                    icon: Icons.enhanced_encryption_outlined,
+                    iconColor: Colors.deepOrange,
+                    title: l10n.settingsEncryptExport,
+                    value: settings.encryptExportByDefault,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setEncryptExportByDefault(v);
+                    },
+                  ),
+                ],
               ),
+
+              // ── Sync ───────────────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionSync,
+                children: [
+                  Builder(
+                    builder: (context) {
+                      final authState = ref.watch(authProvider);
+                      final isAuthenticated =
+                          authState.value == AuthStatus.authenticated;
+                      return _SettingsTile(
+                        icon: Icons.account_circle_outlined,
+                        iconColor: colorScheme.primary,
+                        title: l10n.settingsSyncAccount,
+                        subtitle: FutureBuilder<String>(
+                          future: _getUserEmail(ref),
+                          builder: (_, snap) => Text(
+                            isAuthenticated
+                                ? (snap.data ?? l10n.loading)
+                                : l10n.settingsSyncNotLoggedIn,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                        ),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => context.push(
+                          isAuthenticated ? '/sync-settings' : '/login',
+                        ),
+                      );
+                    },
+                  ),
+                  _SettingsSwitchTile(
+                    icon: Icons.sync_outlined,
+                    iconColor: Colors.lightBlue,
+                    title: l10n.syncAutoSync,
+                    value: settings.autoSync,
+                    onChanged: (v) {
+                      ref.read(settingsProvider.notifier).setAutoSync(v);
+                    },
+                  ),
+                  _SettingsTile(
+                    icon: Icons.cloud_outlined,
+                    iconColor: Colors.blueGrey,
+                    title: l10n.settingsSyncServerUrl,
+                    subtitleText: settings.serverUrl.isEmpty
+                        ? l10n.settingsSyncDefaultServer
+                        : settings.serverUrl,
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push('/server-config'),
+                  ),
+                  Builder(
+                    builder: (context) {
+                      final authState = ref.watch(authProvider);
+                      final isAuthenticated =
+                          authState.value == AuthStatus.authenticated;
+                      if (!isAuthenticated) return const SizedBox.shrink();
+                      return _SettingsTile(
+                        icon: Icons.logout,
+                        iconColor: colorScheme.error,
+                        title: l10n.accountLogout,
+                        onTap: () async {
+                          await ref.read(authProvider.notifier).logout();
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+
+              // ── Support ────────────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionSupport,
+                children: [
+                  _SettingsTile(
+                    icon: Icons.download_outlined,
+                    iconColor: Colors.brown,
+                    title: l10n.settingsDownloadLogs,
+                    onTap: () => _downloadLogs(l10n),
+                  ),
+                  _SettingsTile(
+                    icon: Icons.email_outlined,
+                    iconColor: Colors.pink,
+                    title: l10n.settingsSendLogs,
+                    onTap: () => _sendLogsToSupport(l10n),
+                  ),
+                  _SettingsTile(
+                    icon: Icons.favorite_outlined,
+                    iconColor: Colors.red,
+                    title: l10n.supportProjectTitle,
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push('/support'),
+                  ),
+                ],
+              ),
+
+              // ── About ─────────────────────────────────────────────
+              _SettingsGroup(
+                title: l10n.settingsSectionAbout,
+                children: [
+                  _SettingsTile(
+                    icon: Icons.info_outline,
+                    iconColor: colorScheme.secondary,
+                    title: l10n.settingsAbout,
+                    onTap: () => app.showAppAboutDialog(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
             ],
           );
         },
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) =>
+            Center(child: Text(l10n.error(error.toString()))),
       ),
     );
   }
@@ -423,7 +511,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _confirmRemovePin(AppLocalizations l10n) async {
-    // Verify current PIN before allowing removal
     final pin = await PinDialog.showVerifyPin(
       context,
       verifier: (pin) async =>
@@ -532,6 +619,71 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  Future<void> _editDnsServers(
+    AppLocalizations l10n,
+    String current,
+  ) async {
+    final controller = TextEditingController(text: current);
+    final result = await showAdaptiveFormDialog<String>(
+      context,
+      title: l10n.settingsDnsServers,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.settingsDnsHint,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: controller,
+            maxLines: 3,
+            decoration: InputDecoration(
+              labelText: l10n.settingsDnsLabel,
+              hintText:
+                  'https://cloudflare-dns.com/dns-query,\nhttps://dns.google/resolve',
+            ),
+            keyboardType: TextInputType.url,
+          ),
+        ],
+      ),
+      materialActions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, ''),
+          child: Text(l10n.settingsDnsReset),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, controller.text),
+          child: Text(l10n.save),
+        ),
+      ],
+      cupertinoActions: [
+        CupertinoDialogAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        CupertinoDialogAction(
+          onPressed: () => Navigator.pop(context, ''),
+          child: Text(l10n.settingsDnsReset),
+        ),
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(context, controller.text),
+          child: Text(l10n.save),
+        ),
+      ],
+    );
+    controller.dispose();
+    if (result != null) {
+      ref.read(settingsProvider.notifier).setDnsServers(result);
+    }
+  }
+
   Future<void> _downloadLogs(AppLocalizations l10n) async {
     final logger = ref.read(loggingServiceProvider);
 
@@ -562,7 +714,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _sendLogsToSupport(AppLocalizations l10n) async {
     final logger = ref.read(loggingServiceProvider);
 
-    // Detect platform
     String platform;
     if (kIsWeb) {
       platform = 'Web';
@@ -580,7 +731,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       platform = 'Unknown';
     }
 
-    // If logs exist, export and share via share_plus with email intent
     if (!logger.isEmpty && !isDesktopPlatform) {
       final filePath = await logger.exportToFile();
       if (filePath != null && mounted) {
@@ -600,7 +750,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
     }
 
-    // Fallback: open mailto link without attachment
     final mailUri = Uri(
       scheme: 'mailto',
       path: 'support@sshvault.app',
@@ -621,21 +770,143 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
+// ─────────────────────────────────────────────────────────────────────────────
+// Android 16–style settings widgets
+// ─────────────────────────────────────────────────────────────────────────────
 
-  const _SectionHeader({required this.title});
+/// A grouped settings section with a colored header and rounded card.
+class _SettingsGroup extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const _SettingsGroup({required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+      padding: const EdgeInsets.only(top: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 4),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
+            clipBehavior: Clip.antiAlias,
+            child: Column(children: children),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+/// A single settings row with a colored circular icon.
+class _SettingsTile extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String? subtitleText;
+  final Widget? subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  const _SettingsTile({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    this.subtitleText,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: _CircleIcon(icon: icon, color: iconColor),
+      title: Text(title),
+      subtitle: subtitle ??
+          (subtitleText != null
+              ? Text(
+                  subtitleText!,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                )
+              : null),
+      trailing: trailing,
+      onTap: onTap,
+    );
+  }
+}
+
+/// A settings row with a switch toggle.
+class _SettingsSwitchTile extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String? subtitleText;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  const _SettingsSwitchTile({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    this.subtitleText,
+    required this.value,
+    this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      secondary: _CircleIcon(icon: icon, color: iconColor),
+      title: Text(title),
+      subtitle: subtitleText != null
+          ? Text(
+              subtitleText!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            )
+          : null,
+      value: value,
+      onChanged: onChanged,
+    );
+  }
+}
+
+/// A small circular background behind the icon, matching Android 16 style.
+class _CircleIcon extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+
+  const _CircleIcon({required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: color.withAlpha(30),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(icon, color: color, size: 22),
     );
   }
 }

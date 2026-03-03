@@ -1145,9 +1145,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authPasswordMismatch => 'Las contraseñas no coinciden';
 
   @override
-  String get authOrContinueWith => 'o continuar con';
-
-  @override
   String get authNoAccount => '¿Sin cuenta?';
 
   @override
@@ -1296,6 +1293,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get accountManageSubscription => 'Gestionar suscripción y facturas';
+
+  @override
+  String get settingsSectionNetwork => 'Red y DNS';
+
+  @override
+  String get settingsDnsServers => 'Servidores DNS-over-HTTPS';
+
+  @override
+  String get settingsDnsDefault => 'Predeterminado (Cloudflare + Google)';
+
+  @override
+  String get settingsDnsHint =>
+      'Ingresa URLs personalizadas de servidores DoH, separadas por comas. Se necesitan al menos 2 servidores para la verificación cruzada.';
+
+  @override
+  String get settingsDnsLabel => 'URLs de servidores DoH';
+
+  @override
+  String get settingsDnsReset => 'Restablecer predeterminado';
 
   @override
   String get settingsSectionSync => 'Sincronización';

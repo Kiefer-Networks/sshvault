@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -187,52 +186,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // OAuth divider
-                  if (showAppleSignIn || !kIsWeb) ...[
-                    Row(
-                      children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            l10n.authOrContinueWith,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // OAuth buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (showAppleSignIn)
-                          _OAuthButton(
-                            icon: Icons.apple,
-                            label: 'Apple',
-                            onPressed: isLoading
-                                ? null
-                                : () => ref
-                                      .read(authProvider.notifier)
-                                      .loginWithApple(),
-                          ),
-                        if (showAppleSignIn) const SizedBox(width: 16),
-                        _OAuthButton(
-                          icon: Icons.g_mobiledata,
-                          label: 'Google',
-                          onPressed: isLoading
-                              ? null
-                              : () => ref
-                                    .read(authProvider.notifier)
-                                    .loginWithGoogle(),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-
                   // Register link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -287,23 +240,3 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-class _OAuthButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback? onPressed;
-
-  const _OAuthButton({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon),
-      label: Text(label),
-    );
-  }
-}

@@ -46,11 +46,11 @@ import UIKit
             let window = windowScene.windows.first else { continue }
       let field = UITextField()
       field.isSecureTextEntry = true
+      field.translatesAutoresizingMaskIntoConstraints = false
+      field.isUserInteractionEnabled = false
       window.addSubview(field)
       field.centerYAnchor.constraint(equalTo: window.centerYAnchor).isActive = true
       field.centerXAnchor.constraint(equalTo: window.centerXAnchor).isActive = true
-      window.layer.superlayer?.addSublayer(field.layer)
-      field.layer.sublayers?.last?.addSublayer(window.layer)
       secureFields[windowScene] = field
     }
   }

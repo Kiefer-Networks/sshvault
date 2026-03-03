@@ -2188,12 +2188,6 @@ abstract class AppLocalizations {
   /// **'Passwords do not match'**
   String get authPasswordMismatch;
 
-  /// No description provided for @authOrContinueWith.
-  ///
-  /// In en, this message translates to:
-  /// **'or continue with'**
-  String get authOrContinueWith;
-
   /// No description provided for @authNoAccount.
   ///
   /// In en, this message translates to:
@@ -2463,6 +2457,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage Subscription & Invoices'**
   String get accountManageSubscription;
+
+  /// No description provided for @settingsSectionNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network & DNS'**
+  String get settingsSectionNetwork;
+
+  /// No description provided for @settingsDnsServers.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS-over-HTTPS Servers'**
+  String get settingsDnsServers;
+
+  /// No description provided for @settingsDnsDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default (Cloudflare + Google)'**
+  String get settingsDnsDefault;
+
+  /// No description provided for @settingsDnsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom DoH server URLs, separated by commas. At least 2 servers are needed for cross-check verification.'**
+  String get settingsDnsHint;
+
+  /// No description provided for @settingsDnsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DoH Server URLs'**
+  String get settingsDnsLabel;
+
+  /// No description provided for @settingsDnsReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to Default'**
+  String get settingsDnsReset;
 
   /// No description provided for @settingsSectionSync.
   ///
