@@ -1,12 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
+final _pinDialogErrorProvider = StateProvider.autoDispose<String?>((_) => null);
+
+final _pinVerifyErrorProvider = StateProvider.autoDispose<String?>((_) => null);
+
+final _pinVerifyingProvider = StateProvider.autoDispose<bool>((_) => false);
+
 /// Dialog to set or verify a 6-digit PIN code.
-class PinDialog extends StatefulWidget {
+class PinDialog extends ConsumerStatefulWidget {
   final String title;
   final String? subtitle;
   final bool confirm;
@@ -64,13 +72,12 @@ class PinDialog extends StatefulWidget {
   }
 
   @override
-  State<PinDialog> createState() => _PinDialogState();
+  ConsumerState<PinDialog> createState() => _PinDialogState();
 }
 
-class _PinDialogState extends State<PinDialog> {
+class _PinDialogState extends ConsumerState<PinDialog> {
   final _pinController = TextEditingController();
   final _confirmController = TextEditingController();
-  String? _error;
 
   @override
   void dispose() {
@@ -83,11 +90,13 @@ class _PinDialogState extends State<PinDialog> {
     final l10n = AppLocalizations.of(context)!;
     final pin = _pinController.text;
     if (pin.length != 6) {
-      setState(() => _error = l10n.pinDialogErrorLength);
+      ref.read(_pinDialogErrorProvider.notifier).state =
+          l10n.pinDialogErrorLength;
       return;
     }
     if (widget.confirm && _confirmController.text != pin) {
-      setState(() => _error = l10n.pinDialogErrorMismatch);
+      ref.read(_pinDialogErrorProvider.notifier).state =
+          l10n.pinDialogErrorMismatch;
       return;
     }
     Navigator.of(context).pop(pin);
@@ -95,6 +104,7 @@ class _PinDialogState extends State<PinDialog> {
 
   Widget _buildContent(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final error = ref.watch(_pinDialogErrorProvider);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -138,10 +148,10 @@ class _PinDialogState extends State<PinDialog> {
             style: const TextStyle(letterSpacing: 8, fontSize: 24),
           ),
         ],
-        if (_error != null) ...[
+        if (error != null) ...[
           const SizedBox(height: 12),
           Text(
-            _error!,
+            error,
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
         ],
@@ -188,20 +198,18 @@ class _PinDialogState extends State<PinDialog> {
   }
 }
 
-class _PinVerifyDialog extends StatefulWidget {
+class _PinVerifyDialog extends ConsumerStatefulWidget {
   final Future<bool> Function(String pin) verifier;
 
   const _PinVerifyDialog({required this.verifier});
 
   @override
-  State<_PinVerifyDialog> createState() => _PinVerifyDialogState();
+  ConsumerState<_PinVerifyDialog> createState() => _PinVerifyDialogState();
 }
 
-class _PinVerifyDialogState extends State<_PinVerifyDialog> {
+class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
   final _controller = TextEditingController();
-  String? _error;
   int _attempts = 0;
-  bool _verifying = false;
 
   @override
   void dispose() {
@@ -210,16 +218,18 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
   }
 
   Future<void> _verify() async {
-    if (_verifying) return;
+    final verifying = ref.read(_pinVerifyingProvider);
+    if (verifying) return;
     final l10n = AppLocalizations.of(context)!;
     final pin = _controller.text;
 
     if (pin.length != 6) {
-      setState(() => _error = l10n.pinDialogErrorLength);
+      ref.read(_pinVerifyErrorProvider.notifier).state =
+          l10n.pinDialogErrorLength;
       return;
     }
 
-    setState(() => _verifying = true);
+    ref.read(_pinVerifyingProvider.notifier).state = true;
 
     final success = await widget.verifier(pin);
 
@@ -229,11 +239,10 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
       Navigator.of(context).pop(pin);
     } else {
       _attempts++;
-      setState(() {
-        _verifying = false;
-        _error = l10n.pinDialogWrongPin(_attempts);
-        _controller.clear();
-      });
+      ref.read(_pinVerifyingProvider.notifier).state = false;
+      ref.read(_pinVerifyErrorProvider.notifier).state =
+          l10n.pinDialogWrongPin(_attempts);
+      _controller.clear();
       if (_attempts >= AppConstants.maxPinAttempts) {
         Navigator.of(context).pop();
       }
@@ -242,6 +251,7 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
 
   Widget _buildVerifyContent(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final error = ref.watch(_pinVerifyErrorProvider);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -262,10 +272,10 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
           style: const TextStyle(letterSpacing: 8, fontSize: 24),
           onSubmitted: (_) => _verify(),
         ),
-        if (_error != null) ...[
+        if (error != null) ...[
           const SizedBox(height: 12),
           Text(
-            _error!,
+            error,
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
         ],
@@ -276,6 +286,7 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final verifying = ref.watch(_pinVerifyingProvider);
 
     if (useCupertinoDesign) {
       return CupertinoAlertDialog(
@@ -286,13 +297,13 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
         ),
         actions: [
           CupertinoDialogAction(
-            onPressed: _verifying ? null : () => Navigator.of(context).pop(),
+            onPressed: verifying ? null : () => Navigator.of(context).pop(),
             child: Text(l10n.cancel),
           ),
           CupertinoDialogAction(
             isDefaultAction: true,
-            onPressed: _verifying ? null : _verify,
-            child: _verifying
+            onPressed: verifying ? null : _verify,
+            child: verifying
                 ? const CupertinoActivityIndicator()
                 : Text(l10n.lockScreenUnlock),
           ),
@@ -305,12 +316,12 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
       content: _buildVerifyContent(context),
       actions: [
         TextButton(
-          onPressed: _verifying ? null : () => Navigator.of(context).pop(),
+          onPressed: verifying ? null : () => Navigator.of(context).pop(),
           child: Text(l10n.cancel),
         ),
         FilledButton(
-          onPressed: _verifying ? null : _verify,
-          child: _verifying
+          onPressed: verifying ? null : _verify,
+          child: verifying
               ? const SizedBox(
                   width: 16,
                   height: 16,

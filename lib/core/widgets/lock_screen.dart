@@ -9,6 +9,75 @@ import 'package:shellvault/core/services/biometric_provider.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 
+class _LockState {
+  final bool isUnlocked;
+  final bool isAuthenticating;
+  final bool isVerifying;
+  final String? pinError;
+
+  const _LockState({
+    this.isUnlocked = false,
+    this.isAuthenticating = false,
+    this.isVerifying = false,
+    this.pinError,
+  });
+
+  _LockState copyWith({
+    bool? isUnlocked,
+    bool? isAuthenticating,
+    bool? isVerifying,
+    String? pinError,
+    bool clearPinError = false,
+  }) {
+    return _LockState(
+      isUnlocked: isUnlocked ?? this.isUnlocked,
+      isAuthenticating: isAuthenticating ?? this.isAuthenticating,
+      isVerifying: isVerifying ?? this.isVerifying,
+      pinError: clearPinError ? null : (pinError ?? this.pinError),
+    );
+  }
+}
+
+class _LockNotifier extends Notifier<_LockState> {
+  @override
+  _LockState build() => const _LockState();
+
+  void setUnlocked(bool value) {
+    state = state.copyWith(isUnlocked: value);
+  }
+
+  void setAuthenticating(bool value) {
+    state = state.copyWith(isAuthenticating: value);
+  }
+
+  void setVerifying(bool value) {
+    state = state.copyWith(isVerifying: value);
+  }
+
+  void setPinError(String? value) {
+    if (value == null) {
+      state = state.copyWith(clearPinError: true);
+    } else {
+      state = state.copyWith(pinError: value);
+    }
+  }
+
+  void resetForResume() {
+    state = state.copyWith(isUnlocked: false, clearPinError: true);
+  }
+
+  void setVerifyFailed({required String pinError}) {
+    state = state.copyWith(isVerifying: false, pinError: pinError);
+  }
+
+  void forceRebuild() {
+    state = state.copyWith();
+  }
+}
+
+final _lockStateProvider =
+    NotifierProvider.autoDispose<_LockNotifier, _LockState>(_LockNotifier.new);
+
 class LockScreen extends ConsumerStatefulWidget {
   final Widget child;
 
@@ -20,11 +89,7 @@ class LockScreen extends ConsumerStatefulWidget {
 
 class _LockScreenState extends ConsumerState<LockScreen>
     with WidgetsBindingObserver {
-  bool _isUnlocked = false;
-  bool _isAuthenticating = false;
-  bool _isVerifying = false;
   final _pinController = TextEditingController();
-  String? _pinError;
   Timer? _lockoutTimer;
 
   @override
@@ -49,12 +114,10 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _isUnlocked) {
-      setState(() {
-        _isUnlocked = false;
-        _pinController.clear();
-        _pinError = null;
-      });
+    final lockState = ref.read(_lockStateProvider);
+    if (state == AppLifecycleState.resumed && lockState.isUnlocked) {
+      ref.read(_lockStateProvider.notifier).resetForResume();
+      _pinController.clear();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _tryBiometric();
       });
@@ -73,9 +136,9 @@ class _LockScreenState extends ConsumerState<LockScreen>
         final s = ref.read(settingsProvider).value;
         if (s == null || !s.isLockedOut) {
           _lockoutTimer?.cancel();
-          setState(() => _pinError = null);
+          ref.read(_lockStateProvider.notifier).setPinError(null);
         } else {
-          setState(() {});
+          ref.read(_lockStateProvider.notifier).forceRebuild();
         }
       });
     }
@@ -83,18 +146,19 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
   Future<void> _onUnlockSuccess() async {
     if (mounted) {
-      setState(() => _isUnlocked = true);
+      ref.read(_lockStateProvider.notifier).setUnlocked(true);
     }
   }
 
   Future<void> _tryBiometric() async {
-    if (_isAuthenticating) return;
+    final lockState = ref.read(_lockStateProvider);
+    if (lockState.isAuthenticating) return;
 
     final settings = ref.read(settingsProvider).value;
     if (settings == null || !settings.biometricUnlock) return;
     if (settings.isLockedOut) return;
 
-    setState(() => _isAuthenticating = true);
+    ref.read(_lockStateProvider.notifier).setAuthenticating(true);
 
     try {
       final service = ref.read(biometricServiceProvider);
@@ -104,13 +168,14 @@ class _LockScreenState extends ConsumerState<LockScreen>
       }
     } finally {
       if (mounted) {
-        setState(() => _isAuthenticating = false);
+        ref.read(_lockStateProvider.notifier).setAuthenticating(false);
       }
     }
   }
 
   Future<void> _verifyPin() async {
-    if (_isVerifying) return;
+    final lockState = ref.read(_lockStateProvider);
+    if (lockState.isVerifying) return;
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(settingsProvider.notifier);
 
@@ -118,11 +183,11 @@ class _LockScreenState extends ConsumerState<LockScreen>
     if (settings != null && settings.isLockedOut) return;
 
     if (_pinController.text.length != 6) {
-      setState(() => _pinError = l10n.pinDialogErrorLength);
+      ref.read(_lockStateProvider.notifier).setPinError(l10n.pinDialogErrorLength);
       return;
     }
 
-    setState(() => _isVerifying = true);
+    ref.read(_lockStateProvider.notifier).setVerifying(true);
 
     final success = await notifier.verifyPin(_pinController.text);
 
@@ -135,25 +200,26 @@ class _LockScreenState extends ConsumerState<LockScreen>
       if (updatedSettings != null && updatedSettings.isLockedOut) {
         _startLockoutTimerIfNeeded();
       }
-      setState(() {
-        _isVerifying = false;
-        if (updatedSettings?.isLockedOut ?? false) {
-          final remaining = updatedSettings!.remainingLockout;
-          _pinError = l10n.lockScreenLockedOut(remaining.inMinutes + 1);
-        } else {
-          final remaining =
-              AppConstants.maxPinAttempts -
-              (updatedSettings?.failedPinAttempts ?? 0);
-          _pinError = l10n.pinDialogWrongPin(remaining);
-        }
-        _pinController.clear();
-      });
+      final String errorMsg;
+      if (updatedSettings?.isLockedOut ?? false) {
+        final remaining = updatedSettings!.remainingLockout;
+        errorMsg = l10n.lockScreenLockedOut(remaining.inMinutes + 1);
+      } else {
+        final remaining =
+            AppConstants.maxPinAttempts -
+            (updatedSettings?.failedPinAttempts ?? 0);
+        errorMsg = l10n.pinDialogWrongPin(remaining);
+      }
+      ref.read(_lockStateProvider.notifier).setVerifyFailed(pinError: errorMsg);
+      _pinController.clear();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isUnlocked) return widget.child;
+    final lockState = ref.watch(_lockStateProvider);
+
+    if (lockState.isUnlocked) return widget.child;
 
     final theme = Theme.of(context);
     final settings = ref.watch(settingsProvider).value;
@@ -194,12 +260,12 @@ class _LockScreenState extends ConsumerState<LockScreen>
                   width: 240,
                   child: TextField(
                     controller: _pinController,
-                    enabled: !isLockedOut && !_isVerifying,
+                    enabled: !isLockedOut && !lockState.isVerifying,
                     decoration: InputDecoration(
                       labelText: l10n.pinDialogLabel,
                       hintText: l10n.pinDialogHint,
                       prefixIcon: const Icon(Icons.pin),
-                      errorText: _pinError,
+                      errorText: lockState.pinError,
                     ),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
@@ -215,8 +281,8 @@ class _LockScreenState extends ConsumerState<LockScreen>
                 ),
                 const SizedBox(height: 16),
                 AdaptiveButton.filledIcon(
-                  onPressed: isLockedOut || _isVerifying ? null : _verifyPin,
-                  icon: _isVerifying
+                  onPressed: isLockedOut || lockState.isVerifying ? null : _verifyPin,
+                  icon: lockState.isVerifying
                       ? const SizedBox(
                           width: 18,
                           height: 18,
@@ -230,7 +296,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
               if (settings?.biometricUnlock ?? false) ...[
                 if (settings?.hasPin ?? false) const SizedBox(height: 16),
                 AdaptiveButton.textIcon(
-                  onPressed: _isAuthenticating || isLockedOut
+                  onPressed: lockState.isAuthenticating || isLockedOut
                       ? null
                       : _tryBiometric,
                   icon: const Icon(Icons.fingerprint),

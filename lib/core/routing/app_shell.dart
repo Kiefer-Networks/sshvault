@@ -8,6 +8,7 @@ import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/services/terminal_notification_service.dart';
@@ -347,7 +348,9 @@ int _tabToBranch(int tabIndex) {
   return -1; // More — not a branch
 }
 
-class _CupertinoMobileScaffold extends StatefulWidget {
+final _showMoreProvider = StateProvider.autoDispose<bool>((_) => false);
+
+class _CupertinoMobileScaffold extends ConsumerWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
   final int sessionCount;
@@ -360,47 +363,40 @@ class _CupertinoMobileScaffold extends StatefulWidget {
     required this.child,
   });
 
-  @override
-  State<_CupertinoMobileScaffold> createState() =>
-      _CupertinoMobileScaffoldState();
-}
-
-class _CupertinoMobileScaffoldState extends State<_CupertinoMobileScaffold> {
-  bool _showMore = false;
-
-  int get _currentTab {
-    if (_showMore) return 4;
-    return _branchToTab(widget.currentIndex);
+  int _currentTab(bool showMore) {
+    if (showMore) return 4;
+    return _branchToTab(currentIndex);
   }
 
-  void _onTabTapped(int tabIndex) {
+  void _onTabTapped(WidgetRef ref, int tabIndex) {
     if (tabIndex == 4) {
-      setState(() => _showMore = true);
+      ref.read(_showMoreProvider.notifier).state = true;
       return;
     }
-    setState(() => _showMore = false);
+    ref.read(_showMoreProvider.notifier).state = false;
     final branchIndex = _tabToBranch(tabIndex);
     if (branchIndex >= 0) {
-      widget.onDestinationSelected(branchIndex);
+      onDestinationSelected(branchIndex);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final showMore = ref.watch(_showMoreProvider);
 
     return Scaffold(
-      body: _showMore
+      body: showMore
           ? IosMoreScreen(
               onBranchSelected: (branchIndex) {
-                setState(() => _showMore = false);
-                widget.onDestinationSelected(branchIndex);
+                ref.read(_showMoreProvider.notifier).state = false;
+                onDestinationSelected(branchIndex);
               },
             )
-          : widget.child,
+          : child,
       bottomNavigationBar: CupertinoTabBar(
-        currentIndex: _currentTab,
-        onTap: _onTabTapped,
+        currentIndex: _currentTab(showMore),
+        onTap: (index) => _onTabTapped(ref, index),
         items: [
           BottomNavigationBarItem(
             icon: const Icon(CupertinoIcons.device_desktop),
@@ -415,9 +411,9 @@ class _CupertinoMobileScaffoldState extends State<_CupertinoMobileScaffold> {
             label: l10n.navSnippets,
           ),
           BottomNavigationBarItem(
-            icon: widget.sessionCount > 0
+            icon: sessionCount > 0
                 ? Badge(
-                    label: Text('${widget.sessionCount}'),
+                    label: Text('$sessionCount'),
                     child: const Icon(Icons.terminal),
                   )
                 : const Icon(Icons.terminal),
