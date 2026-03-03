@@ -98,9 +98,7 @@ void main() {
     });
 
     test('failures accumulate while running', () async {
-      var callCount = 0;
       when(() => mockApi.get('/health')).thenAnswer((_) async {
-        callCount++;
         return const Err<Map<String, dynamic>>(NetworkFailure('fail'));
       });
 

@@ -98,180 +98,6 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Linux (deb, rpm, AppImage)
-  # ─────────────────────────────────────────────────────────────────────────
-  build-linux:
-    name: Linux (${{ matrix.format }})
-    needs: preflight
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        format: [deb, rpm, appimage]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: ${{ env.FLUTTER_VERSION }}
-          cache: true
-
-      - name: Install Linux build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            clang cmake ninja-build pkg-config \
-            libgtk-3-dev liblzma-dev libstdc++-12-dev \
-            libsecret-1-dev libjsoncpp-dev
-
-      - run: flutter pub get
-
-      - name: Build Linux bundle
-        run: flutter build linux --release
-
-      - name: Install packaging tools
-        run: |
-          if [ "${{ matrix.format }}" = "deb" ]; then
-            sudo apt-get install -y dpkg-dev
-          elif [ "${{ matrix.format }}" = "rpm" ]; then
-            sudo apt-get install -y rpm
-          elif [ "${{ matrix.format }}" = "appimage" ]; then
-            sudo apt-get install -y libfuse2
-            wget -q "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage" -O /usr/local/bin/appimagetool
-            chmod +x /usr/local/bin/appimagetool
-          fi
-
-      - name: Package ${{ matrix.format }}
-        env:
-          VERSION: ${{ needs.preflight.outputs.version }}
-        run: |
-          BUNDLE_DIR="build/linux/x64/release/bundle"
-          PKG_DIR="packaging/${{ matrix.format }}"
-          mkdir -p "$PKG_DIR"
-
-          if [ "${{ matrix.format }}" = "deb" ]; then
-            mkdir -p "$PKG_DIR/DEBIAN"
-            mkdir -p "$PKG_DIR/usr/bin"
-            mkdir -p "$PKG_DIR/usr/lib/shellvault"
-            mkdir -p "$PKG_DIR/usr/share/applications"
-
-            cp -r "$BUNDLE_DIR"/* "$PKG_DIR/usr/lib/shellvault/"
-
-            cat > "$PKG_DIR/usr/bin/shellvault" <<'WRAPPER'
-          #!/bin/sh
-          export LD_LIBRARY_PATH=/usr/lib/shellvault:$LD_LIBRARY_PATH
-          exec /usr/lib/shellvault/shellvault "$@"
-          WRAPPER
-            chmod +x "$PKG_DIR/usr/bin/shellvault"
-
-            cp linux/de.kiefer_networks.shellvault.desktop \
-               "$PKG_DIR/usr/share/applications/shellvault.desktop"
-
-            cat > "$PKG_DIR/DEBIAN/control" <<CTRL
-          Package: shellvault
-          Version: $VERSION
-          Section: net
-          Priority: optional
-          Architecture: amd64
-          Depends: libgtk-3-0, libsecret-1-0
-          Maintainer: Kiefer Networks <support@sshvault.app>
-          Description: ShellVault — Secure, Self-Hosted SSH Client
-           Zero-knowledge encrypted SSH credential manager with cloud sync.
-          CTRL
-
-            dpkg-deb --build "$PKG_DIR" "shellvault_${VERSION}_amd64.deb"
-
-          elif [ "${{ matrix.format }}" = "rpm" ]; then
-            mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-
-            TAR_DIR="shellvault-$VERSION"
-            mkdir -p "$TAR_DIR"
-            cp -r "$BUNDLE_DIR"/* "$TAR_DIR/"
-            tar czf "rpmbuild/SOURCES/shellvault-$VERSION.tar.gz" "$TAR_DIR"
-            rm -rf "$TAR_DIR"
-
-            cat > rpmbuild/SPECS/shellvault.spec <<SPEC
-          Name:     shellvault
-          Version:  $VERSION
-          Release:  1
-          Summary:  Secure, Self-Hosted SSH Client
-          License:  Proprietary
-          URL:      https://sshvault.app
-          Source0:  shellvault-%{version}.tar.gz
-
-          Requires: gtk3, libsecret
-
-          %description
-          Zero-knowledge encrypted SSH credential manager with cloud sync.
-
-          %prep
-          %setup -q
-
-          %install
-          mkdir -p %{buildroot}/usr/lib/shellvault
-          mkdir -p %{buildroot}/usr/bin
-          mkdir -p %{buildroot}/usr/share/applications
-
-          cp -r * %{buildroot}/usr/lib/shellvault/
-
-          cat > %{buildroot}/usr/bin/shellvault <<'WRAPPER'
-          #!/bin/sh
-          export LD_LIBRARY_PATH=/usr/lib/shellvault:"\$LD_LIBRARY_PATH"
-          exec /usr/lib/shellvault/shellvault "\$@"
-          WRAPPER
-          chmod +x %{buildroot}/usr/bin/shellvault
-
-          cat > %{buildroot}/usr/share/applications/shellvault.desktop <<'DESK'
-          [Desktop Entry]
-          Type=Application
-          Name=ShellVault
-          Comment=Secure SSH Client
-          Exec=shellvault
-          Icon=shellvault
-          Terminal=false
-          Categories=Network;RemoteAccess;
-          DESK
-
-          %files
-          /usr/lib/shellvault
-          /usr/bin/shellvault
-          /usr/share/applications/shellvault.desktop
-          SPEC
-
-            rpmbuild --define "_topdir $(pwd)/rpmbuild" -bb rpmbuild/SPECS/shellvault.spec
-            cp rpmbuild/RPMS/x86_64/*.rpm "shellvault-${VERSION}.x86_64.rpm"
-
-          elif [ "${{ matrix.format }}" = "appimage" ]; then
-            APP_DIR="ShellVault.AppDir"
-            mkdir -p "$APP_DIR/usr/bin" "$APP_DIR/usr/lib" "$APP_DIR/usr/share/applications"
-
-            cp -r "$BUNDLE_DIR"/* "$APP_DIR/usr/bin/"
-            cp -r "$BUNDLE_DIR/lib/"* "$APP_DIR/usr/lib/" 2>/dev/null || true
-
-            cat > "$APP_DIR/AppRun" <<'APPRUN'
-          #!/bin/sh
-          SELF=$(readlink -f "$0")
-          HERE=${SELF%/*}
-          export LD_LIBRARY_PATH="${HERE}/usr/lib:${HERE}/usr/bin/lib:${LD_LIBRARY_PATH}"
-          exec "${HERE}/usr/bin/shellvault" "$@"
-          APPRUN
-            chmod +x "$APP_DIR/AppRun"
-
-            cp linux/de.kiefer_networks.shellvault.desktop "$APP_DIR/de.kiefer_networks.shellvault.desktop"
-            cp linux/icons/128x128.png "$APP_DIR/de.kiefer_networks.shellvault.png"
-
-            ARCH=x86_64 appimagetool "$APP_DIR" "ShellVault-${VERSION}-x86_64.AppImage"
-          fi
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: linux-${{ matrix.format }}
-          path: |
-            *.deb
-            *.rpm
-            *.AppImage
-
-  # ─────────────────────────────────────────────────────────────────────────
   # Linux Flatpak
   # ─────────────────────────────────────────────────────────────────────────
   build-flatpak:
@@ -366,7 +192,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   release:
     name: Create GitHub Release
-    needs: [preflight, build-android, build-linux, build-flatpak, build-windows]
+    needs: [preflight, build-android, build-flatpak, build-windows]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -390,10 +216,7 @@ jobs:
           cp artifacts/android-apk/app-release.apk \
              "release-assets/ShellVault-${VERSION}-android.apk" 2>/dev/null || true
 
-          # Linux
-          cp artifacts/linux-deb/*.deb release-assets/ 2>/dev/null || true
-          cp artifacts/linux-rpm/*.rpm release-assets/ 2>/dev/null || true
-          cp artifacts/linux-appimage/*.AppImage release-assets/ 2>/dev/null || true
+          # Linux (Flatpak only)
           cp artifacts/linux-flatpak/*.flatpak release-assets/ 2>/dev/null || true
 
           # Windows
@@ -417,30 +240,19 @@ jobs:
 
           ### Highlights
 
-          - **Liquid Glass** — Native iOS 26+ / macOS 26+ Liquid Glass design via `cupertino_native_better`
-          - **Platform Hardening** — Android network security, iOS/macOS entitlements, R8/ProGuard
-          - **Security Module** — Certificate pinning, DNS-over-HTTPS, proof-of-work, server attestation
-          - **Argon2id Upgrade** — KDF memory increased to 256 MiB (envelope v2)
-          - **Comprehensive Tests** — 348 unit tests across all layers
+          - **Material 3** — Consistent Material Design on all platforms
+          - **Security Hardening** — PoW challenges, response padding, timing equalization
+          - **Crypto** — Counter-based nonces, Argon2id 256 MiB, memory zeroing
+          - **DNS Cross-Check** — Multi-resolver DoH verification
+          - **Server Attestation** — Ed25519-signed attestation endpoint
+          - **Comprehensive Tests** — 431+ unit tests across all layers
           - **CI/CD Pipeline** — Automated lint, analyze, test, and multi-platform builds
-
-          ### Platform Design
-
-          | Platform | Design System |
-          |----------|---------------|
-          | iOS / iPadOS | Cupertino + Liquid Glass (iOS 26+) |
-          | macOS | macOS HIG + Liquid Glass |
-          | Android | Material 3 |
-          | Linux / Windows | Material 3 |
 
           ### Downloads
 
           | Platform | File |
           |----------|------|
           | Android | `ShellVault-*-android.apk` |
-          | Linux (Debian/Ubuntu) | `shellvault_*_amd64.deb` |
-          | Linux (Fedora/RHEL) | `shellvault-*.x86_64.rpm` |
-          | Linux (AppImage) | `ShellVault-*-x86_64.AppImage` |
           | Linux (Flatpak) | `ShellVault-*.flatpak` |
           | Windows | `ShellVault-*-windows.msix` |
 
@@ -452,16 +264,6 @@ jobs:
           ```bash
           flatpak install ShellVault-*.flatpak
           flatpak run de.kiefer_networks.shellvault
-          ```
-
-          **Linux deb:**
-          ```bash
-          sudo dpkg -i shellvault_*_amd64.deb
-          ```
-
-          **Linux rpm:**
-          ```bash
-          sudo dnf install shellvault-*.x86_64.rpm
           ```
           NOTES
 
