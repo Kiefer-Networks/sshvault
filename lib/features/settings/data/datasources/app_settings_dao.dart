@@ -16,6 +16,12 @@ class AppSettingsDao extends DatabaseAccessor<AppDatabase>
     return result?.value;
   }
 
+  /// Fetches all settings in a single query and returns them as a Map.
+  Future<Map<String, String>> getAll() async {
+    final rows = await select(appSettings).get();
+    return {for (final row in rows) row.key: row.value};
+  }
+
   Future<void> setValue(String key, String value) async {
     await into(appSettings).insertOnConflictUpdate(
       AppSettingsCompanion.insert(key: key, value: value),

@@ -41,26 +41,13 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   Future<AppSettingsEntity> build() async {
     final dao = ref.watch(databaseProvider).appSettingsDao;
 
-    final themeStr = await dao.getValue(_keyThemeMode);
-    final portStr = await dao.getValue(_keyDefaultSshPort);
-    final username = await dao.getValue(_keyDefaultUsername);
-    final autoLockStr = await dao.getValue(_keyAutoLockMinutes);
-    final biometricStr = await dao.getValue(_keyBiometricUnlock);
-    final encryptStr = await dao.getValue(_keyEncryptExportDefault);
-    final pinHash = await dao.getValue(_keyPinHash);
-    final pinSalt = await dao.getValue(_keyPinSalt);
-    final dismissedHint = await dao.getValue(_keyDismissedSecurityHint);
-    final locale = await dao.getValue(_keyLocale);
-    final failedAttemptsStr = await dao.getValue(_keyFailedAttempts);
-    final lockoutUntilStr = await dao.getValue(_keyLockoutUntil);
-    final serverUrl = await dao.getValue(_keyServerUrl);
-    final selfHostedStr = await dao.getValue(_keySelfHosted);
-    final autoSyncStr = await dao.getValue(_keyAutoSync);
-    final localVaultVersionStr = await dao.getValue(_keyLocalVaultVersion);
-    final preventScreenshotsStr = await dao.getValue(_keyPreventScreenshots);
+    // Single query instead of 17+ sequential reads
+    final all = await dao.getAll();
+
+    final pinHash = all[_keyPinHash];
 
     // Migrate legacy plaintext PIN to hash if present
-    final legacyPin = await dao.getValue('pin_code');
+    final legacyPin = all['pin_code'];
     if (legacyPin != null &&
         legacyPin.isNotEmpty &&
         (pinHash == null || pinHash.isEmpty)) {
@@ -69,45 +56,31 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       await dao.setValue(_keyPinSalt, hashResult.salt);
       await dao.deleteValue('pin_code');
 
-      return AppSettingsEntity(
-        themeMode: _parseThemeMode(themeStr),
-        defaultSshPort: int.tryParse(portStr ?? '') ?? 22,
-        defaultUsername: username ?? 'root',
-        autoLockMinutes: int.tryParse(autoLockStr ?? '') ?? 5,
-        biometricUnlock: biometricStr == 'true',
-        encryptExportByDefault: encryptStr != 'false',
-        pinHash: hashResult.hash,
-        pinSalt: hashResult.salt,
-        dismissedSecurityHint: dismissedHint == 'true',
-        locale: locale ?? '',
-        failedPinAttempts: int.tryParse(failedAttemptsStr ?? '') ?? 0,
-        lockoutUntil: _parseLockoutUntil(lockoutUntilStr),
-        serverUrl: serverUrl ?? '',
-        selfHosted: selfHostedStr == 'true',
-        autoSync: autoSyncStr != 'false',
-        localVaultVersion: int.tryParse(localVaultVersionStr ?? '') ?? 0,
-        preventScreenshots: preventScreenshotsStr == 'true',
-      );
+      return _buildEntity(all, pinHash: hashResult.hash, pinSalt: hashResult.salt);
     }
 
+    return _buildEntity(all);
+  }
+
+  AppSettingsEntity _buildEntity(Map<String, String> all, {String? pinHash, String? pinSalt}) {
     return AppSettingsEntity(
-      themeMode: _parseThemeMode(themeStr),
-      defaultSshPort: int.tryParse(portStr ?? '') ?? 22,
-      defaultUsername: username ?? 'root',
-      autoLockMinutes: int.tryParse(autoLockStr ?? '') ?? 5,
-      biometricUnlock: biometricStr == 'true',
-      encryptExportByDefault: encryptStr != 'false',
-      pinHash: pinHash ?? '',
-      pinSalt: pinSalt ?? '',
-      dismissedSecurityHint: dismissedHint == 'true',
-      locale: locale ?? '',
-      failedPinAttempts: int.tryParse(failedAttemptsStr ?? '') ?? 0,
-      lockoutUntil: _parseLockoutUntil(lockoutUntilStr),
-      serverUrl: serverUrl ?? '',
-      selfHosted: selfHostedStr == 'true',
-      autoSync: autoSyncStr != 'false',
-      localVaultVersion: int.tryParse(localVaultVersionStr ?? '') ?? 0,
-      preventScreenshots: preventScreenshotsStr == 'true',
+      themeMode: _parseThemeMode(all[_keyThemeMode]),
+      defaultSshPort: int.tryParse(all[_keyDefaultSshPort] ?? '') ?? 22,
+      defaultUsername: all[_keyDefaultUsername] ?? 'root',
+      autoLockMinutes: int.tryParse(all[_keyAutoLockMinutes] ?? '') ?? 5,
+      biometricUnlock: all[_keyBiometricUnlock] == 'true',
+      encryptExportByDefault: all[_keyEncryptExportDefault] != 'false',
+      pinHash: pinHash ?? all[_keyPinHash] ?? '',
+      pinSalt: pinSalt ?? all[_keyPinSalt] ?? '',
+      dismissedSecurityHint: all[_keyDismissedSecurityHint] == 'true',
+      locale: all[_keyLocale] ?? '',
+      failedPinAttempts: int.tryParse(all[_keyFailedAttempts] ?? '') ?? 0,
+      lockoutUntil: _parseLockoutUntil(all[_keyLockoutUntil]),
+      serverUrl: all[_keyServerUrl] ?? '',
+      selfHosted: all[_keySelfHosted] == 'true',
+      autoSync: all[_keyAutoSync] != 'false',
+      localVaultVersion: int.tryParse(all[_keyLocalVaultVersion] ?? '') ?? 0,
+      preventScreenshots: all[_keyPreventScreenshots] == 'true',
     );
   }
 
