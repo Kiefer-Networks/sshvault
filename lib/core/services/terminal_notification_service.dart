@@ -31,7 +31,10 @@ class TerminalNotificationService {
     );
 
     await _plugin.initialize(
-      const InitializationSettings(android: androidSettings, iOS: iosSettings),
+      settings: const InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      ),
       onDidReceiveNotificationResponse: (_) {
         onNotificationTapped?.call();
       },
@@ -77,10 +80,13 @@ class TerminalNotificationService {
     );
 
     await _plugin.show(
-      _notificationId,
-      title,
-      body,
-      const NotificationDetails(android: androidDetails, iOS: iosDetails),
+      id: _notificationId,
+      title: title,
+      body: body,
+      notificationDetails: const NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      ),
     );
   }
 
@@ -88,6 +94,6 @@ class TerminalNotificationService {
   Future<void> dismiss() async {
     if (!Platform.isAndroid && !Platform.isIOS) return;
     if (!_initialized) return;
-    await _plugin.cancel(_notificationId);
+    await _plugin.cancel(id: _notificationId);
   }
 }

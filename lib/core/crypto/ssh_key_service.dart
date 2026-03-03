@@ -151,8 +151,8 @@ class SshKeyService {
       );
 
     final pair = keyGen.generateKeyPair();
-    final pub = pair.publicKey as RSAPublicKey;
-    final priv = pair.privateKey as RSAPrivateKey;
+    final pub = pair.publicKey;
+    final priv = pair.privateKey;
 
     return Success(
       SshKeyPair(
@@ -200,8 +200,8 @@ class SshKeyService {
       );
 
     final pair = keyGen.generateKeyPair();
-    final pub = pair.publicKey as ECPublicKey;
-    final priv = pair.privateKey as ECPrivateKey;
+    final pub = pair.publicKey;
+    final priv = pair.privateKey;
 
     return Success(
       SshKeyPair(
