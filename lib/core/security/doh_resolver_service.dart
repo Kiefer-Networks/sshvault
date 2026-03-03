@@ -122,6 +122,74 @@ class DohResolverService {
     return result.map((addresses) => addresses.first);
   }
 
+  /// Cross-check DNS resolution across Cloudflare and Google.
+  ///
+  /// Queries both providers in parallel and compares results.
+  /// Returns the resolved addresses if they agree, or a [DnsDivergence]
+  /// failure if the IP sets differ (possible DNS spoofing).
+  static Future<Result<List<String>>> crossCheck(
+    String hostname, {
+    DnsRecordType type = DnsRecordType.a,
+    HttpClient? httpClient,
+  }) async {
+    final cloudflare = DohResolverService(
+      provider: DohProvider.cloudflare,
+      httpClient: httpClient,
+    );
+    final google = DohResolverService(
+      provider: DohProvider.google,
+      httpClient: httpClient,
+    );
+
+    final results = await Future.wait([
+      cloudflare.resolve(hostname, type: type),
+      google.resolve(hostname, type: type),
+    ]);
+
+    final cfResult = results[0];
+    final gResult = results[1];
+
+    // If both fail, return the first error
+    if (cfResult is Err && gResult is Err) {
+      _log.error(_tag, 'Both DoH resolvers failed for $hostname');
+      return cfResult;
+    }
+
+    // If only one fails, return the successful one with a warning
+    if (cfResult is Err) {
+      _log.warning(_tag, 'Cloudflare DoH failed, using Google result only');
+      return gResult;
+    }
+    if (gResult is Err) {
+      _log.warning(_tag, 'Google DoH failed, using Cloudflare result only');
+      return cfResult;
+    }
+
+    final cfAddresses = (cfResult as Success<List<String>>).value.toSet();
+    final gAddresses = (gResult as Success<List<String>>).value.toSet();
+
+    // Check if results overlap (at least one common IP)
+    final intersection = cfAddresses.intersection(gAddresses);
+    if (intersection.isEmpty) {
+      _log.error(
+        _tag,
+        'DNS divergence detected for $hostname: '
+        'Cloudflare=$cfAddresses, Google=$gAddresses',
+      );
+      return Err(DnsDivergence(
+        hostname: hostname,
+        cloudflareIPs: cfAddresses.toList(),
+        googleIPs: gAddresses.toList(),
+      ));
+    }
+
+    _log.info(
+      _tag,
+      'Cross-check passed for $hostname: ${intersection.length} common IP(s)',
+    );
+    return Success(cfAddresses.toList());
+  }
+
   /// Clear all cached DNS results.
   void clearCache() {
     _cache.clear();

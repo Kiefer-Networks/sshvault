@@ -63,3 +63,18 @@ final class SyncFailure extends Failure {
     super.cause,
   });
 }
+
+final class DnsDivergence extends Failure {
+  final String hostname;
+  final List<String> cloudflareIPs;
+  final List<String> googleIPs;
+  const DnsDivergence({
+    required this.hostname,
+    required this.cloudflareIPs,
+    required this.googleIPs,
+  }) : super('DNS divergence detected');
+}
+
+final class SecurityViolation extends Failure {
+  const SecurityViolation(super.message, {super.cause});
+}
