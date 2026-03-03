@@ -6,6 +6,7 @@ export 'adaptive_list_section.dart';
 export 'adaptive_list_tile.dart';
 export 'adaptive_notification.dart';
 export 'adaptive_progress.dart';
+export 'adaptive_scaffold.dart';
 export 'adaptive_segmented_control.dart';
 export 'adaptive_switch_tile.dart';
 export 'adaptive_text_field.dart';
