@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class NewDirectoryDialog extends StatefulWidget {
@@ -20,6 +22,32 @@ class _NewDirectoryDialogState extends State<NewDirectoryDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
+    if (useCupertinoDesign) {
+      return CupertinoAlertDialog(
+        title: Text(l10n.sftpNewFolder),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: CupertinoTextField(
+            controller: _controller,
+            autofocus: true,
+            placeholder: l10n.sftpNewFolderName,
+            onSubmitted: (value) => Navigator.pop(context, value.trim()),
+          ),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, _controller.text.trim()),
+            child: Text(l10n.create),
+          ),
+        ],
+      );
+    }
 
     return AlertDialog(
       title: Text(l10n.sftpNewFolder),

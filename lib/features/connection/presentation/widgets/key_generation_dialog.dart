@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/crypto/ssh_key_type.dart';
@@ -333,12 +334,9 @@ class _KeyPreviewCard extends StatelessWidget {
                   tooltip: AppLocalizations.of(context)!.keyGenCopyTooltip,
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: value));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(context)!.keyGenCopied(label),
-                        ),
-                      ),
+                    AdaptiveNotification.show(
+                      context,
+                      message: AppLocalizations.of(context)!.keyGenCopied(label),
                     );
                   },
                   visualDensity: VisualDensity.compact,

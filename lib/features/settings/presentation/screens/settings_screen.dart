@@ -1,10 +1,12 @@
 import 'dart:io' show File;
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,61 +48,57 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ListTile(
                 leading: const Icon(Icons.palette_outlined),
                 title: Text(l10n.settingsTheme),
-                subtitle: Text(_themeLabel(l10n, settings.themeMode)),
-                trailing: SegmentedButton<ThemeMode>(
-                  segments: const [
-                    ButtonSegment(
-                      value: ThemeMode.system,
-                      icon: Icon(Icons.settings_suggest, size: 18),
-                    ),
-                    ButtonSegment(
-                      value: ThemeMode.light,
-                      icon: Icon(Icons.light_mode, size: 18),
-                    ),
-                    ButtonSegment(
-                      value: ThemeMode.dark,
-                      icon: Icon(Icons.dark_mode, size: 18),
-                    ),
-                  ],
-                  selected: {settings.themeMode},
-                  onSelectionChanged: (modes) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .setThemeMode(modes.first);
-                  },
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: AdaptiveSegmentedControl<ThemeMode>(
+                    selected: settings.themeMode,
+                    segments: {
+                      ThemeMode.system: l10n.settingsThemeSystem,
+                      ThemeMode.light: l10n.settingsThemeLight,
+                      ThemeMode.dark: l10n.settingsThemeDark,
+                    },
+                    onChanged: (mode) {
+                      ref.read(settingsProvider.notifier).setThemeMode(mode);
+                    },
+                  ),
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.language),
                 title: Text(l10n.settingsLanguage),
                 subtitle: Text(_localeLabel(l10n, settings.locale)),
-                trailing: DropdownButton<String>(
-                  value: settings.locale.isEmpty ? '' : settings.locale,
-                  underline: const SizedBox.shrink(),
-                  items: [
-                    DropdownMenuItem(
-                      value: '',
-                      child: Text(l10n.settingsLanguageSystem),
-                    ),
-                    DropdownMenuItem(
-                      value: 'en',
-                      child: Text(l10n.settingsLanguageEn),
-                    ),
-                    DropdownMenuItem(
-                      value: 'de',
-                      child: Text(l10n.settingsLanguageDe),
-                    ),
-                    DropdownMenuItem(
-                      value: 'es',
-                      child: Text(l10n.settingsLanguageEs),
-                    ),
-                  ],
-                  onChanged: (v) {
-                    if (v != null) {
-                      ref.read(settingsProvider.notifier).setLocale(v);
-                    }
-                  },
-                ),
+                trailing: useCupertinoDesign
+                    ? const CupertinoListTileChevron()
+                    : DropdownButton<String>(
+                        value: settings.locale.isEmpty ? '' : settings.locale,
+                        underline: const SizedBox.shrink(),
+                        items: [
+                          DropdownMenuItem(
+                            value: '',
+                            child: Text(l10n.settingsLanguageSystem),
+                          ),
+                          DropdownMenuItem(
+                            value: 'en',
+                            child: Text(l10n.settingsLanguageEn),
+                          ),
+                          DropdownMenuItem(
+                            value: 'de',
+                            child: Text(l10n.settingsLanguageDe),
+                          ),
+                          DropdownMenuItem(
+                            value: 'es',
+                            child: Text(l10n.settingsLanguageEs),
+                          ),
+                        ],
+                        onChanged: (v) {
+                          if (v != null) {
+                            ref.read(settingsProvider.notifier).setLocale(v);
+                          }
+                        },
+                      ),
+                onTap: useCupertinoDesign
+                    ? () => _showLanguagePicker(l10n, settings.locale)
+                    : null,
               ),
               const Divider(),
 
@@ -185,59 +183,65 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ? l10n.settingsAutoLockDisabled
                       : l10n.settingsAutoLockMinutes(settings.autoLockMinutes),
                 ),
-                trailing: DropdownButton<int>(
-                  value: settings.autoLockMinutes,
-                  underline: const SizedBox.shrink(),
-                  items: [
-                    DropdownMenuItem(
-                      value: 0,
-                      child: Text(l10n.settingsAutoLockOff),
-                    ),
-                    DropdownMenuItem(
-                      value: 1,
-                      child: Text(l10n.settingsAutoLock1Min),
-                    ),
-                    DropdownMenuItem(
-                      value: 5,
-                      child: Text(l10n.settingsAutoLock5Min),
-                    ),
-                    DropdownMenuItem(
-                      value: 15,
-                      child: Text(l10n.settingsAutoLock15Min),
-                    ),
-                    DropdownMenuItem(
-                      value: 30,
-                      child: Text(l10n.settingsAutoLock30Min),
-                    ),
-                  ],
-                  onChanged: (v) {
-                    if (v != null) {
-                      ref.read(settingsProvider.notifier).setAutoLockMinutes(v);
-                    }
-                  },
-                ),
+                trailing: useCupertinoDesign
+                    ? const CupertinoListTileChevron()
+                    : DropdownButton<int>(
+                        value: settings.autoLockMinutes,
+                        underline: const SizedBox.shrink(),
+                        items: [
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Text(l10n.settingsAutoLockOff),
+                          ),
+                          DropdownMenuItem(
+                            value: 1,
+                            child: Text(l10n.settingsAutoLock1Min),
+                          ),
+                          DropdownMenuItem(
+                            value: 5,
+                            child: Text(l10n.settingsAutoLock5Min),
+                          ),
+                          DropdownMenuItem(
+                            value: 15,
+                            child: Text(l10n.settingsAutoLock15Min),
+                          ),
+                          DropdownMenuItem(
+                            value: 30,
+                            child: Text(l10n.settingsAutoLock30Min),
+                          ),
+                        ],
+                        onChanged: (v) {
+                          if (v != null) {
+                            ref
+                                .read(settingsProvider.notifier)
+                                .setAutoLockMinutes(v);
+                          }
+                        },
+                      ),
+                onTap: useCupertinoDesign
+                    ? () => _showAutoLockPicker(l10n, settings.autoLockMinutes)
+                    : null,
               ),
               Builder(
                 builder: (context) {
                   final biometricAvailable = ref.watch(
                     biometricAvailableProvider,
                   );
-                  return SwitchListTile(
+                  final subtitleText = biometricAvailable.when(
+                    data: (available) {
+                      if (!available) return l10n.settingsBiometricNotAvailable;
+                      if (!settings.hasPin) {
+                        return l10n.settingsBiometricRequiresPin;
+                      }
+                      return null;
+                    },
+                    loading: () => null,
+                    error: (_, _) => l10n.settingsBiometricError,
+                  );
+                  return AdaptiveSwitchTile(
                     secondary: const Icon(Icons.fingerprint),
-                    title: Text(l10n.settingsBiometricUnlock),
-                    subtitle: biometricAvailable.when(
-                      data: (available) {
-                        if (!available) {
-                          return Text(l10n.settingsBiometricNotAvailable);
-                        }
-                        if (!settings.hasPin) {
-                          return Text(l10n.settingsBiometricRequiresPin);
-                        }
-                        return null;
-                      },
-                      loading: () => null,
-                      error: (_, _) => Text(l10n.settingsBiometricError),
-                    ),
+                    title: l10n.settingsBiometricUnlock,
+                    subtitle: subtitleText,
                     value: settings.biometricUnlock,
                     onChanged: biometricAvailable.maybeWhen(
                       data: (available) => available && settings.hasPin
@@ -288,10 +292,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 },
               ),
               if (ScreenProtectionService.isSupported)
-                SwitchListTile(
+                AdaptiveSwitchTile(
                   secondary: const Icon(Icons.screenshot_monitor_outlined),
-                  title: Text(l10n.settingsPreventScreenshots),
-                  subtitle: Text(l10n.settingsPreventScreenshotsDescription),
+                  title: l10n.settingsPreventScreenshots,
+                  subtitle: l10n.settingsPreventScreenshotsDescription,
                   value: settings.preventScreenshots,
                   onChanged: (v) {
                     ref
@@ -303,9 +307,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               // Export
               _SectionHeader(title: l10n.settingsSectionExport),
-              SwitchListTile(
+              AdaptiveSwitchTile(
                 secondary: const Icon(Icons.enhanced_encryption_outlined),
-                title: Text(l10n.settingsEncryptExport),
+                title: l10n.settingsEncryptExport,
                 value: settings.encryptExportByDefault,
                 onChanged: (v) {
                   ref
@@ -340,9 +344,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   );
                 },
               ),
-              SwitchListTile(
+              AdaptiveSwitchTile(
                 secondary: const Icon(Icons.sync_outlined),
-                title: Text(l10n.syncAutoSync),
+                title: l10n.syncAutoSync,
                 value: settings.autoSync,
                 onChanged: (v) {
                   ref.read(settingsProvider.notifier).setAutoSync(v);
@@ -406,18 +410,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
       ),
     );
-  }
-
-  String _themeLabel(AppLocalizations l10n, ThemeMode mode) {
-    return switch (mode) {
-      ThemeMode.system => l10n.settingsThemeSystem,
-      ThemeMode.light => l10n.settingsThemeLight,
-      ThemeMode.dark => l10n.settingsThemeDark,
-    };
   }
 
   Future<String> _getUserEmail(WidgetRef ref) async {
@@ -444,22 +440,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
     if (pin == null || !mounted) return;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.settingsPinRemoveTitle),
-        content: Text(l10n.settingsPinRemoveWarning),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.settingsPinRemove),
-          ),
-        ],
-      ),
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.settingsPinRemoveTitle,
+      message: l10n.settingsPinRemoveWarning,
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.settingsPinRemove,
+      isDestructive: true,
     );
     if (confirmed == true) {
       await ref.read(settingsProvider.notifier).clearPinCode();
@@ -468,29 +455,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _editPort(AppLocalizations l10n, int currentPort) async {
     final controller = TextEditingController(text: currentPort.toString());
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.settingsDefaultPortDialog),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: l10n.settingsPortLabel,
-            hintText: l10n.settingsPortHint,
-          ),
+    final result = await showAdaptiveFormDialog<String>(
+      context,
+      title: l10n.settingsDefaultPortDialog,
+      content: TextField(
+        controller: controller,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          labelText: l10n.settingsPortLabel,
+          hintText: l10n.settingsPortHint,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(l10n.save),
-          ),
-        ],
       ),
+      materialActions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, controller.text),
+          child: Text(l10n.save),
+        ),
+      ],
+      cupertinoActions: [
+        CupertinoDialogAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(context, controller.text),
+          child: Text(l10n.save),
+        ),
+      ],
     );
     controller.dispose();
     if (result != null) {
@@ -506,29 +502,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     String currentUsername,
   ) async {
     final controller = TextEditingController(text: currentUsername);
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.settingsDefaultUsernameDialog),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: l10n.settingsUsernameLabel,
-            hintText: l10n.settingsUsernameHint,
-          ),
-          keyboardType: TextInputType.text,
+    final result = await showAdaptiveFormDialog<String>(
+      context,
+      title: l10n.settingsDefaultUsernameDialog,
+      content: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: l10n.settingsUsernameLabel,
+          hintText: l10n.settingsUsernameHint,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(l10n.save),
-          ),
-        ],
+        keyboardType: TextInputType.text,
       ),
+      materialActions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, controller.text),
+          child: Text(l10n.save),
+        ),
+      ],
+      cupertinoActions: [
+        CupertinoDialogAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(context, controller.text),
+          child: Text(l10n.save),
+        ),
+      ],
     );
     controller.dispose();
     if (result != null && result.trim().isNotEmpty) {
@@ -536,14 +541,74 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  void _showLanguagePicker(AppLocalizations l10n, String currentLocale) {
+    final options = [
+      ('', l10n.settingsLanguageSystem),
+      ('en', l10n.settingsLanguageEn),
+      ('de', l10n.settingsLanguageDe),
+      ('es', l10n.settingsLanguageEs),
+    ];
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (ctx) => CupertinoActionSheet(
+        title: Text(l10n.settingsLanguage),
+        actions: options.map((o) {
+          return CupertinoActionSheetAction(
+            isDefaultAction: o.$1 == currentLocale ||
+                (o.$1 == '' && currentLocale.isEmpty),
+            onPressed: () {
+              Navigator.pop(ctx);
+              ref.read(settingsProvider.notifier).setLocale(o.$1);
+            },
+            child: Text(o.$2),
+          );
+        }).toList(),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text(l10n.cancel),
+        ),
+      ),
+    );
+  }
+
+  void _showAutoLockPicker(AppLocalizations l10n, int currentMinutes) {
+    final options = [
+      (0, l10n.settingsAutoLockOff),
+      (1, l10n.settingsAutoLock1Min),
+      (5, l10n.settingsAutoLock5Min),
+      (15, l10n.settingsAutoLock15Min),
+      (30, l10n.settingsAutoLock30Min),
+    ];
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (ctx) => CupertinoActionSheet(
+        title: Text(l10n.settingsAutoLock),
+        actions: options.map((o) {
+          return CupertinoActionSheetAction(
+            isDefaultAction: o.$1 == currentMinutes,
+            onPressed: () {
+              Navigator.pop(ctx);
+              ref.read(settingsProvider.notifier).setAutoLockMinutes(o.$1);
+            },
+            child: Text(o.$2),
+          );
+        }).toList(),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text(l10n.cancel),
+        ),
+      ),
+    );
+  }
+
   Future<void> _downloadLogs(AppLocalizations l10n) async {
     final logger = ref.read(loggingServiceProvider);
 
     if (logger.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.settingsLogsEmpty)));
+      AdaptiveNotification.show(context, message: l10n.settingsLogsEmpty);
       return;
     }
 
@@ -562,9 +627,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
 
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.settingsLogsSaved)));
+    AdaptiveNotification.show(context, message: l10n.settingsLogsSaved);
   }
 
   Future<void> _sendLogsToSupport(AppLocalizations l10n) async {

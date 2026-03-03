@@ -120,7 +120,7 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
         width: double.maxFinite,
         height: 400,
         child: _loading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator.adaptive())
             : _error != null
             ? Center(
                 child: Column(

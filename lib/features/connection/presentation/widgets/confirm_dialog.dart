@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class ConfirmDialog extends StatelessWidget {
@@ -22,14 +23,15 @@ class ConfirmDialog extends StatelessWidget {
     String? confirmLabel,
     Color? confirmColor,
   }) {
-    return showDialog<bool>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: title,
-        message: message,
-        confirmLabel: confirmLabel,
-        confirmColor: confirmColor,
-      ),
+    final l10n = AppLocalizations.of(context)!;
+    return showAdaptiveConfirmDialog(
+      context,
+      title: title,
+      message: message,
+      cancelLabel: l10n.cancel,
+      confirmLabel: confirmLabel ?? l10n.confirmDeleteLabel,
+      confirmColor: confirmColor,
+      isDestructive: true,
     );
   }
 

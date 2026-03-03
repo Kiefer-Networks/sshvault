@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 /// Dialog to set or verify a 6-digit PIN code.
@@ -19,6 +21,17 @@ class PinDialog extends StatefulWidget {
   /// Show dialog to set a new PIN. Returns the PIN or null if cancelled.
   static Future<String?> showSetPin(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    if (useCupertinoDesign) {
+      return showCupertinoDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => PinDialog(
+          title: l10n.pinDialogSetTitle,
+          subtitle: l10n.pinDialogSetSubtitle,
+          confirm: true,
+        ),
+      );
+    }
     return showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -36,6 +49,13 @@ class PinDialog extends StatefulWidget {
     BuildContext context, {
     required Future<bool> Function(String pin) verifier,
   }) async {
+    if (useCupertinoDesign) {
+      return showCupertinoDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => _PinVerifyDialog(verifier: verifier),
+      );
+    }
     return showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -73,22 +93,38 @@ class _PinDialogState extends State<PinDialog> {
     Navigator.of(context).pop(pin);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildContent(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return AlertDialog(
-      title: Text(widget.title),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.subtitle != null) ...[
-            Text(widget.subtitle!),
-            const SizedBox(height: 16),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.subtitle != null) ...[
+          Text(widget.subtitle!),
+          const SizedBox(height: 16),
+        ],
+        TextField(
+          controller: _pinController,
+          decoration: InputDecoration(
+            labelText: l10n.pinDialogLabel,
+            hintText: l10n.pinDialogHint,
+            prefixIcon: const Icon(Icons.pin),
+          ),
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(6),
           ],
+          obscureText: true,
+          autofocus: true,
+          textAlign: TextAlign.center,
+          style: const TextStyle(letterSpacing: 8, fontSize: 24),
+        ),
+        if (widget.confirm) ...[
+          const SizedBox(height: 12),
           TextField(
-            controller: _pinController,
+            controller: _confirmController,
             decoration: InputDecoration(
-              labelText: l10n.pinDialogLabel,
+              labelText: l10n.pinDialogConfirmLabel,
               hintText: l10n.pinDialogHint,
               prefixIcon: const Icon(Icons.pin),
             ),
@@ -98,38 +134,49 @@ class _PinDialogState extends State<PinDialog> {
               LengthLimitingTextInputFormatter(6),
             ],
             obscureText: true,
-            autofocus: true,
             textAlign: TextAlign.center,
             style: const TextStyle(letterSpacing: 8, fontSize: 24),
           ),
-          if (widget.confirm) ...[
-            const SizedBox(height: 12),
-            TextField(
-              controller: _confirmController,
-              decoration: InputDecoration(
-                labelText: l10n.pinDialogConfirmLabel,
-                hintText: l10n.pinDialogHint,
-                prefixIcon: const Icon(Icons.pin),
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(6),
-              ],
-              obscureText: true,
-              textAlign: TextAlign.center,
-              style: const TextStyle(letterSpacing: 8, fontSize: 24),
-            ),
-          ],
-          if (_error != null) ...[
-            const SizedBox(height: 12),
-            Text(
-              _error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ],
         ],
-      ),
+        if (_error != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            _error!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ],
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (useCupertinoDesign) {
+      return CupertinoAlertDialog(
+        title: Text(widget.title),
+        content: Material(
+          color: Colors.transparent,
+          child: _buildContent(context),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: _submit,
+            child: Text(l10n.save),
+          ),
+        ],
+      );
+    }
+
+    return AlertDialog(
+      title: Text(widget.title),
+      content: _buildContent(context),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -193,40 +240,69 @@ class _PinVerifyDialogState extends State<_PinVerifyDialog> {
     }
   }
 
+  Widget _buildVerifyContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextField(
+          controller: _controller,
+          decoration: InputDecoration(
+            labelText: l10n.pinDialogLabel,
+            prefixIcon: const Icon(Icons.pin),
+          ),
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(6),
+          ],
+          obscureText: true,
+          autofocus: true,
+          textAlign: TextAlign.center,
+          style: const TextStyle(letterSpacing: 8, fontSize: 24),
+          onSubmitted: (_) => _verify(),
+        ),
+        if (_error != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            _error!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ],
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
+    if (useCupertinoDesign) {
+      return CupertinoAlertDialog(
+        title: Text(l10n.pinDialogVerifyTitle),
+        content: Material(
+          color: Colors.transparent,
+          child: _buildVerifyContent(context),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: _verifying ? null : () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: _verifying ? null : _verify,
+            child: _verifying
+                ? const CupertinoActivityIndicator()
+                : Text(l10n.lockScreenUnlock),
+          ),
+        ],
+      );
+    }
+
     return AlertDialog(
       title: Text(l10n.pinDialogVerifyTitle),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              labelText: l10n.pinDialogLabel,
-              prefixIcon: const Icon(Icons.pin),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(6),
-            ],
-            obscureText: true,
-            autofocus: true,
-            textAlign: TextAlign.center,
-            style: const TextStyle(letterSpacing: 8, fontSize: 24),
-            onSubmitted: (_) => _verify(),
-          ),
-          if (_error != null) ...[
-            const SizedBox(height: 12),
-            Text(
-              _error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ],
-        ],
-      ),
+      content: _buildVerifyContent(context),
       actions: [
         TextButton(
           onPressed: _verifying ? null : () => Navigator.of(context).pop(),

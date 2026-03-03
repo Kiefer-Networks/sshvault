@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class ChmodDialog extends StatefulWidget {
@@ -88,31 +90,51 @@ class _ChmodDialogState extends State<ChmodDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    final content = SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Octal input
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              labelText: l10n.sftpChmodOctal,
+              border: const OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            maxLength: 3,
+            onChanged: _updateFromText,
+          ),
+          const SizedBox(height: 16),
+          // Permission grid
+          _buildGroup(l10n.sftpChmodOwner, l10n),
+          _buildGroup(l10n.sftpChmodGroup, l10n),
+          _buildGroup(l10n.sftpChmodOther, l10n),
+        ],
+      ),
+    );
+
+    if (useCupertinoDesign) {
+      return CupertinoAlertDialog(
+        title: Text(l10n.sftpChmodTitle),
+        content: Material(color: Colors.transparent, child: content),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, _toOctal()),
+            child: Text(l10n.save),
+          ),
+        ],
+      );
+    }
+
     return AlertDialog(
       title: Text(l10n.sftpChmodTitle),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Octal input
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: l10n.sftpChmodOctal,
-                border: const OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-              maxLength: 3,
-              onChanged: _updateFromText,
-            ),
-            const SizedBox(height: 16),
-            // Permission grid
-            _buildGroup(l10n.sftpChmodOwner, l10n),
-            _buildGroup(l10n.sftpChmodGroup, l10n),
-            _buildGroup(l10n.sftpChmodOther, l10n),
-          ],
-        ),
-      ),
+      content: content,
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),

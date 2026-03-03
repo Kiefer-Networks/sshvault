@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 
@@ -15,18 +16,13 @@ class AuthMethodSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return SegmentedButton<AuthMethod>(
-      segments: AuthMethod.values
-          .map(
-            (method) => ButtonSegment(
-              value: method,
-              label: Text(_label(l10n, method)),
-              icon: Icon(_iconForMethod(method), size: 18),
-            ),
-          )
-          .toList(),
-      selected: {selected},
-      onSelectionChanged: (selected) => onChanged(selected.first),
+    return AdaptiveSegmentedControl<AuthMethod>(
+      selected: selected,
+      segments: {
+        for (final method in AuthMethod.values)
+          method: _label(l10n, method),
+      },
+      onChanged: onChanged,
     );
   }
 
@@ -38,11 +34,4 @@ class AuthMethodSelector extends StatelessWidget {
     };
   }
 
-  IconData _iconForMethod(AuthMethod method) {
-    return switch (method) {
-      AuthMethod.password => Icons.password,
-      AuthMethod.key => Icons.vpn_key,
-      AuthMethod.both => Icons.security,
-    };
-  }
 }

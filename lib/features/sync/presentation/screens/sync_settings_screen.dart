@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/features/account/domain/entities/billing_status.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
@@ -155,10 +157,10 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
             builder: (context) {
               final billingActive =
                   ref.watch(billingStatusProvider).value?.active ?? false;
-              return SwitchListTile(
+              return AdaptiveSwitchTile(
                 secondary: const Icon(Icons.sync),
-                title: Text(l10n.syncAutoSync),
-                subtitle: Text(l10n.syncAutoSyncDescription),
+                title: l10n.syncAutoSync,
+                subtitle: l10n.syncAutoSyncDescription,
                 value: billingActive && (settings?.autoSync ?? true),
                 onChanged: billingActive
                     ? (v) {
@@ -299,7 +301,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                 ),
               ],
             ),
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
       error: (e, _) => Text(l10n.error(e.toString())),
     );
   }
@@ -380,7 +382,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           ],
         ],
       ),
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
       error: (e, _) => Text(l10n.error(e.toString())),
     );
   }
@@ -417,7 +419,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                       )
                       .toList(),
                 ),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: CircularProgressIndicator.adaptive()),
           error: (e, _) => Text(l10n.error(e.toString())),
         ),
       ],
@@ -477,10 +479,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.error(e.toString())),
-          ),
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.error(e.toString()),
         );
       }
     }
@@ -514,10 +515,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.error(e.toString())),
-          ),
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.error(e.toString()),
         );
       }
     }
@@ -530,10 +530,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       ref.invalidate(deviceListProvider);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.error(e.toString())),
-          ),
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.error(e.toString()),
         );
       }
     }
@@ -542,43 +541,54 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   Future<void> _changePassword(AppLocalizations l10n) async {
     final oldPw = TextEditingController();
     final newPw = TextEditingController();
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.accountChangePassword),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: oldPw,
-              obscureText: true,
-              decoration: InputDecoration(labelText: l10n.accountOldPassword),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: newPw,
-              obscureText: true,
-              decoration: InputDecoration(labelText: l10n.accountNewPassword),
-            ),
-          ],
+    final formContent = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextField(
+          controller: oldPw,
+          obscureText: true,
+          decoration: InputDecoration(labelText: l10n.accountOldPassword),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.save),
-          ),
-        ],
-      ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: newPw,
+          obscureText: true,
+          decoration: InputDecoration(labelText: l10n.accountNewPassword),
+        ),
+      ],
+    );
+    final result = await showAdaptiveFormDialog<bool>(
+      context,
+      title: l10n.accountChangePassword,
+      content: formContent,
+      materialActions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.save),
+        ),
+      ],
+      cupertinoActions: [
+        CupertinoDialogAction(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
+        ),
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.save),
+        ),
+      ],
     );
     if (result == true) {
       if (oldPw.text.isEmpty || newPw.text.isEmpty) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.error(l10n.validatorPasswordRequired))),
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(l10n.validatorPasswordRequired),
           );
         }
         oldPw.dispose();
@@ -589,15 +599,17 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         final repo = ref.read(accountRepositoryProvider);
         await repo.changePassword(oldPw.text, newPw.text);
         if (mounted) {
-          ScaffoldMessenger.of(
+          AdaptiveNotification.show(
             context,
-          ).showSnackBar(SnackBar(content: Text(l10n.accountChangePassword)));
+            message: l10n.accountChangePassword,
+          );
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
+          AdaptiveNotification.show(
             context,
-          ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
+            message: l10n.error(e.toString()),
+          );
         }
       }
     }
@@ -609,78 +621,87 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     final oldPw = TextEditingController();
     final newPw = TextEditingController();
     final confirmPw = TextEditingController();
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.changeEncryptionPassword),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              l10n.changeEncryptionWarning,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: oldPw,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: l10n.changeEncryptionOldPassword,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: newPw,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: l10n.changeEncryptionNewPassword,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: confirmPw,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: l10n.authConfirmPasswordLabel,
-              ),
-            ),
-          ],
+    final encFormContent = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          l10n.changeEncryptionWarning,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.error,
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
+        const SizedBox(height: 16),
+        TextField(
+          controller: oldPw,
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: l10n.changeEncryptionOldPassword,
           ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.save),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: newPw,
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: l10n.changeEncryptionNewPassword,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: confirmPw,
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: l10n.authConfirmPasswordLabel,
+          ),
+        ),
+      ],
+    );
+    final result = await showAdaptiveFormDialog<bool>(
+      context,
+      title: l10n.changeEncryptionPassword,
+      content: encFormContent,
+      materialActions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.save),
+        ),
+      ],
+      cupertinoActions: [
+        CupertinoDialogAction(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
+        ),
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.save),
+        ),
+      ],
     );
     if (result == true) {
       if (oldPw.text.isEmpty || newPw.text.isEmpty) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.error(l10n.validatorPasswordRequired))),
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(l10n.validatorPasswordRequired),
           );
         }
       } else if (newPw.text != confirmPw.text) {
         if (mounted) {
-          ScaffoldMessenger.of(
+          AdaptiveNotification.show(
             context,
-          ).showSnackBar(SnackBar(content: Text(l10n.authPasswordMismatch)));
+            message: l10n.authPasswordMismatch,
+          );
         }
       } else if (newPw.text.length < 8) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.error('Password must be at least 8 characters'),
-              ),
-            ),
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error('Password must be at least 8 characters'),
           );
         }
       } else {
@@ -696,24 +717,27 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               final storage = ref.read(secureStorageProvider);
               await storage.saveSyncPassword(newPw.text);
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.changeEncryptionSuccess)),
+                AdaptiveNotification.show(
+                  context,
+                  message: l10n.changeEncryptionSuccess,
                 );
               }
             },
             onFailure: (f) {
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.error(f.toString()))),
+                AdaptiveNotification.show(
+                  context,
+                  message: l10n.error(f.toString()),
                 );
               }
             },
           );
         } catch (e) {
           if (mounted) {
-            ScaffoldMessenger.of(
+            AdaptiveNotification.show(
               context,
-            ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
+              message: l10n.error(e.toString()),
+            );
           }
         }
       }
@@ -724,25 +748,13 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   }
 
   Future<void> _logoutAllDevices(AppLocalizations l10n) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.logoutAllDevices),
-        content: Text(l10n.logoutAllDevicesConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.logoutAllDevices),
-          ),
-        ],
-      ),
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.logoutAllDevices,
+      message: l10n.logoutAllDevicesConfirm,
+      confirmLabel: l10n.logoutAllDevices,
+      cancelLabel: l10n.cancel,
+      isDestructive: true,
     );
     if (confirmed == true) {
       try {
@@ -751,10 +763,10 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         result.fold(
           onSuccess: (_) async {
             if (!mounted) return;
-            final messenger = ScaffoldMessenger.of(context);
             final router = GoRouter.of(context);
-            messenger.showSnackBar(
-              SnackBar(content: Text(l10n.logoutAllDevicesSuccess)),
+            AdaptiveNotification.show(
+              context,
+              message: l10n.logoutAllDevicesSuccess,
             );
             // Logout locally as well
             await ref.read(authProvider.notifier).logout();
@@ -762,42 +774,32 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           },
           onFailure: (f) {
             if (mounted) {
-              ScaffoldMessenger.of(
+              AdaptiveNotification.show(
                 context,
-              ).showSnackBar(SnackBar(content: Text(l10n.error(f.toString()))));
+                message: l10n.error(f.toString()),
+              );
             }
           },
         );
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
+          AdaptiveNotification.show(
             context,
-          ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
+            message: l10n.error(e.toString()),
+          );
         }
       }
     }
   }
 
   Future<void> _deleteAccount(AppLocalizations l10n) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.accountDeleteAccount),
-        content: Text(l10n.accountDeleteWarning),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.delete),
-          ),
-        ],
-      ),
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.accountDeleteAccount,
+      message: l10n.accountDeleteWarning,
+      confirmLabel: l10n.delete,
+      cancelLabel: l10n.cancel,
+      isDestructive: true,
     );
     if (confirmed == true) {
       try {
@@ -807,9 +809,10 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         if (mounted) context.go('/');
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
+          AdaptiveNotification.show(
             context,
-          ).showSnackBar(SnackBar(content: Text(l10n.error(e.toString()))));
+            message: l10n.error(e.toString()),
+          );
         }
       }
     }

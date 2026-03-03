@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
@@ -47,34 +49,57 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return AlertDialog(
-      title: Text(
-        widget.isEditing ? l10n.tagFormTitleEdit : l10n.tagFormTitleNew,
-      ),
-      content: SizedBox(
-        width: 400,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: l10n.tagFormNameLabel,
-                  prefixIcon: const Icon(Icons.label_outline),
-                ),
-                keyboardType: TextInputType.text,
-                autofocus: true,
+    final titleText = widget.isEditing
+        ? l10n.tagFormTitleEdit
+        : l10n.tagFormTitleNew;
+    final saveText = widget.isEditing ? l10n.update : l10n.create;
+
+    final formContent = SizedBox(
+      width: 400,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: l10n.tagFormNameLabel,
+                prefixIcon: const Icon(Icons.label_outline),
               ),
-              const SizedBox(height: 16),
-              ColorPickerField(
-                selectedColor: _color,
-                onColorChanged: (c) => setState(() => _color = c),
-              ),
-            ],
-          ),
+              keyboardType: TextInputType.text,
+              autofocus: true,
+            ),
+            const SizedBox(height: 16),
+            ColorPickerField(
+              selectedColor: _color,
+              onColorChanged: (c) => setState(() => _color = c),
+            ),
+          ],
         ),
       ),
+    );
+
+    if (useCupertinoDesign) {
+      return CupertinoAlertDialog(
+        title: Text(titleText),
+        content: Material(color: Colors.transparent, child: formContent),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: _save,
+            child: Text(saveText),
+          ),
+        ],
+      );
+    }
+
+    return AlertDialog(
+      title: Text(titleText),
+      content: formContent,
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -82,7 +107,7 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
         ),
         FilledButton(
           onPressed: _save,
-          child: Text(widget.isEditing ? l10n.update : l10n.create),
+          child: Text(saveText),
         ),
       ],
     );

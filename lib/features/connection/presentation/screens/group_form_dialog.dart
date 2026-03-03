@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
@@ -55,69 +57,92 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
 
     final l10n = AppLocalizations.of(context)!;
 
-    return AlertDialog(
-      title: Text(
-        widget.isEditing ? l10n.groupFormTitleEdit : l10n.groupFormTitleNew,
-      ),
-      content: SizedBox(
-        width: 400,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: l10n.groupFormNameLabel,
-                  prefixIcon: const Icon(Icons.folder_outlined),
-                ),
-                keyboardType: TextInputType.text,
-                autofocus: true,
+    final titleText = widget.isEditing
+        ? l10n.groupFormTitleEdit
+        : l10n.groupFormTitleNew;
+    final saveText = widget.isEditing ? l10n.update : l10n.create;
+
+    final formContent = SizedBox(
+      width: 400,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: l10n.groupFormNameLabel,
+                prefixIcon: const Icon(Icons.folder_outlined),
               ),
-              const SizedBox(height: 16),
-              groupsAsync.when(
-                data: (groups) {
-                  final availableGroups = groups
-                      .where((g) => g.id != widget.group?.id)
-                      .toList();
-                  if (availableGroups.isEmpty) return const SizedBox.shrink();
-                  return DropdownButtonFormField<String?>(
-                    initialValue: _parentId,
-                    decoration: InputDecoration(
-                      labelText: l10n.groupFormParentLabel,
-                      prefixIcon: const Icon(Icons.account_tree),
+              keyboardType: TextInputType.text,
+              autofocus: true,
+            ),
+            const SizedBox(height: 16),
+            groupsAsync.when(
+              data: (groups) {
+                final availableGroups = groups
+                    .where((g) => g.id != widget.group?.id)
+                    .toList();
+                if (availableGroups.isEmpty) return const SizedBox.shrink();
+                return DropdownButtonFormField<String?>(
+                  initialValue: _parentId,
+                  decoration: InputDecoration(
+                    labelText: l10n.groupFormParentLabel,
+                    prefixIcon: const Icon(Icons.account_tree),
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text(l10n.groupFormParentNone),
                     ),
-                    items: [
-                      DropdownMenuItem(
-                        value: null,
-                        child: Text(l10n.groupFormParentNone),
-                      ),
-                      ...availableGroups.map(
-                        (g) =>
-                            DropdownMenuItem(value: g.id, child: Text(g.name)),
-                      ),
-                    ],
-                    onChanged: (v) => setState(() => _parentId = v),
-                  );
-                },
-                loading: () => const SizedBox.shrink(),
-                error: (_, _) => const SizedBox.shrink(),
-              ),
-              const SizedBox(height: 16),
-              ColorPickerField(
-                selectedColor: _color,
-                onColorChanged: (c) => setState(() => _color = c),
-              ),
-              const SizedBox(height: 16),
-              IconPickerField(
-                selectedIcon: _iconName,
-                onIconChanged: (i) => setState(() => _iconName = i),
-                accentColor: _color,
-              ),
-            ],
-          ),
+                    ...availableGroups.map(
+                      (g) =>
+                          DropdownMenuItem(value: g.id, child: Text(g.name)),
+                    ),
+                  ],
+                  onChanged: (v) => setState(() => _parentId = v),
+                );
+              },
+              loading: () => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
+            ),
+            const SizedBox(height: 16),
+            ColorPickerField(
+              selectedColor: _color,
+              onColorChanged: (c) => setState(() => _color = c),
+            ),
+            const SizedBox(height: 16),
+            IconPickerField(
+              selectedIcon: _iconName,
+              onIconChanged: (i) => setState(() => _iconName = i),
+              accentColor: _color,
+            ),
+          ],
         ),
       ),
+    );
+
+    if (useCupertinoDesign) {
+      return CupertinoAlertDialog(
+        title: Text(titleText),
+        content: Material(color: Colors.transparent, child: formContent),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: _save,
+            child: Text(saveText),
+          ),
+        ],
+      );
+    }
+
+    return AlertDialog(
+      title: Text(titleText),
+      content: formContent,
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -125,7 +150,7 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
         ),
         FilledButton(
           onPressed: _save,
-          child: Text(widget.isEditing ? l10n.update : l10n.create),
+          child: Text(saveText),
         ),
       ],
     );

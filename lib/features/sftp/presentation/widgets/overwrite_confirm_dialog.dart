@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class OverwriteConfirmDialog extends StatelessWidget {
@@ -7,9 +8,14 @@ class OverwriteConfirmDialog extends StatelessWidget {
   const OverwriteConfirmDialog({super.key, required this.fileName});
 
   static Future<bool> show(BuildContext context, String fileName) async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (_) => OverwriteConfirmDialog(fileName: fileName),
+    final l10n = AppLocalizations.of(context)!;
+    final result = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.sftpOverwriteTitle,
+      message: l10n.sftpOverwriteMessage(fileName),
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.sftpOverwrite,
+      isDestructive: true,
     );
     return result ?? false;
   }

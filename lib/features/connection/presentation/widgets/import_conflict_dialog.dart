@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
 
@@ -6,6 +8,40 @@ class ImportConflictDialog extends StatelessWidget {
   const ImportConflictDialog({super.key});
 
   static Future<ImportConflictStrategy?> show(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (useCupertinoDesign) {
+      return showCupertinoDialog<ImportConflictStrategy>(
+        context: context,
+        builder: (ctx) => CupertinoAlertDialog(
+          title: Text(l10n.importConflictTitle),
+          content: Text(l10n.importConflictDescription),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            CupertinoDialogAction(
+              onPressed: () =>
+                  Navigator.of(ctx).pop(ImportConflictStrategy.skip),
+              child: Text(l10n.importConflictSkip),
+            ),
+            CupertinoDialogAction(
+              onPressed: () =>
+                  Navigator.of(ctx).pop(ImportConflictStrategy.rename),
+              child: Text(l10n.importConflictRename),
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () =>
+                  Navigator.of(ctx).pop(ImportConflictStrategy.overwrite),
+              child: Text(l10n.importConflictOverwrite),
+            ),
+          ],
+        ),
+      );
+    }
+
     return showDialog<ImportConflictStrategy>(
       context: context,
       builder: (_) => const ImportConflictDialog(),

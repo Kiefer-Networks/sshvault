@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/utils/validators.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
@@ -130,16 +131,13 @@ class ServerFormFields extends StatelessWidget {
               authMethod == AuthMethod.both) ...[
             const SizedBox(height: 16),
             if (onUseManagedKeyChanged != null)
-              SwitchListTile(
-                title: Text(l10n.serverFormUseManagedKey),
-                subtitle: Text(
-                  useManagedKey
-                      ? l10n.serverFormManagedKeySubtitle
-                      : l10n.serverFormDirectKeySubtitle,
-                ),
+              AdaptiveSwitchTile(
+                title: l10n.serverFormUseManagedKey,
+                subtitle: useManagedKey
+                    ? l10n.serverFormManagedKeySubtitle
+                    : l10n.serverFormDirectKeySubtitle,
                 value: useManagedKey,
                 onChanged: onUseManagedKeyChanged,
-                contentPadding: EdgeInsets.zero,
               ),
             if (useManagedKey && onSshKeyChanged != null) ...[
               const SizedBox(height: 8),
