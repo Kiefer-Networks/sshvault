@@ -257,8 +257,8 @@ jobs:
           APPRUN
             chmod +x "$APP_DIR/AppRun"
 
-            cp linux/de.kiefer_networks.shellvault.desktop "$APP_DIR/shellvault.desktop"
-            cp linux/icons/128x128.png "$APP_DIR/shellvault.png"
+            cp linux/de.kiefer_networks.shellvault.desktop "$APP_DIR/de.kiefer_networks.shellvault.desktop"
+            cp linux/icons/128x128.png "$APP_DIR/de.kiefer_networks.shellvault.png"
 
             ARCH=x86_64 appimagetool "$APP_DIR" "ShellVault-${VERSION}-x86_64.AppImage"
           fi
