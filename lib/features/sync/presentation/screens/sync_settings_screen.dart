@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/error/failures.dart';
+import 'package:shellvault/features/account/domain/entities/billing_status.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
@@ -32,6 +33,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     _lifecycleListener = AppLifecycleListener(
       onResume: () {
         ref.invalidate(billingStatusProvider);
+        ref.invalidate(serverReachableProvider);
       },
     );
   }
@@ -80,6 +82,52 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // ── 0. SERVER REACHABILITY BANNER ──
+          if (isAuthenticated) ...[
+            Builder(
+              builder: (context) {
+                final reachable = ref.watch(serverReachableProvider);
+                if (reachable.value == false || reachable.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: MaterialBanner(
+                      leading: Icon(
+                        Icons.cloud_off,
+                        color: theme.colorScheme.error,
+                      ),
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.syncServerUnreachable,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: theme.colorScheme.error,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            l10n.syncServerUnreachableHint,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                      backgroundColor:
+                          theme.colorScheme.errorContainer.withAlpha(77),
+                      actions: [
+                        TextButton(
+                          onPressed: () =>
+                              ref.invalidate(serverReachableProvider),
+                          child: Text(l10n.serverConfigTest),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+
           // ── 1. USER CARD ──
           if (isAuthenticated) ...[
             Card(
@@ -320,9 +368,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: _openSubscriptionManagement,
+                onPressed: () => _openSubscriptionManagement(billing),
                 icon: Icon(
-                  isNativeIapPlatform
+                  billing.provider == 'apple' || billing.provider == 'google'
                       ? Icons.store_outlined
                       : Icons.receipt_long_outlined,
                 ),
@@ -383,8 +431,15 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     AsyncValue<SyncStatus> syncState,
   ) {
     if (syncState.hasError) {
+      final error = syncState.error;
+      final String message;
+      if (error is NetworkFailure) {
+        message = l10n.syncNetworkError;
+      } else {
+        message = '${l10n.syncError}: $error';
+      }
       return Text(
-        '${l10n.syncError}: ${syncState.error}',
+        message,
         style: TextStyle(color: Theme.of(context).colorScheme.error),
       );
     }
@@ -431,23 +486,23 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     }
   }
 
-  Future<void> _openSubscriptionManagement() async {
-    if (isNativeIapPlatform) {
-      // Open the respective store's subscription management
-      final Uri storeUri;
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-        storeUri = Uri.parse(
-          'https://play.google.com/store/account/subscriptions',
+  Future<void> _openSubscriptionManagement(BillingStatus billing) async {
+    switch (billing.provider) {
+      case 'apple':
+        await launchUrl(
+          Uri.parse('https://apps.apple.com/account/subscriptions'),
+          mode: LaunchMode.externalApplication,
         );
-      } else {
-        // iOS + macOS → Apple App Store
-        storeUri = Uri.parse('https://apps.apple.com/account/subscriptions');
-      }
-      await launchUrl(storeUri, mode: LaunchMode.externalApplication);
-      return;
+        return;
+      case 'google':
+        await launchUrl(
+          Uri.parse('https://play.google.com/store/account/subscriptions'),
+          mode: LaunchMode.externalApplication,
+        );
+        return;
     }
 
-    // Desktop / Web → Stripe Billing Portal
+    // Stripe (or unknown) → Stripe Billing Portal
     try {
       final repo = ref.read(accountRepositoryProvider);
       final result = await repo.createPortal();

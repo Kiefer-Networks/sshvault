@@ -2398,6 +2398,24 @@ abstract class AppLocalizations {
   /// **'Sync error'**
   String get syncError;
 
+  /// No description provided for @syncServerUnreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Server not reachable'**
+  String get syncServerUnreachable;
+
+  /// No description provided for @syncServerUnreachableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The sync server could not be reached. Check your internet connection and server URL.'**
+  String get syncServerUnreachableHint;
+
+  /// No description provided for @syncNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection to server failed. Please check your internet connection or try again later.'**
+  String get syncNetworkError;
+
   /// No description provided for @syncNeverSynced.
   ///
   /// In en, this message translates to:
@@ -2655,6 +2673,546 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No activity logs found'**
   String get auditLogEmpty;
+
+  /// No description provided for @navSftp.
+  ///
+  /// In en, this message translates to:
+  /// **'SFTP'**
+  String get navSftp;
+
+  /// No description provided for @sftpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File Manager'**
+  String get sftpTitle;
+
+  /// No description provided for @sftpLocalDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Device'**
+  String get sftpLocalDevice;
+
+  /// No description provided for @sftpSelectServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Select server...'**
+  String get sftpSelectServer;
+
+  /// No description provided for @sftpConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting...'**
+  String get sftpConnecting;
+
+  /// No description provided for @sftpEmptyDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'This directory is empty'**
+  String get sftpEmptyDirectory;
+
+  /// No description provided for @sftpNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No server connected'**
+  String get sftpNoConnection;
+
+  /// No description provided for @sftpPathLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Path'**
+  String get sftpPathLabel;
+
+  /// No description provided for @sftpUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get sftpUpload;
+
+  /// No description provided for @sftpDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get sftpDownload;
+
+  /// No description provided for @sftpDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get sftpDelete;
+
+  /// No description provided for @sftpRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get sftpRename;
+
+  /// No description provided for @sftpNewFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'New Folder'**
+  String get sftpNewFolder;
+
+  /// No description provided for @sftpNewFolderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder name'**
+  String get sftpNewFolderName;
+
+  /// No description provided for @sftpChmod.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get sftpChmod;
+
+  /// No description provided for @sftpChmodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Permissions'**
+  String get sftpChmodTitle;
+
+  /// No description provided for @sftpChmodOctal.
+  ///
+  /// In en, this message translates to:
+  /// **'Octal'**
+  String get sftpChmodOctal;
+
+  /// No description provided for @sftpChmodOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get sftpChmodOwner;
+
+  /// No description provided for @sftpChmodGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get sftpChmodGroup;
+
+  /// No description provided for @sftpChmodOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get sftpChmodOther;
+
+  /// No description provided for @sftpChmodRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get sftpChmodRead;
+
+  /// No description provided for @sftpChmodWrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Write'**
+  String get sftpChmodWrite;
+
+  /// No description provided for @sftpChmodExecute.
+  ///
+  /// In en, this message translates to:
+  /// **'Execute'**
+  String get sftpChmodExecute;
+
+  /// No description provided for @sftpCreateSymlink.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Symlink'**
+  String get sftpCreateSymlink;
+
+  /// No description provided for @sftpSymlinkTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target path'**
+  String get sftpSymlinkTarget;
+
+  /// No description provided for @sftpSymlinkName.
+  ///
+  /// In en, this message translates to:
+  /// **'Link name'**
+  String get sftpSymlinkName;
+
+  /// No description provided for @sftpFilePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'File Preview'**
+  String get sftpFilePreview;
+
+  /// No description provided for @sftpFileInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'File Info'**
+  String get sftpFileInfo;
+
+  /// No description provided for @sftpFileSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get sftpFileSize;
+
+  /// No description provided for @sftpFileModified.
+  ///
+  /// In en, this message translates to:
+  /// **'Modified'**
+  String get sftpFileModified;
+
+  /// No description provided for @sftpFilePermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get sftpFilePermissions;
+
+  /// No description provided for @sftpFileOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get sftpFileOwner;
+
+  /// No description provided for @sftpFileType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get sftpFileType;
+
+  /// No description provided for @sftpFileLinkTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Link target'**
+  String get sftpFileLinkTarget;
+
+  /// No description provided for @sftpTransfers.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers'**
+  String get sftpTransfers;
+
+  /// No description provided for @sftpTransferProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} of {total}'**
+  String sftpTransferProgress(int current, int total);
+
+  /// No description provided for @sftpTransferQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Queued'**
+  String get sftpTransferQueued;
+
+  /// No description provided for @sftpTransferActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Transferring...'**
+  String get sftpTransferActive;
+
+  /// No description provided for @sftpTransferPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get sftpTransferPaused;
+
+  /// No description provided for @sftpTransferCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get sftpTransferCompleted;
+
+  /// No description provided for @sftpTransferFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get sftpTransferFailed;
+
+  /// No description provided for @sftpTransferCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get sftpTransferCancelled;
+
+  /// No description provided for @sftpPauseTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get sftpPauseTransfer;
+
+  /// No description provided for @sftpResumeTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get sftpResumeTransfer;
+
+  /// No description provided for @sftpCancelTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get sftpCancelTransfer;
+
+  /// No description provided for @sftpClearCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear completed'**
+  String get sftpClearCompleted;
+
+  /// No description provided for @sftpTransferCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{active} of {total} transfers'**
+  String sftpTransferCount(int active, int total);
+
+  /// No description provided for @sftpTransferCountActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 active} other{{count} active}}'**
+  String sftpTransferCountActive(int count);
+
+  /// No description provided for @sftpTransferCountCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 completed} other{{count} completed}}'**
+  String sftpTransferCountCompleted(int count);
+
+  /// No description provided for @sftpTransferCountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 failed} other{{count} failed}}'**
+  String sftpTransferCountFailed(int count);
+
+  /// No description provided for @sftpCopyToOtherPane.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to other pane'**
+  String get sftpCopyToOtherPane;
+
+  /// No description provided for @sftpConfirmDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {count} items?'**
+  String sftpConfirmDelete(int count);
+
+  /// No description provided for @sftpConfirmDeleteSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"?'**
+  String sftpConfirmDeleteSingle(String name);
+
+  /// No description provided for @sftpDeleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted successfully'**
+  String get sftpDeleteSuccess;
+
+  /// No description provided for @sftpRenameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get sftpRenameTitle;
+
+  /// No description provided for @sftpRenameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New name'**
+  String get sftpRenameLabel;
+
+  /// No description provided for @sftpSortByName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get sftpSortByName;
+
+  /// No description provided for @sftpSortBySize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get sftpSortBySize;
+
+  /// No description provided for @sftpSortByDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get sftpSortByDate;
+
+  /// No description provided for @sftpSortByType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get sftpSortByType;
+
+  /// No description provided for @sftpShowHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Show hidden files'**
+  String get sftpShowHidden;
+
+  /// No description provided for @sftpHideHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide hidden files'**
+  String get sftpHideHidden;
+
+  /// No description provided for @sftpSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get sftpSelectAll;
+
+  /// No description provided for @sftpDeselectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Deselect all'**
+  String get sftpDeselectAll;
+
+  /// No description provided for @sftpItemsSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String sftpItemsSelected(int count);
+
+  /// No description provided for @sftpRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get sftpRefresh;
+
+  /// No description provided for @sftpConnectionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection failed: {message}'**
+  String sftpConnectionError(String message);
+
+  /// No description provided for @sftpPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission denied'**
+  String get sftpPermissionDenied;
+
+  /// No description provided for @sftpOperationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation failed: {message}'**
+  String sftpOperationFailed(String message);
+
+  /// No description provided for @sftpOverwriteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File already exists'**
+  String get sftpOverwriteTitle;
+
+  /// No description provided for @sftpOverwriteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" already exists. Overwrite?'**
+  String sftpOverwriteMessage(String fileName);
+
+  /// No description provided for @sftpOverwrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite'**
+  String get sftpOverwrite;
+
+  /// No description provided for @sftpTransferStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer started: {fileName}'**
+  String sftpTransferStarted(String fileName);
+
+  /// No description provided for @sftpNoPaneSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a destination in the other pane first'**
+  String get sftpNoPaneSelected;
+
+  /// No description provided for @sftpDirectoryTransferNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory transfer coming soon'**
+  String get sftpDirectoryTransferNotSupported;
+
+  /// No description provided for @sftpSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get sftpSelect;
+
+  /// No description provided for @sftpOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get sftpOpen;
+
+  /// No description provided for @sftpExtractArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Extract Here'**
+  String get sftpExtractArchive;
+
+  /// No description provided for @sftpExtractSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive extracted'**
+  String get sftpExtractSuccess;
+
+  /// No description provided for @sftpExtractFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Extraction failed: {message}'**
+  String sftpExtractFailed(String message);
+
+  /// No description provided for @sftpExtractUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported archive format'**
+  String get sftpExtractUnsupported;
+
+  /// No description provided for @sftpExtracting.
+  ///
+  /// In en, this message translates to:
+  /// **'Extracting...'**
+  String get sftpExtracting;
+
+  /// No description provided for @sftpUploadStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Upload started} other{{count} uploads started}}'**
+  String sftpUploadStarted(int count);
+
+  /// No description provided for @sftpDownloadStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Download started} other{{count} downloads started}}'**
+  String sftpDownloadStarted(int count);
+
+  /// No description provided for @sftpDownloadComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{fileName}\" downloaded'**
+  String sftpDownloadComplete(String fileName);
+
+  /// No description provided for @sftpSavedToDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to Downloads/ShellVault'**
+  String get sftpSavedToDownloads;
+
+  /// No description provided for @sftpSaveToFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Files'**
+  String get sftpSaveToFiles;
+
+  /// No description provided for @sftpFileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'File saved'**
+  String get sftpFileSaved;
+
+  /// No description provided for @notificationTerminalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{SSH session active} other{{count} SSH sessions active}}'**
+  String notificationTerminalTitle(int count);
+
+  /// No description provided for @notificationTerminalTap.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open terminal'**
+  String get notificationTerminalTap;
 }
 
 class _AppLocalizationsDelegate

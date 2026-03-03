@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/network/api_client.dart';
+import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
 import 'package:shellvault/features/account/domain/entities/billing_status.dart';
 import 'package:shellvault/features/account/domain/entities/device_entity.dart';
@@ -7,6 +9,15 @@ import 'package:shellvault/features/account/presentation/providers/account_repos
 export 'package:shellvault/features/account/presentation/providers/account_repository_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
+
+/// Checks whether the sync server is reachable via GET /health.
+/// Returns `true` when the server responds, `false` on any error.
+final serverReachableProvider = FutureProvider<bool>((ref) async {
+  final baseUrl = ref.watch(serverUrlProvider);
+  final client = ApiClient(baseUrl);
+  final result = await client.get('/health');
+  return result.isSuccess;
+});
 
 final userProfileProvider = FutureProvider<UserEntity?>((ref) async {
   // Re-fetch when auth state changes (login/logout)

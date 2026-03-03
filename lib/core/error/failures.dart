@@ -40,6 +40,10 @@ final class SshConnectionFailure extends Failure {
   const SshConnectionFailure(super.message, {super.cause});
 }
 
+final class SftpFailure extends Failure {
+  const SftpFailure(super.message, {super.cause});
+}
+
 final class NetworkFailure extends Failure {
   final int? statusCode;
   const NetworkFailure(super.message, {this.statusCode, super.cause});

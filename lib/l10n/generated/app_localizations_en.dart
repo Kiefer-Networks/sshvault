@@ -1254,6 +1254,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncError => 'Sync error';
 
   @override
+  String get syncServerUnreachable => 'Server not reachable';
+
+  @override
+  String get syncServerUnreachableHint =>
+      'The sync server could not be reached. Check your internet connection and server URL.';
+
+  @override
+  String get syncNetworkError =>
+      'Connection to server failed. Please check your internet connection or try again later.';
+
+  @override
   String get syncNeverSynced => 'Never synced';
 
   @override
@@ -1389,4 +1400,346 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get auditLogEmpty => 'No activity logs found';
+
+  @override
+  String get navSftp => 'SFTP';
+
+  @override
+  String get sftpTitle => 'File Manager';
+
+  @override
+  String get sftpLocalDevice => 'Local Device';
+
+  @override
+  String get sftpSelectServer => 'Select server...';
+
+  @override
+  String get sftpConnecting => 'Connecting...';
+
+  @override
+  String get sftpEmptyDirectory => 'This directory is empty';
+
+  @override
+  String get sftpNoConnection => 'No server connected';
+
+  @override
+  String get sftpPathLabel => 'Path';
+
+  @override
+  String get sftpUpload => 'Upload';
+
+  @override
+  String get sftpDownload => 'Download';
+
+  @override
+  String get sftpDelete => 'Delete';
+
+  @override
+  String get sftpRename => 'Rename';
+
+  @override
+  String get sftpNewFolder => 'New Folder';
+
+  @override
+  String get sftpNewFolderName => 'Folder name';
+
+  @override
+  String get sftpChmod => 'Permissions';
+
+  @override
+  String get sftpChmodTitle => 'Change Permissions';
+
+  @override
+  String get sftpChmodOctal => 'Octal';
+
+  @override
+  String get sftpChmodOwner => 'Owner';
+
+  @override
+  String get sftpChmodGroup => 'Group';
+
+  @override
+  String get sftpChmodOther => 'Other';
+
+  @override
+  String get sftpChmodRead => 'Read';
+
+  @override
+  String get sftpChmodWrite => 'Write';
+
+  @override
+  String get sftpChmodExecute => 'Execute';
+
+  @override
+  String get sftpCreateSymlink => 'Create Symlink';
+
+  @override
+  String get sftpSymlinkTarget => 'Target path';
+
+  @override
+  String get sftpSymlinkName => 'Link name';
+
+  @override
+  String get sftpFilePreview => 'File Preview';
+
+  @override
+  String get sftpFileInfo => 'File Info';
+
+  @override
+  String get sftpFileSize => 'Size';
+
+  @override
+  String get sftpFileModified => 'Modified';
+
+  @override
+  String get sftpFilePermissions => 'Permissions';
+
+  @override
+  String get sftpFileOwner => 'Owner';
+
+  @override
+  String get sftpFileType => 'Type';
+
+  @override
+  String get sftpFileLinkTarget => 'Link target';
+
+  @override
+  String get sftpTransfers => 'Transfers';
+
+  @override
+  String sftpTransferProgress(int current, int total) {
+    return '$current of $total';
+  }
+
+  @override
+  String get sftpTransferQueued => 'Queued';
+
+  @override
+  String get sftpTransferActive => 'Transferring...';
+
+  @override
+  String get sftpTransferPaused => 'Paused';
+
+  @override
+  String get sftpTransferCompleted => 'Completed';
+
+  @override
+  String get sftpTransferFailed => 'Failed';
+
+  @override
+  String get sftpTransferCancelled => 'Cancelled';
+
+  @override
+  String get sftpPauseTransfer => 'Pause';
+
+  @override
+  String get sftpResumeTransfer => 'Resume';
+
+  @override
+  String get sftpCancelTransfer => 'Cancel';
+
+  @override
+  String get sftpClearCompleted => 'Clear completed';
+
+  @override
+  String sftpTransferCount(int active, int total) {
+    return '$active of $total transfers';
+  }
+
+  @override
+  String sftpTransferCountActive(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count active',
+      one: '1 active',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sftpTransferCountCompleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count completed',
+      one: '1 completed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sftpTransferCountFailed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count failed',
+      one: '1 failed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sftpCopyToOtherPane => 'Copy to other pane';
+
+  @override
+  String sftpConfirmDelete(int count) {
+    return 'Delete $count items?';
+  }
+
+  @override
+  String sftpConfirmDeleteSingle(String name) {
+    return 'Delete \"$name\"?';
+  }
+
+  @override
+  String get sftpDeleteSuccess => 'Deleted successfully';
+
+  @override
+  String get sftpRenameTitle => 'Rename';
+
+  @override
+  String get sftpRenameLabel => 'New name';
+
+  @override
+  String get sftpSortByName => 'Name';
+
+  @override
+  String get sftpSortBySize => 'Size';
+
+  @override
+  String get sftpSortByDate => 'Date';
+
+  @override
+  String get sftpSortByType => 'Type';
+
+  @override
+  String get sftpShowHidden => 'Show hidden files';
+
+  @override
+  String get sftpHideHidden => 'Hide hidden files';
+
+  @override
+  String get sftpSelectAll => 'Select all';
+
+  @override
+  String get sftpDeselectAll => 'Deselect all';
+
+  @override
+  String sftpItemsSelected(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get sftpRefresh => 'Refresh';
+
+  @override
+  String sftpConnectionError(String message) {
+    return 'Connection failed: $message';
+  }
+
+  @override
+  String get sftpPermissionDenied => 'Permission denied';
+
+  @override
+  String sftpOperationFailed(String message) {
+    return 'Operation failed: $message';
+  }
+
+  @override
+  String get sftpOverwriteTitle => 'File already exists';
+
+  @override
+  String sftpOverwriteMessage(String fileName) {
+    return '\"$fileName\" already exists. Overwrite?';
+  }
+
+  @override
+  String get sftpOverwrite => 'Overwrite';
+
+  @override
+  String sftpTransferStarted(String fileName) {
+    return 'Transfer started: $fileName';
+  }
+
+  @override
+  String get sftpNoPaneSelected =>
+      'Select a destination in the other pane first';
+
+  @override
+  String get sftpDirectoryTransferNotSupported =>
+      'Directory transfer coming soon';
+
+  @override
+  String get sftpSelect => 'Select';
+
+  @override
+  String get sftpOpen => 'Open';
+
+  @override
+  String get sftpExtractArchive => 'Extract Here';
+
+  @override
+  String get sftpExtractSuccess => 'Archive extracted';
+
+  @override
+  String sftpExtractFailed(String message) {
+    return 'Extraction failed: $message';
+  }
+
+  @override
+  String get sftpExtractUnsupported => 'Unsupported archive format';
+
+  @override
+  String get sftpExtracting => 'Extracting...';
+
+  @override
+  String sftpUploadStarted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count uploads started',
+      one: 'Upload started',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sftpDownloadStarted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count downloads started',
+      one: 'Download started',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sftpDownloadComplete(String fileName) {
+    return '\"$fileName\" downloaded';
+  }
+
+  @override
+  String get sftpSavedToDownloads => 'Saved to Downloads/ShellVault';
+
+  @override
+  String get sftpSaveToFiles => 'Save to Files';
+
+  @override
+  String get sftpFileSaved => 'File saved';
+
+  @override
+  String notificationTerminalTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count SSH sessions active',
+      one: 'SSH session active',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notificationTerminalTap => 'Tap to open terminal';
 }
