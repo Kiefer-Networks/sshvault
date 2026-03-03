@@ -148,6 +148,18 @@ abstract class AppLocalizations {
   /// **'Terminal'**
   String get navTerminal;
 
+  /// No description provided for @navMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get navMore;
+
+  /// No description provided for @navManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Management'**
+  String get navManagement;
+
   /// No description provided for @navSettings.
   ///
   /// In en, this message translates to:

@@ -1,7 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/routing/ios_more_screen.dart';
+import 'package:shellvault/core/utils/platform_utils.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -218,34 +222,13 @@ class AppShellState extends ConsumerState<AppShell> {
   Future<void> _showSecurityDialog() async {
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
-    final goToSettings = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        icon: const Icon(Icons.shield_outlined, color: Colors.orange, size: 40),
-        title: Text(l10n.settingsSectionSecurity),
-        content: Text(l10n.securityBannerMessage),
-        actions: [
-          TextButton(
-            onPressed: () {
-              ref
-                  .read(settingsProvider.notifier)
-                  .setDismissedSecurityHint(true);
-              Navigator.pop(ctx, false);
-            },
-            child: Text(l10n.securityBannerDismiss),
-          ),
-          FilledButton(
-            onPressed: () {
-              ref
-                  .read(settingsProvider.notifier)
-                  .setDismissedSecurityHint(true);
-              Navigator.pop(ctx, true);
-            },
-            child: Text(l10n.navSettings),
-          ),
-        ],
-      ),
+    ref.read(settingsProvider.notifier).setDismissedSecurityHint(true);
+    final goToSettings = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.settingsSectionSecurity,
+      message: l10n.securityBannerMessage,
+      cancelLabel: l10n.securityBannerDismiss,
+      confirmLabel: l10n.navSettings,
     );
     if (goToSettings == true && mounted) {
       context.push('/settings');
@@ -277,6 +260,15 @@ class AppShellState extends ConsumerState<AppShell> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
+
+        if (isCupertinoMobile && width < ShellBreakpoints.mobile) {
+          return _CupertinoMobileScaffold(
+            currentIndex: widget.navigationShell.currentIndex,
+            onDestinationSelected: _onDestinationSelected,
+            sessionCount: sessionCount,
+            child: widget.navigationShell,
+          );
+        }
 
         if (width < ShellBreakpoints.mobile) {
           return _MobileScaffold(
@@ -329,6 +321,114 @@ class _MobileScaffold extends StatelessWidget {
         sessionCount: sessionCount,
       ),
       body: child,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// iOS Mobile: CupertinoTabBar with 5 tabs
+// ---------------------------------------------------------------------------
+
+/// Maps GoRouter branch index → iOS tab index.
+///
+/// Branches 0-2 map to tabs 0-2 (Hosts, SFTP, Snippets).
+/// Branch 7 (Terminal) maps to tab 3.
+/// Branches 3-6 (SSH Keys, Groups, Tags, Export/Import) map to tab 4 (More).
+int _branchToTab(int branchIndex) {
+  if (branchIndex <= 2) return branchIndex;
+  if (branchIndex == 7) return 3;
+  return 4; // branches 3–6 → More
+}
+
+/// Maps iOS tab index → GoRouter branch index (for primary tabs only).
+int _tabToBranch(int tabIndex) {
+  if (tabIndex <= 2) return tabIndex;
+  if (tabIndex == 3) return 7; // Terminal
+  return -1; // More — not a branch
+}
+
+class _CupertinoMobileScaffold extends StatefulWidget {
+  final int currentIndex;
+  final ValueChanged<int> onDestinationSelected;
+  final int sessionCount;
+  final Widget child;
+
+  const _CupertinoMobileScaffold({
+    required this.currentIndex,
+    required this.onDestinationSelected,
+    required this.sessionCount,
+    required this.child,
+  });
+
+  @override
+  State<_CupertinoMobileScaffold> createState() =>
+      _CupertinoMobileScaffoldState();
+}
+
+class _CupertinoMobileScaffoldState extends State<_CupertinoMobileScaffold> {
+  bool _showMore = false;
+
+  int get _currentTab {
+    if (_showMore) return 4;
+    return _branchToTab(widget.currentIndex);
+  }
+
+  void _onTabTapped(int tabIndex) {
+    if (tabIndex == 4) {
+      setState(() => _showMore = true);
+      return;
+    }
+    setState(() => _showMore = false);
+    final branchIndex = _tabToBranch(tabIndex);
+    if (branchIndex >= 0) {
+      widget.onDestinationSelected(branchIndex);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      body: _showMore
+          ? IosMoreScreen(
+              onBranchSelected: (branchIndex) {
+                setState(() => _showMore = false);
+                widget.onDestinationSelected(branchIndex);
+              },
+            )
+          : widget.child,
+      bottomNavigationBar: CupertinoTabBar(
+        currentIndex: _currentTab,
+        onTap: _onTabTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.device_desktop),
+            label: l10n.navHosts,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.folder),
+            label: l10n.navSftp,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.chevron_left_slash_chevron_right),
+            label: l10n.navSnippets,
+          ),
+          BottomNavigationBarItem(
+            icon: widget.sessionCount > 0
+                ? Badge(
+                    label: Text('${widget.sessionCount}'),
+                    child: const Icon(Icons.terminal),
+                  )
+                : const Icon(Icons.terminal),
+            label: l10n.navTerminal,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.ellipsis),
+            label: l10n.navMore,
+          ),
+        ],
+      ),
     );
   }
 }

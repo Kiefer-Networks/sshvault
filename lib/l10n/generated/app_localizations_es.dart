@@ -33,6 +33,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navTerminal => 'Terminal';
 
   @override
+  String get navMore => 'Más';
+
+  @override
+  String get navManagement => 'Gestión';
+
+  @override
   String get navSettings => 'Ajustes';
 
   @override

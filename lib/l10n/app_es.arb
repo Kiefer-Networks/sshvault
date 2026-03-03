@@ -10,6 +10,8 @@
   "navSshKeys": "Claves SSH",
   "navExportImport": "Exportar / Importar",
   "navTerminal": "Terminal",
+  "navMore": "Más",
+  "navManagement": "Gestión",
   "navSettings": "Ajustes",
   "navAbout": "Acerca de",
 
