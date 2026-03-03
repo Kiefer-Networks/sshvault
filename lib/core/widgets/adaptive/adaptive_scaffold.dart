@@ -67,7 +67,7 @@ class AdaptiveScaffold extends StatelessWidget {
       return CupertinoPageScaffold(
         navigationBar: resolvedAppBar as ObstructingPreferredSizeWidget,
         backgroundColor: backgroundColor,
-        child: body,
+        child: Material(type: MaterialType.transparency, child: body),
       );
     }
 

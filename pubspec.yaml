@@ -65,6 +65,7 @@ dependencies:
   in_app_purchase: ^3.2.0
 
   # UI
+  cupertino_icons: ^1.0.8
   flutter_slidable: ^4.0.3
 
   # SSH & Terminal
