@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>de.kiefer_networks.shellvault</id>
+  <name>ShellVault</name>
+  <summary>Zero-knowledge encrypted SSH and terminal client</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+
+  <description>
+    <p>
+      ShellVault is a secure SSH client with zero-knowledge encrypted
+      sync across devices. Manage SSH connections, keys, and snippets
+      with end-to-end encryption — the server never sees your data.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>SSH terminal with full xterm emulation</li>
+      <li>SFTP file browser</li>
+      <li>SSH key management (Ed25519, RSA, ECDSA)</li>
+      <li>Encrypted snippet library</li>
+      <li>Zero-knowledge sync with AES-256-GCM and Argon2id</li>
+      <li>Connection grouping and tagging</li>
+      <li>Encrypted export/import</li>
+    </ul>
+  </description>
+
+  <url type="homepage">https://shellvault.app</url>
+  <url type="bugtracker">https://github.com/Kiefer-Networks/sshvault/issues</url>
+
+  <developer id="de.kiefer_networks">
+    <name>Kiefer Networks</name>
+  </developer>
+
+  <launchable type="desktop-id">de.kiefer_networks.shellvault.desktop</launchable>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="0.1.0" date="2026-03-03">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+</component>

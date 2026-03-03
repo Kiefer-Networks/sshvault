@@ -1,0 +1,57 @@
+app-id: de.kiefer_networks.shellvault
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+command: shellvault
+
+finish-args:
+  # Display
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  # GPU acceleration
+  - --device=dri
+  # Network access (SSH connections, sync)
+  - --share=network
+  # Secret Service API (flutter_secure_storage)
+  - --talk-name=org.freedesktop.secrets
+  # File picker / export
+  - --filesystem=home:ro
+  - --filesystem=xdg-download
+  # Notifications
+  - --talk-name=org.freedesktop.Notifications
+  # SSH agent forwarding
+  - --socket=ssh-auth
+
+modules:
+  - name: libsecret
+    buildsystem: meson
+    config-opts:
+      - -Dmanpage=false
+      - -Dvapi=false
+      - -Dgtk_doc=false
+      - -Dintrospection=false
+    cleanup:
+      - /bin
+      - /include
+      - /lib/pkgconfig
+      - /share/man
+    sources:
+      - type: archive
+        url: https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.4.tar.xz
+        sha256: 163d08d783be6d4ab9a75571f648b987225a36a8f3f416c8af7aab516cd65560
+
+  - name: shellvault
+    buildsystem: simple
+    build-commands:
+      - cp -r bundle/ /app/
+      - chmod +x /app/shellvault
+      - mkdir -p /app/bin
+      - ln -s /app/shellvault /app/bin/shellvault
+      - install -Dm644 de.kiefer_networks.shellvault.desktop /app/share/applications/de.kiefer_networks.shellvault.desktop
+      - install -Dm644 de.kiefer_networks.shellvault.metainfo.xml /app/share/metainfo/de.kiefer_networks.shellvault.metainfo.xml
+      - install -Dm644 icons/128x128.png /app/share/icons/hicolor/128x128/apps/de.kiefer_networks.shellvault.png
+      - install -Dm644 icons/256x256.png /app/share/icons/hicolor/256x256/apps/de.kiefer_networks.shellvault.png
+    sources:
+      - type: dir
+        path: flatpak-dist
