@@ -1,4 +1,4 @@
-name: CI — Lint & L10n
+name: CI
 
 on:
   push:
@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   lint:
-    name: Lint, Analyze & L10n Check
+    name: Lint, Analyze & L10n
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -69,3 +69,23 @@ jobs:
 
       - name: Check formatting
         run: dart format --set-exit-if-changed lib/
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate l10n
+        run: flutter gen-l10n
+
+      - name: Run tests
+        run: flutter test --reporter expanded
