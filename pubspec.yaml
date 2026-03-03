@@ -79,7 +79,7 @@ dev_dependencies:
   mocktail: ^1.0.4
 
   # Code Generation
-  build_runner: ^2.11.1
+  build_runner: 2.11.1
   freezed: ^3.2.5
   json_serializable: ^6.13.0
   riverpod_generator: ^4.0.3

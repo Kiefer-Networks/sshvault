@@ -263,7 +263,8 @@ class AppShellState extends ConsumerState<AppShell> {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
 
-        if (isCupertinoMobile && width < ShellBreakpoints.mobile) {
+        // iOS/iPadOS: Always use Cupertino tab bar — even on iPad's wider screens.
+        if (isCupertinoMobile) {
           return _CupertinoMobileScaffold(
             currentIndex: widget.navigationShell.currentIndex,
             onDestinationSelected: _onDestinationSelected,
