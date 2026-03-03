@@ -32,6 +32,11 @@ class ScreenProtectionService {
       await _channel.invokeMethod('setFlagSecure', {'enable': enable});
       _enabled = enable;
       _log.info(_tag, 'Screen protection ${enable ? 'enabled' : 'disabled'}');
+    } on MissingPluginException {
+      _log.warning(
+        _tag,
+        'Screen protection not available (native plugin not registered)',
+      );
     } on PlatformException catch (e) {
       _log.error(_tag, 'Failed to set screen protection: $e');
     }
