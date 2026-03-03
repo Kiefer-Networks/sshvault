@@ -47,8 +47,17 @@
 			</array>
 		</dict>
 	</dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+	</dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>SSH Vault uses Face ID to protect your SSH credentials.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>SSH Vault uses the camera to scan QR codes for server configuration import.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>SSH Vault saves exported files to your photo library.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>SSH Vault connects to servers on your local network.</string>
 	<key>NSBonjourServices</key>
@@ -68,6 +77,12 @@
 	<true/>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
