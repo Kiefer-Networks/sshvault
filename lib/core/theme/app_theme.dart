@@ -5,6 +5,38 @@ import 'package:shellvault/core/constants/app_constants.dart';
 abstract final class AppTheme {
   static const _seedColor = Color(0xFF1A1A2E);
 
+  static CupertinoThemeData get cupertinoLight {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seedColor,
+      brightness: Brightness.light,
+    );
+    return CupertinoThemeData(
+      brightness: Brightness.light,
+      primaryColor: colorScheme.primary,
+      barBackgroundColor: colorScheme.surface.withAlpha(230),
+      scaffoldBackgroundColor: colorScheme.surface,
+      textTheme: CupertinoTextThemeData(
+        primaryColor: colorScheme.primary,
+      ),
+    );
+  }
+
+  static CupertinoThemeData get cupertinoDark {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seedColor,
+      brightness: Brightness.dark,
+    );
+    return CupertinoThemeData(
+      brightness: Brightness.dark,
+      primaryColor: colorScheme.primary,
+      barBackgroundColor: const Color(0xFF0F0F1A).withAlpha(230),
+      scaffoldBackgroundColor: const Color(0xFF0F0F1A),
+      textTheme: CupertinoTextThemeData(
+        primaryColor: colorScheme.primary,
+      ),
+    );
+  }
+
   static ThemeData get light {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: _seedColor,
