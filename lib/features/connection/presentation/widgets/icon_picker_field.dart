@@ -31,31 +31,38 @@ class IconPickerField extends StatelessWidget {
           runSpacing: 6,
           children: IconConstants.serverIcons.map((si) {
             final isSelected = si.name == selectedIcon;
-            return GestureDetector(
-              onTap: () => onIconChanged(si.name),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? Color(accentColor).withAlpha(AppConstants.alpha51)
-                      : Colors.white.withAlpha(AppConstants.alpha8),
-                  borderRadius: BorderRadius.circular(8),
-                  border: isSelected
-                      ? Border.all(color: Color(accentColor), width: 2)
-                      : Border.all(
-                          color: Colors.white.withAlpha(AppConstants.alpha13),
-                        ),
-                ),
-                child: Icon(
-                  si.icon,
-                  size: 20,
-                  color: isSelected
-                      ? Color(accentColor)
-                      : theme.colorScheme.onSurface.withAlpha(
-                          AppConstants.alpha128,
-                        ),
+            return Material(
+              color: isSelected
+                  ? Color(accentColor).withAlpha(AppConstants.alpha51)
+                  : theme.colorScheme.surfaceContainerHighest
+                      .withAlpha(AppConstants.alpha77),
+              borderRadius: BorderRadius.circular(8),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => onIconChanged(si.name),
+                borderRadius: BorderRadius.circular(8),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: isSelected
+                        ? Border.all(color: Color(accentColor), width: 2)
+                        : Border.all(
+                            color: theme.colorScheme.outlineVariant
+                                .withAlpha(AppConstants.alpha77),
+                          ),
+                  ),
+                  child: Icon(
+                    si.icon,
+                    size: 20,
+                    color: isSelected
+                        ? Color(accentColor)
+                        : theme.colorScheme.onSurface.withAlpha(
+                            AppConstants.alpha128,
+                          ),
+                  ),
                 ),
               ),
             );

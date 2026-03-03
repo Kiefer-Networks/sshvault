@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/widgets/pin_num_pad.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 final _pinDialogErrorProvider = StateProvider.autoDispose<String?>((_) => null);
 
-final _pinVerifyErrorProvider = StateProvider.autoDispose<String?>((_) => null);
+final _pinVerifyErrorProvider =
+    StateProvider.autoDispose<String?>((_) => null);
 
 final _pinVerifyingProvider = StateProvider.autoDispose<bool>((_) => false);
 
-/// Dialog to set or verify a 6-digit PIN code.
+/// Dialog to set or verify a 6-digit PIN code using a numpad.
 class PinDialog extends ConsumerStatefulWidget {
   final String title;
   final String? subtitle;
@@ -55,104 +56,117 @@ class PinDialog extends ConsumerStatefulWidget {
   ConsumerState<PinDialog> createState() => _PinDialogState();
 }
 
-class _PinDialogState extends ConsumerState<PinDialog> {
-  final _pinController = TextEditingController();
-  final _confirmController = TextEditingController();
+enum _SetPinPhase { enter, confirm }
 
-  @override
-  void dispose() {
-    _pinController.dispose();
-    _confirmController.dispose();
-    super.dispose();
+class _PinDialogState extends ConsumerState<PinDialog> {
+  String _pin = '';
+  String _firstPin = '';
+  _SetPinPhase _phase = _SetPinPhase.enter;
+
+  void _onDigit(String digit) {
+    if (_pin.length >= 6) return;
+    ref.read(_pinDialogErrorProvider.notifier).state = null;
+    _pin += digit;
+    ref.read(_pinDialogErrorProvider.notifier).state =
+        ref.read(_pinDialogErrorProvider);
+
+    if (_pin.length == 6) {
+      _onPinComplete();
+    }
   }
 
-  void _submit() {
+  void _onBackspace() {
+    if (_pin.isEmpty) return;
+    ref.read(_pinDialogErrorProvider.notifier).state = null;
+    _pin = _pin.substring(0, _pin.length - 1);
+    // Force rebuild by toggling error state
+    ref.read(_pinDialogErrorProvider.notifier).state =
+        ref.read(_pinDialogErrorProvider);
+  }
+
+  void _onPinComplete() {
     final l10n = AppLocalizations.of(context)!;
-    final pin = _pinController.text;
-    if (pin.length != 6) {
-      ref.read(_pinDialogErrorProvider.notifier).state =
-          l10n.pinDialogErrorLength;
+    if (!widget.confirm) {
+      Navigator.of(context).pop(_pin);
       return;
     }
-    if (widget.confirm && _confirmController.text != pin) {
+
+    if (_phase == _SetPinPhase.enter) {
+      _firstPin = _pin;
+      _pin = '';
+      _phase = _SetPinPhase.confirm;
+      ref.read(_pinDialogErrorProvider.notifier).state = null;
+      return;
+    }
+
+    // Confirm phase
+    if (_pin != _firstPin) {
       ref.read(_pinDialogErrorProvider.notifier).state =
           l10n.pinDialogErrorMismatch;
+      _pin = '';
       return;
     }
-    Navigator.of(context).pop(pin);
-  }
-
-  Widget _buildContent(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final error = ref.watch(_pinDialogErrorProvider);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.subtitle != null) ...[
-          Text(widget.subtitle!),
-          const SizedBox(height: 16),
-        ],
-        TextField(
-          controller: _pinController,
-          decoration: InputDecoration(
-            labelText: l10n.pinDialogLabel,
-            hintText: l10n.pinDialogHint,
-            prefixIcon: const Icon(Icons.pin),
-          ),
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(6),
-          ],
-          obscureText: true,
-          autofocus: true,
-          textAlign: TextAlign.center,
-          style: const TextStyle(letterSpacing: 8, fontSize: 24),
-        ),
-        if (widget.confirm) ...[
-          const SizedBox(height: 12),
-          TextField(
-            controller: _confirmController,
-            decoration: InputDecoration(
-              labelText: l10n.pinDialogConfirmLabel,
-              hintText: l10n.pinDialogHint,
-              prefixIcon: const Icon(Icons.pin),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(6),
-            ],
-            obscureText: true,
-            textAlign: TextAlign.center,
-            style: const TextStyle(letterSpacing: 8, fontSize: 24),
-          ),
-        ],
-        if (error != null) ...[
-          const SizedBox(height: 12),
-          Text(
-            error,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
-        ],
-      ],
-    );
+    Navigator.of(context).pop(_pin);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final error = ref.watch(_pinDialogErrorProvider);
 
-    return AlertDialog(
-      title: Text(widget.title),
-      content: _buildContent(context),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.cancel),
+    final title = _phase == _SetPinPhase.confirm
+        ? l10n.pinDialogConfirmLabel
+        : widget.title;
+
+    return Dialog.fullscreen(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: Text(title),
         ),
-        FilledButton(onPressed: _submit, child: Text(l10n.save)),
-      ],
+        body: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.subtitle != null &&
+                    _phase == _SetPinPhase.enter) ...[
+                  Text(
+                    widget.subtitle!,
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                PinDotIndicator(
+                  length: _pin.length,
+                  hasError: error != null,
+                ),
+                if (error != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    error,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.error,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+                const SizedBox(height: 32),
+                PinNumPad(
+                  onDigit: _onDigit,
+                  onBackspace: _onBackspace,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -167,22 +181,37 @@ class _PinVerifyDialog extends ConsumerStatefulWidget {
 }
 
 class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
-  final _controller = TextEditingController();
+  String _pin = '';
   int _attempts = 0;
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void _onDigit(String digit) {
+    final verifying = ref.read(_pinVerifyingProvider);
+    if (verifying || _pin.length >= 6) return;
+
+    ref.read(_pinVerifyErrorProvider.notifier).state = null;
+    _pin += digit;
+    ref.read(_pinVerifyErrorProvider.notifier).state =
+        ref.read(_pinVerifyErrorProvider);
+
+    if (_pin.length == 6) {
+      _verify();
+    }
+  }
+
+  void _onBackspace() {
+    if (_pin.isEmpty) return;
+    ref.read(_pinVerifyErrorProvider.notifier).state = null;
+    _pin = _pin.substring(0, _pin.length - 1);
+    ref.read(_pinVerifyErrorProvider.notifier).state =
+        ref.read(_pinVerifyErrorProvider);
   }
 
   Future<void> _verify() async {
     final verifying = ref.read(_pinVerifyingProvider);
     if (verifying) return;
     final l10n = AppLocalizations.of(context)!;
-    final pin = _controller.text;
 
-    if (pin.length != 6) {
+    if (_pin.length != 6) {
       ref.read(_pinVerifyErrorProvider.notifier).state =
           l10n.pinDialogErrorLength;
       return;
@@ -190,83 +219,79 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
 
     ref.read(_pinVerifyingProvider.notifier).state = true;
 
-    final success = await widget.verifier(pin);
+    final success = await widget.verifier(_pin);
 
     if (!mounted) return;
 
     if (success) {
-      Navigator.of(context).pop(pin);
+      Navigator.of(context).pop(_pin);
     } else {
       _attempts++;
       ref.read(_pinVerifyingProvider.notifier).state = false;
-      ref.read(_pinVerifyErrorProvider.notifier).state = l10n.pinDialogWrongPin(
-        _attempts,
-      );
-      _controller.clear();
+      ref.read(_pinVerifyErrorProvider.notifier).state =
+          l10n.pinDialogWrongPin(_attempts);
+      _pin = '';
       if (_attempts >= AppConstants.maxPinAttempts) {
         Navigator.of(context).pop();
       }
     }
   }
 
-  Widget _buildVerifyContent(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final error = ref.watch(_pinVerifyErrorProvider);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          controller: _controller,
-          decoration: InputDecoration(
-            labelText: l10n.pinDialogLabel,
-            prefixIcon: const Icon(Icons.pin),
-          ),
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(6),
-          ],
-          obscureText: true,
-          autofocus: true,
-          textAlign: TextAlign.center,
-          style: const TextStyle(letterSpacing: 8, fontSize: 24),
-          onSubmitted: (_) => _verify(),
-        ),
-        if (error != null) ...[
-          const SizedBox(height: 12),
-          Text(
-            error,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
-        ],
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final error = ref.watch(_pinVerifyErrorProvider);
     final verifying = ref.watch(_pinVerifyingProvider);
 
-    return AlertDialog(
-      title: Text(l10n.pinDialogVerifyTitle),
-      content: _buildVerifyContent(context),
-      actions: [
-        TextButton(
-          onPressed: verifying ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.cancel),
+    return Dialog.fullscreen(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed:
+                verifying ? null : () => Navigator.of(context).pop(),
+          ),
+          title: Text(l10n.pinDialogVerifyTitle),
         ),
-        FilledButton(
-          onPressed: verifying ? null : _verify,
-          child: verifying
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Text(l10n.lockScreenUnlock),
+        body: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PinDotIndicator(
+                  length: _pin.length,
+                  hasError: error != null,
+                ),
+                if (error != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    error,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.error,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+                if (verifying) ...[
+                  const SizedBox(height: 12),
+                  const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ],
+                const SizedBox(height: 32),
+                PinNumPad(
+                  onDigit: _onDigit,
+                  onBackspace: _onBackspace,
+                ),
+              ],
+            ),
+          ),
         ),
-      ],
+      ),
     );
   }
 }

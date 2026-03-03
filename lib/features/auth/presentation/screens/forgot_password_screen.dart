@@ -70,10 +70,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.mark_email_read_outlined,
                         size: 64,
-                        color: Colors.green,
+                        color: Theme.of(context).colorScheme.tertiary,
                       ),
                       const SizedBox(height: 16),
                       Text(

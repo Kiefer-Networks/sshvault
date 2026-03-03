@@ -41,7 +41,10 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.green),
+                  Icon(
+                    Icons.check_circle,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

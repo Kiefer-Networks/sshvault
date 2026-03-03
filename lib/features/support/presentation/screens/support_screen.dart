@@ -63,7 +63,7 @@ class SupportScreen extends ConsumerWidget {
           if (status == SupportPurchaseStatus.success)
             _StatusBanner(
               message: l10n.supportProjectThankYou,
-              color: Colors.green,
+              color: theme.colorScheme.tertiary,
               icon: Icons.check_circle_outline,
             ),
           if (status == SupportPurchaseStatus.error)

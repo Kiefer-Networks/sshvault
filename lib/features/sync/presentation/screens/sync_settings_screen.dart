@@ -285,7 +285,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                             Icon(
                               Icons.verified,
                               size: 16,
-                              color: Colors.green.shade600,
+                              color: theme.colorScheme.tertiary,
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -324,7 +324,9 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
             children: [
               Icon(
                 billing.active ? Icons.check_circle : Icons.cancel_outlined,
-                color: billing.active ? Colors.green : Colors.orange,
+                color: billing.active
+                    ? theme.colorScheme.tertiary
+                    : theme.colorScheme.error,
               ),
               const SizedBox(width: 8),
               Expanded(

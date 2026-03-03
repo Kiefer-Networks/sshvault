@@ -9,16 +9,17 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isActive ? Colors.greenAccent : Colors.grey,
+        color: isActive ? colorScheme.tertiary : colorScheme.outlineVariant,
         boxShadow: isActive
             ? [
                 BoxShadow(
-                  color: Colors.greenAccent.withAlpha(AppConstants.alpha128),
+                  color: colorScheme.tertiary.withAlpha(AppConstants.alpha128),
                   blurRadius: 6,
                   spreadRadius: 1,
                 ),

@@ -52,10 +52,15 @@ class SshKeyFormDialog extends ConsumerStatefulWidget {
 
   bool get isEditing => existingKey != null;
 
-  static Future<bool?> show(BuildContext context, {SshKeyEntity? existingKey}) {
-    return showDialog<bool>(
-      context: context,
-      builder: (_) => SshKeyFormDialog(existingKey: existingKey),
+  static Future<bool?> show(
+    BuildContext context, {
+    SshKeyEntity? existingKey,
+  }) {
+    return Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => SshKeyFormDialog(existingKey: existingKey),
+      ),
     );
   }
 
@@ -94,6 +99,16 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     _privateKeyController.dispose();
     _passphraseController.dispose();
     super.dispose();
+  }
+
+  void _onSave() {
+    if (widget.isEditing) {
+      _saveEdit();
+    } else if (_tabController.index == 0) {
+      _saveGenerate();
+    } else {
+      _saveImport();
+    }
   }
 
   Future<void> _saveGenerate() async {
@@ -258,55 +273,54 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final formState = ref.watch(_sshKeyFormStateProvider);
-
     final l10n = AppLocalizations.of(context)!;
 
-    if (widget.isEditing) {
-      return AlertDialog(
-        title: Text(l10n.sshKeyFormTitleEdit),
-        content: SizedBox(width: 480, child: _buildEditForm(theme, formState)),
-        actions: _buildActions(onSave: _saveEdit, formState: formState),
-      );
-    }
-
-    return AlertDialog(
-      title: Text(l10n.sshKeyFormTitleAdd),
-      content: SizedBox(
-        width: 480,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(text: l10n.sshKeyFormTabGenerate),
-                Tab(text: l10n.sshKeyFormTabImport),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 380,
-              child: TabBarView(
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed:
+              formState.saving ? null : () => Navigator.pop(context),
+        ),
+        title: Text(
+          widget.isEditing
+              ? l10n.sshKeyFormTitleEdit
+              : l10n.sshKeyFormTitleAdd,
+        ),
+        actions: [
+          TextButton(
+            onPressed: formState.saving ? null : _onSave,
+            child: formState.saving
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(l10n.save),
+          ),
+        ],
+        bottom: widget.isEditing
+            ? null
+            : TabBar(
                 controller: _tabController,
-                children: [
-                  _buildGenerateForm(theme, formState),
-                  _buildImportForm(theme, formState),
+                tabs: [
+                  Tab(text: l10n.sshKeyFormTabGenerate),
+                  Tab(text: l10n.sshKeyFormTabImport),
                 ],
               ),
+      ),
+      body: widget.isEditing
+          ? ListView(
+              padding: const EdgeInsets.all(16),
+              children: [_buildEditForm(theme, formState)],
+            )
+          : TabBarView(
+              controller: _tabController,
+              children: [
+                _buildGenerateForm(theme, formState),
+                _buildImportForm(theme, formState),
+              ],
             ),
-          ],
-        ),
-      ),
-      actions: _buildActions(
-        onSave: () {
-          if (_tabController.index == 0) {
-            _saveGenerate();
-          } else {
-            _saveImport();
-          }
-        },
-        formState: formState,
-      ),
     );
   }
 
@@ -315,107 +329,105 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     _SshKeyFormReactiveState formState,
   ) {
     final l10n = AppLocalizations.of(context)!;
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextFormField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: l10n.sshKeyFormNameLabel,
-              prefixIcon: const Icon(Icons.label_outline),
-              hintText: l10n.sshKeyFormNameHint,
-            ),
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        TextFormField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            labelText: l10n.sshKeyFormNameLabel,
+            prefixIcon: const Icon(Icons.label_outline),
+            hintText: l10n.sshKeyFormNameHint,
           ),
-          const SizedBox(height: 16),
-          DropdownButtonFormField<SshKeyType>(
-            initialValue: formState.selectedType,
-            decoration: InputDecoration(
-              labelText: l10n.sshKeyFormKeyType,
-              prefixIcon: const Icon(Icons.vpn_key),
-            ),
-            items: SshKeyType.values
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,
+        ),
+        const SizedBox(height: 16),
+        DropdownMenu<SshKeyType>(
+          initialSelection: formState.selectedType,
+          expandedInsets: EdgeInsets.zero,
+          requestFocusOnTap: false,
+          label: Text(l10n.sshKeyFormKeyType),
+          leadingIcon: const Icon(Icons.vpn_key),
+          dropdownMenuEntries: SshKeyType.values
+              .map(
+                (t) => DropdownMenuEntry(value: t, label: t.displayName),
+              )
+              .toList(),
+          onSelected: formState.saving
+              ? null
+              : (type) {
+                  if (type == null) return;
+                  ref
+                      .read(_sshKeyFormStateProvider.notifier)
+                      .state = formState.copyWith(
+                    selectedType: type,
+                    selectedBits: type.defaultBitLength,
+                  );
+                },
+        ),
+        const SizedBox(height: 16),
+        if (formState.selectedType.allowedBitLengths.isNotEmpty)
+          DropdownMenu<int>(
+            initialSelection: formState.selectedBits > 0
+                ? formState.selectedBits
+                : formState.selectedType.defaultBitLength,
+            expandedInsets: EdgeInsets.zero,
+            requestFocusOnTap: false,
+            label: Text(l10n.sshKeyFormKeySize),
+            leadingIcon: const Icon(Icons.memory),
+            dropdownMenuEntries: formState.selectedType.allowedBitLengths
                 .map(
-                  (t) => DropdownMenuItem(value: t, child: Text(t.displayName)),
+                  (b) => DropdownMenuEntry(
+                    value: b,
+                    label: l10n.sshKeyFormKeySizeBit(b),
+                  ),
                 )
                 .toList(),
-            onChanged: formState.saving
+            onSelected: formState.saving
                 ? null
-                : (type) {
-                    if (type == null) return;
-                    ref
-                        .read(_sshKeyFormStateProvider.notifier)
-                        .state = formState.copyWith(
-                      selectedType: type,
-                      selectedBits: type.defaultBitLength,
-                    );
+                : (bits) {
+                    if (bits != null) {
+                      ref.read(_sshKeyFormStateProvider.notifier).state =
+                          formState.copyWith(selectedBits: bits);
+                    }
                   },
-          ),
-          const SizedBox(height: 16),
-          if (formState.selectedType.allowedBitLengths.isNotEmpty)
-            DropdownButtonFormField<int>(
-              initialValue: formState.selectedBits > 0
-                  ? formState.selectedBits
-                  : formState.selectedType.defaultBitLength,
-              decoration: InputDecoration(
-                labelText: l10n.sshKeyFormKeySize,
-                prefixIcon: const Icon(Icons.memory),
+          )
+        else
+          Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 16,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
-              items: formState.selectedType.allowedBitLengths
-                  .map(
-                    (b) => DropdownMenuItem(
-                      value: b,
-                      child: Text(l10n.sshKeyFormKeySizeBit(b)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: formState.saving
-                  ? null
-                  : (bits) {
-                      if (bits != null) {
-                        ref.read(_sshKeyFormStateProvider.notifier).state =
-                            formState.copyWith(selectedBits: bits);
-                      }
-                    },
-            )
-          else
-            Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 16,
+              const SizedBox(width: 8),
+              Text(
+                formState.selectedType.keySizeLabel,
+                style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  formState.selectedType.keySizeLabel,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _commentController,
-            decoration: InputDecoration(
-              labelText: l10n.sshKeyFormCommentLabel,
-              prefixIcon: const Icon(Icons.comment_outlined),
-              hintText: l10n.sshKeyFormCommentHint,
-            ),
-            keyboardType: TextInputType.text,
+              ),
+            ],
           ),
-          if (formState.error != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              formState.error!,
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-          ],
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _commentController,
+          decoration: InputDecoration(
+            labelText: l10n.sshKeyFormCommentLabel,
+            prefixIcon: const Icon(Icons.comment_outlined),
+            hintText: l10n.sshKeyFormCommentHint,
+          ),
+          keyboardType: TextInputType.text,
+        ),
+        if (formState.error != null) ...[
+          const SizedBox(height: 16),
+          Text(
+            formState.error!,
+            style: TextStyle(color: theme.colorScheme.error),
+          ),
         ],
-      ),
+      ],
     );
   }
 
@@ -482,65 +494,63 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
 
   Widget _buildImportForm(ThemeData theme, _SshKeyFormReactiveState formState) {
     final l10n = AppLocalizations.of(context)!;
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextFormField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: l10n.sshKeyFormNameLabel,
-              prefixIcon: const Icon(Icons.label_outline),
-              hintText: l10n.sshKeyFormNameHint,
-            ),
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        TextFormField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            labelText: l10n.sshKeyFormNameLabel,
+            prefixIcon: const Icon(Icons.label_outline),
+            hintText: l10n.sshKeyFormNameHint,
           ),
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,
+        ),
+        const SizedBox(height: 16),
+        OutlinedButton.icon(
+          onPressed: formState.saving ? null : _pickKeyFile,
+          icon: const Icon(Icons.file_open),
+          label: Text(l10n.sshKeyFormImportFromFile),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _privateKeyController,
+          decoration: InputDecoration(
+            labelText: l10n.sshKeyFormPrivateKeyLabel,
+            prefixIcon: const Icon(Icons.vpn_key),
+            hintText: l10n.sshKeyFormPrivateKeyHint,
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: 5,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _passphraseController,
+          decoration: InputDecoration(
+            labelText: l10n.sshKeyFormPassphraseLabel,
+            prefixIcon: const Icon(Icons.lock_outline),
+          ),
+          keyboardType: TextInputType.visiblePassword,
+          obscureText: true,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _commentController,
+          decoration: InputDecoration(
+            labelText: l10n.sshKeyFormCommentOptional,
+            prefixIcon: const Icon(Icons.comment_outlined),
+          ),
+          keyboardType: TextInputType.text,
+        ),
+        if (formState.error != null) ...[
           const SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: formState.saving ? null : _pickKeyFile,
-            icon: const Icon(Icons.file_open),
-            label: Text(l10n.sshKeyFormImportFromFile),
+          Text(
+            formState.error!,
+            style: TextStyle(color: theme.colorScheme.error),
           ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _privateKeyController,
-            decoration: InputDecoration(
-              labelText: l10n.sshKeyFormPrivateKeyLabel,
-              prefixIcon: const Icon(Icons.vpn_key),
-              hintText: l10n.sshKeyFormPrivateKeyHint,
-            ),
-            keyboardType: TextInputType.multiline,
-            maxLines: 5,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _passphraseController,
-            decoration: InputDecoration(
-              labelText: l10n.sshKeyFormPassphraseLabel,
-              prefixIcon: const Icon(Icons.lock_outline),
-            ),
-            keyboardType: TextInputType.visiblePassword,
-            obscureText: true,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _commentController,
-            decoration: InputDecoration(
-              labelText: l10n.sshKeyFormCommentOptional,
-              prefixIcon: const Icon(Icons.comment_outlined),
-            ),
-            keyboardType: TextInputType.text,
-          ),
-          if (formState.error != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              formState.error!,
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-          ],
         ],
-      ),
+      ],
     );
   }
 
@@ -601,29 +611,5 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         ],
       ],
     );
-  }
-
-  List<Widget> _buildActions({
-    required VoidCallback onSave,
-    required _SshKeyFormReactiveState formState,
-  }) {
-    final l10n = AppLocalizations.of(context)!;
-    return [
-      TextButton(
-        onPressed: formState.saving ? null : () => Navigator.pop(context),
-        child: Text(l10n.cancel),
-      ),
-      FilledButton.icon(
-        onPressed: formState.saving ? null : onSave,
-        icon: formState.saving
-            ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : const Icon(Icons.save, size: 18),
-        label: Text(formState.saving ? l10n.sshKeyFormSaving : l10n.save),
-      ),
-    ];
   }
 }

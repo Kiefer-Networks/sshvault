@@ -1,44 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive_dialog.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
-class RenameDialog extends StatefulWidget {
-  final String currentName;
-
-  const RenameDialog({super.key, required this.currentName});
-
-  @override
-  State<RenameDialog> createState() => _RenameDialogState();
-}
-
-class _RenameDialogState extends State<RenameDialog> {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.currentName);
-    _controller.selection = TextSelection(
-      baseOffset: 0,
-      extentOffset: widget.currentName.contains('.')
-          ? widget.currentName.lastIndexOf('.')
-          : widget.currentName.length,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+class RenameDialog {
+  static Future<String?> show(
+    BuildContext context, {
+    required String currentName,
+  }) {
     final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController(text: currentName);
+    controller.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: currentName.contains('.')
+          ? currentName.lastIndexOf('.')
+          : currentName.length,
+    );
 
-    return AlertDialog(
-      title: Text(l10n.sftpRenameTitle),
+    return showAdaptiveFormDialog<String>(
+      context,
+      title: l10n.sftpRenameTitle,
       content: TextField(
-        controller: _controller,
+        controller: controller,
         autofocus: true,
         decoration: InputDecoration(
           labelText: l10n.sftpRenameLabel,
@@ -46,13 +28,14 @@ class _RenameDialogState extends State<RenameDialog> {
         ),
         onSubmitted: (value) => Navigator.pop(context, value.trim()),
       ),
-      actions: [
+      materialActions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(l10n.cancel),
         ),
+        const SizedBox(width: 8),
         FilledButton(
-          onPressed: () => Navigator.pop(context, _controller.text.trim()),
+          onPressed: () => Navigator.pop(context, controller.text.trim()),
           child: Text(l10n.save),
         ),
       ],

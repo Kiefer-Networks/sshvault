@@ -25,30 +25,27 @@ class SshKeySelector extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            DropdownButtonFormField<String?>(
-              initialValue: keys.any((k) => k.id == selectedKeyId)
+            DropdownMenu<String?>(
+              initialSelection: keys.any((k) => k.id == selectedKeyId)
                   ? selectedKeyId
                   : null,
-              decoration: InputDecoration(
-                labelText: l10n.sshKeySelectorLabel,
-                prefixIcon: const Icon(Icons.vpn_key_outlined),
-              ),
-              items: [
-                DropdownMenuItem(
+              expandedInsets: EdgeInsets.zero,
+              requestFocusOnTap: false,
+              label: Text(l10n.sshKeySelectorLabel),
+              leadingIcon: const Icon(Icons.vpn_key_outlined),
+              dropdownMenuEntries: [
+                DropdownMenuEntry<String?>(
                   value: null,
-                  child: Text(l10n.sshKeySelectorNone),
+                  label: l10n.sshKeySelectorNone,
                 ),
                 ...keys.map(
-                  (k) => DropdownMenuItem(
+                  (k) => DropdownMenuEntry<String?>(
                     value: k.id,
-                    child: Text(
-                      '${k.name} (${k.keyType.displayName})',
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    label: '${k.name} (${k.keyType.displayName})',
                   ),
                 ),
               ],
-              onChanged: onChanged,
+              onSelected: onChanged,
             ),
             Align(
               alignment: Alignment.centerRight,

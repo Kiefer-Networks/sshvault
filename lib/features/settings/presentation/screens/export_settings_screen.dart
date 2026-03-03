@@ -93,12 +93,14 @@ class ExportSettingsScreen extends ConsumerWidget {
               ),
             if (exportState.hasValue && exportState.value != null)
               Card(
-                color: Colors.green.withAlpha(AppConstants.alpha26),
+                color: theme.colorScheme.tertiaryContainer,
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
                     exportState.value!,
-                    style: const TextStyle(color: Colors.green),
+                    style: TextStyle(
+                      color: theme.colorScheme.onTertiaryContainer,
+                    ),
                   ),
                 ),
               ),

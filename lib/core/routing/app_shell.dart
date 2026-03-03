@@ -514,77 +514,81 @@ class _AppDrawer extends StatelessWidget {
     final theme = Theme.of(context);
     final showTerminal = sessionCount > 0;
 
-    // Build visible nav items — Terminal only when sessions exist
     final visibleItems = [
       ..._buildBaseNavItems(context),
       if (showTerminal) _buildTerminalNavItem(context),
     ];
 
-    return Drawer(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Branding header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.shield_outlined,
-                    color: theme.colorScheme.primary,
-                    size: 28,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    l10n.appName,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const _SyncStatusIcon(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Divider(indent: 16, endIndent: 16),
-            const SizedBox(height: 8),
+    final clampedIndex =
+        currentIndex < visibleItems.length ? currentIndex : 0;
 
-            // Nav items with section dividers
-            for (var i = 0; i < visibleItems.length; i++) ...[
-              if (_sectionBreaks.contains(i))
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Divider(indent: 28, endIndent: 28, height: 1),
+    return NavigationDrawer(
+      selectedIndex: clampedIndex,
+      onDestinationSelected: (i) {
+        Navigator.pop(context);
+        onDestinationSelected(i);
+      },
+      children: [
+        // Branding header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(28, 24, 28, 8),
+          child: Row(
+            children: [
+              Icon(
+                Icons.shield_outlined,
+                color: theme.colorScheme.primary,
+                size: 28,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.appName,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
-              _DrawerItem(
-                icon: visibleItems[i].icon,
-                selectedIcon: visibleItems[i].selectedIcon,
-                label: visibleItems[i].label,
-                selected: i == currentIndex,
-                badge: showTerminal && i == visibleItems.length - 1
-                    ? sessionCount
-                    : null,
-                onTap: () {
-                  Navigator.pop(context); // close drawer
-                  onDestinationSelected(i);
-                },
               ),
+              const _SyncStatusIcon(),
             ],
-
-            const Spacer(),
-
-            const Divider(indent: 16, endIndent: 16),
-            _SettingsDrawerItem(),
-            const SizedBox(height: 8),
-          ],
+          ),
         ),
-      ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(28, 8, 28, 8),
+          child: Divider(),
+        ),
+
+        // Nav destinations with section dividers
+        for (var i = 0; i < visibleItems.length; i++) ...[
+          if (_sectionBreaks.contains(i))
+            const Padding(
+              padding: EdgeInsets.fromLTRB(28, 4, 28, 4),
+              child: Divider(),
+            ),
+          NavigationDrawerDestination(
+            icon: showTerminal && i == visibleItems.length - 1
+                ? Badge(
+                    label: Text('$sessionCount'),
+                    child: Icon(visibleItems[i].icon),
+                  )
+                : Icon(visibleItems[i].icon),
+            selectedIcon: showTerminal && i == visibleItems.length - 1
+                ? Badge(
+                    label: Text('$sessionCount'),
+                    child: Icon(visibleItems[i].selectedIcon),
+                  )
+                : Icon(visibleItems[i].selectedIcon),
+            label: Text(visibleItems[i].label),
+          ),
+        ],
+
+        // Settings at bottom via spacer workaround
+        const _DrawerSettingsSection(),
+      ],
     );
   }
 }
 
-class _SettingsDrawerItem extends ConsumerWidget {
+class _DrawerSettingsSection extends ConsumerWidget {
+  const _DrawerSettingsSection();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -601,66 +605,26 @@ class _SettingsDrawerItem extends ConsumerWidget {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-      child: ListTile(
-        leading: iconWidget,
-        title: Text(l10n.navSettings),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        onTap: () {
-          Navigator.pop(context);
-          context.push('/settings');
-        },
-      ),
-    );
-  }
-}
-
-class _DrawerItem extends StatelessWidget {
-  final IconData icon;
-  final IconData selectedIcon;
-  final String label;
-  final bool selected;
-  final int? badge;
-  final VoidCallback onTap;
-
-  const _DrawerItem({
-    required this.icon,
-    required this.selectedIcon,
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    this.badge,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = selected
-        ? theme.colorScheme.primary
-        : theme.colorScheme.onSurface;
-
-    Widget iconWidget = Icon(selected ? selectedIcon : icon, color: color);
-    if (badge != null) {
-      iconWidget = Badge(label: Text('$badge'), child: iconWidget);
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-      child: ListTile(
-        leading: iconWidget,
-        title: Text(
-          label,
-          style: TextStyle(
-            color: color,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(28, 16, 28, 8),
+          child: Divider(),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+          child: ListTile(
+            leading: iconWidget,
+            title: Text(l10n.navSettings),
+            shape: const StadiumBorder(),
+            onTap: () {
+              Navigator.pop(context);
+              context.push('/settings');
+            },
           ),
         ),
-        selected: selected,
-        selectedTileColor: theme.colorScheme.secondaryContainer,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        onTap: onTap,
-      ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 }

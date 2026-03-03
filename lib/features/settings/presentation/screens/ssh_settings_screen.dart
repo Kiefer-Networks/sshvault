@@ -49,20 +49,20 @@ class SshSettingsScreen extends ConsumerWidget {
                   icon: Icons.key_outlined,
                   iconColor: Colors.green,
                   title: l10n.settingsDefaultAuthMethod,
-                  trailing: DropdownButton<String>(
-                    value: settings.defaultAuthMethod,
-                    underline: const SizedBox.shrink(),
-                    items: [
-                      DropdownMenuItem(
+                  trailing: DropdownMenu<String>(
+                    initialSelection: settings.defaultAuthMethod,
+                    requestFocusOnTap: false,
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
                         value: 'password',
-                        child: Text(l10n.settingsAuthPassword),
+                        label: l10n.settingsAuthPassword,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 'key',
-                        child: Text(l10n.settingsAuthKey),
+                        label: l10n.settingsAuthKey,
                       ),
                     ],
-                    onChanged: (v) {
+                    onSelected: (v) {
                       if (v != null) {
                         ref
                             .read(settingsProvider.notifier)
@@ -121,18 +121,18 @@ class SshSettingsScreen extends ConsumerWidget {
                   icon: Icons.terminal,
                   iconColor: Colors.deepPurple,
                   title: l10n.settingsTerminalType,
-                  trailing: DropdownButton<String>(
-                    value: settings.defaultTerminalType,
-                    underline: const SizedBox.shrink(),
-                    items: const [
-                      DropdownMenuItem(
+                  trailing: DropdownMenu<String>(
+                    initialSelection: settings.defaultTerminalType,
+                    requestFocusOnTap: false,
+                    dropdownMenuEntries: const [
+                      DropdownMenuEntry(
                         value: 'xterm-256color',
-                        child: Text('xterm-256color'),
+                        label: 'xterm-256color',
                       ),
-                      DropdownMenuItem(value: 'xterm', child: Text('xterm')),
-                      DropdownMenuItem(value: 'vt100', child: Text('vt100')),
+                      DropdownMenuEntry(value: 'xterm', label: 'xterm'),
+                      DropdownMenuEntry(value: 'vt100', label: 'vt100'),
                     ],
-                    onChanged: (v) {
+                    onSelected: (v) {
                       if (v != null) {
                         ref
                             .read(settingsProvider.notifier)

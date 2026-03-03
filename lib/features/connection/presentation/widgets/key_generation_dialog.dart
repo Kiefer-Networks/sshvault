@@ -153,21 +153,20 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                 children: [
                   Text(l10n.keyGenKeyType, style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
-                  DropdownButtonFormField<SshKeyType>(
-                    initialValue: genState.selectedType,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.vpn_key),
-                      isDense: true,
-                    ),
-                    items: SshKeyType.values
+                  DropdownMenu<SshKeyType>(
+                    initialSelection: genState.selectedType,
+                    expandedInsets: EdgeInsets.zero,
+                    requestFocusOnTap: false,
+                    leadingIcon: const Icon(Icons.vpn_key),
+                    dropdownMenuEntries: SshKeyType.values
                         .map(
-                          (t) => DropdownMenuItem(
+                          (t) => DropdownMenuEntry(
                             value: t,
-                            child: Text(t.displayName),
+                            label: t.displayName,
                           ),
                         )
                         .toList(),
-                    onChanged: genState.generating
+                    onSelected: genState.generating
                         ? null
                         : (type) {
                             if (type == null) return;
@@ -184,23 +183,23 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                   if (genState.selectedType.allowedBitLengths.isNotEmpty) ...[
                     Text(l10n.keyGenKeySize, style: theme.textTheme.titleSmall),
                     const SizedBox(height: 8),
-                    DropdownButtonFormField<int>(
-                      initialValue: genState.selectedBits > 0
+                    DropdownMenu<int>(
+                      initialSelection: genState.selectedBits > 0
                           ? genState.selectedBits
                           : genState.selectedType.defaultBitLength,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.memory),
-                        isDense: true,
-                      ),
-                      items: genState.selectedType.allowedBitLengths
+                      expandedInsets: EdgeInsets.zero,
+                      requestFocusOnTap: false,
+                      leadingIcon: const Icon(Icons.memory),
+                      dropdownMenuEntries: genState
+                          .selectedType.allowedBitLengths
                           .map(
-                            (b) => DropdownMenuItem(
+                            (b) => DropdownMenuEntry(
                               value: b,
-                              child: Text(l10n.keyGenKeySizeBit(b)),
+                              label: l10n.keyGenKeySizeBit(b),
                             ),
                           )
                           .toList(),
-                      onChanged: genState.generating
+                      onSelected: genState.generating
                           ? null
                           : (bits) {
                               if (bits != null) {

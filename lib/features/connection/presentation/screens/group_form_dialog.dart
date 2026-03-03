@@ -46,9 +46,11 @@ class GroupFormDialog extends ConsumerStatefulWidget {
   bool get isEditing => group != null;
 
   static Future<void> show(BuildContext context, {GroupEntity? group}) {
-    return showDialog(
-      context: context,
-      builder: (_) => GroupFormDialog(group: group),
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+        builder: (_) => GroupFormDialog(group: group),
+      ),
     );
   }
 
@@ -101,81 +103,79 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
         : l10n.groupFormTitleNew;
     final saveText = widget.isEditing ? l10n.update : l10n.create;
 
-    final formContent = SizedBox(
-      width: 400,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: l10n.groupFormNameLabel,
-                prefixIcon: const Icon(Icons.folder_outlined),
-              ),
-              keyboardType: TextInputType.text,
-              autofocus: true,
-            ),
-            const SizedBox(height: 16),
-            groupsAsync.when(
-              data: (groups) {
-                final availableGroups = groups
-                    .where((g) => g.id != widget.group?.id)
-                    .toList();
-                if (availableGroups.isEmpty) return const SizedBox.shrink();
-                return DropdownButtonFormField<String?>(
-                  initialValue: formState.parentId,
-                  decoration: InputDecoration(
-                    labelText: l10n.groupFormParentLabel,
-                    prefixIcon: const Icon(Icons.account_tree),
-                  ),
-                  items: [
-                    DropdownMenuItem(
-                      value: null,
-                      child: Text(l10n.groupFormParentNone),
-                    ),
-                    ...availableGroups.map(
-                      (g) => DropdownMenuItem(value: g.id, child: Text(g.name)),
-                    ),
-                  ],
-                  onChanged: (v) =>
-                      ref.read(_groupFormStateProvider.notifier).state =
-                          formState.copyWith(parentId: () => v),
-                );
-              },
-              loading: () => const SizedBox.shrink(),
-              error: (_, _) => const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 16),
-            ColorPickerField(
-              selectedColor: formState.color,
-              onColorChanged: (c) =>
-                  ref.read(_groupFormStateProvider.notifier).state = formState
-                      .copyWith(color: c),
-            ),
-            const SizedBox(height: 16),
-            IconPickerField(
-              selectedIcon: formState.iconName,
-              onIconChanged: (i) =>
-                  ref.read(_groupFormStateProvider.notifier).state = formState
-                      .copyWith(iconName: i),
-              accentColor: formState.color,
-            ),
-          ],
-        ),
-      ),
-    );
-
-    return AlertDialog(
-      title: Text(titleText),
-      content: formContent,
-      actions: [
-        TextButton(
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.cancel),
         ),
-        FilledButton(onPressed: _save, child: Text(saveText)),
-      ],
+        title: Text(titleText),
+        actions: [
+          TextButton(onPressed: _save, child: Text(saveText)),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          TextField(
+            controller: _nameController,
+            decoration: InputDecoration(
+              labelText: l10n.groupFormNameLabel,
+              prefixIcon: const Icon(Icons.folder_outlined),
+            ),
+            keyboardType: TextInputType.text,
+            autofocus: true,
+          ),
+          const SizedBox(height: 16),
+          groupsAsync.when(
+            data: (groups) {
+              final availableGroups = groups
+                  .where((g) => g.id != widget.group?.id)
+                  .toList();
+              if (availableGroups.isEmpty) return const SizedBox.shrink();
+              return DropdownMenu<String?>(
+                initialSelection: formState.parentId,
+                expandedInsets: EdgeInsets.zero,
+                requestFocusOnTap: false,
+                label: Text(l10n.groupFormParentLabel),
+                leadingIcon: const Icon(Icons.account_tree),
+                dropdownMenuEntries: [
+                  DropdownMenuEntry<String?>(
+                    value: null,
+                    label: l10n.groupFormParentNone,
+                  ),
+                  ...availableGroups.map(
+                    (g) => DropdownMenuEntry<String?>(
+                      value: g.id,
+                      label: g.name,
+                    ),
+                  ),
+                ],
+                onSelected: (v) =>
+                    ref.read(_groupFormStateProvider.notifier).state =
+                        formState.copyWith(parentId: () => v),
+              );
+            },
+            loading: () => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
+          ),
+          const SizedBox(height: 16),
+          ColorPickerField(
+            selectedColor: formState.color,
+            onColorChanged: (c) =>
+                ref.read(_groupFormStateProvider.notifier).state = formState
+                    .copyWith(color: c),
+          ),
+          const SizedBox(height: 16),
+          IconPickerField(
+            selectedIcon: formState.iconName,
+            onIconChanged: (i) =>
+                ref.read(_groupFormStateProvider.notifier).state = formState
+                    .copyWith(iconName: i),
+            accentColor: formState.color,
+          ),
+        ],
+      ),
     );
   }
 

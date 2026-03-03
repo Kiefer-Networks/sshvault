@@ -119,10 +119,7 @@ class SftpToolbar extends ConsumerWidget {
   }
 
   void _showNewFolderDialog(BuildContext context, WidgetRef ref) async {
-    final name = await showDialog<String>(
-      context: context,
-      builder: (ctx) => const NewDirectoryDialog(),
-    );
+    final name = await NewDirectoryDialog.show(context);
     if (name != null && name.isNotEmpty) {
       ref.read(sftpPaneProvider(side).notifier).createDirectory(name);
     }
@@ -144,10 +141,7 @@ class SftpToolbar extends ConsumerWidget {
   }
 
   void _showSymlinkDialog(BuildContext context, WidgetRef ref) async {
-    final result = await showDialog<({String target, String name})>(
-      context: context,
-      builder: (ctx) => const CreateSymlinkDialog(),
-    );
+    final result = await CreateSymlinkDialog.show(context);
     if (result != null) {
       ref
           .read(sftpPaneProvider(side).notifier)
@@ -247,10 +241,7 @@ class _SelectionToolbar extends ConsumerWidget {
   }
 
   void _showChmodDialog(BuildContext context, WidgetRef ref) async {
-    final permissions = await showDialog<int>(
-      context: context,
-      builder: (ctx) => const ChmodDialog(),
-    );
+    final permissions = await ChmodDialog.show(context);
     if (permissions != null) {
       final paneState = ref.read(sftpPaneProvider(side));
       for (final selectedPath in paneState.selectedPaths) {

@@ -447,19 +447,16 @@ class SftpEntryTile extends ConsumerWidget {
   }
 
   void _showRenameDialog(BuildContext context, WidgetRef ref) async {
-    final newName = await showDialog<String>(
-      context: context,
-      builder: (ctx) => RenameDialog(currentName: entry.name),
-    );
+    final newName = await RenameDialog.show(context, currentName: entry.name);
     if (newName != null && newName.isNotEmpty && newName != entry.name) {
       ref.read(sftpPaneProvider(side).notifier).rename(entry.path, newName);
     }
   }
 
   void _showChmodDialog(BuildContext context, WidgetRef ref) async {
-    final newPermissions = await showDialog<int>(
-      context: context,
-      builder: (ctx) => ChmodDialog(initialPermissions: entry.permissions),
+    final newPermissions = await ChmodDialog.show(
+      context,
+      initialPermissions: entry.permissions,
     );
     if (newPermissions != null) {
       // Preserve file type bits from original mode, replace only permission bits
@@ -470,10 +467,7 @@ class SftpEntryTile extends ConsumerWidget {
   }
 
   void _showCreateSymlinkDialog(BuildContext context, WidgetRef ref) async {
-    final result = await showDialog<({String target, String name})>(
-      context: context,
-      builder: (ctx) => const CreateSymlinkDialog(),
-    );
+    final result = await CreateSymlinkDialog.show(context);
     if (result != null) {
       ref
           .read(sftpPaneProvider(side).notifier)

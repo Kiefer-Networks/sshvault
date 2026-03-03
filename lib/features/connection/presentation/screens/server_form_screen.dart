@@ -202,24 +202,42 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
     final l10n = AppLocalizations.of(context)!;
 
-    return AdaptiveScaffold(
-      title: widget.isEditing
-          ? l10n.serverFormTitleEdit
-          : l10n.serverFormTitleAdd,
-      actions: [
-        if (widget.isEditing)
-          Row(
-            children: [
-              Text(l10n.serverActive),
-              Switch(
-                value: formState.isActive,
-                onChanged: (v) =>
-                    ref.read(_serverFormStateProvider.notifier).state =
-                        formState.copyWith(isActive: v),
-              ),
-            ],
+    return AdaptiveScaffold.withAppBar(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          widget.isEditing
+              ? l10n.serverFormTitleEdit
+              : l10n.serverFormTitleAdd,
+        ),
+        actions: [
+          if (widget.isEditing)
+            Row(
+              children: [
+                Text(l10n.serverActive),
+                Switch(
+                  value: formState.isActive,
+                  onChanged: (v) =>
+                      ref.read(_serverFormStateProvider.notifier).state =
+                          formState.copyWith(isActive: v),
+                ),
+              ],
+            ),
+          TextButton(
+            onPressed: formState.saving ? null : _save,
+            child: formState.saving
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(l10n.save),
           ),
-      ],
+        ],
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -266,25 +284,25 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                   groupsAsync.when(
                     data: (groups) {
                       if (groups.isEmpty) return const SizedBox.shrink();
-                      return DropdownButtonFormField<String?>(
-                        initialValue: formState.groupId,
-                        decoration: InputDecoration(
-                          labelText: l10n.navGroups,
-                          prefixIcon: const Icon(Icons.folder_outlined),
-                        ),
-                        items: [
-                          DropdownMenuItem(
+                      return DropdownMenu<String?>(
+                        initialSelection: formState.groupId,
+                        expandedInsets: EdgeInsets.zero,
+                        requestFocusOnTap: false,
+                        label: Text(l10n.navGroups),
+                        leadingIcon: const Icon(Icons.folder_outlined),
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry<String?>(
                             value: null,
-                            child: Text(l10n.serverNoGroup),
+                            label: l10n.serverNoGroup,
                           ),
                           ...groups.map(
-                            (g) => DropdownMenuItem(
+                            (g) => DropdownMenuEntry<String?>(
                               value: g.id,
-                              child: Text(g.name),
+                              label: g.name,
                             ),
                           ),
                         ],
-                        onChanged: (v) =>
+                        onSelected: (v) =>
                             ref.read(_serverFormStateProvider.notifier).state =
                                 formState.copyWith(groupId: () => v),
                       );
@@ -325,26 +343,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                     accentColor: formState.color,
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            AdaptiveButton.filledIcon(
-              onPressed: formState.saving ? null : _save,
-              icon: formState.saving
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.save),
-              label: Text(
-                widget.isEditing
-                    ? l10n.serverFormUpdateButton
-                    : l10n.serverFormAddButton,
-              ),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(double.infinity, 52),
               ),
             ),
             const SizedBox(height: 32),

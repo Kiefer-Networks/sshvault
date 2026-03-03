@@ -103,7 +103,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                 testState.result!,
                 style: TextStyle(
                   color: testState.success == true
-                      ? Colors.green
+                      ? theme.colorScheme.tertiary
                       : theme.colorScheme.error,
                 ),
               ),

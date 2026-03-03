@@ -1,35 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive_dialog.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
-class CreateSymlinkDialog extends StatefulWidget {
-  const CreateSymlinkDialog({super.key});
-
-  @override
-  State<CreateSymlinkDialog> createState() => _CreateSymlinkDialogState();
-}
-
-class _CreateSymlinkDialogState extends State<CreateSymlinkDialog> {
-  final _targetController = TextEditingController();
-  final _nameController = TextEditingController();
-
-  @override
-  void dispose() {
-    _targetController.dispose();
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+class CreateSymlinkDialog {
+  static Future<({String target, String name})?> show(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final targetController = TextEditingController();
+    final nameController = TextEditingController();
 
-    return AlertDialog(
-      title: Text(l10n.sftpCreateSymlink),
+    return showAdaptiveFormDialog<({String target, String name})>(
+      context,
+      title: l10n.sftpCreateSymlink,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
-            controller: _targetController,
+            controller: targetController,
             autofocus: true,
             decoration: InputDecoration(
               labelText: l10n.sftpSymlinkTarget,
@@ -38,7 +24,7 @@ class _CreateSymlinkDialogState extends State<CreateSymlinkDialog> {
           ),
           const SizedBox(height: 16),
           TextField(
-            controller: _nameController,
+            controller: nameController,
             decoration: InputDecoration(
               labelText: l10n.sftpSymlinkName,
               border: const OutlineInputBorder(),
@@ -46,15 +32,16 @@ class _CreateSymlinkDialogState extends State<CreateSymlinkDialog> {
           ),
         ],
       ),
-      actions: [
+      materialActions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(l10n.cancel),
         ),
+        const SizedBox(width: 8),
         FilledButton(
           onPressed: () {
-            final target = _targetController.text.trim();
-            final name = _nameController.text.trim();
+            final target = targetController.text.trim();
+            final name = nameController.text.trim();
             if (target.isNotEmpty && name.isNotEmpty) {
               Navigator.pop(context, (target: target, name: name));
             }

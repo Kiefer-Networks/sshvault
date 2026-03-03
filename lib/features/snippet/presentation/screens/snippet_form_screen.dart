@@ -127,10 +127,30 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     final groupsAsync = ref.watch(groupListProvider);
     final formState = ref.watch(_snippetFormProvider);
 
-    return AdaptiveScaffold(
-      title: widget.isEditing
-          ? l10n.snippetFormTitleEdit
-          : l10n.snippetFormTitleNew,
+    return AdaptiveScaffold.withAppBar(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          widget.isEditing
+              ? l10n.snippetFormTitleEdit
+              : l10n.snippetFormTitleNew,
+        ),
+        actions: [
+          TextButton(
+            onPressed: formState.saving ? null : _save,
+            child: formState.saving
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(l10n.save),
+          ),
+        ],
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -156,16 +176,18 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                   const SizedBox(height: 16),
 
                   // Language
-                  DropdownButtonFormField<String>(
-                    initialValue: formState.language,
-                    decoration: InputDecoration(
-                      labelText: l10n.snippetFormLanguageLabel,
-                      prefixIcon: const Icon(Icons.code),
-                    ),
-                    items: _languages
-                        .map((l) => DropdownMenuItem(value: l, child: Text(l)))
+                  DropdownMenu<String>(
+                    initialSelection: formState.language,
+                    expandedInsets: EdgeInsets.zero,
+                    requestFocusOnTap: false,
+                    label: Text(l10n.snippetFormLanguageLabel),
+                    leadingIcon: const Icon(Icons.code),
+                    dropdownMenuEntries: _languages
+                        .map(
+                          (l) => DropdownMenuEntry(value: l, label: l),
+                        )
                         .toList(),
-                    onChanged: (v) {
+                    onSelected: (v) {
                       if (v != null) {
                         ref.read(_snippetFormProvider.notifier).state =
                             formState.copyWith(language: v);
@@ -219,25 +241,25 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                   groupsAsync.when(
                     data: (groups) {
                       if (groups.isEmpty) return const SizedBox.shrink();
-                      return DropdownButtonFormField<String?>(
-                        initialValue: formState.groupId,
-                        decoration: InputDecoration(
-                          labelText: l10n.snippetFormGroupLabel,
-                          prefixIcon: const Icon(Icons.folder_outlined),
-                        ),
-                        items: [
-                          DropdownMenuItem(
+                      return DropdownMenu<String?>(
+                        initialSelection: formState.groupId,
+                        expandedInsets: EdgeInsets.zero,
+                        requestFocusOnTap: false,
+                        label: Text(l10n.snippetFormGroupLabel),
+                        leadingIcon: const Icon(Icons.folder_outlined),
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry<String?>(
                             value: null,
-                            child: Text(l10n.snippetFormNoGroup),
+                            label: l10n.snippetFormNoGroup,
                           ),
                           ...groups.map(
-                            (g) => DropdownMenuItem(
+                            (g) => DropdownMenuEntry<String?>(
                               value: g.id,
-                              child: Text(g.name),
+                              label: g.name,
                             ),
                           ),
                         ],
-                        onChanged: (v) =>
+                        onSelected: (v) =>
                             ref.read(_snippetFormProvider.notifier).state =
                                 formState.copyWith(groupId: () => v),
                       );
@@ -267,27 +289,6 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                 onChanged: (vars) =>
                     ref.read(_snippetFormProvider.notifier).state = formState
                         .copyWith(variables: vars),
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            // Save button
-            AdaptiveButton.filledIcon(
-              onPressed: formState.saving ? null : _save,
-              icon: formState.saving
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.save),
-              label: Text(
-                widget.isEditing
-                    ? l10n.snippetFormUpdateButton
-                    : l10n.snippetFormCreateButton,
-              ),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(double.infinity, 52),
               ),
             ),
             const SizedBox(height: 32),

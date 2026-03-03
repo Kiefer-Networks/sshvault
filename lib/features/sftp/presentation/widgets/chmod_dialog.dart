@@ -1,110 +1,132 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive_dialog.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
-final _chmodPermissionsProvider = StateProvider.autoDispose<int>(
-  (ref) => 0x1ED, // 755 octal
-);
+class ChmodDialog {
+  static Future<int?> show(
+    BuildContext context, {
+    int? initialPermissions,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    final permissions = ValueNotifier<int>(initialPermissions ?? 0x1ED);
 
-class ChmodDialog extends ConsumerStatefulWidget {
-  final int? initialPermissions;
-
-  const ChmodDialog({super.key, this.initialPermissions});
-
-  @override
-  ConsumerState<ChmodDialog> createState() => _ChmodDialogState();
+    return showAdaptiveFormDialog<int>(
+      context,
+      title: l10n.sftpChmodTitle,
+      content: _ChmodContent(permissions: permissions),
+      materialActions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        const SizedBox(width: 8),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, permissions.value),
+          child: Text(l10n.save),
+        ),
+      ],
+    );
+  }
 }
 
-class _ChmodDialogState extends ConsumerState<ChmodDialog> {
+class _ChmodContent extends StatefulWidget {
+  final ValueNotifier<int> permissions;
+
+  const _ChmodContent({required this.permissions});
+
+  @override
+  State<_ChmodContent> createState() => _ChmodContentState();
+}
+
+class _ChmodContentState extends State<_ChmodContent> {
   late final TextEditingController _controller;
-  bool _initialized = false;
+  bool _updatingFromCheckbox = false;
 
   @override
   void initState() {
     super.initState();
-    final initial = widget.initialPermissions ?? 0x1ED;
     _controller = TextEditingController(
-      text: initial.toRadixString(8).padLeft(3, '0'),
+      text: widget.permissions.value.toRadixString(8).padLeft(3, '0'),
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initialized) {
-      _initialized = true;
-      if (widget.initialPermissions != null) {
-        ref.read(_chmodPermissionsProvider.notifier).state =
-            widget.initialPermissions!;
-      }
-    }
+    widget.permissions.addListener(_onPermissionsChanged);
   }
 
   @override
   void dispose() {
+    widget.permissions.removeListener(_onPermissionsChanged);
     _controller.dispose();
     super.dispose();
   }
 
-  int _toOctal() => ref.read(_chmodPermissionsProvider);
+  void _onPermissionsChanged() {
+    if (_updatingFromCheckbox) {
+      _controller.text =
+          widget.permissions.value.toRadixString(8).padLeft(3, '0');
+    }
+  }
 
   void _toggleBit(int bit, bool value) {
-    final current = ref.read(_chmodPermissionsProvider);
-    final updated = value ? (current | bit) : (current & ~bit);
-    ref.read(_chmodPermissionsProvider.notifier).state = updated;
-    _controller.text = updated.toRadixString(8).padLeft(3, '0');
+    _updatingFromCheckbox = true;
+    final current = widget.permissions.value;
+    widget.permissions.value = value ? (current | bit) : (current & ~bit);
+    _updatingFromCheckbox = false;
   }
 
   void _updateFromText(String text) {
     final value = int.tryParse(text, radix: 8);
     if (value != null && value >= 0 && value <= 0x1FF) {
-      ref.read(_chmodPermissionsProvider.notifier).state = value;
+      widget.permissions.value = value;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final mode = ref.watch(_chmodPermissionsProvider);
 
-    final content = SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Octal input
-          TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              labelText: l10n.sftpChmodOctal,
-              border: const OutlineInputBorder(),
+    return ValueListenableBuilder<int>(
+      valueListenable: widget.permissions,
+      builder: (context, mode, _) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                labelText: l10n.sftpChmodOctal,
+                border: const OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              maxLength: 3,
+              onChanged: _updateFromText,
             ),
-            keyboardType: TextInputType.number,
-            maxLength: 3,
-            onChanged: _updateFromText,
-          ),
-          const SizedBox(height: 16),
-          // Permission grid
-          _buildGroup(l10n.sftpChmodOwner, l10n, mode, 0x100, 0x080, 0x040),
-          _buildGroup(l10n.sftpChmodGroup, l10n, mode, 0x020, 0x010, 0x008),
-          _buildGroup(l10n.sftpChmodOther, l10n, mode, 0x004, 0x002, 0x001),
-        ],
-      ),
-    );
-
-    return AlertDialog(
-      title: Text(l10n.sftpChmodTitle),
-      content: content,
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancel),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, _toOctal()),
-          child: Text(l10n.save),
-        ),
-      ],
+            const SizedBox(height: 16),
+            _buildGroup(
+              l10n.sftpChmodOwner,
+              l10n,
+              mode,
+              0x100,
+              0x080,
+              0x040,
+            ),
+            _buildGroup(
+              l10n.sftpChmodGroup,
+              l10n,
+              mode,
+              0x020,
+              0x010,
+              0x008,
+            ),
+            _buildGroup(
+              l10n.sftpChmodOther,
+              l10n,
+              mode,
+              0x004,
+              0x002,
+              0x001,
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -130,9 +152,13 @@ class _ChmodDialogState extends ConsumerState<ChmodDialog> {
               _checkboxLabel(l10n.sftpChmodWrite, (mode & writeBit) != 0, (v) {
                 _toggleBit(writeBit, v!);
               }),
-              _checkboxLabel(l10n.sftpChmodExecute, (mode & execBit) != 0, (v) {
-                _toggleBit(execBit, v!);
-              }),
+              _checkboxLabel(
+                l10n.sftpChmodExecute,
+                (mode & execBit) != 0,
+                (v) {
+                  _toggleBit(execBit, v!);
+                },
+              ),
             ],
           ),
         ],

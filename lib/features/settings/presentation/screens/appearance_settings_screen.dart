@@ -50,28 +50,29 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                   iconColor: Theme.of(context).colorScheme.tertiary,
                   title: l10n.settingsLanguage,
                   subtitleText: _localeLabel(l10n, settings.locale),
-                  trailing: DropdownButton<String>(
-                    value: settings.locale.isEmpty ? '' : settings.locale,
-                    underline: const SizedBox.shrink(),
-                    items: [
-                      DropdownMenuItem(
+                  trailing: DropdownMenu<String>(
+                    initialSelection:
+                        settings.locale.isEmpty ? '' : settings.locale,
+                    requestFocusOnTap: false,
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
                         value: '',
-                        child: Text(l10n.settingsLanguageSystem),
+                        label: l10n.settingsLanguageSystem,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 'en',
-                        child: Text(l10n.settingsLanguageEn),
+                        label: l10n.settingsLanguageEn,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 'de',
-                        child: Text(l10n.settingsLanguageDe),
+                        label: l10n.settingsLanguageDe,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 'es',
-                        child: Text(l10n.settingsLanguageEs),
+                        label: l10n.settingsLanguageEs,
                       ),
                     ],
-                    onChanged: (v) {
+                    onSelected: (v) {
                       if (v != null) {
                         ref.read(settingsProvider.notifier).setLocale(v);
                       }

@@ -34,32 +34,32 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   subtitleText: settings.autoLockMinutes == 0
                       ? l10n.settingsAutoLockDisabled
                       : l10n.settingsAutoLockMinutes(settings.autoLockMinutes),
-                  trailing: DropdownButton<int>(
-                    value: settings.autoLockMinutes,
-                    underline: const SizedBox.shrink(),
-                    items: [
-                      DropdownMenuItem(
+                  trailing: DropdownMenu<int>(
+                    initialSelection: settings.autoLockMinutes,
+                    requestFocusOnTap: false,
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
                         value: 0,
-                        child: Text(l10n.settingsAutoLockOff),
+                        label: l10n.settingsAutoLockOff,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 1,
-                        child: Text(l10n.settingsAutoLock1Min),
+                        label: l10n.settingsAutoLock1Min,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 5,
-                        child: Text(l10n.settingsAutoLock5Min),
+                        label: l10n.settingsAutoLock5Min,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 15,
-                        child: Text(l10n.settingsAutoLock15Min),
+                        label: l10n.settingsAutoLock15Min,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 30,
-                        child: Text(l10n.settingsAutoLock30Min),
+                        label: l10n.settingsAutoLock30Min,
                       ),
                     ],
-                    onChanged: (v) {
+                    onSelected: (v) {
                       if (v != null) {
                         ref
                             .read(settingsProvider.notifier)
@@ -96,32 +96,32 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   icon: Icons.content_paste_off_outlined,
                   iconColor: Colors.purple,
                   title: l10n.settingsClipboardAutoClear,
-                  trailing: DropdownButton<int>(
-                    value: settings.clipboardAutoClearSecs,
-                    underline: const SizedBox.shrink(),
-                    items: [
-                      DropdownMenuItem(
+                  trailing: DropdownMenu<int>(
+                    initialSelection: settings.clipboardAutoClearSecs,
+                    requestFocusOnTap: false,
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
                         value: 0,
-                        child: Text(l10n.settingsClipboardAutoClearOff),
+                        label: l10n.settingsClipboardAutoClearOff,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 15,
-                        child: Text(l10n.settingsClipboardAutoClearValue(15)),
+                        label: l10n.settingsClipboardAutoClearValue(15),
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 30,
-                        child: Text(l10n.settingsClipboardAutoClearValue(30)),
+                        label: l10n.settingsClipboardAutoClearValue(30),
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 60,
-                        child: Text(l10n.settingsClipboardAutoClearValue(60)),
+                        label: l10n.settingsClipboardAutoClearValue(60),
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 120,
-                        child: Text(l10n.settingsClipboardAutoClearValue(120)),
+                        label: l10n.settingsClipboardAutoClearValue(120),
                       ),
                     ],
-                    onChanged: (v) {
+                    onSelected: (v) {
                       if (v != null) {
                         ref
                             .read(settingsProvider.notifier)
@@ -134,28 +134,28 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   icon: Icons.timer_off_outlined,
                   iconColor: Colors.orange,
                   title: l10n.settingsSessionTimeout,
-                  trailing: DropdownButton<int>(
-                    value: settings.sessionTimeoutMins,
-                    underline: const SizedBox.shrink(),
-                    items: [
-                      DropdownMenuItem(
+                  trailing: DropdownMenu<int>(
+                    initialSelection: settings.sessionTimeoutMins,
+                    requestFocusOnTap: false,
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
                         value: 0,
-                        child: Text(l10n.settingsSessionTimeoutOff),
+                        label: l10n.settingsSessionTimeoutOff,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 15,
-                        child: Text(l10n.settingsSessionTimeoutValue(15)),
+                        label: l10n.settingsSessionTimeoutValue(15),
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 30,
-                        child: Text(l10n.settingsSessionTimeoutValue(30)),
+                        label: l10n.settingsSessionTimeoutValue(30),
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 60,
-                        child: Text(l10n.settingsSessionTimeoutValue(60)),
+                        label: l10n.settingsSessionTimeoutValue(60),
                       ),
                     ],
-                    onChanged: (v) {
+                    onSelected: (v) {
                       if (v != null) {
                         ref
                             .read(settingsProvider.notifier)
@@ -176,28 +176,28 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   icon: Icons.autorenew,
                   iconColor: Colors.cyan,
                   title: l10n.settingsKeyRotationReminder,
-                  trailing: DropdownButton<int>(
-                    value: settings.keyRotationReminderDays,
-                    underline: const SizedBox.shrink(),
-                    items: [
-                      DropdownMenuItem(
+                  trailing: DropdownMenu<int>(
+                    initialSelection: settings.keyRotationReminderDays,
+                    requestFocusOnTap: false,
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
                         value: 0,
-                        child: Text(l10n.settingsKeyRotationOff),
+                        label: l10n.settingsKeyRotationOff,
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 30,
-                        child: Text(l10n.settingsKeyRotationValue(30)),
+                        label: l10n.settingsKeyRotationValue(30),
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 60,
-                        child: Text(l10n.settingsKeyRotationValue(60)),
+                        label: l10n.settingsKeyRotationValue(60),
                       ),
-                      DropdownMenuItem(
+                      DropdownMenuEntry(
                         value: 90,
-                        child: Text(l10n.settingsKeyRotationValue(90)),
+                        label: l10n.settingsKeyRotationValue(90),
                       ),
                     ],
-                    onChanged: (v) {
+                    onSelected: (v) {
                       if (v != null) {
                         ref
                             .read(settingsProvider.notifier)

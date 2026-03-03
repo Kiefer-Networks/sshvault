@@ -27,12 +27,15 @@ class ServerGridCard extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return GestureDetector(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      child: SectionCard(
-        padding: const EdgeInsets.all(14),
-        child: Column(
+    return SectionCard(
+      padding: EdgeInsets.zero,
+      child: InkWell(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -140,7 +143,8 @@ class ServerGridCard extends StatelessWidget {
                     ),
                 ],
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -64,7 +64,7 @@ class AccountHeader extends StatelessWidget {
                             Icon(
                               Icons.verified,
                               size: 14,
-                              color: Colors.green.shade600,
+                              color: colorScheme.tertiary,
                             ),
                             const SizedBox(width: 4),
                           ],

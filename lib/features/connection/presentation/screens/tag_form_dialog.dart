@@ -19,9 +19,11 @@ class TagFormDialog extends ConsumerStatefulWidget {
   bool get isEditing => tag != null;
 
   static Future<void> show(BuildContext context, {TagEntity? tag}) {
-    return showDialog(
-      context: context,
-      builder: (_) => TagFormDialog(tag: tag),
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+        builder: (_) => TagFormDialog(tag: tag),
+      ),
     );
   }
 
@@ -66,42 +68,37 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
         : l10n.tagFormTitleNew;
     final saveText = widget.isEditing ? l10n.update : l10n.create;
 
-    final formContent = SizedBox(
-      width: 400,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: l10n.tagFormNameLabel,
-                prefixIcon: const Icon(Icons.label_outline),
-              ),
-              keyboardType: TextInputType.text,
-              autofocus: true,
-            ),
-            const SizedBox(height: 16),
-            ColorPickerField(
-              selectedColor: color,
-              onColorChanged: (c) =>
-                  ref.read(_tagFormColorProvider.notifier).state = c,
-            ),
-          ],
-        ),
-      ),
-    );
-
-    return AlertDialog(
-      title: Text(titleText),
-      content: formContent,
-      actions: [
-        TextButton(
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.cancel),
         ),
-        FilledButton(onPressed: _save, child: Text(saveText)),
-      ],
+        title: Text(titleText),
+        actions: [
+          TextButton(onPressed: _save, child: Text(saveText)),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          TextField(
+            controller: _nameController,
+            decoration: InputDecoration(
+              labelText: l10n.tagFormNameLabel,
+              prefixIcon: const Icon(Icons.label_outline),
+            ),
+            keyboardType: TextInputType.text,
+            autofocus: true,
+          ),
+          const SizedBox(height: 16),
+          ColorPickerField(
+            selectedColor: color,
+            onColorChanged: (c) =>
+                ref.read(_tagFormColorProvider.notifier).state = c,
+          ),
+        ],
+      ),
     );
   }
 

@@ -35,22 +35,23 @@ class SessionTabBar extends ConsumerWidget {
           final session = sessions[index];
           final isActive = index == activeIndex;
 
-          return GestureDetector(
-            onTap: () {
-              ref.read(activeSessionIndexProvider.notifier).state = index;
-            },
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 180),
-              margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: isActive
-                    ? theme.colorScheme.primaryContainer.withAlpha(
-                        AppConstants.alpha153,
-                      )
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-              ),
+          return Material(
+            color: isActive
+                ? theme.colorScheme.primaryContainer.withAlpha(
+                    AppConstants.alpha153,
+                  )
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () {
+                ref.read(activeSessionIndexProvider.notifier).state = index;
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 180),
+                margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -84,6 +85,7 @@ class SessionTabBar extends ConsumerWidget {
                 ],
               ),
             ),
+          ),
           );
         },
       ),
@@ -98,12 +100,13 @@ class _StatusDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final color = switch (status) {
-      SshConnectionStatus.connected => Colors.green,
+      SshConnectionStatus.connected => colorScheme.tertiary,
       SshConnectionStatus.connecting ||
-      SshConnectionStatus.authenticating => Colors.amber,
+      SshConnectionStatus.authenticating => colorScheme.tertiaryContainer,
       SshConnectionStatus.error ||
-      SshConnectionStatus.disconnected => Colors.red,
+      SshConnectionStatus.disconnected => colorScheme.error,
     };
 
     return Container(

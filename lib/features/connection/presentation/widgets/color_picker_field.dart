@@ -28,31 +28,41 @@ class ColorPickerField extends StatelessWidget {
           runSpacing: 8,
           children: ColorConstants.serverColors.map((sc) {
             final isSelected = sc.value == selectedColor;
-            return GestureDetector(
-              onTap: () => onColorChanged(sc.value),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: sc.color,
-                  shape: BoxShape.circle,
-                  border: isSelected
-                      ? Border.all(color: Colors.white, width: 2.5)
-                      : null,
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: sc.color.withAlpha(AppConstants.alpha128),
-                            blurRadius: 8,
-                            spreadRadius: 1,
-                          ),
-                        ]
+            return Material(
+              color: sc.color,
+              shape: const CircleBorder(),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => onColorChanged(sc.value),
+                customBorder: const CircleBorder(),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: isSelected
+                        ? Border.all(color: Colors.white, width: 2.5)
+                        : null,
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color:
+                                  sc.color.withAlpha(AppConstants.alpha128),
+                              blurRadius: 8,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: isSelected
+                      ? const Icon(
+                          Icons.check,
+                          size: 18,
+                          color: Colors.white,
+                        )
                       : null,
                 ),
-                child: isSelected
-                    ? const Icon(Icons.check, size: 18, color: Colors.white)
-                    : null,
               ),
             );
           }).toList(),

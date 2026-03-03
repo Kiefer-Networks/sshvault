@@ -141,7 +141,7 @@ class _AuditLogTile extends StatelessWidget {
     final theme = Theme.of(context);
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 4),
-      leading: _levelIcon(entry.level),
+      leading: _levelIcon(context, entry.level),
       title: Text(
         '${entry.category} / ${entry.action}',
         style: theme.textTheme.bodyMedium?.copyWith(
@@ -173,11 +173,24 @@ class _AuditLogTile extends StatelessWidget {
     );
   }
 
-  Widget _levelIcon(String level) {
+  Widget _levelIcon(BuildContext context, String level) {
+    final colorScheme = Theme.of(context).colorScheme;
     return switch (level) {
-      'warn' => const Icon(Icons.warning_amber, color: Colors.orange, size: 20),
-      'error' => const Icon(Icons.error_outline, color: Colors.red, size: 20),
-      _ => const Icon(Icons.info_outline, color: Colors.blue, size: 20),
+      'warn' => Icon(
+          Icons.warning_amber,
+          color: colorScheme.tertiary,
+          size: 20,
+        ),
+      'error' => Icon(
+          Icons.error_outline,
+          color: colorScheme.error,
+          size: 20,
+        ),
+      _ => Icon(
+          Icons.info_outline,
+          color: colorScheme.primary,
+          size: 20,
+        ),
     };
   }
 }

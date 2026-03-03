@@ -1,30 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/widgets/adaptive/adaptive_dialog.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
-class NewDirectoryDialog extends StatefulWidget {
-  const NewDirectoryDialog({super.key});
-
-  @override
-  State<NewDirectoryDialog> createState() => _NewDirectoryDialogState();
-}
-
-class _NewDirectoryDialogState extends State<NewDirectoryDialog> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+class NewDirectoryDialog {
+  static Future<String?> show(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController();
 
-    return AlertDialog(
-      title: Text(l10n.sftpNewFolder),
+    return showAdaptiveFormDialog<String>(
+      context,
+      title: l10n.sftpNewFolder,
       content: TextField(
-        controller: _controller,
+        controller: controller,
         autofocus: true,
         decoration: InputDecoration(
           labelText: l10n.sftpNewFolderName,
@@ -32,13 +19,14 @@ class _NewDirectoryDialogState extends State<NewDirectoryDialog> {
         ),
         onSubmitted: (value) => Navigator.pop(context, value.trim()),
       ),
-      actions: [
+      materialActions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(l10n.cancel),
         ),
+        const SizedBox(width: 8),
         FilledButton(
-          onPressed: () => Navigator.pop(context, _controller.text.trim()),
+          onPressed: () => Navigator.pop(context, controller.text.trim()),
           child: Text(l10n.create),
         ),
       ],

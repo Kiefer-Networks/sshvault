@@ -64,7 +64,7 @@ class TransferPanel extends ConsumerWidget {
                   size: 20,
                   color: activeCount > 0
                       ? theme.colorScheme.primary
-                      : Colors.green,
+                      : theme.colorScheme.tertiary,
                 ),
                 const SizedBox(width: 8),
                 Text(l10n.sftpTransfers, style: theme.textTheme.titleSmall),
@@ -242,7 +242,7 @@ class _TransferItemTile extends ConsumerWidget {
   Color _statusColor(TransferStatus status, ThemeData theme) {
     switch (status) {
       case TransferStatus.completed:
-        return Colors.green;
+        return theme.colorScheme.tertiary;
       case TransferStatus.failed:
         return theme.colorScheme.error;
       case TransferStatus.cancelled:

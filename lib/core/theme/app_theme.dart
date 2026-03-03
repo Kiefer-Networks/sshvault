@@ -22,7 +22,7 @@ abstract final class AppTheme {
         titleTextStyle: TextStyle(
           color: colorScheme.onSurface,
           fontSize: 22,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
         ),
       ),
       cardTheme: CardThemeData(
@@ -42,7 +42,7 @@ abstract final class AppTheme {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.primaryContainer,
         foregroundColor: colorScheme.onPrimaryContainer,
-        elevation: 4,
+        elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       searchBarTheme: SearchBarThemeData(
@@ -109,9 +109,7 @@ abstract final class AppTheme {
           fontSize: 13,
         ),
         indicatorColor: colorScheme.primary.withAlpha(AppConstants.alpha26),
-        indicatorShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        indicatorShape: const StadiumBorder(),
       ),
       drawerTheme: const DrawerThemeData(
         shape: RoundedRectangleBorder(
@@ -176,7 +174,7 @@ abstract final class AppTheme {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.primaryContainer,
         foregroundColor: colorScheme.onPrimaryContainer,
-        elevation: 4,
+        elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       searchBarTheme: SearchBarThemeData(
@@ -244,9 +242,7 @@ abstract final class AppTheme {
           fontSize: 13,
         ),
         indicatorColor: colorScheme.primary.withAlpha(AppConstants.alpha26),
-        indicatorShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        indicatorShape: const StadiumBorder(),
       ),
       drawerTheme: DrawerThemeData(
         backgroundColor: colorScheme.surface,

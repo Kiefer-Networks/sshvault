@@ -54,15 +54,21 @@ class InfoRow extends StatelessWidget {
           ),
           if (onTap != null) ...[
             const SizedBox(width: 4),
-            GestureDetector(
-              onTap: onTap,
-              child: Icon(
+            IconButton(
+              onPressed: onTap,
+              icon: Icon(
                 Icons.copy,
                 size: 16,
                 color: theme.colorScheme.onSurface.withAlpha(
                   AppConstants.alpha102,
                 ),
               ),
+              visualDensity: VisualDensity.compact,
+              constraints: const BoxConstraints(
+                minWidth: 32,
+                minHeight: 32,
+              ),
+              padding: EdgeInsets.zero,
             ),
           ],
           if (trailing != null) ...[const SizedBox(width: 4), trailing!],
