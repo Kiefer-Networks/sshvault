@@ -222,16 +222,15 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     _log.debug(_tag, 'Auth tokens persisted');
   }
 
-  /// Invalidate account-related providers so they re-fetch from server.
-  /// Called after login to ensure billing status, device list and profile
-  /// reflect the current account (subscription is account-wide, not per-device).
+  /// Account-related providers (billing, devices, profile) already
+  /// `ref.watch(authProvider)`, so they rebuild automatically when auth
+  /// state changes.  No manual `ref.invalidate()` needed — calling it
+  /// inside the auth state update would trigger an immediate rebuild that
+  /// reads authProvider back, causing a CircularDependencyError.
   void _invalidateAccountProviders() {
-    ref.invalidate(billingStatusProvider);
-    ref.invalidate(deviceListProvider);
-    ref.invalidate(userProfileProvider);
     _log.debug(
       _tag,
-      'Account providers invalidated (billing, devices, profile)',
+      'Auth state changed — account providers will auto-refresh',
     );
   }
 
