@@ -40,10 +40,12 @@ dependencies:
   crypto: ^3.0.6
 
   # File System
+  path: ^1.9.0
   archive: ^4.0.2
   path_provider: ^2.1.5
   file_picker: ^10.3.10
   share_plus: ^12.0.1
+  flutter_local_notifications: ^19.0.0
   url_launcher: ^6.3.1
 
   # Networking
@@ -81,6 +83,11 @@ dev_dependencies:
   json_serializable: ^6.13.0
   riverpod_generator: ^4.0.3
   drift_dev: ^2.31.0
+
+dependency_overrides:
+  # Local fork with SFTP subsystem await fix (sendSubsystem was not awaited in sftp())
+  dartssh2:
+    path: packages/dartssh2
 
 flutter:
   generate: true

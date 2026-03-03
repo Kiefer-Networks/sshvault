@@ -36,7 +36,8 @@ abstract final class AppConstants {
   static const int lockoutDurationSeconds = 300; // 5 minutes
 
   // Navigation
-  static const int terminalBranchIndex = 6;
+  static const int sftpBranchIndex = 1;
+  static const int terminalBranchIndex = 7;
 
   // Pagination
   static const int defaultPageSize = 50;

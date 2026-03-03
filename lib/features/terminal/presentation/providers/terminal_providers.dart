@@ -7,6 +7,7 @@ import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:shellvault/core/services/terminal_notification_service.dart';
 import 'package:shellvault/features/terminal/data/services/ssh_service.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data.dart';
@@ -16,6 +17,10 @@ import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data
 // ---------------------------------------------------------------------------
 
 final sshServiceProvider = Provider<SshService>((ref) => SshService());
+
+final terminalNotificationProvider = Provider<TerminalNotificationService>(
+  (ref) => TerminalNotificationService(),
+);
 
 // ---------------------------------------------------------------------------
 // Session Manager

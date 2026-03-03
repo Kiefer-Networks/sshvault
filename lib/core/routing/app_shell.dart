@@ -6,12 +6,14 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
+import 'package:shellvault/core/services/terminal_notification_service.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/settings/presentation/widgets/about_dialog.dart'
     as app;
 import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
+import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 /// Breakpoints following Material 3 Compact / Medium / Expanded.
@@ -33,20 +35,38 @@ class _NavItem {
   });
 }
 
-/// Base nav items (indices 0–5). Terminal (index 6) is appended dynamically
+/// Section break indices — dividers appear *before* items at these indices.
+/// Used by drawer and rail to visually group navigation items.
+const _sectionBreaks = {3, 6}; // before SSH Keys, before Export/Import
+
+/// Base nav items (indices 0–6). Terminal (index 7) is appended dynamically
 /// only when there are active sessions.
+///
+/// Order: Hosts, SFTP, Snippets | SSH Keys, Groups, Tags | Export/Import
 List<_NavItem> _buildBaseNavItems(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
   return <_NavItem>[
+    // — Main features —
     _NavItem(
       icon: Icons.dns_outlined,
       selectedIcon: Icons.dns,
       label: l10n.navHosts,
     ),
     _NavItem(
+      icon: Icons.folder_copy_outlined,
+      selectedIcon: Icons.folder_copy,
+      label: l10n.navSftp,
+    ),
+    _NavItem(
       icon: Icons.code_outlined,
       selectedIcon: Icons.code,
       label: l10n.navSnippets,
+    ),
+    // — Management —
+    _NavItem(
+      icon: Icons.vpn_key_outlined,
+      selectedIcon: Icons.vpn_key,
+      label: l10n.navSshKeys,
     ),
     _NavItem(
       icon: Icons.folder_outlined,
@@ -58,11 +78,7 @@ List<_NavItem> _buildBaseNavItems(BuildContext context) {
       selectedIcon: Icons.label,
       label: l10n.navTags,
     ),
-    _NavItem(
-      icon: Icons.vpn_key_outlined,
-      selectedIcon: Icons.vpn_key,
-      label: l10n.navSshKeys,
-    ),
+    // — Data —
     _NavItem(
       icon: Icons.import_export_outlined,
       selectedIcon: Icons.import_export,
@@ -132,6 +148,19 @@ class AppShellState extends ConsumerState<AppShell> {
       if (mounted) {
         ref.read(shellNavigationProvider.notifier).state =
             widget.navigationShell;
+
+        // Navigate to terminal when the notification is tapped
+        TerminalNotificationService.onNotificationTapped = () {
+          ref
+              .read(shellNavigationProvider)
+              ?.goBranch(AppConstants.terminalBranchIndex);
+        };
+
+        // Update notification when terminal sessions change
+        ref.listenManual(sessionManagerProvider, (_, next) {
+          _updateSessionNotification(next);
+        });
+
         // Listen for settings to load, then show security dialog if needed
         ref.listenManual(settingsProvider, (_, next) {
           final settings = next.value;
@@ -152,10 +181,35 @@ class AppShellState extends ConsumerState<AppShell> {
     ref.invalidate(deviceListProvider);
   }
 
+  void _updateSessionNotification(List<SshSessionEntity> sessions) {
+    final service = ref.read(terminalNotificationProvider);
+    final active = sessions.where(
+      (s) =>
+          s.status == SshConnectionStatus.connected ||
+          s.status == SshConnectionStatus.connecting ||
+          s.status == SshConnectionStatus.authenticating,
+    ).toList();
+
+    if (active.isEmpty) {
+      service.dismiss();
+      return;
+    }
+
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return;
+
+    service.show(
+      title: l10n.notificationTerminalTitle(active.length),
+      body: active.map((s) => s.title).join(', '),
+    );
+  }
+
   @override
   void dispose() {
     _billingRefreshTimer?.cancel();
     _lifecycleListener.dispose();
+    TerminalNotificationService.onNotificationTapped = null;
+    ref.read(terminalNotificationProvider).dismiss();
     super.dispose();
   }
 
@@ -374,6 +428,9 @@ class _DesktopScaffold extends StatelessWidget {
             destinations: [
               for (var i = 0; i < visibleItems.length; i++)
                 NavigationRailDestination(
+                  padding: _sectionBreaks.contains(i)
+                      ? const EdgeInsets.only(top: 12)
+                      : EdgeInsets.zero,
                   icon: showTerminal && i == visibleItems.length - 1
                       ? Badge(
                           label: Text('$sessionCount'),
@@ -551,8 +608,13 @@ class _AppDrawer extends StatelessWidget {
             const Divider(indent: 16, endIndent: 16),
             const SizedBox(height: 8),
 
-            // Nav items
-            for (var i = 0; i < visibleItems.length; i++)
+            // Nav items with section dividers
+            for (var i = 0; i < visibleItems.length; i++) ...[
+              if (_sectionBreaks.contains(i))
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Divider(indent: 28, endIndent: 28, height: 1),
+                ),
               _DrawerItem(
                 icon: visibleItems[i].icon,
                 selectedIcon: visibleItems[i].selectedIcon,
@@ -566,6 +628,7 @@ class _AppDrawer extends StatelessWidget {
                   onDestinationSelected(i);
                 },
               ),
+            ],
 
             const Spacer(),
 

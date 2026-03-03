@@ -20,6 +20,7 @@ import 'package:shellvault/features/snippet/presentation/screens/snippet_form_sc
 import 'package:shellvault/features/snippet/presentation/screens/snippet_list_screen.dart';
 import 'package:shellvault/features/support/presentation/screens/support_screen.dart';
 import 'package:shellvault/features/sync/presentation/screens/sync_settings_screen.dart';
+import 'package:shellvault/features/sftp/presentation/screens/sftp_browser_screen.dart';
 import 'package:shellvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -47,7 +48,17 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 1 — Snippets
+          // 1 — SFTP
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/sftp',
+                builder: (context, state) => const SftpBrowserScreen(),
+              ),
+            ],
+          ),
+
+          // 2 — Snippets
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -57,27 +68,7 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 2 — Groups
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/groups',
-                builder: (context, state) => const GroupListScreen(),
-              ),
-            ],
-          ),
-
-          // 3 — Tags
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/tags',
-                builder: (context, state) => const TagListScreen(),
-              ),
-            ],
-          ),
-
-          // 4 — SSH Keys
+          // 3 — SSH Keys
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -87,7 +78,27 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 5 — Export / Import
+          // 4 — Groups
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/groups',
+                builder: (context, state) => const GroupListScreen(),
+              ),
+            ],
+          ),
+
+          // 5 — Tags
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/tags',
+                builder: (context, state) => const TagListScreen(),
+              ),
+            ],
+          ),
+
+          // 6 — Export / Import
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -97,7 +108,7 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 6 — Terminal
+          // 7 — Terminal
           StatefulShellBranch(
             routes: [
               GoRoute(
