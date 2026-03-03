@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 
 /// A platform-adaptive segmented control.
 ///
-/// On iOS/macOS: [CupertinoSlidingSegmentedControl].
+/// On iOS/macOS: [CNSegmentedControl] (Liquid Glass on iOS 26+).
 /// On Android/Desktop: [SegmentedButton].
 class AdaptiveSegmentedControl<T extends Object> extends StatelessWidget {
   final T selected;
@@ -21,21 +21,19 @@ class AdaptiveSegmentedControl<T extends Object> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (useCupertinoDesign) {
+      final keys = segments.keys.toList();
+      final labels = segments.values.toList();
+      final selectedIndex = keys.indexOf(selected);
+
       return SizedBox(
         width: double.infinity,
-        child: CupertinoSlidingSegmentedControl<T>(
-          groupValue: selected,
-          children: segments.map(
-            (key, label) => MapEntry(
-              key,
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(label),
-              ),
-            ),
-          ),
-          onValueChanged: (value) {
-            if (value != null) onChanged(value);
+        child: CNSegmentedControl(
+          labels: labels,
+          selectedIndex: selectedIndex >= 0 ? selectedIndex : 0,
+          onValueChanged: (index) {
+            if (index >= 0 && index < keys.length) {
+              onChanged(keys[index]);
+            }
           },
         ),
       );
