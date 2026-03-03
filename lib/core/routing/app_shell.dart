@@ -115,6 +115,7 @@ class AppShellState extends ConsumerState<AppShell> {
   bool _securityDialogShown = false;
   late final AppLifecycleListener _lifecycleListener;
   Timer? _billingRefreshTimer;
+  late final TerminalNotificationService _notificationService;
 
   /// How often to re-check billing status from the server.
   static const _billingRefreshInterval = Duration(minutes: 15);
@@ -148,6 +149,8 @@ class AppShellState extends ConsumerState<AppShell> {
               .read(shellNavigationProvider)
               ?.goBranch(AppConstants.terminalBranchIndex);
         };
+
+        _notificationService = ref.read(terminalNotificationProvider);
 
         // Update notification when terminal sessions change
         ref.listenManual(sessionManagerProvider, (_, next) {
@@ -204,7 +207,7 @@ class AppShellState extends ConsumerState<AppShell> {
     _billingRefreshTimer?.cancel();
     _lifecycleListener.dispose();
     TerminalNotificationService.onNotificationTapped = null;
-    ref.read(terminalNotificationProvider).dismiss();
+    _notificationService.dismiss();
     super.dispose();
   }
 
