@@ -61,6 +61,11 @@ class ServerUseCases {
   }
 
   String? _validate(ServerEntity server) {
+    if (server.jumpHostId != null &&
+        server.jumpHostId == server.id &&
+        server.id.isNotEmpty) {
+      return 'A server cannot be its own jump host';
+    }
     return Validators.validateServerName(server.name) ??
         Validators.validateHostname(server.hostname) ??
         Validators.validatePort(server.port.toString()) ??

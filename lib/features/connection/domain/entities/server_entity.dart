@@ -24,6 +24,7 @@ abstract class ServerEntity with _$ServerEntity {
     String? distroId,
     String? distroName,
     @Default([]) List<TagEntity> tags,
+    String? jumpHostId,
     String? ownerId,
     String? sharedWith,
     String? permissions,

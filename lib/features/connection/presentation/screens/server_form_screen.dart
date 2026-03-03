@@ -19,6 +19,7 @@ import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
 import 'package:shellvault/features/connection/presentation/widgets/icon_picker_field.dart';
 import 'package:shellvault/features/connection/presentation/widgets/server_form_fields.dart';
+import 'package:shellvault/features/connection/presentation/widgets/jump_host_selector.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_selector.dart';
 
 class _ServerFormReactiveState {
@@ -31,6 +32,7 @@ class _ServerFormReactiveState {
   final List<String> selectedTagIds;
   final bool isActive;
   final bool saving;
+  final String? jumpHostId;
 
   const _ServerFormReactiveState({
     this.authMethod = AuthMethod.password,
@@ -42,6 +44,7 @@ class _ServerFormReactiveState {
     this.selectedTagIds = const [],
     this.isActive = true,
     this.saving = false,
+    this.jumpHostId,
   });
 
   _ServerFormReactiveState copyWith({
@@ -54,6 +57,7 @@ class _ServerFormReactiveState {
     List<String>? selectedTagIds,
     bool? isActive,
     bool? saving,
+    String? Function()? jumpHostId,
   }) {
     return _ServerFormReactiveState(
       authMethod: authMethod ?? this.authMethod,
@@ -65,6 +69,7 @@ class _ServerFormReactiveState {
       selectedTagIds: selectedTagIds ?? this.selectedTagIds,
       isActive: isActive ?? this.isActive,
       saving: saving ?? this.saving,
+      jumpHostId: jumpHostId != null ? jumpHostId() : this.jumpHostId,
     );
   }
 }
@@ -129,6 +134,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       useManagedKey: result.sshKeyId != null,
       selectedTagIds: result.tags.map((t) => t.id).toList(),
       isActive: result.isActive,
+      jumpHostId: result.jumpHostId,
     );
 
     final creds = await ref.read(
@@ -245,7 +251,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
           children: [
             SectionCard(
               padding: const EdgeInsets.all(16),
-              child: ServerFormFields(
+              child: Column(
+                children: [
+                  ServerFormFields(
                 nameController: _nameController,
                 hostnameController: _hostnameController,
                 portController: _portController,
@@ -273,6 +281,16 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                 onSshKeyChanged: (id) =>
                     ref.read(_serverFormStateProvider.notifier).state =
                         formState.copyWith(sshKeyId: () => id),
+              ),
+                  const SizedBox(height: 16),
+                  JumpHostSelector(
+                    currentServerId: widget.serverId,
+                    selectedJumpHostId: formState.jumpHostId,
+                    onChanged: (id) =>
+                        ref.read(_serverFormStateProvider.notifier).state =
+                            formState.copyWith(jumpHostId: () => id),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -383,6 +401,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         isActive: currentState.isActive,
         groupId: currentState.groupId,
         sshKeyId: currentState.useManagedKey ? currentState.sshKeyId : null,
+        jumpHostId: currentState.jumpHostId,
         tags: tags,
         createdAt: now,
         updatedAt: now,

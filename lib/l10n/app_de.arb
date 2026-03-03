@@ -696,5 +696,15 @@
   "keyGenPassphrase": "Passphrase",
   "keyGenPassphraseHint": "Optional — schützt den privaten Schlüssel",
 
-  "settingsDnsDefaultQuad9Mullvad": "Standard (Quad9 + Mullvad)"
+  "settingsDnsDefaultQuad9Mullvad": "Standard (Quad9 + Mullvad)",
+
+  "sshKeyDuplicate": "Dieser SSH-Schlüssel existiert bereits: \"{name}\"",
+  "@sshKeyDuplicate": { "placeholders": { "name": { "type": "String" } } },
+
+  "jumpHost": "Sprunghost",
+  "jumpHostNone": "Keiner",
+  "jumpHostLabel": "Über Sprunghost verbinden",
+  "jumpHostSelfError": "Ein Server kann nicht sein eigener Sprunghost sein",
+  "jumpHostConnecting": "Verbinde mit Sprunghost…",
+  "jumpHostCircularError": "Zirkuläre Sprunghost-Kette erkannt"
 }

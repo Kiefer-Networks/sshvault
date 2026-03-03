@@ -3705,6 +3705,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Default (Quad9 + Mullvad)'**
   String get settingsDnsDefaultQuad9Mullvad;
+
+  /// No description provided for @sshKeyDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'This SSH key already exists: \"{name}\"'**
+  String sshKeyDuplicate(String name);
+
+  /// No description provided for @jumpHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump Host'**
+  String get jumpHost;
+
+  /// No description provided for @jumpHostNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get jumpHostNone;
+
+  /// No description provided for @jumpHostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect via jump host'**
+  String get jumpHostLabel;
+
+  /// No description provided for @jumpHostSelfError.
+  ///
+  /// In en, this message translates to:
+  /// **'A server cannot be its own jump host'**
+  String get jumpHostSelfError;
+
+  /// No description provided for @jumpHostConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to jump host…'**
+  String get jumpHostConnecting;
+
+  /// No description provided for @jumpHostCircularError.
+  ///
+  /// In en, this message translates to:
+  /// **'Circular jump host chain detected'**
+  String get jumpHostCircularError;
 }
 
 class _AppLocalizationsDelegate

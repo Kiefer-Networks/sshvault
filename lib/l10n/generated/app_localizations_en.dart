@@ -2028,4 +2028,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDnsDefaultQuad9Mullvad => 'Default (Quad9 + Mullvad)';
+
+  @override
+  String sshKeyDuplicate(String name) {
+    return 'This SSH key already exists: \"$name\"';
+  }
+
+  @override
+  String get jumpHost => 'Jump Host';
+
+  @override
+  String get jumpHostNone => 'None';
+
+  @override
+  String get jumpHostLabel => 'Connect via jump host';
+
+  @override
+  String get jumpHostSelfError => 'A server cannot be its own jump host';
+
+  @override
+  String get jumpHostConnecting => 'Connecting to jump host…';
+
+  @override
+  String get jumpHostCircularError => 'Circular jump host chain detected';
 }

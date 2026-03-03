@@ -34,6 +34,7 @@ class SshSessionEntity {
   String title;
   final Terminal terminal;
   SSHClient? client;
+  SSHClient? jumpHostClient;
   SSHSession? session;
   StreamSubscription<Uint8List>? stdoutSubscription;
   StreamSubscription<Uint8List>? stderrSubscription;
@@ -48,6 +49,7 @@ class SshSessionEntity {
     required this.title,
     required this.terminal,
     this.client,
+    this.jumpHostClient,
     this.session,
     this.stdoutSubscription,
     this.stderrSubscription,
@@ -63,5 +65,10 @@ class SshSessionEntity {
     stdoutSubscription = null;
     await stderrSubscription?.cancel();
     stderrSubscription = null;
+  }
+
+  void closeJumpHost() {
+    jumpHostClient?.close();
+    jumpHostClient = null;
   }
 }

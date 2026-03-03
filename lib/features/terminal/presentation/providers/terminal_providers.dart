@@ -5,6 +5,8 @@ import 'package:xterm/xterm.dart';
 
 import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
+import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/core/services/terminal_notification_service.dart';
@@ -110,6 +112,39 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
         );
       }
 
+      // Load jump host if configured
+      ServerEntity? jumpHost;
+      ServerCredentials? jumpHostCredentials;
+      String? jumpHostPrivateKey;
+      String? jumpHostPassphrase;
+
+      if (server.jumpHostId != null) {
+        final jumpResult = await serverUseCases.getServer(server.jumpHostId!);
+        jumpHost = jumpResult.fold(
+          onSuccess: (s) => s,
+          onFailure: (_) => null,
+        );
+        if (jumpHost != null) {
+          final jumpCredsResult = await serverUseCases.getCredentials(jumpHost.id);
+          jumpHostCredentials = jumpCredsResult.fold(
+            onSuccess: (c) => c,
+            onFailure: (_) => null,
+          );
+          if (jumpHost.sshKeyId != null && jumpHost.authMethod != AuthMethod.password) {
+            final keyResult = await sshKeyUseCases.getSshKeyPrivateKey(jumpHost.sshKeyId!);
+            jumpHostPrivateKey = keyResult.fold(
+              onSuccess: (k) => k,
+              onFailure: (_) => null,
+            );
+            final passphraseResult = await sshKeyUseCases.getSshKeyPassphrase(jumpHost.sshKeyId!);
+            jumpHostPassphrase = passphraseResult.fold(
+              onSuccess: (p) => p,
+              onFailure: (_) => null,
+            );
+          }
+        }
+      }
+
       session.status = SshConnectionStatus.authenticating;
       _notifyChange();
 
@@ -120,11 +155,16 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
         terminal: session.terminal,
         managedPrivateKey: managedPrivateKey,
         managedPassphrase: managedPassphrase,
+        jumpHost: jumpHost,
+        jumpHostCredentials: jumpHostCredentials,
+        jumpHostPrivateKey: jumpHostPrivateKey,
+        jumpHostPassphrase: jumpHostPassphrase,
       );
 
       result.fold(
         onSuccess: (connection) {
           session.client = connection.client;
+          session.jumpHostClient = connection.jumpHostClient;
           session.session = connection.session;
           session.stdoutSubscription = connection.stdoutSubscription;
           session.stderrSubscription = connection.stderrSubscription;
@@ -170,6 +210,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     final session = state[index];
     session.cancelSubscriptions();
     session.client?.close();
+    session.closeJumpHost();
 
     state = [
       for (int i = 0; i < state.length; i++)
@@ -191,6 +232,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     for (final session in state) {
       session.cancelSubscriptions();
       session.client?.close();
+      session.closeJumpHost();
     }
     state = [];
     ref.read(activeSessionIndexProvider.notifier).state = 0;
@@ -205,9 +247,11 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     // Cancel old subscriptions and close connection
     await session.cancelSubscriptions();
     session.client?.close();
+    session.closeJumpHost();
 
     // Reset state
     session.client = null;
+    session.jumpHostClient = null;
     session.session = null;
     session.status = SshConnectionStatus.connecting;
     session.errorMessage = null;

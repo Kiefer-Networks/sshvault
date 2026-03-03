@@ -55,6 +55,9 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(servers, servers.distroId);
           await m.addColumn(servers, servers.distroName);
         }
+        if (from < 5) {
+          await m.addColumn(servers, servers.jumpHostId);
+        }
       },
     );
   }

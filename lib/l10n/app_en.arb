@@ -722,5 +722,15 @@
   "keyGenPassphrase": "Passphrase",
   "keyGenPassphraseHint": "Optional — protects the private key",
 
-  "settingsDnsDefaultQuad9Mullvad": "Default (Quad9 + Mullvad)"
+  "settingsDnsDefaultQuad9Mullvad": "Default (Quad9 + Mullvad)",
+
+  "sshKeyDuplicate": "This SSH key already exists: \"{name}\"",
+  "@sshKeyDuplicate": { "placeholders": { "name": { "type": "String" } } },
+
+  "jumpHost": "Jump Host",
+  "jumpHostNone": "None",
+  "jumpHostLabel": "Connect via jump host",
+  "jumpHostSelfError": "A server cannot be its own jump host",
+  "jumpHostConnecting": "Connecting to jump host…",
+  "jumpHostCircularError": "Circular jump host chain detected"
 }

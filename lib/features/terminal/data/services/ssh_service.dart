@@ -17,6 +17,7 @@ typedef SshConnection = ({
   SSHSession session,
   StreamSubscription<Uint8List> stdoutSubscription,
   StreamSubscription<Uint8List> stderrSubscription,
+  SSHClient? jumpHostClient,
 });
 
 class SshService {
@@ -29,31 +30,83 @@ class SshService {
     required Terminal terminal,
     String? managedPrivateKey,
     String? managedPassphrase,
+    ServerEntity? jumpHost,
+    ServerCredentials? jumpHostCredentials,
+    String? jumpHostPrivateKey,
+    String? jumpHostPassphrase,
   }) async {
     _log.info(
       _tag,
       'Connecting to ${server.hostname}:${server.port} as ${server.username}',
     );
     try {
-      final socket = await SSHSocket.connect(
-        server.hostname,
-        server.port,
-        timeout: const Duration(seconds: 15),
-      );
+      SSHClient? jumpHostClient;
+      SSHClient client;
 
-      _log.debug(_tag, 'Socket connected to ${server.hostname}:${server.port}');
+      if (jumpHost != null && jumpHostCredentials != null) {
+        _log.info(
+          _tag,
+          'Using jump host ${jumpHost.hostname}:${jumpHost.port}',
+        );
 
-      final client = SSHClient(
-        socket,
-        username: server.username,
-        onPasswordRequest: _buildPasswordHandler(server, credentials),
-        identities: _buildIdentities(
-          server,
-          credentials,
-          managedPrivateKey,
-          managedPassphrase,
-        ),
-      );
+        final jumpSocket = await SSHSocket.connect(
+          jumpHost.hostname,
+          jumpHost.port,
+          timeout: const Duration(seconds: 15),
+        );
+
+        jumpHostClient = SSHClient(
+          jumpSocket,
+          username: jumpHost.username,
+          onPasswordRequest: _buildPasswordHandler(jumpHost, jumpHostCredentials),
+          identities: _buildIdentities(
+            jumpHost,
+            jumpHostCredentials,
+            jumpHostPrivateKey,
+            jumpHostPassphrase,
+          ),
+        );
+
+        await jumpHostClient.authenticated;
+        _log.info(_tag, 'Authenticated to jump host ${jumpHost.hostname}');
+
+        final forward = await jumpHostClient.forwardLocal(
+          server.hostname,
+          server.port,
+        );
+
+        client = SSHClient(
+          forward,
+          username: server.username,
+          onPasswordRequest: _buildPasswordHandler(server, credentials),
+          identities: _buildIdentities(
+            server,
+            credentials,
+            managedPrivateKey,
+            managedPassphrase,
+          ),
+        );
+      } else {
+        final socket = await SSHSocket.connect(
+          server.hostname,
+          server.port,
+          timeout: const Duration(seconds: 15),
+        );
+
+        _log.debug(_tag, 'Socket connected to ${server.hostname}:${server.port}');
+
+        client = SSHClient(
+          socket,
+          username: server.username,
+          onPasswordRequest: _buildPasswordHandler(server, credentials),
+          identities: _buildIdentities(
+            server,
+            credentials,
+            managedPrivateKey,
+            managedPassphrase,
+          ),
+        );
+      }
 
       await client.authenticated;
       _log.info(_tag, 'Authenticated to ${server.hostname}:${server.port}');
@@ -98,6 +151,7 @@ class SshService {
         session: session,
         stdoutSubscription: stdoutSub,
         stderrSubscription: stderrSub,
+        jumpHostClient: jumpHostClient,
       ));
     } on SSHAuthFailError catch (e) {
       _log.error(

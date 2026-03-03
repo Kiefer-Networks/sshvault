@@ -28,6 +28,7 @@ _ServerEntity _$ServerEntityFromJson(Map<String, dynamic> json) =>
               ?.map((e) => TagEntity.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      jumpHostId: json['jumpHostId'] as String?,
       ownerId: json['ownerId'] as String?,
       sharedWith: json['sharedWith'] as String?,
       permissions: json['permissions'] as String?,
@@ -53,6 +54,7 @@ Map<String, dynamic> _$ServerEntityToJson(_ServerEntity instance) =>
       'distroId': instance.distroId,
       'distroName': instance.distroName,
       'tags': instance.tags.map((e) => e.toJson()).toList(),
+      'jumpHostId': instance.jumpHostId,
       'ownerId': instance.ownerId,
       'sharedWith': instance.sharedWith,
       'permissions': instance.permissions,

@@ -33,6 +33,7 @@ class Servers extends Table {
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   TextColumn get distroId => text().nullable()();
   TextColumn get distroName => text().nullable()();
+  TextColumn get jumpHostId => text().nullable()();
   TextColumn get ownerId => text().nullable()();
   TextColumn get sharedWith => text().nullable()();
   TextColumn get permissions => text().nullable()();

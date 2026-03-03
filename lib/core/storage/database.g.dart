@@ -1500,6 +1500,17 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _jumpHostIdMeta = const VerificationMeta(
+    'jumpHostId',
+  );
+  @override
+  late final GeneratedColumn<String> jumpHostId = GeneratedColumn<String>(
+    'jump_host_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _ownerIdMeta = const VerificationMeta(
     'ownerId',
   );
@@ -1572,6 +1583,7 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     sortOrder,
     distroId,
     distroName,
+    jumpHostId,
     ownerId,
     sharedWith,
     permissions,
@@ -1685,6 +1697,15 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         distroName.isAcceptableOrUnknown(data['distro_name']!, _distroNameMeta),
       );
     }
+    if (data.containsKey('jump_host_id')) {
+      context.handle(
+        _jumpHostIdMeta,
+        jumpHostId.isAcceptableOrUnknown(
+          data['jump_host_id']!,
+          _jumpHostIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('owner_id')) {
       context.handle(
         _ownerIdMeta,
@@ -1791,6 +1812,10 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         DriftSqlType.string,
         data['${effectivePrefix}distro_name'],
       ),
+      jumpHostId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}jump_host_id'],
+      ),
       ownerId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}owner_id'],
@@ -1836,6 +1861,7 @@ class Server extends DataClass implements Insertable<Server> {
   final int sortOrder;
   final String? distroId;
   final String? distroName;
+  final String? jumpHostId;
   final String? ownerId;
   final String? sharedWith;
   final String? permissions;
@@ -1857,6 +1883,7 @@ class Server extends DataClass implements Insertable<Server> {
     required this.sortOrder,
     this.distroId,
     this.distroName,
+    this.jumpHostId,
     this.ownerId,
     this.sharedWith,
     this.permissions,
@@ -1888,6 +1915,9 @@ class Server extends DataClass implements Insertable<Server> {
     }
     if (!nullToAbsent || distroName != null) {
       map['distro_name'] = Variable<String>(distroName);
+    }
+    if (!nullToAbsent || jumpHostId != null) {
+      map['jump_host_id'] = Variable<String>(jumpHostId);
     }
     if (!nullToAbsent || ownerId != null) {
       map['owner_id'] = Variable<String>(ownerId);
@@ -1928,6 +1958,9 @@ class Server extends DataClass implements Insertable<Server> {
       distroName: distroName == null && nullToAbsent
           ? const Value.absent()
           : Value(distroName),
+      jumpHostId: jumpHostId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(jumpHostId),
       ownerId: ownerId == null && nullToAbsent
           ? const Value.absent()
           : Value(ownerId),
@@ -1963,6 +1996,7 @@ class Server extends DataClass implements Insertable<Server> {
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       distroId: serializer.fromJson<String?>(json['distroId']),
       distroName: serializer.fromJson<String?>(json['distroName']),
+      jumpHostId: serializer.fromJson<String?>(json['jumpHostId']),
       ownerId: serializer.fromJson<String?>(json['ownerId']),
       sharedWith: serializer.fromJson<String?>(json['sharedWith']),
       permissions: serializer.fromJson<String?>(json['permissions']),
@@ -1989,6 +2023,7 @@ class Server extends DataClass implements Insertable<Server> {
       'sortOrder': serializer.toJson<int>(sortOrder),
       'distroId': serializer.toJson<String?>(distroId),
       'distroName': serializer.toJson<String?>(distroName),
+      'jumpHostId': serializer.toJson<String?>(jumpHostId),
       'ownerId': serializer.toJson<String?>(ownerId),
       'sharedWith': serializer.toJson<String?>(sharedWith),
       'permissions': serializer.toJson<String?>(permissions),
@@ -2013,6 +2048,7 @@ class Server extends DataClass implements Insertable<Server> {
     int? sortOrder,
     Value<String?> distroId = const Value.absent(),
     Value<String?> distroName = const Value.absent(),
+    Value<String?> jumpHostId = const Value.absent(),
     Value<String?> ownerId = const Value.absent(),
     Value<String?> sharedWith = const Value.absent(),
     Value<String?> permissions = const Value.absent(),
@@ -2034,6 +2070,7 @@ class Server extends DataClass implements Insertable<Server> {
     sortOrder: sortOrder ?? this.sortOrder,
     distroId: distroId.present ? distroId.value : this.distroId,
     distroName: distroName.present ? distroName.value : this.distroName,
+    jumpHostId: jumpHostId.present ? jumpHostId.value : this.jumpHostId,
     ownerId: ownerId.present ? ownerId.value : this.ownerId,
     sharedWith: sharedWith.present ? sharedWith.value : this.sharedWith,
     permissions: permissions.present ? permissions.value : this.permissions,
@@ -2061,6 +2098,9 @@ class Server extends DataClass implements Insertable<Server> {
       distroName: data.distroName.present
           ? data.distroName.value
           : this.distroName,
+      jumpHostId: data.jumpHostId.present
+          ? data.jumpHostId.value
+          : this.jumpHostId,
       ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       sharedWith: data.sharedWith.present
           ? data.sharedWith.value
@@ -2091,6 +2131,7 @@ class Server extends DataClass implements Insertable<Server> {
           ..write('sortOrder: $sortOrder, ')
           ..write('distroId: $distroId, ')
           ..write('distroName: $distroName, ')
+          ..write('jumpHostId: $jumpHostId, ')
           ..write('ownerId: $ownerId, ')
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
@@ -2101,7 +2142,7 @@ class Server extends DataClass implements Insertable<Server> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     name,
     hostname,
@@ -2117,12 +2158,13 @@ class Server extends DataClass implements Insertable<Server> {
     sortOrder,
     distroId,
     distroName,
+    jumpHostId,
     ownerId,
     sharedWith,
     permissions,
     createdAt,
     updatedAt,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2142,6 +2184,7 @@ class Server extends DataClass implements Insertable<Server> {
           other.sortOrder == this.sortOrder &&
           other.distroId == this.distroId &&
           other.distroName == this.distroName &&
+          other.jumpHostId == this.jumpHostId &&
           other.ownerId == this.ownerId &&
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
@@ -2165,6 +2208,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
   final Value<int> sortOrder;
   final Value<String?> distroId;
   final Value<String?> distroName;
+  final Value<String?> jumpHostId;
   final Value<String?> ownerId;
   final Value<String?> sharedWith;
   final Value<String?> permissions;
@@ -2187,6 +2231,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.sortOrder = const Value.absent(),
     this.distroId = const Value.absent(),
     this.distroName = const Value.absent(),
+    this.jumpHostId = const Value.absent(),
     this.ownerId = const Value.absent(),
     this.sharedWith = const Value.absent(),
     this.permissions = const Value.absent(),
@@ -2210,6 +2255,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.sortOrder = const Value.absent(),
     this.distroId = const Value.absent(),
     this.distroName = const Value.absent(),
+    this.jumpHostId = const Value.absent(),
     this.ownerId = const Value.absent(),
     this.sharedWith = const Value.absent(),
     this.permissions = const Value.absent(),
@@ -2238,6 +2284,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Expression<int>? sortOrder,
     Expression<String>? distroId,
     Expression<String>? distroName,
+    Expression<String>? jumpHostId,
     Expression<String>? ownerId,
     Expression<String>? sharedWith,
     Expression<String>? permissions,
@@ -2261,6 +2308,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
       if (sortOrder != null) 'sort_order': sortOrder,
       if (distroId != null) 'distro_id': distroId,
       if (distroName != null) 'distro_name': distroName,
+      if (jumpHostId != null) 'jump_host_id': jumpHostId,
       if (ownerId != null) 'owner_id': ownerId,
       if (sharedWith != null) 'shared_with': sharedWith,
       if (permissions != null) 'permissions': permissions,
@@ -2286,6 +2334,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Value<int>? sortOrder,
     Value<String?>? distroId,
     Value<String?>? distroName,
+    Value<String?>? jumpHostId,
     Value<String?>? ownerId,
     Value<String?>? sharedWith,
     Value<String?>? permissions,
@@ -2309,6 +2358,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
       sortOrder: sortOrder ?? this.sortOrder,
       distroId: distroId ?? this.distroId,
       distroName: distroName ?? this.distroName,
+      jumpHostId: jumpHostId ?? this.jumpHostId,
       ownerId: ownerId ?? this.ownerId,
       sharedWith: sharedWith ?? this.sharedWith,
       permissions: permissions ?? this.permissions,
@@ -2366,6 +2416,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
     if (distroName.present) {
       map['distro_name'] = Variable<String>(distroName.value);
     }
+    if (jumpHostId.present) {
+      map['jump_host_id'] = Variable<String>(jumpHostId.value);
+    }
     if (ownerId.present) {
       map['owner_id'] = Variable<String>(ownerId.value);
     }
@@ -2405,6 +2458,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
           ..write('sortOrder: $sortOrder, ')
           ..write('distroId: $distroId, ')
           ..write('distroName: $distroName, ')
+          ..write('jumpHostId: $jumpHostId, ')
           ..write('ownerId: $ownerId, ')
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
@@ -5799,6 +5853,7 @@ typedef $$ServersTableCreateCompanionBuilder =
       Value<int> sortOrder,
       Value<String?> distroId,
       Value<String?> distroName,
+      Value<String?> jumpHostId,
       Value<String?> ownerId,
       Value<String?> sharedWith,
       Value<String?> permissions,
@@ -5823,6 +5878,7 @@ typedef $$ServersTableUpdateCompanionBuilder =
       Value<int> sortOrder,
       Value<String?> distroId,
       Value<String?> distroName,
+      Value<String?> jumpHostId,
       Value<String?> ownerId,
       Value<String?> sharedWith,
       Value<String?> permissions,
@@ -5960,6 +6016,11 @@ class $$ServersTableFilterComposer
 
   ColumnFilters<String> get distroName => $composableBuilder(
     column: $table.distroName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get jumpHostId => $composableBuilder(
+    column: $table.jumpHostId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6134,6 +6195,11 @@ class $$ServersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get jumpHostId => $composableBuilder(
+    column: $table.jumpHostId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get ownerId => $composableBuilder(
     column: $table.ownerId,
     builder: (column) => ColumnOrderings(column),
@@ -6255,6 +6321,11 @@ class $$ServersTableAnnotationComposer
 
   GeneratedColumn<String> get distroName => $composableBuilder(
     column: $table.distroName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get jumpHostId => $composableBuilder(
+    column: $table.jumpHostId,
     builder: (column) => column,
   );
 
@@ -6396,6 +6467,7 @@ class $$ServersTableTableManager
                 Value<int> sortOrder = const Value.absent(),
                 Value<String?> distroId = const Value.absent(),
                 Value<String?> distroName = const Value.absent(),
+                Value<String?> jumpHostId = const Value.absent(),
                 Value<String?> ownerId = const Value.absent(),
                 Value<String?> sharedWith = const Value.absent(),
                 Value<String?> permissions = const Value.absent(),
@@ -6418,6 +6490,7 @@ class $$ServersTableTableManager
                 sortOrder: sortOrder,
                 distroId: distroId,
                 distroName: distroName,
+                jumpHostId: jumpHostId,
                 ownerId: ownerId,
                 sharedWith: sharedWith,
                 permissions: permissions,
@@ -6442,6 +6515,7 @@ class $$ServersTableTableManager
                 Value<int> sortOrder = const Value.absent(),
                 Value<String?> distroId = const Value.absent(),
                 Value<String?> distroName = const Value.absent(),
+                Value<String?> jumpHostId = const Value.absent(),
                 Value<String?> ownerId = const Value.absent(),
                 Value<String?> sharedWith = const Value.absent(),
                 Value<String?> permissions = const Value.absent(),
@@ -6464,6 +6538,7 @@ class $$ServersTableTableManager
                 sortOrder: sortOrder,
                 distroId: distroId,
                 distroName: distroName,
+                jumpHostId: jumpHostId,
                 ownerId: ownerId,
                 sharedWith: sharedWith,
                 permissions: permissions,

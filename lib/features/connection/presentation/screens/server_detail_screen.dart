@@ -165,6 +165,8 @@ class ServerDetailScreen extends ConsumerWidget {
                         value: server.username,
                         onTap: () => _copy(context, server.username),
                       ),
+                      if (server.jumpHostId != null)
+                        _JumpHostInfoRow(jumpHostId: server.jumpHostId!),
                     ],
                   ),
                 ),
@@ -448,5 +450,31 @@ class _DistroLogo extends StatelessWidget {
       'coreos' || 'flatcar' => const Color(0xFF3D6AA2),
       _ => const Color(0xFF78909C),
     };
+  }
+}
+
+class _JumpHostInfoRow extends ConsumerWidget {
+  final String jumpHostId;
+
+  const _JumpHostInfoRow({required this.jumpHostId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final jumpHostAsync = ref.watch(serverDetailProvider(jumpHostId));
+    final l10n = AppLocalizations.of(context)!;
+
+    return jumpHostAsync.when(
+      data: (jumpHost) => InfoRow(
+        icon: Icons.route_outlined,
+        label: l10n.jumpHost,
+        value: jumpHost.name,
+      ),
+      loading: () => InfoRow(
+        icon: Icons.route_outlined,
+        label: l10n.jumpHost,
+        value: '...',
+      ),
+      error: (_, _) => const SizedBox.shrink(),
+    );
   }
 }

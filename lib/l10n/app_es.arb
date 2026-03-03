@@ -696,5 +696,15 @@
   "keyGenPassphrase": "Passphrase",
   "keyGenPassphraseHint": "Opcional — protege la clave privada",
 
-  "settingsDnsDefaultQuad9Mullvad": "Predeterminado (Quad9 + Mullvad)"
+  "settingsDnsDefaultQuad9Mullvad": "Predeterminado (Quad9 + Mullvad)",
+
+  "sshKeyDuplicate": "Esta clave SSH ya existe: \"{name}\"",
+  "@sshKeyDuplicate": { "placeholders": { "name": { "type": "String" } } },
+
+  "jumpHost": "Host de salto",
+  "jumpHostNone": "Ninguno",
+  "jumpHostLabel": "Conectar vía host de salto",
+  "jumpHostSelfError": "Un servidor no puede ser su propio host de salto",
+  "jumpHostConnecting": "Conectando al host de salto…",
+  "jumpHostCircularError": "Cadena circular de host de salto detectada"
 }
