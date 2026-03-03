@@ -3369,6 +3369,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Build'**
   String get aboutBuild;
+
+  /// No description provided for @settingsDohDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS-over-HTTPS encrypts DNS queries and prevents DNS spoofing. ShellVault checks hostnames against multiple providers to detect attacks.'**
+  String get settingsDohDescription;
+
+  /// No description provided for @settingsDnsAddServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add DNS Server'**
+  String get settingsDnsAddServer;
+
+  /// No description provided for @settingsDnsServerUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get settingsDnsServerUrl;
+
+  /// No description provided for @settingsDnsDefaultBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get settingsDnsDefaultBadge;
+
+  /// No description provided for @settingsDnsResetDefaults.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to Defaults'**
+  String get settingsDnsResetDefaults;
+
+  /// No description provided for @settingsDnsInvalidUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid HTTPS URL'**
+  String get settingsDnsInvalidUrl;
+
+  /// No description provided for @settingsDefaultAuthMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication Method'**
+  String get settingsDefaultAuthMethod;
+
+  /// No description provided for @settingsAuthPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get settingsAuthPassword;
+
+  /// No description provided for @settingsAuthKey.
+  ///
+  /// In en, this message translates to:
+  /// **'SSH Key'**
+  String get settingsAuthKey;
+
+  /// No description provided for @settingsConnectionTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Timeout'**
+  String get settingsConnectionTimeout;
+
+  /// No description provided for @settingsConnectionTimeoutValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s'**
+  String settingsConnectionTimeoutValue(int seconds);
+
+  /// No description provided for @settingsKeepaliveInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep-Alive Interval'**
+  String get settingsKeepaliveInterval;
+
+  /// No description provided for @settingsKeepaliveIntervalValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s'**
+  String settingsKeepaliveIntervalValue(int seconds);
+
+  /// No description provided for @settingsCompression.
+  ///
+  /// In en, this message translates to:
+  /// **'Compression'**
+  String get settingsCompression;
+
+  /// No description provided for @settingsCompressionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable zlib compression for SSH connections'**
+  String get settingsCompressionDescription;
+
+  /// No description provided for @settingsTerminalType.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal Type'**
+  String get settingsTerminalType;
+
+  /// No description provided for @settingsSectionConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection'**
+  String get settingsSectionConnection;
+
+  /// No description provided for @settingsClipboardAutoClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clipboard Auto-Clear'**
+  String get settingsClipboardAutoClear;
+
+  /// No description provided for @settingsClipboardAutoClearOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get settingsClipboardAutoClearOff;
+
+  /// No description provided for @settingsClipboardAutoClearValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s'**
+  String settingsClipboardAutoClearValue(int seconds);
+
+  /// No description provided for @settingsSessionTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Timeout'**
+  String get settingsSessionTimeout;
+
+  /// No description provided for @settingsSessionTimeoutOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get settingsSessionTimeoutOff;
+
+  /// No description provided for @settingsSessionTimeoutValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String settingsSessionTimeoutValue(int minutes);
+
+  /// No description provided for @settingsDuressPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Duress PIN'**
+  String get settingsDuressPin;
+
+  /// No description provided for @settingsDuressPinDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A separate PIN that wipes all data when entered'**
+  String get settingsDuressPinDescription;
+
+  /// No description provided for @settingsDuressPinSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Duress PIN is set'**
+  String get settingsDuressPinSet;
+
+  /// No description provided for @settingsDuressPinNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not configured'**
+  String get settingsDuressPinNotSet;
+
+  /// No description provided for @settingsDuressPinWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Entering this PIN will permanently delete all local data including credentials, keys, and settings. This cannot be undone.'**
+  String get settingsDuressPinWarning;
+
+  /// No description provided for @settingsKeyRotationReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Rotation Reminder'**
+  String get settingsKeyRotationReminder;
+
+  /// No description provided for @settingsKeyRotationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get settingsKeyRotationOff;
+
+  /// No description provided for @settingsKeyRotationValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String settingsKeyRotationValue(int days);
+
+  /// No description provided for @settingsFailedAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed PIN Attempts'**
+  String get settingsFailedAttempts;
+
+  /// No description provided for @settingsSectionAppLock.
+  ///
+  /// In en, this message translates to:
+  /// **'App Lock'**
+  String get settingsSectionAppLock;
+
+  /// No description provided for @settingsSectionPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get settingsSectionPrivacy;
+
+  /// No description provided for @settingsSectionReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get settingsSectionReminders;
+
+  /// No description provided for @settingsSectionStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get settingsSectionStatus;
+
+  /// No description provided for @settingsExportBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export, Import & Backup'**
+  String get settingsExportBackupSubtitle;
+
+  /// No description provided for @settingsExportJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Export as JSON'**
+  String get settingsExportJson;
+
+  /// No description provided for @settingsExportEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Encrypted'**
+  String get settingsExportEncrypted;
+
+  /// No description provided for @settingsImportFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from File'**
+  String get settingsImportFile;
+
+  /// No description provided for @settingsSectionImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get settingsSectionImport;
+
+  /// No description provided for @filterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Servers'**
+  String get filterTitle;
+
+  /// No description provided for @filterApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get filterApply;
+
+  /// No description provided for @filterClearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All'**
+  String get filterClearAll;
+
+  /// No description provided for @filterActiveCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 filter active} other{{count} filters active}}'**
+  String filterActiveCount(int count);
+
+  /// No description provided for @filterGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get filterGroup;
+
+  /// No description provided for @filterTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get filterTags;
+
+  /// No description provided for @filterStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get filterStatus;
+
+  /// No description provided for @variablePreviewResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved Preview'**
+  String get variablePreviewResolved;
+
+  /// No description provided for @variableInsert.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert'**
+  String get variableInsert;
+
+  /// No description provided for @tagServerCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 server} other{{count} servers}}'**
+  String tagServerCount(int count);
 }
 
 class _AppLocalizationsDelegate

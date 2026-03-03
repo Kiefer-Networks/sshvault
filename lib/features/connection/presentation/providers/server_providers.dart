@@ -113,6 +113,19 @@ final serverDetailProvider = FutureProvider.family<ServerEntity, String>((
   );
 });
 
+/// Server count for a specific tag.
+final serverCountByTagProvider =
+    FutureProvider.family<int, String>((ref, tagId) async {
+      final useCases = ref.watch(serverUseCasesProvider);
+      final result = await useCases.getServers(
+        filter: ServerFilter(tagIds: [tagId]),
+      );
+      return result.fold(
+        onSuccess: (servers) => servers.length,
+        onFailure: (_) => 0,
+      );
+    });
+
 final serverCredentialsProvider =
     FutureProvider.family<ServerCredentials, String>((ref, serverId) async {
       final useCases = ref.watch(serverUseCasesProvider);

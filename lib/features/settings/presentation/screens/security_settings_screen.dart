@@ -22,8 +22,9 @@ class SecuritySettingsScreen extends ConsumerWidget {
         data: (settings) => ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: [
+            // App Lock section
             const SizedBox(height: 8),
-            SectionHeader(title: l10n.settingsSectionSecurity),
+            SectionHeader(title: l10n.settingsSectionAppLock),
             SettingsGroupCard(
               children: [
                 SettingsTile(
@@ -69,6 +70,15 @@ class SecuritySettingsScreen extends ConsumerWidget {
                 ),
                 _BiometricTile(settings: settings),
                 _PinTile(settings: settings),
+                _DuressPinTile(settings: settings),
+              ],
+            ),
+
+            // Privacy section
+            const SizedBox(height: 16),
+            SectionHeader(title: l10n.settingsSectionPrivacy),
+            SettingsGroupCard(
+              children: [
                 if (ScreenProtectionService.isSupported)
                   SettingsSwitchTile(
                     icon: Icons.screenshot_monitor_outlined,
@@ -82,6 +92,134 @@ class SecuritySettingsScreen extends ConsumerWidget {
                           .setPreventScreenshots(v);
                     },
                   ),
+                SettingsTile(
+                  icon: Icons.content_paste_off_outlined,
+                  iconColor: Colors.purple,
+                  title: l10n.settingsClipboardAutoClear,
+                  trailing: DropdownButton<int>(
+                    value: settings.clipboardAutoClearSecs,
+                    underline: const SizedBox.shrink(),
+                    items: [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text(l10n.settingsClipboardAutoClearOff),
+                      ),
+                      DropdownMenuItem(
+                        value: 15,
+                        child: Text(l10n.settingsClipboardAutoClearValue(15)),
+                      ),
+                      DropdownMenuItem(
+                        value: 30,
+                        child: Text(l10n.settingsClipboardAutoClearValue(30)),
+                      ),
+                      DropdownMenuItem(
+                        value: 60,
+                        child: Text(l10n.settingsClipboardAutoClearValue(60)),
+                      ),
+                      DropdownMenuItem(
+                        value: 120,
+                        child: Text(l10n.settingsClipboardAutoClearValue(120)),
+                      ),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setClipboardAutoClear(v);
+                      }
+                    },
+                  ),
+                ),
+                SettingsTile(
+                  icon: Icons.timer_off_outlined,
+                  iconColor: Colors.orange,
+                  title: l10n.settingsSessionTimeout,
+                  trailing: DropdownButton<int>(
+                    value: settings.sessionTimeoutMins,
+                    underline: const SizedBox.shrink(),
+                    items: [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text(l10n.settingsSessionTimeoutOff),
+                      ),
+                      DropdownMenuItem(
+                        value: 15,
+                        child: Text(l10n.settingsSessionTimeoutValue(15)),
+                      ),
+                      DropdownMenuItem(
+                        value: 30,
+                        child: Text(l10n.settingsSessionTimeoutValue(30)),
+                      ),
+                      DropdownMenuItem(
+                        value: 60,
+                        child: Text(l10n.settingsSessionTimeoutValue(60)),
+                      ),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setSessionTimeout(v);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            // Reminders section
+            const SizedBox(height: 16),
+            SectionHeader(title: l10n.settingsSectionReminders),
+            SettingsGroupCard(
+              children: [
+                SettingsTile(
+                  icon: Icons.autorenew,
+                  iconColor: Colors.cyan,
+                  title: l10n.settingsKeyRotationReminder,
+                  trailing: DropdownButton<int>(
+                    value: settings.keyRotationReminderDays,
+                    underline: const SizedBox.shrink(),
+                    items: [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text(l10n.settingsKeyRotationOff),
+                      ),
+                      DropdownMenuItem(
+                        value: 30,
+                        child: Text(l10n.settingsKeyRotationValue(30)),
+                      ),
+                      DropdownMenuItem(
+                        value: 60,
+                        child: Text(l10n.settingsKeyRotationValue(60)),
+                      ),
+                      DropdownMenuItem(
+                        value: 90,
+                        child: Text(l10n.settingsKeyRotationValue(90)),
+                      ),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setKeyRotationReminder(v);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            // Status section
+            const SizedBox(height: 16),
+            SectionHeader(title: l10n.settingsSectionStatus),
+            SettingsGroupCard(
+              children: [
+                SettingsTile(
+                  icon: Icons.warning_amber_outlined,
+                  iconColor: Colors.grey,
+                  title: l10n.settingsFailedAttempts,
+                  subtitleText: settings.failedPinAttempts.toString(),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -197,6 +335,73 @@ class _PinTile extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(settingsProvider.notifier).clearPinCode();
+    }
+  }
+}
+
+class _DuressPinTile extends ConsumerWidget {
+  final dynamic settings;
+
+  const _DuressPinTile({required this.settings});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return SettingsTile(
+      icon: Icons.dangerous_outlined,
+      iconColor: Colors.red.shade800,
+      title: l10n.settingsDuressPin,
+      subtitleText: settings.hasDuressPin
+          ? l10n.settingsDuressPinSet
+          : l10n.settingsDuressPinNotSet,
+      trailing: settings.hasDuressPin
+          ? TextButton(
+              onPressed: () => _removeDuressPin(context, ref, l10n),
+              child: Text(l10n.settingsPinRemove),
+            )
+          : null,
+      onTap: () => _setDuressPin(context, ref, l10n),
+    );
+  }
+
+  Future<void> _setDuressPin(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    // Show warning first
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.settingsDuressPin,
+      message: l10n.settingsDuressPinWarning,
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.save,
+      isDestructive: true,
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final pin = await PinDialog.showSetPin(context);
+    if (pin != null) {
+      await ref.read(settingsProvider.notifier).setDuressPin(pin);
+    }
+  }
+
+  Future<void> _removeDuressPin(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.settingsDuressPin,
+      message: l10n.settingsPinRemoveWarning,
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.settingsPinRemove,
+      isDestructive: true,
+    );
+    if (confirmed == true) {
+      await ref.read(settingsProvider.notifier).clearDuressPin();
     }
   }
 }

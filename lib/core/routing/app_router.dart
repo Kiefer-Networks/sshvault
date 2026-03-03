@@ -7,7 +7,6 @@ import 'package:shellvault/features/auth/presentation/screens/forgot_password_sc
 import 'package:shellvault/features/auth/presentation/screens/login_screen.dart';
 import 'package:shellvault/features/auth/presentation/screens/register_screen.dart';
 import 'package:shellvault/features/auth/presentation/screens/sync_password_screen.dart';
-import 'package:shellvault/features/connection/presentation/screens/export_import_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/group_list_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/server_detail_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/server_form_screen.dart';
@@ -105,17 +104,7 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 6 — Export / Import
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/export-import',
-                builder: (context, state) => const ExportImportScreen(),
-              ),
-            ],
-          ),
-
-          // 7 — Terminal
+          // 6 — Terminal
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -260,6 +249,11 @@ abstract final class AppRouter {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/sync-settings',
         redirect: (_, _) => '/settings/account',
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/export-import',
+        redirect: (_, _) => '/settings/export',
       ),
 
       GoRoute(

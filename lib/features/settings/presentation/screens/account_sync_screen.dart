@@ -134,6 +134,73 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             ),
           ],
 
+          // Login Card for unauthenticated users
+          if (!isAuthenticated) ...[
+            SectionCard(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.cloud_sync_outlined,
+                    size: 48,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.authWhyLogin,
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Text(
+                            l10n.authPricingInfo(
+                              isNativeIapPlatform
+                                  ? '\u20AC12.99'
+                                  : '\u20AC9.99',
+                            ),
+                            style: theme.textTheme.titleSmall,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            l10n.authPricingHint,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: () => context.push('/login'),
+                      icon: const Icon(Icons.login),
+                      label: Text(l10n.authLogin),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push('/register'),
+                      icon: const Icon(Icons.person_add_outlined),
+                      label: Text(l10n.authRegister),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
           // User Card
           if (isAuthenticated) ...[
             SectionHeader(title: l10n.accountTitle),
@@ -550,21 +617,23 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   Future<void> _changePassword(AppLocalizations l10n) async {
     final oldPw = TextEditingController();
     final newPw = TextEditingController();
-    final formContent = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          controller: oldPw,
-          obscureText: true,
-          decoration: InputDecoration(labelText: l10n.accountOldPassword),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: newPw,
-          obscureText: true,
-          decoration: InputDecoration(labelText: l10n.accountNewPassword),
-        ),
-      ],
+    final formContent = SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: oldPw,
+            obscureText: true,
+            decoration: InputDecoration(labelText: l10n.accountOldPassword),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: newPw,
+            obscureText: true,
+            decoration: InputDecoration(labelText: l10n.accountNewPassword),
+          ),
+        ],
+      ),
     );
     final result = await showAdaptiveFormDialog<bool>(
       context,
@@ -627,38 +696,42 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
     final oldPw = TextEditingController();
     final newPw = TextEditingController();
     final confirmPw = TextEditingController();
-    final encFormContent = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          l10n.changeEncryptionWarning,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.error,
+    final encFormContent = SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            l10n.changeEncryptionWarning,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.error,
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: oldPw,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: l10n.changeEncryptionOldPassword,
+          const SizedBox(height: 16),
+          TextField(
+            controller: oldPw,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: l10n.changeEncryptionOldPassword,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: newPw,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: l10n.changeEncryptionNewPassword,
+          const SizedBox(height: 8),
+          TextField(
+            controller: newPw,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: l10n.changeEncryptionNewPassword,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: confirmPw,
-          obscureText: true,
-          decoration: InputDecoration(labelText: l10n.authConfirmPasswordLabel),
-        ),
-      ],
+          const SizedBox(height: 8),
+          TextField(
+            controller: confirmPw,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: l10n.authConfirmPasswordLabel,
+            ),
+          ),
+        ],
+      ),
     );
     final result = await showAdaptiveFormDialog<bool>(
       context,

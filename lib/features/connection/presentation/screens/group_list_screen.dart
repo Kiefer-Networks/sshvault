@@ -7,7 +7,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
-import 'package:shellvault/core/widgets/settings/circle_icon.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/error_state.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
@@ -190,6 +189,7 @@ class _GroupTile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final expanded = ref.watch(_groupTileExpandedProvider(group.id));
     final connectingAll = ref.watch(_groupTileConnectingProvider(group.id));
+    final groupColor = Color(group.color);
 
     return Column(
       children: [
@@ -215,69 +215,91 @@ class _GroupTile extends ConsumerWidget {
               ),
             ],
           ),
-          child: ListTile(
-            contentPadding: EdgeInsets.only(
-              left: 16.0 + depth * 24.0,
-              right: 16.0,
-            ),
-            leading: CircleIcon(
-              icon: IconConstants.getIcon(group.iconName),
-              color: Color(group.color),
-              size: 44,
-            ),
-            title: Text(group.name),
-            subtitle: Text(
-              l10n.groupServerCount(group.serverCount),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(
-                  AppConstants.alpha153,
+          child: Container(
+            decoration: depth > 0
+                ? BoxDecoration(
+                    border: Border(
+                      left: BorderSide(color: groupColor, width: 3),
+                    ),
+                  )
+                : null,
+            child: ListTile(
+              contentPadding: EdgeInsets.only(
+                left: 16.0 + depth * 24.0,
+                right: 16.0,
+              ),
+              leading: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: groupColor.withAlpha(30),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  IconConstants.getIcon(group.iconName),
+                  color: groupColor,
+                  size: 22,
                 ),
               ),
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (group.serverCount > 0)
-                  connectingAll
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.play_circle_outline),
-                          onPressed: () => _connectAllServers(context, ref),
-                          tooltip: l10n.groupConnectAll,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                if (group.serverCount > 0)
-                  IconButton(
-                    icon: Icon(
-                      expanded ? Icons.expand_less : Icons.expand_more,
+              title: Text(group.name),
+              subtitle: Text(
+                l10n.groupServerCount(group.serverCount),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (group.serverCount > 0)
+                    connectingAll
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : OutlinedButton.icon(
+                            onPressed: () => _connectAllServers(context, ref),
+                            icon: const Icon(Icons.play_arrow, size: 18),
+                            label: Text(l10n.groupConnectAll),
+                            style: OutlinedButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                            ),
+                          ),
+                  if (group.serverCount > 0)
+                    IconButton(
+                      icon: Icon(
+                        expanded ? Icons.expand_less : Icons.expand_more,
+                      ),
+                      onPressed: () =>
+                          ref
+                                  .read(
+                                    _groupTileExpandedProvider(
+                                      group.id,
+                                    ).notifier,
+                                  )
+                                  .state =
+                              !expanded,
+                      tooltip: expanded
+                          ? l10n.groupCollapse
+                          : l10n.groupShowHosts,
+                      visualDensity: VisualDensity.compact,
                     ),
-                    onPressed: () =>
+                ],
+              ),
+              onTap: group.serverCount > 0
+                  ? () =>
                         ref
                                 .read(
                                   _groupTileExpandedProvider(group.id).notifier,
                                 )
                                 .state =
-                            !expanded,
-                    tooltip: expanded
-                        ? l10n.groupCollapse
-                        : l10n.groupShowHosts,
-                    visualDensity: VisualDensity.compact,
-                  ),
-              ],
+                            !expanded
+                  : null,
             ),
-            onTap: group.serverCount > 0
-                ? () =>
-                      ref
-                              .read(
-                                _groupTileExpandedProvider(group.id).notifier,
-                              )
-                              .state =
-                          !expanded
-                : null,
           ),
         ),
         if (expanded) _GroupServerList(groupId: group.id, depth: depth),
@@ -375,24 +397,13 @@ class _ServerSubTile extends StatelessWidget {
         ),
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.info_outlined, size: 18),
-            onPressed: onDetail,
-            tooltip: AppLocalizations.of(context)!.serverDetails,
-            visualDensity: VisualDensity.compact,
-          ),
-          IconButton(
-            icon: const Icon(Icons.terminal, size: 18),
-            onPressed: onTap,
-            tooltip: AppLocalizations.of(context)!.serverConnect,
-            visualDensity: VisualDensity.compact,
-          ),
-        ],
+      trailing: IconButton(
+        icon: const Icon(Icons.terminal, size: 18),
+        onPressed: onTap,
+        tooltip: AppLocalizations.of(context)!.serverConnect,
+        visualDensity: VisualDensity.compact,
       ),
-      onTap: onTap,
+      onTap: onDetail,
     );
   }
 }

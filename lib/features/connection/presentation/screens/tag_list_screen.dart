@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/settings/circle_icon.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/core/widgets/error_state.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
+import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/screens/tag_form_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -93,7 +93,7 @@ class TagListScreen extends ConsumerWidget {
   }
 }
 
-class _TagTile extends StatelessWidget {
+class _TagTile extends ConsumerWidget {
   final TagEntity tag;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -105,9 +105,11 @@ class _TagTile extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final tagColor = Color(tag.color);
+    final serverCountAsync = ref.watch(serverCountByTagProvider(tag.id));
 
     return Slidable(
       endActionPane: ActionPane(
@@ -131,43 +133,61 @@ class _TagTile extends StatelessWidget {
           ),
         ],
       ),
-      child: ListTile(
-        leading: CircleIcon(
-          icon: Icons.label,
-          color: Color(tag.color),
-          size: 44,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: tagColor, width: 4)),
         ),
-        title: Text(tag.name),
-        subtitle: Text(
-          _colorHex(tag.color),
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha153),
-            fontFamily: AppConstants.monospaceFontFamily,
+        child: ListTile(
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: tagColor.withAlpha(30),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(Icons.label, color: tagColor, size: 22),
           ),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: onEdit,
-              tooltip: l10n.edit,
-              visualDensity: VisualDensity.compact,
+          title: Text(tag.name),
+          subtitle: serverCountAsync.when(
+            data: (count) => Text(
+              l10n.tagServerCount(count),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
-            IconButton(
-              icon: Icon(Icons.delete, color: theme.colorScheme.error),
-              onPressed: onDelete,
-              tooltip: l10n.delete,
-              visualDensity: VisualDensity.compact,
-            ),
-          ],
+            loading: () => null,
+            error: (_, _) => null,
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                onPressed: onEdit,
+                tooltip: l10n.edit,
+                visualDensity: VisualDensity.compact,
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.delete_outline,
+                  size: 20,
+                  color: theme.colorScheme.error,
+                ),
+                onPressed: onDelete,
+                tooltip: l10n.delete,
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
+          ),
+          onTap: () {
+            // Navigate to hosts filtered by this tag
+            ref.read(serverFilterProvider.notifier).state = ServerFilter(
+              tagIds: [tag.id],
+            );
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
         ),
-        onTap: onEdit,
       ),
     );
-  }
-
-  String _colorHex(int color) {
-    return '#${(color & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
   }
 }

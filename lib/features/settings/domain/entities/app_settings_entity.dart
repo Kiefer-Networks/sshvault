@@ -20,6 +20,18 @@ class AppSettingsEntity {
   final int localVaultVersion;
   final bool preventScreenshots;
   final String dnsServers;
+  // SSH defaults
+  final String defaultAuthMethod;
+  final int connectionTimeoutSecs;
+  final int keepaliveIntervalSecs;
+  final bool sshCompression;
+  final String defaultTerminalType;
+  // Security
+  final int clipboardAutoClearSecs;
+  final int sessionTimeoutMins;
+  final String duressPinHash;
+  final String duressPinSalt;
+  final int keyRotationReminderDays;
 
   const AppSettingsEntity({
     this.themeMode = ThemeMode.system,
@@ -40,9 +52,20 @@ class AppSettingsEntity {
     this.localVaultVersion = 0,
     this.preventScreenshots = false,
     this.dnsServers = '',
+    this.defaultAuthMethod = 'password',
+    this.connectionTimeoutSecs = 30,
+    this.keepaliveIntervalSecs = 15,
+    this.sshCompression = false,
+    this.defaultTerminalType = 'xterm-256color',
+    this.clipboardAutoClearSecs = 0,
+    this.sessionTimeoutMins = 0,
+    this.duressPinHash = '',
+    this.duressPinSalt = '',
+    this.keyRotationReminderDays = 0,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
+  bool get hasDuressPin => duressPinHash.isNotEmpty;
   bool get hasAnyLock => biometricUnlock || hasPin;
 
   bool get isLockedOut {
@@ -78,6 +101,16 @@ class AppSettingsEntity {
     int? localVaultVersion,
     bool? preventScreenshots,
     String? dnsServers,
+    String? defaultAuthMethod,
+    int? connectionTimeoutSecs,
+    int? keepaliveIntervalSecs,
+    bool? sshCompression,
+    String? defaultTerminalType,
+    int? clipboardAutoClearSecs,
+    int? sessionTimeoutMins,
+    String? duressPinHash,
+    String? duressPinSalt,
+    int? keyRotationReminderDays,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -100,6 +133,20 @@ class AppSettingsEntity {
       localVaultVersion: localVaultVersion ?? this.localVaultVersion,
       preventScreenshots: preventScreenshots ?? this.preventScreenshots,
       dnsServers: dnsServers ?? this.dnsServers,
+      defaultAuthMethod: defaultAuthMethod ?? this.defaultAuthMethod,
+      connectionTimeoutSecs:
+          connectionTimeoutSecs ?? this.connectionTimeoutSecs,
+      keepaliveIntervalSecs:
+          keepaliveIntervalSecs ?? this.keepaliveIntervalSecs,
+      sshCompression: sshCompression ?? this.sshCompression,
+      defaultTerminalType: defaultTerminalType ?? this.defaultTerminalType,
+      clipboardAutoClearSecs:
+          clipboardAutoClearSecs ?? this.clipboardAutoClearSecs,
+      sessionTimeoutMins: sessionTimeoutMins ?? this.sessionTimeoutMins,
+      duressPinHash: duressPinHash ?? this.duressPinHash,
+      duressPinSalt: duressPinSalt ?? this.duressPinSalt,
+      keyRotationReminderDays:
+          keyRotationReminderDays ?? this.keyRotationReminderDays,
     );
   }
 

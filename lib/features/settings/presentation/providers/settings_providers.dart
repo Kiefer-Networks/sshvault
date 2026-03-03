@@ -37,6 +37,16 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyLocalVaultVersion = 'local_vault_version';
   static const _keyPreventScreenshots = 'prevent_screenshots';
   static const _keyDnsServers = 'dns_servers';
+  static const _keyDefaultAuthMethod = 'default_auth_method';
+  static const _keyConnectionTimeout = 'connection_timeout_secs';
+  static const _keyKeepaliveInterval = 'keepalive_interval_secs';
+  static const _keySshCompression = 'ssh_compression';
+  static const _keyDefaultTerminalType = 'default_terminal_type';
+  static const _keyClipboardAutoClear = 'clipboard_auto_clear_secs';
+  static const _keySessionTimeout = 'session_timeout_mins';
+  static const _keyDuressPinHash = 'duress_pin_hash';
+  static const _keyDuressPinSalt = 'duress_pin_salt';
+  static const _keyKeyRotationReminder = 'key_rotation_reminder_days';
 
   @override
   Future<AppSettingsEntity> build() async {
@@ -91,6 +101,20 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       localVaultVersion: int.tryParse(all[_keyLocalVaultVersion] ?? '') ?? 0,
       preventScreenshots: all[_keyPreventScreenshots] == 'true',
       dnsServers: all[_keyDnsServers] ?? '',
+      defaultAuthMethod: all[_keyDefaultAuthMethod] ?? 'password',
+      connectionTimeoutSecs:
+          int.tryParse(all[_keyConnectionTimeout] ?? '') ?? 30,
+      keepaliveIntervalSecs:
+          int.tryParse(all[_keyKeepaliveInterval] ?? '') ?? 15,
+      sshCompression: all[_keySshCompression] == 'true',
+      defaultTerminalType: all[_keyDefaultTerminalType] ?? 'xterm-256color',
+      clipboardAutoClearSecs:
+          int.tryParse(all[_keyClipboardAutoClear] ?? '') ?? 0,
+      sessionTimeoutMins: int.tryParse(all[_keySessionTimeout] ?? '') ?? 0,
+      duressPinHash: all[_keyDuressPinHash] ?? '',
+      duressPinSalt: all[_keyDuressPinSalt] ?? '',
+      keyRotationReminderDays:
+          int.tryParse(all[_keyKeyRotationReminder] ?? '') ?? 0,
     );
   }
 
@@ -315,6 +339,88 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     _log.info(_tag, 'DNS servers changed');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyDnsServers, servers);
+    ref.invalidateSelf();
+  }
+
+  Future<void> setDefaultAuthMethod(String method) async {
+    _log.info(_tag, 'Default auth method changed to $method');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyDefaultAuthMethod, method);
+    ref.invalidateSelf();
+  }
+
+  Future<void> setConnectionTimeout(int seconds) async {
+    _log.info(_tag, 'Connection timeout changed to ${seconds}s');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyConnectionTimeout, seconds.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setKeepaliveInterval(int seconds) async {
+    _log.info(_tag, 'Keepalive interval changed to ${seconds}s');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyKeepaliveInterval, seconds.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setSshCompression(bool enabled) async {
+    _log.info(_tag, 'SSH compression ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keySshCompression, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setDefaultTerminalType(String type) async {
+    _log.info(_tag, 'Default terminal type changed to $type');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyDefaultTerminalType, type);
+    ref.invalidateSelf();
+  }
+
+  Future<void> setClipboardAutoClear(int seconds) async {
+    _log.info(_tag, 'Clipboard auto-clear changed to ${seconds}s');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyClipboardAutoClear, seconds.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setSessionTimeout(int minutes) async {
+    _log.info(_tag, 'Session timeout changed to ${minutes}m');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keySessionTimeout, minutes.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setDuressPin(String pin) async {
+    _log.info(_tag, 'Duress PIN set');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    final hashResult = await _hashPin(pin);
+    await dao.setValue(_keyDuressPinHash, hashResult.hash);
+    await dao.setValue(_keyDuressPinSalt, hashResult.salt);
+    ref.invalidateSelf();
+  }
+
+  Future<void> clearDuressPin() async {
+    _log.info(_tag, 'Duress PIN removed');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyDuressPinHash, '');
+    await dao.setValue(_keyDuressPinSalt, '');
+    ref.invalidateSelf();
+  }
+
+  Future<bool> verifyDuressPin(String pin) async {
+    final current = state.value;
+    if (current == null || !current.hasDuressPin) return false;
+
+    final salt = base64Decode(current.duressPinSalt);
+    final result = await _hashPin(pin, existingSalt: salt);
+    return result.hash == current.duressPinHash;
+  }
+
+  Future<void> setKeyRotationReminder(int days) async {
+    _log.info(_tag, 'Key rotation reminder changed to ${days}d');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyKeyRotationReminder, days.toString());
     ref.invalidateSelf();
   }
 }

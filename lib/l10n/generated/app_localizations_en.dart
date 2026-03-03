@@ -1821,4 +1821,187 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutBuild => 'Build';
+
+  @override
+  String get settingsDohDescription =>
+      'DNS-over-HTTPS encrypts DNS queries and prevents DNS spoofing. ShellVault checks hostnames against multiple providers to detect attacks.';
+
+  @override
+  String get settingsDnsAddServer => 'Add DNS Server';
+
+  @override
+  String get settingsDnsServerUrl => 'Server URL';
+
+  @override
+  String get settingsDnsDefaultBadge => 'Default';
+
+  @override
+  String get settingsDnsResetDefaults => 'Reset to Defaults';
+
+  @override
+  String get settingsDnsInvalidUrl => 'Please enter a valid HTTPS URL';
+
+  @override
+  String get settingsDefaultAuthMethod => 'Authentication Method';
+
+  @override
+  String get settingsAuthPassword => 'Password';
+
+  @override
+  String get settingsAuthKey => 'SSH Key';
+
+  @override
+  String get settingsConnectionTimeout => 'Connection Timeout';
+
+  @override
+  String settingsConnectionTimeoutValue(int seconds) {
+    return '${seconds}s';
+  }
+
+  @override
+  String get settingsKeepaliveInterval => 'Keep-Alive Interval';
+
+  @override
+  String settingsKeepaliveIntervalValue(int seconds) {
+    return '${seconds}s';
+  }
+
+  @override
+  String get settingsCompression => 'Compression';
+
+  @override
+  String get settingsCompressionDescription =>
+      'Enable zlib compression for SSH connections';
+
+  @override
+  String get settingsTerminalType => 'Terminal Type';
+
+  @override
+  String get settingsSectionConnection => 'Connection';
+
+  @override
+  String get settingsClipboardAutoClear => 'Clipboard Auto-Clear';
+
+  @override
+  String get settingsClipboardAutoClearOff => 'Off';
+
+  @override
+  String settingsClipboardAutoClearValue(int seconds) {
+    return '${seconds}s';
+  }
+
+  @override
+  String get settingsSessionTimeout => 'Session Timeout';
+
+  @override
+  String get settingsSessionTimeoutOff => 'Off';
+
+  @override
+  String settingsSessionTimeoutValue(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get settingsDuressPin => 'Duress PIN';
+
+  @override
+  String get settingsDuressPinDescription =>
+      'A separate PIN that wipes all data when entered';
+
+  @override
+  String get settingsDuressPinSet => 'Duress PIN is set';
+
+  @override
+  String get settingsDuressPinNotSet => 'Not configured';
+
+  @override
+  String get settingsDuressPinWarning =>
+      'Entering this PIN will permanently delete all local data including credentials, keys, and settings. This cannot be undone.';
+
+  @override
+  String get settingsKeyRotationReminder => 'Key Rotation Reminder';
+
+  @override
+  String get settingsKeyRotationOff => 'Off';
+
+  @override
+  String settingsKeyRotationValue(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get settingsFailedAttempts => 'Failed PIN Attempts';
+
+  @override
+  String get settingsSectionAppLock => 'App Lock';
+
+  @override
+  String get settingsSectionPrivacy => 'Privacy';
+
+  @override
+  String get settingsSectionReminders => 'Reminders';
+
+  @override
+  String get settingsSectionStatus => 'Status';
+
+  @override
+  String get settingsExportBackupSubtitle => 'Export, Import & Backup';
+
+  @override
+  String get settingsExportJson => 'Export as JSON';
+
+  @override
+  String get settingsExportEncrypted => 'Export Encrypted';
+
+  @override
+  String get settingsImportFile => 'Import from File';
+
+  @override
+  String get settingsSectionImport => 'Import';
+
+  @override
+  String get filterTitle => 'Filter Servers';
+
+  @override
+  String get filterApply => 'Apply Filters';
+
+  @override
+  String get filterClearAll => 'Clear All';
+
+  @override
+  String filterActiveCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count filters active',
+      one: '1 filter active',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filterGroup => 'Group';
+
+  @override
+  String get filterTags => 'Tags';
+
+  @override
+  String get filterStatus => 'Status';
+
+  @override
+  String get variablePreviewResolved => 'Resolved Preview';
+
+  @override
+  String get variableInsert => 'Insert';
+
+  @override
+  String tagServerCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count servers',
+      one: '1 server',
+    );
+    return '$_temp0';
+  }
 }

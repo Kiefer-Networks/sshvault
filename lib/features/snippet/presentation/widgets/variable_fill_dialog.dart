@@ -112,13 +112,31 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
                     ),
                   ),
                 ),
-                child: Text(
-                  l10n.variableFillPreview,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withAlpha(
-                      AppConstants.alpha102,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.variablePreviewResolved,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withAlpha(
+                          AppConstants.alpha102,
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    ListenableBuilder(
+                      listenable: Listenable.merge(
+                        _controllers.values.toList(),
+                      ),
+                      builder: (context, _) => SelectableText(
+                        _resolveContent(),
+                        style: const TextStyle(
+                          fontFamily: AppConstants.monospaceFontFamily,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -132,8 +150,8 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
         ),
         FilledButton.icon(
           onPressed: _copyAndClose,
-          icon: const Icon(Icons.copy, size: 18),
-          label: Text(l10n.copy),
+          icon: Icon(widget.returnContent ? Icons.input : Icons.copy, size: 18),
+          label: Text(widget.returnContent ? l10n.variableInsert : l10n.copy),
         ),
       ],
     );

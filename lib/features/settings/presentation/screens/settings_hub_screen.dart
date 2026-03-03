@@ -122,10 +122,10 @@ class _SettingsHubScreenState extends ConsumerState<SettingsHubScreen> {
                   onTap: () => context.push('/settings/network'),
                 ),
                 SettingsCategoryTile(
-                  icon: Icons.enhanced_encryption_outlined,
+                  icon: Icons.import_export,
                   iconColor: Colors.deepOrange,
                   title: l10n.settingsSectionExport,
-                  subtitle: l10n.settingsExportSubtitle,
+                  subtitle: l10n.settingsExportBackupSubtitle,
                   onTap: () => context.push('/settings/export'),
                 ),
                 SettingsCategoryTile(

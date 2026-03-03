@@ -20,8 +20,9 @@ class SshSettingsScreen extends ConsumerWidget {
         data: (settings) => ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: [
+            // Connection section
             const SizedBox(height: 8),
-            SectionHeader(title: l10n.settingsSectionSshDefaults),
+            SectionHeader(title: l10n.settingsSectionConnection),
             SettingsGroupCard(
               children: [
                 SettingsTile(
@@ -44,6 +45,102 @@ class SshSettingsScreen extends ConsumerWidget {
                     settings.defaultUsername,
                   ),
                 ),
+                SettingsTile(
+                  icon: Icons.key_outlined,
+                  iconColor: Colors.green,
+                  title: l10n.settingsDefaultAuthMethod,
+                  trailing: DropdownButton<String>(
+                    value: settings.defaultAuthMethod,
+                    underline: const SizedBox.shrink(),
+                    items: [
+                      DropdownMenuItem(
+                        value: 'password',
+                        child: Text(l10n.settingsAuthPassword),
+                      ),
+                      DropdownMenuItem(
+                        value: 'key',
+                        child: Text(l10n.settingsAuthKey),
+                      ),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setDefaultAuthMethod(v);
+                      }
+                    },
+                  ),
+                ),
+                SettingsTile(
+                  icon: Icons.timer_outlined,
+                  iconColor: Colors.red,
+                  title: l10n.settingsConnectionTimeout,
+                  subtitleText: l10n.settingsConnectionTimeoutValue(
+                    settings.connectionTimeoutSecs,
+                  ),
+                  onTap: () => _editTimeout(
+                    context,
+                    ref,
+                    l10n,
+                    settings.connectionTimeoutSecs,
+                  ),
+                ),
+                SettingsTile(
+                  icon: Icons.favorite_border,
+                  iconColor: Colors.pink,
+                  title: l10n.settingsKeepaliveInterval,
+                  subtitleText: l10n.settingsKeepaliveIntervalValue(
+                    settings.keepaliveIntervalSecs,
+                  ),
+                  onTap: () => _editKeepalive(
+                    context,
+                    ref,
+                    l10n,
+                    settings.keepaliveIntervalSecs,
+                  ),
+                ),
+              ],
+            ),
+
+            // Terminal section
+            const SizedBox(height: 16),
+            SectionHeader(title: l10n.settingsSectionTerminal),
+            SettingsGroupCard(
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.compress,
+                  iconColor: Colors.teal,
+                  title: l10n.settingsCompression,
+                  subtitleText: l10n.settingsCompressionDescription,
+                  value: settings.sshCompression,
+                  onChanged: (v) {
+                    ref.read(settingsProvider.notifier).setSshCompression(v);
+                  },
+                ),
+                SettingsTile(
+                  icon: Icons.terminal,
+                  iconColor: Colors.deepPurple,
+                  title: l10n.settingsTerminalType,
+                  trailing: DropdownButton<String>(
+                    value: settings.defaultTerminalType,
+                    underline: const SizedBox.shrink(),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'xterm-256color',
+                        child: Text('xterm-256color'),
+                      ),
+                      DropdownMenuItem(value: 'xterm', child: Text('xterm')),
+                      DropdownMenuItem(value: 'vt100', child: Text('vt100')),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setDefaultTerminalType(v);
+                      }
+                    },
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -63,45 +160,50 @@ class SshSettingsScreen extends ConsumerWidget {
     int currentPort,
   ) async {
     final controller = TextEditingController(text: currentPort.toString());
-    final result = await showAdaptiveFormDialog<String>(
-      context,
-      title: l10n.settingsDefaultPortDialog,
-      content: TextField(
-        controller: controller,
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(
-          labelText: l10n.settingsPortLabel,
-          hintText: l10n.settingsPortHint,
+    try {
+      final result = await showAdaptiveFormDialog<String>(
+        context,
+        title: l10n.settingsDefaultPortDialog,
+        content: SingleChildScrollView(
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: l10n.settingsPortLabel,
+              hintText: l10n.settingsPortHint,
+            ),
+          ),
         ),
-      ),
-      materialActions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancel),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, controller.text),
-          child: Text(l10n.save),
-        ),
-      ],
-      cupertinoActions: [
-        CupertinoDialogAction(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancel),
-        ),
-        CupertinoDialogAction(
-          isDefaultAction: true,
-          onPressed: () => Navigator.pop(context, controller.text),
-          child: Text(l10n.save),
-        ),
-      ],
-    );
-    controller.dispose();
-    if (result != null) {
-      final port = int.tryParse(result);
-      if (port != null && port > 0 && port <= 65535) {
-        ref.read(settingsProvider.notifier).setDefaultSshPort(port);
+        materialActions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.save),
+          ),
+        ],
+        cupertinoActions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.save),
+          ),
+        ],
+      );
+      if (result != null) {
+        final port = int.tryParse(result);
+        if (port != null && port > 0 && port <= 65535) {
+          ref.read(settingsProvider.notifier).setDefaultSshPort(port);
+        }
       }
+    } finally {
+      WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
     }
   }
 
@@ -112,42 +214,155 @@ class SshSettingsScreen extends ConsumerWidget {
     String currentUsername,
   ) async {
     final controller = TextEditingController(text: currentUsername);
-    final result = await showAdaptiveFormDialog<String>(
-      context,
-      title: l10n.settingsDefaultUsernameDialog,
-      content: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: l10n.settingsUsernameLabel,
-          hintText: l10n.settingsUsernameHint,
+    try {
+      final result = await showAdaptiveFormDialog<String>(
+        context,
+        title: l10n.settingsDefaultUsernameDialog,
+        content: SingleChildScrollView(
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: l10n.settingsUsernameLabel,
+              hintText: l10n.settingsUsernameHint,
+            ),
+            keyboardType: TextInputType.text,
+          ),
         ),
-        keyboardType: TextInputType.text,
-      ),
-      materialActions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancel),
+        materialActions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.save),
+          ),
+        ],
+        cupertinoActions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.save),
+          ),
+        ],
+      );
+      if (result != null && result.trim().isNotEmpty) {
+        ref.read(settingsProvider.notifier).setDefaultUsername(result.trim());
+      }
+    } finally {
+      WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+    }
+  }
+
+  Future<void> _editTimeout(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    int currentTimeout,
+  ) async {
+    final controller = TextEditingController(text: currentTimeout.toString());
+    try {
+      final result = await showAdaptiveFormDialog<String>(
+        context,
+        title: l10n.settingsConnectionTimeout,
+        content: SingleChildScrollView(
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Seconds',
+              hintText: '30',
+            ),
+          ),
         ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, controller.text),
-          child: Text(l10n.save),
+        materialActions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.save),
+          ),
+        ],
+        cupertinoActions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.save),
+          ),
+        ],
+      );
+      if (result != null) {
+        final secs = int.tryParse(result);
+        if (secs != null && secs > 0 && secs <= 300) {
+          ref.read(settingsProvider.notifier).setConnectionTimeout(secs);
+        }
+      }
+    } finally {
+      WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+    }
+  }
+
+  Future<void> _editKeepalive(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    int currentInterval,
+  ) async {
+    final controller = TextEditingController(text: currentInterval.toString());
+    try {
+      final result = await showAdaptiveFormDialog<String>(
+        context,
+        title: l10n.settingsKeepaliveInterval,
+        content: SingleChildScrollView(
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Seconds',
+              hintText: '15',
+            ),
+          ),
         ),
-      ],
-      cupertinoActions: [
-        CupertinoDialogAction(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancel),
-        ),
-        CupertinoDialogAction(
-          isDefaultAction: true,
-          onPressed: () => Navigator.pop(context, controller.text),
-          child: Text(l10n.save),
-        ),
-      ],
-    );
-    controller.dispose();
-    if (result != null && result.trim().isNotEmpty) {
-      ref.read(settingsProvider.notifier).setDefaultUsername(result.trim());
+        materialActions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.save),
+          ),
+        ],
+        cupertinoActions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.save),
+          ),
+        ],
+      );
+      if (result != null) {
+        final secs = int.tryParse(result);
+        if (secs != null && secs >= 0 && secs <= 300) {
+          ref.read(settingsProvider.notifier).setKeepaliveInterval(secs);
+        }
+      }
+    } finally {
+      WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
     }
   }
 }

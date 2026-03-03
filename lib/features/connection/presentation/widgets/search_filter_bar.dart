@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
 import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
-import 'package:shellvault/features/connection/presentation/widgets/group_chip.dart';
-import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
-
-final _showFiltersProvider = StateProvider.autoDispose<bool>((ref) => false);
+import 'package:shellvault/features/connection/presentation/widgets/filter_bottom_sheet.dart';
 
 class SearchFilterBar extends ConsumerStatefulWidget {
   const SearchFilterBar({super.key});
@@ -33,11 +28,12 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
     final filter = ref.watch(serverFilterProvider);
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final showFilters = ref.watch(_showFiltersProvider);
+    final activeFilterCount = _countActiveFilters(filter);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Search bar + filter button
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -72,161 +68,136 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                 ),
               ),
               const SizedBox(width: 8),
-              IconButton(
-                icon: Icon(
-                  showFilters ? Icons.filter_list_off : Icons.filter_list,
-                  color: _hasActiveFilters(filter)
-                      ? theme.colorScheme.primary
-                      : null,
+              Badge(
+                isLabelVisible: activeFilterCount > 0,
+                label: Text('$activeFilterCount'),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.tune,
+                    color: activeFilterCount > 0
+                        ? theme.colorScheme.primary
+                        : null,
+                  ),
+                  onPressed: () => _showFilterSheet(filter),
                 ),
-                onPressed: () => ref.read(_showFiltersProvider.notifier).state =
-                    !showFilters,
               ),
             ],
           ),
         ),
-        if (showFilters) ...[
-          const SizedBox(height: 12),
-          _buildGroupFilter(filter, l10n),
+
+        // Active filter chips
+        if (activeFilterCount > 0) ...[
           const SizedBox(height: 8),
-          _buildTagFilter(filter),
-          const SizedBox(height: 8),
-          _buildStatusFilter(filter, l10n),
+          SizedBox(
+            height: 36,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: [
+                ..._buildActiveFilterChips(filter, l10n),
+                const SizedBox(width: 8),
+                ActionChip(
+                  label: Text(l10n.filterClearAll),
+                  avatar: const Icon(Icons.clear_all, size: 16),
+                  onPressed: () {
+                    _searchController.clear();
+                    ref.read(serverFilterProvider.notifier).state =
+                        const ServerFilter();
+                  },
+                ),
+              ],
+            ),
+          ),
         ],
       ],
     );
   }
 
-  bool _hasActiveFilters(ServerFilter filter) {
-    return filter.groupId != null ||
-        filter.tagIds.isNotEmpty ||
-        filter.isActive != null;
+  int _countActiveFilters(ServerFilter filter) {
+    var count = 0;
+    if (filter.groupId != null) count++;
+    count += filter.tagIds.length;
+    if (filter.isActive != null) count++;
+    return count;
   }
 
-  Widget _buildGroupFilter(ServerFilter filter, AppLocalizations l10n) {
-    final groupsAsync = ref.watch(groupListProvider);
-    return SizedBox(
-      height: 36,
-      child: groupsAsync.when(
-        data: (groups) => ListView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          children: [
-            FilterChip(
-              label: Text(l10n.filterAllGroups),
-              selected: filter.groupId == null,
-              onSelected: (_) {
-                ref.read(serverFilterProvider.notifier).state = filter.copyWith(
-                  groupId: null,
-                );
-              },
-            ),
-            const SizedBox(width: 8),
-            ...groups.map(
-              (group) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: GroupChip(
-                  group: group,
-                  selected: filter.groupId == group.id,
-                  onTap: () {
-                    ref.read(serverFilterProvider.notifier).state = filter
-                        .copyWith(
-                          groupId: filter.groupId == group.id ? null : group.id,
-                        );
-                  },
-                ),
-              ),
-            ),
-          ],
+  List<Widget> _buildActiveFilterChips(
+    ServerFilter filter,
+    AppLocalizations l10n,
+  ) {
+    final chips = <Widget>[];
+
+    if (filter.groupId != null) {
+      final groupsAsync = ref.read(groupListProvider);
+      final groupName =
+          groupsAsync.value
+              ?.where((g) => g.id == filter.groupId)
+              .firstOrNull
+              ?.name ??
+          '';
+      chips.add(
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: InputChip(
+            label: Text('${l10n.filterGroup}: $groupName'),
+            onDeleted: () {
+              ref.read(serverFilterProvider.notifier).state = filter.copyWith(
+                groupId: null,
+              );
+            },
+          ),
         ),
-        loading: () => const SizedBox.shrink(),
-        error: (_, _) => const SizedBox.shrink(),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildTagFilter(ServerFilter filter) {
-    final tagsAsync = ref.watch(tagListProvider);
-    return SizedBox(
-      height: 36,
-      child: tagsAsync.when(
-        data: (tags) => ListView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          children: tags
-              .map(
-                (tag) => Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: TagChip(
-                    tag: tag,
-                    selected: filter.tagIds.contains(tag.id),
-                    onTap: () {
-                      final newTagIds = List<String>.from(filter.tagIds);
-                      if (newTagIds.contains(tag.id)) {
-                        newTagIds.remove(tag.id);
-                      } else {
-                        newTagIds.add(tag.id);
-                      }
-                      ref.read(serverFilterProvider.notifier).state = filter
-                          .copyWith(tagIds: newTagIds);
-                    },
-                  ),
-                ),
-              )
-              .toList(),
+    for (final tagId in filter.tagIds) {
+      final tagsAsync = ref.read(tagListProvider);
+      final tagName =
+          tagsAsync.value?.where((t) => t.id == tagId).firstOrNull?.name ?? '';
+      chips.add(
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: InputChip(
+            label: Text(tagName),
+            onDeleted: () {
+              final newTagIds = List<String>.from(filter.tagIds)..remove(tagId);
+              ref.read(serverFilterProvider.notifier).state = filter.copyWith(
+                tagIds: newTagIds,
+              );
+            },
+          ),
         ),
-        loading: () => const SizedBox.shrink(),
-        error: (_, _) => const SizedBox.shrink(),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildStatusFilter(ServerFilter filter, AppLocalizations l10n) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          FilterChip(
-            label: Text(l10n.filterAll),
-            selected: filter.isActive == null,
-            onSelected: (_) {
+    if (filter.isActive != null) {
+      chips.add(
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: InputChip(
+            label: Text(
+              filter.isActive! ? l10n.filterActive : l10n.filterInactive,
+            ),
+            onDeleted: () {
               ref.read(serverFilterProvider.notifier).state = filter.copyWith(
                 isActive: null,
               );
             },
           ),
-          const SizedBox(width: 8),
-          FilterChip(
-            label: Text(l10n.filterActive),
-            selected: filter.isActive == true,
-            onSelected: (_) {
-              ref.read(serverFilterProvider.notifier).state = filter.copyWith(
-                isActive: filter.isActive == true ? null : true,
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-          FilterChip(
-            label: Text(l10n.filterInactive),
-            selected: filter.isActive == false,
-            onSelected: (_) {
-              ref.read(serverFilterProvider.notifier).state = filter.copyWith(
-                isActive: filter.isActive == false ? null : false,
-              );
-            },
-          ),
-          const Spacer(),
-          if (_hasActiveFilters(filter))
-            AdaptiveButton.textIcon(
-              icon: const Icon(Icons.clear_all, size: 18),
-              label: Text(l10n.filterClear),
-              onPressed: () {
-                ref.read(serverFilterProvider.notifier).state =
-                    const ServerFilter();
-              },
-            ),
-        ],
-      ),
+        ),
+      );
+    }
+
+    return chips;
+  }
+
+  Future<void> _showFilterSheet(ServerFilter currentFilter) async {
+    final result = await FilterBottomSheet.show(
+      context,
+      currentFilter: currentFilter,
     );
+    if (result != null) {
+      ref.read(serverFilterProvider.notifier).state = result;
+    }
   }
 }

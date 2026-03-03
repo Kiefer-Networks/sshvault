@@ -1827,4 +1827,189 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get aboutBuild => 'Build';
+
+  @override
+  String get settingsDohDescription =>
+      'DNS-over-HTTPS cifra las consultas DNS y previene el envenenamiento DNS. ShellVault verifica los nombres de host contra múltiples proveedores para detectar ataques.';
+
+  @override
+  String get settingsDnsAddServer => 'Añadir servidor DNS';
+
+  @override
+  String get settingsDnsServerUrl => 'URL del servidor';
+
+  @override
+  String get settingsDnsDefaultBadge => 'Predeterminado';
+
+  @override
+  String get settingsDnsResetDefaults => 'Restablecer valores predeterminados';
+
+  @override
+  String get settingsDnsInvalidUrl => 'Introduce una URL HTTPS válida';
+
+  @override
+  String get settingsDefaultAuthMethod => 'Método de autenticación';
+
+  @override
+  String get settingsAuthPassword => 'Contraseña';
+
+  @override
+  String get settingsAuthKey => 'Clave SSH';
+
+  @override
+  String get settingsConnectionTimeout => 'Tiempo de espera de conexión';
+
+  @override
+  String settingsConnectionTimeoutValue(int seconds) {
+    return '${seconds}s';
+  }
+
+  @override
+  String get settingsKeepaliveInterval => 'Intervalo Keep-Alive';
+
+  @override
+  String settingsKeepaliveIntervalValue(int seconds) {
+    return '${seconds}s';
+  }
+
+  @override
+  String get settingsCompression => 'Compresión';
+
+  @override
+  String get settingsCompressionDescription =>
+      'Habilitar compresión zlib para conexiones SSH';
+
+  @override
+  String get settingsTerminalType => 'Tipo de terminal';
+
+  @override
+  String get settingsSectionConnection => 'Conexión';
+
+  @override
+  String get settingsClipboardAutoClear =>
+      'Limpiar portapapeles automáticamente';
+
+  @override
+  String get settingsClipboardAutoClearOff => 'Desactivado';
+
+  @override
+  String settingsClipboardAutoClearValue(int seconds) {
+    return '${seconds}s';
+  }
+
+  @override
+  String get settingsSessionTimeout => 'Tiempo de espera de sesión';
+
+  @override
+  String get settingsSessionTimeoutOff => 'Desactivado';
+
+  @override
+  String settingsSessionTimeoutValue(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get settingsDuressPin => 'PIN de emergencia';
+
+  @override
+  String get settingsDuressPinDescription =>
+      'Un PIN separado que borra todos los datos al ingresarlo';
+
+  @override
+  String get settingsDuressPinSet => 'PIN de emergencia configurado';
+
+  @override
+  String get settingsDuressPinNotSet => 'No configurado';
+
+  @override
+  String get settingsDuressPinWarning =>
+      'Al ingresar este PIN se eliminarán permanentemente todos los datos locales, incluyendo credenciales, claves y configuraciones.';
+
+  @override
+  String get settingsKeyRotationReminder =>
+      'Recordatorio de rotación de claves';
+
+  @override
+  String get settingsKeyRotationOff => 'Desactivado';
+
+  @override
+  String settingsKeyRotationValue(int days) {
+    return '$days días';
+  }
+
+  @override
+  String get settingsFailedAttempts => 'Intentos fallidos de PIN';
+
+  @override
+  String get settingsSectionAppLock => 'Bloqueo de app';
+
+  @override
+  String get settingsSectionPrivacy => 'Privacidad';
+
+  @override
+  String get settingsSectionReminders => 'Recordatorios';
+
+  @override
+  String get settingsSectionStatus => 'Estado';
+
+  @override
+  String get settingsExportBackupSubtitle => 'Exportar, Importar y Respaldo';
+
+  @override
+  String get settingsExportJson => 'Exportar como JSON';
+
+  @override
+  String get settingsExportEncrypted => 'Exportar cifrado';
+
+  @override
+  String get settingsImportFile => 'Importar desde archivo';
+
+  @override
+  String get settingsSectionImport => 'Importar';
+
+  @override
+  String get filterTitle => 'Filtrar servidores';
+
+  @override
+  String get filterApply => 'Aplicar filtros';
+
+  @override
+  String get filterClearAll => 'Limpiar todo';
+
+  @override
+  String filterActiveCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count filtros activos',
+      one: '1 filtro activo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filterGroup => 'Grupo';
+
+  @override
+  String get filterTags => 'Etiquetas';
+
+  @override
+  String get filterStatus => 'Estado';
+
+  @override
+  String get variablePreviewResolved => 'Vista previa resuelta';
+
+  @override
+  String get variableInsert => 'Insertar';
+
+  @override
+  String tagServerCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count servidores',
+      one: '1 servidor',
+    );
+    return '$_temp0';
+  }
 }
