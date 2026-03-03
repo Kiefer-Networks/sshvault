@@ -9,11 +9,15 @@ import 'package:shellvault/core/crypto/encrypted_payload.dart';
 import 'package:shellvault/core/crypto/export_envelope.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
+import 'package:shellvault/core/crypto/nonce_counter.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 
 class EncryptionService {
   static final _log = LoggingService.instance;
   final Random _secureRandom = Random.secure();
+  final NonceCounter? _nonceCounter;
+
+  EncryptionService({NonceCounter? nonceCounter}) : _nonceCounter = nonceCounter;
 
   Uint8List _generateSecureBytes(int length) {
     return Uint8List.fromList(
@@ -60,8 +64,7 @@ class EncryptionService {
     return hash.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
   }
 
-  EncryptedPayload _encrypt(Uint8List plaintext, Uint8List key) {
-    final nonce = _generateSecureBytes(AppConstants.aesNonceLength);
+  EncryptedPayload _encryptWithNonce(Uint8List plaintext, Uint8List key, Uint8List nonce) {
     final cipher = GCMBlockCipher(AESEngine());
     cipher.init(
       true,
@@ -77,6 +80,16 @@ class EncryptionService {
       nonce: nonce,
       salt: Uint8List(0), // Salt managed at envelope level
     );
+  }
+
+  Future<EncryptedPayload> _encrypt(Uint8List plaintext, Uint8List key, {String? keyId}) async {
+    final Uint8List nonce;
+    if (_nonceCounter != null && keyId != null) {
+      nonce = await _nonceCounter.next(keyId);
+    } else {
+      nonce = _generateSecureBytes(AppConstants.aesNonceLength);
+    }
+    return _encryptWithNonce(plaintext, key, nonce);
   }
 
   Uint8List _decrypt(Uint8List ciphertext, Uint8List key, Uint8List nonce) {
@@ -113,7 +126,7 @@ class EncryptionService {
 
       final plaintext = Uint8List.fromList(utf8.encode(jsonData));
       final checksum = _sha256Hex(plaintext);
-      final payload = _encrypt(plaintext, key);
+      final payload = await _encrypt(plaintext, key, keyId: 'export');
 
       sw.stop();
       _log.info(
