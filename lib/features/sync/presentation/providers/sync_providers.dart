@@ -69,7 +69,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     final authStatus = ref.read(authProvider).value;
     if (authStatus != AuthStatus.authenticated) {
       _log.warning(_tag, 'Sync aborted: not authenticated');
-      state = AsyncValue.error('Not authenticated', StackTrace.current);
+      state = const AsyncValue.data(SyncStatus.idle);
       return;
     }
 
@@ -79,7 +79,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     final syncPassword = syncPwResult.isSuccess ? syncPwResult.value : null;
     if (syncPassword == null || syncPassword.isEmpty) {
       _log.warning(_tag, 'Sync aborted: sync password not set');
-      state = AsyncValue.error('Sync password not set', StackTrace.current);
+      state = const AsyncValue.data(SyncStatus.idle);
       return;
     }
 
