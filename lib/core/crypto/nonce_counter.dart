@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -13,15 +14,39 @@ import 'package:shellvault/core/services/logging_service.dart';
 /// The random prefix is generated once per key and persisted.
 /// The counter is incremented and persisted after each use.
 /// Falls back to fully random nonces if storage is unavailable.
+///
+/// Thread-safe: concurrent calls to [next] are serialized per keyId
+/// to prevent nonce reuse from TOCTOU race conditions.
 class NonceCounter {
   static const _storageKeyPrefix = 'nonce_prefix_';
   static const _storageKeyCounter = 'nonce_counter_';
   static final _log = LoggingService.instance;
 
+  /// Maximum counter value before requiring key rotation.
+  /// Uses 2^53-1 to stay safe on all Dart platforms (including JS).
+  static const int _maxCounter = 9007199254740991; // 2^53 - 1
+
   final FlutterSecureStorage _storage;
+
+  /// Per-keyId mutexes to prevent concurrent counter access.
+  final Map<String, Completer<void>> _locks = {};
 
   NonceCounter({FlutterSecureStorage? storage})
     : _storage = storage ?? const FlutterSecureStorage();
+
+  /// Acquires a per-keyId lock to serialize counter operations.
+  Future<void> _acquireLock(String keyId) async {
+    while (_locks.containsKey(keyId)) {
+      await _locks[keyId]!.future;
+    }
+    _locks[keyId] = Completer<void>();
+  }
+
+  /// Releases the per-keyId lock.
+  void _releaseLock(String keyId) {
+    final completer = _locks.remove(keyId);
+    completer?.complete();
+  }
 
   /// Generates the next unique nonce for the given [keyId].
   ///
@@ -29,8 +54,18 @@ class NonceCounter {
   /// an 8-byte big-endian counter. The counter is persisted in secure
   /// storage and incremented after each call.
   ///
-  /// If secure storage fails, falls back to a random nonce.
+  /// Concurrent calls are serialized per keyId to prevent nonce reuse.
+  /// Throws [StateError] if the counter has been exhausted (requires key rotation).
   Future<Uint8List> next(String keyId) async {
+    await _acquireLock(keyId);
+    try {
+      return await _nextLocked(keyId);
+    } finally {
+      _releaseLock(keyId);
+    }
+  }
+
+  Future<Uint8List> _nextLocked(String keyId) async {
     try {
       // Load or create the random prefix for this key
       var prefix = await _loadPrefix(keyId);
@@ -41,6 +76,13 @@ class NonceCounter {
 
       // Load, increment, and save counter
       final counter = await _loadCounter(keyId);
+      if (counter >= _maxCounter) {
+        _log.error(
+          'NonceCounter',
+          'Counter exhausted for key $keyId — key rotation required',
+        );
+        throw StateError('Nonce counter exhausted for key $keyId');
+      }
       final nextCounter = counter + 1;
       await _saveCounter(keyId, nextCounter);
 
@@ -50,11 +92,12 @@ class NonceCounter {
       _writeUint64BE(nonce, 4, nextCounter);
       return nonce;
     } catch (e) {
-      _log.warning(
+      if (e is StateError) rethrow;
+      _log.error(
         'NonceCounter',
-        'Counter unavailable, falling back to random nonce: $e',
+        'Counter unavailable for key $keyId, refusing to fall back to random nonce',
       );
-      return _randomBytes(AppConstants.aesNonceLength);
+      rethrow;
     }
   }
 

@@ -21,13 +21,9 @@ class CertificatePinningService {
   static const _tag = 'CertPin';
 
   final Map<String, List<CertificatePin>> _pins;
-  final bool _enforceInDebug;
 
-  CertificatePinningService({
-    required Map<String, List<CertificatePin>> pins,
-    bool enforceInDebug = false,
-  }) : _pins = Map.unmodifiable(pins),
-       _enforceInDebug = enforceInDebug;
+  CertificatePinningService({required Map<String, List<CertificatePin>> pins})
+    : _pins = Map.unmodifiable(pins);
 
   /// Whether pinning is configured for any host.
   bool get hasPins => _pins.isNotEmpty;
@@ -54,9 +50,24 @@ class CertificatePinningService {
       return const Success(null);
     }
 
+    // Filter out expired pins
+    final validPins = hostPins.where((p) => p.isValid).toList();
+    if (validPins.isEmpty) {
+      _log.error(
+        _tag,
+        'All ${hostPins.length} pin(s) for $hostname have expired',
+      );
+      return const Err(
+        NetworkFailure(
+          'All certificate pins have expired. App update required.',
+        ),
+      );
+    }
+
     final certHash = _computeSha256(certificate.der);
-    for (final pin in hostPins) {
-      if (pin.hash == certHash) {
+    for (final pin in validPins) {
+      // Constant-time comparison for defense-in-depth
+      if (_constantTimeEquals(pin.hash, certHash)) {
         _log.debug(_tag, 'Certificate pin matched for $hostname');
         return const Success(null);
       }
@@ -86,18 +97,13 @@ class CertificatePinningService {
   HttpClient createHttpClient() {
     final client = HttpClient();
     client.badCertificateCallback = (cert, host, port) {
-      if (!_enforceInDebug) {
-        // In debug mode, allow all certificates unless enforcement is enabled
-        assert(() {
-          _log.warning(
-            _tag,
-            'Debug mode: skipping certificate pin for $host:$port',
-          );
-          return true;
-        }());
-      }
-
       final result = validateCertificate(cert, host);
+      if (!result.isSuccess) {
+        _log.error(
+          _tag,
+          'Rejecting certificate for $host:$port — pin validation failed',
+        );
+      }
       return result.isSuccess;
     };
     return client;
@@ -114,6 +120,16 @@ class CertificatePinningService {
   /// Use this utility to generate pin strings from actual certificates.
   static String computePin(Uint8List derBytes) {
     return _computeSha256(derBytes);
+  }
+
+  /// Constant-time string comparison to prevent timing side-channels.
+  static bool _constantTimeEquals(String a, String b) {
+    if (a.length != b.length) return false;
+    var result = 0;
+    for (var i = 0; i < a.length; i++) {
+      result |= a.codeUnitAt(i) ^ b.codeUnitAt(i);
+    }
+    return result == 0;
   }
 }
 

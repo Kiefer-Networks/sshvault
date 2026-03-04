@@ -47,7 +47,9 @@ class DohResolverService {
     _log.debug(_tag, 'Resolving $hostname via $_baseUrl (${type.name})');
 
     try {
-      final uri = Uri.parse('$_baseUrl?name=$hostname&type=${type.name}');
+      final uri = Uri.parse(
+        '$_baseUrl?name=${Uri.encodeComponent(hostname)}&type=${type.name}',
+      );
 
       final request = await _httpClient.getUrl(uri);
       request.headers.set('Accept', 'application/dns-json');
@@ -82,6 +84,7 @@ class DohResolverService {
       final addresses = answers
           .where((a) => (a as Map<String, dynamic>)['type'] == type.value)
           .map((a) => (a as Map<String, dynamic>)['data'] as String)
+          .where((addr) => InternetAddress.tryParse(addr) != null)
           .toList();
 
       if (addresses.isEmpty) {
@@ -179,31 +182,33 @@ class DohResolverService {
       return Success(successResults.first.toList());
     }
 
-    // Compare all successful results — check pairwise overlap
-    final first = successResults.first;
+    // Compare all successful results — return only the intersection
+    var consensus = successResults.first;
     for (var i = 1; i < successResults.length; i++) {
-      final intersection = first.intersection(successResults[i]);
+      final intersection = consensus.intersection(successResults[i]);
       if (intersection.isEmpty) {
         _log.error(
           _tag,
           'DNS divergence detected for $hostname: '
-          'resolver[0]=$first, resolver[$i]=${successResults[i]}',
+          'no common IPs across resolvers',
         );
         return Err(
           DnsDivergence(
             hostname: hostname,
-            cloudflareIPs: first.toList(),
+            cloudflareIPs: successResults.first.toList(),
             googleIPs: successResults[i].toList(),
           ),
         );
       }
+      consensus = intersection;
     }
 
     _log.info(
       _tag,
-      'Cross-check passed for $hostname across ${successResults.length} resolvers',
+      'Cross-check passed for $hostname across ${successResults.length} resolvers '
+      '(${consensus.length} consensus IP(s))',
     );
-    return Success(first.toList());
+    return Success(consensus.toList());
   }
 
   /// Clear all cached DNS results.

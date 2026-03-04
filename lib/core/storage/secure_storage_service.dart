@@ -20,6 +20,8 @@ class SecureStorageService {
             mOptions: MacOsOptions(
               accessibility: KeychainAccessibility.first_unlock_this_device,
             ),
+            lOptions: LinuxOptions(),
+            wOptions: WindowsOptions(),
           );
 
   String _credentialKey(String serverId) =>

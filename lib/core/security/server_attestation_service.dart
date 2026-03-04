@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' show sha256, Hmac;
@@ -100,7 +101,13 @@ class ServerAttestationService {
         );
       }
 
-      // 4. Verify nonce if provided
+      // 4. Verify nonce (required for replay protection)
+      if (expectedNonce == null) {
+        _log.warning(
+          _tag,
+          'No expected nonce provided — replay protection disabled',
+        );
+      }
       if (expectedNonce != null && attestation.nonce != expectedNonce) {
         _log.error(_tag, 'Attestation nonce mismatch (possible replay attack)');
         return const Err(
@@ -114,7 +121,13 @@ class ServerAttestationService {
       final canonical = _buildCanonicalPayload(attestation);
       final expectedSignature = _computeHmac(canonical);
 
-      if (attestation.signature != expectedSignature) {
+      // Constant-time comparison to prevent timing side-channel
+      final sigBytes = utf8.encode(attestation.signature);
+      final expectedBytes = utf8.encode(expectedSignature);
+      final sigMatch =
+          sigBytes.length == expectedBytes.length &&
+          _constantTimeEquals(sigBytes, expectedBytes);
+      if (!sigMatch) {
         _log.error(_tag, 'Attestation signature verification failed');
         return const Err(
           NetworkFailure(
@@ -136,12 +149,12 @@ class ServerAttestationService {
     }
   }
 
-  /// Generate a random nonce for attestation requests.
+  /// Generate a cryptographically secure random nonce for attestation requests.
   static String generateNonce() {
+    final rng = Random.secure();
     final bytes = Uint8List(16);
-    final random = DateTime.now().microsecondsSinceEpoch;
     for (var i = 0; i < bytes.length; i++) {
-      bytes[i] = (random >> (i * 3)) & 0xFF;
+      bytes[i] = rng.nextInt(256);
     }
     return base64Url.encode(bytes);
   }
@@ -161,6 +174,16 @@ class ServerAttestationService {
     final hmac = Hmac(sha256, _hmacKey);
     final digest = hmac.convert(utf8.encode(payload));
     return base64Encode(digest.bytes);
+  }
+
+  /// Constant-time byte comparison to prevent timing side-channels.
+  static bool _constantTimeEquals(List<int> a, List<int> b) {
+    if (a.length != b.length) return false;
+    var result = 0;
+    for (var i = 0; i < a.length; i++) {
+      result |= a[i] ^ b[i];
+    }
+    return result == 0;
   }
 }
 

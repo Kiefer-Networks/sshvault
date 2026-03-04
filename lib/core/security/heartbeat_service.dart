@@ -28,13 +28,28 @@ class HeartbeatService {
     this.onSessionExpired,
   }) : _apiClient = apiClient;
 
-  /// Start periodic heartbeat checks.
+  /// Start periodic heartbeat checks with jitter to avoid thundering herd.
   void start() {
     if (_running) return;
     _running = true;
     _consecutiveFailures = 0;
     _log.info(_tag, 'Heartbeat started (interval: ${interval.inSeconds}s)');
-    _timer = Timer.periodic(interval, (_) => _beat());
+    _scheduleNextBeat();
+  }
+
+  void _scheduleNextBeat() {
+    if (!_running) return;
+    // Add +/- 15% jitter to prevent synchronized heartbeats
+    final jitterMs = (interval.inMilliseconds * 0.15).round();
+    final rng = DateTime.now().microsecond;
+    final offset = (rng % (jitterMs * 2 + 1)) - jitterMs;
+    final nextInterval = Duration(
+      milliseconds: interval.inMilliseconds + offset,
+    );
+    _timer = Timer(nextInterval, () async {
+      await _beat();
+      _scheduleNextBeat();
+    });
   }
 
   /// Stop periodic heartbeat checks.

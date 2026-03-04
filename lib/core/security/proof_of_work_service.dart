@@ -21,14 +21,33 @@ class ProofOfWorkService {
   /// Maximum number of iterations before giving up.
   static const int maxIterations = 10000000; // 10M
 
+  /// Maximum difficulty the client will accept from the server.
+  /// Prevents a malicious server from causing client-side DoS.
+  static const int maxDifficulty = 24;
+
   /// Solve a proof-of-work challenge.
   ///
   /// [challenge] contains the server-issued prefix and required difficulty.
   /// Returns a [ProofOfWorkSolution] with the nonce and hash, or an error
   /// if the challenge cannot be solved within [maxIterations].
+  /// Rejects challenges with difficulty exceeding [maxDifficulty].
   Future<Result<ProofOfWorkSolution>> solve(
     ProofOfWorkChallenge challenge,
   ) async {
+    if (challenge.difficulty > maxDifficulty) {
+      _log.error(
+        _tag,
+        'PoW difficulty ${challenge.difficulty} exceeds max $maxDifficulty',
+      );
+      return const Err(
+        CryptoFailure('Server requested excessive PoW difficulty'),
+      );
+    }
+
+    if (challenge.isExpired) {
+      _log.error(_tag, 'PoW challenge already expired before solving');
+      return const Err(CryptoFailure('PoW challenge has expired'));
+    }
     _log.info(
       _tag,
       'Solving PoW challenge (difficulty=${challenge.difficulty}, '

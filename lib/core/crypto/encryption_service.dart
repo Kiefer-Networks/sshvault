@@ -126,7 +126,7 @@ class EncryptionService {
     String password,
   ) async {
     final sw = Stopwatch()..start();
-    _log.info('Crypto', 'Encrypting data (${jsonData.length} chars)');
+    _log.info('Crypto', 'Encrypting data for export');
 
     try {
       final salt = _generateSecureBytes(AppConstants.saltLength);
@@ -137,11 +137,13 @@ class EncryptionService {
       final checksum = _sha256Hex(plaintext);
       final payload = await _encrypt(plaintext, key, keyId: 'export');
 
+      // Zero key material from memory
+      key.fillRange(0, key.length, 0);
+
       sw.stop();
       _log.info(
         'Crypto',
-        'Encryption completed in ${sw.elapsedMilliseconds}ms '
-            '(${plaintext.length} bytes → ${payload.ciphertext.length} bytes)',
+        'Encryption completed in ${sw.elapsedMilliseconds}ms',
       );
 
       return Success(
@@ -168,11 +170,7 @@ class EncryptionService {
     String password,
   ) async {
     final sw = Stopwatch()..start();
-    _log.info(
-      'Crypto',
-      'Decrypting envelope v${envelope.version} '
-          '(${envelope.encryptedData.length} chars base64)',
-    );
+    _log.info('Crypto', 'Decrypting envelope v${envelope.version}');
 
     try {
       final salt = envelope.saltBytes;
@@ -188,10 +186,11 @@ class EncryptionService {
         key,
         envelope.nonceBytes,
       );
-      _log.debug(
-        'Crypto',
-        'AES-GCM decrypt completed (${plaintext.length} bytes)',
-      );
+
+      // Zero key material from memory
+      key.fillRange(0, key.length, 0);
+
+      _log.debug('Crypto', 'AES-GCM decrypt completed');
 
       // Verify checksum
       final checksum = _sha256Hex(plaintext);
@@ -199,9 +198,7 @@ class EncryptionService {
         sw.stop();
         _log.error(
           'Crypto',
-          'Checksum mismatch after ${sw.elapsedMilliseconds}ms '
-              '(expected ${envelope.checksum.substring(0, 8)}..., '
-              'got ${checksum.substring(0, 8)}...)',
+          'Checksum mismatch after ${sw.elapsedMilliseconds}ms',
         );
         return const Err(
           CryptoFailure('Checksum verification failed — data may be corrupted'),
@@ -211,8 +208,7 @@ class EncryptionService {
       sw.stop();
       _log.info(
         'Crypto',
-        'Decryption completed in ${sw.elapsedMilliseconds}ms '
-            '(${plaintext.length} bytes)',
+        'Decryption completed in ${sw.elapsedMilliseconds}ms',
       );
       return Success(utf8.decode(plaintext));
     } on ArgumentError catch (e) {

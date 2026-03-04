@@ -31,7 +31,8 @@ class AuthInterceptor extends Interceptor {
   ];
 
   bool _isPublicPath(String path) {
-    return _publicPaths.any((p) => path.contains(p));
+    final cleanPath = Uri.parse(path).path;
+    return _publicPaths.any((p) => cleanPath.endsWith(p));
   }
 
   @override
@@ -52,8 +53,8 @@ class AuthInterceptor extends Interceptor {
         _log.warning(_tag, 'No access token for ${options.path}');
       }
       handler.next(options);
-    } catch (_) {
-      // On any error, let the request proceed without auth header.
+    } catch (e) {
+      _log.error(_tag, 'Failed to attach auth header: $e');
       handler.next(options);
     }
   }
