@@ -62,7 +62,7 @@ class _LockNotifier extends Notifier<_LockState> {
   }
 
   void resetForResume() {
-    state = state.copyWith(isUnlocked: false, clearPinError: true);
+    state = const _LockState();
   }
 
   void setVerifyFailed({required String pinError}) {
