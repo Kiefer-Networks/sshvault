@@ -9,7 +9,6 @@
   "navTags": "Etiquetas",
   "navSshKeys": "Claves SSH",
   "navExportImport": "Exportar / Importar",
-  "navTeleport": "Teleport",
   "navTerminal": "Terminal",
   "navMore": "Más",
   "navManagement": "Gestión",
@@ -715,49 +714,6 @@
   "logoutDialogMessage": "¿Quieres eliminar todos los datos locales? Servidores, claves SSH, snippets y configuraciones se eliminarán de este dispositivo.",
   "logoutOnly": "Solo cerrar sesión",
   "logoutAndDelete": "Cerrar sesión y eliminar datos",
-
-  "teleportTitle": "Teleport",
-  "teleportAddClusterTooltip": "Añadir clúster",
-  "teleportNoClusters": "Sin clústeres Teleport",
-  "teleportNoClustersHint": "Añade un clúster para ver tus nodos SSH",
-  "teleportAddCluster": "Añadir clúster",
-  "teleportNoNodes": "No hay nodos disponibles",
-  "teleportSessionsNotAvailable": "Las sesiones de terminal Teleport aún no están disponibles",
-  "teleportFailedToLoadNodes": "No se pudieron cargar los nodos",
-  "teleportLogin": "Iniciar sesión",
-  "teleportDeleteClusterConfirm": "¿Eliminar clúster \"{name}\"? Solo se elimina la configuración local.",
-  "@teleportDeleteClusterConfirm": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-
-  "teleportClusterFormTitle": "Añadir clúster Teleport",
-  "teleportClusterNameLabel": "Nombre del clúster",
-  "teleportClusterNameHint": "p. ej. Producción",
-  "teleportProxyAddrLabel": "Dirección del proxy",
-  "teleportProxyAddrHint": "p. ej. teleport.example.com:443",
-  "teleportAuthMethodLabel": "Método de autenticación",
-  "teleportAuthIdentityFile": "Archivo de identidad",
-  "teleportAuthLocal": "Local (Usuario/Contraseña)",
-  "teleportAuthSsoOidc": "SSO (OIDC)",
-  "teleportAuthSsoSaml": "SSO (SAML)",
-  "teleportSelectIdentityFile": "Seleccionar archivo de identidad",
-  "teleportFieldRequired": "Obligatorio",
-
-  "teleportLoginTitle": "Inicio de sesión Teleport",
-  "teleportLoginUsername": "Usuario",
-  "teleportLoginPassword": "Contraseña",
-  "teleportLoginTotpCode": "Código TOTP (opcional)",
-  "teleportLoginButton": "Iniciar sesión",
-
-  "teleportCertNone": "Sin certificado",
-  "teleportCertExpired": "Expirado",
-  "teleportCertExpiringSoon": "Expira pronto",
-  "teleportCertHoursLeft": "{hours}h restantes",
-  "@teleportCertHoursLeft": { "placeholders": { "hours": { "type": "int" } } },
-  "teleportCertMinutesLeft": "{minutes}m restantes",
-  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } },
 
   "couponTitle": "Canjear cupón",
   "couponInputLabel": "Código de cupón",

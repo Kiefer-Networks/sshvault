@@ -36,15 +36,12 @@ class _NavItem {
 
 /// Section break indices — dividers appear *before* items at these indices.
 /// Used by drawer and rail to visually group navigation items.
-/// Note: index 6 is Teleport which is only shown when authenticated,
-/// so the break set is computed dynamically by _buildVisibleNavItems.
 const _baseSectionBreaks = {3}; // before SSH Keys
 
 /// Builds the visible nav items based on auth state and session count.
 /// Returns the items list and the set of section break indices.
 ({List<_NavItem> items, Set<int> breaks}) _buildVisibleNavItems(
   BuildContext context, {
-  required bool isAuthenticated,
   required bool showTerminal,
   required int sessionCount,
 }) {
@@ -85,16 +82,6 @@ const _baseSectionBreaks = {3}; // before SSH Keys
   ];
 
   final breaks = <int>{..._baseSectionBreaks};
-
-  // — Teleport (only when authenticated) —
-  if (isAuthenticated) {
-    breaks.add(items.length); // section break before Teleport
-    items.add(_NavItem(
-      icon: Icons.cloud_outlined,
-      selectedIcon: Icons.cloud,
-      label: l10n.navTeleport,
-    ));
-  }
 
   // — Terminal (only when sessions exist) —
   if (showTerminal) {
@@ -267,8 +254,6 @@ class AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final sessionCount = ref.watch(sessionManagerProvider).length;
-    final isAuthenticated =
-        ref.watch(authProvider).value == AuthStatus.authenticated;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -280,7 +265,6 @@ class AppShellState extends ConsumerState<AppShell> {
             currentIndex: widget.navigationShell.currentIndex,
             onDestinationSelected: _onDestinationSelected,
             sessionCount: sessionCount,
-            isAuthenticated: isAuthenticated,
             child: widget.navigationShell,
           );
         }
@@ -290,7 +274,6 @@ class AppShellState extends ConsumerState<AppShell> {
           onDestinationSelected: _onDestinationSelected,
           extended: width >= ShellBreakpoints.railExtended,
           sessionCount: sessionCount,
-          isAuthenticated: isAuthenticated,
           child: widget.navigationShell,
         );
       },
@@ -307,7 +290,6 @@ class _MobileScaffold extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
   final int sessionCount;
-  final bool isAuthenticated;
   final Widget child;
 
   const _MobileScaffold({
@@ -315,7 +297,6 @@ class _MobileScaffold extends StatelessWidget {
     required this.currentIndex,
     required this.onDestinationSelected,
     required this.sessionCount,
-    required this.isAuthenticated,
     required this.child,
   });
 
@@ -327,7 +308,6 @@ class _MobileScaffold extends StatelessWidget {
         currentIndex: currentIndex,
         onDestinationSelected: onDestinationSelected,
         sessionCount: sessionCount,
-        isAuthenticated: isAuthenticated,
       ),
       body: child,
     );
@@ -343,7 +323,6 @@ class _DesktopScaffold extends StatelessWidget {
   final ValueChanged<int> onDestinationSelected;
   final bool extended;
   final int sessionCount;
-  final bool isAuthenticated;
   final Widget child;
 
   const _DesktopScaffold({
@@ -351,7 +330,6 @@ class _DesktopScaffold extends StatelessWidget {
     required this.onDestinationSelected,
     required this.extended,
     required this.sessionCount,
-    required this.isAuthenticated,
     required this.child,
   });
 
@@ -363,7 +341,6 @@ class _DesktopScaffold extends StatelessWidget {
 
     final (:items, :breaks) = _buildVisibleNavItems(
       context,
-      isAuthenticated: isAuthenticated,
       showTerminal: showTerminal,
       sessionCount: sessionCount,
     );
@@ -533,13 +510,11 @@ class _AppDrawer extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
   final int sessionCount;
-  final bool isAuthenticated;
 
   const _AppDrawer({
     required this.currentIndex,
     required this.onDestinationSelected,
     required this.sessionCount,
-    required this.isAuthenticated,
   });
 
   @override
@@ -550,7 +525,6 @@ class _AppDrawer extends StatelessWidget {
 
     final (:items, :breaks) = _buildVisibleNavItems(
       context,
-      isAuthenticated: isAuthenticated,
       showTerminal: showTerminal,
       sessionCount: sessionCount,
     );

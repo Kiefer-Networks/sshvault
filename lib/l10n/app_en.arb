@@ -9,7 +9,6 @@
   "navTags": "Tags",
   "navSshKeys": "SSH Keys",
   "navExportImport": "Export / Import",
-  "navTeleport": "Teleport",
   "navTerminal": "Terminal",
   "navMore": "More",
   "navManagement": "Management",
@@ -741,49 +740,6 @@
   "logoutDialogMessage": "Do you want to delete all local data? Servers, SSH keys, snippets, and settings will be removed from this device.",
   "logoutOnly": "Log out only",
   "logoutAndDelete": "Log out & delete data",
-
-  "teleportTitle": "Teleport",
-  "teleportAddClusterTooltip": "Add cluster",
-  "teleportNoClusters": "No Teleport clusters",
-  "teleportNoClustersHint": "Add a cluster to see your SSH nodes",
-  "teleportAddCluster": "Add Cluster",
-  "teleportNoNodes": "No nodes available",
-  "teleportSessionsNotAvailable": "Teleport terminal sessions not yet available",
-  "teleportFailedToLoadNodes": "Failed to load nodes",
-  "teleportLogin": "Login",
-  "teleportDeleteClusterConfirm": "Remove cluster \"{name}\"? This only removes the local configuration.",
-  "@teleportDeleteClusterConfirm": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-
-  "teleportClusterFormTitle": "Add Teleport Cluster",
-  "teleportClusterNameLabel": "Cluster Name",
-  "teleportClusterNameHint": "e.g. Production",
-  "teleportProxyAddrLabel": "Proxy Address",
-  "teleportProxyAddrHint": "e.g. teleport.example.com:443",
-  "teleportAuthMethodLabel": "Auth Method",
-  "teleportAuthIdentityFile": "Identity File",
-  "teleportAuthLocal": "Local (User/Password)",
-  "teleportAuthSsoOidc": "SSO (OIDC)",
-  "teleportAuthSsoSaml": "SSO (SAML)",
-  "teleportSelectIdentityFile": "Select Identity File",
-  "teleportFieldRequired": "Required",
-
-  "teleportLoginTitle": "Teleport Login",
-  "teleportLoginUsername": "Username",
-  "teleportLoginPassword": "Password",
-  "teleportLoginTotpCode": "TOTP Code (optional)",
-  "teleportLoginButton": "Login",
-
-  "teleportCertNone": "No cert",
-  "teleportCertExpired": "Expired",
-  "teleportCertExpiringSoon": "Expiring soon",
-  "teleportCertHoursLeft": "{hours}h left",
-  "@teleportCertHoursLeft": { "placeholders": { "hours": { "type": "int" } } },
-  "teleportCertMinutesLeft": "{minutes}m left",
-  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } },
 
   "couponTitle": "Redeem Coupon",
   "couponInputLabel": "Coupon Code",

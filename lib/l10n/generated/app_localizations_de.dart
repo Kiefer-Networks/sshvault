@@ -30,9 +30,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navExportImport => 'Export / Import';
 
   @override
-  String get navTeleport => 'Teleport';
-
-  @override
   String get navTerminal => 'Terminal';
 
   @override
@@ -2081,110 +2078,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get logoutAndDelete => 'Abmelden & Daten löschen';
-
-  @override
-  String get teleportTitle => 'Teleport';
-
-  @override
-  String get teleportAddClusterTooltip => 'Cluster hinzufügen';
-
-  @override
-  String get teleportNoClusters => 'Keine Teleport-Cluster';
-
-  @override
-  String get teleportNoClustersHint =>
-      'Füge einen Cluster hinzu, um deine SSH-Nodes zu sehen';
-
-  @override
-  String get teleportAddCluster => 'Cluster hinzufügen';
-
-  @override
-  String get teleportNoNodes => 'Keine Nodes verfügbar';
-
-  @override
-  String get teleportSessionsNotAvailable =>
-      'Teleport-Terminalsitzungen noch nicht verfügbar';
-
-  @override
-  String get teleportFailedToLoadNodes => 'Nodes konnten nicht geladen werden';
-
-  @override
-  String get teleportLogin => 'Anmelden';
-
-  @override
-  String teleportDeleteClusterConfirm(String name) {
-    return 'Cluster \"$name\" entfernen? Dies entfernt nur die lokale Konfiguration.';
-  }
-
-  @override
-  String get teleportClusterFormTitle => 'Teleport-Cluster hinzufügen';
-
-  @override
-  String get teleportClusterNameLabel => 'Cluster-Name';
-
-  @override
-  String get teleportClusterNameHint => 'z. B. Produktion';
-
-  @override
-  String get teleportProxyAddrLabel => 'Proxy-Adresse';
-
-  @override
-  String get teleportProxyAddrHint => 'z. B. teleport.example.com:443';
-
-  @override
-  String get teleportAuthMethodLabel => 'Authentifizierungsmethode';
-
-  @override
-  String get teleportAuthIdentityFile => 'Identity-Datei';
-
-  @override
-  String get teleportAuthLocal => 'Lokal (Benutzer/Passwort)';
-
-  @override
-  String get teleportAuthSsoOidc => 'SSO (OIDC)';
-
-  @override
-  String get teleportAuthSsoSaml => 'SSO (SAML)';
-
-  @override
-  String get teleportSelectIdentityFile => 'Identity-Datei auswählen';
-
-  @override
-  String get teleportFieldRequired => 'Erforderlich';
-
-  @override
-  String get teleportLoginTitle => 'Teleport-Anmeldung';
-
-  @override
-  String get teleportLoginUsername => 'Benutzername';
-
-  @override
-  String get teleportLoginPassword => 'Passwort';
-
-  @override
-  String get teleportLoginTotpCode => 'TOTP-Code (optional)';
-
-  @override
-  String get teleportLoginButton => 'Anmelden';
-
-  @override
-  String get teleportCertNone => 'Kein Zertifikat';
-
-  @override
-  String get teleportCertExpired => 'Abgelaufen';
-
-  @override
-  String get teleportCertExpiringSoon => 'Läuft bald ab';
-
-  @override
-  String teleportCertHoursLeft(int hours) {
-    return '$hours Std. übrig';
-  }
-
-  @override
-  String teleportCertMinutesLeft(int minutes) {
-    return '$minutes Min. übrig';
-  }
 
   @override
   String get couponTitle => 'Gutschein einlösen';

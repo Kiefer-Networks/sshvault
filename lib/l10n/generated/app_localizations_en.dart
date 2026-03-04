@@ -30,9 +30,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navExportImport => 'Export / Import';
 
   @override
-  String get navTeleport => 'Teleport';
-
-  @override
   String get navTerminal => 'Terminal';
 
   @override
@@ -2073,109 +2070,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutAndDelete => 'Log out & delete data';
-
-  @override
-  String get teleportTitle => 'Teleport';
-
-  @override
-  String get teleportAddClusterTooltip => 'Add cluster';
-
-  @override
-  String get teleportNoClusters => 'No Teleport clusters';
-
-  @override
-  String get teleportNoClustersHint => 'Add a cluster to see your SSH nodes';
-
-  @override
-  String get teleportAddCluster => 'Add Cluster';
-
-  @override
-  String get teleportNoNodes => 'No nodes available';
-
-  @override
-  String get teleportSessionsNotAvailable =>
-      'Teleport terminal sessions not yet available';
-
-  @override
-  String get teleportFailedToLoadNodes => 'Failed to load nodes';
-
-  @override
-  String get teleportLogin => 'Login';
-
-  @override
-  String teleportDeleteClusterConfirm(String name) {
-    return 'Remove cluster \"$name\"? This only removes the local configuration.';
-  }
-
-  @override
-  String get teleportClusterFormTitle => 'Add Teleport Cluster';
-
-  @override
-  String get teleportClusterNameLabel => 'Cluster Name';
-
-  @override
-  String get teleportClusterNameHint => 'e.g. Production';
-
-  @override
-  String get teleportProxyAddrLabel => 'Proxy Address';
-
-  @override
-  String get teleportProxyAddrHint => 'e.g. teleport.example.com:443';
-
-  @override
-  String get teleportAuthMethodLabel => 'Auth Method';
-
-  @override
-  String get teleportAuthIdentityFile => 'Identity File';
-
-  @override
-  String get teleportAuthLocal => 'Local (User/Password)';
-
-  @override
-  String get teleportAuthSsoOidc => 'SSO (OIDC)';
-
-  @override
-  String get teleportAuthSsoSaml => 'SSO (SAML)';
-
-  @override
-  String get teleportSelectIdentityFile => 'Select Identity File';
-
-  @override
-  String get teleportFieldRequired => 'Required';
-
-  @override
-  String get teleportLoginTitle => 'Teleport Login';
-
-  @override
-  String get teleportLoginUsername => 'Username';
-
-  @override
-  String get teleportLoginPassword => 'Password';
-
-  @override
-  String get teleportLoginTotpCode => 'TOTP Code (optional)';
-
-  @override
-  String get teleportLoginButton => 'Login';
-
-  @override
-  String get teleportCertNone => 'No cert';
-
-  @override
-  String get teleportCertExpired => 'Expired';
-
-  @override
-  String get teleportCertExpiringSoon => 'Expiring soon';
-
-  @override
-  String teleportCertHoursLeft(int hours) {
-    return '${hours}h left';
-  }
-
-  @override
-  String teleportCertMinutesLeft(int minutes) {
-    return '${minutes}m left';
-  }
 
   @override
   String get couponTitle => 'Redeem Coupon';

@@ -40,8 +40,7 @@ abstract final class AppConstants {
 
   // Navigation
   static const int sftpBranchIndex = 1;
-  static const int teleportBranchIndex = 6;
-  static const int terminalBranchIndex = 7;
+  static const int terminalBranchIndex = 6;
 
   // Pagination
   static const int defaultPageSize = 50;
