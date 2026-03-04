@@ -776,5 +776,11 @@
   "teleportCertHoursLeft": "{hours}h left",
   "@teleportCertHoursLeft": { "placeholders": { "hours": { "type": "int" } } },
   "teleportCertMinutesLeft": "{minutes}m left",
-  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } }
+  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } },
+
+  "couponTitle": "Redeem Coupon",
+  "couponInputLabel": "Coupon Code",
+  "couponInputHint": "Enter your coupon code",
+  "couponRedeemButton": "Redeem",
+  "couponSuccess": "Coupon redeemed successfully"
 }

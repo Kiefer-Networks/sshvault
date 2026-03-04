@@ -3969,6 +3969,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes}m left'**
   String teleportCertMinutesLeft(int minutes);
+
+  /// No description provided for @couponTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem Coupon'**
+  String get couponTitle;
+
+  /// No description provided for @couponInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon Code'**
+  String get couponInputLabel;
+
+  /// No description provided for @couponInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your coupon code'**
+  String get couponInputHint;
+
+  /// No description provided for @couponRedeemButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get couponRedeemButton;
+
+  /// No description provided for @couponSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon redeemed successfully'**
+  String get couponSuccess;
 }
 
 class _AppLocalizationsDelegate

@@ -2168,4 +2168,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String teleportCertMinutesLeft(int minutes) {
     return '${minutes}m left';
   }
+
+  @override
+  String get couponTitle => 'Redeem Coupon';
+
+  @override
+  String get couponInputLabel => 'Coupon Code';
+
+  @override
+  String get couponInputHint => 'Enter your coupon code';
+
+  @override
+  String get couponRedeemButton => 'Redeem';
+
+  @override
+  String get couponSuccess => 'Coupon redeemed successfully';
 }

@@ -2177,4 +2177,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String teleportCertMinutesLeft(int minutes) {
     return '$minutes Min. übrig';
   }
+
+  @override
+  String get couponTitle => 'Gutschein einlösen';
+
+  @override
+  String get couponInputLabel => 'Gutschein-Code';
+
+  @override
+  String get couponInputHint => 'Gutschein-Code eingeben';
+
+  @override
+  String get couponRedeemButton => 'Einlösen';
+
+  @override
+  String get couponSuccess => 'Gutschein erfolgreich eingelöst';
 }

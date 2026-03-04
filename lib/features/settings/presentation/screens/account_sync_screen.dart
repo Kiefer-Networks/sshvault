@@ -30,6 +30,8 @@ class AccountSyncScreen extends ConsumerStatefulWidget {
 class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   late final AppLifecycleListener _lifecycleListener;
   Timer? _billingPollTimer;
+  final _couponController = TextEditingController();
+  bool _couponLoading = false;
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   @override
   void dispose() {
     _billingPollTimer?.cancel();
+    _couponController.dispose();
     _lifecycleListener.dispose();
     super.dispose();
   }
@@ -220,6 +223,13 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             const SizedBox(height: 16),
           ],
 
+          // Coupon Redemption
+          if (isAuthenticated) ...[
+            SectionHeader(title: l10n.couponTitle),
+            SectionCard(child: _buildCouponCard(l10n, theme)),
+            const SizedBox(height: 16),
+          ],
+
           // Sync Controls
           SectionHeader(title: l10n.syncTitle),
           SettingsGroupCard(
@@ -348,6 +358,75 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildCouponCard(AppLocalizations l10n, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          controller: _couponController,
+          textCapitalization: TextCapitalization.characters,
+          decoration: InputDecoration(
+            labelText: l10n.couponInputLabel,
+            hintText: l10n.couponInputHint,
+            prefixIcon: const Icon(Icons.confirmation_number_outlined),
+            border: const OutlineInputBorder(),
+          ),
+          enabled: !_couponLoading,
+        ),
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          onPressed: _couponLoading ? null : () => _redeemCoupon(l10n),
+          icon: _couponLoading
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Icon(Icons.redeem),
+          label: Text(l10n.couponRedeemButton),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _redeemCoupon(AppLocalizations l10n) async {
+    final code = _couponController.text.trim();
+    if (code.isEmpty) return;
+
+    setState(() => _couponLoading = true);
+    try {
+      final repo = ref.read(accountRepositoryProvider);
+      final result = await repo.redeemCoupon(code);
+      result.fold(
+        onSuccess: (r) {
+          if (!mounted) return;
+          _couponController.clear();
+          ref.invalidate(billingStatusProvider);
+          AdaptiveNotification.show(context, message: l10n.couponSuccess);
+        },
+        onFailure: (f) {
+          if (!mounted) return;
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(f.toString()),
+          );
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.error(errorMessage(e)),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _couponLoading = false);
+    }
   }
 
   Widget _buildUserCard(AppLocalizations l10n, ThemeData theme) {

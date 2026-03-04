@@ -750,5 +750,11 @@
   "teleportCertHoursLeft": "{hours} Std. übrig",
   "@teleportCertHoursLeft": { "placeholders": { "hours": { "type": "int" } } },
   "teleportCertMinutesLeft": "{minutes} Min. übrig",
-  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } }
+  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } },
+
+  "couponTitle": "Gutschein einlösen",
+  "couponInputLabel": "Gutschein-Code",
+  "couponInputHint": "Gutschein-Code eingeben",
+  "couponRedeemButton": "Einlösen",
+  "couponSuccess": "Gutschein erfolgreich eingelöst"
 }

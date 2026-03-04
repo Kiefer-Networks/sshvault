@@ -1,6 +1,7 @@
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
 import 'package:shellvault/features/account/domain/entities/billing_status.dart';
+import 'package:shellvault/features/account/domain/entities/coupon_redeem_result.dart';
 import 'package:shellvault/features/account/domain/entities/device_entity.dart';
 import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
 
@@ -19,6 +20,7 @@ abstract class AccountRepository {
   Future<Result<BillingStatus>> verifyGooglePurchase(String purchaseToken);
   Future<Result<BillingStatus>> verifyApplePurchase(String transactionId);
   Future<Result<String>> createTeleportAddonCheckout();
+  Future<Result<CouponRedeemResult>> redeemCoupon(String code);
   Future<Result<AuditLogResult>> getAuditLogs({
     String? category,
     String? action,

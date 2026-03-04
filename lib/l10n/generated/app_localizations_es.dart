@@ -2180,4 +2180,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String teleportCertMinutesLeft(int minutes) {
     return '${minutes}m restantes';
   }
+
+  @override
+  String get couponTitle => 'Canjear cupón';
+
+  @override
+  String get couponInputLabel => 'Código de cupón';
+
+  @override
+  String get couponInputHint => 'Introduce tu código de cupón';
+
+  @override
+  String get couponRedeemButton => 'Canjear';
+
+  @override
+  String get couponSuccess => 'Cupón canjeado con éxito';
 }

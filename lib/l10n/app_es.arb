@@ -750,5 +750,11 @@
   "teleportCertHoursLeft": "{hours}h restantes",
   "@teleportCertHoursLeft": { "placeholders": { "hours": { "type": "int" } } },
   "teleportCertMinutesLeft": "{minutes}m restantes",
-  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } }
+  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } },
+
+  "couponTitle": "Canjear cupón",
+  "couponInputLabel": "Código de cupón",
+  "couponInputHint": "Introduce tu código de cupón",
+  "couponRedeemButton": "Canjear",
+  "couponSuccess": "Cupón canjeado con éxito"
 }
