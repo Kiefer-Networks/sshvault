@@ -719,5 +719,22 @@
   "couponInputLabel": "Código de cupón",
   "couponInputHint": "Introduce tu código de cupón",
   "couponRedeemButton": "Canjear",
-  "couponSuccess": "Cupón canjeado con éxito"
+  "couponSuccess": "Cupón canjeado con éxito",
+
+  "subscriptionExpiresOn": "Se renueva el {date}",
+  "@subscriptionExpiresOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "changeAvatar": "Cambiar avatar",
+  "removeAvatar": "Eliminar avatar",
+  "avatarUploadFailed": "Error al subir el avatar",
+  "avatarTooLarge": "La imagen es demasiado grande",
+
+  "deviceLastSeen": "Visto por última vez",
+  "deviceIpAddress": "IP",
+
+  "serverUrlLockedWhileLoggedIn": "No se puede cambiar la URL del servidor mientras estás conectado. Cierra sesión primero."
 }

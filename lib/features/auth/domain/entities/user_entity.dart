@@ -9,6 +9,7 @@ abstract class UserEntity with _$UserEntity {
     required String id,
     required String email,
     @Default(false) bool verified,
+    @Default('') String avatar,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _UserEntity;

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/network/api_client.dart';
@@ -213,6 +216,34 @@ class AccountRepositoryImpl implements AccountRepository {
           return Err(NetworkFailure('Invalid coupon response', cause: e));
         }
       },
+      onFailure: (f) => Err(f),
+    );
+  }
+
+  @override
+  Future<Result<UserEntity>> uploadAvatar(Uint8List imageBytes) async {
+    final base64Data = base64Encode(imageBytes);
+    final result = await _apiClient.put(
+      '/v1/user/avatar',
+      data: {'avatar': base64Data},
+    );
+    return result.fold(
+      onSuccess: (data) {
+        try {
+          return Success(UserEntity.fromJson(data));
+        } catch (e) {
+          return Err(NetworkFailure('Invalid avatar response', cause: e));
+        }
+      },
+      onFailure: (f) => Err(f),
+    );
+  }
+
+  @override
+  Future<Result<void>> deleteAvatar() async {
+    final result = await _apiClient.delete('/v1/user/avatar');
+    return result.fold(
+      onSuccess: (_) => const Success(null),
       onFailure: (f) => Err(f),
     );
   }

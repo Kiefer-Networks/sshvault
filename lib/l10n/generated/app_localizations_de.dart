@@ -2093,4 +2093,31 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get couponSuccess => 'Gutschein erfolgreich eingelöst';
+
+  @override
+  String subscriptionExpiresOn(String date) {
+    return 'Verlängert sich am $date';
+  }
+
+  @override
+  String get changeAvatar => 'Avatar ändern';
+
+  @override
+  String get removeAvatar => 'Avatar entfernen';
+
+  @override
+  String get avatarUploadFailed => 'Avatar-Upload fehlgeschlagen';
+
+  @override
+  String get avatarTooLarge => 'Bild ist zu groß';
+
+  @override
+  String get deviceLastSeen => 'Zuletzt gesehen';
+
+  @override
+  String get deviceIpAddress => 'IP';
+
+  @override
+  String get serverUrlLockedWhileLoggedIn =>
+      'Server-URL kann nicht geändert werden, solange du angemeldet bist. Melde dich zuerst ab.';
 }

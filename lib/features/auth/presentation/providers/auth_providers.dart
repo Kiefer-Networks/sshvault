@@ -133,6 +133,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       _log.info(_tag, 'Logout completed — all local data deleted');
     } else {
       await storage.clearAuthTokens();
+      await ref.read(settingsProvider.notifier).setLocalVaultVersion(0);
       _log.info(_tag, 'Logout completed — tokens and device ID cleared');
     }
 

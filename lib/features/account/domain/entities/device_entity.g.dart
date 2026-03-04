@@ -14,6 +14,10 @@ _DeviceEntity _$DeviceEntityFromJson(Map<String, dynamic> json) =>
       lastSync: json['last_sync'] == null
           ? null
           : DateTime.parse(json['last_sync'] as String),
+      lastIp: json['last_ip'] as String?,
+      lastSeen: json['last_seen'] == null
+          ? null
+          : DateTime.parse(json['last_seen'] as String),
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -25,5 +29,7 @@ Map<String, dynamic> _$DeviceEntityToJson(_DeviceEntity instance) =>
       'name': instance.name,
       'platform': instance.platform,
       'last_sync': instance.lastSync?.toIso8601String(),
+      'last_ip': instance.lastIp,
+      'last_seen': instance.lastSeen?.toIso8601String(),
       'created_at': instance.createdAt?.toIso8601String(),
     };

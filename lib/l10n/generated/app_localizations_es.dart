@@ -2096,4 +2096,31 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get couponSuccess => 'Cupón canjeado con éxito';
+
+  @override
+  String subscriptionExpiresOn(String date) {
+    return 'Se renueva el $date';
+  }
+
+  @override
+  String get changeAvatar => 'Cambiar avatar';
+
+  @override
+  String get removeAvatar => 'Eliminar avatar';
+
+  @override
+  String get avatarUploadFailed => 'Error al subir el avatar';
+
+  @override
+  String get avatarTooLarge => 'La imagen es demasiado grande';
+
+  @override
+  String get deviceLastSeen => 'Visto por última vez';
+
+  @override
+  String get deviceIpAddress => 'IP';
+
+  @override
+  String get serverUrlLockedWhileLoggedIn =>
+      'No se puede cambiar la URL del servidor mientras estás conectado. Cierra sesión primero.';
 }

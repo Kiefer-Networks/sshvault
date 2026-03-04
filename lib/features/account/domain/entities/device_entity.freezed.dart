@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DeviceEntity {
 
- String get id; String get name; String get platform;@JsonKey(name: 'last_sync') DateTime? get lastSync;@JsonKey(name: 'created_at') DateTime? get createdAt;
+ String get id; String get name; String get platform;@JsonKey(name: 'last_sync') DateTime? get lastSync;@JsonKey(name: 'last_ip') String? get lastIp;@JsonKey(name: 'last_seen') DateTime? get lastSeen;@JsonKey(name: 'created_at') DateTime? get createdAt;
 /// Create a copy of DeviceEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $DeviceEntityCopyWith<DeviceEntity> get copyWith => _$DeviceEntityCopyWithImpl<D
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeviceEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.lastSync, lastSync) || other.lastSync == lastSync)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeviceEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.lastSync, lastSync) || other.lastSync == lastSync)&&(identical(other.lastIp, lastIp) || other.lastIp == lastIp)&&(identical(other.lastSeen, lastSeen) || other.lastSeen == lastSeen)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,platform,lastSync,createdAt);
+int get hashCode => Object.hash(runtimeType,id,name,platform,lastSync,lastIp,lastSeen,createdAt);
 
 @override
 String toString() {
-  return 'DeviceEntity(id: $id, name: $name, platform: $platform, lastSync: $lastSync, createdAt: $createdAt)';
+  return 'DeviceEntity(id: $id, name: $name, platform: $platform, lastSync: $lastSync, lastIp: $lastIp, lastSeen: $lastSeen, createdAt: $createdAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $DeviceEntityCopyWith<$Res>  {
   factory $DeviceEntityCopyWith(DeviceEntity value, $Res Function(DeviceEntity) _then) = _$DeviceEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String platform,@JsonKey(name: 'last_sync') DateTime? lastSync,@JsonKey(name: 'created_at') DateTime? createdAt
+ String id, String name, String platform,@JsonKey(name: 'last_sync') DateTime? lastSync,@JsonKey(name: 'last_ip') String? lastIp,@JsonKey(name: 'last_seen') DateTime? lastSeen,@JsonKey(name: 'created_at') DateTime? createdAt
 });
 
 
@@ -65,12 +65,14 @@ class _$DeviceEntityCopyWithImpl<$Res>
 
 /// Create a copy of DeviceEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? platform = null,Object? lastSync = freezed,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? platform = null,Object? lastSync = freezed,Object? lastIp = freezed,Object? lastSeen = freezed,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,platform: null == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
 as String,lastSync: freezed == lastSync ? _self.lastSync : lastSync // ignore: cast_nullable_to_non_nullable
+as DateTime?,lastIp: freezed == lastIp ? _self.lastIp : lastIp // ignore: cast_nullable_to_non_nullable
+as String?,lastSeen: freezed == lastSeen ? _self.lastSeen : lastSeen // ignore: cast_nullable_to_non_nullable
 as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -157,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String platform, @JsonKey(name: 'last_sync')  DateTime? lastSync, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String platform, @JsonKey(name: 'last_sync')  DateTime? lastSync, @JsonKey(name: 'last_ip')  String? lastIp, @JsonKey(name: 'last_seen')  DateTime? lastSeen, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DeviceEntity() when $default != null:
-return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.lastIp,_that.lastSeen,_that.createdAt);case _:
   return orElse();
 
 }
@@ -178,10 +180,10 @@ return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.createdA
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String platform, @JsonKey(name: 'last_sync')  DateTime? lastSync, @JsonKey(name: 'created_at')  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String platform, @JsonKey(name: 'last_sync')  DateTime? lastSync, @JsonKey(name: 'last_ip')  String? lastIp, @JsonKey(name: 'last_seen')  DateTime? lastSeen, @JsonKey(name: 'created_at')  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _DeviceEntity():
-return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.lastIp,_that.lastSeen,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +200,10 @@ return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.createdA
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String platform, @JsonKey(name: 'last_sync')  DateTime? lastSync, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String platform, @JsonKey(name: 'last_sync')  DateTime? lastSync, @JsonKey(name: 'last_ip')  String? lastIp, @JsonKey(name: 'last_seen')  DateTime? lastSeen, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _DeviceEntity() when $default != null:
-return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.lastIp,_that.lastSeen,_that.createdAt);case _:
   return null;
 
 }
@@ -213,13 +215,15 @@ return $default(_that.id,_that.name,_that.platform,_that.lastSync,_that.createdA
 @JsonSerializable()
 
 class _DeviceEntity implements DeviceEntity {
-  const _DeviceEntity({required this.id, required this.name, this.platform = '', @JsonKey(name: 'last_sync') this.lastSync, @JsonKey(name: 'created_at') this.createdAt});
+  const _DeviceEntity({required this.id, required this.name, this.platform = '', @JsonKey(name: 'last_sync') this.lastSync, @JsonKey(name: 'last_ip') this.lastIp, @JsonKey(name: 'last_seen') this.lastSeen, @JsonKey(name: 'created_at') this.createdAt});
   factory _DeviceEntity.fromJson(Map<String, dynamic> json) => _$DeviceEntityFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override@JsonKey() final  String platform;
 @override@JsonKey(name: 'last_sync') final  DateTime? lastSync;
+@override@JsonKey(name: 'last_ip') final  String? lastIp;
+@override@JsonKey(name: 'last_seen') final  DateTime? lastSeen;
 @override@JsonKey(name: 'created_at') final  DateTime? createdAt;
 
 /// Create a copy of DeviceEntity
@@ -235,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeviceEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.lastSync, lastSync) || other.lastSync == lastSync)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeviceEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.lastSync, lastSync) || other.lastSync == lastSync)&&(identical(other.lastIp, lastIp) || other.lastIp == lastIp)&&(identical(other.lastSeen, lastSeen) || other.lastSeen == lastSeen)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,platform,lastSync,createdAt);
+int get hashCode => Object.hash(runtimeType,id,name,platform,lastSync,lastIp,lastSeen,createdAt);
 
 @override
 String toString() {
-  return 'DeviceEntity(id: $id, name: $name, platform: $platform, lastSync: $lastSync, createdAt: $createdAt)';
+  return 'DeviceEntity(id: $id, name: $name, platform: $platform, lastSync: $lastSync, lastIp: $lastIp, lastSeen: $lastSeen, createdAt: $createdAt)';
 }
 
 
@@ -255,7 +259,7 @@ abstract mixin class _$DeviceEntityCopyWith<$Res> implements $DeviceEntityCopyWi
   factory _$DeviceEntityCopyWith(_DeviceEntity value, $Res Function(_DeviceEntity) _then) = __$DeviceEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String platform,@JsonKey(name: 'last_sync') DateTime? lastSync,@JsonKey(name: 'created_at') DateTime? createdAt
+ String id, String name, String platform,@JsonKey(name: 'last_sync') DateTime? lastSync,@JsonKey(name: 'last_ip') String? lastIp,@JsonKey(name: 'last_seen') DateTime? lastSeen,@JsonKey(name: 'created_at') DateTime? createdAt
 });
 
 
@@ -272,12 +276,14 @@ class __$DeviceEntityCopyWithImpl<$Res>
 
 /// Create a copy of DeviceEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? platform = null,Object? lastSync = freezed,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? platform = null,Object? lastSync = freezed,Object? lastIp = freezed,Object? lastSeen = freezed,Object? createdAt = freezed,}) {
   return _then(_DeviceEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,platform: null == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
 as String,lastSync: freezed == lastSync ? _self.lastSync : lastSync // ignore: cast_nullable_to_non_nullable
+as DateTime?,lastIp: freezed == lastIp ? _self.lastIp : lastIp // ignore: cast_nullable_to_non_nullable
+as String?,lastSeen: freezed == lastSeen ? _self.lastSeen : lastSeen // ignore: cast_nullable_to_non_nullable
 as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

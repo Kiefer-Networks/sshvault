@@ -719,5 +719,22 @@
   "couponInputLabel": "Gutschein-Code",
   "couponInputHint": "Gutschein-Code eingeben",
   "couponRedeemButton": "Einlösen",
-  "couponSuccess": "Gutschein erfolgreich eingelöst"
+  "couponSuccess": "Gutschein erfolgreich eingelöst",
+
+  "subscriptionExpiresOn": "Verlängert sich am {date}",
+  "@subscriptionExpiresOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "changeAvatar": "Avatar ändern",
+  "removeAvatar": "Avatar entfernen",
+  "avatarUploadFailed": "Avatar-Upload fehlgeschlagen",
+  "avatarTooLarge": "Bild ist zu groß",
+
+  "deviceLastSeen": "Zuletzt gesehen",
+  "deviceIpAddress": "IP",
+
+  "serverUrlLockedWhileLoggedIn": "Server-URL kann nicht geändert werden, solange du angemeldet bist. Melde dich zuerst ab."
 }

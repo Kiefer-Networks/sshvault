@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
@@ -436,11 +438,20 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
           ? Text(l10n.accountNotLoggedIn)
           : Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: theme.colorScheme.primaryContainer,
-                  child: Icon(
-                    Icons.person,
-                    color: theme.colorScheme.onPrimaryContainer,
+                GestureDetector(
+                  onTap: () => _showAvatarOptions(l10n, user.avatar),
+                  child: CircleAvatar(
+                    radius: 24,
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    backgroundImage: user.avatar.isNotEmpty
+                        ? MemoryImage(base64Decode(user.avatar))
+                        : null,
+                    child: user.avatar.isEmpty
+                        ? Icon(
+                            Icons.person,
+                            color: theme.colorScheme.onPrimaryContainer,
+                          )
+                        : null,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -477,6 +488,108 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
       loading: () => const Center(child: CircularProgressIndicator.adaptive()),
       error: (e, _) => Text(l10n.error(errorMessage(e))),
     );
+  }
+
+  Future<void> _showAvatarOptions(AppLocalizations l10n, String currentAvatar) async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(l10n.changeAvatar),
+              onTap: () => Navigator.pop(ctx, 'pick'),
+            ),
+            if (currentAvatar.isNotEmpty)
+              ListTile(
+                leading: const Icon(Icons.delete_outline),
+                title: Text(l10n.removeAvatar),
+                onTap: () => Navigator.pop(ctx, 'remove'),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+
+    if (result == 'remove') {
+      await _deleteAvatar(l10n);
+    } else if (result == 'pick') {
+      await _pickAndUploadAvatar(l10n);
+    }
+  }
+
+  Future<void> _pickAndUploadAvatar(AppLocalizations l10n) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 256,
+      maxHeight: 256,
+      imageQuality: 80,
+    );
+    if (picked == null || !mounted) return;
+
+    final bytes = await picked.readAsBytes();
+    if (bytes.length > 384 * 1024) {
+      if (mounted) {
+        AdaptiveNotification.show(context, message: l10n.avatarTooLarge);
+      }
+      return;
+    }
+
+    try {
+      final repo = ref.read(accountRepositoryProvider);
+      final result = await repo.uploadAvatar(bytes);
+      result.fold(
+        onSuccess: (_) {
+          if (mounted) ref.invalidate(userProfileProvider);
+        },
+        onFailure: (f) {
+          if (mounted) {
+            AdaptiveNotification.show(
+              context,
+              message: l10n.avatarUploadFailed,
+            );
+          }
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.avatarUploadFailed,
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteAvatar(AppLocalizations l10n) async {
+    try {
+      final repo = ref.read(accountRepositoryProvider);
+      final result = await repo.deleteAvatar();
+      result.fold(
+        onSuccess: (_) {
+          if (mounted) ref.invalidate(userProfileProvider);
+        },
+        onFailure: (f) {
+          if (mounted) {
+            AdaptiveNotification.show(
+              context,
+              message: l10n.error(f.toString()),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.error(errorMessage(e)),
+        );
+      }
+    }
   }
 
   Widget _buildBillingCard(AppLocalizations l10n, ThemeData theme) {
@@ -575,7 +688,18 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               },
             ),
           ],
-          if (billing.active) ...[
+          if (billing.active && billing.periodEnd != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                l10n.subscriptionExpiresOn(formatDate(billing.periodEnd!)),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          if (billing.active &&
+              const {'stripe', 'apple', 'google'}.contains(billing.provider)) ...[
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
@@ -609,11 +733,21 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                       contentPadding: EdgeInsets.zero,
                       leading: Icon(_platformIcon(d.platform)),
                       title: Text(d.name),
-                      subtitle: d.lastSync != null
-                          ? Text(
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (d.lastSync != null)
+                            Text(
                               '${l10n.accountLastSync}: ${formatDate(d.lastSync!)}',
-                            )
-                          : null,
+                            ),
+                          if (d.lastSeen != null)
+                            Text(
+                              '${l10n.deviceLastSeen}: ${formatDate(d.lastSeen!)}',
+                            ),
+                          if (d.lastIp != null && d.lastIp!.isNotEmpty)
+                            Text('${l10n.deviceIpAddress}: ${d.lastIp}'),
+                        ],
+                      ),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete_outline, size: 20),
                         onPressed: () => _deleteDevice(d.id),

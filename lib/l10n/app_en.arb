@@ -745,5 +745,22 @@
   "couponInputLabel": "Coupon Code",
   "couponInputHint": "Enter your coupon code",
   "couponRedeemButton": "Redeem",
-  "couponSuccess": "Coupon redeemed successfully"
+  "couponSuccess": "Coupon redeemed successfully",
+
+  "subscriptionExpiresOn": "Renews on {date}",
+  "@subscriptionExpiresOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "changeAvatar": "Change Avatar",
+  "removeAvatar": "Remove Avatar",
+  "avatarUploadFailed": "Failed to upload avatar",
+  "avatarTooLarge": "Image is too large",
+
+  "deviceLastSeen": "Last seen",
+  "deviceIpAddress": "IP",
+
+  "serverUrlLockedWhileLoggedIn": "Server URL cannot be changed while logged in. Log out first."
 }

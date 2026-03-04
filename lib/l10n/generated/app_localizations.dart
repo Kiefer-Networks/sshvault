@@ -3813,6 +3813,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coupon redeemed successfully'**
   String get couponSuccess;
+
+  /// No description provided for @subscriptionExpiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews on {date}'**
+  String subscriptionExpiresOn(String date);
+
+  /// No description provided for @changeAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Avatar'**
+  String get changeAvatar;
+
+  /// No description provided for @removeAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Avatar'**
+  String get removeAvatar;
+
+  /// No description provided for @avatarUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload avatar'**
+  String get avatarUploadFailed;
+
+  /// No description provided for @avatarTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Image is too large'**
+  String get avatarTooLarge;
+
+  /// No description provided for @deviceLastSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen'**
+  String get deviceLastSeen;
+
+  /// No description provided for @deviceIpAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'IP'**
+  String get deviceIpAddress;
+
+  /// No description provided for @serverUrlLockedWhileLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL cannot be changed while logged in. Log out first.'**
+  String get serverUrlLockedWhileLoggedIn;
 }
 
 class _AppLocalizationsDelegate

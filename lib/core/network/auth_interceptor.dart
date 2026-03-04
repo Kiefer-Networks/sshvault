@@ -52,6 +52,13 @@ class AuthInterceptor extends Interceptor {
       } else {
         _log.warning(_tag, 'No access token for ${options.path}');
       }
+
+      final deviceIdResult = await _storage.getDeviceId();
+      final deviceId = deviceIdResult.isSuccess ? deviceIdResult.value : null;
+      if (deviceId != null && deviceId.isNotEmpty) {
+        options.headers['X-Device-ID'] = deviceId;
+      }
+
       handler.next(options);
     } catch (e) {
       _log.error(_tag, 'Failed to attach auth header: $e');

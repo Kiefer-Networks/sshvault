@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
 import 'package:shellvault/features/account/domain/entities/billing_status.dart';
@@ -21,6 +23,8 @@ abstract class AccountRepository {
   Future<Result<BillingStatus>> verifyApplePurchase(String transactionId);
   Future<Result<String>> createTeleportAddonCheckout();
   Future<Result<CouponRedeemResult>> redeemCoupon(String code);
+  Future<Result<UserEntity>> uploadAvatar(Uint8List imageBytes);
+  Future<Result<void>> deleteAvatar();
   Future<Result<AuditLogResult>> getAuditLogs({
     String? category,
     String? action,

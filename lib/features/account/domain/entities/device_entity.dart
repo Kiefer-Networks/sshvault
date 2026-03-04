@@ -10,6 +10,8 @@ abstract class DeviceEntity with _$DeviceEntity {
     required String name,
     @Default('') String platform,
     @JsonKey(name: 'last_sync') DateTime? lastSync,
+    @JsonKey(name: 'last_ip') String? lastIp,
+    @JsonKey(name: 'last_seen') DateTime? lastSeen,
     @JsonKey(name: 'created_at') DateTime? createdAt,
   }) = _DeviceEntity;
 

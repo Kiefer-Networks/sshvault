@@ -5,6 +5,7 @@ import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
+import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -51,6 +52,8 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     final settings = settingsAsync.value;
     final isSelfHosted = settings?.selfHosted ?? false;
     final testState = ref.watch(_connectionTestProvider);
+    final authState = ref.watch(authProvider);
+    final isLoggedIn = authState.value == AuthStatus.authenticated;
 
     return AdaptiveScaffold(
       title: l10n.serverConfigTitle,
@@ -63,20 +66,32 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
             title: l10n.serverConfigSelfHosted,
             subtitle: l10n.serverConfigSelfHostedDescription,
             value: isSelfHosted,
-            onChanged: (v) {
-              ref.read(settingsProvider.notifier).setSelfHosted(v);
-              if (!v) {
-                _urlController.text = AppConstants.defaultServerUrl;
-                _saveUrl(AppConstants.defaultServerUrl);
-              }
-            },
+            onChanged: isLoggedIn
+                ? null
+                : (v) {
+                    ref.read(settingsProvider.notifier).setSelfHosted(v);
+                    if (!v) {
+                      _urlController.text = AppConstants.defaultServerUrl;
+                      _saveUrl(AppConstants.defaultServerUrl);
+                    }
+                  },
           ),
+          if (isLoggedIn)
+            Padding(
+              padding: const EdgeInsets.only(top: 4, left: 16, right: 16),
+              child: Text(
+                l10n.serverUrlLockedWhileLoggedIn,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
           const SizedBox(height: 16),
 
           // Server URL
           TextField(
             controller: _urlController,
-            enabled: isSelfHosted,
+            enabled: isSelfHosted && !isLoggedIn,
             keyboardType: TextInputType.url,
             decoration: InputDecoration(
               labelText: l10n.serverConfigUrlLabel,
