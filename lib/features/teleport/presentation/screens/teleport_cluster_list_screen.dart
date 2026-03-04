@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/teleport/presentation/providers/teleport_providers.dart';
 import 'package:shellvault/features/teleport/presentation/widgets/teleport_cert_status.dart';
 import 'package:shellvault/features/teleport/presentation/widgets/teleport_node_tile.dart';
@@ -12,14 +13,15 @@ class TeleportBranchScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final clustersAsync = ref.watch(teleportClusterListProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Teleport'),
+        title: Text(l10n.teleportTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Add cluster',
+            tooltip: l10n.teleportAddClusterTooltip,
             onPressed: () => context.push('/teleport/cluster/new'),
           ),
         ],
@@ -38,12 +40,12 @@ class TeleportBranchScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No Teleport clusters',
+                    l10n.teleportNoClusters,
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Add a cluster to see your SSH nodes',
+                    l10n.teleportNoClustersHint,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.outline,
                     ),
@@ -52,7 +54,7 @@ class TeleportBranchScreen extends ConsumerWidget {
                   FilledButton.icon(
                     onPressed: () => context.push('/teleport/cluster/new'),
                     icon: const Icon(Icons.add),
-                    label: const Text('Add Cluster'),
+                    label: Text(l10n.teleportAddCluster),
                   ),
                 ],
               ),
@@ -89,7 +91,7 @@ class TeleportBranchScreen extends ConsumerWidget {
                         Padding(
                           padding: const EdgeInsets.all(16),
                           child: Text(
-                            'No nodes available',
+                            l10n.teleportNoNodes,
                             style: theme.textTheme.bodySmall,
                           ),
                         ),
@@ -99,7 +101,11 @@ class TeleportBranchScreen extends ConsumerWidget {
                       return TeleportNodeTile(
                         node: node,
                         onTap: () {
-                          // TODO: Open terminal session to Teleport node
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.teleportSessionsNotAvailable),
+                            ),
+                          );
                         },
                       );
                     }).toList();
@@ -114,7 +120,7 @@ class TeleportBranchScreen extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Text(
-                        'Failed to load nodes',
+                        l10n.teleportFailedToLoadNodes,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.error,
                         ),
@@ -128,7 +134,7 @@ class TeleportBranchScreen extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
-          child: Text('Error: $e'),
+          child: Text(l10n.error(e.toString())),
         ),
       ),
     );

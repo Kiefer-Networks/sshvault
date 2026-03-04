@@ -714,5 +714,41 @@
   "logoutDialogTitle": "Abmelden",
   "logoutDialogMessage": "Möchtest du alle lokalen Daten löschen? Server, SSH-Keys, Snippets und Einstellungen werden von diesem Gerät entfernt.",
   "logoutOnly": "Nur abmelden",
-  "logoutAndDelete": "Abmelden & Daten löschen"
+  "logoutAndDelete": "Abmelden & Daten löschen",
+
+  "teleportTitle": "Teleport",
+  "teleportAddClusterTooltip": "Cluster hinzufügen",
+  "teleportNoClusters": "Keine Teleport-Cluster",
+  "teleportNoClustersHint": "Füge einen Cluster hinzu, um deine SSH-Nodes zu sehen",
+  "teleportAddCluster": "Cluster hinzufügen",
+  "teleportNoNodes": "Keine Nodes verfügbar",
+  "teleportSessionsNotAvailable": "Teleport-Terminalsitzungen noch nicht verfügbar",
+  "teleportFailedToLoadNodes": "Nodes konnten nicht geladen werden",
+
+  "teleportClusterFormTitle": "Teleport-Cluster hinzufügen",
+  "teleportClusterNameLabel": "Cluster-Name",
+  "teleportClusterNameHint": "z. B. Produktion",
+  "teleportProxyAddrLabel": "Proxy-Adresse",
+  "teleportProxyAddrHint": "z. B. teleport.example.com:443",
+  "teleportAuthMethodLabel": "Authentifizierungsmethode",
+  "teleportAuthIdentityFile": "Identity-Datei",
+  "teleportAuthLocal": "Lokal (Benutzer/Passwort)",
+  "teleportAuthSsoOidc": "SSO (OIDC)",
+  "teleportAuthSsoSaml": "SSO (SAML)",
+  "teleportSelectIdentityFile": "Identity-Datei auswählen",
+  "teleportFieldRequired": "Erforderlich",
+
+  "teleportLoginTitle": "Teleport-Anmeldung",
+  "teleportLoginUsername": "Benutzername",
+  "teleportLoginPassword": "Passwort",
+  "teleportLoginTotpCode": "TOTP-Code (optional)",
+  "teleportLoginButton": "Anmelden",
+
+  "teleportCertNone": "Kein Zertifikat",
+  "teleportCertExpired": "Abgelaufen",
+  "teleportCertExpiringSoon": "Läuft bald ab",
+  "teleportCertHoursLeft": "{hours} Std. übrig",
+  "@teleportCertHoursLeft": { "placeholders": { "hours": { "type": "int" } } },
+  "teleportCertMinutesLeft": "{minutes} Min. übrig",
+  "@teleportCertMinutesLeft": { "placeholders": { "minutes": { "type": "int" } } }
 }

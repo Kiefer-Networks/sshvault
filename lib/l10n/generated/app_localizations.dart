@@ -3789,6 +3789,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log out & delete data'**
   String get logoutAndDelete;
+
+  /// No description provided for @teleportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teleport'**
+  String get teleportTitle;
+
+  /// No description provided for @teleportAddClusterTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add cluster'**
+  String get teleportAddClusterTooltip;
+
+  /// No description provided for @teleportNoClusters.
+  ///
+  /// In en, this message translates to:
+  /// **'No Teleport clusters'**
+  String get teleportNoClusters;
+
+  /// No description provided for @teleportNoClustersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a cluster to see your SSH nodes'**
+  String get teleportNoClustersHint;
+
+  /// No description provided for @teleportAddCluster.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Cluster'**
+  String get teleportAddCluster;
+
+  /// No description provided for @teleportNoNodes.
+  ///
+  /// In en, this message translates to:
+  /// **'No nodes available'**
+  String get teleportNoNodes;
+
+  /// No description provided for @teleportSessionsNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Teleport terminal sessions not yet available'**
+  String get teleportSessionsNotAvailable;
+
+  /// No description provided for @teleportFailedToLoadNodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load nodes'**
+  String get teleportFailedToLoadNodes;
+
+  /// No description provided for @teleportClusterFormTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Teleport Cluster'**
+  String get teleportClusterFormTitle;
+
+  /// No description provided for @teleportClusterNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cluster Name'**
+  String get teleportClusterNameLabel;
+
+  /// No description provided for @teleportClusterNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Production'**
+  String get teleportClusterNameHint;
+
+  /// No description provided for @teleportProxyAddrLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy Address'**
+  String get teleportProxyAddrLabel;
+
+  /// No description provided for @teleportProxyAddrHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. teleport.example.com:443'**
+  String get teleportProxyAddrHint;
+
+  /// No description provided for @teleportAuthMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Auth Method'**
+  String get teleportAuthMethodLabel;
+
+  /// No description provided for @teleportAuthIdentityFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity File'**
+  String get teleportAuthIdentityFile;
+
+  /// No description provided for @teleportAuthLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Local (User/Password)'**
+  String get teleportAuthLocal;
+
+  /// No description provided for @teleportAuthSsoOidc.
+  ///
+  /// In en, this message translates to:
+  /// **'SSO (OIDC)'**
+  String get teleportAuthSsoOidc;
+
+  /// No description provided for @teleportAuthSsoSaml.
+  ///
+  /// In en, this message translates to:
+  /// **'SSO (SAML)'**
+  String get teleportAuthSsoSaml;
+
+  /// No description provided for @teleportSelectIdentityFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Identity File'**
+  String get teleportSelectIdentityFile;
+
+  /// No description provided for @teleportFieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get teleportFieldRequired;
+
+  /// No description provided for @teleportLoginTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teleport Login'**
+  String get teleportLoginTitle;
+
+  /// No description provided for @teleportLoginUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get teleportLoginUsername;
+
+  /// No description provided for @teleportLoginPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get teleportLoginPassword;
+
+  /// No description provided for @teleportLoginTotpCode.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTP Code (optional)'**
+  String get teleportLoginTotpCode;
+
+  /// No description provided for @teleportLoginButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get teleportLoginButton;
+
+  /// No description provided for @teleportCertNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No cert'**
+  String get teleportCertNone;
+
+  /// No description provided for @teleportCertExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get teleportCertExpired;
+
+  /// No description provided for @teleportCertExpiringSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring soon'**
+  String get teleportCertExpiringSoon;
+
+  /// No description provided for @teleportCertHoursLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h left'**
+  String teleportCertHoursLeft(int hours);
+
+  /// No description provided for @teleportCertMinutesLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m left'**
+  String teleportCertMinutesLeft(int minutes);
 }
 
 class _AppLocalizationsDelegate

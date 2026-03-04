@@ -75,6 +75,8 @@ class TeleportAddonStoreNotifier extends AsyncNotifier<ProductDetails?> {
     ref.read(teleportAddonPurchaseStatusProvider.notifier).state =
         TeleportAddonPurchaseStatus.verifying;
 
+    var verified = false;
+
     // Reuse the same Google/Apple verification endpoints — the server
     // distinguishes by product ID in the transaction data.
     if (Platform.isAndroid) {
@@ -86,6 +88,7 @@ class TeleportAddonStoreNotifier extends AsyncNotifier<ProductDetails?> {
         ref.read(teleportAddonPurchaseStatusProvider.notifier).state =
             TeleportAddonPurchaseStatus.success;
         ref.invalidate(billingStatusProvider);
+        verified = true;
       } else {
         ref.read(teleportAddonPurchaseStatusProvider.notifier).state =
             TeleportAddonPurchaseStatus.error;
@@ -101,6 +104,7 @@ class TeleportAddonStoreNotifier extends AsyncNotifier<ProductDetails?> {
         ref.read(teleportAddonPurchaseStatusProvider.notifier).state =
             TeleportAddonPurchaseStatus.success;
         ref.invalidate(billingStatusProvider);
+        verified = true;
       } else {
         ref.read(teleportAddonPurchaseStatusProvider.notifier).state =
             TeleportAddonPurchaseStatus.error;
@@ -109,7 +113,12 @@ class TeleportAddonStoreNotifier extends AsyncNotifier<ProductDetails?> {
       }
     }
 
-    await InAppPurchase.instance.completePurchase(purchase);
+    // Only acknowledge the purchase to the store after successful server
+    // verification. Leaving it pending on failure allows the platform's
+    // automatic refund mechanism (e.g. Google Play's 3-day window).
+    if (verified) {
+      await InAppPurchase.instance.completePurchase(purchase);
+    }
   }
 
   /// Initiates a one-time purchase of the Teleport addon via the native store.

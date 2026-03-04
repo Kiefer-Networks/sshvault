@@ -1,9 +1,10 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/teleport/domain/entities/teleport_cluster_entity.dart';
 import 'package:shellvault/features/teleport/presentation/providers/teleport_providers.dart';
 
@@ -22,7 +23,7 @@ class _TeleportClusterFormScreenState
   final _proxyAddrController = TextEditingController();
   TeleportAuthMethod _authMethod = TeleportAuthMethod.identityFile;
   String? _identityFileName;
-  List<int>? _identityBytes;
+  Uint8List? _identityBytes;
   bool _loading = false;
 
   @override
@@ -40,7 +41,7 @@ class _TeleportClusterFormScreenState
     if (result != null && result.files.single.bytes != null) {
       setState(() {
         _identityFileName = result.files.single.name;
-        _identityBytes = result.files.single.bytes!.toList();
+        _identityBytes = result.files.single.bytes!;
       });
     }
   }
@@ -55,9 +56,7 @@ class _TeleportClusterFormScreenState
       name: _nameController.text.trim(),
       proxyAddr: _proxyAddrController.text.trim(),
       authMethod: _authMethodToString(_authMethod),
-      identity: _identityBytes != null
-          ? base64Decode(base64Encode(_identityBytes!))
-          : null,
+      identity: _identityBytes,
     );
 
     if (!mounted) return;
@@ -88,9 +87,10 @@ class _TeleportClusterFormScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Teleport Cluster')),
+      appBar: AppBar(title: Text(l10n.teleportClusterFormTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -100,43 +100,43 @@ class _TeleportClusterFormScreenState
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Cluster Name',
-                  hintText: 'e.g. Production',
+                decoration: InputDecoration(
+                  labelText: l10n.teleportClusterNameLabel,
+                  hintText: l10n.teleportClusterNameHint,
                 ),
                 validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Required' : null,
+                    (v == null || v.trim().isEmpty) ? l10n.teleportFieldRequired : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _proxyAddrController,
-                decoration: const InputDecoration(
-                  labelText: 'Proxy Address',
-                  hintText: 'e.g. teleport.example.com:443',
+                decoration: InputDecoration(
+                  labelText: l10n.teleportProxyAddrLabel,
+                  hintText: l10n.teleportProxyAddrHint,
                 ),
                 validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Required' : null,
+                    (v == null || v.trim().isEmpty) ? l10n.teleportFieldRequired : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<TeleportAuthMethod>(
                 initialValue: _authMethod,
-                decoration: const InputDecoration(labelText: 'Auth Method'),
-                items: const [
+                decoration: InputDecoration(labelText: l10n.teleportAuthMethodLabel),
+                items: [
                   DropdownMenuItem(
                     value: TeleportAuthMethod.identityFile,
-                    child: Text('Identity File'),
+                    child: Text(l10n.teleportAuthIdentityFile),
                   ),
                   DropdownMenuItem(
                     value: TeleportAuthMethod.local,
-                    child: Text('Local (User/Password)'),
+                    child: Text(l10n.teleportAuthLocal),
                   ),
                   DropdownMenuItem(
                     value: TeleportAuthMethod.ssoOidc,
-                    child: Text('SSO (OIDC)'),
+                    child: Text(l10n.teleportAuthSsoOidc),
                   ),
                   DropdownMenuItem(
                     value: TeleportAuthMethod.ssoSaml,
-                    child: Text('SSO (SAML)'),
+                    child: Text(l10n.teleportAuthSsoSaml),
                   ),
                 ],
                 onChanged: (v) {
@@ -148,7 +148,7 @@ class _TeleportClusterFormScreenState
                 OutlinedButton.icon(
                   onPressed: _pickIdentityFile,
                   icon: const Icon(Icons.upload_file),
-                  label: Text(_identityFileName ?? 'Select Identity File'),
+                  label: Text(_identityFileName ?? l10n.teleportSelectIdentityFile),
                 ),
                 if (_identityFileName != null)
                   Padding(
@@ -168,7 +168,7 @@ class _TeleportClusterFormScreenState
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Add Cluster'),
+                    : Text(l10n.teleportAddCluster),
               ),
             ],
           ),

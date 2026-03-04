@@ -70,9 +70,9 @@ class TeleportApiService {
     final result = await _api.post(
       '/v1/teleport/clusters/$clusterId/login',
       data: {
-        if (username != null) 'username': username,
-        if (password != null) 'password': password,
-        if (otpToken != null) 'otp_token': otpToken,
+        'username': ?username,
+        'password': ?password,
+        'otp_token': ?otpToken,
       },
     );
     return result.map((_) {});
@@ -112,8 +112,8 @@ class TeleportApiService {
     final result = await _api.post(
       '/v1/teleport/clusters/$clusterId/certs',
       data: {
-        if (username != null) 'username': username,
-        if (ttl != null) 'ttl': ttl,
+        'username': ?username,
+        'ttl': ?ttl,
       },
     );
 

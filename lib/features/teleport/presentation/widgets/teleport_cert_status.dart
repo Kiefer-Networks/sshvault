@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class TeleportCertStatus extends StatelessWidget {
   final DateTime? expiresAt;
@@ -8,12 +9,13 @@ class TeleportCertStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (expiresAt == null) {
       return _badge(
         context,
         icon: Icons.vpn_key_off,
-        label: 'No cert',
+        label: l10n.teleportCertNone,
         color: theme.colorScheme.outline,
       );
     }
@@ -25,7 +27,7 @@ class TeleportCertStatus extends StatelessWidget {
       return _badge(
         context,
         icon: Icons.error_outline,
-        label: 'Expired',
+        label: l10n.teleportCertExpired,
         color: theme.colorScheme.error,
       );
     }
@@ -34,13 +36,15 @@ class TeleportCertStatus extends StatelessWidget {
       return _badge(
         context,
         icon: Icons.warning_amber,
-        label: 'Expiring soon',
+        label: l10n.teleportCertExpiringSoon,
         color: theme.colorScheme.tertiary,
       );
     }
 
     final hours = remaining.inHours;
-    final label = hours > 0 ? '${hours}h left' : '${remaining.inMinutes}m left';
+    final label = hours > 0
+        ? l10n.teleportCertHoursLeft(hours)
+        : l10n.teleportCertMinutesLeft(remaining.inMinutes);
 
     return _badge(
       context,

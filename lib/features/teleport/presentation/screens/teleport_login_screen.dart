@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/features/teleport/presentation/providers/teleport_providers.dart';
 
 class TeleportLoginScreen extends ConsumerStatefulWidget {
@@ -55,8 +56,10 @@ class _TeleportLoginScreenState extends ConsumerState<TeleportLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Teleport Login')),
+      appBar: AppBar(title: Text(l10n.teleportLoginTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -78,26 +81,26 @@ class _TeleportLoginScreenState extends ConsumerState<TeleportLoginScreen> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Username',
-                prefixIcon: Icon(Icons.person),
+              decoration: InputDecoration(
+                labelText: l10n.teleportLoginUsername,
+                prefixIcon: const Icon(Icons.person),
               ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _passwordController,
               obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.lock),
+              decoration: InputDecoration(
+                labelText: l10n.teleportLoginPassword,
+                prefixIcon: const Icon(Icons.lock),
               ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _otpController,
-              decoration: const InputDecoration(
-                labelText: 'TOTP Code (optional)',
-                prefixIcon: Icon(Icons.security),
+              decoration: InputDecoration(
+                labelText: l10n.teleportLoginTotpCode,
+                prefixIcon: const Icon(Icons.security),
               ),
               keyboardType: TextInputType.number,
             ),
@@ -110,7 +113,7 @@ class _TeleportLoginScreenState extends ConsumerState<TeleportLoginScreen> {
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Login'),
+                  : Text(l10n.teleportLoginButton),
             ),
           ],
         ),

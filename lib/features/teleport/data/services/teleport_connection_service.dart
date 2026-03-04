@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartssh2/dartssh2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/teleport/data/services/teleport_api_service.dart';
 import 'package:shellvault/features/teleport/domain/entities/teleport_node_entity.dart';
@@ -34,6 +35,16 @@ class TeleportConnectionService {
     required String username,
     bool Function(X509Certificate)? onBadCertificate,
   }) async {
+    // Reject custom certificate callbacks in release builds to prevent
+    // TLS validation bypass (MITM protection).
+    assert(
+      onBadCertificate == null || kDebugMode,
+      'onBadCertificate must not be used in release builds',
+    );
+    if (!kDebugMode && onBadCertificate != null) {
+      onBadCertificate = null;
+    }
+
     _log.info(_tag, 'Connecting to Teleport node ${node.hostname} via $proxyHost:$proxyPort');
 
     // Parse the private key from the certificate response.
