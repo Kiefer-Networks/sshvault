@@ -58,10 +58,10 @@ void main() {
 
   group('getGroups', () {
     test('returns list of GroupEntity on success', () async {
-      when(() => mockDao.getAllGroups())
-          .thenAnswer((_) async => [driftGroup]);
-      when(() => mockDao.getServerCountForGroup('g1'))
-          .thenAnswer((_) async => 3);
+      when(() => mockDao.getAllGroups()).thenAnswer((_) async => [driftGroup]);
+      when(
+        () => mockDao.getServerCountForGroup('g1'),
+      ).thenAnswer((_) async => 3);
 
       final result = await sut.getGroups();
 
@@ -95,10 +95,12 @@ void main() {
 
   group('getGroup', () {
     test('returns GroupEntity when found', () async {
-      when(() => mockDao.getGroupById('g1'))
-          .thenAnswer((_) async => driftGroup);
-      when(() => mockDao.getServerCountForGroup('g1'))
-          .thenAnswer((_) async => 5);
+      when(
+        () => mockDao.getGroupById('g1'),
+      ).thenAnswer((_) async => driftGroup);
+      when(
+        () => mockDao.getServerCountForGroup('g1'),
+      ).thenAnswer((_) async => 5);
 
       final result = await sut.getGroup('g1');
 
@@ -109,8 +111,7 @@ void main() {
     });
 
     test('returns NotFoundFailure when group does not exist', () async {
-      when(() => mockDao.getGroupById('missing'))
-          .thenAnswer((_) async => null);
+      when(() => mockDao.getGroupById('missing')).thenAnswer((_) async => null);
 
       final result = await sut.getGroup('missing');
 
@@ -146,7 +147,9 @@ void main() {
 
     test('returns DatabaseFailure when insert fails', () async {
       when(() => mockUuid.v4()).thenReturn('generated-uuid');
-      when(() => mockDao.insertGroup(any())).thenThrow(Exception('insert error'));
+      when(
+        () => mockDao.insertGroup(any()),
+      ).thenThrow(Exception('insert error'));
 
       final result = await sut.createGroup(validEntity);
 
@@ -168,7 +171,9 @@ void main() {
     });
 
     test('returns DatabaseFailure when update fails', () async {
-      when(() => mockDao.updateGroup(any())).thenThrow(Exception('update error'));
+      when(
+        () => mockDao.updateGroup(any()),
+      ).thenThrow(Exception('update error'));
 
       final result = await sut.updateGroup(validEntity);
 
@@ -189,8 +194,9 @@ void main() {
     });
 
     test('returns DatabaseFailure when delete fails', () async {
-      when(() => mockDao.deleteGroupById('g1'))
-          .thenThrow(Exception('delete error'));
+      when(
+        () => mockDao.deleteGroupById('g1'),
+      ).thenThrow(Exception('delete error'));
 
       final result = await sut.deleteGroup('g1');
 
@@ -202,12 +208,15 @@ void main() {
 
   group('getGroupTree', () {
     test('returns tree structure with root and child groups', () async {
-      when(() => mockDao.getAllGroups())
-          .thenAnswer((_) async => [driftGroup, driftGroupChild]);
-      when(() => mockDao.getServerCountForGroup('g1'))
-          .thenAnswer((_) async => 2);
-      when(() => mockDao.getServerCountForGroup('g2'))
-          .thenAnswer((_) async => 1);
+      when(
+        () => mockDao.getAllGroups(),
+      ).thenAnswer((_) async => [driftGroup, driftGroupChild]);
+      when(
+        () => mockDao.getServerCountForGroup('g1'),
+      ).thenAnswer((_) async => 2);
+      when(
+        () => mockDao.getServerCountForGroup('g2'),
+      ).thenAnswer((_) async => 1);
 
       final result = await sut.getGroupTree();
 
@@ -238,12 +247,15 @@ void main() {
         updatedAt: now,
       );
 
-      when(() => mockDao.getAllGroups())
-          .thenAnswer((_) async => [driftGroup, secondRoot]);
-      when(() => mockDao.getServerCountForGroup('g1'))
-          .thenAnswer((_) async => 0);
-      when(() => mockDao.getServerCountForGroup('g3'))
-          .thenAnswer((_) async => 0);
+      when(
+        () => mockDao.getAllGroups(),
+      ).thenAnswer((_) async => [driftGroup, secondRoot]);
+      when(
+        () => mockDao.getServerCountForGroup('g1'),
+      ).thenAnswer((_) async => 0);
+      when(
+        () => mockDao.getServerCountForGroup('g3'),
+      ).thenAnswer((_) async => 0);
 
       final result = await sut.getGroupTree();
 

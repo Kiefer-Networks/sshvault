@@ -13,6 +13,10 @@ class SshKeyDao extends DatabaseAccessor<AppDatabase> with _$SshKeyDaoMixin {
   Future<SshKey?> getSshKeyById(String id) =>
       (select(sshKeys)..where((k) => k.id.equals(id))).getSingleOrNull();
 
+  Future<SshKey?> getSshKeyByFingerprint(String fingerprint) =>
+      (select(sshKeys)..where((k) => k.fingerprint.equals(fingerprint)))
+          .getSingleOrNull();
+
   Future<int> insertSshKey(SshKeysCompanion key) => into(sshKeys).insert(key);
 
   Future<bool> updateSshKey(SshKeysCompanion key) =>

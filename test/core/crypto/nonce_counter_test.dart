@@ -141,7 +141,9 @@ void main() {
       final nonces = <String>[];
       for (var i = 0; i < 20; i++) {
         final nonce = await sut.next('unique-key');
-        nonces.add(nonce.map((b) => b.toRadixString(16).padLeft(2, '0')).join());
+        nonces.add(
+          nonce.map((b) => b.toRadixString(16).padLeft(2, '0')).join(),
+        );
       }
 
       // All nonces must be distinct
@@ -154,8 +156,12 @@ void main() {
 
       // Different key IDs get different random prefixes, so nonces differ.
       // Even though both have counter=1, the prefix should be different.
-      final hexA = nonceA.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-      final hexB = nonceB.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      final hexA = nonceA
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
+      final hexB = nonceB
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
       expect(hexA, isNot(equals(hexB)));
     });
 
@@ -183,7 +189,9 @@ void main() {
       final nonces = <String>[];
       for (var i = 0; i < 10; i++) {
         final nonce = await sut.next('fail-key');
-        nonces.add(nonce.map((b) => b.toRadixString(16).padLeft(2, '0')).join());
+        nonces.add(
+          nonce.map((b) => b.toRadixString(16).padLeft(2, '0')).join(),
+        );
       }
       // All random nonces should be unique (statistically guaranteed)
       expect(nonces.toSet().length, nonces.length);
@@ -223,10 +231,7 @@ void main() {
     test('keyId with special characters works', () async {
       final nonce = await sut.next('key/with:special@chars');
       expect(nonce.length, 12);
-      expect(
-        fakeStorage.store['nonce_counter_key/with:special@chars'],
-        '1',
-      );
+      expect(fakeStorage.store['nonce_counter_key/with:special@chars'], '1');
     });
   });
 }

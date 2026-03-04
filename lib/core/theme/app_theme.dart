@@ -15,6 +15,11 @@ abstract final class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: colorScheme,
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(fontSize: 14),
+        bodyMedium: TextStyle(fontSize: 12),
+        bodySmall: TextStyle(fontSize: 11),
+      ),
       appBarTheme: AppBarTheme(
         surfaceTintColor: Colors.transparent,
         elevation: 0,
@@ -147,6 +152,11 @@ abstract final class AppTheme {
       brightness: Brightness.dark,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colorScheme.surface,
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(fontSize: 14),
+        bodyMedium: TextStyle(fontSize: 12),
+        bodySmall: TextStyle(fontSize: 11),
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
@@ -155,7 +165,7 @@ abstract final class AppTheme {
         titleTextStyle: TextStyle(
           color: colorScheme.onSurface,
           fontSize: 22,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
         ),
       ),
       listTileTheme: ListTileThemeData(

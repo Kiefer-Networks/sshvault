@@ -35,10 +35,9 @@ void main() {
     });
 
     test('start is idempotent — calling twice does not reset state', () {
-      when(() => mockApi.get('/health'))
-          .thenAnswer((_) async => const Err<Map<String, dynamic>>(
-                NetworkFailure('fail'),
-              ));
+      when(() => mockApi.get('/health')).thenAnswer(
+        (_) async => const Err<Map<String, dynamic>>(NetworkFailure('fail')),
+      );
 
       final sut = HeartbeatService(
         apiClient: mockApi,
@@ -51,10 +50,9 @@ void main() {
     });
 
     test('stop resets consecutive failure count', () async {
-      when(() => mockApi.get('/health'))
-          .thenAnswer((_) async => const Err<Map<String, dynamic>>(
-                NetworkFailure('fail'),
-              ));
+      when(() => mockApi.get('/health')).thenAnswer(
+        (_) async => const Err<Map<String, dynamic>>(NetworkFailure('fail')),
+      );
 
       final sut = HeartbeatService(
         apiClient: mockApi,
@@ -79,10 +77,10 @@ void main() {
 
   group('HeartbeatService — failure counting', () {
     test('increments failure count on Err result', () async {
-      when(() => mockApi.get('/health'))
-          .thenAnswer((_) async => const Err<Map<String, dynamic>>(
-                NetworkFailure('Server error'),
-              ));
+      when(() => mockApi.get('/health')).thenAnswer(
+        (_) async =>
+            const Err<Map<String, dynamic>>(NetworkFailure('Server error')),
+      );
 
       final sut = HeartbeatService(
         apiClient: mockApi,
@@ -118,33 +116,34 @@ void main() {
   });
 
   group('HeartbeatService — session expiration', () {
-    test('calls onSessionExpired after maxFailures consecutive failures', () async {
-      var sessionExpired = false;
+    test(
+      'calls onSessionExpired after maxFailures consecutive failures',
+      () async {
+        var sessionExpired = false;
 
-      when(() => mockApi.get('/health'))
-          .thenAnswer((_) async => const Err<Map<String, dynamic>>(
-                NetworkFailure('fail'),
-              ));
+        when(() => mockApi.get('/health')).thenAnswer(
+          (_) async => const Err<Map<String, dynamic>>(NetworkFailure('fail')),
+        );
 
-      final sut = HeartbeatService(
-        apiClient: mockApi,
-        interval: const Duration(milliseconds: 10),
-        maxFailures: 3,
-        onSessionExpired: () => sessionExpired = true,
-      );
-      sut.start();
+        final sut = HeartbeatService(
+          apiClient: mockApi,
+          interval: const Duration(milliseconds: 10),
+          maxFailures: 3,
+          onSessionExpired: () => sessionExpired = true,
+        );
+        sut.start();
 
-      // Wait long enough for 3+ heartbeats
-      await Future<void>.delayed(const Duration(milliseconds: 120));
-      expect(sessionExpired, isTrue);
-      expect(sut.isRunning, isFalse); // auto-stopped after expiration
-    });
+        // Wait long enough for 3+ heartbeats
+        await Future<void>.delayed(const Duration(milliseconds: 120));
+        expect(sessionExpired, isTrue);
+        expect(sut.isRunning, isFalse); // auto-stopped after expiration
+      },
+    );
 
     test('stops the timer when session expires', () async {
-      when(() => mockApi.get('/health'))
-          .thenAnswer((_) async => const Err<Map<String, dynamic>>(
-                NetworkFailure('fail'),
-              ));
+      when(() => mockApi.get('/health')).thenAnswer(
+        (_) async => const Err<Map<String, dynamic>>(NetworkFailure('fail')),
+      );
 
       final sut = HeartbeatService(
         apiClient: mockApi,
@@ -186,10 +185,9 @@ void main() {
     });
 
     test('works without onSessionExpired callback', () async {
-      when(() => mockApi.get('/health'))
-          .thenAnswer((_) async => const Err<Map<String, dynamic>>(
-                NetworkFailure('fail'),
-              ));
+      when(() => mockApi.get('/health')).thenAnswer(
+        (_) async => const Err<Map<String, dynamic>>(NetworkFailure('fail')),
+      );
 
       final sut = HeartbeatService(
         apiClient: mockApi,

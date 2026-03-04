@@ -90,15 +90,15 @@ class _SettingsHubScreenState extends ConsumerState<SettingsHubScreen> {
                 ],
               ),
           ] else ...[
-            // Category Tiles
+            // General
             SettingsGroupCard(
               children: [
                 SettingsCategoryTile(
-                  icon: Icons.security,
-                  iconColor: Colors.red,
-                  title: l10n.settingsSectionSecurity,
-                  subtitle: l10n.settingsSecuritySubtitle,
-                  onTap: () => context.push('/settings/security'),
+                  icon: Icons.palette_outlined,
+                  iconColor: colorScheme.primary,
+                  title: l10n.settingsSectionAppearance,
+                  subtitle: l10n.settingsAppearanceSubtitle,
+                  onTap: () => context.push('/settings/appearance'),
                 ),
                 SettingsCategoryTile(
                   icon: Icons.terminal,
@@ -107,12 +107,19 @@ class _SettingsHubScreenState extends ConsumerState<SettingsHubScreen> {
                   subtitle: l10n.settingsSshSubtitle,
                   onTap: () => context.push('/settings/ssh'),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Security & Data
+            SettingsGroupCard(
+              children: [
                 SettingsCategoryTile(
-                  icon: Icons.palette_outlined,
-                  iconColor: colorScheme.primary,
-                  title: l10n.settingsSectionAppearance,
-                  subtitle: l10n.settingsAppearanceSubtitle,
-                  onTap: () => context.push('/settings/appearance'),
+                  icon: Icons.security,
+                  iconColor: Colors.red,
+                  title: l10n.settingsSectionSecurity,
+                  subtitle: l10n.settingsSecuritySubtitle,
+                  onTap: () => context.push('/settings/security'),
                 ),
                 SettingsCategoryTile(
                   icon: Icons.dns_outlined,
@@ -128,6 +135,13 @@ class _SettingsHubScreenState extends ConsumerState<SettingsHubScreen> {
                   subtitle: l10n.settingsExportBackupSubtitle,
                   onTap: () => context.push('/settings/export'),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Info
+            SettingsGroupCard(
+              children: [
                 SettingsCategoryTile(
                   icon: Icons.support_outlined,
                   iconColor: Colors.pink,

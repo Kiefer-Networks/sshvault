@@ -144,7 +144,7 @@ class ServerListScreen extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 1.1,
+        childAspectRatio: 0.95,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/network/auth_interceptor.dart';
+import 'package:shellvault/core/network/pow_interceptor.dart';
 import 'package:shellvault/core/storage/secure_storage_provider.dart';
 
 export 'package:shellvault/core/storage/secure_storage_provider.dart';
@@ -25,6 +26,7 @@ final apiClientProvider = Provider<ApiClient>((ref) {
           // Will be handled by AuthNotifier watching token state
         },
       ),
+      PowInterceptor(),
     ],
   );
 

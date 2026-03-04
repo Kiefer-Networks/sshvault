@@ -59,7 +59,9 @@ void main() {
       expect(find.byIcon(Icons.warning_amber), findsNothing);
     });
 
-    testWidgets('shows report button when onReport is provided', (tester) async {
+    testWidgets('shows report button when onReport is provided', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           child: SecurityWarningDialog(
@@ -130,7 +132,9 @@ void main() {
       expect(find.byIcon(Icons.gpp_bad), findsNothing);
     });
 
-    testWidgets('does not show Continue Anyway when onContinue is null', (tester) async {
+    testWidgets('does not show Continue Anyway when onContinue is null', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           child: SecurityWarningDialog(
@@ -249,7 +253,9 @@ void main() {
       expect(find.text('Fingerprint: SHA256:abc123'), findsOneWidget);
     });
 
-    testWidgets('does not display details container when details is null', (tester) async {
+    testWidgets('does not display details container when details is null', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           child: SecurityWarningDialog(
@@ -267,7 +273,9 @@ void main() {
       expect(find.text('Fingerprint: SHA256:abc123'), findsNothing);
     });
 
-    testWidgets('all three buttons appear for warning with all callbacks', (tester) async {
+    testWidgets('all three buttons appear for warning with all callbacks', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           child: SecurityWarningDialog(

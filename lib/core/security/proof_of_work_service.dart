@@ -140,19 +140,28 @@ class ProofOfWorkChallenge {
       expiresAt != null && DateTime.now().toUtc().isAfter(expiresAt!);
 
   factory ProofOfWorkChallenge.fromJson(Map<String, dynamic> json) {
+    final rawExpiry = json['expires_at'];
+    DateTime? expiresAt;
+    if (rawExpiry is int) {
+      expiresAt = DateTime.fromMillisecondsSinceEpoch(
+        rawExpiry * 1000,
+        isUtc: true,
+      );
+    } else if (rawExpiry is String) {
+      expiresAt = DateTime.tryParse(rawExpiry);
+    }
+
     return ProofOfWorkChallenge(
-      prefix: json['prefix'] as String,
+      prefix: (json['challenge'] ?? json['prefix']) as String,
       difficulty: json['difficulty'] as int,
-      expiresAt: json['expires_at'] != null
-          ? DateTime.parse(json['expires_at'] as String)
-          : null,
+      expiresAt: expiresAt,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'prefix': prefix,
+    'challenge': prefix,
     'difficulty': difficulty,
-    if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
+    if (expiresAt != null) 'expires_at': expiresAt!.millisecondsSinceEpoch ~/ 1000,
   };
 }
 

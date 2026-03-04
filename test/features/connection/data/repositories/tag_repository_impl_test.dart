@@ -59,8 +59,9 @@ void main() {
 
   group('getTags', () {
     test('returns list of TagEntity on success', () async {
-      when(() => mockTagDao.getAllTags())
-          .thenAnswer((_) async => [driftTag, driftTag2]);
+      when(
+        () => mockTagDao.getAllTags(),
+      ).thenAnswer((_) async => [driftTag, driftTag2]);
 
       final result = await sut.getTags();
 
@@ -93,8 +94,7 @@ void main() {
 
   group('getTag', () {
     test('returns TagEntity when found', () async {
-      when(() => mockTagDao.getTagById('t1'))
-          .thenAnswer((_) async => driftTag);
+      when(() => mockTagDao.getTagById('t1')).thenAnswer((_) async => driftTag);
 
       final result = await sut.getTag('t1');
 
@@ -105,8 +105,9 @@ void main() {
     });
 
     test('returns NotFoundFailure when tag does not exist', () async {
-      when(() => mockTagDao.getTagById('missing'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockTagDao.getTagById('missing'),
+      ).thenAnswer((_) async => null);
 
       final result = await sut.getTag('missing');
 
@@ -116,8 +117,7 @@ void main() {
     });
 
     test('returns DatabaseFailure on exception', () async {
-      when(() => mockTagDao.getTagById('t1'))
-          .thenThrow(Exception('db error'));
+      when(() => mockTagDao.getTagById('t1')).thenThrow(Exception('db error'));
 
       final result = await sut.getTag('t1');
 
@@ -143,8 +143,9 @@ void main() {
 
     test('returns DatabaseFailure when insert fails', () async {
       when(() => mockUuid.v4()).thenReturn('generated-uuid');
-      when(() => mockTagDao.insertTag(any()))
-          .thenThrow(Exception('insert error'));
+      when(
+        () => mockTagDao.insertTag(any()),
+      ).thenThrow(Exception('insert error'));
 
       final result = await sut.createTag(validEntity);
 
@@ -166,8 +167,9 @@ void main() {
     });
 
     test('returns DatabaseFailure when update fails', () async {
-      when(() => mockTagDao.updateTag(any()))
-          .thenThrow(Exception('update error'));
+      when(
+        () => mockTagDao.updateTag(any()),
+      ).thenThrow(Exception('update error'));
 
       final result = await sut.updateTag(validEntity);
 
@@ -188,8 +190,9 @@ void main() {
     });
 
     test('returns DatabaseFailure when delete fails', () async {
-      when(() => mockTagDao.deleteTagById('t1'))
-          .thenThrow(Exception('delete error'));
+      when(
+        () => mockTagDao.deleteTagById('t1'),
+      ).thenThrow(Exception('delete error'));
 
       final result = await sut.deleteTag('t1');
 
@@ -201,8 +204,9 @@ void main() {
 
   group('getTagsForServer', () {
     test('returns tags for a server', () async {
-      when(() => mockServerDao.getTagsForServer('server-1'))
-          .thenAnswer((_) async => [driftTag, driftTag2]);
+      when(
+        () => mockServerDao.getTagsForServer('server-1'),
+      ).thenAnswer((_) async => [driftTag, driftTag2]);
 
       final result = await sut.getTagsForServer('server-1');
 
@@ -214,8 +218,9 @@ void main() {
     });
 
     test('returns empty list when server has no tags', () async {
-      when(() => mockServerDao.getTagsForServer('server-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockServerDao.getTagsForServer('server-1'),
+      ).thenAnswer((_) async => []);
 
       final result = await sut.getTagsForServer('server-1');
 
@@ -224,8 +229,9 @@ void main() {
     });
 
     test('returns DatabaseFailure on exception', () async {
-      when(() => mockServerDao.getTagsForServer('server-1'))
-          .thenThrow(Exception('db error'));
+      when(
+        () => mockServerDao.getTagsForServer('server-1'),
+      ).thenThrow(Exception('db error'));
 
       final result = await sut.getTagsForServer('server-1');
 
@@ -237,19 +243,22 @@ void main() {
 
   group('setServerTags', () {
     test('sets tags for a server', () async {
-      when(() => mockServerDao.setServerTags('server-1', ['t1', 't2']))
-          .thenAnswer((_) async {});
+      when(
+        () => mockServerDao.setServerTags('server-1', ['t1', 't2']),
+      ).thenAnswer((_) async {});
 
       final result = await sut.setServerTags('server-1', ['t1', 't2']);
 
       expect(result.isSuccess, isTrue);
-      verify(() => mockServerDao.setServerTags('server-1', ['t1', 't2']))
-          .called(1);
+      verify(
+        () => mockServerDao.setServerTags('server-1', ['t1', 't2']),
+      ).called(1);
     });
 
     test('sets empty tag list', () async {
-      when(() => mockServerDao.setServerTags('server-1', []))
-          .thenAnswer((_) async {});
+      when(
+        () => mockServerDao.setServerTags('server-1', []),
+      ).thenAnswer((_) async {});
 
       final result = await sut.setServerTags('server-1', []);
 
@@ -258,8 +267,9 @@ void main() {
     });
 
     test('returns DatabaseFailure on exception', () async {
-      when(() => mockServerDao.setServerTags('server-1', ['t1']))
-          .thenThrow(Exception('db error'));
+      when(
+        () => mockServerDao.setServerTags('server-1', ['t1']),
+      ).thenThrow(Exception('db error'));
 
       final result = await sut.setServerTags('server-1', ['t1']);
 
