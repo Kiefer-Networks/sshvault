@@ -174,32 +174,20 @@ void main() {
     });
   });
 
-  group('NonceCounter — storage failure fallback', () {
-    test('falls back to random nonce when storage throws', () async {
+  group('NonceCounter — storage failure behavior', () {
+    test('throws when storage is unavailable (fail-closed)', () async {
       fakeStorage.shouldThrow = true;
 
-      final nonce = await sut.next('fail-key');
-      // Should still return a valid 12-byte nonce
-      expect(nonce.length, 12);
-    });
-
-    test('random fallback nonces are unique', () async {
-      fakeStorage.shouldThrow = true;
-
-      final nonces = <String>[];
-      for (var i = 0; i < 10; i++) {
-        final nonce = await sut.next('fail-key');
-        nonces.add(
-          nonce.map((b) => b.toRadixString(16).padLeft(2, '0')).join(),
-        );
-      }
-      // All random nonces should be unique (statistically guaranteed)
-      expect(nonces.toSet().length, nonces.length);
+      expect(() => sut.next('fail-key'), throwsException);
     });
 
     test('storage failure does not persist any data', () async {
       fakeStorage.shouldThrow = true;
-      await sut.next('no-persist');
+      try {
+        await sut.next('no-persist');
+      } catch (_) {
+        // Expected
+      }
 
       fakeStorage.shouldThrow = false;
       // Nothing was persisted
@@ -209,8 +197,11 @@ void main() {
 
     test('recovers after storage becomes available again', () async {
       fakeStorage.shouldThrow = true;
-      final randomNonce = await sut.next('recover-key');
-      expect(randomNonce.length, 12);
+      try {
+        await sut.next('recover-key');
+      } catch (_) {
+        // Expected
+      }
 
       fakeStorage.shouldThrow = false;
       final counterNonce = await sut.next('recover-key');
