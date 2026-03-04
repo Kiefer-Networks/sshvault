@@ -364,9 +364,10 @@ class _DesktopScaffold extends StatelessWidget {
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.shield_outlined,
-                          color: theme.colorScheme.primary,
+                        Image.asset(
+                          'assets/images/app_icon.png',
+                          width: 24,
+                          height: 24,
                         ),
                         const SizedBox(width: 12),
                         Text(
@@ -377,9 +378,10 @@ class _DesktopScaffold extends StatelessWidget {
                         ),
                       ],
                     )
-                  : Icon(
-                      Icons.shield_outlined,
-                      color: theme.colorScheme.primary,
+                  : Image.asset(
+                      'assets/images/app_icon.png',
+                      width: 24,
+                      height: 24,
                     ),
             ),
             trailing: Expanded(
@@ -543,10 +545,10 @@ class _AppDrawer extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(28, 24, 28, 8),
           child: Row(
             children: [
-              Icon(
-                Icons.shield_outlined,
-                color: theme.colorScheme.primary,
-                size: 28,
+              Image.asset(
+                'assets/images/app_icon.png',
+                width: 28,
+                height: 28,
               ),
               const SizedBox(width: 12),
               Text(

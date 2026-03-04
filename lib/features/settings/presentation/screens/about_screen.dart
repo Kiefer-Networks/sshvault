@@ -26,17 +26,12 @@ class AboutScreen extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.shield_outlined,
-                    size: 44,
-                    color: colorScheme.onPrimaryContainer,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    'assets/images/app_icon.png',
+                    width: 80,
+                    height: 80,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -101,10 +96,10 @@ class AboutScreen extends StatelessWidget {
                   applicationVersion: 'v${AppConstants.appVersion}',
                   applicationIcon: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.shield_outlined,
-                      size: 48,
-                      color: colorScheme.primary,
+                    child: Image.asset(
+                      'assets/images/app_icon.png',
+                      width: 48,
+                      height: 48,
                     ),
                   ),
                 ),
