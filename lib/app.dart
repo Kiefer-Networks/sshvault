@@ -27,8 +27,8 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _triggerAutoSync();
       _applyScreenProtection();
+      _listenForAutoSync();
     });
   }
 
@@ -39,14 +39,17 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     }, fireImmediately: true);
   }
 
+  void _listenForAutoSync() {
+    ref.listenManual(authProvider, (prev, next) {
+      if (next.value == AuthStatus.authenticated && !_autoSyncTriggered) {
+        _autoSyncTriggered = true;
+        _triggerAutoSync();
+      }
+    }, fireImmediately: true);
+  }
+
   void _triggerAutoSync() {
-    if (_autoSyncTriggered) return;
-    _autoSyncTriggered = true;
-
-    final authStatus = ref.read(authProvider).value;
     final settings = ref.read(settingsProvider).value;
-
-    if (authStatus != AuthStatus.authenticated) return;
     if (!(settings?.autoSync ?? true)) return;
 
     ref
