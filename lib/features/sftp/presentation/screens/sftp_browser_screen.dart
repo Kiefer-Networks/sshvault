@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
@@ -114,7 +115,7 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
       if (context.mounted) {
         AdaptiveNotification.show(
           context,
-          message: l10n.sftpOperationFailed(e.toString()),
+          message: l10n.sftpOperationFailed(errorMessage(e)),
         );
       }
     }

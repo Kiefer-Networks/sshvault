@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/constants/color_constants.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
@@ -436,7 +437,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       if (mounted) {
         AdaptiveNotification.show(
           context,
-          message: AppLocalizations.of(context)!.error(e.toString()),
+          message: AppLocalizations.of(context)!.error(errorMessage(e)),
         );
       }
     } finally {

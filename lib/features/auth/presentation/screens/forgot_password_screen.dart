@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -145,7 +146,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       if (mounted) ref.read(_forgotPasswordProvider.notifier).setSent(true);
     } catch (e) {
       if (mounted) {
-        AdaptiveNotification.show(context, message: e.toString());
+        AdaptiveNotification.show(context, message: errorMessage(e));
       }
     } finally {
       if (mounted) {

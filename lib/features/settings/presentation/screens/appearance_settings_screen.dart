@@ -5,6 +5,7 @@ import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:shellvault/features/terminal/presentation/widgets/terminal_theme_picker.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class AppearanceSettingsScreen extends ConsumerWidget {
@@ -145,7 +146,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
         ),
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
   }

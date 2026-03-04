@@ -502,7 +502,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           .read(_sshKeyFormStateProvider)
           .copyWith(
             error: () =>
-                AppLocalizations.of(context)!.sshKeyFormFileError(e.toString()),
+                AppLocalizations.of(context)!.sshKeyFormFileError(errorMessage(e)),
           );
     }
   }

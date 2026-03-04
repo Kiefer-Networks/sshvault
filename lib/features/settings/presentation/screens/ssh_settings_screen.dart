@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class SshSettingsScreen extends ConsumerWidget {
@@ -148,7 +149,7 @@ class SshSettingsScreen extends ConsumerWidget {
         ),
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
   }

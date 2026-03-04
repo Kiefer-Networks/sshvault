@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/security/doh_resolver_service.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
@@ -115,7 +116,7 @@ class NetworkSettingsScreen extends ConsumerWidget {
         },
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
   }

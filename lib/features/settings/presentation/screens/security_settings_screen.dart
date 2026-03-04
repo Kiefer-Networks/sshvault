@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/services/biometric_provider.dart';
 import 'package:shellvault/core/services/screen_protection_service.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
@@ -227,7 +228,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
         ),
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
   }

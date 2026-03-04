@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -19,7 +20,7 @@ class ErrorState extends StatelessWidget {
         children: [
           const Icon(Icons.error_outline, size: 48),
           const SizedBox(height: 16),
-          Text(l10n.error(error.toString())),
+          Text(l10n.error(errorMessage(error))),
           const SizedBox(height: 16),
           AdaptiveButton.filled(onPressed: onRetry, child: Text(l10n.retry)),
         ],

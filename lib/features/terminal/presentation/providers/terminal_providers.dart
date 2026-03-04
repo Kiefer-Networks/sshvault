@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 import 'package:xterm/xterm.dart';
 
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
@@ -198,7 +199,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       _notifyChange();
     } catch (e) {
       session.status = SshConnectionStatus.error;
-      session.errorMessage = e.toString();
+      session.errorMessage = errorMessage(e);
       _notifyChange();
     }
   }

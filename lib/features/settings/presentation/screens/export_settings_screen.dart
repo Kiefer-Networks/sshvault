@@ -2,7 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/connection/presentation/providers/export_import_providers.dart';
@@ -82,12 +82,26 @@ class ExportSettingsScreen extends ConsumerWidget {
               const Center(child: CircularProgressIndicator.adaptive()),
             if (exportState.hasError)
               Card(
-                color: theme.colorScheme.error.withAlpha(AppConstants.alpha26),
+                color: theme.colorScheme.errorContainer,
                 child: Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Text(
-                    l10n.error(exportState.error.toString()),
-                    style: TextStyle(color: theme.colorScheme.error),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        color: theme.colorScheme.onErrorContainer,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          errorMessage(exportState.error!),
+                          style: TextStyle(
+                            color: theme.colorScheme.onErrorContainer,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -109,7 +123,7 @@ class ExportSettingsScreen extends ConsumerWidget {
         ),
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
   }

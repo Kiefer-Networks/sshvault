@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -121,7 +122,7 @@ class SshKeyListScreen extends ConsumerWidget {
         await ref.read(sshKeyListProvider.notifier).deleteSshKey(key.id);
       } catch (e) {
         if (context.mounted) {
-          AdaptiveNotification.show(context, message: l10n.error(e.toString()));
+          AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
         }
       }
     }

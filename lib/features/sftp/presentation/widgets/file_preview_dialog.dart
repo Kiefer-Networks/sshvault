@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
@@ -110,7 +111,7 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
         if (mounted) {
           ref.read(_filePreviewProvider.notifier).state = _FilePreviewState(
             loading: false,
-            error: e.toString(),
+            error: errorMessage(e),
           );
         }
       }

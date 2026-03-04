@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -146,7 +147,7 @@ class _SnippetQuickPanelContentState
             },
             loading: () =>
                 const Center(child: CircularProgressIndicator.adaptive()),
-            error: (e, _) => Center(child: Text(l10n.error(e.toString()))),
+            error: (e, _) => Center(child: Text(l10n.error(errorMessage(e)))),
           ),
         ),
       ],

@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -113,7 +114,7 @@ class ExportImportScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(
-                  l10n.error(exportState.error.toString()),
+                  l10n.error(errorMessage(exportState.error!)),
                   style: TextStyle(color: theme.colorScheme.error),
                 ),
               ),

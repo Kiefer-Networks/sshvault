@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/section_card.dart';
@@ -43,7 +44,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         context.go('/sync-password?mode=create');
       }
       if (next.hasError && mounted) {
-        AdaptiveNotification.show(context, message: next.error.toString());
+        AdaptiveNotification.show(context, message: errorMessage(next.error!));
       }
     });
 

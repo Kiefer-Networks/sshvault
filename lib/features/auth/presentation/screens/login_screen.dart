@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
@@ -43,7 +44,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _checkSyncPasswordAndNavigate();
       }
       if (next.hasError && mounted) {
-        AdaptiveNotification.show(context, message: next.error.toString());
+        AdaptiveNotification.show(context, message: errorMessage(next.error!));
       }
     });
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
@@ -122,7 +123,7 @@ class AuditLogScreen extends ConsumerWidget {
               },
               loading: () =>
                   const Center(child: CircularProgressIndicator.adaptive()),
-              error: (e, _) => Center(child: Text(l10n.error(e.toString()))),
+              error: (e, _) => Center(child: Text(l10n.error(errorMessage(e)))),
             ),
           ),
         ],

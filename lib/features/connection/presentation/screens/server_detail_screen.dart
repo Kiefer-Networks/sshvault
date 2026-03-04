@@ -16,6 +16,7 @@ import 'package:shellvault/features/connection/presentation/providers/server_pro
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/status_badge.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class ServerDetailScreen extends ConsumerWidget {
@@ -267,7 +268,7 @@ class ServerDetailScreen extends ConsumerWidget {
         },
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(error.toString()))),
+        error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
   }

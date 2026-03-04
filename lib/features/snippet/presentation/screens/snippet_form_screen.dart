@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -340,7 +341,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AdaptiveNotification.show(context, message: l10n.error(e.toString()));
+        AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
       }
     } finally {
       if (mounted) {

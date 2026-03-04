@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -175,7 +176,7 @@ class _GroupTile extends ConsumerWidget {
       if (context.mounted) {
         AdaptiveNotification.show(
           context,
-          message: AppLocalizations.of(context)!.error(e.toString()),
+          message: AppLocalizations.of(context)!.error(errorMessage(e)),
         );
       }
     } finally {
@@ -354,7 +355,7 @@ class _GroupServerList extends ConsumerWidget {
       error: (e, _) => Padding(
         padding: EdgeInsets.only(left: indent),
         child: Text(
-          AppLocalizations.of(context)!.error(e.toString()),
+          AppLocalizations.of(context)!.error(errorMessage(e)),
           style: theme.textTheme.bodySmall,
         ),
       ),

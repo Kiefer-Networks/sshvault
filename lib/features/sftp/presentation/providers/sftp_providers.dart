@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -110,7 +111,7 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
               state = state.copyWith(isLoading: false, error: error.message);
           }
         } catch (e) {
-          state = state.copyWith(isLoading: false, error: e.toString());
+          state = state.copyWith(isLoading: false, error: errorMessage(e));
         }
     }
   }
@@ -192,7 +193,7 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
           state = state.copyWith(isLoading: false, error: error.message);
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 
@@ -761,7 +762,7 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
       if (current != null && current.status != TransferStatus.cancelled) {
         _updateItem(
           item.id,
-          (i) => i.copyWith(status: TransferStatus.failed, error: e.toString()),
+          (i) => i.copyWith(status: TransferStatus.failed, error: errorMessage(e)),
         );
       }
     } finally {

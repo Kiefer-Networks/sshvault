@@ -78,3 +78,11 @@ final class DnsDivergence extends Failure {
 final class SecurityViolation extends Failure {
   const SecurityViolation(super.message, {super.cause});
 }
+
+/// Extracts a human-readable message from any error object.
+/// For [Failure] subclasses returns [Failure.message] directly,
+/// avoiding the `ClassName: message` format of [toString].
+String errorMessage(Object error) {
+  if (error is Failure) return error.message;
+  return error.toString();
+}
