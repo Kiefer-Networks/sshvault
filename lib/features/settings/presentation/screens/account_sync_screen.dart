@@ -13,6 +13,7 @@ import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/account/domain/entities/billing_status.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
+import 'package:shellvault/features/account/presentation/providers/subscription_purchase_provider.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
@@ -153,26 +154,30 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          Text(
-                            l10n.authPricingInfo(
-                              isNativeIapPlatform
-                                  ? '\u20AC12.99'
-                                  : '\u20AC9.99',
-                            ),
-                            style: theme.textTheme.titleSmall,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            l10n.authPricingHint,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                      child: Builder(
+                        builder: (context) {
+                          final iapProduct = isNativeIapPlatform
+                              ? ref.watch(subscriptionStoreProvider).value
+                              : null;
+                          final priceLabel = iapProduct?.price ?? (isNativeIapPlatform ? '...' : '\u20AC9.99');
+                          return Column(
+                            children: [
+                              Text(
+                                l10n.authPricingInfo(priceLabel),
+                                style: theme.textTheme.titleSmall,
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.authPricingHint,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -430,27 +435,65 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
           ),
           if (!billing.active) ...[
             const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: _checkout,
-                icon: const Icon(Icons.payment),
-                label: Text(
-                  l10n.accountActivateSyncPrice(
-                    isNativeIapPlatform ? '\u20AC12.99' : '\u20AC9.99',
-                  ),
-                ),
-              ),
+            Builder(
+              builder: (context) {
+                final iapProduct = isNativeIapPlatform
+                    ? ref.watch(subscriptionStoreProvider).value
+                    : null;
+                final purchaseStatus =
+                    ref.watch(subscriptionPurchaseStatusProvider);
+                final isWorking =
+                    purchaseStatus == SubscriptionPurchaseStatus.purchasing ||
+                    purchaseStatus == SubscriptionPurchaseStatus.verifying;
+
+                final priceLabel = iapProduct?.price ?? (isNativeIapPlatform ? '...' : '\u20AC9.99');
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: isWorking ? null : _checkout,
+                        icon: isWorking
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Icon(Icons.payment),
+                        label: Text(
+                          l10n.accountActivateSyncPrice(priceLabel),
+                        ),
+                      ),
+                    ),
+                    if (purchaseStatus ==
+                        SubscriptionPurchaseStatus.error) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        ref.watch(subscriptionPurchaseErrorProvider) ??
+                            'Purchase failed',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.error,
+                        ),
+                      ),
+                    ],
+                    if (isNativeIapPlatform) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.accountStoreFeeNote,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
             ),
-            if (isNativeIapPlatform) ...[
-              const SizedBox(height: 8),
-              Text(
-                l10n.accountStoreFeeNote,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
           ],
           if (billing.active) ...[
             const SizedBox(height: 12),
@@ -541,6 +584,13 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   }
 
   Future<void> _checkout() async {
+    if (isNativeIapPlatform) {
+      final store = ref.read(subscriptionStoreProvider.notifier);
+      await store.subscribe();
+      _startBillingPoll();
+      return;
+    }
+
     try {
       final repo = ref.read(accountRepositoryProvider);
       final result = await repo.createCheckout();

@@ -16,6 +16,7 @@ abstract class AccountRepository {
   Future<Result<BillingStatus>> getBillingStatus();
   Future<Result<String>> createCheckout();
   Future<Result<String>> createPortal();
+  Future<Result<BillingStatus>> verifyGooglePurchase(String purchaseToken);
   Future<Result<AuditLogResult>> getAuditLogs({
     String? category,
     String? action,
