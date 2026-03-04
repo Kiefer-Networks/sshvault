@@ -90,7 +90,11 @@ class TeleportRepositoryImpl implements TeleportRepository {
 
   @override
   Future<Result<void>> deleteCluster(String id) async {
-    return _api.deleteCluster(id);
+    final result = await _api.deleteCluster(id);
+    if (result.isSuccess) {
+      await _dao.deleteClusterById(id);
+    }
+    return result;
   }
 
   @override
