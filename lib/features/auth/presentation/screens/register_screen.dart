@@ -41,7 +41,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     ref.listen(authProvider, (prev, next) {
       if (next.value == AuthStatus.authenticated && mounted) {
-        context.go('/sync-password?mode=create');
+        context.go('/');
       }
       if (next.hasError && mounted) {
         AdaptiveNotification.show(context, message: errorMessage(next.error!));

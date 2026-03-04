@@ -6,6 +6,7 @@ import 'package:shellvault/core/routing/app_router.dart';
 import 'package:shellvault/core/services/screen_protection_service.dart';
 import 'package:shellvault/core/theme/app_theme.dart';
 import 'package:shellvault/core/widgets/lock_screen.dart';
+import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
@@ -50,8 +51,18 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
 
     ref
         .read(billingStatusProvider.future)
-        .then((billing) {
-          if (billing.active && mounted) {
+        .then((billing) async {
+          if (!billing.active || !mounted) return;
+
+          // Check if sync password is set — if not, redirect to create it
+          final storage = ref.read(secureStorageProvider);
+          final pwResult = await storage.getSyncPassword();
+          final pw = pwResult.isSuccess ? pwResult.value : null;
+          if (!mounted) return;
+
+          if (pw == null || pw.isEmpty) {
+            AppRouter.router.go('/sync-password?mode=create');
+          } else {
             ref.read(syncProvider.notifier).sync();
           }
         })

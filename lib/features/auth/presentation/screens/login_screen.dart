@@ -7,6 +7,7 @@ import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/section_card.dart';
+import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -243,6 +244,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _checkSyncPasswordAndNavigate() async {
+    // Check billing status first — no subscription means no vault to decrypt
+    final billing = await ref.read(billingStatusProvider.future);
+    if (!mounted) return;
+    if (!billing.active) {
+      context.go('/');
+      return;
+    }
+
     final storage = ref.read(secureStorageProvider);
     final syncPwResult = await storage.getSyncPassword();
     final syncPw = syncPwResult.isSuccess ? syncPwResult.value : null;
