@@ -95,14 +95,6 @@ class ServerListScreen extends ConsumerWidget {
                 .read(shellNavigationProvider)
                 ?.goBranch(AppConstants.terminalBranchIndex);
           },
-          onConnect: () async {
-            await ref
-                .read(sessionManagerProvider.notifier)
-                .openSession(server.id);
-            ref
-                .read(shellNavigationProvider)
-                ?.goBranch(AppConstants.terminalBranchIndex);
-          },
           onDetail: () => context.push('/server/${server.id}'),
           onEdit: () => context.push('/server/${server.id}/edit'),
           onDuplicate: () async {

@@ -75,11 +75,22 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
       // Compute fingerprint
       String fingerprint = key.fingerprint;
       if (fingerprint.isEmpty && publicKey.isNotEmpty) {
-        fingerprint = _sshKeyService.computeFingerprint(publicKey);
+        try {
+          fingerprint = _sshKeyService.computeFingerprint(publicKey);
+        } catch (_) {
+          fingerprint = '';
+        }
       }
 
+      // Check for duplicate by fingerprint or public key content
       if (fingerprint.isNotEmpty) {
         final existing = await _sshKeyDao.getSshKeyByFingerprint(fingerprint);
+        if (existing != null) {
+          return Err(DuplicateSshKeyFailure(existing.name));
+        }
+      }
+      if (publicKey.isNotEmpty) {
+        final existing = await _sshKeyDao.getSshKeyByPublicKey(publicKey);
         if (existing != null) {
           return Err(DuplicateSshKeyFailure(existing.name));
         }
