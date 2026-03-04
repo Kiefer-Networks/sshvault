@@ -2038,8 +2038,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String sshKeyDuplicate(String name) {
-    return 'Dieser SSH-Schlüssel existiert bereits: \"$name\"';
+    return 'Ein Schlüssel mit demselben Fingerabdruck existiert bereits: \"$name\". Jeder SSH-Schlüssel muss einzigartig sein.';
   }
+
+  @override
+  String get sshKeyFingerprint => 'Fingerabdruck';
+
+  @override
+  String get sshKeyPublicKey => 'Öffentlicher Schlüssel';
 
   @override
   String get jumpHost => 'Sprunghost';

@@ -2040,8 +2040,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String sshKeyDuplicate(String name) {
-    return 'Esta clave SSH ya existe: \"$name\"';
+    return 'Ya existe una clave con la misma huella digital: \"$name\". Cada clave SSH debe ser única.';
   }
+
+  @override
+  String get sshKeyFingerprint => 'Huella digital';
+
+  @override
+  String get sshKeyPublicKey => 'Clave pública';
 
   @override
   String get jumpHost => 'Host de salto';

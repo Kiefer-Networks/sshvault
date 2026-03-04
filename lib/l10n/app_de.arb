@@ -698,8 +698,10 @@
 
   "settingsDnsDefaultQuad9Mullvad": "Standard (Quad9 + Mullvad)",
 
-  "sshKeyDuplicate": "Dieser SSH-Schlüssel existiert bereits: \"{name}\"",
+  "sshKeyDuplicate": "Ein Schlüssel mit demselben Fingerabdruck existiert bereits: \"{name}\". Jeder SSH-Schlüssel muss einzigartig sein.",
   "@sshKeyDuplicate": { "placeholders": { "name": { "type": "String" } } },
+  "sshKeyFingerprint": "Fingerabdruck",
+  "sshKeyPublicKey": "Öffentlicher Schlüssel",
 
   "jumpHost": "Sprunghost",
   "jumpHostNone": "Keiner",

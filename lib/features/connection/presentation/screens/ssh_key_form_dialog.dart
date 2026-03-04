@@ -111,6 +111,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   }
 
   String _errorMessage(Object e) {
+    if (e is DuplicateSshKeyFailure) {
+      return AppLocalizations.of(context)!.sshKeyDuplicate(e.existingKeyName);
+    }
     if (e is Failure) return e.message;
     return e.toString();
   }
@@ -571,6 +574,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
 
   Widget _buildEditForm(ThemeData theme, _SshKeyFormReactiveState formState) {
     final l10n = AppLocalizations.of(context)!;
+    final key = widget.existingKey!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -593,30 +597,69 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           ),
           keyboardType: TextInputType.text,
         ),
-        if (widget.existingKey != null) ...[
+        const SizedBox(height: 24),
+
+        // Key type
+        Row(
+          children: [
+            Icon(Icons.vpn_key, size: 18, color: theme.colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(
+              l10n.sshKeyFormKeyType,
+              style: theme.textTheme.labelLarge,
+            ),
+            const Spacer(),
+            Text(
+              key.keyType.displayName,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontFamily: AppConstants.monospaceFontFamily,
+              ),
+            ),
+          ],
+        ),
+
+        // Fingerprint
+        if (key.fingerprint.isNotEmpty) ...[
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Icon(
-                Icons.info_outline,
-                size: 16,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  '${widget.existingKey!.keyType.displayName}'
-                  '${widget.existingKey!.fingerprint.isNotEmpty ? ' · ${widget.existingKey!.fingerprint}' : ''}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: AppConstants.monospaceFontFamily,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+          Text(
+            l10n.sshKeyFingerprint,
+            style: theme.textTheme.labelLarge,
+          ),
+          const SizedBox(height: 4),
+          SelectableText(
+            key.fingerprint,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontFamily: AppConstants.monospaceFontFamily,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
+
+        // Public key
+        if (key.publicKey.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            l10n.sshKeyPublicKey,
+            style: theme.textTheme.labelLarge,
+          ),
+          const SizedBox(height: 4),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: SelectableText(
+              key.publicKey,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontFamily: AppConstants.monospaceFontFamily,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
+
         if (formState.error != null) ...[
           const SizedBox(height: 16),
           Text(

@@ -81,9 +81,7 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
       if (fingerprint.isNotEmpty) {
         final existing = await _sshKeyDao.getSshKeyByFingerprint(fingerprint);
         if (existing != null) {
-          return Err(ValidationFailure(
-            'SSH key already exists: "${existing.name}"',
-          ));
+          return Err(DuplicateSshKeyFailure(existing.name));
         }
       }
 

@@ -724,8 +724,10 @@
 
   "settingsDnsDefaultQuad9Mullvad": "Default (Quad9 + Mullvad)",
 
-  "sshKeyDuplicate": "This SSH key already exists: \"{name}\"",
+  "sshKeyDuplicate": "A key with the same fingerprint already exists: \"{name}\". Each SSH key must be unique.",
   "@sshKeyDuplicate": { "placeholders": { "name": { "type": "String" } } },
+  "sshKeyFingerprint": "Fingerprint",
+  "sshKeyPublicKey": "Public Key",
 
   "jumpHost": "Jump Host",
   "jumpHostNone": "None",

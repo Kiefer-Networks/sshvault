@@ -79,6 +79,12 @@ final class SecurityViolation extends Failure {
   const SecurityViolation(super.message, {super.cause});
 }
 
+final class DuplicateSshKeyFailure extends Failure {
+  final String existingKeyName;
+  const DuplicateSshKeyFailure(this.existingKeyName)
+      : super('SSH key already exists: "$existingKeyName"');
+}
+
 /// Extracts a human-readable message from any error object.
 /// For [Failure] subclasses returns [Failure.message] directly,
 /// avoiding the `ClassName: message` format of [toString].

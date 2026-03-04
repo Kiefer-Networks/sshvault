@@ -698,8 +698,10 @@
 
   "settingsDnsDefaultQuad9Mullvad": "Predeterminado (Quad9 + Mullvad)",
 
-  "sshKeyDuplicate": "Esta clave SSH ya existe: \"{name}\"",
+  "sshKeyDuplicate": "Ya existe una clave con la misma huella digital: \"{name}\". Cada clave SSH debe ser única.",
   "@sshKeyDuplicate": { "placeholders": { "name": { "type": "String" } } },
+  "sshKeyFingerprint": "Huella digital",
+  "sshKeyPublicKey": "Clave pública",
 
   "jumpHost": "Host de salto",
   "jumpHostNone": "Ninguno",

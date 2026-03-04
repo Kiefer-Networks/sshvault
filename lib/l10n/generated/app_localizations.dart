@@ -3709,8 +3709,20 @@ abstract class AppLocalizations {
   /// No description provided for @sshKeyDuplicate.
   ///
   /// In en, this message translates to:
-  /// **'This SSH key already exists: \"{name}\"'**
+  /// **'A key with the same fingerprint already exists: \"{name}\". Each SSH key must be unique.'**
   String sshKeyDuplicate(String name);
+
+  /// No description provided for @sshKeyFingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint'**
+  String get sshKeyFingerprint;
+
+  /// No description provided for @sshKeyPublicKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Key'**
+  String get sshKeyPublicKey;
 
   /// No description provided for @jumpHost.
   ///
