@@ -114,7 +114,8 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
 
       return Success(newKey);
     } catch (e) {
-      return Err(DatabaseFailure('Failed to create SSH key', cause: e));
+      if (e is Failure) return Err(e);
+      return Err(DatabaseFailure('Failed to create SSH key: $e'));
     }
   }
 
