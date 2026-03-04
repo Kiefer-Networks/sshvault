@@ -22,7 +22,9 @@ void main() {
     sut = AuthInterceptor(
       mockStorage,
       dio,
-      onAuthExpired: () => authExpiredCalled = true,
+      onAuthExpired: ({bool sessionRevoked = false}) async {
+        authExpiredCalled = true;
+      },
     );
   });
 

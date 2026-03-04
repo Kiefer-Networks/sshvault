@@ -3,8 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/services/logging_service.dart';
+import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_repository_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
@@ -106,8 +113,8 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     );
   }
 
-  Future<void> logout() async {
-    _log.info(_tag, 'Logout initiated');
+  Future<void> logout({bool deleteLocalData = false}) async {
+    _log.info(_tag, 'Logout initiated (deleteLocalData=$deleteLocalData)');
     state = const AsyncValue.loading();
     final repo = ref.read(authRepositoryProvider);
     final storage = ref.read(secureStorageProvider);
@@ -118,9 +125,18 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       await repo.logout(refreshToken);
     }
 
-    await storage.clearAuthTokens();
+    if (deleteLocalData) {
+      await storage.clearAllData();
+      final db = ref.read(databaseProvider);
+      await db.deleteAllData();
+      _invalidateDataProviders();
+      _log.info(_tag, 'Logout completed — all local data deleted');
+    } else {
+      await storage.clearAuthTokens();
+      _log.info(_tag, 'Logout completed — tokens and device ID cleared');
+    }
+
     _invalidateAccountProviders();
-    _log.info(_tag, 'Logout completed — tokens and device ID cleared');
     state = const AsyncValue.data(AuthStatus.unauthenticated);
   }
 
@@ -161,6 +177,18 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
       _tag,
       'Auth state changed — account providers will auto-refresh',
     );
+  }
+
+  /// Force-refresh all local data providers so the UI immediately
+  /// reflects that the database has been wiped.
+  void _invalidateDataProviders() {
+    ref.invalidate(serverListProvider);
+    ref.invalidate(sshKeyListProvider);
+    ref.invalidate(groupListProvider);
+    ref.invalidate(tagListProvider);
+    ref.invalidate(snippetListProvider);
+    ref.invalidate(settingsProvider);
+    _log.debug(_tag, 'All local data providers invalidated');
   }
 
   /// Register this device if not already registered

@@ -2057,4 +2057,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get jumpHostCircularError => 'Circular jump host chain detected';
+
+  @override
+  String get logoutDialogTitle => 'Log Out';
+
+  @override
+  String get logoutDialogMessage =>
+      'Do you want to delete all local data? Servers, SSH keys, snippets, and settings will be removed from this device.';
+
+  @override
+  String get logoutOnly => 'Log out only';
+
+  @override
+  String get logoutAndDelete => 'Log out & delete data';
 }

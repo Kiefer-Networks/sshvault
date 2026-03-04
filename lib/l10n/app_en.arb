@@ -734,5 +734,10 @@
   "jumpHostLabel": "Connect via jump host",
   "jumpHostSelfError": "A server cannot be its own jump host",
   "jumpHostConnecting": "Connecting to jump host…",
-  "jumpHostCircularError": "Circular jump host chain detected"
+  "jumpHostCircularError": "Circular jump host chain detected",
+
+  "logoutDialogTitle": "Log Out",
+  "logoutDialogMessage": "Do you want to delete all local data? Servers, SSH keys, snippets, and settings will be removed from this device.",
+  "logoutOnly": "Log out only",
+  "logoutAndDelete": "Log out & delete data"
 }

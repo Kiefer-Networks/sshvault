@@ -3759,6 +3759,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Circular jump host chain detected'**
   String get jumpHostCircularError;
+
+  /// No description provided for @logoutDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get logoutDialogTitle;
+
+  /// No description provided for @logoutDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to delete all local data? Servers, SSH keys, snippets, and settings will be removed from this device.'**
+  String get logoutDialogMessage;
+
+  /// No description provided for @logoutOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out only'**
+  String get logoutOnly;
+
+  /// No description provided for @logoutAndDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out & delete data'**
+  String get logoutAndDelete;
 }
 
 class _AppLocalizationsDelegate

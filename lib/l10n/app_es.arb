@@ -708,5 +708,10 @@
   "jumpHostLabel": "Conectar vía host de salto",
   "jumpHostSelfError": "Un servidor no puede ser su propio host de salto",
   "jumpHostConnecting": "Conectando al host de salto…",
-  "jumpHostCircularError": "Cadena circular de host de salto detectada"
+  "jumpHostCircularError": "Cadena circular de host de salto detectada",
+
+  "logoutDialogTitle": "Cerrar sesión",
+  "logoutDialogMessage": "¿Quieres eliminar todos los datos locales? Servidores, claves SSH, snippets y configuraciones se eliminarán de este dispositivo.",
+  "logoutOnly": "Solo cerrar sesión",
+  "logoutAndDelete": "Cerrar sesión y eliminar datos"
 }

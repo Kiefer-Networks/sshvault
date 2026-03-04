@@ -16,7 +16,6 @@ import 'package:shellvault/features/account/presentation/providers/account_provi
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
-import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 final _pollTimedOutProvider = StateProvider.autoDispose<bool>((ref) => false);
@@ -313,11 +312,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                   icon: Icons.logout,
                   iconColor: theme.colorScheme.error,
                   title: l10n.accountLogout,
-                  onTap: () async {
-                    final router = GoRouter.of(context);
-                    await ref.read(authProvider.notifier).logout();
-                    if (mounted) router.go('/');
-                  },
+                  onTap: () => _showLogoutSheet(l10n, theme),
                 ),
               ],
             ),
@@ -792,14 +787,16 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
           );
           changeResult.fold(
             onSuccess: (_) async {
-              final storage = ref.read(secureStorageProvider);
-              await storage.saveSyncPassword(newPw.text);
-              if (mounted) {
-                AdaptiveNotification.show(
-                  context,
-                  message: l10n.changeEncryptionSuccess,
-                );
-              }
+              if (!mounted) return;
+              final router = GoRouter.of(context);
+              AdaptiveNotification.show(
+                context,
+                message: l10n.changeEncryptionSuccess,
+              );
+              await ref
+                  .read(authProvider.notifier)
+                  .logout(deleteLocalData: true);
+              if (mounted) router.go('/');
             },
             onFailure: (f) {
               if (mounted) {
@@ -846,7 +843,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               context,
               message: l10n.logoutAllDevicesSuccessCount(revokedCount),
             );
-            await ref.read(authProvider.notifier).logout();
+            await ref.read(authProvider.notifier).logout(deleteLocalData: true);
             if (mounted) router.go('/');
           },
           onFailure: (f) {
@@ -864,6 +861,44 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         }
       }
     }
+  }
+
+  Future<void> _showLogoutSheet(AppLocalizations l10n, ThemeData theme) async {
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.logoutDialogTitle, style: theme.textTheme.titleLarge),
+              const SizedBox(height: 12),
+              Text(l10n.logoutDialogMessage, style: theme.textTheme.bodyMedium),
+              const SizedBox(height: 24),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: theme.colorScheme.error,
+                  foregroundColor: theme.colorScheme.onError,
+                ),
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(l10n.logoutAndDelete),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l10n.logoutOnly),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+    final router = GoRouter.of(context);
+    await ref.read(authProvider.notifier).logout(deleteLocalData: result);
+    if (mounted) router.go('/');
   }
 
   Future<void> _deleteAccount(AppLocalizations l10n) async {
@@ -884,12 +919,15 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
       cancelLabel: l10n.cancel,
       isDestructive: true,
     );
-    if (confirmed == true) {
+    if (confirmed == true && mounted) {
       try {
+        final router = GoRouter.of(context);
         final repo = ref.read(accountRepositoryProvider);
         await repo.deleteAccount();
-        await ref.read(authProvider.notifier).logout();
-        if (mounted) context.go('/');
+        await ref
+            .read(authProvider.notifier)
+            .logout(deleteLocalData: true);
+        if (mounted) router.go('/');
       } catch (e) {
         if (mounted) {
           AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));

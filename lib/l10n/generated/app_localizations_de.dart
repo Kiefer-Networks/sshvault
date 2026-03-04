@@ -2065,4 +2065,17 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get jumpHostCircularError => 'Zirkuläre Sprunghost-Kette erkannt';
+
+  @override
+  String get logoutDialogTitle => 'Abmelden';
+
+  @override
+  String get logoutDialogMessage =>
+      'Möchtest du alle lokalen Daten löschen? Server, SSH-Keys, Snippets und Einstellungen werden von diesem Gerät entfernt.';
+
+  @override
+  String get logoutOnly => 'Nur abmelden';
+
+  @override
+  String get logoutAndDelete => 'Abmelden & Daten löschen';
 }

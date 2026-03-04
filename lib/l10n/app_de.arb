@@ -708,5 +708,10 @@
   "jumpHostLabel": "Über Sprunghost verbinden",
   "jumpHostSelfError": "Ein Server kann nicht sein eigener Sprunghost sein",
   "jumpHostConnecting": "Verbinde mit Sprunghost…",
-  "jumpHostCircularError": "Zirkuläre Sprunghost-Kette erkannt"
+  "jumpHostCircularError": "Zirkuläre Sprunghost-Kette erkannt",
+
+  "logoutDialogTitle": "Abmelden",
+  "logoutDialogMessage": "Möchtest du alle lokalen Daten löschen? Server, SSH-Keys, Snippets und Einstellungen werden von diesem Gerät entfernt.",
+  "logoutOnly": "Nur abmelden",
+  "logoutAndDelete": "Abmelden & Daten löschen"
 }

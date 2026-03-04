@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/secure_storage_service.dart';
 
-typedef OnAuthExpired = void Function();
+typedef OnAuthExpired = Future<void> Function({bool sessionRevoked});
 
 class AuthInterceptor extends Interceptor {
   static final _log = LoggingService.instance;
@@ -153,11 +153,14 @@ class AuthInterceptor extends Interceptor {
       final retryResponse = await _dio.fetch(opts);
       return handler.resolve(retryResponse);
     } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
       _log.error(
         _tag,
-        'Token refresh failed: ${e.response?.statusCode ?? 'N/A'} ${e.message}',
+        'Token refresh failed: ${statusCode ?? 'N/A'} ${e.message}',
       );
-      await _handleAuthExpired();
+      // 401 on refresh means the session was explicitly revoked
+      // (e.g. logout-all-devices). Other errors are transient.
+      await _handleAuthExpired(sessionRevoked: statusCode == 401);
       if (!completer.isCompleted) {
         completer.completeError(StateError('Token refresh failed'));
       }
@@ -167,9 +170,14 @@ class AuthInterceptor extends Interceptor {
     }
   }
 
-  Future<void> _handleAuthExpired() async {
-    _log.warning(_tag, 'Auth expired — clearing tokens');
+  Future<void> _handleAuthExpired({bool sessionRevoked = false}) async {
+    _log.warning(
+      _tag,
+      sessionRevoked
+          ? 'Session revoked — clearing all local data'
+          : 'Auth expired — clearing tokens',
+    );
     await _storage.clearAuthTokens();
-    onAuthExpired?.call();
+    await onAuthExpired?.call(sessionRevoked: sessionRevoked);
   }
 }

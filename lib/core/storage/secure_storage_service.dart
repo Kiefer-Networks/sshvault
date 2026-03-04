@@ -375,4 +375,13 @@ class SecureStorageService {
       return Err(StorageFailure('Failed to delete device ID', cause: e));
     }
   }
+
+  Future<Result<void>> clearAllData() async {
+    try {
+      await _storage.deleteAll();
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to clear all data', cause: e));
+    }
+  }
 }

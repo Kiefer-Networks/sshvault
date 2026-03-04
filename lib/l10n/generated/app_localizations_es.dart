@@ -2068,4 +2068,17 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get jumpHostCircularError =>
       'Cadena circular de host de salto detectada';
+
+  @override
+  String get logoutDialogTitle => 'Cerrar sesión';
+
+  @override
+  String get logoutDialogMessage =>
+      '¿Quieres eliminar todos los datos locales? Servidores, claves SSH, snippets y configuraciones se eliminarán de este dispositivo.';
+
+  @override
+  String get logoutOnly => 'Solo cerrar sesión';
+
+  @override
+  String get logoutAndDelete => 'Cerrar sesión y eliminar datos';
 }
