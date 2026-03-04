@@ -8,6 +8,7 @@ import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:dartssh2/src/utils/bcrypt.dart' as openssh_bcrypt;
 import 'package:pointycastle/asn1.dart';
 import 'package:pointycastle/export.dart';
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/crypto/ssh_key_type.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
@@ -38,12 +39,9 @@ class SshKeyService {
 
   static void _ensureInitialized() {
     if (_initialized) return;
-    final seed = Uint8List(32);
-    final random = Random.secure();
-    for (var i = 0; i < 32; i++) {
-      seed[i] = random.nextInt(256);
-    }
+    final seed = CryptoUtils.secureRandomBytes(32);
     _secureRandom.seed(KeyParameter(seed));
+    CryptoUtils.zeroMemory(seed);
     _initialized = true;
   }
 
@@ -294,19 +292,22 @@ class SshKeyService {
     final publicKeyBytes = Uint8List.fromList(publicKey.bytes);
     final privateKeyBytes = Uint8List.fromList(privateKeyData);
 
-    return Success(
-      SshKeyPair(
-        privateKey: _ed25519ToOpenSshPrivateKey(
-          privateKeyBytes,
-          publicKeyBytes,
-          options.comment,
-          passphrase: options.passphrase,
-        ),
-        publicKey: _ed25519ToOpenSshPublicKey(publicKeyBytes, options.comment),
-        type: SshKeyType.ed25519,
-        comment: options.comment,
+    final result = SshKeyPair(
+      privateKey: _ed25519ToOpenSshPrivateKey(
+        privateKeyBytes,
+        publicKeyBytes,
+        options.comment,
+        passphrase: options.passphrase,
       ),
+      publicKey: _ed25519ToOpenSshPublicKey(publicKeyBytes, options.comment),
+      type: SshKeyType.ed25519,
+      comment: options.comment,
     );
+
+    // Zero private key material from memory
+    CryptoUtils.zeroMemory(privateKeyBytes);
+
+    return Success(result);
   }
 
   Future<Result<String>> _extractOpenSshPublicKey(

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' show sha256;
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/services/logging_service.dart';
@@ -69,7 +70,7 @@ class ProofOfWorkService {
         sw.stop();
         final solution = ProofOfWorkSolution(
           nonce: nonce.toString(),
-          hash: _bytesToHex(hash.bytes),
+          hash: CryptoUtils.bytesToHex(hash.bytes),
           iterations: nonce + 1,
           durationMs: sw.elapsedMilliseconds,
         );
@@ -105,7 +106,7 @@ class ProofOfWorkService {
   bool verify(ProofOfWorkChallenge challenge, ProofOfWorkSolution solution) {
     final input = utf8.encode('${challenge.prefix}${solution.nonce}');
     final hash = sha256.convert(input);
-    final hashHex = _bytesToHex(hash.bytes);
+    final hashHex = CryptoUtils.bytesToHex(hash.bytes);
 
     if (hashHex != solution.hash) return false;
     return _hasLeadingZeroBits(hash.bytes, challenge.difficulty);
@@ -126,14 +127,6 @@ class ProofOfWorkService {
       }
     }
     return remaining <= 0;
-  }
-
-  static String _bytesToHex(List<int> bytes) {
-    final sb = StringBuffer();
-    for (final b in bytes) {
-      sb.write(b.toRadixString(16).padLeft(2, '0'));
-    }
-    return sb.toString();
   }
 }
 

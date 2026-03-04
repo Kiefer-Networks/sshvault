@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart'
+    show CupertinoTextThemeData, CupertinoThemeData;
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 

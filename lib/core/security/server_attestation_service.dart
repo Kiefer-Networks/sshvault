@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' show sha256, Hmac;
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/services/logging_service.dart';
@@ -126,7 +126,7 @@ class ServerAttestationService {
       final expectedBytes = utf8.encode(expectedSignature);
       final sigMatch =
           sigBytes.length == expectedBytes.length &&
-          _constantTimeEquals(sigBytes, expectedBytes);
+          CryptoUtils.constantTimeEquals(sigBytes, expectedBytes);
       if (!sigMatch) {
         _log.error(_tag, 'Attestation signature verification failed');
         return const Err(
@@ -151,12 +151,7 @@ class ServerAttestationService {
 
   /// Generate a cryptographically secure random nonce for attestation requests.
   static String generateNonce() {
-    final rng = Random.secure();
-    final bytes = Uint8List(16);
-    for (var i = 0; i < bytes.length; i++) {
-      bytes[i] = rng.nextInt(256);
-    }
-    return base64Url.encode(bytes);
+    return base64Url.encode(CryptoUtils.secureRandomBytes(16));
   }
 
   /// Build canonical payload for HMAC verification.
@@ -174,16 +169,6 @@ class ServerAttestationService {
     final hmac = Hmac(sha256, _hmacKey);
     final digest = hmac.convert(utf8.encode(payload));
     return base64Encode(digest.bytes);
-  }
-
-  /// Constant-time byte comparison to prevent timing side-channels.
-  static bool _constantTimeEquals(List<int> a, List<int> b) {
-    if (a.length != b.length) return false;
-    var result = 0;
-    for (var i = 0; i < a.length; i++) {
-      result |= a[i] ^ b[i];
-    }
-    return result == 0;
   }
 }
 

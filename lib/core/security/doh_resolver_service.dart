@@ -195,8 +195,8 @@ class DohResolverService {
         return Err(
           DnsDivergence(
             hostname: hostname,
-            cloudflareIPs: successResults.first.toList(),
-            googleIPs: successResults[i].toList(),
+            resolverAIPs: successResults.first.toList(),
+            resolverBIPs: successResults[i].toList(),
           ),
         );
       }

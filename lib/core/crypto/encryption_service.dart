@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:pointycastle/export.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/crypto/encrypted_payload.dart';
 import 'package:shellvault/core/crypto/export_envelope.dart';
 import 'package:shellvault/core/error/failures.dart';
@@ -14,17 +14,10 @@ import 'package:shellvault/core/services/logging_service.dart';
 
 class EncryptionService {
   static final _log = LoggingService.instance;
-  final Random _secureRandom = Random.secure();
   final NonceCounter? _nonceCounter;
 
   EncryptionService({NonceCounter? nonceCounter})
     : _nonceCounter = nonceCounter;
-
-  Uint8List _generateSecureBytes(int length) {
-    return Uint8List.fromList(
-      List.generate(length, (_) => _secureRandom.nextInt(256)),
-    );
-  }
 
   /// Derives an AES-256 key from [password] and [salt] using Argon2id.
   ///
@@ -62,7 +55,7 @@ class EncryptionService {
   String _sha256Hex(Uint8List data) {
     final digest = SHA256Digest();
     final hash = digest.process(data);
-    return hash.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+    return CryptoUtils.bytesToHex(hash);
   }
 
   EncryptedPayload _encryptWithNonce(
@@ -96,7 +89,7 @@ class EncryptionService {
     if (_nonceCounter != null && keyId != null) {
       nonce = await _nonceCounter.next(keyId);
     } else {
-      nonce = _generateSecureBytes(AppConstants.aesNonceLength);
+      nonce = CryptoUtils.secureRandomBytes(AppConstants.aesNonceLength);
     }
     return _encryptWithNonce(plaintext, key, nonce);
   }
@@ -129,7 +122,7 @@ class EncryptionService {
     _log.info('Crypto', 'Encrypting data for export');
 
     try {
-      final salt = _generateSecureBytes(AppConstants.saltLength);
+      final salt = CryptoUtils.secureRandomBytes(AppConstants.saltLength);
       final key = await _deriveKey(password, salt);
       _log.debug('Crypto', 'Key derived in ${sw.elapsedMilliseconds}ms');
 
@@ -137,8 +130,7 @@ class EncryptionService {
       final checksum = _sha256Hex(plaintext);
       final payload = await _encrypt(plaintext, key, keyId: 'export');
 
-      // Zero key material from memory
-      key.fillRange(0, key.length, 0);
+      CryptoUtils.zeroMemory(key);
 
       sw.stop();
       _log.info(
@@ -187,8 +179,7 @@ class EncryptionService {
         envelope.nonceBytes,
       );
 
-      // Zero key material from memory
-      key.fillRange(0, key.length, 0);
+      CryptoUtils.zeroMemory(key);
 
       _log.debug('Crypto', 'AES-GCM decrypt completed');
 

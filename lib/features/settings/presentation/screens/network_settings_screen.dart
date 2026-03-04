@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/error/failures.dart';
@@ -150,17 +149,6 @@ class NetworkSettingsScreen extends ConsumerWidget {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(l10n.save),
-          ),
-        ],
-        cupertinoActions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
             onPressed: () => Navigator.pop(context, controller.text),
             child: Text(l10n.save),
           ),

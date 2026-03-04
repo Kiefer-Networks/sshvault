@@ -66,12 +66,12 @@ final class SyncFailure extends Failure {
 
 final class DnsDivergence extends Failure {
   final String hostname;
-  final List<String> cloudflareIPs;
-  final List<String> googleIPs;
+  final List<String> resolverAIPs;
+  final List<String> resolverBIPs;
   const DnsDivergence({
     required this.hostname,
-    required this.cloudflareIPs,
-    required this.googleIPs,
+    required this.resolverAIPs,
+    required this.resolverBIPs,
   }) : super('DNS divergence detected');
 }
 

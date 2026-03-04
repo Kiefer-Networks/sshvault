@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -624,17 +623,6 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           child: Text(l10n.save),
         ),
       ],
-      cupertinoActions: [
-        CupertinoDialogAction(
-          onPressed: () => Navigator.pop(context, false),
-          child: Text(l10n.cancel),
-        ),
-        CupertinoDialogAction(
-          isDefaultAction: true,
-          onPressed: () => Navigator.pop(context, true),
-          child: Text(l10n.save),
-        ),
-      ],
     );
     if (result == true) {
       if (oldPw.text.isEmpty || newPw.text.isEmpty) {
@@ -717,17 +705,6 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           child: Text(l10n.cancel),
         ),
         FilledButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: Text(l10n.save),
-        ),
-      ],
-      cupertinoActions: [
-        CupertinoDialogAction(
-          onPressed: () => Navigator.pop(context, false),
-          child: Text(l10n.cancel),
-        ),
-        CupertinoDialogAction(
-          isDefaultAction: true,
           onPressed: () => Navigator.pop(context, true),
           child: Text(l10n.save),
         ),

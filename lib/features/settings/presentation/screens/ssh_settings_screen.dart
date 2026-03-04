@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
@@ -186,17 +185,6 @@ class SshSettingsScreen extends ConsumerWidget {
             child: Text(l10n.save),
           ),
         ],
-        cupertinoActions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(l10n.save),
-          ),
-        ],
       );
       if (result != null) {
         final port = int.tryParse(result);
@@ -236,17 +224,6 @@ class SshSettingsScreen extends ConsumerWidget {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(l10n.save),
-          ),
-        ],
-        cupertinoActions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
             onPressed: () => Navigator.pop(context, controller.text),
             child: Text(l10n.save),
           ),
@@ -291,17 +268,6 @@ class SshSettingsScreen extends ConsumerWidget {
             child: Text(l10n.save),
           ),
         ],
-        cupertinoActions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(l10n.save),
-          ),
-        ],
       );
       if (result != null) {
         final secs = int.tryParse(result);
@@ -341,17 +307,6 @@ class SshSettingsScreen extends ConsumerWidget {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(l10n.save),
-          ),
-        ],
-        cupertinoActions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
             onPressed: () => Navigator.pop(context, controller.text),
             child: Text(l10n.save),
           ),

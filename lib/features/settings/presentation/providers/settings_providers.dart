@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/settings/domain/entities/app_settings_entity.dart';
@@ -150,10 +150,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     if (existingSalt != null) {
       salt = existingSalt;
     } else {
-      final rng = Random.secure();
-      salt = Uint8List.fromList(
-        List.generate(AppConstants.saltLength, (_) => rng.nextInt(256)),
-      );
+      salt = CryptoUtils.secureRandomBytes(AppConstants.saltLength);
     }
 
     final argon2 = crypto.Argon2id(
@@ -190,7 +187,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
 
     final dao = ref.read(databaseProvider).appSettingsDao;
 
-    if (result.hash == current.pinHash) {
+    if (CryptoUtils.constantTimeStringEquals(result.hash, current.pinHash)) {
       // Reset failed attempts on success
       await dao.setValue(_keyFailedAttempts, '0');
       await dao.deleteValue(_keyLockoutUntil);
@@ -414,7 +411,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
 
     final salt = base64Decode(current.duressPinSalt);
     final result = await _hashPin(pin, existingSalt: salt);
-    return result.hash == current.duressPinHash;
+    return CryptoUtils.constantTimeStringEquals(
+      result.hash,
+      current.duressPinHash,
+    );
   }
 
   Future<void> setKeyRotationReminder(int days) async {

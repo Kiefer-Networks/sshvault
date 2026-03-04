@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' show sha256;
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/services/logging_service.dart';
@@ -67,7 +68,7 @@ class CertificatePinningService {
     final certHash = _computeSha256(certificate.der);
     for (final pin in validPins) {
       // Constant-time comparison for defense-in-depth
-      if (_constantTimeEquals(pin.hash, certHash)) {
+      if (CryptoUtils.constantTimeStringEquals(pin.hash, certHash)) {
         _log.debug(_tag, 'Certificate pin matched for $hostname');
         return const Success(null);
       }
@@ -120,16 +121,6 @@ class CertificatePinningService {
   /// Use this utility to generate pin strings from actual certificates.
   static String computePin(Uint8List derBytes) {
     return _computeSha256(derBytes);
-  }
-
-  /// Constant-time string comparison to prevent timing side-channels.
-  static bool _constantTimeEquals(String a, String b) {
-    if (a.length != b.length) return false;
-    var result = 0;
-    for (var i = 0; i < a.length; i++) {
-      result |= a.codeUnitAt(i) ^ b.codeUnitAt(i);
-    }
-    return result == 0;
   }
 }
 

@@ -68,67 +68,12 @@ Future<bool?> showAdaptiveConfirmDialog(
   );
 }
 
-/// Shows an alert as a modal bottom sheet with a single OK button.
-Future<void> showAdaptiveAlert(
-  BuildContext context, {
-  required String title,
-  required String message,
-  String? okLabel,
-}) {
-  final label = okLabel ?? 'OK';
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (ctx) {
-      final theme = Theme.of(ctx);
-      return Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const _DragHandle(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(title, style: theme.textTheme.titleLarge),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                message,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FilledButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: Text(label),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
 /// Shows a form dialog as a modal bottom sheet.
 Future<T?> showAdaptiveFormDialog<T>(
   BuildContext context, {
   required String title,
   required Widget content,
   required List<Widget> materialActions,
-  List<Widget>? cupertinoActions,
   Widget? icon,
 }) {
   return showModalBottomSheet<T>(

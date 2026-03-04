@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 
 /// Generates unique counter-based nonces for AES-256-GCM.
@@ -70,7 +70,7 @@ class NonceCounter {
       // Load or create the random prefix for this key
       var prefix = await _loadPrefix(keyId);
       if (prefix == null) {
-        prefix = _randomBytes(4);
+        prefix = CryptoUtils.secureRandomBytes(4);
         await _savePrefix(keyId, prefix);
       }
 
@@ -104,13 +104,13 @@ class NonceCounter {
   Future<Uint8List?> _loadPrefix(String keyId) async {
     final hex = await _storage.read(key: '$_storageKeyPrefix$keyId');
     if (hex == null) return null;
-    return _hexToBytes(hex);
+    return CryptoUtils.hexToBytes(hex);
   }
 
   Future<void> _savePrefix(String keyId, Uint8List prefix) async {
     await _storage.write(
       key: '$_storageKeyPrefix$keyId',
-      value: _bytesToHex(prefix),
+      value: CryptoUtils.bytesToHex(prefix),
     );
   }
 
@@ -127,26 +127,10 @@ class NonceCounter {
     );
   }
 
-  static Uint8List _randomBytes(int length) {
-    final rng = Random.secure();
-    return Uint8List.fromList(List.generate(length, (_) => rng.nextInt(256)));
-  }
-
   static void _writeUint64BE(Uint8List buf, int offset, int value) {
     for (var i = 7; i >= 0; i--) {
       buf[offset + i] = value & 0xFF;
       value >>= 8;
     }
-  }
-
-  static String _bytesToHex(Uint8List bytes) =>
-      bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-
-  static Uint8List _hexToBytes(String hex) {
-    final result = Uint8List(hex.length ~/ 2);
-    for (var i = 0; i < result.length; i++) {
-      result[i] = int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16);
-    }
-    return result;
   }
 }
