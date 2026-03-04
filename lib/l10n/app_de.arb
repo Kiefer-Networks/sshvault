@@ -724,6 +724,13 @@
   "teleportNoNodes": "Keine Nodes verfügbar",
   "teleportSessionsNotAvailable": "Teleport-Terminalsitzungen noch nicht verfügbar",
   "teleportFailedToLoadNodes": "Nodes konnten nicht geladen werden",
+  "teleportLogin": "Anmelden",
+  "teleportDeleteClusterConfirm": "Cluster \"{name}\" entfernen? Dies entfernt nur die lokale Konfiguration.",
+  "@teleportDeleteClusterConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
 
   "teleportClusterFormTitle": "Teleport-Cluster hinzufügen",
   "teleportClusterNameLabel": "Cluster-Name",

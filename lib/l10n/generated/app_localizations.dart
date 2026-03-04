@@ -3838,6 +3838,18 @@ abstract class AppLocalizations {
   /// **'Failed to load nodes'**
   String get teleportFailedToLoadNodes;
 
+  /// No description provided for @teleportLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get teleportLogin;
+
+  /// No description provided for @teleportDeleteClusterConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove cluster \"{name}\"? This only removes the local configuration.'**
+  String teleportDeleteClusterConfirm(String name);
+
   /// No description provided for @teleportClusterFormTitle.
   ///
   /// In en, this message translates to:

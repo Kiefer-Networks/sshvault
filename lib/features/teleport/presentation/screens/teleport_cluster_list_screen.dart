@@ -82,9 +82,35 @@ class TeleportBranchScreen extends ConsumerWidget {
                     TeleportCertStatus(expiresAt: cluster.certExpiresAt),
                   ],
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.more_vert),
-                  onPressed: () => context.push('/teleport/cluster/${cluster.id}'),
+                trailing: PopupMenuButton<String>(
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'login':
+                        context.push('/teleport/cluster/${cluster.id}/login');
+                      case 'delete':
+                        _confirmDelete(context, ref, cluster.id, cluster.name, l10n);
+                    }
+                  },
+                  itemBuilder: (_) => [
+                    PopupMenuItem(
+                      value: 'login',
+                      child: ListTile(
+                        leading: const Icon(Icons.login),
+                        title: Text(l10n.teleportLogin),
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: ListTile(
+                        leading: Icon(Icons.delete_outline, color: theme.colorScheme.error),
+                        title: Text(l10n.delete, style: TextStyle(color: theme.colorScheme.error)),
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
                 ),
                 children: nodesAsync.when(
                   data: (nodes) {
@@ -138,6 +164,38 @@ class TeleportBranchScreen extends ConsumerWidget {
         error: (e, _) => Center(
           child: Text(l10n.error(e.toString())),
         ),
+      ),
+    );
+  }
+
+  void _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    String clusterId,
+    String clusterName,
+    AppLocalizations l10n,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.delete),
+        content: Text(l10n.teleportDeleteClusterConfirm(clusterName)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              ref.read(teleportRepositoryProvider).deleteCluster(clusterId);
+            },
+            child: Text(l10n.delete),
+          ),
+        ],
       ),
     );
   }

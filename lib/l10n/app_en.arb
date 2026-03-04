@@ -750,6 +750,13 @@
   "teleportNoNodes": "No nodes available",
   "teleportSessionsNotAvailable": "Teleport terminal sessions not yet available",
   "teleportFailedToLoadNodes": "Failed to load nodes",
+  "teleportLogin": "Login",
+  "teleportDeleteClusterConfirm": "Remove cluster \"{name}\"? This only removes the local configuration.",
+  "@teleportDeleteClusterConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
 
   "teleportClusterFormTitle": "Add Teleport Cluster",
   "teleportClusterNameLabel": "Cluster Name",

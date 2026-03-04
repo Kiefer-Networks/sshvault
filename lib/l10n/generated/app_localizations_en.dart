@@ -2100,6 +2100,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teleportFailedToLoadNodes => 'Failed to load nodes';
 
   @override
+  String get teleportLogin => 'Login';
+
+  @override
+  String teleportDeleteClusterConfirm(String name) {
+    return 'Remove cluster \"$name\"? This only removes the local configuration.';
+  }
+
+  @override
   String get teleportClusterFormTitle => 'Add Teleport Cluster';
 
   @override
