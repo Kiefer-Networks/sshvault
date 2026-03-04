@@ -159,7 +159,9 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                           final iapProduct = isNativeIapPlatform
                               ? ref.watch(subscriptionStoreProvider).value
                               : null;
-                          final priceLabel = iapProduct?.price ?? (isNativeIapPlatform ? '...' : '\u20AC9.99');
+                          final priceLabel =
+                              iapProduct?.price ??
+                              (isNativeIapPlatform ? '...' : '\u20AC9.99');
                           return Column(
                             children: [
                               Text(
@@ -440,13 +442,16 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                 final iapProduct = isNativeIapPlatform
                     ? ref.watch(subscriptionStoreProvider).value
                     : null;
-                final purchaseStatus =
-                    ref.watch(subscriptionPurchaseStatusProvider);
+                final purchaseStatus = ref.watch(
+                  subscriptionPurchaseStatusProvider,
+                );
                 final isWorking =
                     purchaseStatus == SubscriptionPurchaseStatus.purchasing ||
                     purchaseStatus == SubscriptionPurchaseStatus.verifying;
 
-                final priceLabel = iapProduct?.price ?? (isNativeIapPlatform ? '...' : '\u20AC9.99');
+                final priceLabel =
+                    iapProduct?.price ??
+                    (isNativeIapPlatform ? '...' : '\u20AC9.99');
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -465,13 +470,10 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                                 ),
                               )
                             : const Icon(Icons.payment),
-                        label: Text(
-                          l10n.accountActivateSyncPrice(priceLabel),
-                        ),
+                        label: Text(l10n.accountActivateSyncPrice(priceLabel)),
                       ),
                     ),
-                    if (purchaseStatus ==
-                        SubscriptionPurchaseStatus.error) ...[
+                    if (purchaseStatus == SubscriptionPurchaseStatus.error) ...[
                       const SizedBox(height: 8),
                       Text(
                         ref.watch(subscriptionPurchaseErrorProvider) ??
@@ -731,7 +733,10 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         }
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(errorMessage(e)),
+          );
         }
       }
     }
@@ -907,7 +912,10 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         );
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(errorMessage(e)),
+          );
         }
       }
     }
@@ -974,13 +982,14 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         final router = GoRouter.of(context);
         final repo = ref.read(accountRepositoryProvider);
         await repo.deleteAccount();
-        await ref
-            .read(authProvider.notifier)
-            .logout(deleteLocalData: true);
+        await ref.read(authProvider.notifier).logout(deleteLocalData: true);
         if (mounted) router.go('/');
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(errorMessage(e)),
+          );
         }
       }
     }

@@ -52,40 +52,40 @@ class SessionTabBar extends ConsumerWidget {
                 constraints: const BoxConstraints(maxWidth: 180),
                 margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _StatusDot(status: session.status),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      session.title,
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        fontWeight: isActive
-                            ? FontWeight.w600
-                            : FontWeight.normal,
-                        color: isActive
-                            ? theme.colorScheme.onPrimaryContainer
-                            : theme.colorScheme.onSurface.withAlpha(
-                                AppConstants.alpha179,
-                              ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _StatusDot(status: session.status),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        session.title,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          fontWeight: isActive
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                          color: isActive
+                              ? theme.colorScheme.onPrimaryContainer
+                              : theme.colorScheme.onSurface.withAlpha(
+                                  AppConstants.alpha179,
+                                ),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  _CloseButton(
-                    session: session,
-                    onClose: () {
-                      ref
-                          .read(sessionManagerProvider.notifier)
-                          .closeSession(session.id);
-                    },
-                  ),
-                ],
+                    const SizedBox(width: 4),
+                    _CloseButton(
+                      session: session,
+                      onClose: () {
+                        ref
+                            .read(sessionManagerProvider.notifier)
+                            .closeSession(session.id);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
           );
         },
       ),

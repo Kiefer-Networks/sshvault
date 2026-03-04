@@ -522,8 +522,7 @@ class _AppDrawer extends StatelessWidget {
       if (showTerminal) _buildTerminalNavItem(context),
     ];
 
-    final clampedIndex =
-        currentIndex < visibleItems.length ? currentIndex : 0;
+    final clampedIndex = currentIndex < visibleItems.length ? currentIndex : 0;
 
     return NavigationDrawer(
       selectedIndex: clampedIndex,

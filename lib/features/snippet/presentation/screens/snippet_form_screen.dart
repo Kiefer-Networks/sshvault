@@ -184,9 +184,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                     label: Text(l10n.snippetFormLanguageLabel),
                     leadingIcon: const Icon(Icons.code),
                     dropdownMenuEntries: _languages
-                        .map(
-                          (l) => DropdownMenuEntry(value: l, label: l),
-                        )
+                        .map((l) => DropdownMenuEntry(value: l, label: l))
                         .toList(),
                     onSelected: (v) {
                       if (v != null) {
@@ -341,7 +339,10 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
+        AdaptiveNotification.show(
+          context,
+          message: l10n.error(errorMessage(e)),
+        );
       }
     } finally {
       if (mounted) {

@@ -355,13 +355,16 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                 final iapProduct = isNativeIapPlatform
                     ? ref.watch(subscriptionStoreProvider).value
                     : null;
-                final purchaseStatus =
-                    ref.watch(subscriptionPurchaseStatusProvider);
+                final purchaseStatus = ref.watch(
+                  subscriptionPurchaseStatusProvider,
+                );
                 final isWorking =
                     purchaseStatus == SubscriptionPurchaseStatus.purchasing ||
                     purchaseStatus == SubscriptionPurchaseStatus.verifying;
 
-                final priceLabel = iapProduct?.price ?? (isNativeIapPlatform ? '...' : '\u20AC9.99');
+                final priceLabel =
+                    iapProduct?.price ??
+                    (isNativeIapPlatform ? '...' : '\u20AC9.99');
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -380,13 +383,10 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                                 ),
                               )
                             : const Icon(Icons.payment),
-                        label: Text(
-                          l10n.accountActivateSyncPrice(priceLabel),
-                        ),
+                        label: Text(l10n.accountActivateSyncPrice(priceLabel)),
                       ),
                     ),
-                    if (purchaseStatus ==
-                        SubscriptionPurchaseStatus.error) ...[
+                    if (purchaseStatus == SubscriptionPurchaseStatus.error) ...[
                       const SizedBox(height: 8),
                       Text(
                         ref.watch(subscriptionPurchaseErrorProvider) ??
@@ -659,7 +659,10 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         }
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(errorMessage(e)),
+          );
         }
       }
     }
@@ -831,7 +834,10 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         );
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(errorMessage(e)),
+          );
         }
       }
     }
@@ -854,7 +860,10 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         if (mounted) context.go('/');
       } catch (e) {
         if (mounted) {
-          AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(errorMessage(e)),
+          );
         }
       }
     }

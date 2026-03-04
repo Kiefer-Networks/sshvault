@@ -113,7 +113,8 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       _pausedAt ??= DateTime.now();
       return;
     }
@@ -348,8 +349,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                 ),
               ],
 
-              if (!(settings?.hasPin ?? false) &&
-                  hasBiometric) ...[
+              if (!(settings?.hasPin ?? false) && hasBiometric) ...[
                 IconButton.filled(
                   onPressed: lockState.isAuthenticating || isLockedOut
                       ? null

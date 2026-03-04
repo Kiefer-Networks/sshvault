@@ -36,113 +36,115 @@ class ServerGridCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: Color(server.color).withAlpha(AppConstants.alpha26),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    IconConstants.getIcon(server.iconName),
-                    color: Color(server.color),
-                    size: 20,
-                  ),
-                ),
-                const Spacer(),
-                StatusBadge(isActive: server.isActive),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              server.name,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${server.username}@${server.hostname}',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(
-                  AppConstants.alpha128,
-                ),
-                fontFamily: AppConstants.monospaceFontFamily,
-                fontSize: 11,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const Spacer(),
-            if (server.tags.isNotEmpty)
-              Wrap(
-                spacing: 4,
-                runSpacing: 2,
-                children: server.tags.take(2).map((tag) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(tag.color).withAlpha(AppConstants.alpha26),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      tag.name,
-                      style: TextStyle(fontSize: 10, color: Color(tag.color)),
-                    ),
-                  );
-                }).toList(),
-              ),
-            if (onDetail != null || onEdit != null)
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  if (onDetail != null)
-                    IconButton(
-                      icon: Icon(
-                        Icons.info_outlined,
-                        size: 18,
-                        color: theme.colorScheme.onSurface.withAlpha(
-                          AppConstants.alpha153,
-                        ),
-                      ),
-                      onPressed: onDetail,
-                      tooltip: l10n.serverDetails,
-                      visualDensity: VisualDensity.compact,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(
-                        minWidth: 32,
-                        minHeight: 32,
-                      ),
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: Color(
+                        server.color,
+                      ).withAlpha(AppConstants.alpha26),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  if (onEdit != null)
-                    IconButton(
-                      icon: Icon(
-                        Icons.edit_outlined,
-                        size: 18,
-                        color: theme.colorScheme.onSurface.withAlpha(
-                          AppConstants.alpha153,
-                        ),
-                      ),
-                      onPressed: onEdit,
-                      tooltip: l10n.edit,
-                      visualDensity: VisualDensity.compact,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(
-                        minWidth: 32,
-                        minHeight: 32,
-                      ),
+                    child: Icon(
+                      IconConstants.getIcon(server.iconName),
+                      color: Color(server.color),
+                      size: 20,
                     ),
+                  ),
+                  const Spacer(),
+                  StatusBadge(isActive: server.isActive),
                 ],
               ),
+              const SizedBox(height: 12),
+              Text(
+                server.name,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${server.username}@${server.hostname}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withAlpha(
+                    AppConstants.alpha128,
+                  ),
+                  fontFamily: AppConstants.monospaceFontFamily,
+                  fontSize: 11,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const Spacer(),
+              if (server.tags.isNotEmpty)
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 2,
+                  children: server.tags.take(2).map((tag) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(tag.color).withAlpha(AppConstants.alpha26),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        tag.name,
+                        style: TextStyle(fontSize: 10, color: Color(tag.color)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              if (onDetail != null || onEdit != null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (onDetail != null)
+                      IconButton(
+                        icon: Icon(
+                          Icons.info_outlined,
+                          size: 18,
+                          color: theme.colorScheme.onSurface.withAlpha(
+                            AppConstants.alpha153,
+                          ),
+                        ),
+                        onPressed: onDetail,
+                        tooltip: l10n.serverDetails,
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
+                      ),
+                    if (onEdit != null)
+                      IconButton(
+                        icon: Icon(
+                          Icons.edit_outlined,
+                          size: 18,
+                          color: theme.colorScheme.onSurface.withAlpha(
+                            AppConstants.alpha153,
+                          ),
+                        ),
+                        onPressed: onEdit,
+                        tooltip: l10n.edit,
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
+                      ),
+                  ],
+                ),
             ],
           ),
         ),

@@ -216,9 +216,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          widget.isEditing
-              ? l10n.serverFormTitleEdit
-              : l10n.serverFormTitleAdd,
+          widget.isEditing ? l10n.serverFormTitleEdit : l10n.serverFormTitleAdd,
         ),
         actions: [
           if (widget.isEditing)
@@ -255,34 +253,34 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
               child: Column(
                 children: [
                   ServerFormFields(
-                nameController: _nameController,
-                hostnameController: _hostnameController,
-                portController: _portController,
-                usernameController: _usernameController,
-                passwordController: _passwordController,
-                privateKeyController: _privateKeyController,
-                publicKeyController: _publicKeyController,
-                passphraseController: _passphraseController,
-                notesController: _notesController,
-                authMethod: formState.authMethod,
-                onAuthMethodChanged: (m) =>
-                    ref.read(_serverFormStateProvider.notifier).state =
-                        formState.copyWith(authMethod: m),
-                onGenerateKeyPair: _generateKeyPair,
-                onExtractPublicKey: _extractPublicKey,
-                useManagedKey: formState.useManagedKey,
-                onUseManagedKeyChanged: (v) =>
-                    ref
-                        .read(_serverFormStateProvider.notifier)
-                        .state = formState.copyWith(
-                      useManagedKey: v,
-                      sshKeyId: v ? null : () => null,
-                    ),
-                selectedSshKeyId: formState.sshKeyId,
-                onSshKeyChanged: (id) =>
-                    ref.read(_serverFormStateProvider.notifier).state =
-                        formState.copyWith(sshKeyId: () => id),
-              ),
+                    nameController: _nameController,
+                    hostnameController: _hostnameController,
+                    portController: _portController,
+                    usernameController: _usernameController,
+                    passwordController: _passwordController,
+                    privateKeyController: _privateKeyController,
+                    publicKeyController: _publicKeyController,
+                    passphraseController: _passphraseController,
+                    notesController: _notesController,
+                    authMethod: formState.authMethod,
+                    onAuthMethodChanged: (m) =>
+                        ref.read(_serverFormStateProvider.notifier).state =
+                            formState.copyWith(authMethod: m),
+                    onGenerateKeyPair: _generateKeyPair,
+                    onExtractPublicKey: _extractPublicKey,
+                    useManagedKey: formState.useManagedKey,
+                    onUseManagedKeyChanged: (v) =>
+                        ref
+                            .read(_serverFormStateProvider.notifier)
+                            .state = formState.copyWith(
+                          useManagedKey: v,
+                          sshKeyId: v ? null : () => null,
+                        ),
+                    selectedSshKeyId: formState.sshKeyId,
+                    onSshKeyChanged: (id) =>
+                        ref.read(_serverFormStateProvider.notifier).state =
+                            formState.copyWith(sshKeyId: () => id),
+                  ),
                   const SizedBox(height: 16),
                   JumpHostSelector(
                     currentServerId: widget.serverId,

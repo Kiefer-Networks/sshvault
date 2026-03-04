@@ -14,18 +14,20 @@ class SshKeyDao extends DatabaseAccessor<AppDatabase> with _$SshKeyDaoMixin {
       (select(sshKeys)..where((k) => k.id.equals(id))).getSingleOrNull();
 
   Future<SshKey?> getSshKeyByFingerprint(String fingerprint) async {
-    final rows = await (select(sshKeys)
-          ..where((k) => k.fingerprint.equals(fingerprint))
-          ..limit(1))
-        .get();
+    final rows =
+        await (select(sshKeys)
+              ..where((k) => k.fingerprint.equals(fingerprint))
+              ..limit(1))
+            .get();
     return rows.isEmpty ? null : rows.first;
   }
 
   Future<SshKey?> getSshKeyByPublicKey(String publicKey) async {
-    final rows = await (select(sshKeys)
-          ..where((k) => k.publicKey.equals(publicKey))
-          ..limit(1))
-        .get();
+    final rows =
+        await (select(sshKeys)
+              ..where((k) => k.publicKey.equals(publicKey))
+              ..limit(1))
+            .get();
     return rows.isEmpty ? null : rows.first;
   }
 

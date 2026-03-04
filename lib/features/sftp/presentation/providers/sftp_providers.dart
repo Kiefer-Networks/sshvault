@@ -762,7 +762,8 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
       if (current != null && current.status != TransferStatus.cancelled) {
         _updateItem(
           item.id,
-          (i) => i.copyWith(status: TransferStatus.failed, error: errorMessage(e)),
+          (i) =>
+              i.copyWith(status: TransferStatus.failed, error: errorMessage(e)),
         );
       }
     } finally {

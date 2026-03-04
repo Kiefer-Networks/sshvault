@@ -58,7 +58,10 @@ class SshService {
         jumpHostClient = SSHClient(
           jumpSocket,
           username: jumpHost.username,
-          onPasswordRequest: _buildPasswordHandler(jumpHost, jumpHostCredentials),
+          onPasswordRequest: _buildPasswordHandler(
+            jumpHost,
+            jumpHostCredentials,
+          ),
           identities: _buildIdentities(
             jumpHost,
             jumpHostCredentials,
@@ -93,7 +96,10 @@ class SshService {
           timeout: const Duration(seconds: 15),
         );
 
-        _log.debug(_tag, 'Socket connected to ${server.hostname}:${server.port}');
+        _log.debug(
+          _tag,
+          'Socket connected to ${server.hostname}:${server.port}',
+        );
 
         client = SSHClient(
           socket,

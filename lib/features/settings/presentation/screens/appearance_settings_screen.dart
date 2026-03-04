@@ -52,8 +52,9 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                   title: l10n.settingsLanguage,
                   subtitleText: _localeLabel(l10n, settings.locale),
                   trailing: DropdownMenu<String>(
-                    initialSelection:
-                        settings.locale.isEmpty ? '' : settings.locale,
+                    initialSelection: settings.locale.isEmpty
+                        ? ''
+                        : settings.locale,
                     requestFocusOnTap: false,
                     dropdownMenuEntries: [
                       DropdownMenuEntry(
@@ -146,7 +147,8 @@ class AppearanceSettingsScreen extends ConsumerWidget {
         ),
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
+        error: (error, _) =>
+            Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
   }

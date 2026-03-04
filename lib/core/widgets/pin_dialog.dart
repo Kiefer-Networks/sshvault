@@ -7,8 +7,7 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 final _pinDialogErrorProvider = StateProvider.autoDispose<String?>((_) => null);
 
-final _pinVerifyErrorProvider =
-    StateProvider.autoDispose<String?>((_) => null);
+final _pinVerifyErrorProvider = StateProvider.autoDispose<String?>((_) => null);
 
 final _pinVerifyingProvider = StateProvider.autoDispose<bool>((_) => false);
 
@@ -67,8 +66,9 @@ class _PinDialogState extends ConsumerState<PinDialog> {
     if (_pin.length >= 6) return;
     ref.read(_pinDialogErrorProvider.notifier).state = null;
     _pin += digit;
-    ref.read(_pinDialogErrorProvider.notifier).state =
-        ref.read(_pinDialogErrorProvider);
+    ref.read(_pinDialogErrorProvider.notifier).state = ref.read(
+      _pinDialogErrorProvider,
+    );
 
     if (_pin.length == 6) {
       _onPinComplete();
@@ -80,8 +80,9 @@ class _PinDialogState extends ConsumerState<PinDialog> {
     ref.read(_pinDialogErrorProvider.notifier).state = null;
     _pin = _pin.substring(0, _pin.length - 1);
     // Force rebuild by toggling error state
-    ref.read(_pinDialogErrorProvider.notifier).state =
-        ref.read(_pinDialogErrorProvider);
+    ref.read(_pinDialogErrorProvider.notifier).state = ref.read(
+      _pinDialogErrorProvider,
+    );
   }
 
   void _onPinComplete() {
@@ -143,10 +144,7 @@ class _PinDialogState extends ConsumerState<PinDialog> {
                   ),
                   const SizedBox(height: 24),
                 ],
-                PinDotIndicator(
-                  length: _pin.length,
-                  hasError: error != null,
-                ),
+                PinDotIndicator(length: _pin.length, hasError: error != null),
                 if (error != null) ...[
                   const SizedBox(height: 12),
                   Text(
@@ -158,10 +156,7 @@ class _PinDialogState extends ConsumerState<PinDialog> {
                   ),
                 ],
                 const SizedBox(height: 32),
-                PinNumPad(
-                  onDigit: _onDigit,
-                  onBackspace: _onBackspace,
-                ),
+                PinNumPad(onDigit: _onDigit, onBackspace: _onBackspace),
               ],
             ),
           ),
@@ -190,8 +185,9 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
 
     ref.read(_pinVerifyErrorProvider.notifier).state = null;
     _pin += digit;
-    ref.read(_pinVerifyErrorProvider.notifier).state =
-        ref.read(_pinVerifyErrorProvider);
+    ref.read(_pinVerifyErrorProvider.notifier).state = ref.read(
+      _pinVerifyErrorProvider,
+    );
 
     if (_pin.length == 6) {
       _verify();
@@ -202,8 +198,9 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
     if (_pin.isEmpty) return;
     ref.read(_pinVerifyErrorProvider.notifier).state = null;
     _pin = _pin.substring(0, _pin.length - 1);
-    ref.read(_pinVerifyErrorProvider.notifier).state =
-        ref.read(_pinVerifyErrorProvider);
+    ref.read(_pinVerifyErrorProvider.notifier).state = ref.read(
+      _pinVerifyErrorProvider,
+    );
   }
 
   Future<void> _verify() async {
@@ -228,8 +225,9 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
     } else {
       _attempts++;
       ref.read(_pinVerifyingProvider.notifier).state = false;
-      ref.read(_pinVerifyErrorProvider.notifier).state =
-          l10n.pinDialogWrongPin(_attempts);
+      ref.read(_pinVerifyErrorProvider.notifier).state = l10n.pinDialogWrongPin(
+        _attempts,
+      );
       _pin = '';
       if (_attempts >= AppConstants.maxPinAttempts) {
         Navigator.of(context).pop();
@@ -249,8 +247,7 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.close),
-            onPressed:
-                verifying ? null : () => Navigator.of(context).pop(),
+            onPressed: verifying ? null : () => Navigator.of(context).pop(),
           ),
           title: Text(l10n.pinDialogVerifyTitle),
         ),
@@ -260,10 +257,7 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                PinDotIndicator(
-                  length: _pin.length,
-                  hasError: error != null,
-                ),
+                PinDotIndicator(length: _pin.length, hasError: error != null),
                 if (error != null) ...[
                   const SizedBox(height: 12),
                   Text(
@@ -283,10 +277,7 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
                   ),
                 ],
                 const SizedBox(height: 32),
-                PinNumPad(
-                  onDigit: _onDigit,
-                  onBackspace: _onBackspace,
-                ),
+                PinNumPad(onDigit: _onDigit, onBackspace: _onBackspace),
               ],
             ),
           ),

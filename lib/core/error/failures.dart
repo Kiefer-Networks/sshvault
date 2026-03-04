@@ -82,7 +82,7 @@ final class SecurityViolation extends Failure {
 final class DuplicateSshKeyFailure extends Failure {
   final String existingKeyName;
   const DuplicateSshKeyFailure(this.existingKeyName)
-      : super('SSH key already exists: "$existingKeyName"');
+    : super('SSH key already exists: "$existingKeyName"');
 }
 
 /// Extracts a human-readable message from any error object.

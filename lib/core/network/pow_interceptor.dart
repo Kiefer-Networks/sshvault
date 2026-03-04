@@ -11,7 +11,7 @@ class PowInterceptor extends Interceptor {
   final ProofOfWorkService _powService;
 
   PowInterceptor({ProofOfWorkService? powService})
-      : _powService = powService ?? ProofOfWorkService();
+    : _powService = powService ?? ProofOfWorkService();
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
@@ -19,16 +19,21 @@ class PowInterceptor extends Interceptor {
       return handler.next(err);
     }
 
-    _log.info(_tag, '428 on ${err.requestOptions.path} — solving PoW challenge');
+    _log.info(
+      _tag,
+      '428 on ${err.requestOptions.path} — solving PoW challenge',
+    );
 
     try {
       // Fetch challenge from server using a plain Dio to avoid recursion
-      final challengeDio = Dio(BaseOptions(
-        baseUrl: err.requestOptions.baseUrl,
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
-        headers: {'Content-Type': 'application/json'},
-      ));
+      final challengeDio = Dio(
+        BaseOptions(
+          baseUrl: err.requestOptions.baseUrl,
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
 
       final challengeResponse = await challengeDio.get<Map<String, dynamic>>(
         '/v1/auth/challenge',
@@ -66,20 +71,19 @@ class PowInterceptor extends Interceptor {
         '(${solution.iterations} iterations, ${solution.durationMs}ms)',
       );
 
-      final retryDio = Dio(BaseOptions(
-        baseUrl: opts.baseUrl,
-        connectTimeout: opts.connectTimeout,
-        receiveTimeout: opts.receiveTimeout,
-      ));
+      final retryDio = Dio(
+        BaseOptions(
+          baseUrl: opts.baseUrl,
+          connectTimeout: opts.connectTimeout,
+          receiveTimeout: opts.receiveTimeout,
+        ),
+      );
 
       final retryResponse = await retryDio.request<dynamic>(
         opts.path,
         data: opts.data,
         queryParameters: opts.queryParameters,
-        options: Options(
-          method: opts.method,
-          headers: opts.headers,
-        ),
+        options: Options(method: opts.method, headers: opts.headers),
       );
 
       return handler.resolve(

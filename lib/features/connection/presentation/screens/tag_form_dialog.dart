@@ -75,9 +75,7 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(titleText),
-        actions: [
-          TextButton(onPressed: _save, child: Text(saveText)),
-        ],
+        actions: [TextButton(onPressed: _save, child: Text(saveText))],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

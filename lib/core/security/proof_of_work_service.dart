@@ -161,7 +161,8 @@ class ProofOfWorkChallenge {
   Map<String, dynamic> toJson() => {
     'challenge': prefix,
     'difficulty': difficulty,
-    if (expiresAt != null) 'expires_at': expiresAt!.millisecondsSinceEpoch ~/ 1000,
+    if (expiresAt != null)
+      'expires_at': expiresAt!.millisecondsSinceEpoch ~/ 1000,
   };
 }
 

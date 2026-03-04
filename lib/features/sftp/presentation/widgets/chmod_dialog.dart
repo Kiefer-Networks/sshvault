@@ -3,10 +3,7 @@ import 'package:shellvault/core/widgets/adaptive/adaptive_dialog.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 class ChmodDialog {
-  static Future<int?> show(
-    BuildContext context, {
-    int? initialPermissions,
-  }) {
+  static Future<int?> show(BuildContext context, {int? initialPermissions}) {
     final l10n = AppLocalizations.of(context)!;
     final permissions = ValueNotifier<int>(initialPermissions ?? 0x1ED);
 
@@ -60,8 +57,9 @@ class _ChmodContentState extends State<_ChmodContent> {
 
   void _onPermissionsChanged() {
     if (_updatingFromCheckbox) {
-      _controller.text =
-          widget.permissions.value.toRadixString(8).padLeft(3, '0');
+      _controller.text = widget.permissions.value
+          .toRadixString(8)
+          .padLeft(3, '0');
     }
   }
 
@@ -100,30 +98,9 @@ class _ChmodContentState extends State<_ChmodContent> {
               onChanged: _updateFromText,
             ),
             const SizedBox(height: 16),
-            _buildGroup(
-              l10n.sftpChmodOwner,
-              l10n,
-              mode,
-              0x100,
-              0x080,
-              0x040,
-            ),
-            _buildGroup(
-              l10n.sftpChmodGroup,
-              l10n,
-              mode,
-              0x020,
-              0x010,
-              0x008,
-            ),
-            _buildGroup(
-              l10n.sftpChmodOther,
-              l10n,
-              mode,
-              0x004,
-              0x002,
-              0x001,
-            ),
+            _buildGroup(l10n.sftpChmodOwner, l10n, mode, 0x100, 0x080, 0x040),
+            _buildGroup(l10n.sftpChmodGroup, l10n, mode, 0x020, 0x010, 0x008),
+            _buildGroup(l10n.sftpChmodOther, l10n, mode, 0x004, 0x002, 0x001),
           ],
         );
       },
@@ -152,13 +129,9 @@ class _ChmodContentState extends State<_ChmodContent> {
               _checkboxLabel(l10n.sftpChmodWrite, (mode & writeBit) != 0, (v) {
                 _toggleBit(writeBit, v!);
               }),
-              _checkboxLabel(
-                l10n.sftpChmodExecute,
-                (mode & execBit) != 0,
-                (v) {
-                  _toggleBit(execBit, v!);
-                },
-              ),
+              _checkboxLabel(l10n.sftpChmodExecute, (mode & execBit) != 0, (v) {
+                _toggleBit(execBit, v!);
+              }),
             ],
           ),
         ],

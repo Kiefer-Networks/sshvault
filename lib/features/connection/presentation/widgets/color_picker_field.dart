@@ -47,8 +47,7 @@ class ColorPickerField extends StatelessWidget {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color:
-                                  sc.color.withAlpha(AppConstants.alpha128),
+                              color: sc.color.withAlpha(AppConstants.alpha128),
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),
@@ -56,11 +55,7 @@ class ColorPickerField extends StatelessWidget {
                         : null,
                   ),
                   child: isSelected
-                      ? const Icon(
-                          Icons.check,
-                          size: 18,
-                          color: Colors.white,
-                        )
+                      ? const Icon(Icons.check, size: 18, color: Colors.white)
                       : null,
                 ),
               ),

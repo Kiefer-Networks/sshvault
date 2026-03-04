@@ -160,10 +160,8 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                     leadingIcon: const Icon(Icons.vpn_key),
                     dropdownMenuEntries: SshKeyType.values
                         .map(
-                          (t) => DropdownMenuEntry(
-                            value: t,
-                            label: t.displayName,
-                          ),
+                          (t) =>
+                              DropdownMenuEntry(value: t, label: t.displayName),
                         )
                         .toList(),
                     onSelected: genState.generating
@@ -191,7 +189,8 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                       requestFocusOnTap: false,
                       leadingIcon: const Icon(Icons.memory),
                       dropdownMenuEntries: genState
-                          .selectedType.allowedBitLengths
+                          .selectedType
+                          .allowedBitLengths
                           .map(
                             (b) => DropdownMenuEntry(
                               value: b,

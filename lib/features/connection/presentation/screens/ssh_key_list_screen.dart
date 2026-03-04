@@ -122,7 +122,10 @@ class SshKeyListScreen extends ConsumerWidget {
         await ref.read(sshKeyListProvider.notifier).deleteSshKey(key.id);
       } catch (e) {
         if (context.mounted) {
-          AdaptiveNotification.show(context, message: l10n.error(errorMessage(e)));
+          AdaptiveNotification.show(
+            context,
+            message: l10n.error(errorMessage(e)),
+          );
         }
       }
     }

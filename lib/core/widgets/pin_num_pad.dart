@@ -34,8 +34,8 @@ class PinDotIndicator extends StatelessWidget {
               color: hasError
                   ? colorScheme.error
                   : (filled
-                      ? colorScheme.primary
-                      : colorScheme.onSurfaceVariant),
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant),
               width: 2,
             ),
           ),
@@ -115,10 +115,7 @@ class _NumPadButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget child;
 
-  const _NumPadButton({
-    required this.onPressed,
-    required this.child,
-  });
+  const _NumPadButton({required this.onPressed, required this.child});
 
   @override
   Widget build(BuildContext context) {

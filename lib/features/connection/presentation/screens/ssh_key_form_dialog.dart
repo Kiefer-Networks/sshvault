@@ -53,10 +53,7 @@ class SshKeyFormDialog extends ConsumerStatefulWidget {
 
   bool get isEditing => existingKey != null;
 
-  static Future<bool?> show(
-    BuildContext context, {
-    SshKeyEntity? existingKey,
-  }) {
+  static Future<bool?> show(BuildContext context, {SshKeyEntity? existingKey}) {
     return Navigator.of(context).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
@@ -103,10 +100,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   void _showError(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 
@@ -297,13 +291,10 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed:
-              formState.saving ? null : () => Navigator.pop(context),
+          onPressed: formState.saving ? null : () => Navigator.pop(context),
         ),
         title: Text(
-          widget.isEditing
-              ? l10n.sshKeyFormTitleEdit
-              : l10n.sshKeyFormTitleAdd,
+          widget.isEditing ? l10n.sshKeyFormTitleEdit : l10n.sshKeyFormTitleAdd,
         ),
         actions: [
           TextButton(
@@ -368,20 +359,17 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           label: Text(l10n.sshKeyFormKeyType),
           leadingIcon: const Icon(Icons.vpn_key),
           dropdownMenuEntries: SshKeyType.values
-              .map(
-                (t) => DropdownMenuEntry(value: t, label: t.displayName),
-              )
+              .map((t) => DropdownMenuEntry(value: t, label: t.displayName))
               .toList(),
           onSelected: formState.saving
               ? null
               : (type) {
                   if (type == null) return;
-                  ref
-                      .read(_sshKeyFormStateProvider.notifier)
-                      .state = formState.copyWith(
-                    selectedType: type,
-                    selectedBits: type.defaultBitLength,
-                  );
+                  ref.read(_sshKeyFormStateProvider.notifier).state = formState
+                      .copyWith(
+                        selectedType: type,
+                        selectedBits: type.defaultBitLength,
+                      );
                 },
         ),
         const SizedBox(height: 16),
@@ -504,8 +492,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       ref.read(_sshKeyFormStateProvider.notifier).state = ref
           .read(_sshKeyFormStateProvider)
           .copyWith(
-            error: () =>
-                AppLocalizations.of(context)!.sshKeyFormFileError(errorMessage(e)),
+            error: () => AppLocalizations.of(
+              context,
+            )!.sshKeyFormFileError(errorMessage(e)),
           );
     }
   }
@@ -604,10 +593,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           children: [
             Icon(Icons.vpn_key, size: 18, color: theme.colorScheme.primary),
             const SizedBox(width: 8),
-            Text(
-              l10n.sshKeyFormKeyType,
-              style: theme.textTheme.labelLarge,
-            ),
+            Text(l10n.sshKeyFormKeyType, style: theme.textTheme.labelLarge),
             const Spacer(),
             Text(
               key.keyType.displayName,
@@ -621,10 +607,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         // Fingerprint
         if (key.fingerprint.isNotEmpty) ...[
           const SizedBox(height: 16),
-          Text(
-            l10n.sshKeyFingerprint,
-            style: theme.textTheme.labelLarge,
-          ),
+          Text(l10n.sshKeyFingerprint, style: theme.textTheme.labelLarge),
           const SizedBox(height: 4),
           SelectableText(
             key.fingerprint,
@@ -638,10 +621,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         // Public key
         if (key.publicKey.isNotEmpty) ...[
           const SizedBox(height: 16),
-          Text(
-            l10n.sshKeyPublicKey,
-            style: theme.textTheme.labelLarge,
-          ),
+          Text(l10n.sshKeyPublicKey, style: theme.textTheme.labelLarge),
           const SizedBox(height: 4),
           Container(
             width: double.infinity,

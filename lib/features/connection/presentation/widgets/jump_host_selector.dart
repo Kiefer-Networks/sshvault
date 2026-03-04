@@ -37,10 +37,7 @@ class JumpHostSelector extends ConsumerWidget {
           label: Text(l10n.jumpHost),
           leadingIcon: const Icon(Icons.route_outlined),
           dropdownMenuEntries: [
-            DropdownMenuEntry<String?>(
-              value: null,
-              label: l10n.jumpHostNone,
-            ),
+            DropdownMenuEntry<String?>(value: null, label: l10n.jumpHostNone),
             ...available.map(
               (s) => DropdownMenuEntry<String?>(
                 value: s.id,

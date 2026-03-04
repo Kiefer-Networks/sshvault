@@ -64,10 +64,7 @@ class InfoRow extends StatelessWidget {
                 ),
               ),
               visualDensity: VisualDensity.compact,
-              constraints: const BoxConstraints(
-                minWidth: 32,
-                minHeight: 32,
-              ),
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               padding: EdgeInsets.zero,
             ),
           ],

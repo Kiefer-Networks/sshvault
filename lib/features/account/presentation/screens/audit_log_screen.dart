@@ -178,20 +178,12 @@ class _AuditLogTile extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return switch (level) {
       'warn' => Icon(
-          Icons.warning_amber,
-          color: colorScheme.tertiary,
-          size: 20,
-        ),
-      'error' => Icon(
-          Icons.error_outline,
-          color: colorScheme.error,
-          size: 20,
-        ),
-      _ => Icon(
-          Icons.info_outline,
-          color: colorScheme.primary,
-          size: 20,
-        ),
+        Icons.warning_amber,
+        color: colorScheme.tertiary,
+        size: 20,
+      ),
+      'error' => Icon(Icons.error_outline, color: colorScheme.error, size: 20),
+      _ => Icon(Icons.info_outline, color: colorScheme.primary, size: 20),
     };
   }
 }

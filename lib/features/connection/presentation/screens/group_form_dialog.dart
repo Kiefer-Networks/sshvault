@@ -110,9 +110,7 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(titleText),
-        actions: [
-          TextButton(onPressed: _save, child: Text(saveText)),
-        ],
+        actions: [TextButton(onPressed: _save, child: Text(saveText))],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -145,15 +143,13 @@ class _GroupFormDialogState extends ConsumerState<GroupFormDialog> {
                     label: l10n.groupFormParentNone,
                   ),
                   ...availableGroups.map(
-                    (g) => DropdownMenuEntry<String?>(
-                      value: g.id,
-                      label: g.name,
-                    ),
+                    (g) =>
+                        DropdownMenuEntry<String?>(value: g.id, label: g.name),
                   ),
                 ],
                 onSelected: (v) =>
-                    ref.read(_groupFormStateProvider.notifier).state =
-                        formState.copyWith(parentId: () => v),
+                    ref.read(_groupFormStateProvider.notifier).state = formState
+                        .copyWith(parentId: () => v),
               );
             },
             loading: () => const SizedBox.shrink(),

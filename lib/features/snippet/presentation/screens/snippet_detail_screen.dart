@@ -297,7 +297,8 @@ class SnippetDetailScreen extends ConsumerWidget {
         },
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
+        error: (error, _) =>
+            Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
   }

@@ -34,8 +34,9 @@ class IconPickerField extends StatelessWidget {
             return Material(
               color: isSelected
                   ? Color(accentColor).withAlpha(AppConstants.alpha51)
-                  : theme.colorScheme.surfaceContainerHighest
-                      .withAlpha(AppConstants.alpha77),
+                  : theme.colorScheme.surfaceContainerHighest.withAlpha(
+                      AppConstants.alpha77,
+                    ),
               borderRadius: BorderRadius.circular(8),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
@@ -50,8 +51,9 @@ class IconPickerField extends StatelessWidget {
                     border: isSelected
                         ? Border.all(color: Color(accentColor), width: 2)
                         : Border.all(
-                            color: theme.colorScheme.outlineVariant
-                                .withAlpha(AppConstants.alpha77),
+                            color: theme.colorScheme.outlineVariant.withAlpha(
+                              AppConstants.alpha77,
+                            ),
                           ),
                   ),
                   child: Icon(
