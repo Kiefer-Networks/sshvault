@@ -90,6 +90,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
     with WidgetsBindingObserver {
   String _pin = '';
   Timer? _lockoutTimer;
+  DateTime? _pausedAt;
 
   @override
   void initState() {
@@ -112,8 +113,40 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final lockState = ref.read(_lockStateProvider);
-    if (state == AppLifecycleState.resumed && lockState.isUnlocked) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      _pausedAt ??= DateTime.now();
+      return;
+    }
+
+    if (state == AppLifecycleState.resumed) {
+      final lockState = ref.read(_lockStateProvider);
+      if (!lockState.isUnlocked) {
+        _pausedAt = null;
+        return;
+      }
+
+      final pausedAt = _pausedAt;
+      _pausedAt = null;
+
+      // Determine the lock grace period. File pickers, biometric prompts,
+      // and share sheets briefly push the app into the background. We must
+      // NOT re-lock for those short transitions.
+      final settings = ref.read(settingsProvider).value;
+      final autoLockMins = settings?.autoLockMinutes ?? 5;
+
+      // autoLockMinutes == 0 means "disabled" → never re-lock on resume.
+      if (autoLockMins == 0) return;
+
+      // If we didn't record when we paused, stay unlocked (safety).
+      if (pausedAt == null) return;
+
+      final elapsed = DateTime.now().difference(pausedAt);
+      final threshold = Duration(minutes: autoLockMins);
+
+      // Minimum grace period of 5 seconds so file pickers, biometric dialogs,
+      // and other system UIs never trigger the lock screen.
+      if (elapsed < const Duration(seconds: 5) || elapsed < threshold) return;
+
       ref.read(_lockStateProvider.notifier).resetForResume();
       _pin = '';
       WidgetsBinding.instance.addPostFrameCallback((_) {
