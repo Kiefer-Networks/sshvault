@@ -36,15 +36,20 @@ class _NavItem {
 
 /// Section break indices — dividers appear *before* items at these indices.
 /// Used by drawer and rail to visually group navigation items.
-const _sectionBreaks = {3, 6}; // before SSH Keys, before Teleport
+/// Note: index 6 is Teleport which is only shown when authenticated,
+/// so the break set is computed dynamically by _buildVisibleNavItems.
+const _baseSectionBreaks = {3}; // before SSH Keys
 
-/// Base nav items (indices 0–6). Terminal (index 7) is appended dynamically
-/// only when there are active sessions.
-///
-/// Order: Hosts, SFTP, Snippets | SSH Keys, Groups, Tags | Teleport
-List<_NavItem> _buildBaseNavItems(BuildContext context) {
+/// Builds the visible nav items based on auth state and session count.
+/// Returns the items list and the set of section break indices.
+({List<_NavItem> items, Set<int> breaks}) _buildVisibleNavItems(
+  BuildContext context, {
+  required bool isAuthenticated,
+  required bool showTerminal,
+  required int sessionCount,
+}) {
   final l10n = AppLocalizations.of(context)!;
-  return <_NavItem>[
+  final items = <_NavItem>[
     // — Main features —
     _NavItem(
       icon: Icons.dns_outlined,
@@ -77,22 +82,30 @@ List<_NavItem> _buildBaseNavItems(BuildContext context) {
       selectedIcon: Icons.label,
       label: l10n.navTags,
     ),
-    // — Teleport —
-    _NavItem(
+  ];
+
+  final breaks = <int>{..._baseSectionBreaks};
+
+  // — Teleport (only when authenticated) —
+  if (isAuthenticated) {
+    breaks.add(items.length); // section break before Teleport
+    items.add(_NavItem(
       icon: Icons.cloud_outlined,
       selectedIcon: Icons.cloud,
       label: l10n.navTeleport,
-    ),
-  ];
-}
+    ));
+  }
 
-_NavItem _buildTerminalNavItem(BuildContext context) {
-  final l10n = AppLocalizations.of(context)!;
-  return _NavItem(
-    icon: Icons.terminal_outlined,
-    selectedIcon: Icons.terminal,
-    label: l10n.navTerminal,
-  );
+  // — Terminal (only when sessions exist) —
+  if (showTerminal) {
+    items.add(_NavItem(
+      icon: Icons.terminal_outlined,
+      selectedIcon: Icons.terminal,
+      label: l10n.navTerminal,
+    ));
+  }
+
+  return (items: items, breaks: breaks);
 }
 
 /// The root shell widget used by [StatefulShellRoute].
@@ -254,6 +267,8 @@ class AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final sessionCount = ref.watch(sessionManagerProvider).length;
+    final isAuthenticated =
+        ref.watch(authProvider).value == AuthStatus.authenticated;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -265,6 +280,7 @@ class AppShellState extends ConsumerState<AppShell> {
             currentIndex: widget.navigationShell.currentIndex,
             onDestinationSelected: _onDestinationSelected,
             sessionCount: sessionCount,
+            isAuthenticated: isAuthenticated,
             child: widget.navigationShell,
           );
         }
@@ -274,6 +290,7 @@ class AppShellState extends ConsumerState<AppShell> {
           onDestinationSelected: _onDestinationSelected,
           extended: width >= ShellBreakpoints.railExtended,
           sessionCount: sessionCount,
+          isAuthenticated: isAuthenticated,
           child: widget.navigationShell,
         );
       },
@@ -290,6 +307,7 @@ class _MobileScaffold extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
   final int sessionCount;
+  final bool isAuthenticated;
   final Widget child;
 
   const _MobileScaffold({
@@ -297,6 +315,7 @@ class _MobileScaffold extends StatelessWidget {
     required this.currentIndex,
     required this.onDestinationSelected,
     required this.sessionCount,
+    required this.isAuthenticated,
     required this.child,
   });
 
@@ -308,6 +327,7 @@ class _MobileScaffold extends StatelessWidget {
         currentIndex: currentIndex,
         onDestinationSelected: onDestinationSelected,
         sessionCount: sessionCount,
+        isAuthenticated: isAuthenticated,
       ),
       body: child,
     );
@@ -323,6 +343,7 @@ class _DesktopScaffold extends StatelessWidget {
   final ValueChanged<int> onDestinationSelected;
   final bool extended;
   final int sessionCount;
+  final bool isAuthenticated;
   final Widget child;
 
   const _DesktopScaffold({
@@ -330,6 +351,7 @@ class _DesktopScaffold extends StatelessWidget {
     required this.onDestinationSelected,
     required this.extended,
     required this.sessionCount,
+    required this.isAuthenticated,
     required this.child,
   });
 
@@ -339,14 +361,15 @@ class _DesktopScaffold extends StatelessWidget {
     final theme = Theme.of(context);
     final showTerminal = sessionCount > 0;
 
-    // Build visible nav items — Terminal only when sessions exist
-    final visibleItems = [
-      ..._buildBaseNavItems(context),
-      if (showTerminal) _buildTerminalNavItem(context),
-    ];
+    final (:items, :breaks) = _buildVisibleNavItems(
+      context,
+      isAuthenticated: isAuthenticated,
+      showTerminal: showTerminal,
+      sessionCount: sessionCount,
+    );
 
-    // Clamp selectedIndex if Terminal is hidden but was selected
-    final clampedIndex = currentIndex < visibleItems.length ? currentIndex : 0;
+    // Clamp selectedIndex if a dynamic item is hidden but was selected
+    final clampedIndex = currentIndex < items.length ? currentIndex : 0;
 
     return Scaffold(
       body: Row(
@@ -392,24 +415,24 @@ class _DesktopScaffold extends StatelessWidget {
               ),
             ),
             destinations: [
-              for (var i = 0; i < visibleItems.length; i++)
+              for (var i = 0; i < items.length; i++)
                 NavigationRailDestination(
-                  padding: _sectionBreaks.contains(i)
+                  padding: breaks.contains(i)
                       ? const EdgeInsets.only(top: 12)
                       : EdgeInsets.zero,
-                  icon: showTerminal && i == visibleItems.length - 1
+                  icon: showTerminal && i == items.length - 1
                       ? Badge(
                           label: Text('$sessionCount'),
-                          child: Icon(visibleItems[i].icon),
+                          child: Icon(items[i].icon),
                         )
-                      : Icon(visibleItems[i].icon),
-                  selectedIcon: showTerminal && i == visibleItems.length - 1
+                      : Icon(items[i].icon),
+                  selectedIcon: showTerminal && i == items.length - 1
                       ? Badge(
                           label: Text('$sessionCount'),
-                          child: Icon(visibleItems[i].selectedIcon),
+                          child: Icon(items[i].selectedIcon),
                         )
-                      : Icon(visibleItems[i].selectedIcon),
-                  label: Text(visibleItems[i].label),
+                      : Icon(items[i].selectedIcon),
+                  label: Text(items[i].label),
                 ),
             ],
           ),
@@ -510,11 +533,13 @@ class _AppDrawer extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
   final int sessionCount;
+  final bool isAuthenticated;
 
   const _AppDrawer({
     required this.currentIndex,
     required this.onDestinationSelected,
     required this.sessionCount,
+    required this.isAuthenticated,
   });
 
   @override
@@ -523,12 +548,14 @@ class _AppDrawer extends StatelessWidget {
     final theme = Theme.of(context);
     final showTerminal = sessionCount > 0;
 
-    final visibleItems = [
-      ..._buildBaseNavItems(context),
-      if (showTerminal) _buildTerminalNavItem(context),
-    ];
+    final (:items, :breaks) = _buildVisibleNavItems(
+      context,
+      isAuthenticated: isAuthenticated,
+      showTerminal: showTerminal,
+      sessionCount: sessionCount,
+    );
 
-    final clampedIndex = currentIndex < visibleItems.length ? currentIndex : 0;
+    final clampedIndex = currentIndex < items.length ? currentIndex : 0;
 
     return NavigationDrawer(
       selectedIndex: clampedIndex,
@@ -564,26 +591,26 @@ class _AppDrawer extends StatelessWidget {
         ),
 
         // Nav destinations with section dividers
-        for (var i = 0; i < visibleItems.length; i++) ...[
-          if (_sectionBreaks.contains(i))
+        for (var i = 0; i < items.length; i++) ...[
+          if (breaks.contains(i))
             const Padding(
               padding: EdgeInsets.fromLTRB(28, 4, 28, 4),
               child: Divider(),
             ),
           NavigationDrawerDestination(
-            icon: showTerminal && i == visibleItems.length - 1
+            icon: showTerminal && i == items.length - 1
                 ? Badge(
                     label: Text('$sessionCount'),
-                    child: Icon(visibleItems[i].icon),
+                    child: Icon(items[i].icon),
                   )
-                : Icon(visibleItems[i].icon),
-            selectedIcon: showTerminal && i == visibleItems.length - 1
+                : Icon(items[i].icon),
+            selectedIcon: showTerminal && i == items.length - 1
                 ? Badge(
                     label: Text('$sessionCount'),
-                    child: Icon(visibleItems[i].selectedIcon),
+                    child: Icon(items[i].selectedIcon),
                   )
-                : Icon(visibleItems[i].selectedIcon),
-            label: Text(visibleItems[i].label),
+                : Icon(items[i].selectedIcon),
+            label: Text(items[i].label),
           ),
         ],
 
