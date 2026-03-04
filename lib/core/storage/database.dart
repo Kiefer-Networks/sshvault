@@ -8,6 +8,8 @@ import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/tag_dao.dart';
 import 'package:shellvault/features/settings/data/datasources/app_settings_dao.dart';
 import 'package:shellvault/features/snippet/data/datasources/snippet_dao.dart';
+import 'package:shellvault/features/teleport/data/models/teleport_drift_tables.dart';
+import 'package:shellvault/features/teleport/data/datasources/teleport_cluster_dao.dart';
 
 part 'database.g.dart';
 
@@ -22,8 +24,9 @@ part 'database.g.dart';
     SnippetTags,
     SnippetVariables,
     AppSettings,
+    TeleportClusters,
   ],
-  daos: [ServerDao, SshKeyDao, GroupDao, TagDao, AppSettingsDao, SnippetDao],
+  daos: [ServerDao, SshKeyDao, GroupDao, TagDao, AppSettingsDao, SnippetDao, TeleportClusterDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
@@ -57,6 +60,9 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from < 5) {
           await m.addColumn(servers, servers.jumpHostId);
+        }
+        if (from < 6) {
+          await m.createTable(teleportClusters);
         }
       },
     );

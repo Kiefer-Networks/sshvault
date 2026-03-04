@@ -4761,6 +4761,569 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
   }
 }
 
+class $TeleportClustersTable extends TeleportClusters
+    with TableInfo<$TeleportClustersTable, TeleportCluster> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TeleportClustersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _proxyAddrMeta = const VerificationMeta(
+    'proxyAddr',
+  );
+  @override
+  late final GeneratedColumn<String> proxyAddr = GeneratedColumn<String>(
+    'proxy_addr',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _authMethodMeta = const VerificationMeta(
+    'authMethod',
+  );
+  @override
+  late final GeneratedColumn<String> authMethod = GeneratedColumn<String>(
+    'auth_method',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('local'),
+  );
+  static const VerificationMeta _usernameMeta = const VerificationMeta(
+    'username',
+  );
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+    'username',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _metadataMeta = const VerificationMeta(
+    'metadata',
+  );
+  @override
+  late final GeneratedColumn<String> metadata = GeneratedColumn<String>(
+    'metadata',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _certExpiresAtMeta = const VerificationMeta(
+    'certExpiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> certExpiresAt =
+      GeneratedColumn<DateTime>(
+        'cert_expires_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    proxyAddr,
+    authMethod,
+    username,
+    metadata,
+    certExpiresAt,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'teleport_clusters';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TeleportCluster> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('proxy_addr')) {
+      context.handle(
+        _proxyAddrMeta,
+        proxyAddr.isAcceptableOrUnknown(data['proxy_addr']!, _proxyAddrMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_proxyAddrMeta);
+    }
+    if (data.containsKey('auth_method')) {
+      context.handle(
+        _authMethodMeta,
+        authMethod.isAcceptableOrUnknown(data['auth_method']!, _authMethodMeta),
+      );
+    }
+    if (data.containsKey('username')) {
+      context.handle(
+        _usernameMeta,
+        username.isAcceptableOrUnknown(data['username']!, _usernameMeta),
+      );
+    }
+    if (data.containsKey('metadata')) {
+      context.handle(
+        _metadataMeta,
+        metadata.isAcceptableOrUnknown(data['metadata']!, _metadataMeta),
+      );
+    }
+    if (data.containsKey('cert_expires_at')) {
+      context.handle(
+        _certExpiresAtMeta,
+        certExpiresAt.isAcceptableOrUnknown(
+          data['cert_expires_at']!,
+          _certExpiresAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TeleportCluster map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TeleportCluster(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      proxyAddr: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}proxy_addr'],
+      )!,
+      authMethod: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}auth_method'],
+      )!,
+      username: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}username'],
+      )!,
+      metadata: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}metadata'],
+      )!,
+      certExpiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cert_expires_at'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $TeleportClustersTable createAlias(String alias) {
+    return $TeleportClustersTable(attachedDatabase, alias);
+  }
+}
+
+class TeleportCluster extends DataClass implements Insertable<TeleportCluster> {
+  final String id;
+  final String name;
+  final String proxyAddr;
+  final String authMethod;
+  final String username;
+  final String metadata;
+  final DateTime? certExpiresAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const TeleportCluster({
+    required this.id,
+    required this.name,
+    required this.proxyAddr,
+    required this.authMethod,
+    required this.username,
+    required this.metadata,
+    this.certExpiresAt,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['proxy_addr'] = Variable<String>(proxyAddr);
+    map['auth_method'] = Variable<String>(authMethod);
+    map['username'] = Variable<String>(username);
+    map['metadata'] = Variable<String>(metadata);
+    if (!nullToAbsent || certExpiresAt != null) {
+      map['cert_expires_at'] = Variable<DateTime>(certExpiresAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  TeleportClustersCompanion toCompanion(bool nullToAbsent) {
+    return TeleportClustersCompanion(
+      id: Value(id),
+      name: Value(name),
+      proxyAddr: Value(proxyAddr),
+      authMethod: Value(authMethod),
+      username: Value(username),
+      metadata: Value(metadata),
+      certExpiresAt: certExpiresAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(certExpiresAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory TeleportCluster.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TeleportCluster(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      proxyAddr: serializer.fromJson<String>(json['proxyAddr']),
+      authMethod: serializer.fromJson<String>(json['authMethod']),
+      username: serializer.fromJson<String>(json['username']),
+      metadata: serializer.fromJson<String>(json['metadata']),
+      certExpiresAt: serializer.fromJson<DateTime?>(json['certExpiresAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'proxyAddr': serializer.toJson<String>(proxyAddr),
+      'authMethod': serializer.toJson<String>(authMethod),
+      'username': serializer.toJson<String>(username),
+      'metadata': serializer.toJson<String>(metadata),
+      'certExpiresAt': serializer.toJson<DateTime?>(certExpiresAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  TeleportCluster copyWith({
+    String? id,
+    String? name,
+    String? proxyAddr,
+    String? authMethod,
+    String? username,
+    String? metadata,
+    Value<DateTime?> certExpiresAt = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => TeleportCluster(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    proxyAddr: proxyAddr ?? this.proxyAddr,
+    authMethod: authMethod ?? this.authMethod,
+    username: username ?? this.username,
+    metadata: metadata ?? this.metadata,
+    certExpiresAt: certExpiresAt.present
+        ? certExpiresAt.value
+        : this.certExpiresAt,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  TeleportCluster copyWithCompanion(TeleportClustersCompanion data) {
+    return TeleportCluster(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      proxyAddr: data.proxyAddr.present ? data.proxyAddr.value : this.proxyAddr,
+      authMethod: data.authMethod.present
+          ? data.authMethod.value
+          : this.authMethod,
+      username: data.username.present ? data.username.value : this.username,
+      metadata: data.metadata.present ? data.metadata.value : this.metadata,
+      certExpiresAt: data.certExpiresAt.present
+          ? data.certExpiresAt.value
+          : this.certExpiresAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TeleportCluster(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('proxyAddr: $proxyAddr, ')
+          ..write('authMethod: $authMethod, ')
+          ..write('username: $username, ')
+          ..write('metadata: $metadata, ')
+          ..write('certExpiresAt: $certExpiresAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    proxyAddr,
+    authMethod,
+    username,
+    metadata,
+    certExpiresAt,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TeleportCluster &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.proxyAddr == this.proxyAddr &&
+          other.authMethod == this.authMethod &&
+          other.username == this.username &&
+          other.metadata == this.metadata &&
+          other.certExpiresAt == this.certExpiresAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class TeleportClustersCompanion extends UpdateCompanion<TeleportCluster> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> proxyAddr;
+  final Value<String> authMethod;
+  final Value<String> username;
+  final Value<String> metadata;
+  final Value<DateTime?> certExpiresAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const TeleportClustersCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.proxyAddr = const Value.absent(),
+    this.authMethod = const Value.absent(),
+    this.username = const Value.absent(),
+    this.metadata = const Value.absent(),
+    this.certExpiresAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TeleportClustersCompanion.insert({
+    required String id,
+    required String name,
+    required String proxyAddr,
+    this.authMethod = const Value.absent(),
+    this.username = const Value.absent(),
+    this.metadata = const Value.absent(),
+    this.certExpiresAt = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       proxyAddr = Value(proxyAddr),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<TeleportCluster> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? proxyAddr,
+    Expression<String>? authMethod,
+    Expression<String>? username,
+    Expression<String>? metadata,
+    Expression<DateTime>? certExpiresAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (proxyAddr != null) 'proxy_addr': proxyAddr,
+      if (authMethod != null) 'auth_method': authMethod,
+      if (username != null) 'username': username,
+      if (metadata != null) 'metadata': metadata,
+      if (certExpiresAt != null) 'cert_expires_at': certExpiresAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TeleportClustersCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? proxyAddr,
+    Value<String>? authMethod,
+    Value<String>? username,
+    Value<String>? metadata,
+    Value<DateTime?>? certExpiresAt,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return TeleportClustersCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      proxyAddr: proxyAddr ?? this.proxyAddr,
+      authMethod: authMethod ?? this.authMethod,
+      username: username ?? this.username,
+      metadata: metadata ?? this.metadata,
+      certExpiresAt: certExpiresAt ?? this.certExpiresAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (proxyAddr.present) {
+      map['proxy_addr'] = Variable<String>(proxyAddr.value);
+    }
+    if (authMethod.present) {
+      map['auth_method'] = Variable<String>(authMethod.value);
+    }
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
+    }
+    if (metadata.present) {
+      map['metadata'] = Variable<String>(metadata.value);
+    }
+    if (certExpiresAt.present) {
+      map['cert_expires_at'] = Variable<DateTime>(certExpiresAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TeleportClustersCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('proxyAddr: $proxyAddr, ')
+          ..write('authMethod: $authMethod, ')
+          ..write('username: $username, ')
+          ..write('metadata: $metadata, ')
+          ..write('certExpiresAt: $certExpiresAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4775,6 +5338,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
+  late final $TeleportClustersTable teleportClusters = $TeleportClustersTable(
+    this,
+  );
   late final ServerDao serverDao = ServerDao(this as AppDatabase);
   late final SshKeyDao sshKeyDao = SshKeyDao(this as AppDatabase);
   late final GroupDao groupDao = GroupDao(this as AppDatabase);
@@ -4783,6 +5349,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this as AppDatabase,
   );
   late final SnippetDao snippetDao = SnippetDao(this as AppDatabase);
+  late final TeleportClusterDao teleportClusterDao = TeleportClusterDao(
+    this as AppDatabase,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4797,6 +5366,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     snippetTags,
     snippetVariables,
     appSettings,
+    teleportClusters,
   ];
   @override
   DriftDatabaseOptions get options =>
@@ -8935,6 +9505,292 @@ typedef $$AppSettingsTableProcessedTableManager =
       AppSetting,
       PrefetchHooks Function()
     >;
+typedef $$TeleportClustersTableCreateCompanionBuilder =
+    TeleportClustersCompanion Function({
+      required String id,
+      required String name,
+      required String proxyAddr,
+      Value<String> authMethod,
+      Value<String> username,
+      Value<String> metadata,
+      Value<DateTime?> certExpiresAt,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$TeleportClustersTableUpdateCompanionBuilder =
+    TeleportClustersCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> proxyAddr,
+      Value<String> authMethod,
+      Value<String> username,
+      Value<String> metadata,
+      Value<DateTime?> certExpiresAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$TeleportClustersTableFilterComposer
+    extends Composer<_$AppDatabase, $TeleportClustersTable> {
+  $$TeleportClustersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get proxyAddr => $composableBuilder(
+    column: $table.proxyAddr,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get authMethod => $composableBuilder(
+    column: $table.authMethod,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get username => $composableBuilder(
+    column: $table.username,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get metadata => $composableBuilder(
+    column: $table.metadata,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get certExpiresAt => $composableBuilder(
+    column: $table.certExpiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TeleportClustersTableOrderingComposer
+    extends Composer<_$AppDatabase, $TeleportClustersTable> {
+  $$TeleportClustersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get proxyAddr => $composableBuilder(
+    column: $table.proxyAddr,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get authMethod => $composableBuilder(
+    column: $table.authMethod,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get username => $composableBuilder(
+    column: $table.username,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get metadata => $composableBuilder(
+    column: $table.metadata,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get certExpiresAt => $composableBuilder(
+    column: $table.certExpiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TeleportClustersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TeleportClustersTable> {
+  $$TeleportClustersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get proxyAddr =>
+      $composableBuilder(column: $table.proxyAddr, builder: (column) => column);
+
+  GeneratedColumn<String> get authMethod => $composableBuilder(
+    column: $table.authMethod,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get username =>
+      $composableBuilder(column: $table.username, builder: (column) => column);
+
+  GeneratedColumn<String> get metadata =>
+      $composableBuilder(column: $table.metadata, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get certExpiresAt => $composableBuilder(
+    column: $table.certExpiresAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$TeleportClustersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TeleportClustersTable,
+          TeleportCluster,
+          $$TeleportClustersTableFilterComposer,
+          $$TeleportClustersTableOrderingComposer,
+          $$TeleportClustersTableAnnotationComposer,
+          $$TeleportClustersTableCreateCompanionBuilder,
+          $$TeleportClustersTableUpdateCompanionBuilder,
+          (
+            TeleportCluster,
+            BaseReferences<
+              _$AppDatabase,
+              $TeleportClustersTable,
+              TeleportCluster
+            >,
+          ),
+          TeleportCluster,
+          PrefetchHooks Function()
+        > {
+  $$TeleportClustersTableTableManager(
+    _$AppDatabase db,
+    $TeleportClustersTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TeleportClustersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TeleportClustersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TeleportClustersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> proxyAddr = const Value.absent(),
+                Value<String> authMethod = const Value.absent(),
+                Value<String> username = const Value.absent(),
+                Value<String> metadata = const Value.absent(),
+                Value<DateTime?> certExpiresAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TeleportClustersCompanion(
+                id: id,
+                name: name,
+                proxyAddr: proxyAddr,
+                authMethod: authMethod,
+                username: username,
+                metadata: metadata,
+                certExpiresAt: certExpiresAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String proxyAddr,
+                Value<String> authMethod = const Value.absent(),
+                Value<String> username = const Value.absent(),
+                Value<String> metadata = const Value.absent(),
+                Value<DateTime?> certExpiresAt = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => TeleportClustersCompanion.insert(
+                id: id,
+                name: name,
+                proxyAddr: proxyAddr,
+                authMethod: authMethod,
+                username: username,
+                metadata: metadata,
+                certExpiresAt: certExpiresAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TeleportClustersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TeleportClustersTable,
+      TeleportCluster,
+      $$TeleportClustersTableFilterComposer,
+      $$TeleportClustersTableOrderingComposer,
+      $$TeleportClustersTableAnnotationComposer,
+      $$TeleportClustersTableCreateCompanionBuilder,
+      $$TeleportClustersTableUpdateCompanionBuilder,
+      (
+        TeleportCluster,
+        BaseReferences<_$AppDatabase, $TeleportClustersTable, TeleportCluster>,
+      ),
+      TeleportCluster,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8956,4 +9812,6 @@ class $AppDatabaseManager {
       $$SnippetVariablesTableTableManager(_db, _db.snippetVariables);
   $$AppSettingsTableTableManager get appSettings =>
       $$AppSettingsTableTableManager(_db, _db.appSettings);
+  $$TeleportClustersTableTableManager get teleportClusters =>
+      $$TeleportClustersTableTableManager(_db, _db.teleportClusters);
 }

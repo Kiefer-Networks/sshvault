@@ -27,6 +27,9 @@ import 'package:shellvault/features/snippet/presentation/screens/snippet_form_sc
 import 'package:shellvault/features/snippet/presentation/screens/snippet_list_screen.dart';
 import 'package:shellvault/features/support/presentation/screens/support_screen.dart';
 import 'package:shellvault/features/sftp/presentation/screens/sftp_browser_screen.dart';
+import 'package:shellvault/features/teleport/presentation/screens/teleport_cluster_form_screen.dart';
+import 'package:shellvault/features/teleport/presentation/screens/teleport_cluster_list_screen.dart';
+import 'package:shellvault/features/teleport/presentation/screens/teleport_login_screen.dart';
 import 'package:shellvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -104,7 +107,17 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 6 — Terminal
+          // 6 — Teleport
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/teleport',
+                builder: (context, state) => const TeleportBranchScreen(),
+              ),
+            ],
+          ),
+
+          // 7 — Terminal
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -159,6 +172,21 @@ abstract final class AppRouter {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return SnippetFormScreen(snippetId: id);
+        },
+      ),
+
+      // Teleport detail routes
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/teleport/cluster/new',
+        builder: (context, state) => const TeleportClusterFormScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/teleport/cluster/:id/login',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return TeleportLoginScreen(clusterId: id);
         },
       ),
 

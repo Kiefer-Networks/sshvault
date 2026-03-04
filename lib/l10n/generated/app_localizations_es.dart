@@ -30,6 +30,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navExportImport => 'Exportar / Importar';
 
   @override
+  String get navTeleport => 'Teleport';
+
+  @override
   String get navTerminal => 'Terminal';
 
   @override

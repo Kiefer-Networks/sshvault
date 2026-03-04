@@ -2,6 +2,7 @@ export 'src/ssh_algorithm.dart' show SSHAlgorithms;
 export 'src/ssh_client.dart';
 export 'src/ssh_errors.dart';
 export 'src/ssh_forward.dart';
+export 'src/ssh_certificate_key_pair.dart';
 export 'src/ssh_key_pair.dart';
 export 'src/ssh_pem.dart';
 export 'src/ssh_session.dart';
@@ -9,6 +10,7 @@ export 'src/ssh_signal.dart';
 export 'src/ssh_transport.dart';
 
 export 'src/socket/ssh_socket.dart';
+export 'src/socket/ssh_socket_teleport.dart';
 
 export 'src/algorithm/ssh_cipher_type.dart';
 export 'src/algorithm/ssh_hostkey_type.dart';

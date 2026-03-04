@@ -9,6 +9,7 @@
   "navTags": "Tags",
   "navSshKeys": "SSH-Schlüssel",
   "navExportImport": "Export / Import",
+  "navTeleport": "Teleport",
   "navTerminal": "Terminal",
   "navMore": "Mehr",
   "navManagement": "Verwaltung",

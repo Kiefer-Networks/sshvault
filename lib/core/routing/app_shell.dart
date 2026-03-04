@@ -36,12 +36,12 @@ class _NavItem {
 
 /// Section break indices — dividers appear *before* items at these indices.
 /// Used by drawer and rail to visually group navigation items.
-const _sectionBreaks = {3}; // before SSH Keys
+const _sectionBreaks = {3, 6}; // before SSH Keys, before Teleport
 
-/// Base nav items (indices 0–5). Terminal (index 6) is appended dynamically
+/// Base nav items (indices 0–6). Terminal (index 7) is appended dynamically
 /// only when there are active sessions.
 ///
-/// Order: Hosts, SFTP, Snippets | SSH Keys, Groups, Tags
+/// Order: Hosts, SFTP, Snippets | SSH Keys, Groups, Tags | Teleport
 List<_NavItem> _buildBaseNavItems(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
   return <_NavItem>[
@@ -76,6 +76,12 @@ List<_NavItem> _buildBaseNavItems(BuildContext context) {
       icon: Icons.label_outline,
       selectedIcon: Icons.label,
       label: l10n.navTags,
+    ),
+    // — Teleport —
+    _NavItem(
+      icon: Icons.cloud_outlined,
+      selectedIcon: Icons.cloud,
+      label: l10n.navTeleport,
     ),
   ];
 }

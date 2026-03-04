@@ -150,6 +150,15 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
+  Future<Result<String>> createTeleportAddonCheckout() async {
+    final result = await _apiClient.post('/v1/billing/checkout/teleport');
+    return result.fold(
+      onSuccess: (data) => Success(data['url'] as String? ?? ''),
+      onFailure: (f) => Err(f),
+    );
+  }
+
+  @override
   Future<Result<BillingStatus>> verifyGooglePurchase(
     String purchaseToken,
   ) async {

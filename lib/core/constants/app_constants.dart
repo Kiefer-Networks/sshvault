@@ -4,7 +4,7 @@ abstract final class AppConstants {
 
   // Database
   static const String databaseName = 'shellvault.db';
-  static const int databaseVersion = 5;
+  static const int databaseVersion = 6;
 
   // SSH Defaults
   static const int defaultSshPort = 22;
@@ -40,7 +40,8 @@ abstract final class AppConstants {
 
   // Navigation
   static const int sftpBranchIndex = 1;
-  static const int terminalBranchIndex = 6;
+  static const int teleportBranchIndex = 6;
+  static const int terminalBranchIndex = 7;
 
   // Pagination
   static const int defaultPageSize = 50;

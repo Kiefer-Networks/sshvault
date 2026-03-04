@@ -142,6 +142,12 @@ abstract class AppLocalizations {
   /// **'Export / Import'**
   String get navExportImport;
 
+  /// No description provided for @navTeleport.
+  ///
+  /// In en, this message translates to:
+  /// **'Teleport'**
+  String get navTeleport;
+
   /// No description provided for @navTerminal.
   ///
   /// In en, this message translates to:
