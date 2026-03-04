@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -72,9 +73,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _nameController = TextEditingController();
-  final _commentController = TextEditingController(
-    text: 'shellvault-generated',
-  );
+  final _commentController = TextEditingController();
   final _privateKeyController = TextEditingController();
   final _passphraseController = TextEditingController();
 
@@ -99,6 +98,21 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     _privateKeyController.dispose();
     _passphraseController.dispose();
     super.dispose();
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  String _errorMessage(Object e) {
+    if (e is Failure) return e.message;
+    return e.toString();
   }
 
   void _onSave() {
@@ -132,9 +146,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       final options = SshKeyOptions(
         type: formState.selectedType,
         bits: formState.selectedBits,
-        comment: _commentController.text.trim().isEmpty
-            ? 'shellvault-generated'
-            : _commentController.text.trim(),
+        comment: _commentController.text.trim(),
       );
 
       final genResult = await sshKeyService.generateKeyPair(options);
@@ -168,7 +180,8 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       if (mounted) {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
             .read(_sshKeyFormStateProvider)
-            .copyWith(error: () => e.toString(), saving: false);
+            .copyWith(saving: false);
+        _showError(_errorMessage(e));
       }
     }
   }
@@ -233,7 +246,8 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       if (mounted) {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
             .read(_sshKeyFormStateProvider)
-            .copyWith(error: () => e.toString(), saving: false);
+            .copyWith(saving: false);
+        _showError(_errorMessage(e));
       }
     }
   }
@@ -264,7 +278,8 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       if (mounted) {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
             .read(_sshKeyFormStateProvider)
-            .copyWith(error: () => e.toString(), saving: false);
+            .copyWith(saving: false);
+        _showError(_errorMessage(e));
       }
     }
   }
