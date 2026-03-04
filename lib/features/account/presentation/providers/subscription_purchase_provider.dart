@@ -91,12 +91,21 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
         ref.read(subscriptionPurchaseErrorProvider.notifier).state =
             'Server verification failed';
       }
-    } else {
-      // iOS/macOS: server-side Apple verification not yet implemented,
-      // mark as success and let polling pick up the status.
-      ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-          SubscriptionPurchaseStatus.success;
-      ref.invalidate(billingStatusProvider);
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      final transactionId = purchase.verificationData.serverVerificationData;
+      final repo = ref.read(accountRepositoryProvider);
+      final result = await repo.verifyApplePurchase(transactionId);
+
+      if (result.isSuccess && result.value.active) {
+        ref.read(subscriptionPurchaseStatusProvider.notifier).state =
+            SubscriptionPurchaseStatus.success;
+        ref.invalidate(billingStatusProvider);
+      } else {
+        ref.read(subscriptionPurchaseStatusProvider.notifier).state =
+            SubscriptionPurchaseStatus.error;
+        ref.read(subscriptionPurchaseErrorProvider.notifier).state =
+            'Server verification failed';
+      }
     }
 
     // Always complete the purchase to avoid store-side retries.

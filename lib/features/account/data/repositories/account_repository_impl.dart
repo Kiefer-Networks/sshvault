@@ -170,6 +170,26 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
+  Future<Result<BillingStatus>> verifyApplePurchase(
+    String transactionId,
+  ) async {
+    final result = await _apiClient.post(
+      '/v1/billing/verify-apple',
+      data: {'transaction_id': transactionId},
+    );
+    return result.fold(
+      onSuccess: (data) {
+        try {
+          return Success(BillingStatus.fromJson(data));
+        } catch (e) {
+          return Err(NetworkFailure('Invalid verification response', cause: e));
+        }
+      },
+      onFailure: (f) => Err(f),
+    );
+  }
+
+  @override
   Future<Result<AuditLogResult>> getAuditLogs({
     String? category,
     String? action,
