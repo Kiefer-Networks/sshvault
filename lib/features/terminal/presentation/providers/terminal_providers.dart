@@ -1,9 +1,15 @@
+import 'dart:async';
+import 'dart:typed_data';
+
+import 'package:dartssh2/dartssh2.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 import 'package:xterm/xterm.dart';
 
 import 'package:shellvault/core/error/failures.dart';
+import 'package:shellvault/core/routing/app_router.dart';
 import 'package:shellvault/core/services/vpn_detector_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
@@ -15,6 +21,9 @@ import 'package:shellvault/features/connection/domain/usecases/proxy_resolver.da
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/core/services/terminal_notification_service.dart';
+import 'package:shellvault/features/host_key/domain/entities/known_host_entity.dart';
+import 'package:shellvault/features/host_key/presentation/providers/known_host_providers.dart';
+import 'package:shellvault/features/host_key/presentation/widgets/host_key_verification_dialog.dart';
 import 'package:shellvault/features/settings/presentation/providers/proxy_settings_provider.dart';
 import 'package:shellvault/features/terminal/data/services/ssh_service.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
@@ -192,6 +201,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
         jumpHostPassphrase: jumpHostPassphrase,
         proxyConfig: proxyConfig,
         proxyCredentials: proxyCredentials,
+        onVerifyHostKey: _buildHostKeyVerifier(server),
+        onVerifyJumpHostKey:
+            jumpHost != null ? _buildHostKeyVerifier(jumpHost) : null,
       );
 
       result.fold(
@@ -352,6 +364,101 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       session.terminal.textInput('$cmd\n');
       await Future.delayed(const Duration(milliseconds: 150));
     }
+  }
+
+  SSHHostkeyVerifyHandler _buildHostKeyVerifier(ServerEntity server) {
+    return (String type, Uint8List fingerprint) async {
+      final hex = _fingerprintToHex(fingerprint);
+      final repo = ref.read(knownHostRepositoryProvider);
+      final existing = await repo.findByHostAndPort(
+        server.hostname,
+        server.port,
+      );
+
+      KnownHostEntity? known;
+      if (existing.isSuccess) {
+        known = existing.value;
+      }
+
+      if (known != null) {
+        if (known.fingerprint == hex) {
+          await repo.save(known.copyWith(lastSeenAt: DateTime.now()));
+          return true;
+        }
+        // Key changed
+        final accepted = await _showHostKeyDialog(
+          server.hostname,
+          server.port,
+          type,
+          hex,
+          known,
+        );
+        if (accepted) {
+          await repo.save(
+            known.copyWith(
+              keyType: type,
+              fingerprint: hex,
+              lastSeenAt: DateTime.now(),
+            ),
+          );
+          ref.invalidate(knownHostListProvider);
+        }
+        return accepted;
+      }
+
+      // First connection — TOFU
+      final accepted = await _showHostKeyDialog(
+        server.hostname,
+        server.port,
+        type,
+        hex,
+        null,
+      );
+      if (accepted) {
+        final now = DateTime.now();
+        await repo.save(
+          KnownHostEntity(
+            id: _uuid.v4(),
+            hostname: server.hostname,
+            port: server.port,
+            keyType: type,
+            fingerprint: hex,
+            firstSeenAt: now,
+            lastSeenAt: now,
+          ),
+        );
+        ref.invalidate(knownHostListProvider);
+      }
+      return accepted;
+    };
+  }
+
+  Future<bool> _showHostKeyDialog(
+    String hostname,
+    int port,
+    String keyType,
+    String fingerprint,
+    KnownHostEntity? existingHost,
+  ) async {
+    final context = rootNavigatorKey.currentContext;
+    if (context == null) return false;
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => HostKeyVerificationDialog(
+        hostname: hostname,
+        port: port,
+        keyType: keyType,
+        fingerprint: fingerprint,
+        existingHost: existingHost,
+      ),
+    );
+    return result ?? false;
+  }
+
+  static String _fingerprintToHex(Uint8List bytes) {
+    return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(':');
   }
 
   void _notifyChange() {

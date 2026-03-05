@@ -773,5 +773,37 @@
 
   "terminalSplit": "Geteilte Ansicht",
   "terminalUnsplit": "Teilung schließen",
-  "terminalSelectSession": "Sitzung für geteilte Ansicht auswählen"
+  "terminalSelectSession": "Sitzung für geteilte Ansicht auswählen",
+
+  "knownHostsTitle": "Bekannte Hosts",
+  "knownHostsSubtitle": "Vertrauenswürdige Server-Fingerprints verwalten",
+  "hostKeyNewTitle": "Neuer Host",
+  "hostKeyNewMessage": "Erste Verbindung zu {hostname}:{port}. Überprüfe den Fingerprint vor der Verbindung.",
+  "@hostKeyNewMessage": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+  "hostKeyChangedTitle": "Host-Key geändert!",
+  "hostKeyChangedMessage": "Der Host-Key für {hostname}:{port} hat sich geändert. Dies könnte auf eine Sicherheitsbedrohung hinweisen.",
+  "@hostKeyChangedMessage": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+  "hostKeyFingerprint": "Fingerprint",
+  "hostKeyType": "Key-Typ",
+  "hostKeyTrustConnect": "Vertrauen & Verbinden",
+  "hostKeyAcceptNew": "Neuen Key akzeptieren",
+  "hostKeyReject": "Ablehnen",
+  "hostKeyPreviousFingerprint": "Vorheriger Fingerprint",
+  "hostKeyDeleteAll": "Alle bekannten Hosts löschen",
+  "hostKeyDeleteConfirm": "Bist du sicher, dass du alle bekannten Hosts entfernen möchtest? Du wirst bei der nächsten Verbindung erneut gefragt.",
+  "hostKeyEmpty": "Noch keine bekannten Hosts",
+  "hostKeyEmptySubtitle": "Host-Fingerprints werden hier nach deiner ersten Verbindung gespeichert",
+  "hostKeyFirstSeen": "Erstmals gesehen",
+  "hostKeyLastSeen": "Zuletzt gesehen",
+
+  "sshConfigImportTitle": "SSH-Config importieren",
+  "sshConfigImportPickFile": "SSH-Config-Datei auswählen",
+  "sshConfigImportOrPaste": "Oder Config-Inhalt einfügen",
+  "sshConfigImportParsed": "{count} Hosts gefunden",
+  "@sshConfigImportParsed": { "placeholders": { "count": { "type": "int" } } },
+  "sshConfigImportButton": "Ausgewählte importieren",
+  "sshConfigImportSuccess": "{count} Server importiert",
+  "@sshConfigImportSuccess": { "placeholders": { "count": { "type": "int" } } },
+  "sshConfigImportDuplicate": "Existiert bereits",
+  "sshConfigImportNoHosts": "Keine Hosts in der Config gefunden"
 }

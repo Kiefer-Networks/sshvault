@@ -773,5 +773,37 @@
 
   "terminalSplit": "Vista dividida",
   "terminalUnsplit": "Cerrar división",
-  "terminalSelectSession": "Seleccionar sesión para vista dividida"
+  "terminalSelectSession": "Seleccionar sesión para vista dividida",
+
+  "knownHostsTitle": "Hosts conocidos",
+  "knownHostsSubtitle": "Gestionar huellas digitales de servidores de confianza",
+  "hostKeyNewTitle": "Nuevo host",
+  "hostKeyNewMessage": "Primera conexión a {hostname}:{port}. Verifica la huella digital antes de conectar.",
+  "@hostKeyNewMessage": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+  "hostKeyChangedTitle": "¡Clave del host cambiada!",
+  "hostKeyChangedMessage": "La clave del host para {hostname}:{port} ha cambiado. Esto podría indicar una amenaza de seguridad.",
+  "@hostKeyChangedMessage": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+  "hostKeyFingerprint": "Huella digital",
+  "hostKeyType": "Tipo de clave",
+  "hostKeyTrustConnect": "Confiar y conectar",
+  "hostKeyAcceptNew": "Aceptar nueva clave",
+  "hostKeyReject": "Rechazar",
+  "hostKeyPreviousFingerprint": "Huella digital anterior",
+  "hostKeyDeleteAll": "Eliminar todos los hosts conocidos",
+  "hostKeyDeleteConfirm": "¿Estás seguro de que quieres eliminar todos los hosts conocidos? Se te preguntará de nuevo en la próxima conexión.",
+  "hostKeyEmpty": "Aún no hay hosts conocidos",
+  "hostKeyEmptySubtitle": "Las huellas digitales de los hosts se almacenarán aquí después de tu primera conexión",
+  "hostKeyFirstSeen": "Visto por primera vez",
+  "hostKeyLastSeen": "Visto por última vez",
+
+  "sshConfigImportTitle": "Importar config SSH",
+  "sshConfigImportPickFile": "Seleccionar archivo de config SSH",
+  "sshConfigImportOrPaste": "O pegar contenido de config",
+  "sshConfigImportParsed": "{count} hosts encontrados",
+  "@sshConfigImportParsed": { "placeholders": { "count": { "type": "int" } } },
+  "sshConfigImportButton": "Importar seleccionados",
+  "sshConfigImportSuccess": "{count} servidores importados",
+  "@sshConfigImportSuccess": { "placeholders": { "count": { "type": "int" } } },
+  "sshConfigImportDuplicate": "Ya existe",
+  "sshConfigImportNoHosts": "No se encontraron hosts en la config"
 }

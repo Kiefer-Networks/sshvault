@@ -2204,4 +2204,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get terminalSelectSession => 'Select session for split view';
+
+  @override
+  String get knownHostsTitle => 'Known Hosts';
+
+  @override
+  String get knownHostsSubtitle => 'Manage trusted server fingerprints';
+
+  @override
+  String get hostKeyNewTitle => 'New Host';
+
+  @override
+  String hostKeyNewMessage(String hostname, int port) {
+    return 'First connection to $hostname:$port. Verify the fingerprint before connecting.';
+  }
+
+  @override
+  String get hostKeyChangedTitle => 'Host Key Changed!';
+
+  @override
+  String hostKeyChangedMessage(String hostname, int port) {
+    return 'The host key for $hostname:$port has changed. This could indicate a security threat.';
+  }
+
+  @override
+  String get hostKeyFingerprint => 'Fingerprint';
+
+  @override
+  String get hostKeyType => 'Key Type';
+
+  @override
+  String get hostKeyTrustConnect => 'Trust & Connect';
+
+  @override
+  String get hostKeyAcceptNew => 'Accept New Key';
+
+  @override
+  String get hostKeyReject => 'Reject';
+
+  @override
+  String get hostKeyPreviousFingerprint => 'Previous Fingerprint';
+
+  @override
+  String get hostKeyDeleteAll => 'Delete All Known Hosts';
+
+  @override
+  String get hostKeyDeleteConfirm =>
+      'Are you sure you want to remove all known hosts? You will be prompted again on next connection.';
+
+  @override
+  String get hostKeyEmpty => 'No known hosts yet';
+
+  @override
+  String get hostKeyEmptySubtitle =>
+      'Host fingerprints will be stored here after your first connection';
+
+  @override
+  String get hostKeyFirstSeen => 'First seen';
+
+  @override
+  String get hostKeyLastSeen => 'Last seen';
+
+  @override
+  String get sshConfigImportTitle => 'Import SSH Config';
+
+  @override
+  String get sshConfigImportPickFile => 'Select SSH Config File';
+
+  @override
+  String get sshConfigImportOrPaste => 'Or paste config content';
+
+  @override
+  String sshConfigImportParsed(int count) {
+    return '$count hosts found';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Import Selected';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count servers imported';
+  }
+
+  @override
+  String get sshConfigImportDuplicate => 'Already exists';
+
+  @override
+  String get sshConfigImportNoHosts => 'No hosts found in config';
 }

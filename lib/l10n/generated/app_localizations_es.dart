@@ -2215,4 +2215,93 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get terminalSelectSession => 'Seleccionar sesión para vista dividida';
+
+  @override
+  String get knownHostsTitle => 'Hosts conocidos';
+
+  @override
+  String get knownHostsSubtitle =>
+      'Gestionar huellas digitales de servidores de confianza';
+
+  @override
+  String get hostKeyNewTitle => 'Nuevo host';
+
+  @override
+  String hostKeyNewMessage(String hostname, int port) {
+    return 'Primera conexión a $hostname:$port. Verifica la huella digital antes de conectar.';
+  }
+
+  @override
+  String get hostKeyChangedTitle => '¡Clave del host cambiada!';
+
+  @override
+  String hostKeyChangedMessage(String hostname, int port) {
+    return 'La clave del host para $hostname:$port ha cambiado. Esto podría indicar una amenaza de seguridad.';
+  }
+
+  @override
+  String get hostKeyFingerprint => 'Huella digital';
+
+  @override
+  String get hostKeyType => 'Tipo de clave';
+
+  @override
+  String get hostKeyTrustConnect => 'Confiar y conectar';
+
+  @override
+  String get hostKeyAcceptNew => 'Aceptar nueva clave';
+
+  @override
+  String get hostKeyReject => 'Rechazar';
+
+  @override
+  String get hostKeyPreviousFingerprint => 'Huella digital anterior';
+
+  @override
+  String get hostKeyDeleteAll => 'Eliminar todos los hosts conocidos';
+
+  @override
+  String get hostKeyDeleteConfirm =>
+      '¿Estás seguro de que quieres eliminar todos los hosts conocidos? Se te preguntará de nuevo en la próxima conexión.';
+
+  @override
+  String get hostKeyEmpty => 'Aún no hay hosts conocidos';
+
+  @override
+  String get hostKeyEmptySubtitle =>
+      'Las huellas digitales de los hosts se almacenarán aquí después de tu primera conexión';
+
+  @override
+  String get hostKeyFirstSeen => 'Visto por primera vez';
+
+  @override
+  String get hostKeyLastSeen => 'Visto por última vez';
+
+  @override
+  String get sshConfigImportTitle => 'Importar config SSH';
+
+  @override
+  String get sshConfigImportPickFile => 'Seleccionar archivo de config SSH';
+
+  @override
+  String get sshConfigImportOrPaste => 'O pegar contenido de config';
+
+  @override
+  String sshConfigImportParsed(int count) {
+    return '$count hosts encontrados';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Importar seleccionados';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count servidores importados';
+  }
+
+  @override
+  String get sshConfigImportDuplicate => 'Ya existe';
+
+  @override
+  String get sshConfigImportNoHosts => 'No se encontraron hosts en la config';
 }

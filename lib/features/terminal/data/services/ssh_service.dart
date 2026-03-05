@@ -38,6 +38,8 @@ class SshService {
     String? jumpHostPassphrase,
     ProxyConfig? proxyConfig,
     ProxyCredentials? proxyCredentials,
+    SSHHostkeyVerifyHandler? onVerifyHostKey,
+    SSHHostkeyVerifyHandler? onVerifyJumpHostKey,
   }) async {
     _log.info(
       _tag,
@@ -73,6 +75,7 @@ class SshService {
             jumpHostPrivateKey,
             jumpHostPassphrase,
           ),
+          onVerifyHostKey: onVerifyJumpHostKey,
         );
 
         await jumpHostClient.authenticated;
@@ -93,6 +96,7 @@ class SshService {
             managedPrivateKey,
             managedPassphrase,
           ),
+          onVerifyHostKey: onVerifyHostKey,
         );
       } else {
         final socket = await _connectSocket(
@@ -117,6 +121,7 @@ class SshService {
             managedPrivateKey,
             managedPassphrase,
           ),
+          onVerifyHostKey: onVerifyHostKey,
         );
       }
 

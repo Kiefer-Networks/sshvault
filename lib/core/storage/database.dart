@@ -10,6 +10,7 @@ import 'package:shellvault/features/connection/data/datasources/server_dao.dart'
 import 'package:shellvault/features/connection/data/datasources/ssh_key_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/tag_dao.dart';
+import 'package:shellvault/features/host_key/data/datasources/known_host_dao.dart';
 import 'package:shellvault/features/settings/data/datasources/app_settings_dao.dart';
 import 'package:shellvault/features/snippet/data/datasources/snippet_dao.dart';
 
@@ -26,8 +27,9 @@ part 'database.g.dart';
     SnippetTags,
     SnippetVariables,
     AppSettings,
+    KnownHosts,
   ],
-  daos: [ServerDao, SshKeyDao, GroupDao, TagDao, AppSettingsDao, SnippetDao],
+  daos: [ServerDao, SshKeyDao, GroupDao, TagDao, AppSettingsDao, SnippetDao, KnownHostDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
@@ -102,6 +104,9 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(servers, servers.postConnectCommands);
           await m.addColumn(servers, servers.isFavorite);
           await m.addColumn(servers, servers.lastConnectedAt);
+        }
+        if (from < 9) {
+          await m.createTable(knownHosts);
         }
       },
     );

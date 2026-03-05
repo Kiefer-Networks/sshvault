@@ -145,3 +145,17 @@ class AppSettings extends Table {
   @override
   Set<Column> get primaryKey => {key};
 }
+
+class KnownHosts extends Table {
+  TextColumn get id => text()();
+  TextColumn get hostname => text()();
+  IntColumn get port => integer().withDefault(const Constant(22))();
+  TextColumn get keyType => text()();
+  TextColumn get fingerprint => text()();
+  BoolColumn get trusted => boolean().withDefault(const Constant(true))();
+  DateTimeColumn get firstSeenAt => dateTime()();
+  DateTimeColumn get lastSeenAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}

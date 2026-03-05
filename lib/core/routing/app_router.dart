@@ -13,6 +13,8 @@ import 'package:shellvault/features/connection/presentation/screens/server_form_
 import 'package:shellvault/features/connection/presentation/screens/server_list_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/ssh_key_list_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/tag_list_screen.dart';
+import 'package:shellvault/features/host_key/presentation/screens/known_host_list_screen.dart';
+import 'package:shellvault/features/host_key/presentation/screens/ssh_config_import_screen.dart';
 import 'package:shellvault/features/settings/presentation/screens/about_screen.dart';
 import 'package:shellvault/features/settings/presentation/screens/account_sync_screen.dart';
 import 'package:shellvault/features/settings/presentation/screens/appearance_settings_screen.dart';
@@ -27,11 +29,11 @@ import 'package:shellvault/features/snippet/presentation/screens/snippet_list_sc
 import 'package:shellvault/features/sftp/presentation/screens/sftp_browser_screen.dart';
 import 'package:shellvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 abstract final class AppRouter {
   static final router = GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootNavigatorKey,
     initialLocation: '/',
     routes: [
       // ------------------------------------------------------------------
@@ -118,12 +120,12 @@ abstract final class AppRouter {
       // Detail routes — outside the shell (root navigator).
       // ------------------------------------------------------------------
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/server/new',
         builder: (context, state) => const ServerFormScreen(),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/server/:id',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
@@ -131,7 +133,7 @@ abstract final class AppRouter {
         },
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/server/:id/edit',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
@@ -139,12 +141,12 @@ abstract final class AppRouter {
         },
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/snippet/new',
         builder: (context, state) => const SnippetFormScreen(),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/snippet/:id',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
@@ -152,7 +154,7 @@ abstract final class AppRouter {
         },
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/snippet/:id/edit',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
@@ -162,43 +164,53 @@ abstract final class AppRouter {
 
       // Settings hub + sub-routes
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/settings',
         builder: (context, state) => const SettingsHubScreen(),
         routes: [
           GoRoute(
             path: 'account',
-            parentNavigatorKey: _rootNavigatorKey,
+            parentNavigatorKey: rootNavigatorKey,
             builder: (context, state) => const AccountSyncScreen(),
           ),
           GoRoute(
             path: 'security',
-            parentNavigatorKey: _rootNavigatorKey,
+            parentNavigatorKey: rootNavigatorKey,
             builder: (context, state) => const SecuritySettingsScreen(),
           ),
           GoRoute(
             path: 'ssh',
-            parentNavigatorKey: _rootNavigatorKey,
+            parentNavigatorKey: rootNavigatorKey,
             builder: (context, state) => const SshSettingsScreen(),
           ),
           GoRoute(
             path: 'appearance',
-            parentNavigatorKey: _rootNavigatorKey,
+            parentNavigatorKey: rootNavigatorKey,
             builder: (context, state) => const AppearanceSettingsScreen(),
           ),
           GoRoute(
             path: 'network',
-            parentNavigatorKey: _rootNavigatorKey,
+            parentNavigatorKey: rootNavigatorKey,
             builder: (context, state) => const NetworkSettingsScreen(),
           ),
           GoRoute(
             path: 'export',
-            parentNavigatorKey: _rootNavigatorKey,
+            parentNavigatorKey: rootNavigatorKey,
             builder: (context, state) => const ExportSettingsScreen(),
           ),
           GoRoute(
+            path: 'known-hosts',
+            parentNavigatorKey: rootNavigatorKey,
+            builder: (context, state) => const KnownHostListScreen(),
+          ),
+          GoRoute(
+            path: 'import-ssh-config',
+            parentNavigatorKey: rootNavigatorKey,
+            builder: (context, state) => const SshConfigImportScreen(),
+          ),
+          GoRoute(
             path: 'about',
-            parentNavigatorKey: _rootNavigatorKey,
+            parentNavigatorKey: rootNavigatorKey,
             builder: (context, state) => const AboutScreen(),
           ),
         ],
@@ -206,22 +218,22 @@ abstract final class AppRouter {
 
       // Auth routes
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/login',
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/register',
         builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/sync-password',
         builder: (context, state) {
           final modeParam = state.uri.queryParameters['mode'];
@@ -234,28 +246,28 @@ abstract final class AppRouter {
 
       // Redirects for backward compatibility
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/account',
         redirect: (_, _) => '/settings/account',
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/sync-settings',
         redirect: (_, _) => '/settings/account',
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/export-import',
         redirect: (_, _) => '/settings/export',
       ),
 
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/server-config',
         builder: (context, state) => const ServerConfigScreen(),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         path: '/audit-log',
         builder: (context, state) => const AuditLogScreen(),
       ),

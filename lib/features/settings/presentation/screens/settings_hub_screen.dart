@@ -69,6 +69,13 @@ class SettingsHubScreen extends ConsumerWidget {
                 onTap: () => context.push('/settings/network'),
               ),
               SettingsCategoryTile(
+                icon: Icons.fingerprint,
+                iconColor: AppColors.iconGreen,
+                title: l10n.knownHostsTitle,
+                subtitle: l10n.knownHostsSubtitle,
+                onTap: () => context.push('/settings/known-hosts'),
+              ),
+              SettingsCategoryTile(
                 icon: Icons.import_export,
                 iconColor: AppColors.iconDeepOrange,
                 title: l10n.settingsSectionExport,

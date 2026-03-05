@@ -799,5 +799,37 @@
 
   "terminalSplit": "Split View",
   "terminalUnsplit": "Close Split",
-  "terminalSelectSession": "Select session for split view"
+  "terminalSelectSession": "Select session for split view",
+
+  "knownHostsTitle": "Known Hosts",
+  "knownHostsSubtitle": "Manage trusted server fingerprints",
+  "hostKeyNewTitle": "New Host",
+  "hostKeyNewMessage": "First connection to {hostname}:{port}. Verify the fingerprint before connecting.",
+  "@hostKeyNewMessage": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+  "hostKeyChangedTitle": "Host Key Changed!",
+  "hostKeyChangedMessage": "The host key for {hostname}:{port} has changed. This could indicate a security threat.",
+  "@hostKeyChangedMessage": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+  "hostKeyFingerprint": "Fingerprint",
+  "hostKeyType": "Key Type",
+  "hostKeyTrustConnect": "Trust & Connect",
+  "hostKeyAcceptNew": "Accept New Key",
+  "hostKeyReject": "Reject",
+  "hostKeyPreviousFingerprint": "Previous Fingerprint",
+  "hostKeyDeleteAll": "Delete All Known Hosts",
+  "hostKeyDeleteConfirm": "Are you sure you want to remove all known hosts? You will be prompted again on next connection.",
+  "hostKeyEmpty": "No known hosts yet",
+  "hostKeyEmptySubtitle": "Host fingerprints will be stored here after your first connection",
+  "hostKeyFirstSeen": "First seen",
+  "hostKeyLastSeen": "Last seen",
+
+  "sshConfigImportTitle": "Import SSH Config",
+  "sshConfigImportPickFile": "Select SSH Config File",
+  "sshConfigImportOrPaste": "Or paste config content",
+  "sshConfigImportParsed": "{count} hosts found",
+  "@sshConfigImportParsed": { "placeholders": { "count": { "type": "int" } } },
+  "sshConfigImportButton": "Import Selected",
+  "sshConfigImportSuccess": "{count} servers imported",
+  "@sshConfigImportSuccess": { "placeholders": { "count": { "type": "int" } } },
+  "sshConfigImportDuplicate": "Already exists",
+  "sshConfigImportNoHosts": "No hosts found in config"
 }

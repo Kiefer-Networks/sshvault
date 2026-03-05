@@ -4041,6 +4041,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select session for split view'**
   String get terminalSelectSession;
+
+  /// No description provided for @knownHostsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Known Hosts'**
+  String get knownHostsTitle;
+
+  /// No description provided for @knownHostsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage trusted server fingerprints'**
+  String get knownHostsSubtitle;
+
+  /// No description provided for @hostKeyNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Host'**
+  String get hostKeyNewTitle;
+
+  /// No description provided for @hostKeyNewMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'First connection to {hostname}:{port}. Verify the fingerprint before connecting.'**
+  String hostKeyNewMessage(String hostname, int port);
+
+  /// No description provided for @hostKeyChangedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Host Key Changed!'**
+  String get hostKeyChangedTitle;
+
+  /// No description provided for @hostKeyChangedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The host key for {hostname}:{port} has changed. This could indicate a security threat.'**
+  String hostKeyChangedMessage(String hostname, int port);
+
+  /// No description provided for @hostKeyFingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint'**
+  String get hostKeyFingerprint;
+
+  /// No description provided for @hostKeyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Type'**
+  String get hostKeyType;
+
+  /// No description provided for @hostKeyTrustConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust & Connect'**
+  String get hostKeyTrustConnect;
+
+  /// No description provided for @hostKeyAcceptNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept New Key'**
+  String get hostKeyAcceptNew;
+
+  /// No description provided for @hostKeyReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get hostKeyReject;
+
+  /// No description provided for @hostKeyPreviousFingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Fingerprint'**
+  String get hostKeyPreviousFingerprint;
+
+  /// No description provided for @hostKeyDeleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Known Hosts'**
+  String get hostKeyDeleteAll;
+
+  /// No description provided for @hostKeyDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove all known hosts? You will be prompted again on next connection.'**
+  String get hostKeyDeleteConfirm;
+
+  /// No description provided for @hostKeyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No known hosts yet'**
+  String get hostKeyEmpty;
+
+  /// No description provided for @hostKeyEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Host fingerprints will be stored here after your first connection'**
+  String get hostKeyEmptySubtitle;
+
+  /// No description provided for @hostKeyFirstSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'First seen'**
+  String get hostKeyFirstSeen;
+
+  /// No description provided for @hostKeyLastSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen'**
+  String get hostKeyLastSeen;
+
+  /// No description provided for @sshConfigImportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import SSH Config'**
+  String get sshConfigImportTitle;
+
+  /// No description provided for @sshConfigImportPickFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select SSH Config File'**
+  String get sshConfigImportPickFile;
+
+  /// No description provided for @sshConfigImportOrPaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Or paste config content'**
+  String get sshConfigImportOrPaste;
+
+  /// No description provided for @sshConfigImportParsed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hosts found'**
+  String sshConfigImportParsed(int count);
+
+  /// No description provided for @sshConfigImportButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Selected'**
+  String get sshConfigImportButton;
+
+  /// No description provided for @sshConfigImportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} servers imported'**
+  String sshConfigImportSuccess(int count);
+
+  /// No description provided for @sshConfigImportDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Already exists'**
+  String get sshConfigImportDuplicate;
+
+  /// No description provided for @sshConfigImportNoHosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No hosts found in config'**
+  String get sshConfigImportNoHosts;
 }
 
 class _AppLocalizationsDelegate
