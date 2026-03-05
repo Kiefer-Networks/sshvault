@@ -7,8 +7,10 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/presentation/widgets/status_badge.dart';
+import 'package:shellvault/features/connection/presentation/providers/server_reachability_provider.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
+import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
+import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class ServerListTile extends ConsumerWidget {
   final ServerEntity server;
@@ -35,6 +37,13 @@ class ServerListTile extends ConsumerWidget {
     final vpnActive = server.requiresVpn
         ? ref.watch(vpnActiveProvider).value ?? false
         : false;
+
+    // Determine live connection status from sessions
+    final sessions = ref.watch(sessionManagerProvider);
+    final session = sessions
+        .where((s) => s.serverId == server.id)
+        .firstOrNull;
+    final connectionStatus = session?.status;
 
     return Slidable(
       endActionPane: ActionPane(
@@ -87,7 +96,10 @@ class ServerListTile extends ConsumerWidget {
               ),
             ],
             const SizedBox(width: 8),
-            StatusBadge(isActive: server.isActive),
+            _ConnectionStatusBadge(
+              connectionStatus: connectionStatus,
+              server: server,
+            ),
           ],
         ),
         subtitle: Column(
@@ -123,6 +135,74 @@ class ServerListTile extends ConsumerWidget {
                 tooltip: l10n.serverDetails,
                 visualDensity: VisualDensity.compact,
               )
+            : null,
+      ),
+    );
+  }
+}
+
+class _ConnectionStatusBadge extends ConsumerWidget {
+  final SshConnectionStatus? connectionStatus;
+  final ServerEntity server;
+
+  const _ConnectionStatusBadge({
+    this.connectionStatus,
+    required this.server,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final Color color;
+    final bool glow;
+
+    switch (connectionStatus) {
+      case SshConnectionStatus.connected:
+        color = Colors.green;
+        glow = true;
+      case SshConnectionStatus.connecting:
+      case SshConnectionStatus.authenticating:
+        color = Colors.orange;
+        glow = true;
+      case SshConnectionStatus.error:
+        color = colorScheme.error;
+        glow = false;
+      case SshConnectionStatus.disconnected:
+        color = colorScheme.outlineVariant;
+        glow = false;
+      case null:
+        // No active session — show TCP reachability
+        final reachability = ref.watch(
+          serverReachabilityProvider(server),
+        );
+        return reachability.when(
+          loading: () => _badge(Colors.orange, glow: true),
+          error: (_, _) => _badge(colorScheme.error, glow: false),
+          data: (reachable) => reachable
+              ? _badge(Colors.green, glow: true)
+              : _badge(colorScheme.error, glow: false),
+        );
+    }
+
+    return _badge(color, glow: glow);
+  }
+
+  Widget _badge(Color color, {required bool glow}) {
+    return Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        boxShadow: glow
+            ? [
+                BoxShadow(
+                  color: color.withAlpha(AppConstants.alpha128),
+                  blurRadius: 6,
+                  spreadRadius: 1,
+                ),
+              ]
             : null,
       ),
     );
