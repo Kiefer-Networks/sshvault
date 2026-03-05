@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/security/doh_resolver_service.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:shellvault/features/settings/presentation/providers/proxy_settings_provider.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -96,6 +100,12 @@ class NetworkSettingsScreen extends ConsumerWidget {
                 ],
               ),
 
+              // --- Default Proxy ---
+              const SizedBox(height: 24),
+              SectionHeader(title: l10n.proxyDefaultProxy),
+              const _ProxySettingsSection(),
+              const SizedBox(height: 16),
+
               // Reset button
               if (isCustom) ...[
                 const SizedBox(height: 12),
@@ -119,6 +129,28 @@ class NetworkSettingsScreen extends ConsumerWidget {
             Center(child: Text(l10n.error(errorMessage(error)))),
       ),
     );
+  }
+
+  static Future<void> _testProxy(
+    BuildContext context,
+    AppLocalizations l10n,
+    ProxyConfig proxy,
+  ) async {
+    try {
+      final socket = await Socket.connect(
+        proxy.host,
+        proxy.port,
+        timeout: const Duration(seconds: 5),
+      );
+      await socket.close();
+      if (context.mounted) {
+        AdaptiveNotification.show(context, message: l10n.proxyTestSuccess);
+      }
+    } catch (_) {
+      if (context.mounted) {
+        AdaptiveNotification.show(context, message: l10n.proxyTestFailed);
+      }
+    }
   }
 
   Future<void> _addDnsServer(
@@ -169,5 +201,164 @@ class NetworkSettingsScreen extends ConsumerWidget {
     } finally {
       WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
     }
+  }
+}
+
+class _ProxySettingsSection extends ConsumerStatefulWidget {
+  const _ProxySettingsSection();
+
+  @override
+  ConsumerState<_ProxySettingsSection> createState() =>
+      _ProxySettingsSectionState();
+}
+
+class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
+  final _hostController = TextEditingController();
+  final _portController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _initialized = false;
+
+  @override
+  void dispose() {
+    _hostController.dispose();
+    _portController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settingsAsync = ref.watch(settingsProvider);
+    final l10n = AppLocalizations.of(context)!;
+    return settingsAsync.when(
+      data: (settings) {
+        if (!_initialized) {
+          _hostController.text = settings.globalProxyHost;
+          _portController.text = settings.globalProxyPort.toString();
+          _usernameController.text = settings.globalProxyUsername;
+          // Load password from secure storage
+          ref.read(globalProxyCredentialsProvider.future).then((creds) {
+            if (mounted) {
+              _passwordController.text = creds.password ?? '';
+            }
+          });
+          _initialized = true;
+        }
+
+        final proxyType = ProxyType.values.firstWhere(
+          (e) => e.name == settings.globalProxyType,
+          orElse: () => ProxyType.none,
+        );
+
+        return SectionCard(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonFormField<ProxyType>(
+                  initialValue: proxyType,
+                  decoration: InputDecoration(labelText: l10n.proxyType),
+                  items: [
+                    DropdownMenuItem(
+                      value: ProxyType.none,
+                      child: Text(l10n.proxyNone),
+                    ),
+                    DropdownMenuItem(
+                      value: ProxyType.socks5,
+                      child: Text(l10n.proxySocks5),
+                    ),
+                    DropdownMenuItem(
+                      value: ProxyType.httpConnect,
+                      child: Text(l10n.proxyHttpConnect),
+                    ),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setGlobalProxyType(v.name);
+                    }
+                  },
+                ),
+                if (proxyType != ProxyType.none) ...[
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _hostController,
+                    decoration: InputDecoration(
+                      labelText: l10n.proxyHost,
+                      hintText: '192.168.1.1',
+                    ),
+                    onChanged: (v) => ref
+                        .read(settingsProvider.notifier)
+                        .setGlobalProxyHost(v.trim()),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _portController,
+                    decoration: InputDecoration(
+                      labelText: l10n.proxyPort,
+                      hintText: '1080',
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) {
+                      final port = int.tryParse(v.trim());
+                      if (port != null) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setGlobalProxyPort(port);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: l10n.proxyUsername,
+                    ),
+                    onChanged: (v) => ref
+                        .read(settingsProvider.notifier)
+                        .setGlobalProxyUsername(v.trim()),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: l10n.proxyPassword,
+                    ),
+                    obscureText: true,
+                    onChanged: (v) => saveGlobalProxyPassword(v),
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: FilledButton.tonalIcon(
+                      onPressed: () {
+                        final proxy = ProxyConfig(
+                          type: proxyType,
+                          host: _hostController.text.trim(),
+                          port:
+                              int.tryParse(_portController.text.trim()) ?? 1080,
+                        );
+                        NetworkSettingsScreen._testProxy(
+                          context,
+                          l10n,
+                          proxy,
+                        );
+                      },
+                      icon: const Icon(Icons.network_check, size: 18),
+                      label: Text(l10n.proxyTestConnection),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+    );
   }
 }

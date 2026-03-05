@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:shellvault/core/storage/database.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 
@@ -26,6 +27,15 @@ abstract final class ServerMapper {
       distroId: row.distroId,
       distroName: row.distroName,
       jumpHostId: row.jumpHostId,
+      proxyType: ProxyType.values.firstWhere(
+        (e) => e.name == row.proxyType,
+        orElse: () => ProxyType.none,
+      ),
+      proxyHost: row.proxyHost,
+      proxyPort: row.proxyPort,
+      proxyUsername: row.proxyUsername,
+      useGlobalProxy: row.useGlobalProxy,
+      requiresVpn: row.requiresVpn,
       tags: tags,
       ownerId: row.ownerId,
       sharedWith: row.sharedWith,
@@ -53,6 +63,12 @@ abstract final class ServerMapper {
       distroId: Value(entity.distroId),
       distroName: Value(entity.distroName),
       jumpHostId: Value(entity.jumpHostId),
+      proxyType: Value(entity.proxyType.name),
+      proxyHost: Value(entity.proxyHost),
+      proxyPort: Value(entity.proxyPort),
+      proxyUsername: Value(entity.proxyUsername),
+      useGlobalProxy: Value(entity.useGlobalProxy),
+      requiresVpn: Value(entity.requiresVpn),
       ownerId: Value(entity.ownerId),
       sharedWith: Value(entity.sharedWith),
       permissions: Value(entity.permissions),

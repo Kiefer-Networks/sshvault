@@ -34,6 +34,15 @@ class Servers extends Table {
   TextColumn get distroId => text().nullable()();
   TextColumn get distroName => text().nullable()();
   TextColumn get jumpHostId => text().nullable()();
+  // Proxy
+  TextColumn get proxyType => text().withDefault(const Constant('none'))();
+  TextColumn get proxyHost => text().withDefault(const Constant(''))();
+  IntColumn get proxyPort => integer().withDefault(const Constant(1080))();
+  TextColumn get proxyUsername => text().nullable()();
+  BoolColumn get useGlobalProxy => boolean().withDefault(const Constant(true))();
+  // VPN
+  BoolColumn get requiresVpn => boolean().withDefault(const Constant(false))();
+  // Sync
   TextColumn get ownerId => text().nullable()();
   TextColumn get sharedWith => text().nullable()();
   TextColumn get permissions => text().nullable()();

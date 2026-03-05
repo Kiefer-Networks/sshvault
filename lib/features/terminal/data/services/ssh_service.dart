@@ -7,6 +7,8 @@ import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
@@ -34,6 +36,8 @@ class SshService {
     ServerCredentials? jumpHostCredentials,
     String? jumpHostPrivateKey,
     String? jumpHostPassphrase,
+    ProxyConfig? proxyConfig,
+    ProxyCredentials? proxyCredentials,
   }) async {
     _log.info(
       _tag,
@@ -49,10 +53,11 @@ class SshService {
           'Using jump host ${jumpHost.hostname}:${jumpHost.port}',
         );
 
-        final jumpSocket = await SSHSocket.connect(
+        final jumpSocket = await _connectSocket(
           jumpHost.hostname,
           jumpHost.port,
-          timeout: const Duration(seconds: 15),
+          proxyConfig,
+          proxyCredentials,
         );
 
         jumpHostClient = SSHClient(
@@ -90,10 +95,11 @@ class SshService {
           ),
         );
       } else {
-        final socket = await SSHSocket.connect(
+        final socket = await _connectSocket(
           server.hostname,
           server.port,
-          timeout: const Duration(seconds: 15),
+          proxyConfig,
+          proxyCredentials,
         );
 
         _log.debug(
@@ -251,6 +257,43 @@ class SshService {
     } catch (e) {
       _log.debug(_tag, 'Distro detection failed: $e');
       return null;
+    }
+  }
+
+  Future<SSHSocket> _connectSocket(
+    String host,
+    int port,
+    ProxyConfig? proxy,
+    ProxyCredentials? proxyCreds,
+  ) async {
+    const timeout = Duration(seconds: 15);
+    if (proxy == null || proxy.type == ProxyType.none) {
+      return SSHSocket.connect(host, port, timeout: timeout);
+    }
+    _log.info(_tag, 'Connecting via ${proxy.type.name} proxy ${proxy.host}:${proxy.port}');
+    switch (proxy.type) {
+      case ProxyType.socks5:
+        return Socks5SSHSocket.connect(
+          proxy.host,
+          proxy.port,
+          host,
+          port,
+          username: proxy.username,
+          password: proxyCreds?.password,
+          timeout: timeout,
+        );
+      case ProxyType.httpConnect:
+        return HttpConnectSSHSocket.connect(
+          proxy.host,
+          proxy.port,
+          host,
+          port,
+          username: proxy.username,
+          password: proxyCreds?.password,
+          timeout: timeout,
+        );
+      case ProxyType.none:
+        return SSHSocket.connect(host, port, timeout: timeout);
     }
   }
 

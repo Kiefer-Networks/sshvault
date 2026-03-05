@@ -3831,6 +3831,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes} min'**
   String autoSyncIntervalValue(int minutes);
+
+  /// No description provided for @proxySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy Settings'**
+  String get proxySettings;
+
+  /// No description provided for @proxyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy Type'**
+  String get proxyType;
+
+  /// No description provided for @proxyNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No Proxy'**
+  String get proxyNone;
+
+  /// No description provided for @proxySocks5.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS5'**
+  String get proxySocks5;
+
+  /// No description provided for @proxyHttpConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP CONNECT'**
+  String get proxyHttpConnect;
+
+  /// No description provided for @proxyHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy Host'**
+  String get proxyHost;
+
+  /// No description provided for @proxyPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy Port'**
+  String get proxyPort;
+
+  /// No description provided for @proxyUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy Username'**
+  String get proxyUsername;
+
+  /// No description provided for @proxyPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy Password'**
+  String get proxyPassword;
+
+  /// No description provided for @proxyUseGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Global Proxy'**
+  String get proxyUseGlobal;
+
+  /// No description provided for @proxyGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Global'**
+  String get proxyGlobal;
+
+  /// No description provided for @proxyServerSpecific.
+  ///
+  /// In en, this message translates to:
+  /// **'Server-specific'**
+  String get proxyServerSpecific;
+
+  /// No description provided for @proxyTestConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Connection'**
+  String get proxyTestConnection;
+
+  /// No description provided for @proxyTestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy reachable'**
+  String get proxyTestSuccess;
+
+  /// No description provided for @proxyTestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy not reachable'**
+  String get proxyTestFailed;
+
+  /// No description provided for @proxyDefaultProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Proxy'**
+  String get proxyDefaultProxy;
+
+  /// No description provided for @vpnRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN Required'**
+  String get vpnRequired;
+
+  /// No description provided for @vpnRequiredTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show warning when connecting without active VPN'**
+  String get vpnRequiredTooltip;
+
+  /// No description provided for @vpnActive.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN Active'**
+  String get vpnActive;
+
+  /// No description provided for @vpnInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN Inactive'**
+  String get vpnInactive;
+
+  /// No description provided for @vpnWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN Not Active'**
+  String get vpnWarningTitle;
+
+  /// No description provided for @vpnWarningMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This server is marked as requiring a VPN connection, but no VPN is currently active. Do you want to connect anyway?'**
+  String get vpnWarningMessage;
+
+  /// No description provided for @vpnConnectAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Anyway'**
+  String get vpnConnectAnyway;
 }
 
 class _AppLocalizationsDelegate

@@ -71,6 +71,12 @@ dependencies:
   xterm: ^4.0.0
   package_info_plus: ^9.0.0
 
+  # Proxy
+  socks5_proxy: ^2.1.1
+
+  # VPN Detection
+  vpn_connection_detector: ^2.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

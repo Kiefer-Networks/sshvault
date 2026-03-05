@@ -90,6 +90,14 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(servers, servers.jumpHostId);
         }
         // Schema version 6 previously created teleportClusters (removed).
+        if (from < 7) {
+          await m.addColumn(servers, servers.proxyType);
+          await m.addColumn(servers, servers.proxyHost);
+          await m.addColumn(servers, servers.proxyPort);
+          await m.addColumn(servers, servers.proxyUsername);
+          await m.addColumn(servers, servers.useGlobalProxy);
+          await m.addColumn(servers, servers.requiresVpn);
+        }
       },
     );
   }

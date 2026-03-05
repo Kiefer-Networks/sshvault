@@ -1511,6 +1511,83 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _proxyTypeMeta = const VerificationMeta(
+    'proxyType',
+  );
+  @override
+  late final GeneratedColumn<String> proxyType = GeneratedColumn<String>(
+    'proxy_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('none'),
+  );
+  static const VerificationMeta _proxyHostMeta = const VerificationMeta(
+    'proxyHost',
+  );
+  @override
+  late final GeneratedColumn<String> proxyHost = GeneratedColumn<String>(
+    'proxy_host',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _proxyPortMeta = const VerificationMeta(
+    'proxyPort',
+  );
+  @override
+  late final GeneratedColumn<int> proxyPort = GeneratedColumn<int>(
+    'proxy_port',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1080),
+  );
+  static const VerificationMeta _proxyUsernameMeta = const VerificationMeta(
+    'proxyUsername',
+  );
+  @override
+  late final GeneratedColumn<String> proxyUsername = GeneratedColumn<String>(
+    'proxy_username',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _useGlobalProxyMeta = const VerificationMeta(
+    'useGlobalProxy',
+  );
+  @override
+  late final GeneratedColumn<bool> useGlobalProxy = GeneratedColumn<bool>(
+    'use_global_proxy',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("use_global_proxy" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _requiresVpnMeta = const VerificationMeta(
+    'requiresVpn',
+  );
+  @override
+  late final GeneratedColumn<bool> requiresVpn = GeneratedColumn<bool>(
+    'requires_vpn',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("requires_vpn" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _ownerIdMeta = const VerificationMeta(
     'ownerId',
   );
@@ -1584,6 +1661,12 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     distroId,
     distroName,
     jumpHostId,
+    proxyType,
+    proxyHost,
+    proxyPort,
+    proxyUsername,
+    useGlobalProxy,
+    requiresVpn,
     ownerId,
     sharedWith,
     permissions,
@@ -1706,6 +1789,51 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         ),
       );
     }
+    if (data.containsKey('proxy_type')) {
+      context.handle(
+        _proxyTypeMeta,
+        proxyType.isAcceptableOrUnknown(data['proxy_type']!, _proxyTypeMeta),
+      );
+    }
+    if (data.containsKey('proxy_host')) {
+      context.handle(
+        _proxyHostMeta,
+        proxyHost.isAcceptableOrUnknown(data['proxy_host']!, _proxyHostMeta),
+      );
+    }
+    if (data.containsKey('proxy_port')) {
+      context.handle(
+        _proxyPortMeta,
+        proxyPort.isAcceptableOrUnknown(data['proxy_port']!, _proxyPortMeta),
+      );
+    }
+    if (data.containsKey('proxy_username')) {
+      context.handle(
+        _proxyUsernameMeta,
+        proxyUsername.isAcceptableOrUnknown(
+          data['proxy_username']!,
+          _proxyUsernameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('use_global_proxy')) {
+      context.handle(
+        _useGlobalProxyMeta,
+        useGlobalProxy.isAcceptableOrUnknown(
+          data['use_global_proxy']!,
+          _useGlobalProxyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('requires_vpn')) {
+      context.handle(
+        _requiresVpnMeta,
+        requiresVpn.isAcceptableOrUnknown(
+          data['requires_vpn']!,
+          _requiresVpnMeta,
+        ),
+      );
+    }
     if (data.containsKey('owner_id')) {
       context.handle(
         _ownerIdMeta,
@@ -1816,6 +1944,30 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         DriftSqlType.string,
         data['${effectivePrefix}jump_host_id'],
       ),
+      proxyType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}proxy_type'],
+      )!,
+      proxyHost: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}proxy_host'],
+      )!,
+      proxyPort: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}proxy_port'],
+      )!,
+      proxyUsername: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}proxy_username'],
+      ),
+      useGlobalProxy: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}use_global_proxy'],
+      )!,
+      requiresVpn: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}requires_vpn'],
+      )!,
       ownerId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}owner_id'],
@@ -1862,6 +2014,12 @@ class Server extends DataClass implements Insertable<Server> {
   final String? distroId;
   final String? distroName;
   final String? jumpHostId;
+  final String proxyType;
+  final String proxyHost;
+  final int proxyPort;
+  final String? proxyUsername;
+  final bool useGlobalProxy;
+  final bool requiresVpn;
   final String? ownerId;
   final String? sharedWith;
   final String? permissions;
@@ -1884,6 +2042,12 @@ class Server extends DataClass implements Insertable<Server> {
     this.distroId,
     this.distroName,
     this.jumpHostId,
+    required this.proxyType,
+    required this.proxyHost,
+    required this.proxyPort,
+    this.proxyUsername,
+    required this.useGlobalProxy,
+    required this.requiresVpn,
     this.ownerId,
     this.sharedWith,
     this.permissions,
@@ -1919,6 +2083,14 @@ class Server extends DataClass implements Insertable<Server> {
     if (!nullToAbsent || jumpHostId != null) {
       map['jump_host_id'] = Variable<String>(jumpHostId);
     }
+    map['proxy_type'] = Variable<String>(proxyType);
+    map['proxy_host'] = Variable<String>(proxyHost);
+    map['proxy_port'] = Variable<int>(proxyPort);
+    if (!nullToAbsent || proxyUsername != null) {
+      map['proxy_username'] = Variable<String>(proxyUsername);
+    }
+    map['use_global_proxy'] = Variable<bool>(useGlobalProxy);
+    map['requires_vpn'] = Variable<bool>(requiresVpn);
     if (!nullToAbsent || ownerId != null) {
       map['owner_id'] = Variable<String>(ownerId);
     }
@@ -1961,6 +2133,14 @@ class Server extends DataClass implements Insertable<Server> {
       jumpHostId: jumpHostId == null && nullToAbsent
           ? const Value.absent()
           : Value(jumpHostId),
+      proxyType: Value(proxyType),
+      proxyHost: Value(proxyHost),
+      proxyPort: Value(proxyPort),
+      proxyUsername: proxyUsername == null && nullToAbsent
+          ? const Value.absent()
+          : Value(proxyUsername),
+      useGlobalProxy: Value(useGlobalProxy),
+      requiresVpn: Value(requiresVpn),
       ownerId: ownerId == null && nullToAbsent
           ? const Value.absent()
           : Value(ownerId),
@@ -1997,6 +2177,12 @@ class Server extends DataClass implements Insertable<Server> {
       distroId: serializer.fromJson<String?>(json['distroId']),
       distroName: serializer.fromJson<String?>(json['distroName']),
       jumpHostId: serializer.fromJson<String?>(json['jumpHostId']),
+      proxyType: serializer.fromJson<String>(json['proxyType']),
+      proxyHost: serializer.fromJson<String>(json['proxyHost']),
+      proxyPort: serializer.fromJson<int>(json['proxyPort']),
+      proxyUsername: serializer.fromJson<String?>(json['proxyUsername']),
+      useGlobalProxy: serializer.fromJson<bool>(json['useGlobalProxy']),
+      requiresVpn: serializer.fromJson<bool>(json['requiresVpn']),
       ownerId: serializer.fromJson<String?>(json['ownerId']),
       sharedWith: serializer.fromJson<String?>(json['sharedWith']),
       permissions: serializer.fromJson<String?>(json['permissions']),
@@ -2024,6 +2210,12 @@ class Server extends DataClass implements Insertable<Server> {
       'distroId': serializer.toJson<String?>(distroId),
       'distroName': serializer.toJson<String?>(distroName),
       'jumpHostId': serializer.toJson<String?>(jumpHostId),
+      'proxyType': serializer.toJson<String>(proxyType),
+      'proxyHost': serializer.toJson<String>(proxyHost),
+      'proxyPort': serializer.toJson<int>(proxyPort),
+      'proxyUsername': serializer.toJson<String?>(proxyUsername),
+      'useGlobalProxy': serializer.toJson<bool>(useGlobalProxy),
+      'requiresVpn': serializer.toJson<bool>(requiresVpn),
       'ownerId': serializer.toJson<String?>(ownerId),
       'sharedWith': serializer.toJson<String?>(sharedWith),
       'permissions': serializer.toJson<String?>(permissions),
@@ -2049,6 +2241,12 @@ class Server extends DataClass implements Insertable<Server> {
     Value<String?> distroId = const Value.absent(),
     Value<String?> distroName = const Value.absent(),
     Value<String?> jumpHostId = const Value.absent(),
+    String? proxyType,
+    String? proxyHost,
+    int? proxyPort,
+    Value<String?> proxyUsername = const Value.absent(),
+    bool? useGlobalProxy,
+    bool? requiresVpn,
     Value<String?> ownerId = const Value.absent(),
     Value<String?> sharedWith = const Value.absent(),
     Value<String?> permissions = const Value.absent(),
@@ -2071,6 +2269,14 @@ class Server extends DataClass implements Insertable<Server> {
     distroId: distroId.present ? distroId.value : this.distroId,
     distroName: distroName.present ? distroName.value : this.distroName,
     jumpHostId: jumpHostId.present ? jumpHostId.value : this.jumpHostId,
+    proxyType: proxyType ?? this.proxyType,
+    proxyHost: proxyHost ?? this.proxyHost,
+    proxyPort: proxyPort ?? this.proxyPort,
+    proxyUsername: proxyUsername.present
+        ? proxyUsername.value
+        : this.proxyUsername,
+    useGlobalProxy: useGlobalProxy ?? this.useGlobalProxy,
+    requiresVpn: requiresVpn ?? this.requiresVpn,
     ownerId: ownerId.present ? ownerId.value : this.ownerId,
     sharedWith: sharedWith.present ? sharedWith.value : this.sharedWith,
     permissions: permissions.present ? permissions.value : this.permissions,
@@ -2101,6 +2307,18 @@ class Server extends DataClass implements Insertable<Server> {
       jumpHostId: data.jumpHostId.present
           ? data.jumpHostId.value
           : this.jumpHostId,
+      proxyType: data.proxyType.present ? data.proxyType.value : this.proxyType,
+      proxyHost: data.proxyHost.present ? data.proxyHost.value : this.proxyHost,
+      proxyPort: data.proxyPort.present ? data.proxyPort.value : this.proxyPort,
+      proxyUsername: data.proxyUsername.present
+          ? data.proxyUsername.value
+          : this.proxyUsername,
+      useGlobalProxy: data.useGlobalProxy.present
+          ? data.useGlobalProxy.value
+          : this.useGlobalProxy,
+      requiresVpn: data.requiresVpn.present
+          ? data.requiresVpn.value
+          : this.requiresVpn,
       ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       sharedWith: data.sharedWith.present
           ? data.sharedWith.value
@@ -2132,6 +2350,12 @@ class Server extends DataClass implements Insertable<Server> {
           ..write('distroId: $distroId, ')
           ..write('distroName: $distroName, ')
           ..write('jumpHostId: $jumpHostId, ')
+          ..write('proxyType: $proxyType, ')
+          ..write('proxyHost: $proxyHost, ')
+          ..write('proxyPort: $proxyPort, ')
+          ..write('proxyUsername: $proxyUsername, ')
+          ..write('useGlobalProxy: $useGlobalProxy, ')
+          ..write('requiresVpn: $requiresVpn, ')
           ..write('ownerId: $ownerId, ')
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
@@ -2159,6 +2383,12 @@ class Server extends DataClass implements Insertable<Server> {
     distroId,
     distroName,
     jumpHostId,
+    proxyType,
+    proxyHost,
+    proxyPort,
+    proxyUsername,
+    useGlobalProxy,
+    requiresVpn,
     ownerId,
     sharedWith,
     permissions,
@@ -2185,6 +2415,12 @@ class Server extends DataClass implements Insertable<Server> {
           other.distroId == this.distroId &&
           other.distroName == this.distroName &&
           other.jumpHostId == this.jumpHostId &&
+          other.proxyType == this.proxyType &&
+          other.proxyHost == this.proxyHost &&
+          other.proxyPort == this.proxyPort &&
+          other.proxyUsername == this.proxyUsername &&
+          other.useGlobalProxy == this.useGlobalProxy &&
+          other.requiresVpn == this.requiresVpn &&
           other.ownerId == this.ownerId &&
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
@@ -2209,6 +2445,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
   final Value<String?> distroId;
   final Value<String?> distroName;
   final Value<String?> jumpHostId;
+  final Value<String> proxyType;
+  final Value<String> proxyHost;
+  final Value<int> proxyPort;
+  final Value<String?> proxyUsername;
+  final Value<bool> useGlobalProxy;
+  final Value<bool> requiresVpn;
   final Value<String?> ownerId;
   final Value<String?> sharedWith;
   final Value<String?> permissions;
@@ -2232,6 +2474,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.distroId = const Value.absent(),
     this.distroName = const Value.absent(),
     this.jumpHostId = const Value.absent(),
+    this.proxyType = const Value.absent(),
+    this.proxyHost = const Value.absent(),
+    this.proxyPort = const Value.absent(),
+    this.proxyUsername = const Value.absent(),
+    this.useGlobalProxy = const Value.absent(),
+    this.requiresVpn = const Value.absent(),
     this.ownerId = const Value.absent(),
     this.sharedWith = const Value.absent(),
     this.permissions = const Value.absent(),
@@ -2256,6 +2504,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.distroId = const Value.absent(),
     this.distroName = const Value.absent(),
     this.jumpHostId = const Value.absent(),
+    this.proxyType = const Value.absent(),
+    this.proxyHost = const Value.absent(),
+    this.proxyPort = const Value.absent(),
+    this.proxyUsername = const Value.absent(),
+    this.useGlobalProxy = const Value.absent(),
+    this.requiresVpn = const Value.absent(),
     this.ownerId = const Value.absent(),
     this.sharedWith = const Value.absent(),
     this.permissions = const Value.absent(),
@@ -2285,6 +2539,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Expression<String>? distroId,
     Expression<String>? distroName,
     Expression<String>? jumpHostId,
+    Expression<String>? proxyType,
+    Expression<String>? proxyHost,
+    Expression<int>? proxyPort,
+    Expression<String>? proxyUsername,
+    Expression<bool>? useGlobalProxy,
+    Expression<bool>? requiresVpn,
     Expression<String>? ownerId,
     Expression<String>? sharedWith,
     Expression<String>? permissions,
@@ -2309,6 +2569,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
       if (distroId != null) 'distro_id': distroId,
       if (distroName != null) 'distro_name': distroName,
       if (jumpHostId != null) 'jump_host_id': jumpHostId,
+      if (proxyType != null) 'proxy_type': proxyType,
+      if (proxyHost != null) 'proxy_host': proxyHost,
+      if (proxyPort != null) 'proxy_port': proxyPort,
+      if (proxyUsername != null) 'proxy_username': proxyUsername,
+      if (useGlobalProxy != null) 'use_global_proxy': useGlobalProxy,
+      if (requiresVpn != null) 'requires_vpn': requiresVpn,
       if (ownerId != null) 'owner_id': ownerId,
       if (sharedWith != null) 'shared_with': sharedWith,
       if (permissions != null) 'permissions': permissions,
@@ -2335,6 +2601,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Value<String?>? distroId,
     Value<String?>? distroName,
     Value<String?>? jumpHostId,
+    Value<String>? proxyType,
+    Value<String>? proxyHost,
+    Value<int>? proxyPort,
+    Value<String?>? proxyUsername,
+    Value<bool>? useGlobalProxy,
+    Value<bool>? requiresVpn,
     Value<String?>? ownerId,
     Value<String?>? sharedWith,
     Value<String?>? permissions,
@@ -2359,6 +2631,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
       distroId: distroId ?? this.distroId,
       distroName: distroName ?? this.distroName,
       jumpHostId: jumpHostId ?? this.jumpHostId,
+      proxyType: proxyType ?? this.proxyType,
+      proxyHost: proxyHost ?? this.proxyHost,
+      proxyPort: proxyPort ?? this.proxyPort,
+      proxyUsername: proxyUsername ?? this.proxyUsername,
+      useGlobalProxy: useGlobalProxy ?? this.useGlobalProxy,
+      requiresVpn: requiresVpn ?? this.requiresVpn,
       ownerId: ownerId ?? this.ownerId,
       sharedWith: sharedWith ?? this.sharedWith,
       permissions: permissions ?? this.permissions,
@@ -2419,6 +2697,24 @@ class ServersCompanion extends UpdateCompanion<Server> {
     if (jumpHostId.present) {
       map['jump_host_id'] = Variable<String>(jumpHostId.value);
     }
+    if (proxyType.present) {
+      map['proxy_type'] = Variable<String>(proxyType.value);
+    }
+    if (proxyHost.present) {
+      map['proxy_host'] = Variable<String>(proxyHost.value);
+    }
+    if (proxyPort.present) {
+      map['proxy_port'] = Variable<int>(proxyPort.value);
+    }
+    if (proxyUsername.present) {
+      map['proxy_username'] = Variable<String>(proxyUsername.value);
+    }
+    if (useGlobalProxy.present) {
+      map['use_global_proxy'] = Variable<bool>(useGlobalProxy.value);
+    }
+    if (requiresVpn.present) {
+      map['requires_vpn'] = Variable<bool>(requiresVpn.value);
+    }
     if (ownerId.present) {
       map['owner_id'] = Variable<String>(ownerId.value);
     }
@@ -2459,6 +2755,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
           ..write('distroId: $distroId, ')
           ..write('distroName: $distroName, ')
           ..write('jumpHostId: $jumpHostId, ')
+          ..write('proxyType: $proxyType, ')
+          ..write('proxyHost: $proxyHost, ')
+          ..write('proxyPort: $proxyPort, ')
+          ..write('proxyUsername: $proxyUsername, ')
+          ..write('useGlobalProxy: $useGlobalProxy, ')
+          ..write('requiresVpn: $requiresVpn, ')
           ..write('ownerId: $ownerId, ')
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
@@ -5854,6 +6156,12 @@ typedef $$ServersTableCreateCompanionBuilder =
       Value<String?> distroId,
       Value<String?> distroName,
       Value<String?> jumpHostId,
+      Value<String> proxyType,
+      Value<String> proxyHost,
+      Value<int> proxyPort,
+      Value<String?> proxyUsername,
+      Value<bool> useGlobalProxy,
+      Value<bool> requiresVpn,
       Value<String?> ownerId,
       Value<String?> sharedWith,
       Value<String?> permissions,
@@ -5879,6 +6187,12 @@ typedef $$ServersTableUpdateCompanionBuilder =
       Value<String?> distroId,
       Value<String?> distroName,
       Value<String?> jumpHostId,
+      Value<String> proxyType,
+      Value<String> proxyHost,
+      Value<int> proxyPort,
+      Value<String?> proxyUsername,
+      Value<bool> useGlobalProxy,
+      Value<bool> requiresVpn,
       Value<String?> ownerId,
       Value<String?> sharedWith,
       Value<String?> permissions,
@@ -6021,6 +6335,36 @@ class $$ServersTableFilterComposer
 
   ColumnFilters<String> get jumpHostId => $composableBuilder(
     column: $table.jumpHostId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get proxyType => $composableBuilder(
+    column: $table.proxyType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get proxyHost => $composableBuilder(
+    column: $table.proxyHost,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get proxyPort => $composableBuilder(
+    column: $table.proxyPort,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get proxyUsername => $composableBuilder(
+    column: $table.proxyUsername,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get useGlobalProxy => $composableBuilder(
+    column: $table.useGlobalProxy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get requiresVpn => $composableBuilder(
+    column: $table.requiresVpn,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6200,6 +6544,36 @@ class $$ServersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get proxyType => $composableBuilder(
+    column: $table.proxyType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get proxyHost => $composableBuilder(
+    column: $table.proxyHost,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get proxyPort => $composableBuilder(
+    column: $table.proxyPort,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get proxyUsername => $composableBuilder(
+    column: $table.proxyUsername,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get useGlobalProxy => $composableBuilder(
+    column: $table.useGlobalProxy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get requiresVpn => $composableBuilder(
+    column: $table.requiresVpn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get ownerId => $composableBuilder(
     column: $table.ownerId,
     builder: (column) => ColumnOrderings(column),
@@ -6326,6 +6700,30 @@ class $$ServersTableAnnotationComposer
 
   GeneratedColumn<String> get jumpHostId => $composableBuilder(
     column: $table.jumpHostId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get proxyType =>
+      $composableBuilder(column: $table.proxyType, builder: (column) => column);
+
+  GeneratedColumn<String> get proxyHost =>
+      $composableBuilder(column: $table.proxyHost, builder: (column) => column);
+
+  GeneratedColumn<int> get proxyPort =>
+      $composableBuilder(column: $table.proxyPort, builder: (column) => column);
+
+  GeneratedColumn<String> get proxyUsername => $composableBuilder(
+    column: $table.proxyUsername,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get useGlobalProxy => $composableBuilder(
+    column: $table.useGlobalProxy,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get requiresVpn => $composableBuilder(
+    column: $table.requiresVpn,
     builder: (column) => column,
   );
 
@@ -6468,6 +6866,12 @@ class $$ServersTableTableManager
                 Value<String?> distroId = const Value.absent(),
                 Value<String?> distroName = const Value.absent(),
                 Value<String?> jumpHostId = const Value.absent(),
+                Value<String> proxyType = const Value.absent(),
+                Value<String> proxyHost = const Value.absent(),
+                Value<int> proxyPort = const Value.absent(),
+                Value<String?> proxyUsername = const Value.absent(),
+                Value<bool> useGlobalProxy = const Value.absent(),
+                Value<bool> requiresVpn = const Value.absent(),
                 Value<String?> ownerId = const Value.absent(),
                 Value<String?> sharedWith = const Value.absent(),
                 Value<String?> permissions = const Value.absent(),
@@ -6491,6 +6895,12 @@ class $$ServersTableTableManager
                 distroId: distroId,
                 distroName: distroName,
                 jumpHostId: jumpHostId,
+                proxyType: proxyType,
+                proxyHost: proxyHost,
+                proxyPort: proxyPort,
+                proxyUsername: proxyUsername,
+                useGlobalProxy: useGlobalProxy,
+                requiresVpn: requiresVpn,
                 ownerId: ownerId,
                 sharedWith: sharedWith,
                 permissions: permissions,
@@ -6516,6 +6926,12 @@ class $$ServersTableTableManager
                 Value<String?> distroId = const Value.absent(),
                 Value<String?> distroName = const Value.absent(),
                 Value<String?> jumpHostId = const Value.absent(),
+                Value<String> proxyType = const Value.absent(),
+                Value<String> proxyHost = const Value.absent(),
+                Value<int> proxyPort = const Value.absent(),
+                Value<String?> proxyUsername = const Value.absent(),
+                Value<bool> useGlobalProxy = const Value.absent(),
+                Value<bool> requiresVpn = const Value.absent(),
                 Value<String?> ownerId = const Value.absent(),
                 Value<String?> sharedWith = const Value.absent(),
                 Value<String?> permissions = const Value.absent(),
@@ -6539,6 +6955,12 @@ class $$ServersTableTableManager
                 distroId: distroId,
                 distroName: distroName,
                 jumpHostId: jumpHostId,
+                proxyType: proxyType,
+                proxyHost: proxyHost,
+                proxyPort: proxyPort,
+                proxyUsername: proxyUsername,
+                useGlobalProxy: useGlobalProxy,
+                requiresVpn: requiresVpn,
                 ownerId: ownerId,
                 sharedWith: sharedWith,
                 permissions: permissions,

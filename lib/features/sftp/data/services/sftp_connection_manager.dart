@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:shellvault/features/connection/domain/usecases/proxy_resolver.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:shellvault/features/settings/presentation/providers/proxy_settings_provider.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class SftpConnectionManager {
@@ -84,11 +87,50 @@ class SftpConnectionManager {
           );
         }
 
-        final socket = await SSHSocket.connect(
-          server.hostname,
-          server.port,
-          timeout: const Duration(seconds: 15),
-        );
+        // Resolve proxy configuration
+        final globalProxy = container.read(globalProxyConfigProvider);
+        final resolver = ProxyResolver();
+        final proxy = resolver.resolve(server, globalProxy);
+
+        final SSHSocket socket;
+        if (proxy != null && proxy.type != ProxyType.none) {
+          final proxyCreds =
+              await container.read(globalProxyCredentialsProvider.future);
+          switch (proxy.type) {
+            case ProxyType.socks5:
+              socket = await Socks5SSHSocket.connect(
+                proxy.host,
+                proxy.port,
+                server.hostname,
+                server.port,
+                username: proxy.username,
+                password: proxyCreds.password,
+                timeout: const Duration(seconds: 15),
+              );
+            case ProxyType.httpConnect:
+              socket = await HttpConnectSSHSocket.connect(
+                proxy.host,
+                proxy.port,
+                server.hostname,
+                server.port,
+                username: proxy.username,
+                password: proxyCreds.password,
+                timeout: const Duration(seconds: 15),
+              );
+            case ProxyType.none:
+              socket = await SSHSocket.connect(
+                server.hostname,
+                server.port,
+                timeout: const Duration(seconds: 15),
+              );
+          }
+        } else {
+          socket = await SSHSocket.connect(
+            server.hostname,
+            server.port,
+            timeout: const Duration(seconds: 15),
+          );
+        }
 
         final privateKey = managedPrivateKey ?? credentials.privateKey;
         final passphrase = managedPassphrase ?? credentials.passphrase;

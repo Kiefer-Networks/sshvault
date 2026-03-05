@@ -11,6 +11,7 @@ import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/core/crypto/crypto_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
 import 'package:shellvault/features/connection/presentation/widgets/key_generation_dialog.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
@@ -35,6 +36,11 @@ class _ServerFormReactiveState {
   final bool isActive;
   final bool saving;
   final String? jumpHostId;
+  // Proxy
+  final bool useGlobalProxy;
+  final ProxyType proxyType;
+  // VPN
+  final bool requiresVpn;
 
   const _ServerFormReactiveState({
     this.authMethod = AuthMethod.password,
@@ -47,6 +53,9 @@ class _ServerFormReactiveState {
     this.isActive = true,
     this.saving = false,
     this.jumpHostId,
+    this.useGlobalProxy = true,
+    this.proxyType = ProxyType.none,
+    this.requiresVpn = false,
   });
 
   _ServerFormReactiveState copyWith({
@@ -60,6 +69,9 @@ class _ServerFormReactiveState {
     bool? isActive,
     bool? saving,
     String? Function()? jumpHostId,
+    bool? useGlobalProxy,
+    ProxyType? proxyType,
+    bool? requiresVpn,
   }) {
     return _ServerFormReactiveState(
       authMethod: authMethod ?? this.authMethod,
@@ -72,6 +84,9 @@ class _ServerFormReactiveState {
       isActive: isActive ?? this.isActive,
       saving: saving ?? this.saving,
       jumpHostId: jumpHostId != null ? jumpHostId() : this.jumpHostId,
+      useGlobalProxy: useGlobalProxy ?? this.useGlobalProxy,
+      proxyType: proxyType ?? this.proxyType,
+      requiresVpn: requiresVpn ?? this.requiresVpn,
     );
   }
 }
@@ -103,6 +118,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   final _publicKeyController = TextEditingController();
   final _passphraseController = TextEditingController();
   final _notesController = TextEditingController();
+  final _proxyHostController = TextEditingController();
+  final _proxyPortController = TextEditingController();
+  final _proxyUsernameController = TextEditingController();
+  final _proxyPasswordController = TextEditingController();
 
   @override
   void initState() {
@@ -125,6 +144,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     _portController.text = result.port.toString();
     _usernameController.text = result.username;
     _notesController.text = result.notes;
+    _proxyHostController.text = result.proxyHost;
+    _proxyPortController.text = result.proxyPort.toString();
+    _proxyUsernameController.text = result.proxyUsername ?? '';
     ref
         .read(_serverFormStateProvider.notifier)
         .state = _ServerFormReactiveState(
@@ -137,6 +159,9 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       selectedTagIds: result.tags.map((t) => t.id).toList(),
       isActive: result.isActive,
       jumpHostId: result.jumpHostId,
+      useGlobalProxy: result.useGlobalProxy,
+      proxyType: result.proxyType,
+      requiresVpn: result.requiresVpn,
     );
 
     final creds = await ref.read(
@@ -160,6 +185,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     _publicKeyController.dispose();
     _passphraseController.dispose();
     _notesController.dispose();
+    _proxyHostController.dispose();
+    _proxyPortController.dispose();
+    _proxyUsernameController.dispose();
+    _proxyPasswordController.dispose();
     super.dispose();
   }
 
@@ -340,6 +369,98 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
             ),
             const SizedBox(height: 16),
 
+            // Proxy Section
+            SectionCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.proxySettings,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 12),
+                  SwitchListTile(
+                    title: Text(l10n.proxyUseGlobal),
+                    value: formState.useGlobalProxy,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (v) =>
+                        ref.read(_serverFormStateProvider.notifier).state =
+                            formState.copyWith(useGlobalProxy: v),
+                  ),
+                  if (!formState.useGlobalProxy) ...[
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<ProxyType>(
+                      initialValue: formState.proxyType,
+                      decoration: InputDecoration(labelText: l10n.proxyType),
+                      items: [
+                        DropdownMenuItem(
+                          value: ProxyType.none,
+                          child: Text(l10n.proxyNone),
+                        ),
+                        DropdownMenuItem(
+                          value: ProxyType.socks5,
+                          child: Text(l10n.proxySocks5),
+                        ),
+                        DropdownMenuItem(
+                          value: ProxyType.httpConnect,
+                          child: Text(l10n.proxyHttpConnect),
+                        ),
+                      ],
+                      onChanged: (v) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(proxyType: v),
+                    ),
+                    if (formState.proxyType != ProxyType.none) ...[
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _proxyHostController,
+                        decoration: InputDecoration(
+                          labelText: l10n.proxyHost,
+                          hintText: '192.168.1.1',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _proxyPortController,
+                        decoration: InputDecoration(
+                          labelText: l10n.proxyPort,
+                          hintText: '1080',
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _proxyUsernameController,
+                        decoration: InputDecoration(
+                          labelText: l10n.proxyUsername,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _proxyPasswordController,
+                        decoration: InputDecoration(
+                          labelText: l10n.proxyPassword,
+                        ),
+                        obscureText: true,
+                      ),
+                    ],
+                  ],
+                  const SizedBox(height: 8),
+                  SwitchListTile(
+                    title: Text(l10n.vpnRequired),
+                    subtitle: Text(l10n.vpnRequiredTooltip),
+                    value: formState.requiresVpn,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (v) =>
+                        ref.read(_serverFormStateProvider.notifier).state =
+                            formState.copyWith(requiresVpn: v),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
             SectionCard(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -401,6 +522,14 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         groupId: currentState.groupId,
         sshKeyId: currentState.useManagedKey ? currentState.sshKeyId : null,
         jumpHostId: currentState.jumpHostId,
+        useGlobalProxy: currentState.useGlobalProxy,
+        proxyType: currentState.proxyType,
+        proxyHost: _proxyHostController.text.trim(),
+        proxyPort: int.tryParse(_proxyPortController.text.trim()) ?? 1080,
+        proxyUsername: _proxyUsernameController.text.trim().isEmpty
+            ? null
+            : _proxyUsernameController.text.trim(),
+        requiresVpn: currentState.requiresVpn,
         tags: tags,
         createdAt: now,
         updatedAt: now,

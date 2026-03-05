@@ -759,5 +759,30 @@
 
   "autoSyncInterval": "Sync Interval",
   "autoSyncIntervalValue": "{minutes} min",
-  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } }
+  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } },
+
+  "proxySettings": "Proxy Settings",
+  "proxyType": "Proxy Type",
+  "proxyNone": "No Proxy",
+  "proxySocks5": "SOCKS5",
+  "proxyHttpConnect": "HTTP CONNECT",
+  "proxyHost": "Proxy Host",
+  "proxyPort": "Proxy Port",
+  "proxyUsername": "Proxy Username",
+  "proxyPassword": "Proxy Password",
+  "proxyUseGlobal": "Use Global Proxy",
+  "proxyGlobal": "Global",
+  "proxyServerSpecific": "Server-specific",
+  "proxyTestConnection": "Test Connection",
+  "proxyTestSuccess": "Proxy reachable",
+  "proxyTestFailed": "Proxy not reachable",
+  "proxyDefaultProxy": "Default Proxy",
+
+  "vpnRequired": "VPN Required",
+  "vpnRequiredTooltip": "Show warning when connecting without active VPN",
+  "vpnActive": "VPN Active",
+  "vpnInactive": "VPN Inactive",
+  "vpnWarningTitle": "VPN Not Active",
+  "vpnWarningMessage": "This server is marked as requiring a VPN connection, but no VPN is currently active. Do you want to connect anyway?",
+  "vpnConnectAnyway": "Connect Anyway"
 }

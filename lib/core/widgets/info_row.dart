@@ -11,6 +11,7 @@ class InfoRow extends StatelessWidget {
   final String value;
   final VoidCallback? onTap;
   final Widget? trailing;
+  final Color? valueColor;
 
   const InfoRow({
     super.key,
@@ -19,6 +20,7 @@ class InfoRow extends StatelessWidget {
     required this.value,
     this.onTap,
     this.trailing,
+    this.valueColor,
   });
 
   @override
@@ -48,6 +50,7 @@ class InfoRow extends StatelessWidget {
               value,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontFamily: AppConstants.monospaceFontFamily,
+                color: valueColor,
               ),
               textAlign: TextAlign.end,
             ),

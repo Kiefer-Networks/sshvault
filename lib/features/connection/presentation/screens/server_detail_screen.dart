@@ -9,6 +9,8 @@ import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/core/widgets/info_row.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:shellvault/core/services/vpn_detector_service.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
@@ -171,6 +173,49 @@ class ServerDetailScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+
+                // Proxy
+                if (server.proxyType != ProxyType.none || server.useGlobalProxy) ...[
+                  const SizedBox(height: 16),
+                  SectionCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.proxySettings,
+                          style: theme.textTheme.titleSmall,
+                        ),
+                        const SizedBox(height: 12),
+                        if (server.useGlobalProxy && server.proxyType == ProxyType.none)
+                          InfoRow(
+                            icon: Icons.public,
+                            label: l10n.proxyType,
+                            value: l10n.proxyGlobal,
+                          )
+                        else ...[
+                          InfoRow(
+                            icon: Icons.vpn_key_outlined,
+                            label: l10n.proxyType,
+                            value: switch (server.proxyType) {
+                              ProxyType.socks5 => l10n.proxySocks5,
+                              ProxyType.httpConnect => l10n.proxyHttpConnect,
+                              ProxyType.none => l10n.proxyNone,
+                            },
+                          ),
+                          if (server.proxyHost.isNotEmpty)
+                            InfoRow(
+                              icon: Icons.dns_outlined,
+                              label: l10n.proxyHost,
+                              value: '${server.proxyHost}:${server.proxyPort}',
+                            ),
+                        ],
+                        if (server.requiresVpn)
+                          _VpnStatusRow(serverId: serverId),
+                      ],
+                    ),
+                  ),
+                ],
 
                 // Folder
                 if (server.groupId != null) ...[
@@ -452,6 +497,25 @@ class _DistroLogo extends StatelessWidget {
       'coreos' || 'flatcar' => const Color(0xFF3D6AA2),
       _ => const Color(0xFF78909C),
     };
+  }
+}
+
+class _VpnStatusRow extends ConsumerWidget {
+  final String serverId;
+
+  const _VpnStatusRow({required this.serverId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vpnActive = ref.watch(vpnActiveProvider).value ?? false;
+    final l10n = AppLocalizations.of(context)!;
+
+    return InfoRow(
+      icon: Icons.shield_outlined,
+      label: l10n.vpnRequired,
+      value: vpnActive ? l10n.vpnActive : l10n.vpnInactive,
+      valueColor: vpnActive ? Colors.green : Theme.of(context).colorScheme.error,
+    );
   }
 }
 

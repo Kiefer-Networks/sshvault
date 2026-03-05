@@ -733,5 +733,30 @@
 
   "autoSyncInterval": "Intervalo de sincronización",
   "autoSyncIntervalValue": "{minutes} min",
-  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } }
+  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } },
+
+  "proxySettings": "Configuraci\u00f3n de proxy",
+  "proxyType": "Tipo de proxy",
+  "proxyNone": "Sin proxy",
+  "proxySocks5": "SOCKS5",
+  "proxyHttpConnect": "HTTP CONNECT",
+  "proxyHost": "Host del proxy",
+  "proxyPort": "Puerto del proxy",
+  "proxyUsername": "Usuario del proxy",
+  "proxyPassword": "Contrase\u00f1a del proxy",
+  "proxyUseGlobal": "Usar proxy global",
+  "proxyGlobal": "Global",
+  "proxyServerSpecific": "Espec\u00edfico del servidor",
+  "proxyTestConnection": "Probar conexi\u00f3n",
+  "proxyTestSuccess": "Proxy accesible",
+  "proxyTestFailed": "Proxy no accesible",
+  "proxyDefaultProxy": "Proxy predeterminado",
+
+  "vpnRequired": "VPN requerido",
+  "vpnRequiredTooltip": "Mostrar advertencia al conectar sin VPN activa",
+  "vpnActive": "VPN activa",
+  "vpnInactive": "VPN inactiva",
+  "vpnWarningTitle": "VPN no activa",
+  "vpnWarningMessage": "Este servidor requiere una conexi\u00f3n VPN, pero no hay VPN activa. \u00bfConectar de todos modos?",
+  "vpnConnectAnyway": "Conectar de todos modos"
 }

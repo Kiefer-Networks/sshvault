@@ -48,6 +48,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyDuressPinHash = 'duress_pin_hash';
   static const _keyDuressPinSalt = 'duress_pin_salt';
   static const _keyKeyRotationReminder = 'key_rotation_reminder_days';
+  static const _keyGlobalProxyType = 'global_proxy_type';
+  static const _keyGlobalProxyHost = 'global_proxy_host';
+  static const _keyGlobalProxyPort = 'global_proxy_port';
+  static const _keyGlobalProxyUsername = 'global_proxy_username';
 
   @override
   Future<AppSettingsEntity> build() async {
@@ -118,6 +122,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       duressPinSalt: all[_keyDuressPinSalt] ?? '',
       keyRotationReminderDays:
           int.tryParse(all[_keyKeyRotationReminder] ?? '') ?? 0,
+      globalProxyType: all[_keyGlobalProxyType] ?? 'none',
+      globalProxyHost: all[_keyGlobalProxyHost] ?? '',
+      globalProxyPort:
+          int.tryParse(all[_keyGlobalProxyPort] ?? '') ?? 1080,
+      globalProxyUsername: all[_keyGlobalProxyUsername] ?? '',
     );
   }
 
@@ -431,6 +440,34 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     _log.info(_tag, 'Key rotation reminder changed to ${days}d');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyKeyRotationReminder, days.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setGlobalProxyType(String type) async {
+    _log.info(_tag, 'Global proxy type changed to $type');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyGlobalProxyType, type);
+    ref.invalidateSelf();
+  }
+
+  Future<void> setGlobalProxyHost(String host) async {
+    _log.info(_tag, 'Global proxy host changed');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyGlobalProxyHost, host);
+    ref.invalidateSelf();
+  }
+
+  Future<void> setGlobalProxyPort(int port) async {
+    _log.info(_tag, 'Global proxy port changed to $port');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyGlobalProxyPort, port.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setGlobalProxyUsername(String username) async {
+    _log.info(_tag, 'Global proxy username changed');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyGlobalProxyUsername, username);
     ref.invalidateSelf();
   }
 }

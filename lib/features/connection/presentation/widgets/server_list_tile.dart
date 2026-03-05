@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/services/vpn_detector_service.dart';
 import 'package:shellvault/core/widgets/settings/circle_icon.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -8,7 +10,7 @@ import 'package:shellvault/features/connection/domain/entities/server_entity.dar
 import 'package:shellvault/features/connection/presentation/widgets/status_badge.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
 
-class ServerListTile extends StatelessWidget {
+class ServerListTile extends ConsumerWidget {
   final ServerEntity server;
   final VoidCallback onTap;
   final VoidCallback onEdit;
@@ -27,9 +29,12 @@ class ServerListTile extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final vpnActive = server.requiresVpn
+        ? ref.watch(vpnActiveProvider).value ?? false
+        : false;
 
     return Slidable(
       endActionPane: ActionPane(
@@ -71,6 +76,16 @@ class ServerListTile extends StatelessWidget {
         title: Row(
           children: [
             Expanded(child: Text(server.name, overflow: TextOverflow.ellipsis)),
+            if (server.requiresVpn) ...[
+              const SizedBox(width: 4),
+              Icon(
+                Icons.shield_outlined,
+                size: 16,
+                color: vpnActive
+                    ? Colors.green
+                    : theme.colorScheme.error,
+              ),
+            ],
             const SizedBox(width: 8),
             StatusBadge(isActive: server.isActive),
           ],

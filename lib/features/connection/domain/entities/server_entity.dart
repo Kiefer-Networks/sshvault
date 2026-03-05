@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 
 part 'server_entity.freezed.dart';
@@ -25,6 +26,15 @@ abstract class ServerEntity with _$ServerEntity {
     String? distroName,
     @Default([]) List<TagEntity> tags,
     String? jumpHostId,
+    // Proxy
+    @Default(ProxyType.none) ProxyType proxyType,
+    @Default('') String proxyHost,
+    @Default(1080) int proxyPort,
+    String? proxyUsername,
+    @Default(true) bool useGlobalProxy,
+    // VPN
+    @Default(false) bool requiresVpn,
+    // Sync
     String? ownerId,
     String? sharedWith,
     String? permissions,

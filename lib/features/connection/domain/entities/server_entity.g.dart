@@ -29,6 +29,14 @@ _ServerEntity _$ServerEntityFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
       jumpHostId: json['jumpHostId'] as String?,
+      proxyType:
+          $enumDecodeNullable(_$ProxyTypeEnumMap, json['proxyType']) ??
+          ProxyType.none,
+      proxyHost: json['proxyHost'] as String? ?? '',
+      proxyPort: (json['proxyPort'] as num?)?.toInt() ?? 1080,
+      proxyUsername: json['proxyUsername'] as String?,
+      useGlobalProxy: json['useGlobalProxy'] as bool? ?? true,
+      requiresVpn: json['requiresVpn'] as bool? ?? false,
       ownerId: json['ownerId'] as String?,
       sharedWith: json['sharedWith'] as String?,
       permissions: json['permissions'] as String?,
@@ -55,6 +63,12 @@ Map<String, dynamic> _$ServerEntityToJson(_ServerEntity instance) =>
       'distroName': instance.distroName,
       'tags': instance.tags.map((e) => e.toJson()).toList(),
       'jumpHostId': instance.jumpHostId,
+      'proxyType': _$ProxyTypeEnumMap[instance.proxyType]!,
+      'proxyHost': instance.proxyHost,
+      'proxyPort': instance.proxyPort,
+      'proxyUsername': instance.proxyUsername,
+      'useGlobalProxy': instance.useGlobalProxy,
+      'requiresVpn': instance.requiresVpn,
       'ownerId': instance.ownerId,
       'sharedWith': instance.sharedWith,
       'permissions': instance.permissions,
@@ -66,4 +80,10 @@ const _$AuthMethodEnumMap = {
   AuthMethod.password: 'password',
   AuthMethod.key: 'key',
   AuthMethod.both: 'both',
+};
+
+const _$ProxyTypeEnumMap = {
+  ProxyType.none: 'none',
+  ProxyType.socks5: 'socks5',
+  ProxyType.httpConnect: 'httpConnect',
 };

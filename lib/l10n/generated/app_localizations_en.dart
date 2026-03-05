@@ -2096,4 +2096,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String autoSyncIntervalValue(int minutes) {
     return '$minutes min';
   }
+
+  @override
+  String get proxySettings => 'Proxy Settings';
+
+  @override
+  String get proxyType => 'Proxy Type';
+
+  @override
+  String get proxyNone => 'No Proxy';
+
+  @override
+  String get proxySocks5 => 'SOCKS5';
+
+  @override
+  String get proxyHttpConnect => 'HTTP CONNECT';
+
+  @override
+  String get proxyHost => 'Proxy Host';
+
+  @override
+  String get proxyPort => 'Proxy Port';
+
+  @override
+  String get proxyUsername => 'Proxy Username';
+
+  @override
+  String get proxyPassword => 'Proxy Password';
+
+  @override
+  String get proxyUseGlobal => 'Use Global Proxy';
+
+  @override
+  String get proxyGlobal => 'Global';
+
+  @override
+  String get proxyServerSpecific => 'Server-specific';
+
+  @override
+  String get proxyTestConnection => 'Test Connection';
+
+  @override
+  String get proxyTestSuccess => 'Proxy reachable';
+
+  @override
+  String get proxyTestFailed => 'Proxy not reachable';
+
+  @override
+  String get proxyDefaultProxy => 'Default Proxy';
+
+  @override
+  String get vpnRequired => 'VPN Required';
+
+  @override
+  String get vpnRequiredTooltip =>
+      'Show warning when connecting without active VPN';
+
+  @override
+  String get vpnActive => 'VPN Active';
+
+  @override
+  String get vpnInactive => 'VPN Inactive';
+
+  @override
+  String get vpnWarningTitle => 'VPN Not Active';
+
+  @override
+  String get vpnWarningMessage =>
+      'This server is marked as requiring a VPN connection, but no VPN is currently active. Do you want to connect anyway?';
+
+  @override
+  String get vpnConnectAnyway => 'Connect Anyway';
 }

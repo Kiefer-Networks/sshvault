@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
 
 class AppSettingsEntity {
   final ThemeMode themeMode;
@@ -33,6 +34,11 @@ class AppSettingsEntity {
   final String duressPinHash;
   final String duressPinSalt;
   final int keyRotationReminderDays;
+  // Global Proxy
+  final String globalProxyType;
+  final String globalProxyHost;
+  final int globalProxyPort;
+  final String globalProxyUsername;
 
   const AppSettingsEntity({
     this.themeMode = ThemeMode.system,
@@ -64,6 +70,10 @@ class AppSettingsEntity {
     this.duressPinHash = '',
     this.duressPinSalt = '',
     this.keyRotationReminderDays = 0,
+    this.globalProxyType = 'none',
+    this.globalProxyHost = '',
+    this.globalProxyPort = 1080,
+    this.globalProxyUsername = '',
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -114,6 +124,10 @@ class AppSettingsEntity {
     String? duressPinHash,
     String? duressPinSalt,
     int? keyRotationReminderDays,
+    String? globalProxyType,
+    String? globalProxyHost,
+    int? globalProxyPort,
+    String? globalProxyUsername,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -152,6 +166,24 @@ class AppSettingsEntity {
       duressPinSalt: duressPinSalt ?? this.duressPinSalt,
       keyRotationReminderDays:
           keyRotationReminderDays ?? this.keyRotationReminderDays,
+      globalProxyType: globalProxyType ?? this.globalProxyType,
+      globalProxyHost: globalProxyHost ?? this.globalProxyHost,
+      globalProxyPort: globalProxyPort ?? this.globalProxyPort,
+      globalProxyUsername: globalProxyUsername ?? this.globalProxyUsername,
+    );
+  }
+
+  ProxyConfig get globalProxyConfig {
+    final type = ProxyType.values.firstWhere(
+      (e) => e.name == globalProxyType,
+      orElse: () => ProxyType.none,
+    );
+    if (type == ProxyType.none) return const ProxyConfig();
+    return ProxyConfig(
+      type: type,
+      host: globalProxyHost,
+      port: globalProxyPort,
+      username: globalProxyUsername.isEmpty ? null : globalProxyUsername,
     );
   }
 

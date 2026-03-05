@@ -10,6 +10,8 @@ export 'src/ssh_signal.dart';
 export 'src/ssh_transport.dart';
 
 export 'src/socket/ssh_socket.dart';
+export 'src/socket/ssh_socket_socks5.dart';
+export 'src/socket/ssh_socket_http_connect.dart';
 export 'src/socket/ssh_socket_teleport.dart';
 
 export 'src/algorithm/ssh_cipher_type.dart';

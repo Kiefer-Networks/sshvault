@@ -4,13 +4,18 @@ import 'package:uuid/uuid.dart';
 import 'package:xterm/xterm.dart';
 
 import 'package:shellvault/core/error/failures.dart';
+import 'package:shellvault/core/services/vpn_detector_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:shellvault/features/connection/domain/entities/proxy_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
+import 'package:shellvault/features/connection/domain/usecases/proxy_resolver.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/core/services/terminal_notification_service.dart';
+import 'package:shellvault/features/settings/presentation/providers/proxy_settings_provider.dart';
 import 'package:shellvault/features/terminal/data/services/ssh_service.dart';
 import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data.dart';
@@ -150,8 +155,29 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
         }
       }
 
+      // Check VPN requirement
+      if (server.requiresVpn) {
+        final vpnActive =
+            ref.read(vpnActiveProvider).value ?? false;
+        if (!vpnActive) {
+          session.terminal.write(
+            '\r\n[Warning: VPN is not active but required for this server]\r\n',
+          );
+        }
+      }
+
       session.status = SshConnectionStatus.authenticating;
       _notifyChange();
+
+      // Resolve proxy
+      final globalProxy = ref.read(globalProxyConfigProvider);
+      final resolver = ProxyResolver();
+      final proxyConfig = resolver.resolve(server, globalProxy);
+      ProxyCredentials? proxyCredentials;
+      if (proxyConfig != null && proxyConfig.type != ProxyType.none) {
+        proxyCredentials =
+            await ref.read(globalProxyCredentialsProvider.future);
+      }
 
       // Connect
       final result = await sshService.connect(
@@ -164,6 +190,8 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
         jumpHostCredentials: jumpHostCredentials,
         jumpHostPrivateKey: jumpHostPrivateKey,
         jumpHostPassphrase: jumpHostPassphrase,
+        proxyConfig: proxyConfig,
+        proxyCredentials: proxyCredentials,
       );
 
       result.fold(

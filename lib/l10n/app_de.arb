@@ -733,5 +733,30 @@
 
   "autoSyncInterval": "Sync-Intervall",
   "autoSyncIntervalValue": "{minutes} Min.",
-  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } }
+  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } },
+
+  "proxySettings": "Proxy-Einstellungen",
+  "proxyType": "Proxy-Typ",
+  "proxyNone": "Kein Proxy",
+  "proxySocks5": "SOCKS5",
+  "proxyHttpConnect": "HTTP CONNECT",
+  "proxyHost": "Proxy-Host",
+  "proxyPort": "Proxy-Port",
+  "proxyUsername": "Proxy-Benutzer",
+  "proxyPassword": "Proxy-Passwort",
+  "proxyUseGlobal": "Globalen Proxy nutzen",
+  "proxyGlobal": "Global",
+  "proxyServerSpecific": "Server-spezifisch",
+  "proxyTestConnection": "Verbindung testen",
+  "proxyTestSuccess": "Proxy erreichbar",
+  "proxyTestFailed": "Proxy nicht erreichbar",
+  "proxyDefaultProxy": "Standard-Proxy",
+
+  "vpnRequired": "VPN erforderlich",
+  "vpnRequiredTooltip": "Warnung anzeigen, wenn ohne aktives VPN verbunden wird",
+  "vpnActive": "VPN aktiv",
+  "vpnInactive": "VPN inaktiv",
+  "vpnWarningTitle": "VPN nicht aktiv",
+  "vpnWarningMessage": "Dieser Server erfordert eine VPN-Verbindung, aber es ist kein VPN aktiv. Trotzdem verbinden?",
+  "vpnConnectAnyway": "Trotzdem verbinden"
 }
