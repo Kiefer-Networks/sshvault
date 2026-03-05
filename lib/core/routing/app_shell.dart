@@ -174,6 +174,20 @@ class AppShellState extends ConsumerState<AppShell> {
             _showSecurityDialog();
           }
         }, fireImmediately: true);
+
+        // Auto-recovery: when server comes back online, refresh account
+        // data and trigger sync if auto-sync is enabled.
+        ref.listenManual(serverReachableProvider, (prev, next) {
+          final wasFalse = prev?.value == false;
+          final isTrue = next.value == true;
+          if (wasFalse && isTrue) {
+            _refreshAccountProviders();
+            final settings = ref.read(settingsProvider).value;
+            if (settings?.autoSync ?? false) {
+              ref.read(syncProvider.notifier).sync();
+            }
+          }
+        });
       }
     });
   }
@@ -181,6 +195,7 @@ class AppShellState extends ConsumerState<AppShell> {
   void _refreshAccountProviders() {
     final auth = ref.read(authProvider).value;
     if (auth != AuthStatus.authenticated) return;
+    ref.invalidate(userProfileProvider);
     ref.invalidate(billingStatusProvider);
     ref.invalidate(deviceListProvider);
   }
@@ -438,6 +453,7 @@ class _SyncStatusIcon extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authProvider);
     final isAuthenticated = authState.value == AuthStatus.authenticated;
     if (!isAuthenticated) return const SizedBox.shrink();
@@ -445,11 +461,13 @@ class _SyncStatusIcon extends ConsumerWidget {
     final syncState = ref.watch(syncProvider);
     final billingActive =
         ref.watch(billingStatusProvider).value?.active ?? false;
+    final serverReachable = ref.watch(serverReachableProvider).value ?? true;
     final isSyncing = syncState.value == SyncStatus.syncing;
     final hasError = syncState.hasError;
 
     final IconData icon;
     final Color color;
+    final String? tooltip;
     if (isSyncing) {
       return const Padding(
         padding: EdgeInsets.only(left: 8),
@@ -459,20 +477,30 @@ class _SyncStatusIcon extends ConsumerWidget {
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
       );
+    } else if (!serverReachable) {
+      icon = Icons.cloud_off;
+      color = Theme.of(context).colorScheme.error;
+      tooltip = l10n.syncServerUnreachable;
     } else if (hasError) {
       icon = Icons.cloud_off;
       color = Theme.of(context).colorScheme.error;
+      tooltip = null;
     } else if (billingActive && syncState.value == SyncStatus.success) {
       icon = Icons.cloud_done_outlined;
       color = Theme.of(context).colorScheme.primary;
+      tooltip = null;
     } else {
       icon = Icons.cloud_outlined;
       color = Theme.of(context).colorScheme.onSurfaceVariant;
+      tooltip = null;
     }
 
     return Padding(
       padding: const EdgeInsets.only(left: 8),
-      child: Icon(icon, size: 20, color: color),
+      child: Tooltip(
+        message: tooltip ?? '',
+        child: Icon(icon, size: 20, color: color),
+      ),
     );
   }
 }
@@ -482,7 +510,8 @@ class _SettingsRailButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final syncState = ref.watch(syncProvider);
-    final hasError = syncState.hasError;
+    final serverReachable = ref.watch(serverReachableProvider).value ?? true;
+    final showBadge = syncState.hasError || !serverReachable;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -492,7 +521,7 @@ class _SettingsRailButton extends ConsumerWidget {
           tooltip: l10n.navSettings,
           onPressed: () => context.push('/settings'),
         ),
-        if (hasError)
+        if (showBadge)
           Positioned(
             right: 8,
             top: 8,
@@ -603,10 +632,11 @@ class _DrawerSettingsSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final syncState = ref.watch(syncProvider);
-    final hasError = syncState.hasError;
+    final serverReachable = ref.watch(serverReachableProvider).value ?? true;
+    final showBadge = syncState.hasError || !serverReachable;
 
     Widget iconWidget = const Icon(Icons.settings_outlined);
-    if (hasError) {
+    if (showBadge) {
       iconWidget = Badge(
         smallSize: 8,
         backgroundColor: theme.colorScheme.error,

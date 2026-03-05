@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/network/api_provider.dart';
+import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
 import 'package:shellvault/features/account/domain/entities/billing_status.dart';
 import 'package:shellvault/features/account/domain/entities/device_entity.dart';
@@ -10,27 +14,58 @@ export 'package:shellvault/features/account/presentation/providers/account_repos
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
 
+const _cachedUserProfileKey = 'cached_user_profile';
+const _cachedBillingStatusKey = 'cached_billing_status';
+
 /// Checks whether the sync server is reachable via GET /health.
-/// Returns `true` when the server responds, `false` on any error.
-final serverReachableProvider = FutureProvider<bool>((ref) async {
+/// Polls periodically: 30s when offline, 60s when online.
+/// Only yields on status change to avoid unnecessary rebuilds.
+final serverReachableProvider = StreamProvider<bool>((ref) async* {
   final baseUrl = ref.watch(serverUrlProvider);
   final client = ApiClient(baseUrl);
-  final result = await client.get('/health');
-  return result.isSuccess;
+
+  bool? lastStatus;
+
+  while (true) {
+    final result = await client.get('/health');
+    final reachable = result.isSuccess;
+
+    if (reachable != lastStatus) {
+      lastStatus = reachable;
+      yield reachable;
+    }
+
+    await Future<void>.delayed(
+      Duration(seconds: reachable ? 60 : 30),
+    );
+  }
 });
 
 final userProfileProvider = FutureProvider<UserEntity?>((ref) async {
-  // Re-fetch when auth state changes (login/logout)
   final auth = ref.watch(authProvider).value;
   if (auth != AuthStatus.authenticated) return null;
 
+  final dao = ref.read(databaseProvider).appSettingsDao;
   final repo = ref.watch(accountRepositoryProvider);
   final result = await repo.getProfile();
-  return result.isSuccess ? result.value : null;
+
+  if (result.isSuccess) {
+    final profile = result.value;
+    await dao.setValue(_cachedUserProfileKey, jsonEncode(profile.toJson()));
+    return profile;
+  }
+
+  // Network error — try cache
+  final cached = await dao.getValue(_cachedUserProfileKey);
+  if (cached != null) {
+    return UserEntity.fromJson(
+      jsonDecode(cached) as Map<String, dynamic>,
+    );
+  }
+  return null;
 });
 
 final deviceListProvider = FutureProvider<List<DeviceEntity>>((ref) async {
-  // Re-fetch when auth state changes (login/logout)
   final auth = ref.watch(authProvider).value;
   if (auth != AuthStatus.authenticated) return [];
 
@@ -40,15 +75,29 @@ final deviceListProvider = FutureProvider<List<DeviceEntity>>((ref) async {
 });
 
 final billingStatusProvider = FutureProvider<BillingStatus>((ref) async {
-  // Re-fetch when auth state changes (login/logout)
   final auth = ref.watch(authProvider).value;
   if (auth != AuthStatus.authenticated) {
     return const BillingStatus(active: false);
   }
 
+  final dao = ref.read(databaseProvider).appSettingsDao;
   final repo = ref.watch(accountRepositoryProvider);
   final result = await repo.getBillingStatus();
-  return result.isSuccess ? result.value : const BillingStatus(active: false);
+
+  if (result.isSuccess) {
+    final billing = result.value;
+    await dao.setValue(_cachedBillingStatusKey, jsonEncode(billing.toJson()));
+    return billing;
+  }
+
+  // Network error — try cache
+  final cached = await dao.getValue(_cachedBillingStatusKey);
+  if (cached != null) {
+    return BillingStatus.fromJson(
+      jsonDecode(cached) as Map<String, dynamic>,
+    );
+  }
+  return const BillingStatus(active: false);
 });
 
 final auditLogsProvider =

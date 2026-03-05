@@ -28,4 +28,14 @@ class BillingStatus {
       periodEnd: periodEnd,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'active': active,
+        'provider': provider,
+        'status': status,
+        if (periodEnd != null)
+          'subscription': {
+            'current_period_end': periodEnd!.toIso8601String(),
+          },
+      };
 }
