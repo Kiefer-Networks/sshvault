@@ -201,7 +201,7 @@ class _FolderTile extends ConsumerWidget {
               SlidableAction(
                 onPressed: (_) => onEdit(),
                 backgroundColor: theme.colorScheme.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: theme.colorScheme.onPrimary,
                 icon: Icons.edit,
                 label: l10n.edit,
                 borderRadius: BorderRadius.circular(12),
@@ -209,7 +209,7 @@ class _FolderTile extends ConsumerWidget {
               SlidableAction(
                 onPressed: (_) => onDelete(),
                 backgroundColor: theme.colorScheme.error,
-                foregroundColor: Colors.white,
+                foregroundColor: theme.colorScheme.onError,
                 icon: Icons.delete,
                 label: l10n.delete,
                 borderRadius: BorderRadius.circular(12),

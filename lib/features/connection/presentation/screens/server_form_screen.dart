@@ -389,24 +389,25 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                   ),
                   if (!formState.useGlobalProxy) ...[
                     const SizedBox(height: 8),
-                    DropdownButtonFormField<ProxyType>(
-                      initialValue: formState.proxyType,
-                      decoration: InputDecoration(labelText: l10n.proxyType),
-                      items: [
-                        DropdownMenuItem(
+                    DropdownMenu<ProxyType>(
+                      initialSelection: formState.proxyType,
+                      label: Text(l10n.proxyType),
+                      expandedInsets: EdgeInsets.zero,
+                      dropdownMenuEntries: [
+                        DropdownMenuEntry(
                           value: ProxyType.none,
-                          child: Text(l10n.proxyNone),
+                          label: l10n.proxyNone,
                         ),
-                        DropdownMenuItem(
+                        DropdownMenuEntry(
                           value: ProxyType.socks5,
-                          child: Text(l10n.proxySocks5),
+                          label: l10n.proxySocks5,
                         ),
-                        DropdownMenuItem(
+                        DropdownMenuEntry(
                           value: ProxyType.httpConnect,
-                          child: Text(l10n.proxyHttpConnect),
+                          label: l10n.proxyHttpConnect,
                         ),
                       ],
-                      onChanged: (v) =>
+                      onSelected: (v) =>
                           ref.read(_serverFormStateProvider.notifier).state =
                               formState.copyWith(proxyType: v),
                     ),

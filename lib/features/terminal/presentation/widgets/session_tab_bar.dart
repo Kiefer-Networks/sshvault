@@ -126,7 +126,7 @@ class _CloseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(12),
       onTap: () async {
         if (session.status == SshConnectionStatus.connected) {
           final l10n = AppLocalizations.of(context)!;

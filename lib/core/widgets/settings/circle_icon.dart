@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/core/constants/app_constants.dart';
 
 class CircleIcon extends StatelessWidget {
   final IconData icon;
@@ -18,7 +19,7 @@ class CircleIcon extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: color.withAlpha(30),
+        color: color.withAlpha(AppConstants.alpha26),
         shape: BoxShape.circle,
       ),
       child: Icon(icon, color: color, size: size * 0.55),

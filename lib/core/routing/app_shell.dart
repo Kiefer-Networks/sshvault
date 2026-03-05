@@ -513,28 +513,15 @@ class _SettingsRailButton extends ConsumerWidget {
     final serverReachable = ref.watch(serverReachableProvider).value ?? true;
     final showBadge = syncState.hasError || !serverReachable;
 
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.settings_outlined),
-          tooltip: l10n.navSettings,
-          onPressed: () => context.push('/settings'),
-        ),
-        if (showBadge)
-          Positioned(
-            right: 8,
-            top: 8,
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.error,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-      ],
+    return Badge(
+      smallSize: 8,
+      isLabelVisible: showBadge,
+      backgroundColor: Theme.of(context).colorScheme.error,
+      child: IconButton(
+        icon: const Icon(Icons.settings_outlined),
+        tooltip: l10n.navSettings,
+        onPressed: () => context.push('/settings'),
+      ),
     );
   }
 }

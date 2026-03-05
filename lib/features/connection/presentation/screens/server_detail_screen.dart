@@ -93,7 +93,7 @@ class ServerDetailScreen extends ConsumerWidget {
                           color: Color(
                             server.color,
                           ).withAlpha(AppConstants.alpha38),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
                           IconConstants.getIcon(server.iconName),
@@ -517,7 +517,7 @@ class _VpnStatusRow extends ConsumerWidget {
       label: l10n.vpnRequired,
       value: vpnActive ? l10n.vpnActive : l10n.vpnInactive,
       valueColor: vpnActive
-          ? Colors.green
+          ? Theme.of(context).colorScheme.tertiary
           : Theme.of(context).colorScheme.error,
     );
   }

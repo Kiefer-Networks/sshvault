@@ -175,9 +175,9 @@ class _KeyButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
       child: Material(
         color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
         child: InkWell(
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(8),
           onTap: onTap,
           child: Container(
             constraints: const BoxConstraints(minWidth: 36),
@@ -218,9 +218,9 @@ class _ModifierButton extends StatelessWidget {
         color: isActive
             ? theme.colorScheme.primary
             : theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
         child: InkWell(
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(8),
           onTap: onTap,
           child: Container(
             constraints: const BoxConstraints(minWidth: 48),

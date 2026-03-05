@@ -78,7 +78,7 @@ class SshKeyTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: theme.colorScheme.secondaryContainer,
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 sshKey.keyType.displayName,

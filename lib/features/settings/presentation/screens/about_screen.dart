@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shellvault/core/constants/app_colors.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/services/package_info_provider.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
@@ -95,7 +96,7 @@ class AboutScreen extends ConsumerWidget {
               ),
               SettingsTile(
                 icon: Icons.source_outlined,
-                iconColor: Colors.orange,
+                iconColor: AppColors.iconOrange,
                 title: l10n.aboutOpenSourceLicenses,
                 onTap: () => showLicensePage(
                   context: context,
@@ -113,7 +114,7 @@ class AboutScreen extends ConsumerWidget {
               ),
               SettingsTile(
                 icon: Icons.language,
-                iconColor: Colors.blue,
+                iconColor: AppColors.iconBlue,
                 title: l10n.aboutWebsite,
                 subtitleText: 'sshvault.app',
                 trailing: Icon(

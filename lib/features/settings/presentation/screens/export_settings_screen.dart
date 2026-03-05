@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
+import 'package:shellvault/core/constants/app_colors.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/connection/presentation/providers/export_import_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
@@ -35,7 +36,7 @@ class ExportSettingsScreen extends ConsumerWidget {
               children: [
                 SettingsSwitchTile(
                   icon: Icons.enhanced_encryption_outlined,
-                  iconColor: Colors.deepOrange,
+                  iconColor: AppColors.iconDeepOrange,
                   title: l10n.settingsEncryptExport,
                   value: settings.encryptExportByDefault,
                   onChanged: (v) {
@@ -46,14 +47,14 @@ class ExportSettingsScreen extends ConsumerWidget {
                 ),
                 SettingsTile(
                   icon: Icons.description_outlined,
-                  iconColor: Colors.blue,
+                  iconColor: AppColors.iconBlue,
                   title: l10n.settingsExportJson,
                   subtitleText: l10n.exportJsonButton,
                   onTap: () => _exportJson(context, ref),
                 ),
                 SettingsTile(
                   icon: Icons.lock_outlined,
-                  iconColor: Colors.deepPurple,
+                  iconColor: AppColors.iconDeepPurple,
                   title: l10n.settingsExportEncrypted,
                   subtitleText: l10n.exportZipButton,
                   onTap: () => _exportEncrypted(context, ref),
@@ -68,7 +69,7 @@ class ExportSettingsScreen extends ConsumerWidget {
               children: [
                 SettingsTile(
                   icon: Icons.file_open_outlined,
-                  iconColor: Colors.teal,
+                  iconColor: AppColors.iconTeal,
                   title: l10n.settingsImportFile,
                   subtitleText: l10n.importSupportedFormats,
                   onTap: () => _importFile(context, ref),

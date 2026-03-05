@@ -33,7 +33,7 @@ class SnippetTile extends StatelessWidget {
             SlidableAction(
               onPressed: (_) => onEdit!(),
               backgroundColor: theme.colorScheme.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: theme.colorScheme.onPrimary,
               icon: Icons.edit,
               label: l10n.edit,
               borderRadius: BorderRadius.circular(12),
@@ -42,7 +42,7 @@ class SnippetTile extends StatelessWidget {
             SlidableAction(
               onPressed: (_) => onDelete!(),
               backgroundColor: theme.colorScheme.error,
-              foregroundColor: Colors.white,
+              foregroundColor: theme.colorScheme.onError,
               icon: Icons.delete,
               label: l10n.delete,
               borderRadius: BorderRadius.circular(12),
@@ -66,7 +66,7 @@ class SnippetTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: theme.colorScheme.secondaryContainer,
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 snippet.language,

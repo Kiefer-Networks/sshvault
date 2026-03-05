@@ -15,7 +15,7 @@ class SearchFilterBar extends ConsumerStatefulWidget {
 }
 
 class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
-  final _searchController = TextEditingController();
+  final _searchController = SearchController();
 
   @override
   void dispose() {
@@ -39,31 +39,24 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           child: Row(
             children: [
               Expanded(
-                child: TextField(
+                child: SearchBar(
                   controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: l10n.searchServers,
-                    prefixIcon: const Icon(Icons.search, size: 20),
-                    suffixIcon: filter.searchQuery.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear, size: 20),
-                            onPressed: () {
-                              _searchController.clear();
-                              ref.read(serverFilterProvider.notifier).state =
-                                  filter.copyWith(searchQuery: '');
-                            },
-                          )
-                        : null,
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                  ),
-                  keyboardType: TextInputType.text,
+                  hintText: l10n.searchServers,
+                  leading: const Icon(Icons.search, size: 20),
+                  trailing: [
+                    if (filter.searchQuery.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: () {
+                          _searchController.clear();
+                          ref.read(serverFilterProvider.notifier).state =
+                              filter.copyWith(searchQuery: '');
+                        },
+                      ),
+                  ],
                   onChanged: (value) {
-                    ref.read(serverFilterProvider.notifier).state = filter
-                        .copyWith(searchQuery: value);
+                    ref.read(serverFilterProvider.notifier).state =
+                        filter.copyWith(searchQuery: value);
                   },
                 ),
               ),

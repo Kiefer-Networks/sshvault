@@ -107,7 +107,7 @@ class _ColorSwatchPreview extends StatelessWidget {
       height: 32,
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(4),
       child: Column(

@@ -88,7 +88,9 @@ class ServerListTile extends ConsumerWidget {
               Icon(
                 Icons.shield_outlined,
                 size: 16,
-                color: vpnActive ? Colors.green : theme.colorScheme.error,
+                color: vpnActive
+                    ? theme.colorScheme.tertiary
+                    : theme.colorScheme.error,
               ),
             ],
             const SizedBox(width: 8),
@@ -152,11 +154,11 @@ class _ConnectionStatusBadge extends ConsumerWidget {
 
     switch (connectionStatus) {
       case SshConnectionStatus.connected:
-        color = Colors.green;
+        color = colorScheme.tertiary;
         glow = true;
       case SshConnectionStatus.connecting:
       case SshConnectionStatus.authenticating:
-        color = Colors.orange;
+        color = colorScheme.secondary;
         glow = true;
       case SshConnectionStatus.error:
         color = colorScheme.error;
@@ -168,10 +170,10 @@ class _ConnectionStatusBadge extends ConsumerWidget {
         // No active session — show TCP reachability
         final reachability = ref.watch(serverReachabilityProvider(server));
         return reachability.when(
-          loading: () => _badge(Colors.orange, glow: true),
+          loading: () => _badge(colorScheme.secondary, glow: true),
           error: (_, _) => _badge(colorScheme.error, glow: false),
           data: (reachable) => reachable
-              ? _badge(Colors.green, glow: true)
+              ? _badge(colorScheme.tertiary, glow: true)
               : _badge(colorScheme.error, glow: false),
         );
     }

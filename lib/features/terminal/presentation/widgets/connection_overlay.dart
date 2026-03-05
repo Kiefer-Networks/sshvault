@@ -75,7 +75,7 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
       SshConnectionStatus.connecting ||
       SshConnectionStatus.authenticating => Center(
         child: Card(
-          elevation: 4,
+          elevation: 3,
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(

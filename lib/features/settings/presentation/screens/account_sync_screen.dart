@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shellvault/core/constants/app_colors.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/utils/date_formatter.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
@@ -242,7 +243,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                       ref.watch(billingStatusProvider).value?.active ?? false;
                   return SettingsSwitchTile(
                     icon: Icons.sync,
-                    iconColor: Colors.lightBlue,
+                    iconColor: AppColors.iconLightBlue,
                     title: l10n.syncAutoSync,
                     subtitleText: l10n.syncAutoSyncDescription,
                     value: billingActive && (settings?.autoSync ?? true),
@@ -262,7 +263,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                     final interval = settings?.autoSyncIntervalMinutes ?? 5;
                     return SettingsTile(
                       icon: Icons.timer_outlined,
-                      iconColor: Colors.teal,
+                      iconColor: AppColors.iconTeal,
                       title: l10n.autoSyncInterval,
                       subtitleText: l10n.autoSyncIntervalValue(interval),
                       onTap: billingActive
@@ -275,7 +276,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                 icon: isSyncing
                     ? Icons.hourglass_top
                     : Icons.cloud_sync_outlined,
-                iconColor: Colors.blue,
+                iconColor: AppColors.iconBlue,
                 title: l10n.syncNow,
                 subtitle: _buildSyncStatus(l10n, syncState),
                 onTap: isSyncing
@@ -284,7 +285,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               ),
               SettingsTile(
                 icon: Icons.history,
-                iconColor: Colors.grey,
+                iconColor: AppColors.iconGrey,
                 title: l10n.syncVaultVersion,
                 subtitleText: 'v${settings?.localVaultVersion ?? 0}',
               ),
@@ -306,7 +307,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               children: [
                 SettingsTile(
                   icon: Icons.history_outlined,
-                  iconColor: Colors.blueGrey,
+                  iconColor: AppColors.iconBlueGrey,
                   title: l10n.auditLogTitle,
                   trailing: Icon(
                     Icons.chevron_right,
@@ -316,19 +317,19 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                 ),
                 SettingsTile(
                   icon: Icons.lock_outlined,
-                  iconColor: Colors.indigo,
+                  iconColor: AppColors.iconIndigo,
                   title: l10n.accountChangePassword,
                   onTap: () => _changePassword(l10n),
                 ),
                 SettingsTile(
                   icon: Icons.vpn_key_outlined,
-                  iconColor: Colors.teal,
+                  iconColor: AppColors.iconTeal,
                   title: l10n.changeEncryptionPassword,
                   onTap: () => _changeEncryptionPassword(l10n),
                 ),
                 SettingsTile(
                   icon: Icons.devices_other,
-                  iconColor: Colors.orange,
+                  iconColor: AppColors.iconOrange,
                   title: l10n.logoutAllDevices,
                   onTap: () => _logoutAllDevices(l10n),
                 ),
@@ -360,7 +361,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             children: [
               SettingsTile(
                 icon: Icons.cloud_outlined,
-                iconColor: Colors.blueGrey,
+                iconColor: AppColors.iconBlueGrey,
                 title: l10n.settingsSyncServerUrl,
                 subtitleText: settings?.serverUrl.isEmpty ?? true
                     ? l10n.settingsSyncDefaultServer
@@ -398,12 +399,12 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         FilledButton.icon(
           onPressed: _couponLoading ? null : () => _redeemCoupon(l10n),
           icon: _couponLoading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 18,
                   height: 18,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 )
               : const Icon(Icons.redeem),
@@ -666,12 +667,12 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                       child: FilledButton.icon(
                         onPressed: isWorking ? null : _checkout,
                         icon: isWorking
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 18,
                                 height: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.onPrimary,
                                 ),
                               )
                             : const Icon(Icons.payment),

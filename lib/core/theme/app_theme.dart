@@ -12,23 +12,23 @@ abstract final class AppTheme {
       brightness: Brightness.light,
     );
 
+    final defaultTextTheme = ThemeData.light().textTheme;
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: colorScheme,
-      textTheme: const TextTheme(
-        bodyLarge: TextStyle(fontSize: 14),
-        bodyMedium: TextStyle(fontSize: 12),
-        bodySmall: TextStyle(fontSize: 11),
+      textTheme: defaultTextTheme.copyWith(
+        bodyLarge: defaultTextTheme.bodyLarge?.copyWith(fontSize: 14),
+        bodyMedium: defaultTextTheme.bodyMedium?.copyWith(fontSize: 12),
+        bodySmall: defaultTextTheme.bodySmall?.copyWith(fontSize: 11),
       ),
       appBarTheme: AppBarTheme(
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: TextStyle(
+        titleTextStyle: defaultTextTheme.titleLarge?.copyWith(
           color: colorScheme.onSurface,
-          fontSize: 22,
-          fontWeight: FontWeight.w400,
         ),
       ),
       cardTheme: CardThemeData(
@@ -48,7 +48,7 @@ abstract final class AppTheme {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.primaryContainer,
         foregroundColor: colorScheme.onPrimaryContainer,
-        elevation: 6,
+        elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       searchBarTheme: SearchBarThemeData(
@@ -87,7 +87,7 @@ abstract final class AppTheme {
         ),
       ),
       dialogTheme: DialogThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -105,14 +105,12 @@ abstract final class AppTheme {
         unselectedIconTheme: IconThemeData(
           color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
         ),
-        selectedLabelTextStyle: TextStyle(
+        selectedLabelTextStyle: defaultTextTheme.labelMedium?.copyWith(
           color: colorScheme.primary,
           fontWeight: FontWeight.w600,
-          fontSize: 13,
         ),
-        unselectedLabelTextStyle: TextStyle(
+        unselectedLabelTextStyle: defaultTextTheme.labelMedium?.copyWith(
           color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
-          fontSize: 13,
         ),
         indicatorColor: colorScheme.primary.withAlpha(AppConstants.alpha26),
         indicatorShape: const StadiumBorder(),
@@ -124,7 +122,6 @@ abstract final class AppTheme {
             bottomRight: Radius.circular(16),
           ),
         ),
-        surfaceTintColor: Color(0x00000000),
       ),
       cupertinoOverrideTheme: CupertinoThemeData(
         primaryColor: colorScheme.primary,
@@ -148,25 +145,25 @@ abstract final class AppTheme {
       brightness: Brightness.dark,
     );
 
+    final defaultTextTheme = ThemeData.dark().textTheme;
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colorScheme.surface,
-      textTheme: const TextTheme(
-        bodyLarge: TextStyle(fontSize: 14),
-        bodyMedium: TextStyle(fontSize: 12),
-        bodySmall: TextStyle(fontSize: 11),
+      textTheme: defaultTextTheme.copyWith(
+        bodyLarge: defaultTextTheme.bodyLarge?.copyWith(fontSize: 14),
+        bodyMedium: defaultTextTheme.bodyMedium?.copyWith(fontSize: 12),
+        bodySmall: defaultTextTheme.bodySmall?.copyWith(fontSize: 11),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: TextStyle(
+        titleTextStyle: defaultTextTheme.titleLarge?.copyWith(
           color: colorScheme.onSurface,
-          fontSize: 22,
-          fontWeight: FontWeight.w400,
         ),
       ),
       listTileTheme: ListTileThemeData(
@@ -179,13 +176,15 @@ abstract final class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.white.withAlpha(AppConstants.alpha13)),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withAlpha(AppConstants.alpha77),
+          ),
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.primaryContainer,
         foregroundColor: colorScheme.onPrimaryContainer,
-        elevation: 6,
+        elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       searchBarTheme: SearchBarThemeData(
@@ -199,17 +198,19 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white.withAlpha(AppConstants.alpha8),
+        fillColor: colorScheme.surfaceContainerHighest.withAlpha(
+          AppConstants.alpha77,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: Colors.white.withAlpha(AppConstants.alpha26),
+            color: colorScheme.outline.withAlpha(AppConstants.alpha77),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: Colors.white.withAlpha(AppConstants.alpha26),
+            color: colorScheme.outline.withAlpha(AppConstants.alpha77),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -223,14 +224,14 @@ abstract final class AppTheme {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: colorScheme.surfaceContainerHigh,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: Colors.white.withAlpha(AppConstants.alpha13),
+        backgroundColor: colorScheme.surfaceContainerHighest,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       dividerTheme: DividerThemeData(
-        color: Colors.white.withAlpha(AppConstants.alpha13),
+        color: colorScheme.outlineVariant.withAlpha(AppConstants.alpha77),
         thickness: 1,
       ),
       snackBarTheme: SnackBarThemeData(
@@ -243,14 +244,12 @@ abstract final class AppTheme {
         unselectedIconTheme: IconThemeData(
           color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
         ),
-        selectedLabelTextStyle: TextStyle(
+        selectedLabelTextStyle: defaultTextTheme.labelMedium?.copyWith(
           color: colorScheme.primary,
           fontWeight: FontWeight.w600,
-          fontSize: 13,
         ),
-        unselectedLabelTextStyle: TextStyle(
+        unselectedLabelTextStyle: defaultTextTheme.labelMedium?.copyWith(
           color: colorScheme.onSurface.withAlpha(AppConstants.alpha179),
-          fontSize: 13,
         ),
         indicatorColor: colorScheme.primary.withAlpha(AppConstants.alpha26),
         indicatorShape: const StadiumBorder(),
@@ -263,7 +262,6 @@ abstract final class AppTheme {
             bottomRight: Radius.circular(16),
           ),
         ),
-        surfaceTintColor: const Color(0x00000000),
       ),
       cupertinoOverrideTheme: CupertinoThemeData(
         brightness: Brightness.dark,

@@ -68,7 +68,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                           color: theme.colorScheme.primary.withAlpha(
                             AppConstants.alpha38,
                           ),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
                           Icons.code,
@@ -88,21 +88,11 @@ class SnippetDetailScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.secondaryContainer,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                snippet.language,
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: theme.colorScheme.onSecondaryContainer,
-                                ),
-                              ),
+                            Chip(
+                              label: Text(snippet.language),
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                             ),
                           ],
                         ),

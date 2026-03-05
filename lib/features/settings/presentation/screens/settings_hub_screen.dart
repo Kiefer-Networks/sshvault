@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
+import 'package:shellvault/core/constants/app_colors.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
@@ -41,7 +42,7 @@ class SettingsHubScreen extends ConsumerWidget {
               ),
               SettingsCategoryTile(
                 icon: Icons.terminal,
-                iconColor: Colors.orange,
+                iconColor: AppColors.iconOrange,
                 title: l10n.settingsSectionSshDefaults,
                 subtitle: l10n.settingsSshSubtitle,
                 onTap: () => context.push('/settings/ssh'),
@@ -55,21 +56,21 @@ class SettingsHubScreen extends ConsumerWidget {
             children: [
               SettingsCategoryTile(
                 icon: Icons.security,
-                iconColor: Colors.red,
+                iconColor: AppColors.iconRed,
                 title: l10n.settingsSectionSecurity,
                 subtitle: l10n.settingsSecuritySubtitle,
                 onTap: () => context.push('/settings/security'),
               ),
               SettingsCategoryTile(
                 icon: Icons.dns_outlined,
-                iconColor: Colors.cyan,
+                iconColor: AppColors.iconCyan,
                 title: l10n.settingsSectionNetwork,
                 subtitle: l10n.settingsNetworkSubtitle,
                 onTap: () => context.push('/settings/network'),
               ),
               SettingsCategoryTile(
                 icon: Icons.import_export,
-                iconColor: Colors.deepOrange,
+                iconColor: AppColors.iconDeepOrange,
                 title: l10n.settingsSectionExport,
                 subtitle: l10n.settingsExportBackupSubtitle,
                 onTap: () => context.push('/settings/export'),

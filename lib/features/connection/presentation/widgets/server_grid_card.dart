@@ -5,6 +5,7 @@ import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/widgets/settings/section_card.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/presentation/widgets/status_badge.dart';
+import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
 
 class ServerGridCard extends StatelessWidget {
   final ServerEntity server;
@@ -34,7 +35,7 @@ class ServerGridCard extends StatelessWidget {
         onLongPress: onLongPress,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -47,7 +48,7 @@ class ServerGridCard extends StatelessWidget {
                       color: Color(
                         server.color,
                       ).withAlpha(AppConstants.alpha26),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       IconConstants.getIcon(server.iconName),
@@ -87,19 +88,11 @@ class ServerGridCard extends StatelessWidget {
                   spacing: 4,
                   runSpacing: 2,
                   children: server.tags.take(2).map((tag) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Color(tag.color).withAlpha(AppConstants.alpha26),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        tag.name,
-                        style: TextStyle(fontSize: 10, color: Color(tag.color)),
-                      ),
+                    return TagChip(
+                      tag: tag,
+                      visualDensity: VisualDensity.compact,
+                      materialTapTargetSize:
+                          MaterialTapTargetSize.shrinkWrap,
                     );
                   }).toList(),
                 ),

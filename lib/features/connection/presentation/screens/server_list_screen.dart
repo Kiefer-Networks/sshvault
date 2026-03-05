@@ -288,8 +288,8 @@ class ServerListScreen extends ConsumerWidget {
     return GridView.builder(
       key: const ValueKey('grid'),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 300,
         childAspectRatio: 0.95,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
@@ -401,61 +401,41 @@ class _FolderSectionHeader extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(left: group.depth * 24.0),
-      child: Material(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
-          onTap: onToggle,
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              children: [
-                Icon(
-                  isUncategorized
-                      ? Icons.folder_off_outlined
-                      : IconConstants.getIcon(folder.iconName),
-                  color: folderColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    name,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: folderColor.withAlpha(30),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${group.servers.length}',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: folderColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                if (onToggle != null) ...[
-                  const SizedBox(width: 4),
-                  Icon(
-                    expanded ? Icons.expand_less : Icons.expand_more,
-                    size: 20,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ],
-              ],
-            ),
+      child: ListTile(
+        onTap: onToggle,
+        tileColor: theme.colorScheme.surfaceContainerHighest,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        leading: Icon(
+          isUncategorized
+              ? Icons.folder_off_outlined
+              : IconConstants.getIcon(folder.iconName),
+          color: folderColor,
+          size: 20,
+        ),
+        title: Text(
+          name,
+          style: theme.textTheme.titleSmall?.copyWith(
+            color: theme.colorScheme.onSurface,
           ),
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Badge(
+              label: Text('${group.servers.length}'),
+              backgroundColor: folderColor.withAlpha(AppConstants.alpha30),
+              textColor: folderColor,
+            ),
+            if (onToggle != null) ...[
+              const SizedBox(width: 4),
+              Icon(
+                expanded ? Icons.expand_less : Icons.expand_more,
+                size: 20,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ],
         ),
       ),
     );

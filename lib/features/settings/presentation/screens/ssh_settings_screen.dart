@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:shellvault/core/constants/app_colors.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -27,7 +28,7 @@ class SshSettingsScreen extends ConsumerWidget {
               children: [
                 SettingsTile(
                   icon: Icons.numbers,
-                  iconColor: Colors.orange,
+                  iconColor: AppColors.iconOrange,
                   title: l10n.settingsDefaultPort,
                   subtitleText: settings.defaultSshPort.toString(),
                   onTap: () =>
@@ -35,7 +36,7 @@ class SshSettingsScreen extends ConsumerWidget {
                 ),
                 SettingsTile(
                   icon: Icons.person_outline,
-                  iconColor: Colors.blue,
+                  iconColor: AppColors.iconBlue,
                   title: l10n.settingsDefaultUsername,
                   subtitleText: settings.defaultUsername,
                   onTap: () => _editUsername(
@@ -47,7 +48,7 @@ class SshSettingsScreen extends ConsumerWidget {
                 ),
                 SettingsTile(
                   icon: Icons.key_outlined,
-                  iconColor: Colors.green,
+                  iconColor: AppColors.iconGreen,
                   title: l10n.settingsDefaultAuthMethod,
                   subtitleText: settings.defaultAuthMethod == 'key'
                       ? l10n.settingsAuthKey
@@ -77,7 +78,7 @@ class SshSettingsScreen extends ConsumerWidget {
                 ),
                 SettingsTile(
                   icon: Icons.timer_outlined,
-                  iconColor: Colors.red,
+                  iconColor: AppColors.iconRed,
                   title: l10n.settingsConnectionTimeout,
                   subtitleText: l10n.settingsConnectionTimeoutValue(
                     settings.connectionTimeoutSecs,
@@ -91,7 +92,7 @@ class SshSettingsScreen extends ConsumerWidget {
                 ),
                 SettingsTile(
                   icon: Icons.favorite_border,
-                  iconColor: Colors.pink,
+                  iconColor: AppColors.iconPink,
                   title: l10n.settingsKeepaliveInterval,
                   subtitleText: l10n.settingsKeepaliveIntervalValue(
                     settings.keepaliveIntervalSecs,
@@ -113,7 +114,7 @@ class SshSettingsScreen extends ConsumerWidget {
               children: [
                 SettingsSwitchTile(
                   icon: Icons.compress,
-                  iconColor: Colors.teal,
+                  iconColor: AppColors.iconTeal,
                   title: l10n.settingsCompression,
                   subtitleText: l10n.settingsCompressionDescription,
                   value: settings.sshCompression,
@@ -123,7 +124,7 @@ class SshSettingsScreen extends ConsumerWidget {
                 ),
                 SettingsTile(
                   icon: Icons.terminal,
-                  iconColor: Colors.deepPurple,
+                  iconColor: AppColors.iconDeepPurple,
                   title: l10n.settingsTerminalType,
                   subtitleText: settings.defaultTerminalType,
                   onTap: () async {

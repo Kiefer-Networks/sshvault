@@ -501,25 +501,13 @@ class SftpEntryTile extends ConsumerWidget {
 
   void _confirmDelete(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.sftpDelete),
-        content: Text(l10n.sftpConfirmDeleteSingle(entry.name)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: Text(l10n.sftpDelete),
-          ),
-        ],
-      ),
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.sftpDelete,
+      message: l10n.sftpConfirmDeleteSingle(entry.name),
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.sftpDelete,
+      isDestructive: true,
     );
     if (confirmed == true) {
       ref.read(sftpPaneProvider(side).notifier).toggleSelection(entry.path);

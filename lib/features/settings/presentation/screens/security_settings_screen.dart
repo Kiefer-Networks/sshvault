@@ -5,6 +5,7 @@ import 'package:shellvault/core/services/biometric_provider.dart';
 import 'package:shellvault/core/services/screen_protection_service.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/pin_dialog.dart';
+import 'package:shellvault/core/constants/app_colors.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -30,7 +31,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
               children: [
                 SettingsTile(
                   icon: Icons.lock_clock_outlined,
-                  iconColor: Colors.red,
+                  iconColor: AppColors.iconRed,
                   title: l10n.settingsAutoLock,
                   subtitleText: settings.autoLockMinutes == 0
                       ? l10n.settingsAutoLockDisabled
@@ -82,7 +83,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
                 if (ScreenProtectionService.isSupported)
                   SettingsSwitchTile(
                     icon: Icons.screenshot_monitor_outlined,
-                    iconColor: Colors.amber.shade800,
+                    iconColor: AppColors.iconAmber,
                     title: l10n.settingsPreventScreenshots,
                     subtitleText: l10n.settingsPreventScreenshotsDescription,
                     value: settings.preventScreenshots,
@@ -94,7 +95,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   ),
                 SettingsTile(
                   icon: Icons.content_paste_off_outlined,
-                  iconColor: Colors.purple,
+                  iconColor: AppColors.iconPurple,
                   title: l10n.settingsClipboardAutoClear,
                   subtitleText: settings.clipboardAutoClearSecs == 0
                       ? l10n.settingsClipboardAutoClearOff
@@ -138,7 +139,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
                 ),
                 SettingsTile(
                   icon: Icons.timer_off_outlined,
-                  iconColor: Colors.orange,
+                  iconColor: AppColors.iconOrange,
                   title: l10n.settingsSessionTimeout,
                   subtitleText: settings.sessionTimeoutMins == 0
                       ? l10n.settingsSessionTimeoutOff
@@ -184,7 +185,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
               children: [
                 SettingsTile(
                   icon: Icons.autorenew,
-                  iconColor: Colors.cyan,
+                  iconColor: AppColors.iconCyan,
                   title: l10n.settingsKeyRotationReminder,
                   subtitleText: settings.keyRotationReminderDays == 0
                       ? l10n.settingsKeyRotationOff
@@ -232,7 +233,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
               children: [
                 SettingsTile(
                   icon: Icons.warning_amber_outlined,
-                  iconColor: Colors.grey,
+                  iconColor: AppColors.iconGrey,
                   title: l10n.settingsFailedAttempts,
                   subtitleText: settings.failedPinAttempts.toString(),
                 ),
@@ -271,7 +272,7 @@ class _BiometricTile extends ConsumerWidget {
 
     return SettingsSwitchTile(
       icon: Icons.fingerprint,
-      iconColor: Colors.green,
+      iconColor: AppColors.iconGreen,
       title: l10n.settingsBiometricUnlock,
       subtitleText: subtitleText,
       value: settings.biometricUnlock,
@@ -310,7 +311,7 @@ class _PinTile extends ConsumerWidget {
 
     return SettingsTile(
       icon: Icons.pin,
-      iconColor: Colors.indigo,
+      iconColor: AppColors.iconIndigo,
       title: l10n.settingsPinCode,
       subtitleText: settings.hasPin
           ? l10n.settingsPinIsSet
@@ -367,7 +368,7 @@ class _DuressPinTile extends ConsumerWidget {
 
     return SettingsTile(
       icon: Icons.dangerous_outlined,
-      iconColor: Colors.red.shade800,
+      iconColor: AppColors.iconRed,
       title: l10n.settingsDuressPin,
       subtitleText: settings.hasDuressPin
           ? l10n.settingsDuressPinSet

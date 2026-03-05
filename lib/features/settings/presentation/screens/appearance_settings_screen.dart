@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/constants/app_colors.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
@@ -95,7 +96,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                     final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
                     return SettingsTile(
                       icon: Icons.color_lens_outlined,
-                      iconColor: Colors.deepPurple,
+                      iconColor: AppColors.iconDeepPurple,
                       title: l10n.settingsTerminalTheme,
                       subtitleText: themeKeyAsync.when(
                         data: (key) => key.displayName,
@@ -112,7 +113,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                     final fontSize = fontSizeAsync.value ?? 14.0;
                     return SettingsTile(
                       icon: Icons.text_fields_outlined,
-                      iconColor: Colors.teal,
+                      iconColor: AppColors.iconTeal,
                       title: l10n.settingsFontSize,
                       subtitleText: l10n.settingsFontSizeValue(
                         fontSize.toInt(),

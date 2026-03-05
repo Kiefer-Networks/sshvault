@@ -85,7 +85,7 @@ class _FloatingToolbarContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       shape: const StadiumBorder(),
-      elevation: 2,
+      elevation: 1,
       color: color,
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -352,25 +352,13 @@ class _SelectionToolbarContent extends ConsumerWidget {
 
   void _confirmDeleteSelected(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.sftpDelete),
-        content: Text(l10n.sftpConfirmDelete(selectedCount)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: Text(l10n.sftpDelete),
-          ),
-        ],
-      ),
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.sftpDelete,
+      message: l10n.sftpConfirmDelete(selectedCount),
+      cancelLabel: l10n.cancel,
+      confirmLabel: l10n.sftpDelete,
+      isDestructive: true,
     );
     if (confirmed == true) {
       ref.read(sftpPaneProvider(side).notifier).deleteSelected();

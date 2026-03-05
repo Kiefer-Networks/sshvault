@@ -14,6 +14,7 @@ Future<bool?> showAdaptiveConfirmDialog(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    showDragHandle: true,
     builder: (ctx) {
       final theme = Theme.of(ctx);
       return Padding(
@@ -21,7 +22,6 @@ Future<bool?> showAdaptiveConfirmDialog(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const _DragHandle(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(title, style: theme.textTheme.titleLarge),
@@ -80,6 +80,7 @@ Future<T?> showAdaptiveFormDialog<T>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    showDragHandle: true,
     builder: (ctx) {
       final theme = Theme.of(ctx);
       return Padding(
@@ -87,7 +88,6 @@ Future<T?> showAdaptiveFormDialog<T>(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const _DragHandle(),
             if (icon != null) ...[icon, const SizedBox(height: 8)],
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -113,21 +113,4 @@ Future<T?> showAdaptiveFormDialog<T>(
       );
     },
   );
-}
-
-class _DragHandle extends StatelessWidget {
-  const _DragHandle();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 32,
-      height: 4,
-      margin: const EdgeInsets.symmetric(vertical: 12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(102),
-        borderRadius: BorderRadius.circular(2),
-      ),
-    );
-  }
 }

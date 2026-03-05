@@ -15,6 +15,7 @@ class ColorPickerField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,7 +43,10 @@ class ColorPickerField extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: isSelected
-                        ? Border.all(color: Colors.white, width: 2.5)
+                        ? Border.all(
+                            color: colorScheme.onPrimary,
+                            width: 2.5,
+                          )
                         : null,
                     boxShadow: isSelected
                         ? [
@@ -55,7 +59,11 @@ class ColorPickerField extends StatelessWidget {
                         : null,
                   ),
                   child: isSelected
-                      ? const Icon(Icons.check, size: 18, color: Colors.white)
+                      ? Icon(
+                          Icons.check,
+                          size: 18,
+                          color: colorScheme.onPrimary,
+                        )
                       : null,
                 ),
               ),

@@ -19,7 +19,7 @@ class SnippetListScreen extends ConsumerStatefulWidget {
 }
 
 class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
-  final _searchController = TextEditingController();
+  final _searchController = SearchController();
 
   @override
   void dispose() {
@@ -49,24 +49,21 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
           // Search bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-            child: TextField(
+            child: SearchBar(
               controller: _searchController,
-              decoration: InputDecoration(
-                hintText: l10n.snippetSearchHint,
-                prefixIcon: const Icon(Icons.search, size: 20),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, size: 20),
-                        onPressed: () {
-                          _searchController.clear();
-                          ref.read(snippetFilterProvider.notifier).state =
-                              filter.copyWith(clearSearch: true);
-                        },
-                      )
-                    : null,
-                isDense: true,
-              ),
-              keyboardType: TextInputType.text,
+              hintText: l10n.snippetSearchHint,
+              leading: const Icon(Icons.search, size: 20),
+              trailing: [
+                if (_searchController.text.isNotEmpty)
+                  IconButton(
+                    icon: const Icon(Icons.clear, size: 20),
+                    onPressed: () {
+                      _searchController.clear();
+                      ref.read(snippetFilterProvider.notifier).state =
+                          filter.copyWith(clearSearch: true);
+                    },
+                  ),
+              ],
               onChanged: (value) {
                 ref.read(snippetFilterProvider.notifier).state = value.isEmpty
                     ? filter.copyWith(clearSearch: true)

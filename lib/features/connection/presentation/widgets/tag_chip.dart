@@ -7,6 +7,8 @@ class TagChip extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
   final bool selected;
+  final VisualDensity? visualDensity;
+  final MaterialTapTargetSize? materialTapTargetSize;
 
   const TagChip({
     super.key,
@@ -14,6 +16,8 @@ class TagChip extends StatelessWidget {
     this.onTap,
     this.onDelete,
     this.selected = false,
+    this.visualDensity,
+    this.materialTapTargetSize,
   });
 
   @override
@@ -27,6 +31,8 @@ class TagChip extends StatelessWidget {
       selectedColor: Color(tag.color).withAlpha(AppConstants.alpha51),
       side: BorderSide(color: Color(tag.color).withAlpha(AppConstants.alpha77)),
       labelStyle: TextStyle(color: Color(tag.color), fontSize: 12),
+      visualDensity: visualDensity,
+      materialTapTargetSize: materialTapTargetSize,
     );
   }
 }
