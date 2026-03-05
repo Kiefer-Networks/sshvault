@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/services/package_info_provider.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
-class AboutScreen extends StatelessWidget {
+class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final packageInfo = ref.watch(packageInfoProvider);
+    final version = packageInfo.whenOrNull(
+      data: (info) => 'v${info.version} (${info.buildNumber})',
+    ) ?? 'v${AppConstants.appVersion}';
 
     return AdaptiveScaffold(
       title: l10n.settingsSectionAbout,
@@ -42,7 +48,7 @@ class AboutScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'v${AppConstants.appVersion}',
+                  version,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -92,7 +98,7 @@ class AboutScreen extends StatelessWidget {
                 onTap: () => showLicensePage(
                   context: context,
                   applicationName: AppConstants.appName,
-                  applicationVersion: 'v${AppConstants.appVersion}',
+                  applicationVersion: version,
                   applicationIcon: Padding(
                     padding: const EdgeInsets.all(8),
                     child: Image.asset(

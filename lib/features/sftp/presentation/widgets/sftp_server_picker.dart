@@ -20,10 +20,12 @@ class SftpServerPicker extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    final currentLabel = switch (paneState.source) {
-      SftpPaneSourceLocal() => l10n.sftpLocalDevice,
-      SftpPaneSourceRemote(:final serverName) => serverName,
-    };
+    final currentLabel = paneState.needsHostSelection
+        ? l10n.sftpSelectServer
+        : switch (paneState.source) {
+            SftpPaneSourceLocal() => l10n.sftpLocalDevice,
+            SftpPaneSourceRemote(:final serverName) => serverName,
+          };
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

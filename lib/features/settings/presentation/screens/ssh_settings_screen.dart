@@ -49,27 +49,31 @@ class SshSettingsScreen extends ConsumerWidget {
                   icon: Icons.key_outlined,
                   iconColor: Colors.green,
                   title: l10n.settingsDefaultAuthMethod,
-                  trailing: DropdownMenu<String>(
-                    initialSelection: settings.defaultAuthMethod,
-                    requestFocusOnTap: false,
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(
-                        value: 'password',
-                        label: l10n.settingsAuthPassword,
-                      ),
-                      DropdownMenuEntry(
-                        value: 'key',
-                        label: l10n.settingsAuthKey,
-                      ),
-                    ],
-                    onSelected: (v) {
-                      if (v != null) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .setDefaultAuthMethod(v);
-                      }
-                    },
-                  ),
+                  subtitleText: settings.defaultAuthMethod == 'key'
+                      ? l10n.settingsAuthKey
+                      : l10n.settingsAuthPassword,
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<String>(
+                      context: context,
+                      title: l10n.settingsDefaultAuthMethod,
+                      currentValue: settings.defaultAuthMethod,
+                      options: [
+                        SelectionOption(
+                          value: 'password',
+                          label: l10n.settingsAuthPassword,
+                        ),
+                        SelectionOption(
+                          value: 'key',
+                          label: l10n.settingsAuthKey,
+                        ),
+                      ],
+                    );
+                    if (v != null) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setDefaultAuthMethod(v);
+                    }
+                  },
                 ),
                 SettingsTile(
                   icon: Icons.timer_outlined,
@@ -121,25 +125,27 @@ class SshSettingsScreen extends ConsumerWidget {
                   icon: Icons.terminal,
                   iconColor: Colors.deepPurple,
                   title: l10n.settingsTerminalType,
-                  trailing: DropdownMenu<String>(
-                    initialSelection: settings.defaultTerminalType,
-                    requestFocusOnTap: false,
-                    dropdownMenuEntries: const [
-                      DropdownMenuEntry(
-                        value: 'xterm-256color',
-                        label: 'xterm-256color',
-                      ),
-                      DropdownMenuEntry(value: 'xterm', label: 'xterm'),
-                      DropdownMenuEntry(value: 'vt100', label: 'vt100'),
-                    ],
-                    onSelected: (v) {
-                      if (v != null) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .setDefaultTerminalType(v);
-                      }
-                    },
-                  ),
+                  subtitleText: settings.defaultTerminalType,
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<String>(
+                      context: context,
+                      title: l10n.settingsTerminalType,
+                      currentValue: settings.defaultTerminalType,
+                      options: const [
+                        SelectionOption(
+                          value: 'xterm-256color',
+                          label: 'xterm-256color',
+                        ),
+                        SelectionOption(value: 'xterm', label: 'xterm'),
+                        SelectionOption(value: 'vt100', label: 'vt100'),
+                      ],
+                    );
+                    if (v != null) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setDefaultTerminalType(v);
+                    }
+                  },
                 ),
               ],
             ),

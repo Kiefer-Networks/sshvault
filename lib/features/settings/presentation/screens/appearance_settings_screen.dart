@@ -51,35 +51,36 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                   iconColor: Theme.of(context).colorScheme.tertiary,
                   title: l10n.settingsLanguage,
                   subtitleText: _localeLabel(l10n, settings.locale),
-                  trailing: DropdownMenu<String>(
-                    initialSelection: settings.locale.isEmpty
-                        ? ''
-                        : settings.locale,
-                    requestFocusOnTap: false,
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(
-                        value: '',
-                        label: l10n.settingsLanguageSystem,
-                      ),
-                      DropdownMenuEntry(
-                        value: 'en',
-                        label: l10n.settingsLanguageEn,
-                      ),
-                      DropdownMenuEntry(
-                        value: 'de',
-                        label: l10n.settingsLanguageDe,
-                      ),
-                      DropdownMenuEntry(
-                        value: 'es',
-                        label: l10n.settingsLanguageEs,
-                      ),
-                    ],
-                    onSelected: (v) {
-                      if (v != null) {
-                        ref.read(settingsProvider.notifier).setLocale(v);
-                      }
-                    },
-                  ),
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<String>(
+                      context: context,
+                      title: l10n.settingsLanguage,
+                      currentValue: settings.locale.isEmpty
+                          ? ''
+                          : settings.locale,
+                      options: [
+                        SelectionOption(
+                          value: '',
+                          label: l10n.settingsLanguageSystem,
+                        ),
+                        SelectionOption(
+                          value: 'en',
+                          label: l10n.settingsLanguageEn,
+                        ),
+                        SelectionOption(
+                          value: 'de',
+                          label: l10n.settingsLanguageDe,
+                        ),
+                        SelectionOption(
+                          value: 'es',
+                          label: l10n.settingsLanguageEs,
+                        ),
+                      ],
+                    );
+                    if (v != null) {
+                      ref.read(settingsProvider.notifier).setLocale(v);
+                    }
+                  },
                 ),
               ],
             ),

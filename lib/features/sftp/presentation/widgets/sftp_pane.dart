@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/sftp/data/services/archive_service.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
@@ -32,9 +31,8 @@ class SftpPane extends ConsumerWidget {
 
     Widget fileList;
 
-    // iOS: show host selector instead of local file browser
     if (paneState.needsHostSelection) {
-      fileList = _buildHostSelector(context, ref, l10n);
+      fileList = const SizedBox.shrink();
     } else if (paneState.isLoading) {
       fileList = const Center(child: CircularProgressIndicator.adaptive());
     } else if (paneState.error != null) {
@@ -104,21 +102,14 @@ class SftpPane extends ConsumerWidget {
       fileList = _buildDragTarget(context, ref, fileList);
     }
 
-    // When iOS needs host selection, skip server picker/breadcrumb/toolbar
-    if (paneState.needsHostSelection) {
-      return Column(
-        children: [
-          Expanded(child: fileList),
-        ],
-      );
-    }
-
     return Column(
       children: [
         SftpServerPicker(side: side),
         const Divider(height: 1),
-        SftpBreadcrumb(side: side),
-        const Divider(height: 1),
+        if (!paneState.needsHostSelection) ...[
+          SftpBreadcrumb(side: side),
+          const Divider(height: 1),
+        ],
         Expanded(
           child: Stack(
             children: [
@@ -374,59 +365,6 @@ class SftpPane extends ConsumerWidget {
         final statResult = await sftpService.stat(clientResult.value, destPath);
         return statResult.isSuccess;
     }
-  }
-
-  Widget _buildHostSelector(
-    BuildContext context,
-    WidgetRef ref,
-    AppLocalizations l10n,
-  ) {
-    final serversAsync = ref.watch(serverListProvider);
-    return serversAsync.when(
-      data: (servers) {
-        if (servers.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.dns_outlined,
-                  size: 48,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.sftpSelectServer,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ],
-            ),
-          );
-        }
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: servers.length,
-          itemBuilder: (context, index) {
-            final server = servers[index];
-            return ListTile(
-              leading: const Icon(Icons.dns),
-              title: Text(server.name),
-              subtitle: Text('${server.hostname}:${server.port}'),
-              onTap: () {
-                ref
-                    .read(sftpPaneProvider(side).notifier)
-                    .setSource(SftpPaneSource.remote(
-                      serverId: server.id,
-                      serverName: server.name,
-                    ));
-              },
-            );
-          },
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
-      error: (e, _) => Center(child: Text(l10n.error(e.toString()))),
-    );
   }
 
   Widget _buildDragTarget(BuildContext context, WidgetRef ref, Widget child) {

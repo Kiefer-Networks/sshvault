@@ -69,6 +69,7 @@ dependencies:
   # SSH & Terminal
   dartssh2: ^2.9.0
   xterm: ^4.0.0
+  package_info_plus: ^9.0.0
 
 dev_dependencies:
   flutter_test:

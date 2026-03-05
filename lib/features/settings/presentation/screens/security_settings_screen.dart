@@ -35,39 +35,40 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   subtitleText: settings.autoLockMinutes == 0
                       ? l10n.settingsAutoLockDisabled
                       : l10n.settingsAutoLockMinutes(settings.autoLockMinutes),
-                  trailing: DropdownMenu<int>(
-                    initialSelection: settings.autoLockMinutes,
-                    requestFocusOnTap: false,
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(
-                        value: 0,
-                        label: l10n.settingsAutoLockOff,
-                      ),
-                      DropdownMenuEntry(
-                        value: 1,
-                        label: l10n.settingsAutoLock1Min,
-                      ),
-                      DropdownMenuEntry(
-                        value: 5,
-                        label: l10n.settingsAutoLock5Min,
-                      ),
-                      DropdownMenuEntry(
-                        value: 15,
-                        label: l10n.settingsAutoLock15Min,
-                      ),
-                      DropdownMenuEntry(
-                        value: 30,
-                        label: l10n.settingsAutoLock30Min,
-                      ),
-                    ],
-                    onSelected: (v) {
-                      if (v != null) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .setAutoLockMinutes(v);
-                      }
-                    },
-                  ),
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<int>(
+                      context: context,
+                      title: l10n.settingsAutoLock,
+                      currentValue: settings.autoLockMinutes,
+                      options: [
+                        SelectionOption(
+                          value: 0,
+                          label: l10n.settingsAutoLockOff,
+                        ),
+                        SelectionOption(
+                          value: 1,
+                          label: l10n.settingsAutoLock1Min,
+                        ),
+                        SelectionOption(
+                          value: 5,
+                          label: l10n.settingsAutoLock5Min,
+                        ),
+                        SelectionOption(
+                          value: 15,
+                          label: l10n.settingsAutoLock15Min,
+                        ),
+                        SelectionOption(
+                          value: 30,
+                          label: l10n.settingsAutoLock30Min,
+                        ),
+                      ],
+                    );
+                    if (v != null) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setAutoLockMinutes(v);
+                    }
+                  },
                 ),
                 _BiometricTile(settings: settings),
                 _PinTile(settings: settings),
@@ -97,73 +98,85 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   icon: Icons.content_paste_off_outlined,
                   iconColor: Colors.purple,
                   title: l10n.settingsClipboardAutoClear,
-                  trailing: DropdownMenu<int>(
-                    initialSelection: settings.clipboardAutoClearSecs,
-                    requestFocusOnTap: false,
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(
-                        value: 0,
-                        label: l10n.settingsClipboardAutoClearOff,
-                      ),
-                      DropdownMenuEntry(
-                        value: 15,
-                        label: l10n.settingsClipboardAutoClearValue(15),
-                      ),
-                      DropdownMenuEntry(
-                        value: 30,
-                        label: l10n.settingsClipboardAutoClearValue(30),
-                      ),
-                      DropdownMenuEntry(
-                        value: 60,
-                        label: l10n.settingsClipboardAutoClearValue(60),
-                      ),
-                      DropdownMenuEntry(
-                        value: 120,
-                        label: l10n.settingsClipboardAutoClearValue(120),
-                      ),
-                    ],
-                    onSelected: (v) {
-                      if (v != null) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .setClipboardAutoClear(v);
-                      }
-                    },
-                  ),
+                  subtitleText: settings.clipboardAutoClearSecs == 0
+                      ? l10n.settingsClipboardAutoClearOff
+                      : l10n.settingsClipboardAutoClearValue(
+                          settings.clipboardAutoClearSecs,
+                        ),
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<int>(
+                      context: context,
+                      title: l10n.settingsClipboardAutoClear,
+                      currentValue: settings.clipboardAutoClearSecs,
+                      options: [
+                        SelectionOption(
+                          value: 0,
+                          label: l10n.settingsClipboardAutoClearOff,
+                        ),
+                        SelectionOption(
+                          value: 15,
+                          label: l10n.settingsClipboardAutoClearValue(15),
+                        ),
+                        SelectionOption(
+                          value: 30,
+                          label: l10n.settingsClipboardAutoClearValue(30),
+                        ),
+                        SelectionOption(
+                          value: 60,
+                          label: l10n.settingsClipboardAutoClearValue(60),
+                        ),
+                        SelectionOption(
+                          value: 120,
+                          label: l10n.settingsClipboardAutoClearValue(120),
+                        ),
+                      ],
+                    );
+                    if (v != null) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setClipboardAutoClear(v);
+                    }
+                  },
                 ),
                 SettingsTile(
                   icon: Icons.timer_off_outlined,
                   iconColor: Colors.orange,
                   title: l10n.settingsSessionTimeout,
-                  trailing: DropdownMenu<int>(
-                    initialSelection: settings.sessionTimeoutMins,
-                    requestFocusOnTap: false,
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(
-                        value: 0,
-                        label: l10n.settingsSessionTimeoutOff,
-                      ),
-                      DropdownMenuEntry(
-                        value: 15,
-                        label: l10n.settingsSessionTimeoutValue(15),
-                      ),
-                      DropdownMenuEntry(
-                        value: 30,
-                        label: l10n.settingsSessionTimeoutValue(30),
-                      ),
-                      DropdownMenuEntry(
-                        value: 60,
-                        label: l10n.settingsSessionTimeoutValue(60),
-                      ),
-                    ],
-                    onSelected: (v) {
-                      if (v != null) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .setSessionTimeout(v);
-                      }
-                    },
-                  ),
+                  subtitleText: settings.sessionTimeoutMins == 0
+                      ? l10n.settingsSessionTimeoutOff
+                      : l10n.settingsSessionTimeoutValue(
+                          settings.sessionTimeoutMins,
+                        ),
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<int>(
+                      context: context,
+                      title: l10n.settingsSessionTimeout,
+                      currentValue: settings.sessionTimeoutMins,
+                      options: [
+                        SelectionOption(
+                          value: 0,
+                          label: l10n.settingsSessionTimeoutOff,
+                        ),
+                        SelectionOption(
+                          value: 15,
+                          label: l10n.settingsSessionTimeoutValue(15),
+                        ),
+                        SelectionOption(
+                          value: 30,
+                          label: l10n.settingsSessionTimeoutValue(30),
+                        ),
+                        SelectionOption(
+                          value: 60,
+                          label: l10n.settingsSessionTimeoutValue(60),
+                        ),
+                      ],
+                    );
+                    if (v != null) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setSessionTimeout(v);
+                    }
+                  },
                 ),
               ],
             ),
@@ -177,35 +190,41 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   icon: Icons.autorenew,
                   iconColor: Colors.cyan,
                   title: l10n.settingsKeyRotationReminder,
-                  trailing: DropdownMenu<int>(
-                    initialSelection: settings.keyRotationReminderDays,
-                    requestFocusOnTap: false,
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(
-                        value: 0,
-                        label: l10n.settingsKeyRotationOff,
-                      ),
-                      DropdownMenuEntry(
-                        value: 30,
-                        label: l10n.settingsKeyRotationValue(30),
-                      ),
-                      DropdownMenuEntry(
-                        value: 60,
-                        label: l10n.settingsKeyRotationValue(60),
-                      ),
-                      DropdownMenuEntry(
-                        value: 90,
-                        label: l10n.settingsKeyRotationValue(90),
-                      ),
-                    ],
-                    onSelected: (v) {
-                      if (v != null) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .setKeyRotationReminder(v);
-                      }
-                    },
-                  ),
+                  subtitleText: settings.keyRotationReminderDays == 0
+                      ? l10n.settingsKeyRotationOff
+                      : l10n.settingsKeyRotationValue(
+                          settings.keyRotationReminderDays,
+                        ),
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<int>(
+                      context: context,
+                      title: l10n.settingsKeyRotationReminder,
+                      currentValue: settings.keyRotationReminderDays,
+                      options: [
+                        SelectionOption(
+                          value: 0,
+                          label: l10n.settingsKeyRotationOff,
+                        ),
+                        SelectionOption(
+                          value: 30,
+                          label: l10n.settingsKeyRotationValue(30),
+                        ),
+                        SelectionOption(
+                          value: 60,
+                          label: l10n.settingsKeyRotationValue(60),
+                        ),
+                        SelectionOption(
+                          value: 90,
+                          label: l10n.settingsKeyRotationValue(90),
+                        ),
+                      ],
+                    );
+                    if (v != null) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setKeyRotationReminder(v);
+                    }
+                  },
                 ),
               ],
             ),
