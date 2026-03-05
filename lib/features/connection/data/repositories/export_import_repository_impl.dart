@@ -13,6 +13,7 @@ import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/server_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/ssh_key_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/tag_dao.dart';
+import 'package:shellvault/features/settings/data/datasources/app_settings_dao.dart';
 import 'package:shellvault/features/connection/data/models/group_mapper.dart';
 import 'package:shellvault/features/connection/data/models/server_mapper.dart';
 import 'package:shellvault/features/connection/data/models/ssh_key_mapper.dart';
@@ -33,9 +34,34 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   final TagDao _tagDao;
   final SshKeyDao _sshKeyDao;
   final SnippetDao _snippetDao;
+  final AppSettingsDao _settingsDao;
   final SecureStorageService _secureStorage;
   final EncryptionService _encryptionService;
   final Uuid _uuid;
+
+  static const _exportableSettingsKeys = <String>{
+    'theme_mode',
+    'locale',
+    'prevent_screenshots',
+    'default_ssh_port',
+    'default_username',
+    'default_auth_method',
+    'connection_timeout_secs',
+    'keepalive_interval_secs',
+    'ssh_compression',
+    'default_terminal_type',
+    'auto_lock_minutes',
+    'clipboard_auto_clear_secs',
+    'session_timeout_mins',
+    'key_rotation_reminder_days',
+    'encrypt_export_default',
+    'dismissed_security_hint',
+    'dns_servers',
+    'global_proxy_type',
+    'global_proxy_host',
+    'global_proxy_port',
+    'global_proxy_username',
+  };
 
   ExportImportRepositoryImpl(
     this._serverDao,
@@ -43,6 +69,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     this._tagDao,
     this._sshKeyDao,
     this._snippetDao,
+    this._settingsDao,
     this._secureStorage,
     this._encryptionService, {
     Uuid? uuid,
@@ -110,6 +137,15 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       snippetList.add(json);
     }
 
+    // Export settings (only exportable keys)
+    final allSettings = await _settingsDao.getAll();
+    final exportableSettings = <String, String>{};
+    for (final key in _exportableSettingsKeys) {
+      if (allSettings.containsKey(key)) {
+        exportableSettings[key] = allSettings[key]!;
+      }
+    }
+
     return {
       'version': AppConstants.exportVersion,
       'exportedAt': DateTime.now().toIso8601String(),
@@ -118,6 +154,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       'tags': tags.map((t) => TagMapper.fromDrift(t).toJson()).toList(),
       'sshKeys': sshKeyList,
       'snippets': snippetList,
+      'settings': exportableSettings,
     };
   }
 
@@ -538,6 +575,22 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       }
     }
 
+    // Import settings
+    var settingsImported = 0;
+    final settingsData = data['settings'] as Map<String, dynamic>?;
+    if (settingsData != null) {
+      for (final entry in settingsData.entries) {
+        if (_exportableSettingsKeys.contains(entry.key)) {
+          try {
+            await _settingsDao.setValue(entry.key, entry.value as String);
+            settingsImported++;
+          } catch (e) {
+            errors.add('Setting import error (${entry.key}): $e');
+          }
+        }
+      }
+    }
+
     return Success(
       ImportResult(
         serversImported: serversImported,
@@ -545,6 +598,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
         tagsImported: tagsImported,
         sshKeysImported: sshKeysImported,
         snippetsImported: snippetsImported,
+        settingsImported: settingsImported,
         skipped: skipped,
         errors: errors,
       ),

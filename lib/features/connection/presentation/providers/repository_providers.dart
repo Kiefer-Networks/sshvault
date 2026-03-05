@@ -57,6 +57,7 @@ final exportImportRepositoryProvider = Provider<ExportImportRepository>((ref) {
     db.tagDao,
     db.sshKeyDao,
     db.snippetDao,
+    db.appSettingsDao,
     secureStorage,
     encryptionService,
   );

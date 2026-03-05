@@ -121,6 +121,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         ref.invalidate(tagListProvider);
         ref.invalidate(sshKeyListProvider);
         ref.invalidate(snippetListProvider);
+        ref.invalidate(settingsProvider);
 
         _log.info(_tag, 'Sync successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
@@ -189,6 +190,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         ref.invalidate(tagListProvider);
         ref.invalidate(sshKeyListProvider);
         ref.invalidate(snippetListProvider);
+        ref.invalidate(settingsProvider);
 
         _log.info(_tag, 'Pull-only successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);

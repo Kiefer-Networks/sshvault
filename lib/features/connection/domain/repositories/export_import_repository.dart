@@ -8,6 +8,7 @@ class ImportResult {
   final int tagsImported;
   final int sshKeysImported;
   final int snippetsImported;
+  final int settingsImported;
   final int skipped;
   final List<String> errors;
 
@@ -17,6 +18,7 @@ class ImportResult {
     this.tagsImported = 0,
     this.sshKeysImported = 0,
     this.snippetsImported = 0,
+    this.settingsImported = 0,
     this.skipped = 0,
     this.errors = const [],
   });
