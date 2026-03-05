@@ -372,7 +372,6 @@
 
   "serverCopySuffix": "(Copia)",
 
-  "settingsSectionSupport": "Soporte",
   "settingsDownloadLogs": "Descargar registros",
   "settingsSendLogs": "Enviar registros al soporte",
   "settingsLogsSaved": "Registros guardados exitosamente",
@@ -480,13 +479,6 @@
   "serverConfigSelfHostedDescription": "Usar tu propio servidor ShellVault",
   "serverConfigUrlLabel": "URL del servidor",
   "serverConfigTest": "Probar conexión",
-
-  "supportProjectTitle": "Apoya el proyecto",
-  "supportProjectDescription": "ShellVault es desarrollado con pasión por Kiefer Networks. Apoya su desarrollo continuo con una compra voluntaria.",
-  "supportProjectThankYou": "¡Gracias por tu apoyo!",
-  "supportProjectError": "No se pudo completar la compra. Inténtalo de nuevo.",
-  "supportProjectNotAvailable": "Las compras integradas no están disponibles en esta plataforma. Puedes apoyarnos a través del enlace.",
-  "supportProjectStripeLink": "Apoyar vía navegador",
 
   "auditLogTitle": "Registro de actividad",
   "auditLogAll": "Todos",
@@ -611,7 +603,6 @@
   "settingsAppearanceSubtitle": "Tema, Idioma, Terminal",
   "settingsNetworkSubtitle": "DNS-over-HTTPS",
   "settingsExportSubtitle": "Exportación cifrada por defecto",
-  "settingsSupportSubtitle": "Registros y Proyecto",
   "settingsAboutSubtitle": "Versión, Licencias",
   "settingsSearchHint": "Buscar ajustes...",
   "settingsSearchNoResults": "No se encontraron ajustes",
@@ -736,5 +727,9 @@
   "deviceLastSeen": "Visto por última vez",
   "deviceIpAddress": "IP",
 
-  "serverUrlLockedWhileLoggedIn": "No se puede cambiar la URL del servidor mientras estás conectado. Cierra sesión primero."
+  "serverUrlLockedWhileLoggedIn": "No se puede cambiar la URL del servidor mientras estás conectado. Cierra sesión primero.",
+
+  "autoSyncInterval": "Intervalo de sincronización",
+  "autoSyncIntervalValue": "{minutes} min",
+  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } }
 }

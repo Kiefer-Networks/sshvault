@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/app.dart';
 import 'package:shellvault/core/services/logging_service.dart';
+import 'package:shellvault/core/storage/database.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final log = LoggingService.instance;
   log.info('App', 'SSH Vault starting');
+
+  await AppDatabase.migrateDbLocationIfNeeded();
 
   runApp(const ProviderScope(child: _LifecycleWrapper(child: ShellVaultApp())));
 }

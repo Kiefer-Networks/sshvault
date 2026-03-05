@@ -21,11 +21,9 @@ import 'package:shellvault/features/settings/presentation/screens/network_settin
 import 'package:shellvault/features/settings/presentation/screens/security_settings_screen.dart';
 import 'package:shellvault/features/settings/presentation/screens/settings_hub_screen.dart';
 import 'package:shellvault/features/settings/presentation/screens/ssh_settings_screen.dart';
-import 'package:shellvault/features/settings/presentation/screens/support_settings_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_detail_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_form_screen.dart';
 import 'package:shellvault/features/snippet/presentation/screens/snippet_list_screen.dart';
-import 'package:shellvault/features/support/presentation/screens/support_screen.dart';
 import 'package:shellvault/features/sftp/presentation/screens/sftp_browser_screen.dart';
 import 'package:shellvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
@@ -199,11 +197,6 @@ abstract final class AppRouter {
             builder: (context, state) => const ExportSettingsScreen(),
           ),
           GoRoute(
-            path: 'support',
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (context, state) => const SupportSettingsScreen(),
-          ),
-          GoRoute(
             path: 'about',
             parentNavigatorKey: _rootNavigatorKey,
             builder: (context, state) => const AboutScreen(),
@@ -265,11 +258,6 @@ abstract final class AppRouter {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/audit-log',
         builder: (context, state) => const AuditLogScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/support',
-        builder: (context, state) => const SupportScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/settings/settings.dart';
+import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -82,13 +82,6 @@ class SettingsHubScreen extends ConsumerWidget {
           SettingsGroupCard(
             children: [
               SettingsCategoryTile(
-                icon: Icons.support_outlined,
-                iconColor: Colors.pink,
-                title: l10n.settingsSectionSupport,
-                subtitle: l10n.settingsSupportSubtitle,
-                onTap: () => context.push('/settings/support'),
-              ),
-              SettingsCategoryTile(
                 icon: Icons.info_outline,
                 iconColor: colorScheme.secondary,
                 title: l10n.settingsSectionAbout,
@@ -127,21 +120,16 @@ class _AccountHeaderBuilder extends ConsumerWidget {
       );
     }
 
-    return FutureBuilder<String>(
-      future: _getUserEmail(ref),
-      builder: (_, snap) => AccountHeader(
-        isAuthenticated: true,
-        email: snap.data,
-        unauthenticatedLabel: l10n.settingsAccountSubtitleUnauth,
-        authenticatedLabel: l10n.settingsAccountSubtitleAuth,
-        onTap: onTap,
-      ),
-    );
-  }
+    final profileAsync = ref.watch(userProfileProvider);
+    final user = profileAsync.value;
 
-  Future<String> _getUserEmail(WidgetRef ref) async {
-    final storage = ref.read(secureStorageProvider);
-    final result = await storage.getUserEmail();
-    return result.isSuccess ? (result.value ?? '') : '';
+    return AccountHeader(
+      isAuthenticated: true,
+      email: user?.email,
+      avatarBase64: user?.avatar,
+      unauthenticatedLabel: l10n.settingsAccountSubtitleUnauth,
+      authenticatedLabel: l10n.settingsAccountSubtitleAuth,
+      onTap: onTap,
+    );
   }
 }

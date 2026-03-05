@@ -38,6 +38,9 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     // Start periodic sync timer
     _startPeriodicSync();
 
+    // Restart timer when settings change (e.g. interval or autoSync toggle)
+    ref.listen(settingsProvider, (_, _) => _startPeriodicSync());
+
     return SyncStatus.idle;
   }
 
@@ -50,18 +53,23 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     });
   }
 
-  /// Start periodic background sync (every 5 minutes)
+  /// Start periodic background sync using the configured interval.
   void _startPeriodicSync() {
     _periodicSyncTimer?.cancel();
-    _periodicSyncTimer = Timer.periodic(const Duration(minutes: 5), (_) {
-      final authStatus = ref.read(authProvider).value;
-      final settings = ref.read(settingsProvider).value;
-      if (authStatus == AuthStatus.authenticated &&
-          (settings?.autoSync ?? false)) {
-        _log.debug(_tag, 'Periodic sync triggered');
-        sync();
-      }
-    });
+    final settings = ref.read(settingsProvider).value;
+    final intervalMinutes = settings?.autoSyncIntervalMinutes ?? 5;
+    _periodicSyncTimer = Timer.periodic(
+      Duration(minutes: intervalMinutes),
+      (_) {
+        final authStatus = ref.read(authProvider).value;
+        final s = ref.read(settingsProvider).value;
+        if (authStatus == AuthStatus.authenticated &&
+            (s?.autoSync ?? false)) {
+          _log.debug(_tag, 'Periodic sync triggered (${intervalMinutes}m)');
+          sync();
+        }
+      },
+    );
   }
 
   Future<void> sync() async {

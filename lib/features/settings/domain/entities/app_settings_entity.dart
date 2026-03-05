@@ -17,6 +17,7 @@ class AppSettingsEntity {
   final String serverUrl;
   final bool selfHosted;
   final bool autoSync;
+  final int autoSyncIntervalMinutes;
   final int localVaultVersion;
   final bool preventScreenshots;
   final String dnsServers;
@@ -49,6 +50,7 @@ class AppSettingsEntity {
     this.serverUrl = '',
     this.selfHosted = false,
     this.autoSync = true,
+    this.autoSyncIntervalMinutes = 5,
     this.localVaultVersion = 0,
     this.preventScreenshots = false,
     this.dnsServers = '',
@@ -98,6 +100,7 @@ class AppSettingsEntity {
     String? serverUrl,
     bool? selfHosted,
     bool? autoSync,
+    int? autoSyncIntervalMinutes,
     int? localVaultVersion,
     bool? preventScreenshots,
     String? dnsServers,
@@ -130,6 +133,8 @@ class AppSettingsEntity {
       serverUrl: serverUrl ?? this.serverUrl,
       selfHosted: selfHosted ?? this.selfHosted,
       autoSync: autoSync ?? this.autoSync,
+      autoSyncIntervalMinutes:
+          autoSyncIntervalMinutes ?? this.autoSyncIntervalMinutes,
       localVaultVersion: localVaultVersion ?? this.localVaultVersion,
       preventScreenshots: preventScreenshots ?? this.preventScreenshots,
       dnsServers: dnsServers ?? this.dnsServers,

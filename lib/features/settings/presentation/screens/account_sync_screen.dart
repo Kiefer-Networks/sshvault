@@ -254,6 +254,23 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                   );
                 },
               ),
+              if (settings?.autoSync ?? false)
+                Builder(
+                  builder: (context) {
+                    final billingActive =
+                        ref.watch(billingStatusProvider).value?.active ?? false;
+                    final interval = settings?.autoSyncIntervalMinutes ?? 5;
+                    return SettingsTile(
+                      icon: Icons.timer_outlined,
+                      iconColor: Colors.teal,
+                      title: l10n.autoSyncInterval,
+                      subtitleText: l10n.autoSyncIntervalValue(interval),
+                      onTap: billingActive
+                          ? () => _showIntervalPicker(l10n, interval)
+                          : null,
+                    );
+                  },
+                ),
               SettingsTile(
                 icon: isSyncing
                     ? Icons.hourglass_top
@@ -1147,6 +1164,41 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
     final router = GoRouter.of(context);
     await ref.read(authProvider.notifier).logout(deleteLocalData: result);
     if (mounted) router.go('/');
+  }
+
+  void _showIntervalPicker(AppLocalizations l10n, int current) {
+    const options = [1, 3, 5, 10, 15];
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                l10n.autoSyncInterval,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const Divider(height: 1),
+            for (final minutes in options)
+              ListTile(
+                leading: minutes == current
+                    ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
+                    : const SizedBox(width: 24),
+                title: Text(l10n.autoSyncIntervalValue(minutes)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  ref
+                      .read(settingsProvider.notifier)
+                      .setAutoSyncInterval(minutes);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _deleteAccount(AppLocalizations l10n) async {

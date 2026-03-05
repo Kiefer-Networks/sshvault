@@ -1090,9 +1090,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get serverCopySuffix => '(Copia)';
 
   @override
-  String get settingsSectionSupport => 'Soporte';
-
-  @override
   String get settingsDownloadLogs => 'Descargar registros';
 
   @override
@@ -1398,27 +1395,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get serverConfigTest => 'Probar conexión';
-
-  @override
-  String get supportProjectTitle => 'Apoya el proyecto';
-
-  @override
-  String get supportProjectDescription =>
-      'ShellVault es desarrollado con pasión por Kiefer Networks. Apoya su desarrollo continuo con una compra voluntaria.';
-
-  @override
-  String get supportProjectThankYou => '¡Gracias por tu apoyo!';
-
-  @override
-  String get supportProjectError =>
-      'No se pudo completar la compra. Inténtalo de nuevo.';
-
-  @override
-  String get supportProjectNotAvailable =>
-      'Las compras integradas no están disponibles en esta plataforma. Puedes apoyarnos a través del enlace.';
-
-  @override
-  String get supportProjectStripeLink => 'Apoyar vía navegador';
 
   @override
   String get auditLogTitle => 'Registro de actividad';
@@ -1796,9 +1772,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsExportSubtitle => 'Exportación cifrada por defecto';
 
   @override
-  String get settingsSupportSubtitle => 'Registros y Proyecto';
-
-  @override
   String get settingsAboutSubtitle => 'Versión, Licencias';
 
   @override
@@ -2123,4 +2096,12 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get serverUrlLockedWhileLoggedIn =>
       'No se puede cambiar la URL del servidor mientras estás conectado. Cierra sesión primero.';
+
+  @override
+  String get autoSyncInterval => 'Intervalo de sincronización';
+
+  @override
+  String autoSyncIntervalValue(int minutes) {
+    return '$minutes min';
+  }
 }

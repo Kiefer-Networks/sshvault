@@ -19,5 +19,6 @@ abstract class SftpPaneState with _$SftpPaneState {
     @Default(SortField.name) SortField sortField,
     @Default(true) bool sortAscending,
     @Default(false) bool showHidden,
+    @Default(false) bool needsHostSelection,
   }) = _SftpPaneState;
 }

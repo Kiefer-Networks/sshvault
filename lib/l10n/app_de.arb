@@ -372,7 +372,6 @@
 
   "serverCopySuffix": "(Kopie)",
 
-  "settingsSectionSupport": "Support",
   "settingsDownloadLogs": "Protokolle herunterladen",
   "settingsSendLogs": "Protokolle an Support senden",
   "settingsLogsSaved": "Protokolle erfolgreich gespeichert",
@@ -480,13 +479,6 @@
   "serverConfigSelfHostedDescription": "Eigenen ShellVault-Server verwenden",
   "serverConfigUrlLabel": "Server-URL",
   "serverConfigTest": "Verbindung testen",
-
-  "supportProjectTitle": "Projekt unterstützen",
-  "supportProjectDescription": "ShellVault wird mit Leidenschaft von Kiefer Networks entwickelt. Unterstütze die Weiterentwicklung mit einem freiwilligen Kauf.",
-  "supportProjectThankYou": "Vielen Dank für deine Unterstützung!",
-  "supportProjectError": "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
-  "supportProjectNotAvailable": "In-App-Käufe sind auf dieser Plattform nicht verfügbar. Du kannst uns über den Link unten unterstützen.",
-  "supportProjectStripeLink": "Über Browser unterstützen",
 
   "auditLogTitle": "Aktivitätsprotokoll",
   "auditLogAll": "Alle",
@@ -611,7 +603,6 @@
   "settingsAppearanceSubtitle": "Design, Sprache, Terminal",
   "settingsNetworkSubtitle": "DNS-over-HTTPS",
   "settingsExportSubtitle": "Verschlüsselte Export-Standards",
-  "settingsSupportSubtitle": "Protokolle & Projekt",
   "settingsAboutSubtitle": "Version, Lizenzen",
   "settingsSearchHint": "Einstellungen durchsuchen...",
   "settingsSearchNoResults": "Keine Einstellungen gefunden",
@@ -736,5 +727,9 @@
   "deviceLastSeen": "Zuletzt gesehen",
   "deviceIpAddress": "IP",
 
-  "serverUrlLockedWhileLoggedIn": "Server-URL kann nicht geändert werden, solange du angemeldet bist. Melde dich zuerst ab."
+  "serverUrlLockedWhileLoggedIn": "Server-URL kann nicht geändert werden, solange du angemeldet bist. Melde dich zuerst ab.",
+
+  "autoSyncInterval": "Sync-Intervall",
+  "autoSyncIntervalValue": "{minutes} Min.",
+  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } }
 }

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SftpPaneState {
 
- SftpPaneSource get source; String get currentPath; List<SftpEntry> get entries; bool get isLoading; String? get error; Set<String> get selectedPaths; SortField get sortField; bool get sortAscending; bool get showHidden;
+ SftpPaneSource get source; String get currentPath; List<SftpEntry> get entries; bool get isLoading; String? get error; Set<String> get selectedPaths; SortField get sortField; bool get sortAscending; bool get showHidden; bool get needsHostSelection;
 /// Create a copy of SftpPaneState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $SftpPaneStateCopyWith<SftpPaneState> get copyWith => _$SftpPaneStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneState&&(identical(other.source, source) || other.source == source)&&(identical(other.currentPath, currentPath) || other.currentPath == currentPath)&&const DeepCollectionEquality().equals(other.entries, entries)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other.selectedPaths, selectedPaths)&&(identical(other.sortField, sortField) || other.sortField == sortField)&&(identical(other.sortAscending, sortAscending) || other.sortAscending == sortAscending)&&(identical(other.showHidden, showHidden) || other.showHidden == showHidden));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneState&&(identical(other.source, source) || other.source == source)&&(identical(other.currentPath, currentPath) || other.currentPath == currentPath)&&const DeepCollectionEquality().equals(other.entries, entries)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other.selectedPaths, selectedPaths)&&(identical(other.sortField, sortField) || other.sortField == sortField)&&(identical(other.sortAscending, sortAscending) || other.sortAscending == sortAscending)&&(identical(other.showHidden, showHidden) || other.showHidden == showHidden)&&(identical(other.needsHostSelection, needsHostSelection) || other.needsHostSelection == needsHostSelection));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,source,currentPath,const DeepCollectionEquality().hash(entries),isLoading,error,const DeepCollectionEquality().hash(selectedPaths),sortField,sortAscending,showHidden);
+int get hashCode => Object.hash(runtimeType,source,currentPath,const DeepCollectionEquality().hash(entries),isLoading,error,const DeepCollectionEquality().hash(selectedPaths),sortField,sortAscending,showHidden,needsHostSelection);
 
 @override
 String toString() {
-  return 'SftpPaneState(source: $source, currentPath: $currentPath, entries: $entries, isLoading: $isLoading, error: $error, selectedPaths: $selectedPaths, sortField: $sortField, sortAscending: $sortAscending, showHidden: $showHidden)';
+  return 'SftpPaneState(source: $source, currentPath: $currentPath, entries: $entries, isLoading: $isLoading, error: $error, selectedPaths: $selectedPaths, sortField: $sortField, sortAscending: $sortAscending, showHidden: $showHidden, needsHostSelection: $needsHostSelection)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $SftpPaneStateCopyWith<$Res>  {
   factory $SftpPaneStateCopyWith(SftpPaneState value, $Res Function(SftpPaneState) _then) = _$SftpPaneStateCopyWithImpl;
 @useResult
 $Res call({
- SftpPaneSource source, String currentPath, List<SftpEntry> entries, bool isLoading, String? error, Set<String> selectedPaths, SortField sortField, bool sortAscending, bool showHidden
+ SftpPaneSource source, String currentPath, List<SftpEntry> entries, bool isLoading, String? error, Set<String> selectedPaths, SortField sortField, bool sortAscending, bool showHidden, bool needsHostSelection
 });
 
 
@@ -62,7 +62,7 @@ class _$SftpPaneStateCopyWithImpl<$Res>
 
 /// Create a copy of SftpPaneState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? source = null,Object? currentPath = null,Object? entries = null,Object? isLoading = null,Object? error = freezed,Object? selectedPaths = null,Object? sortField = null,Object? sortAscending = null,Object? showHidden = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? source = null,Object? currentPath = null,Object? entries = null,Object? isLoading = null,Object? error = freezed,Object? selectedPaths = null,Object? sortField = null,Object? sortAscending = null,Object? showHidden = null,Object? needsHostSelection = null,}) {
   return _then(_self.copyWith(
 source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
 as SftpPaneSource,currentPath: null == currentPath ? _self.currentPath : currentPath // ignore: cast_nullable_to_non_nullable
@@ -73,6 +73,7 @@ as String?,selectedPaths: null == selectedPaths ? _self.selectedPaths : selected
 as Set<String>,sortField: null == sortField ? _self.sortField : sortField // ignore: cast_nullable_to_non_nullable
 as SortField,sortAscending: null == sortAscending ? _self.sortAscending : sortAscending // ignore: cast_nullable_to_non_nullable
 as bool,showHidden: null == showHidden ? _self.showHidden : showHidden // ignore: cast_nullable_to_non_nullable
+as bool,needsHostSelection: null == needsHostSelection ? _self.needsHostSelection : needsHostSelection // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -167,10 +168,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SftpPaneSource source,  String currentPath,  List<SftpEntry> entries,  bool isLoading,  String? error,  Set<String> selectedPaths,  SortField sortField,  bool sortAscending,  bool showHidden)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SftpPaneSource source,  String currentPath,  List<SftpEntry> entries,  bool isLoading,  String? error,  Set<String> selectedPaths,  SortField sortField,  bool sortAscending,  bool showHidden,  bool needsHostSelection)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SftpPaneState() when $default != null:
-return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_that.error,_that.selectedPaths,_that.sortField,_that.sortAscending,_that.showHidden);case _:
+return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_that.error,_that.selectedPaths,_that.sortField,_that.sortAscending,_that.showHidden,_that.needsHostSelection);case _:
   return orElse();
 
 }
@@ -188,10 +189,10 @@ return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SftpPaneSource source,  String currentPath,  List<SftpEntry> entries,  bool isLoading,  String? error,  Set<String> selectedPaths,  SortField sortField,  bool sortAscending,  bool showHidden)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SftpPaneSource source,  String currentPath,  List<SftpEntry> entries,  bool isLoading,  String? error,  Set<String> selectedPaths,  SortField sortField,  bool sortAscending,  bool showHidden,  bool needsHostSelection)  $default,) {final _that = this;
 switch (_that) {
 case _SftpPaneState():
-return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_that.error,_that.selectedPaths,_that.sortField,_that.sortAscending,_that.showHidden);case _:
+return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_that.error,_that.selectedPaths,_that.sortField,_that.sortAscending,_that.showHidden,_that.needsHostSelection);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +209,10 @@ return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SftpPaneSource source,  String currentPath,  List<SftpEntry> entries,  bool isLoading,  String? error,  Set<String> selectedPaths,  SortField sortField,  bool sortAscending,  bool showHidden)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SftpPaneSource source,  String currentPath,  List<SftpEntry> entries,  bool isLoading,  String? error,  Set<String> selectedPaths,  SortField sortField,  bool sortAscending,  bool showHidden,  bool needsHostSelection)?  $default,) {final _that = this;
 switch (_that) {
 case _SftpPaneState() when $default != null:
-return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_that.error,_that.selectedPaths,_that.sortField,_that.sortAscending,_that.showHidden);case _:
+return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_that.error,_that.selectedPaths,_that.sortField,_that.sortAscending,_that.showHidden,_that.needsHostSelection);case _:
   return null;
 
 }
@@ -223,7 +224,7 @@ return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_th
 
 
 class _SftpPaneState implements SftpPaneState {
-  const _SftpPaneState({required this.source, required this.currentPath, final  List<SftpEntry> entries = const [], this.isLoading = false, this.error, final  Set<String> selectedPaths = const {}, this.sortField = SortField.name, this.sortAscending = true, this.showHidden = false}): _entries = entries,_selectedPaths = selectedPaths;
+  const _SftpPaneState({required this.source, required this.currentPath, final  List<SftpEntry> entries = const [], this.isLoading = false, this.error, final  Set<String> selectedPaths = const {}, this.sortField = SortField.name, this.sortAscending = true, this.showHidden = false, this.needsHostSelection = false}): _entries = entries,_selectedPaths = selectedPaths;
   
 
 @override final  SftpPaneSource source;
@@ -247,6 +248,7 @@ class _SftpPaneState implements SftpPaneState {
 @override@JsonKey() final  SortField sortField;
 @override@JsonKey() final  bool sortAscending;
 @override@JsonKey() final  bool showHidden;
+@override@JsonKey() final  bool needsHostSelection;
 
 /// Create a copy of SftpPaneState
 /// with the given fields replaced by the non-null parameter values.
@@ -258,16 +260,16 @@ _$SftpPaneStateCopyWith<_SftpPaneState> get copyWith => __$SftpPaneStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SftpPaneState&&(identical(other.source, source) || other.source == source)&&(identical(other.currentPath, currentPath) || other.currentPath == currentPath)&&const DeepCollectionEquality().equals(other._entries, _entries)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other._selectedPaths, _selectedPaths)&&(identical(other.sortField, sortField) || other.sortField == sortField)&&(identical(other.sortAscending, sortAscending) || other.sortAscending == sortAscending)&&(identical(other.showHidden, showHidden) || other.showHidden == showHidden));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SftpPaneState&&(identical(other.source, source) || other.source == source)&&(identical(other.currentPath, currentPath) || other.currentPath == currentPath)&&const DeepCollectionEquality().equals(other._entries, _entries)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other._selectedPaths, _selectedPaths)&&(identical(other.sortField, sortField) || other.sortField == sortField)&&(identical(other.sortAscending, sortAscending) || other.sortAscending == sortAscending)&&(identical(other.showHidden, showHidden) || other.showHidden == showHidden)&&(identical(other.needsHostSelection, needsHostSelection) || other.needsHostSelection == needsHostSelection));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,source,currentPath,const DeepCollectionEquality().hash(_entries),isLoading,error,const DeepCollectionEquality().hash(_selectedPaths),sortField,sortAscending,showHidden);
+int get hashCode => Object.hash(runtimeType,source,currentPath,const DeepCollectionEquality().hash(_entries),isLoading,error,const DeepCollectionEquality().hash(_selectedPaths),sortField,sortAscending,showHidden,needsHostSelection);
 
 @override
 String toString() {
-  return 'SftpPaneState(source: $source, currentPath: $currentPath, entries: $entries, isLoading: $isLoading, error: $error, selectedPaths: $selectedPaths, sortField: $sortField, sortAscending: $sortAscending, showHidden: $showHidden)';
+  return 'SftpPaneState(source: $source, currentPath: $currentPath, entries: $entries, isLoading: $isLoading, error: $error, selectedPaths: $selectedPaths, sortField: $sortField, sortAscending: $sortAscending, showHidden: $showHidden, needsHostSelection: $needsHostSelection)';
 }
 
 
@@ -278,7 +280,7 @@ abstract mixin class _$SftpPaneStateCopyWith<$Res> implements $SftpPaneStateCopy
   factory _$SftpPaneStateCopyWith(_SftpPaneState value, $Res Function(_SftpPaneState) _then) = __$SftpPaneStateCopyWithImpl;
 @override @useResult
 $Res call({
- SftpPaneSource source, String currentPath, List<SftpEntry> entries, bool isLoading, String? error, Set<String> selectedPaths, SortField sortField, bool sortAscending, bool showHidden
+ SftpPaneSource source, String currentPath, List<SftpEntry> entries, bool isLoading, String? error, Set<String> selectedPaths, SortField sortField, bool sortAscending, bool showHidden, bool needsHostSelection
 });
 
 
@@ -295,7 +297,7 @@ class __$SftpPaneStateCopyWithImpl<$Res>
 
 /// Create a copy of SftpPaneState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? source = null,Object? currentPath = null,Object? entries = null,Object? isLoading = null,Object? error = freezed,Object? selectedPaths = null,Object? sortField = null,Object? sortAscending = null,Object? showHidden = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? source = null,Object? currentPath = null,Object? entries = null,Object? isLoading = null,Object? error = freezed,Object? selectedPaths = null,Object? sortField = null,Object? sortAscending = null,Object? showHidden = null,Object? needsHostSelection = null,}) {
   return _then(_SftpPaneState(
 source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
 as SftpPaneSource,currentPath: null == currentPath ? _self.currentPath : currentPath // ignore: cast_nullable_to_non_nullable
@@ -306,6 +308,7 @@ as String?,selectedPaths: null == selectedPaths ? _self._selectedPaths : selecte
 as Set<String>,sortField: null == sortField ? _self.sortField : sortField // ignore: cast_nullable_to_non_nullable
 as SortField,sortAscending: null == sortAscending ? _self.sortAscending : sortAscending // ignore: cast_nullable_to_non_nullable
 as bool,showHidden: null == showHidden ? _self.showHidden : showHidden // ignore: cast_nullable_to_non_nullable
+as bool,needsHostSelection: null == needsHostSelection ? _self.needsHostSelection : needsHostSelection // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

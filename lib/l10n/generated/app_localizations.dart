@@ -2086,12 +2086,6 @@ abstract class AppLocalizations {
   /// **'(Copy)'**
   String get serverCopySuffix;
 
-  /// No description provided for @settingsSectionSupport.
-  ///
-  /// In en, this message translates to:
-  /// **'Support'**
-  String get settingsSectionSupport;
-
   /// No description provided for @settingsDownloadLogs.
   ///
   /// In en, this message translates to:
@@ -2661,42 +2655,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Test Connection'**
   String get serverConfigTest;
-
-  /// No description provided for @supportProjectTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Support the Project'**
-  String get supportProjectTitle;
-
-  /// No description provided for @supportProjectDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'ShellVault is built with passion by Kiefer Networks. Support its continued development with a voluntary purchase.'**
-  String get supportProjectDescription;
-
-  /// No description provided for @supportProjectThankYou.
-  ///
-  /// In en, this message translates to:
-  /// **'Thank you for your support!'**
-  String get supportProjectThankYou;
-
-  /// No description provided for @supportProjectError.
-  ///
-  /// In en, this message translates to:
-  /// **'Purchase could not be completed. Please try again.'**
-  String get supportProjectError;
-
-  /// No description provided for @supportProjectNotAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'In-app purchases are not available on this platform. You can support us via the link below.'**
-  String get supportProjectNotAvailable;
-
-  /// No description provided for @supportProjectStripeLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Support via Browser'**
-  String get supportProjectStripeLink;
 
   /// No description provided for @auditLogTitle.
   ///
@@ -3304,12 +3262,6 @@ abstract class AppLocalizations {
   /// **'Encrypted export defaults'**
   String get settingsExportSubtitle;
 
-  /// No description provided for @settingsSupportSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Logs & Project'**
-  String get settingsSupportSubtitle;
-
   /// No description provided for @settingsAboutSubtitle.
   ///
   /// In en, this message translates to:
@@ -3861,6 +3813,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Server URL cannot be changed while logged in. Log out first.'**
   String get serverUrlLockedWhileLoggedIn;
+
+  /// No description provided for @autoSyncInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Interval'**
+  String get autoSyncInterval;
+
+  /// No description provided for @autoSyncIntervalValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String autoSyncIntervalValue(int minutes);
 }
 
 class _AppLocalizationsDelegate

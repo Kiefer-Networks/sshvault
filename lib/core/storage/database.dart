@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/features/connection/data/models/drift_tables.dart';
 import 'package:shellvault/features/connection/data/datasources/server_dao.dart';
@@ -33,6 +37,33 @@ class AppDatabase extends _$AppDatabase {
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: AppConstants.databaseName);
+  }
+
+  /// Migrate database from Documents to Application Support on iOS/macOS.
+  /// Must be called before opening the database for the first time.
+  static Future<void> migrateDbLocationIfNeeded() async {
+    if (!Platform.isIOS && !Platform.isMacOS) return;
+
+    final documentsDir = await getApplicationDocumentsDirectory();
+    final supportDir = await getApplicationSupportDirectory();
+    const dbName = '${AppConstants.databaseName}.sqlite';
+
+    final oldPath = p.join(documentsDir.path, dbName);
+    final newPath = p.join(supportDir.path, dbName);
+
+    final oldFile = File(oldPath);
+    if (await oldFile.exists() && !await File(newPath).exists()) {
+      await oldFile.copy(newPath);
+      await oldFile.delete();
+      // Also migrate WAL/SHM if present
+      for (final suffix in ['-wal', '-shm']) {
+        final old = File('$oldPath$suffix');
+        if (await old.exists()) {
+          await old.copy('$newPath$suffix');
+          await old.delete();
+        }
+      }
+    }
   }
 
   @override

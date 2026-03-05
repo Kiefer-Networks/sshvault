@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class AccountHeader extends StatelessWidget {
   final String? email;
+  final String? avatarBase64;
   final bool isAuthenticated;
   final bool isVerified;
   final String unauthenticatedLabel;
@@ -11,6 +15,7 @@ class AccountHeader extends StatelessWidget {
   const AccountHeader({
     super.key,
     this.email,
+    this.avatarBase64,
     required this.isAuthenticated,
     this.isVerified = false,
     required this.unauthenticatedLabel,
@@ -34,15 +39,7 @@ class AccountHeader extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: colorScheme.primaryContainer,
-                child: Icon(
-                  isAuthenticated ? Icons.person : Icons.person_outline,
-                  color: colorScheme.onPrimaryContainer,
-                  size: 28,
-                ),
-              ),
+              _buildAvatar(colorScheme),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -85,6 +82,32 @@ class AccountHeader extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAvatar(ColorScheme colorScheme) {
+    final hasAvatar = avatarBase64 != null && avatarBase64!.isNotEmpty;
+    Uint8List? avatarBytes;
+    if (hasAvatar) {
+      try {
+        avatarBytes = base64Decode(avatarBase64!);
+      } catch (_) {
+        // Invalid base64 — fall back to icon
+      }
+    }
+
+    return CircleAvatar(
+      radius: 24,
+      backgroundColor: colorScheme.primaryContainer,
+      backgroundImage:
+          avatarBytes != null ? MemoryImage(avatarBytes) : null,
+      child: avatarBytes == null
+          ? Icon(
+              isAuthenticated ? Icons.person : Icons.person_outline,
+              color: colorScheme.onPrimaryContainer,
+              size: 28,
+            )
+          : null,
     );
   }
 }

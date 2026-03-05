@@ -25,8 +25,8 @@ class TerminalNotificationService {
       '@mipmap/ic_launcher',
     );
     const iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
+      requestAlertPermission: true,
+      requestBadgePermission: true,
       requestSoundPermission: false,
     );
 
@@ -74,7 +74,7 @@ class TerminalNotificationService {
     );
 
     const iosDetails = DarwinNotificationDetails(
-      presentAlert: false,
+      presentAlert: true,
       presentBadge: true,
       presentSound: false,
     );

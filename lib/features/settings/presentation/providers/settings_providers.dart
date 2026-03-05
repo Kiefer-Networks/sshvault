@@ -34,6 +34,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyServerUrl = 'server_url';
   static const _keySelfHosted = 'self_hosted';
   static const _keyAutoSync = 'auto_sync';
+  static const _keyAutoSyncInterval = 'auto_sync_interval';
   static const _keyLocalVaultVersion = 'local_vault_version';
   static const _keyPreventScreenshots = 'prevent_screenshots';
   static const _keyDnsServers = 'dns_servers';
@@ -98,6 +99,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       serverUrl: all[_keyServerUrl] ?? '',
       selfHosted: all[_keySelfHosted] == 'true',
       autoSync: all[_keyAutoSync] != 'false',
+      autoSyncIntervalMinutes:
+          int.tryParse(all[_keyAutoSyncInterval] ?? '') ?? 5,
       localVaultVersion: int.tryParse(all[_keyLocalVaultVersion] ?? '') ?? 0,
       preventScreenshots: all[_keyPreventScreenshots] == 'true',
       dnsServers: all[_keyDnsServers] ?? '',
@@ -316,6 +319,13 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     _log.info(_tag, 'Auto-sync ${enabled ? 'enabled' : 'disabled'}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyAutoSync, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setAutoSyncInterval(int minutes) async {
+    _log.info(_tag, 'Auto-sync interval changed to ${minutes}m');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyAutoSyncInterval, minutes.toString());
     ref.invalidateSelf();
   }
 

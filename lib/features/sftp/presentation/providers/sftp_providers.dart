@@ -67,7 +67,18 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
       return saved.copyWith(isLoading: true);
     }
 
-    // Normal first-time initialization
+    // On iOS, the local file system is sandboxed and useless for browsing.
+    // Show a "select host" placeholder instead of the local file browser.
+    if (Platform.isIOS) {
+      return const SftpPaneState(
+        source: SftpPaneSource.local(),
+        currentPath: '',
+        isLoading: false,
+        needsHostSelection: true,
+      );
+    }
+
+    // Normal first-time initialization (Android, desktop)
     Future.microtask(() async {
       final localService = ref.read(localFileServiceProvider);
       final initialPath = await localService.getInitialPath();
@@ -91,6 +102,7 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
       entries: [],
       selectedPaths: {},
       error: null,
+      needsHostSelection: false,
     );
 
     switch (source) {
