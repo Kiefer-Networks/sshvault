@@ -103,6 +103,24 @@ final serversByGroupProvider =
       );
     });
 
+final favoriteServersProvider = FutureProvider<List<ServerEntity>>((ref) async {
+  final useCases = ref.watch(serverUseCasesProvider);
+  final result = await useCases.getFavorites();
+  return result.fold(
+    onSuccess: (servers) => servers,
+    onFailure: (failure) => throw failure,
+  );
+});
+
+final recentServersProvider = FutureProvider<List<ServerEntity>>((ref) async {
+  final useCases = ref.watch(serverUseCasesProvider);
+  final result = await useCases.getRecents();
+  return result.fold(
+    onSuccess: (servers) => servers,
+    onFailure: (failure) => throw failure,
+  );
+});
+
 final serverDetailProvider = FutureProvider.family<ServerEntity, String>((
   ref,
   id,

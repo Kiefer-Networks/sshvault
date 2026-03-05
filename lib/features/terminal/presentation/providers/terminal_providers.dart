@@ -204,6 +204,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
           session.status = SshConnectionStatus.connected;
           session.errorMessage = null;
 
+          // Update last connected timestamp
+          _updateLastConnectedAt(session.serverId);
+
           // Listen for session close
           connection.session.done.then((_) {
             if (state.any((s) => s.id == session.id)) {
@@ -221,6 +224,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
           // Detect distro in background
           _detectDistro(session);
+
+          // Execute post-connect commands
+          _executePostConnectCommands(session, server);
         },
         onFailure: (failure) {
           session.status = SshConnectionStatus.error;
@@ -326,6 +332,28 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     } catch (_) {}
   }
 
+  Future<void> _updateLastConnectedAt(String serverId) async {
+    try {
+      final db = ref.read(databaseProvider);
+      await db.serverDao.setLastConnectedAt(serverId, DateTime.now());
+    } catch (_) {}
+  }
+
+  Future<void> _executePostConnectCommands(
+    SshSessionEntity session,
+    ServerEntity server,
+  ) async {
+    final commands = server.postConnectCommands.trim();
+    if (commands.isEmpty) return;
+    await Future.delayed(const Duration(milliseconds: 500));
+    for (final line in commands.split('\n')) {
+      final cmd = line.trim();
+      if (cmd.isEmpty) continue;
+      session.terminal.textInput('$cmd\n');
+      await Future.delayed(const Duration(milliseconds: 150));
+    }
+  }
+
   void _notifyChange() {
     state = [...state];
   }
@@ -341,6 +369,22 @@ final activeSessionProvider = Provider<SshSessionEntity?>((ref) {
   final sessions = ref.watch(sessionManagerProvider);
   final index = ref.watch(activeSessionIndexProvider);
   if (sessions.isEmpty || index >= sessions.length) return null;
+  return sessions[index];
+});
+
+// ---------------------------------------------------------------------------
+// Split Terminal
+// ---------------------------------------------------------------------------
+
+enum SplitMode { none, horizontal }
+
+final splitModeProvider = StateProvider<SplitMode>((ref) => SplitMode.none);
+final secondarySessionIndexProvider = StateProvider<int?>((ref) => null);
+
+final secondarySessionProvider = Provider<SshSessionEntity?>((ref) {
+  final sessions = ref.watch(sessionManagerProvider);
+  final index = ref.watch(secondarySessionIndexProvider);
+  if (index == null || sessions.isEmpty || index >= sessions.length) return null;
   return sessions[index];
 });
 

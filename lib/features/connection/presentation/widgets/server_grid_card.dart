@@ -13,6 +13,7 @@ class ServerGridCard extends StatelessWidget {
   final VoidCallback onLongPress;
   final VoidCallback? onDetail;
   final VoidCallback? onEdit;
+  final VoidCallback? onFavoriteToggle;
 
   const ServerGridCard({
     super.key,
@@ -21,6 +22,7 @@ class ServerGridCard extends StatelessWidget {
     required this.onLongPress,
     this.onDetail,
     this.onEdit,
+    this.onFavoriteToggle,
   });
 
   @override
@@ -57,6 +59,21 @@ class ServerGridCard extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
+                  if (onFavoriteToggle != null)
+                    GestureDetector(
+                      onTap: onFavoriteToggle,
+                      child: Icon(
+                        server.isFavorite ? Icons.star : Icons.star_border,
+                        size: 18,
+                        color: server.isFavorite
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha(AppConstants.alpha102),
+                      ),
+                    ),
+                  const SizedBox(width: 4),
                   StatusBadge(isActive: server.isActive),
                 ],
               ),

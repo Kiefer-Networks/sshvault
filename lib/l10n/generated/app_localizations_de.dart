@@ -2175,4 +2175,41 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get vpnConnectAnyway => 'Trotzdem verbinden';
+
+  @override
+  String get postConnectCommands => 'Post-Connect Befehle';
+
+  @override
+  String get postConnectCommandsHint => 'cd /var/log\ntail -f syslog';
+
+  @override
+  String get postConnectCommandsSubtitle =>
+      'Befehle, die nach dem Verbindungsaufbau automatisch ausgeführt werden (einer pro Zeile)';
+
+  @override
+  String get dashboardFavorites => 'Favoriten';
+
+  @override
+  String get dashboardRecent => 'Zuletzt verbunden';
+
+  @override
+  String get dashboardActiveSessions => 'Aktive Sitzungen';
+
+  @override
+  String get addToFavorites => 'Zu Favoriten hinzufügen';
+
+  @override
+  String get removeFromFavorites => 'Aus Favoriten entfernen';
+
+  @override
+  String get noRecentConnections => 'Keine kürzlichen Verbindungen';
+
+  @override
+  String get terminalSplit => 'Geteilte Ansicht';
+
+  @override
+  String get terminalUnsplit => 'Teilung schließen';
+
+  @override
+  String get terminalSelectSession => 'Sitzung für geteilte Ansicht auswählen';
 }

@@ -1588,6 +1588,45 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _postConnectCommandsMeta =
+      const VerificationMeta('postConnectCommands');
+  @override
+  late final GeneratedColumn<String> postConnectCommands =
+      GeneratedColumn<String>(
+        'post_connect_commands',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
+      );
+  static const VerificationMeta _isFavoriteMeta = const VerificationMeta(
+    'isFavorite',
+  );
+  @override
+  late final GeneratedColumn<bool> isFavorite = GeneratedColumn<bool>(
+    'is_favorite',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_favorite" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _lastConnectedAtMeta = const VerificationMeta(
+    'lastConnectedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastConnectedAt =
+      GeneratedColumn<DateTime>(
+        'last_connected_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _ownerIdMeta = const VerificationMeta(
     'ownerId',
   );
@@ -1667,6 +1706,9 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     proxyUsername,
     useGlobalProxy,
     requiresVpn,
+    postConnectCommands,
+    isFavorite,
+    lastConnectedAt,
     ownerId,
     sharedWith,
     permissions,
@@ -1834,6 +1876,30 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         ),
       );
     }
+    if (data.containsKey('post_connect_commands')) {
+      context.handle(
+        _postConnectCommandsMeta,
+        postConnectCommands.isAcceptableOrUnknown(
+          data['post_connect_commands']!,
+          _postConnectCommandsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_favorite')) {
+      context.handle(
+        _isFavoriteMeta,
+        isFavorite.isAcceptableOrUnknown(data['is_favorite']!, _isFavoriteMeta),
+      );
+    }
+    if (data.containsKey('last_connected_at')) {
+      context.handle(
+        _lastConnectedAtMeta,
+        lastConnectedAt.isAcceptableOrUnknown(
+          data['last_connected_at']!,
+          _lastConnectedAtMeta,
+        ),
+      );
+    }
     if (data.containsKey('owner_id')) {
       context.handle(
         _ownerIdMeta,
@@ -1968,6 +2034,18 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         DriftSqlType.bool,
         data['${effectivePrefix}requires_vpn'],
       )!,
+      postConnectCommands: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}post_connect_commands'],
+      )!,
+      isFavorite: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_favorite'],
+      )!,
+      lastConnectedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_connected_at'],
+      ),
       ownerId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}owner_id'],
@@ -2020,6 +2098,9 @@ class Server extends DataClass implements Insertable<Server> {
   final String? proxyUsername;
   final bool useGlobalProxy;
   final bool requiresVpn;
+  final String postConnectCommands;
+  final bool isFavorite;
+  final DateTime? lastConnectedAt;
   final String? ownerId;
   final String? sharedWith;
   final String? permissions;
@@ -2048,6 +2129,9 @@ class Server extends DataClass implements Insertable<Server> {
     this.proxyUsername,
     required this.useGlobalProxy,
     required this.requiresVpn,
+    required this.postConnectCommands,
+    required this.isFavorite,
+    this.lastConnectedAt,
     this.ownerId,
     this.sharedWith,
     this.permissions,
@@ -2091,6 +2175,11 @@ class Server extends DataClass implements Insertable<Server> {
     }
     map['use_global_proxy'] = Variable<bool>(useGlobalProxy);
     map['requires_vpn'] = Variable<bool>(requiresVpn);
+    map['post_connect_commands'] = Variable<String>(postConnectCommands);
+    map['is_favorite'] = Variable<bool>(isFavorite);
+    if (!nullToAbsent || lastConnectedAt != null) {
+      map['last_connected_at'] = Variable<DateTime>(lastConnectedAt);
+    }
     if (!nullToAbsent || ownerId != null) {
       map['owner_id'] = Variable<String>(ownerId);
     }
@@ -2141,6 +2230,11 @@ class Server extends DataClass implements Insertable<Server> {
           : Value(proxyUsername),
       useGlobalProxy: Value(useGlobalProxy),
       requiresVpn: Value(requiresVpn),
+      postConnectCommands: Value(postConnectCommands),
+      isFavorite: Value(isFavorite),
+      lastConnectedAt: lastConnectedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastConnectedAt),
       ownerId: ownerId == null && nullToAbsent
           ? const Value.absent()
           : Value(ownerId),
@@ -2183,6 +2277,11 @@ class Server extends DataClass implements Insertable<Server> {
       proxyUsername: serializer.fromJson<String?>(json['proxyUsername']),
       useGlobalProxy: serializer.fromJson<bool>(json['useGlobalProxy']),
       requiresVpn: serializer.fromJson<bool>(json['requiresVpn']),
+      postConnectCommands: serializer.fromJson<String>(
+        json['postConnectCommands'],
+      ),
+      isFavorite: serializer.fromJson<bool>(json['isFavorite']),
+      lastConnectedAt: serializer.fromJson<DateTime?>(json['lastConnectedAt']),
       ownerId: serializer.fromJson<String?>(json['ownerId']),
       sharedWith: serializer.fromJson<String?>(json['sharedWith']),
       permissions: serializer.fromJson<String?>(json['permissions']),
@@ -2216,6 +2315,9 @@ class Server extends DataClass implements Insertable<Server> {
       'proxyUsername': serializer.toJson<String?>(proxyUsername),
       'useGlobalProxy': serializer.toJson<bool>(useGlobalProxy),
       'requiresVpn': serializer.toJson<bool>(requiresVpn),
+      'postConnectCommands': serializer.toJson<String>(postConnectCommands),
+      'isFavorite': serializer.toJson<bool>(isFavorite),
+      'lastConnectedAt': serializer.toJson<DateTime?>(lastConnectedAt),
       'ownerId': serializer.toJson<String?>(ownerId),
       'sharedWith': serializer.toJson<String?>(sharedWith),
       'permissions': serializer.toJson<String?>(permissions),
@@ -2247,6 +2349,9 @@ class Server extends DataClass implements Insertable<Server> {
     Value<String?> proxyUsername = const Value.absent(),
     bool? useGlobalProxy,
     bool? requiresVpn,
+    String? postConnectCommands,
+    bool? isFavorite,
+    Value<DateTime?> lastConnectedAt = const Value.absent(),
     Value<String?> ownerId = const Value.absent(),
     Value<String?> sharedWith = const Value.absent(),
     Value<String?> permissions = const Value.absent(),
@@ -2277,6 +2382,11 @@ class Server extends DataClass implements Insertable<Server> {
         : this.proxyUsername,
     useGlobalProxy: useGlobalProxy ?? this.useGlobalProxy,
     requiresVpn: requiresVpn ?? this.requiresVpn,
+    postConnectCommands: postConnectCommands ?? this.postConnectCommands,
+    isFavorite: isFavorite ?? this.isFavorite,
+    lastConnectedAt: lastConnectedAt.present
+        ? lastConnectedAt.value
+        : this.lastConnectedAt,
     ownerId: ownerId.present ? ownerId.value : this.ownerId,
     sharedWith: sharedWith.present ? sharedWith.value : this.sharedWith,
     permissions: permissions.present ? permissions.value : this.permissions,
@@ -2319,6 +2429,15 @@ class Server extends DataClass implements Insertable<Server> {
       requiresVpn: data.requiresVpn.present
           ? data.requiresVpn.value
           : this.requiresVpn,
+      postConnectCommands: data.postConnectCommands.present
+          ? data.postConnectCommands.value
+          : this.postConnectCommands,
+      isFavorite: data.isFavorite.present
+          ? data.isFavorite.value
+          : this.isFavorite,
+      lastConnectedAt: data.lastConnectedAt.present
+          ? data.lastConnectedAt.value
+          : this.lastConnectedAt,
       ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       sharedWith: data.sharedWith.present
           ? data.sharedWith.value
@@ -2356,6 +2475,9 @@ class Server extends DataClass implements Insertable<Server> {
           ..write('proxyUsername: $proxyUsername, ')
           ..write('useGlobalProxy: $useGlobalProxy, ')
           ..write('requiresVpn: $requiresVpn, ')
+          ..write('postConnectCommands: $postConnectCommands, ')
+          ..write('isFavorite: $isFavorite, ')
+          ..write('lastConnectedAt: $lastConnectedAt, ')
           ..write('ownerId: $ownerId, ')
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
@@ -2389,6 +2511,9 @@ class Server extends DataClass implements Insertable<Server> {
     proxyUsername,
     useGlobalProxy,
     requiresVpn,
+    postConnectCommands,
+    isFavorite,
+    lastConnectedAt,
     ownerId,
     sharedWith,
     permissions,
@@ -2421,6 +2546,9 @@ class Server extends DataClass implements Insertable<Server> {
           other.proxyUsername == this.proxyUsername &&
           other.useGlobalProxy == this.useGlobalProxy &&
           other.requiresVpn == this.requiresVpn &&
+          other.postConnectCommands == this.postConnectCommands &&
+          other.isFavorite == this.isFavorite &&
+          other.lastConnectedAt == this.lastConnectedAt &&
           other.ownerId == this.ownerId &&
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
@@ -2451,6 +2579,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
   final Value<String?> proxyUsername;
   final Value<bool> useGlobalProxy;
   final Value<bool> requiresVpn;
+  final Value<String> postConnectCommands;
+  final Value<bool> isFavorite;
+  final Value<DateTime?> lastConnectedAt;
   final Value<String?> ownerId;
   final Value<String?> sharedWith;
   final Value<String?> permissions;
@@ -2480,6 +2611,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.proxyUsername = const Value.absent(),
     this.useGlobalProxy = const Value.absent(),
     this.requiresVpn = const Value.absent(),
+    this.postConnectCommands = const Value.absent(),
+    this.isFavorite = const Value.absent(),
+    this.lastConnectedAt = const Value.absent(),
     this.ownerId = const Value.absent(),
     this.sharedWith = const Value.absent(),
     this.permissions = const Value.absent(),
@@ -2510,6 +2644,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.proxyUsername = const Value.absent(),
     this.useGlobalProxy = const Value.absent(),
     this.requiresVpn = const Value.absent(),
+    this.postConnectCommands = const Value.absent(),
+    this.isFavorite = const Value.absent(),
+    this.lastConnectedAt = const Value.absent(),
     this.ownerId = const Value.absent(),
     this.sharedWith = const Value.absent(),
     this.permissions = const Value.absent(),
@@ -2545,6 +2682,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Expression<String>? proxyUsername,
     Expression<bool>? useGlobalProxy,
     Expression<bool>? requiresVpn,
+    Expression<String>? postConnectCommands,
+    Expression<bool>? isFavorite,
+    Expression<DateTime>? lastConnectedAt,
     Expression<String>? ownerId,
     Expression<String>? sharedWith,
     Expression<String>? permissions,
@@ -2575,6 +2715,10 @@ class ServersCompanion extends UpdateCompanion<Server> {
       if (proxyUsername != null) 'proxy_username': proxyUsername,
       if (useGlobalProxy != null) 'use_global_proxy': useGlobalProxy,
       if (requiresVpn != null) 'requires_vpn': requiresVpn,
+      if (postConnectCommands != null)
+        'post_connect_commands': postConnectCommands,
+      if (isFavorite != null) 'is_favorite': isFavorite,
+      if (lastConnectedAt != null) 'last_connected_at': lastConnectedAt,
       if (ownerId != null) 'owner_id': ownerId,
       if (sharedWith != null) 'shared_with': sharedWith,
       if (permissions != null) 'permissions': permissions,
@@ -2607,6 +2751,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Value<String?>? proxyUsername,
     Value<bool>? useGlobalProxy,
     Value<bool>? requiresVpn,
+    Value<String>? postConnectCommands,
+    Value<bool>? isFavorite,
+    Value<DateTime?>? lastConnectedAt,
     Value<String?>? ownerId,
     Value<String?>? sharedWith,
     Value<String?>? permissions,
@@ -2637,6 +2784,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
       proxyUsername: proxyUsername ?? this.proxyUsername,
       useGlobalProxy: useGlobalProxy ?? this.useGlobalProxy,
       requiresVpn: requiresVpn ?? this.requiresVpn,
+      postConnectCommands: postConnectCommands ?? this.postConnectCommands,
+      isFavorite: isFavorite ?? this.isFavorite,
+      lastConnectedAt: lastConnectedAt ?? this.lastConnectedAt,
       ownerId: ownerId ?? this.ownerId,
       sharedWith: sharedWith ?? this.sharedWith,
       permissions: permissions ?? this.permissions,
@@ -2715,6 +2865,17 @@ class ServersCompanion extends UpdateCompanion<Server> {
     if (requiresVpn.present) {
       map['requires_vpn'] = Variable<bool>(requiresVpn.value);
     }
+    if (postConnectCommands.present) {
+      map['post_connect_commands'] = Variable<String>(
+        postConnectCommands.value,
+      );
+    }
+    if (isFavorite.present) {
+      map['is_favorite'] = Variable<bool>(isFavorite.value);
+    }
+    if (lastConnectedAt.present) {
+      map['last_connected_at'] = Variable<DateTime>(lastConnectedAt.value);
+    }
     if (ownerId.present) {
       map['owner_id'] = Variable<String>(ownerId.value);
     }
@@ -2761,6 +2922,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
           ..write('proxyUsername: $proxyUsername, ')
           ..write('useGlobalProxy: $useGlobalProxy, ')
           ..write('requiresVpn: $requiresVpn, ')
+          ..write('postConnectCommands: $postConnectCommands, ')
+          ..write('isFavorite: $isFavorite, ')
+          ..write('lastConnectedAt: $lastConnectedAt, ')
           ..write('ownerId: $ownerId, ')
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
@@ -6162,6 +6326,9 @@ typedef $$ServersTableCreateCompanionBuilder =
       Value<String?> proxyUsername,
       Value<bool> useGlobalProxy,
       Value<bool> requiresVpn,
+      Value<String> postConnectCommands,
+      Value<bool> isFavorite,
+      Value<DateTime?> lastConnectedAt,
       Value<String?> ownerId,
       Value<String?> sharedWith,
       Value<String?> permissions,
@@ -6193,6 +6360,9 @@ typedef $$ServersTableUpdateCompanionBuilder =
       Value<String?> proxyUsername,
       Value<bool> useGlobalProxy,
       Value<bool> requiresVpn,
+      Value<String> postConnectCommands,
+      Value<bool> isFavorite,
+      Value<DateTime?> lastConnectedAt,
       Value<String?> ownerId,
       Value<String?> sharedWith,
       Value<String?> permissions,
@@ -6365,6 +6535,21 @@ class $$ServersTableFilterComposer
 
   ColumnFilters<bool> get requiresVpn => $composableBuilder(
     column: $table.requiresVpn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get postConnectCommands => $composableBuilder(
+    column: $table.postConnectCommands,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastConnectedAt => $composableBuilder(
+    column: $table.lastConnectedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6574,6 +6759,21 @@ class $$ServersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get postConnectCommands => $composableBuilder(
+    column: $table.postConnectCommands,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastConnectedAt => $composableBuilder(
+    column: $table.lastConnectedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get ownerId => $composableBuilder(
     column: $table.ownerId,
     builder: (column) => ColumnOrderings(column),
@@ -6727,6 +6927,21 @@ class $$ServersTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get postConnectCommands => $composableBuilder(
+    column: $table.postConnectCommands,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastConnectedAt => $composableBuilder(
+    column: $table.lastConnectedAt,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get ownerId =>
       $composableBuilder(column: $table.ownerId, builder: (column) => column);
 
@@ -6872,6 +7087,9 @@ class $$ServersTableTableManager
                 Value<String?> proxyUsername = const Value.absent(),
                 Value<bool> useGlobalProxy = const Value.absent(),
                 Value<bool> requiresVpn = const Value.absent(),
+                Value<String> postConnectCommands = const Value.absent(),
+                Value<bool> isFavorite = const Value.absent(),
+                Value<DateTime?> lastConnectedAt = const Value.absent(),
                 Value<String?> ownerId = const Value.absent(),
                 Value<String?> sharedWith = const Value.absent(),
                 Value<String?> permissions = const Value.absent(),
@@ -6901,6 +7119,9 @@ class $$ServersTableTableManager
                 proxyUsername: proxyUsername,
                 useGlobalProxy: useGlobalProxy,
                 requiresVpn: requiresVpn,
+                postConnectCommands: postConnectCommands,
+                isFavorite: isFavorite,
+                lastConnectedAt: lastConnectedAt,
                 ownerId: ownerId,
                 sharedWith: sharedWith,
                 permissions: permissions,
@@ -6932,6 +7153,9 @@ class $$ServersTableTableManager
                 Value<String?> proxyUsername = const Value.absent(),
                 Value<bool> useGlobalProxy = const Value.absent(),
                 Value<bool> requiresVpn = const Value.absent(),
+                Value<String> postConnectCommands = const Value.absent(),
+                Value<bool> isFavorite = const Value.absent(),
+                Value<DateTime?> lastConnectedAt = const Value.absent(),
                 Value<String?> ownerId = const Value.absent(),
                 Value<String?> sharedWith = const Value.absent(),
                 Value<String?> permissions = const Value.absent(),
@@ -6961,6 +7185,9 @@ class $$ServersTableTableManager
                 proxyUsername: proxyUsername,
                 useGlobalProxy: useGlobalProxy,
                 requiresVpn: requiresVpn,
+                postConnectCommands: postConnectCommands,
+                isFavorite: isFavorite,
+                lastConnectedAt: lastConnectedAt,
                 ownerId: ownerId,
                 sharedWith: sharedWith,
                 permissions: permissions,

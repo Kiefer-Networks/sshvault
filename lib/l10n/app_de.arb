@@ -758,5 +758,20 @@
   "vpnInactive": "VPN inaktiv",
   "vpnWarningTitle": "VPN nicht aktiv",
   "vpnWarningMessage": "Dieser Server erfordert eine VPN-Verbindung, aber es ist kein VPN aktiv. Trotzdem verbinden?",
-  "vpnConnectAnyway": "Trotzdem verbinden"
+  "vpnConnectAnyway": "Trotzdem verbinden",
+
+  "postConnectCommands": "Post-Connect Befehle",
+  "postConnectCommandsHint": "cd /var/log\ntail -f syslog",
+  "postConnectCommandsSubtitle": "Befehle, die nach dem Verbindungsaufbau automatisch ausgeführt werden (einer pro Zeile)",
+
+  "dashboardFavorites": "Favoriten",
+  "dashboardRecent": "Zuletzt verbunden",
+  "dashboardActiveSessions": "Aktive Sitzungen",
+  "addToFavorites": "Zu Favoriten hinzufügen",
+  "removeFromFavorites": "Aus Favoriten entfernen",
+  "noRecentConnections": "Keine kürzlichen Verbindungen",
+
+  "terminalSplit": "Geteilte Ansicht",
+  "terminalUnsplit": "Teilung schließen",
+  "terminalSelectSession": "Sitzung für geteilte Ansicht auswählen"
 }

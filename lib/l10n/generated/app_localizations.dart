@@ -3969,6 +3969,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connect Anyway'**
   String get vpnConnectAnyway;
+
+  /// No description provided for @postConnectCommands.
+  ///
+  /// In en, this message translates to:
+  /// **'Post-Connect Commands'**
+  String get postConnectCommands;
+
+  /// No description provided for @postConnectCommandsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'cd /var/log\ntail -f syslog'**
+  String get postConnectCommandsHint;
+
+  /// No description provided for @postConnectCommandsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Commands executed automatically after connection (one per line)'**
+  String get postConnectCommandsSubtitle;
+
+  /// No description provided for @dashboardFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get dashboardFavorites;
+
+  /// No description provided for @dashboardRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get dashboardRecent;
+
+  /// No description provided for @dashboardActiveSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Sessions'**
+  String get dashboardActiveSessions;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Favorites'**
+  String get removeFromFavorites;
+
+  /// No description provided for @noRecentConnections.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent connections'**
+  String get noRecentConnections;
+
+  /// No description provided for @terminalSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Split View'**
+  String get terminalSplit;
+
+  /// No description provided for @terminalUnsplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Split'**
+  String get terminalUnsplit;
+
+  /// No description provided for @terminalSelectSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Select session for split view'**
+  String get terminalSelectSession;
 }
 
 class _AppLocalizationsDelegate

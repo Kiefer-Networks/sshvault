@@ -784,5 +784,20 @@
   "vpnInactive": "VPN Inactive",
   "vpnWarningTitle": "VPN Not Active",
   "vpnWarningMessage": "This server is marked as requiring a VPN connection, but no VPN is currently active. Do you want to connect anyway?",
-  "vpnConnectAnyway": "Connect Anyway"
+  "vpnConnectAnyway": "Connect Anyway",
+
+  "postConnectCommands": "Post-Connect Commands",
+  "postConnectCommandsHint": "cd /var/log\ntail -f syslog",
+  "postConnectCommandsSubtitle": "Commands executed automatically after connection (one per line)",
+
+  "dashboardFavorites": "Favorites",
+  "dashboardRecent": "Recent",
+  "dashboardActiveSessions": "Active Sessions",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
+  "noRecentConnections": "No recent connections",
+
+  "terminalSplit": "Split View",
+  "terminalUnsplit": "Close Split",
+  "terminalSelectSession": "Select session for split view"
 }

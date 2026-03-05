@@ -26,6 +26,11 @@ abstract class ServerEntity with _$ServerEntity {
     String? distroName,
     @Default([]) List<TagEntity> tags,
     String? jumpHostId,
+    // Post-Connect
+    @Default('') String postConnectCommands,
+    // Dashboard
+    @Default(false) bool isFavorite,
+    DateTime? lastConnectedAt,
     // Proxy
     @Default(ProxyType.none) ProxyType proxyType,
     @Default('') String proxyHost,

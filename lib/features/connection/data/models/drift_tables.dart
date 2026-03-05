@@ -43,6 +43,13 @@ class Servers extends Table {
       boolean().withDefault(const Constant(true))();
   // VPN
   BoolColumn get requiresVpn => boolean().withDefault(const Constant(false))();
+  // Post-Connect
+  TextColumn get postConnectCommands =>
+      text().withDefault(const Constant(''))();
+  // Dashboard
+  BoolColumn get isFavorite =>
+      boolean().withDefault(const Constant(false))();
+  DateTimeColumn get lastConnectedAt => dateTime().nullable()();
   // Sync
   TextColumn get ownerId => text().nullable()();
   TextColumn get sharedWith => text().nullable()();

@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ServerEntity {
 
- String get id; String get name; String get hostname; int get port; String get username; AuthMethod get authMethod; String get notes; int get color; String get iconName; bool get isActive; String? get groupId; String? get sshKeyId; int get sortOrder; String? get distroId; String? get distroName; List<TagEntity> get tags; String? get jumpHostId;// Proxy
+ String get id; String get name; String get hostname; int get port; String get username; AuthMethod get authMethod; String get notes; int get color; String get iconName; bool get isActive; String? get groupId; String? get sshKeyId; int get sortOrder; String? get distroId; String? get distroName; List<TagEntity> get tags; String? get jumpHostId;// Post-Connect
+ String get postConnectCommands;// Dashboard
+ bool get isFavorite; DateTime? get lastConnectedAt;// Proxy
  ProxyType get proxyType; String get proxyHost; int get proxyPort; String? get proxyUsername; bool get useGlobalProxy;// VPN
  bool get requiresVpn;// Sync
  String? get ownerId; String? get sharedWith; String? get permissions; DateTime get createdAt; DateTime get updatedAt;
@@ -31,16 +33,16 @@ $ServerEntityCopyWith<ServerEntity> get copyWith => _$ServerEntityCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ServerEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.port, port) || other.port == port)&&(identical(other.username, username) || other.username == username)&&(identical(other.authMethod, authMethod) || other.authMethod == authMethod)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.groupId, groupId) || other.groupId == groupId)&&(identical(other.sshKeyId, sshKeyId) || other.sshKeyId == sshKeyId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.distroId, distroId) || other.distroId == distroId)&&(identical(other.distroName, distroName) || other.distroName == distroName)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.jumpHostId, jumpHostId) || other.jumpHostId == jumpHostId)&&(identical(other.proxyType, proxyType) || other.proxyType == proxyType)&&(identical(other.proxyHost, proxyHost) || other.proxyHost == proxyHost)&&(identical(other.proxyPort, proxyPort) || other.proxyPort == proxyPort)&&(identical(other.proxyUsername, proxyUsername) || other.proxyUsername == proxyUsername)&&(identical(other.useGlobalProxy, useGlobalProxy) || other.useGlobalProxy == useGlobalProxy)&&(identical(other.requiresVpn, requiresVpn) || other.requiresVpn == requiresVpn)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ServerEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.port, port) || other.port == port)&&(identical(other.username, username) || other.username == username)&&(identical(other.authMethod, authMethod) || other.authMethod == authMethod)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.groupId, groupId) || other.groupId == groupId)&&(identical(other.sshKeyId, sshKeyId) || other.sshKeyId == sshKeyId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.distroId, distroId) || other.distroId == distroId)&&(identical(other.distroName, distroName) || other.distroName == distroName)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.jumpHostId, jumpHostId) || other.jumpHostId == jumpHostId)&&(identical(other.postConnectCommands, postConnectCommands) || other.postConnectCommands == postConnectCommands)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.lastConnectedAt, lastConnectedAt) || other.lastConnectedAt == lastConnectedAt)&&(identical(other.proxyType, proxyType) || other.proxyType == proxyType)&&(identical(other.proxyHost, proxyHost) || other.proxyHost == proxyHost)&&(identical(other.proxyPort, proxyPort) || other.proxyPort == proxyPort)&&(identical(other.proxyUsername, proxyUsername) || other.proxyUsername == proxyUsername)&&(identical(other.useGlobalProxy, useGlobalProxy) || other.useGlobalProxy == useGlobalProxy)&&(identical(other.requiresVpn, requiresVpn) || other.requiresVpn == requiresVpn)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,hostname,port,username,authMethod,notes,color,iconName,isActive,groupId,sshKeyId,sortOrder,distroId,distroName,const DeepCollectionEquality().hash(tags),jumpHostId,proxyType,proxyHost,proxyPort,proxyUsername,useGlobalProxy,requiresVpn,ownerId,sharedWith,permissions,createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,name,hostname,port,username,authMethod,notes,color,iconName,isActive,groupId,sshKeyId,sortOrder,distroId,distroName,const DeepCollectionEquality().hash(tags),jumpHostId,postConnectCommands,isFavorite,lastConnectedAt,proxyType,proxyHost,proxyPort,proxyUsername,useGlobalProxy,requiresVpn,ownerId,sharedWith,permissions,createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'ServerEntity(id: $id, name: $name, hostname: $hostname, port: $port, username: $username, authMethod: $authMethod, notes: $notes, color: $color, iconName: $iconName, isActive: $isActive, groupId: $groupId, sshKeyId: $sshKeyId, sortOrder: $sortOrder, distroId: $distroId, distroName: $distroName, tags: $tags, jumpHostId: $jumpHostId, proxyType: $proxyType, proxyHost: $proxyHost, proxyPort: $proxyPort, proxyUsername: $proxyUsername, useGlobalProxy: $useGlobalProxy, requiresVpn: $requiresVpn, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ServerEntity(id: $id, name: $name, hostname: $hostname, port: $port, username: $username, authMethod: $authMethod, notes: $notes, color: $color, iconName: $iconName, isActive: $isActive, groupId: $groupId, sshKeyId: $sshKeyId, sortOrder: $sortOrder, distroId: $distroId, distroName: $distroName, tags: $tags, jumpHostId: $jumpHostId, postConnectCommands: $postConnectCommands, isFavorite: $isFavorite, lastConnectedAt: $lastConnectedAt, proxyType: $proxyType, proxyHost: $proxyHost, proxyPort: $proxyPort, proxyUsername: $proxyUsername, useGlobalProxy: $useGlobalProxy, requiresVpn: $requiresVpn, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -51,7 +53,7 @@ abstract mixin class $ServerEntityCopyWith<$Res>  {
   factory $ServerEntityCopyWith(ServerEntity value, $Res Function(ServerEntity) _then) = _$ServerEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String hostname, int port, String username, AuthMethod authMethod, String notes, int color, String iconName, bool isActive, String? groupId, String? sshKeyId, int sortOrder, String? distroId, String? distroName, List<TagEntity> tags, String? jumpHostId, ProxyType proxyType, String proxyHost, int proxyPort, String? proxyUsername, bool useGlobalProxy, bool requiresVpn, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt
+ String id, String name, String hostname, int port, String username, AuthMethod authMethod, String notes, int color, String iconName, bool isActive, String? groupId, String? sshKeyId, int sortOrder, String? distroId, String? distroName, List<TagEntity> tags, String? jumpHostId, String postConnectCommands, bool isFavorite, DateTime? lastConnectedAt, ProxyType proxyType, String proxyHost, int proxyPort, String? proxyUsername, bool useGlobalProxy, bool requiresVpn, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -68,7 +70,7 @@ class _$ServerEntityCopyWithImpl<$Res>
 
 /// Create a copy of ServerEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? hostname = null,Object? port = null,Object? username = null,Object? authMethod = null,Object? notes = null,Object? color = null,Object? iconName = null,Object? isActive = null,Object? groupId = freezed,Object? sshKeyId = freezed,Object? sortOrder = null,Object? distroId = freezed,Object? distroName = freezed,Object? tags = null,Object? jumpHostId = freezed,Object? proxyType = null,Object? proxyHost = null,Object? proxyPort = null,Object? proxyUsername = freezed,Object? useGlobalProxy = null,Object? requiresVpn = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? hostname = null,Object? port = null,Object? username = null,Object? authMethod = null,Object? notes = null,Object? color = null,Object? iconName = null,Object? isActive = null,Object? groupId = freezed,Object? sshKeyId = freezed,Object? sortOrder = null,Object? distroId = freezed,Object? distroName = freezed,Object? tags = null,Object? jumpHostId = freezed,Object? postConnectCommands = null,Object? isFavorite = null,Object? lastConnectedAt = freezed,Object? proxyType = null,Object? proxyHost = null,Object? proxyPort = null,Object? proxyUsername = freezed,Object? useGlobalProxy = null,Object? requiresVpn = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -87,7 +89,10 @@ as int,distroId: freezed == distroId ? _self.distroId : distroId // ignore: cast
 as String?,distroName: freezed == distroName ? _self.distroName : distroName // ignore: cast_nullable_to_non_nullable
 as String?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
 as List<TagEntity>,jumpHostId: freezed == jumpHostId ? _self.jumpHostId : jumpHostId // ignore: cast_nullable_to_non_nullable
-as String?,proxyType: null == proxyType ? _self.proxyType : proxyType // ignore: cast_nullable_to_non_nullable
+as String?,postConnectCommands: null == postConnectCommands ? _self.postConnectCommands : postConnectCommands // ignore: cast_nullable_to_non_nullable
+as String,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
+as bool,lastConnectedAt: freezed == lastConnectedAt ? _self.lastConnectedAt : lastConnectedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,proxyType: null == proxyType ? _self.proxyType : proxyType // ignore: cast_nullable_to_non_nullable
 as ProxyType,proxyHost: null == proxyHost ? _self.proxyHost : proxyHost // ignore: cast_nullable_to_non_nullable
 as String,proxyPort: null == proxyPort ? _self.proxyPort : proxyPort // ignore: cast_nullable_to_non_nullable
 as int,proxyUsername: freezed == proxyUsername ? _self.proxyUsername : proxyUsername // ignore: cast_nullable_to_non_nullable
@@ -183,10 +188,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String hostname,  int port,  String username,  AuthMethod authMethod,  String notes,  int color,  String iconName,  bool isActive,  String? groupId,  String? sshKeyId,  int sortOrder,  String? distroId,  String? distroName,  List<TagEntity> tags,  String? jumpHostId,  ProxyType proxyType,  String proxyHost,  int proxyPort,  String? proxyUsername,  bool useGlobalProxy,  bool requiresVpn,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String hostname,  int port,  String username,  AuthMethod authMethod,  String notes,  int color,  String iconName,  bool isActive,  String? groupId,  String? sshKeyId,  int sortOrder,  String? distroId,  String? distroName,  List<TagEntity> tags,  String? jumpHostId,  String postConnectCommands,  bool isFavorite,  DateTime? lastConnectedAt,  ProxyType proxyType,  String proxyHost,  int proxyPort,  String? proxyUsername,  bool useGlobalProxy,  bool requiresVpn,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ServerEntity() when $default != null:
-return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_that.authMethod,_that.notes,_that.color,_that.iconName,_that.isActive,_that.groupId,_that.sshKeyId,_that.sortOrder,_that.distroId,_that.distroName,_that.tags,_that.jumpHostId,_that.proxyType,_that.proxyHost,_that.proxyPort,_that.proxyUsername,_that.useGlobalProxy,_that.requiresVpn,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_that.authMethod,_that.notes,_that.color,_that.iconName,_that.isActive,_that.groupId,_that.sshKeyId,_that.sortOrder,_that.distroId,_that.distroName,_that.tags,_that.jumpHostId,_that.postConnectCommands,_that.isFavorite,_that.lastConnectedAt,_that.proxyType,_that.proxyHost,_that.proxyPort,_that.proxyUsername,_that.useGlobalProxy,_that.requiresVpn,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -204,10 +209,10 @@ return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String hostname,  int port,  String username,  AuthMethod authMethod,  String notes,  int color,  String iconName,  bool isActive,  String? groupId,  String? sshKeyId,  int sortOrder,  String? distroId,  String? distroName,  List<TagEntity> tags,  String? jumpHostId,  ProxyType proxyType,  String proxyHost,  int proxyPort,  String? proxyUsername,  bool useGlobalProxy,  bool requiresVpn,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String hostname,  int port,  String username,  AuthMethod authMethod,  String notes,  int color,  String iconName,  bool isActive,  String? groupId,  String? sshKeyId,  int sortOrder,  String? distroId,  String? distroName,  List<TagEntity> tags,  String? jumpHostId,  String postConnectCommands,  bool isFavorite,  DateTime? lastConnectedAt,  ProxyType proxyType,  String proxyHost,  int proxyPort,  String? proxyUsername,  bool useGlobalProxy,  bool requiresVpn,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ServerEntity():
-return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_that.authMethod,_that.notes,_that.color,_that.iconName,_that.isActive,_that.groupId,_that.sshKeyId,_that.sortOrder,_that.distroId,_that.distroName,_that.tags,_that.jumpHostId,_that.proxyType,_that.proxyHost,_that.proxyPort,_that.proxyUsername,_that.useGlobalProxy,_that.requiresVpn,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_that.authMethod,_that.notes,_that.color,_that.iconName,_that.isActive,_that.groupId,_that.sshKeyId,_that.sortOrder,_that.distroId,_that.distroName,_that.tags,_that.jumpHostId,_that.postConnectCommands,_that.isFavorite,_that.lastConnectedAt,_that.proxyType,_that.proxyHost,_that.proxyPort,_that.proxyUsername,_that.useGlobalProxy,_that.requiresVpn,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -224,10 +229,10 @@ return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String hostname,  int port,  String username,  AuthMethod authMethod,  String notes,  int color,  String iconName,  bool isActive,  String? groupId,  String? sshKeyId,  int sortOrder,  String? distroId,  String? distroName,  List<TagEntity> tags,  String? jumpHostId,  ProxyType proxyType,  String proxyHost,  int proxyPort,  String? proxyUsername,  bool useGlobalProxy,  bool requiresVpn,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String hostname,  int port,  String username,  AuthMethod authMethod,  String notes,  int color,  String iconName,  bool isActive,  String? groupId,  String? sshKeyId,  int sortOrder,  String? distroId,  String? distroName,  List<TagEntity> tags,  String? jumpHostId,  String postConnectCommands,  bool isFavorite,  DateTime? lastConnectedAt,  ProxyType proxyType,  String proxyHost,  int proxyPort,  String? proxyUsername,  bool useGlobalProxy,  bool requiresVpn,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ServerEntity() when $default != null:
-return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_that.authMethod,_that.notes,_that.color,_that.iconName,_that.isActive,_that.groupId,_that.sshKeyId,_that.sortOrder,_that.distroId,_that.distroName,_that.tags,_that.jumpHostId,_that.proxyType,_that.proxyHost,_that.proxyPort,_that.proxyUsername,_that.useGlobalProxy,_that.requiresVpn,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_that.authMethod,_that.notes,_that.color,_that.iconName,_that.isActive,_that.groupId,_that.sshKeyId,_that.sortOrder,_that.distroId,_that.distroName,_that.tags,_that.jumpHostId,_that.postConnectCommands,_that.isFavorite,_that.lastConnectedAt,_that.proxyType,_that.proxyHost,_that.proxyPort,_that.proxyUsername,_that.useGlobalProxy,_that.requiresVpn,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -239,7 +244,7 @@ return $default(_that.id,_that.name,_that.hostname,_that.port,_that.username,_th
 @JsonSerializable()
 
 class _ServerEntity implements ServerEntity {
-  const _ServerEntity({required this.id, required this.name, required this.hostname, required this.port, required this.username, required this.authMethod, this.notes = '', required this.color, this.iconName = 'server', this.isActive = true, this.groupId, this.sshKeyId, this.sortOrder = 0, this.distroId, this.distroName, final  List<TagEntity> tags = const [], this.jumpHostId, this.proxyType = ProxyType.none, this.proxyHost = '', this.proxyPort = 1080, this.proxyUsername, this.useGlobalProxy = true, this.requiresVpn = false, this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt}): _tags = tags;
+  const _ServerEntity({required this.id, required this.name, required this.hostname, required this.port, required this.username, required this.authMethod, this.notes = '', required this.color, this.iconName = 'server', this.isActive = true, this.groupId, this.sshKeyId, this.sortOrder = 0, this.distroId, this.distroName, final  List<TagEntity> tags = const [], this.jumpHostId, this.postConnectCommands = '', this.isFavorite = false, this.lastConnectedAt, this.proxyType = ProxyType.none, this.proxyHost = '', this.proxyPort = 1080, this.proxyUsername, this.useGlobalProxy = true, this.requiresVpn = false, this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt}): _tags = tags;
   factory _ServerEntity.fromJson(Map<String, dynamic> json) => _$ServerEntityFromJson(json);
 
 @override final  String id;
@@ -265,6 +270,11 @@ class _ServerEntity implements ServerEntity {
 }
 
 @override final  String? jumpHostId;
+// Post-Connect
+@override@JsonKey() final  String postConnectCommands;
+// Dashboard
+@override@JsonKey() final  bool isFavorite;
+@override final  DateTime? lastConnectedAt;
 // Proxy
 @override@JsonKey() final  ProxyType proxyType;
 @override@JsonKey() final  String proxyHost;
@@ -293,16 +303,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServerEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.port, port) || other.port == port)&&(identical(other.username, username) || other.username == username)&&(identical(other.authMethod, authMethod) || other.authMethod == authMethod)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.groupId, groupId) || other.groupId == groupId)&&(identical(other.sshKeyId, sshKeyId) || other.sshKeyId == sshKeyId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.distroId, distroId) || other.distroId == distroId)&&(identical(other.distroName, distroName) || other.distroName == distroName)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.jumpHostId, jumpHostId) || other.jumpHostId == jumpHostId)&&(identical(other.proxyType, proxyType) || other.proxyType == proxyType)&&(identical(other.proxyHost, proxyHost) || other.proxyHost == proxyHost)&&(identical(other.proxyPort, proxyPort) || other.proxyPort == proxyPort)&&(identical(other.proxyUsername, proxyUsername) || other.proxyUsername == proxyUsername)&&(identical(other.useGlobalProxy, useGlobalProxy) || other.useGlobalProxy == useGlobalProxy)&&(identical(other.requiresVpn, requiresVpn) || other.requiresVpn == requiresVpn)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServerEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.port, port) || other.port == port)&&(identical(other.username, username) || other.username == username)&&(identical(other.authMethod, authMethod) || other.authMethod == authMethod)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.groupId, groupId) || other.groupId == groupId)&&(identical(other.sshKeyId, sshKeyId) || other.sshKeyId == sshKeyId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.distroId, distroId) || other.distroId == distroId)&&(identical(other.distroName, distroName) || other.distroName == distroName)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.jumpHostId, jumpHostId) || other.jumpHostId == jumpHostId)&&(identical(other.postConnectCommands, postConnectCommands) || other.postConnectCommands == postConnectCommands)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.lastConnectedAt, lastConnectedAt) || other.lastConnectedAt == lastConnectedAt)&&(identical(other.proxyType, proxyType) || other.proxyType == proxyType)&&(identical(other.proxyHost, proxyHost) || other.proxyHost == proxyHost)&&(identical(other.proxyPort, proxyPort) || other.proxyPort == proxyPort)&&(identical(other.proxyUsername, proxyUsername) || other.proxyUsername == proxyUsername)&&(identical(other.useGlobalProxy, useGlobalProxy) || other.useGlobalProxy == useGlobalProxy)&&(identical(other.requiresVpn, requiresVpn) || other.requiresVpn == requiresVpn)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,hostname,port,username,authMethod,notes,color,iconName,isActive,groupId,sshKeyId,sortOrder,distroId,distroName,const DeepCollectionEquality().hash(_tags),jumpHostId,proxyType,proxyHost,proxyPort,proxyUsername,useGlobalProxy,requiresVpn,ownerId,sharedWith,permissions,createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,name,hostname,port,username,authMethod,notes,color,iconName,isActive,groupId,sshKeyId,sortOrder,distroId,distroName,const DeepCollectionEquality().hash(_tags),jumpHostId,postConnectCommands,isFavorite,lastConnectedAt,proxyType,proxyHost,proxyPort,proxyUsername,useGlobalProxy,requiresVpn,ownerId,sharedWith,permissions,createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'ServerEntity(id: $id, name: $name, hostname: $hostname, port: $port, username: $username, authMethod: $authMethod, notes: $notes, color: $color, iconName: $iconName, isActive: $isActive, groupId: $groupId, sshKeyId: $sshKeyId, sortOrder: $sortOrder, distroId: $distroId, distroName: $distroName, tags: $tags, jumpHostId: $jumpHostId, proxyType: $proxyType, proxyHost: $proxyHost, proxyPort: $proxyPort, proxyUsername: $proxyUsername, useGlobalProxy: $useGlobalProxy, requiresVpn: $requiresVpn, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ServerEntity(id: $id, name: $name, hostname: $hostname, port: $port, username: $username, authMethod: $authMethod, notes: $notes, color: $color, iconName: $iconName, isActive: $isActive, groupId: $groupId, sshKeyId: $sshKeyId, sortOrder: $sortOrder, distroId: $distroId, distroName: $distroName, tags: $tags, jumpHostId: $jumpHostId, postConnectCommands: $postConnectCommands, isFavorite: $isFavorite, lastConnectedAt: $lastConnectedAt, proxyType: $proxyType, proxyHost: $proxyHost, proxyPort: $proxyPort, proxyUsername: $proxyUsername, useGlobalProxy: $useGlobalProxy, requiresVpn: $requiresVpn, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -313,7 +323,7 @@ abstract mixin class _$ServerEntityCopyWith<$Res> implements $ServerEntityCopyWi
   factory _$ServerEntityCopyWith(_ServerEntity value, $Res Function(_ServerEntity) _then) = __$ServerEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String hostname, int port, String username, AuthMethod authMethod, String notes, int color, String iconName, bool isActive, String? groupId, String? sshKeyId, int sortOrder, String? distroId, String? distroName, List<TagEntity> tags, String? jumpHostId, ProxyType proxyType, String proxyHost, int proxyPort, String? proxyUsername, bool useGlobalProxy, bool requiresVpn, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt
+ String id, String name, String hostname, int port, String username, AuthMethod authMethod, String notes, int color, String iconName, bool isActive, String? groupId, String? sshKeyId, int sortOrder, String? distroId, String? distroName, List<TagEntity> tags, String? jumpHostId, String postConnectCommands, bool isFavorite, DateTime? lastConnectedAt, ProxyType proxyType, String proxyHost, int proxyPort, String? proxyUsername, bool useGlobalProxy, bool requiresVpn, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -330,7 +340,7 @@ class __$ServerEntityCopyWithImpl<$Res>
 
 /// Create a copy of ServerEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? hostname = null,Object? port = null,Object? username = null,Object? authMethod = null,Object? notes = null,Object? color = null,Object? iconName = null,Object? isActive = null,Object? groupId = freezed,Object? sshKeyId = freezed,Object? sortOrder = null,Object? distroId = freezed,Object? distroName = freezed,Object? tags = null,Object? jumpHostId = freezed,Object? proxyType = null,Object? proxyHost = null,Object? proxyPort = null,Object? proxyUsername = freezed,Object? useGlobalProxy = null,Object? requiresVpn = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? hostname = null,Object? port = null,Object? username = null,Object? authMethod = null,Object? notes = null,Object? color = null,Object? iconName = null,Object? isActive = null,Object? groupId = freezed,Object? sshKeyId = freezed,Object? sortOrder = null,Object? distroId = freezed,Object? distroName = freezed,Object? tags = null,Object? jumpHostId = freezed,Object? postConnectCommands = null,Object? isFavorite = null,Object? lastConnectedAt = freezed,Object? proxyType = null,Object? proxyHost = null,Object? proxyPort = null,Object? proxyUsername = freezed,Object? useGlobalProxy = null,Object? requiresVpn = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_ServerEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -349,7 +359,10 @@ as int,distroId: freezed == distroId ? _self.distroId : distroId // ignore: cast
 as String?,distroName: freezed == distroName ? _self.distroName : distroName // ignore: cast_nullable_to_non_nullable
 as String?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
 as List<TagEntity>,jumpHostId: freezed == jumpHostId ? _self.jumpHostId : jumpHostId // ignore: cast_nullable_to_non_nullable
-as String?,proxyType: null == proxyType ? _self.proxyType : proxyType // ignore: cast_nullable_to_non_nullable
+as String?,postConnectCommands: null == postConnectCommands ? _self.postConnectCommands : postConnectCommands // ignore: cast_nullable_to_non_nullable
+as String,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
+as bool,lastConnectedAt: freezed == lastConnectedAt ? _self.lastConnectedAt : lastConnectedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,proxyType: null == proxyType ? _self.proxyType : proxyType // ignore: cast_nullable_to_non_nullable
 as ProxyType,proxyHost: null == proxyHost ? _self.proxyHost : proxyHost // ignore: cast_nullable_to_non_nullable
 as String,proxyPort: null == proxyPort ? _self.proxyPort : proxyPort // ignore: cast_nullable_to_non_nullable
 as int,proxyUsername: freezed == proxyUsername ? _self.proxyUsername : proxyUsername // ignore: cast_nullable_to_non_nullable

@@ -7,6 +7,7 @@ import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
+import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:shellvault/features/terminal/presentation/widgets/connection_overlay.dart';
@@ -43,6 +44,17 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
     final activeSession = ref.watch(activeSessionProvider);
     final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
     final fontSizeAsync = ref.watch(terminalFontSizeProvider);
+    final splitMode = ref.watch(splitModeProvider);
+    final secondarySession = ref.watch(secondarySessionProvider);
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Auto-reset split when less than 2 sessions
+    if (sessions.length < 2 && splitMode != SplitMode.none) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(splitModeProvider.notifier).state = SplitMode.none;
+        ref.read(secondarySessionIndexProvider.notifier).state = null;
+      });
+    }
 
     final terminalTheme = themeKeyAsync.when(
       data: (key) => TerminalThemePresets.getTheme(key),
@@ -93,6 +105,18 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
         context,
         title: l10n.terminalTitle,
         actions: [
+          if (sessions.length >= 2 && screenWidth >= 600)
+            IconButton(
+              icon: Icon(
+                splitMode == SplitMode.none
+                    ? Icons.vertical_split
+                    : Icons.close_fullscreen,
+              ),
+              tooltip: splitMode == SplitMode.none
+                  ? l10n.terminalSplit
+                  : l10n.terminalUnsplit,
+              onPressed: () => _toggleSplit(sessions),
+            ),
           if (activeSession != null)
             IconButton(
               icon: const Icon(Icons.content_paste),
@@ -130,37 +154,57 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
             // Tab bar (always visible when sessions exist)
             const SessionTabBar(),
 
-            // Terminal + overlay
+            // Terminal + overlay (with optional split)
             Expanded(
               child: activeSession == null
                   ? const Center(child: CircularProgressIndicator.adaptive())
-                  : Stack(
-                      children: [
-                        TerminalView(
-                          activeSession.terminal,
+                  : splitMode == SplitMode.horizontal &&
+                            secondarySession != null
+                      ? Row(
+                          children: [
+                            Expanded(
+                              child: _TerminalPane(
+                                session: activeSession,
+                                theme: terminalTheme,
+                                fontSize: fontSize,
+                                autofocus: true,
+                                onRetry: () => ref
+                                    .read(sessionManagerProvider.notifier)
+                                    .reconnectSession(activeSession.id),
+                                onClose: () => ref
+                                    .read(sessionManagerProvider.notifier)
+                                    .closeSession(activeSession.id),
+                              ),
+                            ),
+                            const VerticalDivider(width: 2),
+                            Expanded(
+                              child: _TerminalPane(
+                                session: secondarySession,
+                                theme: terminalTheme,
+                                fontSize: fontSize,
+                                autofocus: false,
+                                onRetry: () => ref
+                                    .read(sessionManagerProvider.notifier)
+                                    .reconnectSession(secondarySession.id),
+                                onClose: () => ref
+                                    .read(sessionManagerProvider.notifier)
+                                    .closeSession(secondarySession.id),
+                              ),
+                            ),
+                          ],
+                        )
+                      : _TerminalPane(
+                          session: activeSession,
                           theme: terminalTheme,
-                          textStyle: TerminalStyle(fontSize: fontSize),
+                          fontSize: fontSize,
                           autofocus: true,
-                          keyboardAppearance: Brightness.dark,
-                          deleteDetection: true,
+                          onRetry: () => ref
+                              .read(sessionManagerProvider.notifier)
+                              .reconnectSession(activeSession.id),
+                          onClose: () => ref
+                              .read(sessionManagerProvider.notifier)
+                              .closeSession(activeSession.id),
                         ),
-                        ConnectionOverlay(
-                          status: activeSession.status,
-                          serverName: activeSession.title,
-                          errorMessage: activeSession.errorMessage,
-                          onRetry: () {
-                            ref
-                                .read(sessionManagerProvider.notifier)
-                                .reconnectSession(activeSession.id);
-                          },
-                          onClose: () {
-                            ref
-                                .read(sessionManagerProvider.notifier)
-                                .closeSession(activeSession.id);
-                          },
-                        ),
-                      ],
-                    ),
             ),
 
             // Mobile keyboard toolbar
@@ -175,11 +219,74 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
     );
   }
 
+  void _toggleSplit(List<SshSessionEntity> sessions) {
+    final current = ref.read(splitModeProvider);
+    if (current == SplitMode.none) {
+      // Find first session that isn't the active one
+      final activeIndex = ref.read(activeSessionIndexProvider);
+      int? secondaryIndex;
+      for (var i = 0; i < sessions.length; i++) {
+        if (i != activeIndex) {
+          secondaryIndex = i;
+          break;
+        }
+      }
+      if (secondaryIndex != null) {
+        ref.read(secondarySessionIndexProvider.notifier).state = secondaryIndex;
+        ref.read(splitModeProvider.notifier).state = SplitMode.horizontal;
+      }
+    } else {
+      ref.read(splitModeProvider.notifier).state = SplitMode.none;
+      ref.read(secondarySessionIndexProvider.notifier).state = null;
+    }
+  }
+
   Future<void> _insertSnippet() async {
     final result = await SnippetQuickPanel.show(context);
     if (result != null) {
       final session = ref.read(activeSessionProvider);
       session?.terminal.textInput(result);
     }
+  }
+}
+
+class _TerminalPane extends StatelessWidget {
+  final SshSessionEntity session;
+  final TerminalTheme theme;
+  final double fontSize;
+  final bool autofocus;
+  final VoidCallback onRetry;
+  final VoidCallback onClose;
+
+  const _TerminalPane({
+    required this.session,
+    required this.theme,
+    required this.fontSize,
+    required this.autofocus,
+    required this.onRetry,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        TerminalView(
+          session.terminal,
+          theme: theme,
+          textStyle: TerminalStyle(fontSize: fontSize),
+          autofocus: autofocus,
+          keyboardAppearance: Brightness.dark,
+          deleteDetection: true,
+        ),
+        ConnectionOverlay(
+          status: session.status,
+          serverName: session.title,
+          errorMessage: session.errorMessage,
+          onRetry: onRetry,
+          onClose: onClose,
+        ),
+      ],
+    );
   }
 }

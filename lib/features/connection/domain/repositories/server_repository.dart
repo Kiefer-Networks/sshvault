@@ -21,4 +21,8 @@ abstract class ServerRepository {
   });
   Future<Result<void>> reorderServers(List<String> orderedIds);
   Future<Result<ServerCredentials>> getCredentials(String serverId);
+  Future<Result<void>> toggleFavorite(String id, bool value);
+  Future<Result<void>> setLastConnectedAt(String id, DateTime time);
+  Future<Result<List<ServerEntity>>> getFavorites();
+  Future<Result<List<ServerEntity>>> getRecents({int limit = 5});
 }

@@ -60,6 +60,22 @@ class ServerUseCases {
     return _repository.getCredentials(serverId);
   }
 
+  Future<Result<void>> toggleFavorite(String id, bool value) {
+    return _repository.toggleFavorite(id, value);
+  }
+
+  Future<Result<void>> setLastConnectedAt(String id, DateTime time) {
+    return _repository.setLastConnectedAt(id, time);
+  }
+
+  Future<Result<List<ServerEntity>>> getFavorites() {
+    return _repository.getFavorites();
+  }
+
+  Future<Result<List<ServerEntity>>> getRecents({int limit = 5}) {
+    return _repository.getRecents(limit: limit);
+  }
+
   String? _validate(ServerEntity server) {
     if (server.jumpHostId != null &&
         server.jumpHostId == server.id &&

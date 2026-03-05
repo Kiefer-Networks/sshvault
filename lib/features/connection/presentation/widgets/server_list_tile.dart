@@ -19,6 +19,7 @@ class ServerListTile extends ConsumerWidget {
   final VoidCallback onDuplicate;
   final VoidCallback onDelete;
   final VoidCallback? onDetail;
+  final VoidCallback? onFavoriteToggle;
 
   const ServerListTile({
     super.key,
@@ -28,6 +29,7 @@ class ServerListTile extends ConsumerWidget {
     required this.onDuplicate,
     required this.onDelete,
     this.onDetail,
+    this.onFavoriteToggle,
   });
 
   @override
@@ -126,14 +128,37 @@ class ServerListTile extends ConsumerWidget {
           ],
         ),
         isThreeLine: server.tags.isNotEmpty,
-        trailing: onDetail != null
-            ? IconButton(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (onFavoriteToggle != null)
+              IconButton(
+                icon: Icon(
+                  server.isFavorite ? Icons.star : Icons.star_border,
+                  color: server.isFavorite
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurface.withAlpha(
+                          AppConstants.alpha102,
+                        ),
+                  size: 20,
+                ),
+                onPressed: onFavoriteToggle,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(
+                  minWidth: 32,
+                  minHeight: 32,
+                ),
+              ),
+            if (onDetail != null)
+              IconButton(
                 icon: const Icon(Icons.info_outlined),
                 onPressed: onDetail,
                 tooltip: l10n.serverDetails,
                 visualDensity: VisualDensity.compact,
-              )
-            : null,
+              ),
+          ],
+        ),
       ),
     );
   }

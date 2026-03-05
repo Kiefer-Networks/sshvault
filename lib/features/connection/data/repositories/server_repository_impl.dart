@@ -233,6 +233,58 @@ class ServerRepositoryImpl implements ServerRepository {
     );
   }
 
+  @override
+  Future<Result<void>> toggleFavorite(String id, bool value) async {
+    try {
+      await _serverDao.setFavorite(id, value);
+      return const Success(null);
+    } catch (e) {
+      return Err(DatabaseFailure('Failed to toggle favorite', cause: e));
+    }
+  }
+
+  @override
+  Future<Result<void>> setLastConnectedAt(String id, DateTime time) async {
+    try {
+      await _serverDao.setLastConnectedAt(id, time);
+      return const Success(null);
+    } catch (e) {
+      return Err(DatabaseFailure('Failed to set last connected', cause: e));
+    }
+  }
+
+  @override
+  Future<Result<List<ServerEntity>>> getFavorites() async {
+    try {
+      final rows = await _serverDao.getFavoriteServers();
+      final entities = <ServerEntity>[];
+      for (final row in rows) {
+        final tagRows = await _serverDao.getTagsForServer(row.id);
+        final tags = tagRows.map((t) => TagMapper.fromDrift(t)).toList();
+        entities.add(ServerMapper.fromDrift(row, tags: tags));
+      }
+      return Success(entities);
+    } catch (e) {
+      return Err(DatabaseFailure('Failed to load favorites', cause: e));
+    }
+  }
+
+  @override
+  Future<Result<List<ServerEntity>>> getRecents({int limit = 5}) async {
+    try {
+      final rows = await _serverDao.getRecentServers(limit: limit);
+      final entities = <ServerEntity>[];
+      for (final row in rows) {
+        final tagRows = await _serverDao.getTagsForServer(row.id);
+        final tags = tagRows.map((t) => TagMapper.fromDrift(t)).toList();
+        entities.add(ServerMapper.fromDrift(row, tags: tags));
+      }
+      return Success(entities);
+    } catch (e) {
+      return Err(DatabaseFailure('Failed to load recent servers', cause: e));
+    }
+  }
+
   Future<void> _saveCredentials(
     String serverId,
     ServerCredentials credentials,

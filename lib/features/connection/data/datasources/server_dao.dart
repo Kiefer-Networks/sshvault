@@ -112,6 +112,27 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
     return rows.map((row) => row.readTable(tags)).toList();
   }
 
+  Future<void> setFavorite(String id, bool favorite) =>
+      (update(servers)..where((s) => s.id.equals(id)))
+          .write(ServersCompanion(isFavorite: Value(favorite)));
+
+  Future<void> setLastConnectedAt(String id, DateTime time) =>
+      (update(servers)..where((s) => s.id.equals(id)))
+          .write(ServersCompanion(lastConnectedAt: Value(time)));
+
+  Future<List<Server>> getFavoriteServers() =>
+      (select(servers)
+            ..where((s) => s.isFavorite.equals(true))
+            ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
+          .get();
+
+  Future<List<Server>> getRecentServers({int limit = 5}) =>
+      (select(servers)
+            ..where((s) => s.lastConnectedAt.isNotNull())
+            ..orderBy([(s) => OrderingTerm.desc(s.lastConnectedAt)])
+            ..limit(limit))
+          .get();
+
   Future<void> updateSortOrders(Map<String, int> idToOrder) async {
     await batch((batch) {
       for (final entry in idToOrder.entries) {

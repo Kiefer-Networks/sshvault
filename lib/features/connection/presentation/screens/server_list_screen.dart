@@ -18,6 +18,8 @@ import 'package:shellvault/features/connection/presentation/widgets/server_grid_
 import 'package:shellvault/features/connection/presentation/widgets/server_list_tile.dart';
 import 'package:shellvault/features/connection/presentation/widgets/view_mode_toggle.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 final _hostFolderExpandedProvider = StateProvider.autoDispose
@@ -54,6 +56,7 @@ class ServerListScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
+          const _DashboardHeader(),
           const SearchFilterBar(),
           const SizedBox(height: 8),
           Expanded(
@@ -158,6 +161,8 @@ class ServerListScreen extends ConsumerWidget {
                           }
                         },
                         onDelete: () => _confirmDelete(context, ref, server),
+                        onFavoriteToggle: () =>
+                            _toggleFavorite(ref, server),
                       ),
                     );
                   }
@@ -279,6 +284,7 @@ class ServerListScreen extends ConsumerWidget {
                   .deleteServer(server.id);
             }
           },
+          onFavoriteToggle: () => _toggleFavorite(ref, server),
         );
       },
     );
@@ -312,9 +318,18 @@ class ServerListScreen extends ConsumerWidget {
           onLongPress: () {
             _showServerActions(context, ref, server);
           },
+          onFavoriteToggle: () => _toggleFavorite(ref, server),
         );
       },
     );
+  }
+
+  Future<void> _toggleFavorite(WidgetRef ref, dynamic server) async {
+    final useCases = ref.read(serverUseCasesProvider);
+    await useCases.toggleFavorite(server.id, !server.isFavorite);
+    ref.invalidate(serverListProvider);
+    ref.invalidate(favoriteServersProvider);
+    ref.invalidate(folderGroupedServersProvider);
   }
 
   void _showServerActions(BuildContext context, WidgetRef ref, dynamic server) {
@@ -344,6 +359,19 @@ class ServerListScreen extends ConsumerWidget {
           label: l10n.edit,
           icon: Icons.edit,
           onPressed: () => context.push('/server/${server.id}/edit'),
+        ),
+        AdaptiveAction(
+          label: server.isFavorite
+              ? l10n.removeFromFavorites
+              : l10n.addToFavorites,
+          icon: server.isFavorite ? Icons.star : Icons.star_border,
+          onPressed: () async {
+            final useCases = ref.read(serverUseCasesProvider);
+            await useCases.toggleFavorite(server.id, !server.isFavorite);
+            ref.invalidate(serverListProvider);
+            ref.invalidate(favoriteServersProvider);
+            ref.invalidate(folderGroupedServersProvider);
+          },
         ),
         AdaptiveAction(
           label: l10n.serverDuplicate,
@@ -437,6 +465,151 @@ class _FolderSectionHeader extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _DashboardHeader extends ConsumerWidget {
+  const _DashboardHeader();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final sessions = ref.watch(sessionManagerProvider);
+    final favoritesAsync = ref.watch(favoriteServersProvider);
+    final recentsAsync = ref.watch(recentServersProvider);
+
+    final favorites = favoritesAsync.value ?? [];
+    final recents = recentsAsync.value ?? [];
+
+    if (sessions.isEmpty && favorites.isEmpty && recents.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Active sessions
+          if (sessions.isNotEmpty) ...[
+            _SectionHeader(title: l10n.dashboardActiveSessions),
+            SizedBox(
+              height: 48,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: sessions.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final session = sessions[index];
+                  return ActionChip(
+                    avatar: Icon(
+                      Icons.circle,
+                      size: 10,
+                      color: session.status == SshConnectionStatus.connected
+                          ? theme.colorScheme.tertiary
+                          : theme.colorScheme.outlineVariant,
+                    ),
+                    label: Text(session.title),
+                    onPressed: () {
+                      ref.read(activeSessionIndexProvider.notifier).state =
+                          index;
+                      ref
+                          .read(shellNavigationProvider)
+                          ?.goBranch(AppConstants.terminalBranchIndex);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+          // Favorites
+          if (favorites.isNotEmpty) ...[
+            _SectionHeader(title: l10n.dashboardFavorites),
+            SizedBox(
+              height: 48,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: favorites.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final server = favorites[index];
+                  return ActionChip(
+                    avatar: Icon(
+                      IconConstants.getIcon(server.iconName),
+                      size: 16,
+                      color: Color(server.color),
+                    ),
+                    label: Text(server.name),
+                    onPressed: () async {
+                      await ref
+                          .read(sessionManagerProvider.notifier)
+                          .openSession(server.id);
+                      ref
+                          .read(shellNavigationProvider)
+                          ?.goBranch(AppConstants.terminalBranchIndex);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+          // Recents
+          if (recents.isNotEmpty) ...[
+            _SectionHeader(title: l10n.dashboardRecent),
+            SizedBox(
+              height: 48,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: recents.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final server = recents[index];
+                  return ActionChip(
+                    avatar: Icon(
+                      IconConstants.getIcon(server.iconName),
+                      size: 16,
+                      color: Color(server.color),
+                    ),
+                    label: Text(server.name),
+                    onPressed: () async {
+                      await ref
+                          .read(sessionManagerProvider.notifier)
+                          .openSession(server.id);
+                      ref
+                          .read(shellNavigationProvider)
+                          ?.goBranch(AppConstants.terminalBranchIndex);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+          const SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     );
   }

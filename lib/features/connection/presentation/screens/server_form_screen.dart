@@ -122,6 +122,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   final _proxyPortController = TextEditingController();
   final _proxyUsernameController = TextEditingController();
   final _proxyPasswordController = TextEditingController();
+  final _postConnectController = TextEditingController();
 
   @override
   void initState() {
@@ -147,6 +148,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     _proxyHostController.text = result.proxyHost;
     _proxyPortController.text = result.proxyPort.toString();
     _proxyUsernameController.text = result.proxyUsername ?? '';
+    _postConnectController.text = result.postConnectCommands;
     ref
         .read(_serverFormStateProvider.notifier)
         .state = _ServerFormReactiveState(
@@ -189,6 +191,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     _proxyPortController.dispose();
     _proxyUsernameController.dispose();
     _proxyPasswordController.dispose();
+    _postConnectController.dispose();
     super.dispose();
   }
 
@@ -461,6 +464,41 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
             ),
             const SizedBox(height: 16),
 
+            // Post-Connect Commands
+            SectionCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.postConnectCommands,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.postConnectCommandsSubtitle,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withAlpha(AppConstants.alpha153),
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _postConnectController,
+                    decoration: InputDecoration(
+                      hintText: l10n.postConnectCommandsHint,
+                    ),
+                    minLines: 2,
+                    maxLines: 5,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
             SectionCard(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -529,6 +567,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         proxyUsername: _proxyUsernameController.text.trim().isEmpty
             ? null
             : _proxyUsernameController.text.trim(),
+        postConnectCommands: _postConnectController.text.trim(),
         requiresVpn: currentState.requiresVpn,
         tags: tags,
         createdAt: now,

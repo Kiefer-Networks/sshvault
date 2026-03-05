@@ -98,6 +98,11 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(servers, servers.useGlobalProxy);
           await m.addColumn(servers, servers.requiresVpn);
         }
+        if (from < 8) {
+          await m.addColumn(servers, servers.postConnectCommands);
+          await m.addColumn(servers, servers.isFavorite);
+          await m.addColumn(servers, servers.lastConnectedAt);
+        }
       },
     );
   }

@@ -2167,4 +2167,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vpnConnectAnyway => 'Connect Anyway';
+
+  @override
+  String get postConnectCommands => 'Post-Connect Commands';
+
+  @override
+  String get postConnectCommandsHint => 'cd /var/log\ntail -f syslog';
+
+  @override
+  String get postConnectCommandsSubtitle =>
+      'Commands executed automatically after connection (one per line)';
+
+  @override
+  String get dashboardFavorites => 'Favorites';
+
+  @override
+  String get dashboardRecent => 'Recent';
+
+  @override
+  String get dashboardActiveSessions => 'Active Sessions';
+
+  @override
+  String get addToFavorites => 'Add to Favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from Favorites';
+
+  @override
+  String get noRecentConnections => 'No recent connections';
+
+  @override
+  String get terminalSplit => 'Split View';
+
+  @override
+  String get terminalUnsplit => 'Close Split';
+
+  @override
+  String get terminalSelectSession => 'Select session for split view';
 }

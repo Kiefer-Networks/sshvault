@@ -29,6 +29,11 @@ _ServerEntity _$ServerEntityFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
       jumpHostId: json['jumpHostId'] as String?,
+      postConnectCommands: json['postConnectCommands'] as String? ?? '',
+      isFavorite: json['isFavorite'] as bool? ?? false,
+      lastConnectedAt: json['lastConnectedAt'] == null
+          ? null
+          : DateTime.parse(json['lastConnectedAt'] as String),
       proxyType:
           $enumDecodeNullable(_$ProxyTypeEnumMap, json['proxyType']) ??
           ProxyType.none,
@@ -63,6 +68,9 @@ Map<String, dynamic> _$ServerEntityToJson(_ServerEntity instance) =>
       'distroName': instance.distroName,
       'tags': instance.tags.map((e) => e.toJson()).toList(),
       'jumpHostId': instance.jumpHostId,
+      'postConnectCommands': instance.postConnectCommands,
+      'isFavorite': instance.isFavorite,
+      'lastConnectedAt': instance.lastConnectedAt?.toIso8601String(),
       'proxyType': _$ProxyTypeEnumMap[instance.proxyType]!,
       'proxyHost': instance.proxyHost,
       'proxyPort': instance.proxyPort,
