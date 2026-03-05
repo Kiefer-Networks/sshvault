@@ -6,9 +6,10 @@ import 'package:shellvault/core/widgets/pin_num_pad.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 final _pinDialogErrorProvider = StateProvider.autoDispose<String?>((_) => null);
+final _pinDialogInputProvider = StateProvider.autoDispose<String>((_) => '');
 
 final _pinVerifyErrorProvider = StateProvider.autoDispose<String?>((_) => null);
-
+final _pinVerifyInputProvider = StateProvider.autoDispose<String>((_) => '');
 final _pinVerifyingProvider = StateProvider.autoDispose<bool>((_) => false);
 
 /// Dialog to set or verify a 6-digit PIN code using a numpad.
@@ -58,56 +59,54 @@ class PinDialog extends ConsumerStatefulWidget {
 enum _SetPinPhase { enter, confirm }
 
 class _PinDialogState extends ConsumerState<PinDialog> {
-  String _pin = '';
   String _firstPin = '';
   _SetPinPhase _phase = _SetPinPhase.enter;
 
   void _onDigit(String digit) {
-    if (_pin.length >= 6) return;
+    final pin = ref.read(_pinDialogInputProvider);
+    if (pin.length >= 6) return;
     ref.read(_pinDialogErrorProvider.notifier).state = null;
-    _pin += digit;
-    ref.read(_pinDialogErrorProvider.notifier).state = ref.read(
-      _pinDialogErrorProvider,
-    );
+    final updated = pin + digit;
+    ref.read(_pinDialogInputProvider.notifier).state = updated;
 
-    if (_pin.length == 6) {
-      _onPinComplete();
+    if (updated.length == 6) {
+      _onPinComplete(updated);
     }
   }
 
   void _onBackspace() {
-    if (_pin.isEmpty) return;
+    final pin = ref.read(_pinDialogInputProvider);
+    if (pin.isEmpty) return;
     ref.read(_pinDialogErrorProvider.notifier).state = null;
-    _pin = _pin.substring(0, _pin.length - 1);
-    // Force rebuild by toggling error state
-    ref.read(_pinDialogErrorProvider.notifier).state = ref.read(
-      _pinDialogErrorProvider,
+    ref.read(_pinDialogInputProvider.notifier).state = pin.substring(
+      0,
+      pin.length - 1,
     );
   }
 
-  void _onPinComplete() {
+  void _onPinComplete(String pin) {
     final l10n = AppLocalizations.of(context)!;
     if (!widget.confirm) {
-      Navigator.of(context).pop(_pin);
+      Navigator.of(context).pop(pin);
       return;
     }
 
     if (_phase == _SetPinPhase.enter) {
-      _firstPin = _pin;
-      _pin = '';
+      _firstPin = pin;
+      ref.read(_pinDialogInputProvider.notifier).state = '';
       _phase = _SetPinPhase.confirm;
       ref.read(_pinDialogErrorProvider.notifier).state = null;
       return;
     }
 
     // Confirm phase
-    if (_pin != _firstPin) {
+    if (pin != _firstPin) {
       ref.read(_pinDialogErrorProvider.notifier).state =
           l10n.pinDialogErrorMismatch;
-      _pin = '';
+      ref.read(_pinDialogInputProvider.notifier).state = '';
       return;
     }
-    Navigator.of(context).pop(_pin);
+    Navigator.of(context).pop(pin);
   }
 
   @override
@@ -115,6 +114,7 @@ class _PinDialogState extends ConsumerState<PinDialog> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final error = ref.watch(_pinDialogErrorProvider);
+    final pin = ref.watch(_pinDialogInputProvider);
 
     final title = _phase == _SetPinPhase.confirm
         ? l10n.pinDialogConfirmLabel
@@ -144,7 +144,7 @@ class _PinDialogState extends ConsumerState<PinDialog> {
                   ),
                   const SizedBox(height: 24),
                 ],
-                PinDotIndicator(length: _pin.length, hasError: error != null),
+                PinDotIndicator(length: pin.length, hasError: error != null),
                 if (error != null) ...[
                   const SizedBox(height: 12),
                   Text(
@@ -176,39 +176,38 @@ class _PinVerifyDialog extends ConsumerStatefulWidget {
 }
 
 class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
-  String _pin = '';
   int _attempts = 0;
 
   void _onDigit(String digit) {
     final verifying = ref.read(_pinVerifyingProvider);
-    if (verifying || _pin.length >= 6) return;
+    final pin = ref.read(_pinVerifyInputProvider);
+    if (verifying || pin.length >= 6) return;
 
     ref.read(_pinVerifyErrorProvider.notifier).state = null;
-    _pin += digit;
-    ref.read(_pinVerifyErrorProvider.notifier).state = ref.read(
-      _pinVerifyErrorProvider,
-    );
+    final updated = pin + digit;
+    ref.read(_pinVerifyInputProvider.notifier).state = updated;
 
-    if (_pin.length == 6) {
-      _verify();
+    if (updated.length == 6) {
+      _verify(updated);
     }
   }
 
   void _onBackspace() {
-    if (_pin.isEmpty) return;
+    final pin = ref.read(_pinVerifyInputProvider);
+    if (pin.isEmpty) return;
     ref.read(_pinVerifyErrorProvider.notifier).state = null;
-    _pin = _pin.substring(0, _pin.length - 1);
-    ref.read(_pinVerifyErrorProvider.notifier).state = ref.read(
-      _pinVerifyErrorProvider,
+    ref.read(_pinVerifyInputProvider.notifier).state = pin.substring(
+      0,
+      pin.length - 1,
     );
   }
 
-  Future<void> _verify() async {
+  Future<void> _verify(String pin) async {
     final verifying = ref.read(_pinVerifyingProvider);
     if (verifying) return;
     final l10n = AppLocalizations.of(context)!;
 
-    if (_pin.length != 6) {
+    if (pin.length != 6) {
       ref.read(_pinVerifyErrorProvider.notifier).state =
           l10n.pinDialogErrorLength;
       return;
@@ -216,19 +215,19 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
 
     ref.read(_pinVerifyingProvider.notifier).state = true;
 
-    final success = await widget.verifier(_pin);
+    final success = await widget.verifier(pin);
 
     if (!mounted) return;
 
     if (success) {
-      Navigator.of(context).pop(_pin);
+      Navigator.of(context).pop(pin);
     } else {
       _attempts++;
       ref.read(_pinVerifyingProvider.notifier).state = false;
       ref.read(_pinVerifyErrorProvider.notifier).state = l10n.pinDialogWrongPin(
         _attempts,
       );
-      _pin = '';
+      ref.read(_pinVerifyInputProvider.notifier).state = '';
       if (_attempts >= AppConstants.maxPinAttempts) {
         Navigator.of(context).pop();
       }
@@ -241,6 +240,7 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
     final theme = Theme.of(context);
     final error = ref.watch(_pinVerifyErrorProvider);
     final verifying = ref.watch(_pinVerifyingProvider);
+    final pin = ref.watch(_pinVerifyInputProvider);
 
     return Dialog.fullscreen(
       child: Scaffold(
@@ -257,7 +257,7 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                PinDotIndicator(length: _pin.length, hasError: error != null),
+                PinDotIndicator(length: pin.length, hasError: error != null),
                 if (error != null) ...[
                   const SizedBox(height: 12),
                   Text(
