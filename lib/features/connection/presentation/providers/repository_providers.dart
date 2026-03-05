@@ -24,7 +24,7 @@ import 'package:shellvault/features/snippet/domain/usecases/snippet_usecases.dar
 final serverRepositoryProvider = Provider<ServerRepository>((ref) {
   final db = ref.watch(databaseProvider);
   final secureStorage = ref.watch(secureStorageProvider);
-  return ServerRepositoryImpl(db.serverDao, secureStorage);
+  return ServerRepositoryImpl(db.serverDao, secureStorage, groupDao: db.groupDao);
 });
 
 final sshKeyRepositoryProvider = Provider<SshKeyRepository>((ref) {
@@ -33,7 +33,7 @@ final sshKeyRepositoryProvider = Provider<SshKeyRepository>((ref) {
   return SshKeyRepositoryImpl(db.sshKeyDao, secureStorage);
 });
 
-final groupRepositoryProvider = Provider<GroupRepository>((ref) {
+final folderRepositoryProvider = Provider<GroupRepository>((ref) {
   final db = ref.watch(databaseProvider);
   return GroupRepositoryImpl(db.groupDao);
 });
@@ -67,8 +67,8 @@ final sshKeyUseCasesProvider = Provider<SshKeyUseCases>((ref) {
   return SshKeyUseCases(ref.watch(sshKeyRepositoryProvider));
 });
 
-final groupUseCasesProvider = Provider<GroupUseCases>((ref) {
-  return GroupUseCases(ref.watch(groupRepositoryProvider));
+final folderUseCasesProvider = Provider<GroupUseCases>((ref) {
+  return GroupUseCases(ref.watch(folderRepositoryProvider));
 });
 
 final tagUseCasesProvider = Provider<TagUseCases>((ref) {

@@ -7,63 +7,62 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/error_state.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/connection/presentation/screens/group_form_dialog.dart';
+import 'package:shellvault/features/connection/presentation/screens/folder_form_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
-final _groupTileExpandedProvider = StateProvider.autoDispose
-    .family<bool, String>((ref, groupId) => false);
+final _folderTileExpandedProvider = StateProvider.autoDispose
+    .family<bool, String>((ref, folderId) => false);
 
-final _groupTileConnectingProvider = StateProvider.autoDispose
-    .family<bool, String>((ref, groupId) => false);
+final _folderTileConnectingProvider = StateProvider.autoDispose
+    .family<bool, String>((ref, folderId) => false);
 
-class GroupListScreen extends ConsumerWidget {
-  const GroupListScreen({super.key});
+class FolderBrowserScreen extends ConsumerWidget {
+  const FolderBrowserScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final groupsAsync = ref.watch(groupTreeProvider);
+    final foldersAsync = ref.watch(folderTreeProvider);
 
     final l10n = AppLocalizations.of(context)!;
 
     return AdaptiveScaffold.withAppBar(
       appBar: buildShellAppBar(
         context,
-        title: l10n.groupListTitle,
+        title: l10n.folderListTitle,
         actions: null,
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'addGroupFab',
-        onPressed: () => _showGroupForm(context, ref),
+        heroTag: 'addFolderFab',
+        onPressed: () => _showFolderForm(context, ref),
         child: const Icon(Icons.add),
       ),
-      body: groupsAsync.when(
-        data: (groups) {
-          if (groups.isEmpty) {
+      body: foldersAsync.when(
+        data: (folders) {
+          if (folders.isEmpty) {
             return EmptyState(
               icon: Icons.folder_outlined,
-              title: l10n.groupListEmpty,
-              subtitle: l10n.groupListEmptySubtitle,
+              title: l10n.folderListEmpty,
+              subtitle: l10n.folderListEmptySubtitle,
               action: FilledButton.icon(
-                onPressed: () => _showGroupForm(context, ref),
+                onPressed: () => _showFolderForm(context, ref),
                 icon: const Icon(Icons.add),
-                label: Text(l10n.groupAddButton),
+                label: Text(l10n.folderAddButton),
               ),
             );
           }
 
-          final widgets = _buildGroupList(context, ref, groups);
+          final widgets = _buildFolderList(context, ref, folders);
           return ListView.separated(
             padding: const EdgeInsets.only(bottom: 80),
             itemCount: widgets.length,
@@ -75,85 +74,85 @@ class GroupListScreen extends ConsumerWidget {
             const Center(child: CircularProgressIndicator.adaptive()),
         error: (error, _) => ErrorState(
           error: error,
-          onRetry: () => ref.invalidate(groupTreeProvider),
+          onRetry: () => ref.invalidate(folderTreeProvider),
         ),
       ),
     );
   }
 
-  List<Widget> _buildGroupList(
+  List<Widget> _buildFolderList(
     BuildContext context,
     WidgetRef ref,
-    List<GroupEntity> groups, {
+    List<GroupEntity> folders, {
     int depth = 0,
   }) {
     final widgets = <Widget>[];
-    for (final group in groups) {
+    for (final folder in folders) {
       widgets.add(
-        _GroupTile(
-          group: group,
+        _FolderTile(
+          folder: folder,
           depth: depth,
-          onEdit: () => _showGroupForm(context, ref, group: group),
-          onDelete: () => _deleteGroup(context, ref, group),
+          onEdit: () => _showFolderForm(context, ref, folder: folder),
+          onDelete: () => _deleteFolder(context, ref, folder),
         ),
       );
-      if (group.children.isNotEmpty) {
+      if (folder.children.isNotEmpty) {
         widgets.addAll(
-          _buildGroupList(context, ref, group.children, depth: depth + 1),
+          _buildFolderList(context, ref, folder.children, depth: depth + 1),
         );
       }
     }
     return widgets;
   }
 
-  void _showGroupForm(
+  void _showFolderForm(
     BuildContext context,
     WidgetRef ref, {
-    GroupEntity? group,
+    GroupEntity? folder,
   }) {
-    GroupFormDialog.show(context, group: group);
+    FolderFormDialog.show(context, folder: folder);
   }
 
-  Future<void> _deleteGroup(
+  Future<void> _deleteFolder(
     BuildContext context,
     WidgetRef ref,
-    GroupEntity group,
+    GroupEntity folder,
   ) async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await ConfirmDialog.show(
       context,
-      title: l10n.groupDeleteTitle,
-      message: l10n.groupDeleteMessage(group.name),
+      title: l10n.folderDeleteTitle,
+      message: l10n.folderDeleteMessage(folder.name),
     );
     if (confirmed == true) {
-      await ref.read(groupListProvider.notifier).deleteGroup(group.id);
+      await ref.read(folderListProvider.notifier).deleteFolder(folder.id);
     }
   }
 }
 
-class _GroupTile extends ConsumerWidget {
-  final GroupEntity group;
+class _FolderTile extends ConsumerWidget {
+  final GroupEntity folder;
   final int depth;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const _GroupTile({
-    required this.group,
+  const _FolderTile({
+    required this.folder,
     this.depth = 0,
     required this.onEdit,
     required this.onDelete,
   });
 
   Future<void> _connectAllServers(BuildContext context, WidgetRef ref) async {
-    final connectingAll = ref.read(_groupTileConnectingProvider(group.id));
+    final connectingAll = ref.read(_folderTileConnectingProvider(folder.id));
     if (connectingAll) return;
-    ref.read(_groupTileConnectingProvider(group.id).notifier).state = true;
+    ref.read(_folderTileConnectingProvider(folder.id).notifier).state = true;
 
     try {
-      final groupId = group.id;
+      final folderId = folder.id;
       final useCases = ref.read(serverUseCasesProvider);
       final result = await useCases.getServers(
-        filter: ServerFilter(groupId: groupId),
+        filter: ServerFilter(groupId: folderId),
       );
       final servers = result.fold(
         onSuccess: (s) => s,
@@ -180,7 +179,7 @@ class _GroupTile extends ConsumerWidget {
         );
       }
     } finally {
-      ref.read(_groupTileConnectingProvider(group.id).notifier).state = false;
+      ref.read(_folderTileConnectingProvider(folder.id).notifier).state = false;
     }
   }
 
@@ -188,9 +187,9 @@ class _GroupTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final expanded = ref.watch(_groupTileExpandedProvider(group.id));
-    final connectingAll = ref.watch(_groupTileConnectingProvider(group.id));
-    final groupColor = Color(group.color);
+    final expanded = ref.watch(_folderTileExpandedProvider(folder.id));
+    final connectingAll = ref.watch(_folderTileConnectingProvider(folder.id));
+    final folderColor = Color(folder.color);
 
     return Column(
       children: [
@@ -220,7 +219,7 @@ class _GroupTile extends ConsumerWidget {
             decoration: depth > 0
                 ? BoxDecoration(
                     border: Border(
-                      left: BorderSide(color: groupColor, width: 3),
+                      left: BorderSide(color: folderColor, width: 3),
                     ),
                   )
                 : null,
@@ -233,18 +232,18 @@ class _GroupTile extends ConsumerWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: groupColor.withAlpha(30),
+                  color: folderColor.withAlpha(30),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  IconConstants.getIcon(group.iconName),
-                  color: groupColor,
+                  expanded ? Icons.folder_open : Icons.folder,
+                  color: folderColor,
                   size: 22,
                 ),
               ),
-              title: Text(group.name),
+              title: Text(folder.name),
               subtitle: Text(
-                l10n.groupServerCount(group.serverCount),
+                l10n.folderServerCount(folder.serverCount),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -252,7 +251,7 @@ class _GroupTile extends ConsumerWidget {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (group.serverCount > 0)
+                  if (folder.serverCount > 0)
                     connectingAll
                         ? const SizedBox(
                             width: 20,
@@ -262,7 +261,7 @@ class _GroupTile extends ConsumerWidget {
                         : OutlinedButton.icon(
                             onPressed: () => _connectAllServers(context, ref),
                             icon: const Icon(Icons.play_arrow, size: 18),
-                            label: Text(l10n.groupConnectAll),
+                            label: Text(l10n.folderConnectAll),
                             style: OutlinedButton.styleFrom(
                               visualDensity: VisualDensity.compact,
                               padding: const EdgeInsets.symmetric(
@@ -270,7 +269,7 @@ class _GroupTile extends ConsumerWidget {
                               ),
                             ),
                           ),
-                  if (group.serverCount > 0)
+                  if (folder.serverCount > 0)
                     IconButton(
                       icon: Icon(
                         expanded ? Icons.expand_less : Icons.expand_more,
@@ -278,24 +277,24 @@ class _GroupTile extends ConsumerWidget {
                       onPressed: () =>
                           ref
                                   .read(
-                                    _groupTileExpandedProvider(
-                                      group.id,
+                                    _folderTileExpandedProvider(
+                                      folder.id,
                                     ).notifier,
                                   )
                                   .state =
                               !expanded,
                       tooltip: expanded
-                          ? l10n.groupCollapse
-                          : l10n.groupShowHosts,
+                          ? l10n.folderCollapse
+                          : l10n.folderShowHosts,
                       visualDensity: VisualDensity.compact,
                     ),
                 ],
               ),
-              onTap: group.serverCount > 0
+              onTap: folder.serverCount > 0
                   ? () =>
                         ref
                                 .read(
-                                  _groupTileExpandedProvider(group.id).notifier,
+                                  _folderTileExpandedProvider(folder.id).notifier,
                                 )
                                 .state =
                             !expanded
@@ -303,21 +302,21 @@ class _GroupTile extends ConsumerWidget {
             ),
           ),
         ),
-        if (expanded) _GroupServerList(groupId: group.id, depth: depth),
+        if (expanded) _FolderServerList(folderId: folder.id, depth: depth),
       ],
     );
   }
 }
 
-class _GroupServerList extends ConsumerWidget {
-  final String groupId;
+class _FolderServerList extends ConsumerWidget {
+  final String folderId;
   final int depth;
 
-  const _GroupServerList({required this.groupId, required this.depth});
+  const _FolderServerList({required this.folderId, required this.depth});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final serversAsync = ref.watch(serversByGroupProvider(groupId));
+    final serversAsync = ref.watch(serversByGroupProvider(folderId));
     final theme = Theme.of(context);
     final indent = 16.0 + depth * 24.0 + 24.0;
 

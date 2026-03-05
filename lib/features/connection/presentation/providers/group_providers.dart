@@ -1,70 +1,11 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/utils/auto_sync_mixin.dart';
-import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+// Re-export folder_providers for backward compatibility during migration.
+// All new code should import folder_providers.dart directly.
+export 'folder_providers.dart';
 
-final groupListProvider =
-    AsyncNotifierProvider<GroupListNotifier, List<GroupEntity>>(
-      GroupListNotifier.new,
-    );
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 
-class GroupListNotifier extends AsyncNotifier<List<GroupEntity>>
-    with AutoSyncMixin {
-  @override
-  Future<List<GroupEntity>> build() async {
-    final useCases = ref.watch(groupUseCasesProvider);
-    final result = await useCases.getGroups();
-    return result.fold(
-      onSuccess: (groups) => groups,
-      onFailure: (failure) => throw failure,
-    );
-  }
+// Legacy aliases — use folderListProvider / folderTreeProvider in new code.
+final groupListProvider = folderListProvider;
+final groupTreeProvider = folderTreeProvider;
 
-  Future<void> createGroup(GroupEntity group) async {
-    final useCases = ref.read(groupUseCasesProvider);
-    final result = await useCases.createGroup(group);
-    result.fold(
-      onSuccess: (_) {
-        ref.invalidateSelf();
-        ref.invalidate(groupTreeProvider);
-        triggerAutoSync();
-      },
-      onFailure: (failure) => throw failure,
-    );
-  }
-
-  Future<void> updateGroup(GroupEntity group) async {
-    final useCases = ref.read(groupUseCasesProvider);
-    final result = await useCases.updateGroup(group);
-    result.fold(
-      onSuccess: (_) {
-        ref.invalidateSelf();
-        ref.invalidate(groupTreeProvider);
-        triggerAutoSync();
-      },
-      onFailure: (failure) => throw failure,
-    );
-  }
-
-  Future<void> deleteGroup(String id) async {
-    final useCases = ref.read(groupUseCasesProvider);
-    final result = await useCases.deleteGroup(id);
-    result.fold(
-      onSuccess: (_) {
-        ref.invalidateSelf();
-        ref.invalidate(groupTreeProvider);
-        triggerAutoSync();
-      },
-      onFailure: (failure) => throw failure,
-    );
-  }
-}
-
-final groupTreeProvider = FutureProvider<List<GroupEntity>>((ref) async {
-  final useCases = ref.watch(groupUseCasesProvider);
-  final result = await useCases.getGroupTree();
-  return result.fold(
-    onSuccess: (tree) => tree,
-    onFailure: (failure) => throw failure,
-  );
-});
+typedef GroupListNotifier = FolderListNotifier;

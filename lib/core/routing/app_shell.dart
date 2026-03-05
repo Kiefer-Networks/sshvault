@@ -72,7 +72,7 @@ const _baseSectionBreaks = {3}; // before SSH Keys
     _NavItem(
       icon: Icons.folder_outlined,
       selectedIcon: Icons.folder,
-      label: l10n.navGroups,
+      label: l10n.navFolders,
     ),
     _NavItem(
       icon: Icons.label_outline,

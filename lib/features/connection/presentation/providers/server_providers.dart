@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/utils/auto_sync_mixin.dart';
+import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 
 enum ViewMode { list, grid }
@@ -137,3 +139,59 @@ final serverCredentialsProvider =
         onFailure: (failure) => throw failure,
       );
     });
+
+class FolderServerGroup {
+  final GroupEntity? folder;
+  final List<ServerEntity> servers;
+  final int depth;
+
+  const FolderServerGroup({
+    this.folder,
+    required this.servers,
+    this.depth = 0,
+  });
+}
+
+final folderGroupedServersProvider =
+    FutureProvider<List<FolderServerGroup>>((ref) async {
+  final useCases = ref.watch(serverUseCasesProvider);
+  final treeResult = await ref.watch(folderTreeProvider.future);
+  final allServersResult = await useCases.getServers();
+  final allServers = allServersResult.fold(
+    onSuccess: (s) => s,
+    onFailure: (f) => throw f,
+  );
+
+  final serversByFolder = <String?, List<ServerEntity>>{};
+  for (final server in allServers) {
+    (serversByFolder[server.groupId] ??= []).add(server);
+  }
+
+  final groups = <FolderServerGroup>[];
+
+  void addFolder(GroupEntity folder, int depth) {
+    final servers = serversByFolder.remove(folder.id) ?? [];
+    if (servers.isNotEmpty || folder.children.isNotEmpty) {
+      groups.add(FolderServerGroup(
+        folder: folder,
+        servers: servers,
+        depth: depth,
+      ));
+    }
+    for (final child in folder.children) {
+      addFolder(child, depth + 1);
+    }
+  }
+
+  for (final root in treeResult) {
+    addFolder(root, 0);
+  }
+
+  // "Uncategorized" at the end
+  final uncategorized = serversByFolder[null] ?? [];
+  if (uncategorized.isNotEmpty) {
+    groups.add(FolderServerGroup(servers: uncategorized));
+  }
+
+  return groups;
+});

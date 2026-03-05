@@ -7,7 +7,7 @@ import 'package:shellvault/features/auth/presentation/screens/forgot_password_sc
 import 'package:shellvault/features/auth/presentation/screens/login_screen.dart';
 import 'package:shellvault/features/auth/presentation/screens/register_screen.dart';
 import 'package:shellvault/features/auth/presentation/screens/sync_password_screen.dart';
-import 'package:shellvault/features/connection/presentation/screens/group_list_screen.dart';
+import 'package:shellvault/features/connection/presentation/screens/folder_browser_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/server_detail_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/server_form_screen.dart';
 import 'package:shellvault/features/connection/presentation/screens/server_list_screen.dart';
@@ -82,12 +82,12 @@ abstract final class AppRouter {
             ],
           ),
 
-          // 4 — Groups
+          // 4 — Folders
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/groups',
-                builder: (context, state) => const GroupListScreen(),
+                path: '/folders',
+                builder: (context, state) => const FolderBrowserScreen(),
               ),
             ],
           ),

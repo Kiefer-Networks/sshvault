@@ -18,7 +18,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navSnippets => 'Snippets';
 
   @override
-  String get navGroups => 'Grupos';
+  String get navFolders => 'Carpetas';
 
   @override
   String get navTags => 'Etiquetas';
@@ -340,7 +340,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get serverActive => 'Activo';
 
   @override
-  String get serverNoGroup => 'Sin grupo';
+  String get serverNoFolder => 'Sin carpeta';
 
   @override
   String get serverFormTitleEdit => 'Editar servidor';
@@ -387,7 +387,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get serverDetailUsername => 'Usuario';
 
   @override
-  String get serverDetailGroup => 'Grupo';
+  String get serverDetailFolder => 'Carpeta';
 
   @override
   String get serverDetailTags => 'Etiquetas';
@@ -465,7 +465,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchServers => 'Buscar servidores...';
 
   @override
-  String get filterAllGroups => 'Todos los grupos';
+  String get filterAllFolders => 'Todas las carpetas';
 
   @override
   String get filterAll => 'Todos';
@@ -480,28 +480,28 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterClear => 'Limpiar';
 
   @override
-  String get groupListTitle => 'Grupos';
+  String get folderListTitle => 'Carpetas';
 
   @override
-  String get groupListEmpty => 'Aún no hay grupos';
+  String get folderListEmpty => 'Aún no hay carpetas';
 
   @override
-  String get groupListEmptySubtitle =>
-      'Crea grupos para organizar tus servidores.';
+  String get folderListEmptySubtitle =>
+      'Crea carpetas para organizar tus servidores.';
 
   @override
-  String get groupAddButton => 'Agregar grupo';
+  String get folderAddButton => 'Agregar carpeta';
 
   @override
-  String get groupDeleteTitle => 'Eliminar grupo';
+  String get folderDeleteTitle => 'Eliminar carpeta';
 
   @override
-  String groupDeleteMessage(String name) {
-    return '¿Eliminar \"$name\"? Los servidores en este grupo quedarán sin grupo.';
+  String folderDeleteMessage(String name) {
+    return '¿Eliminar \"$name\"? Los servidores quedarán sin organizar.';
   }
 
   @override
-  String groupServerCount(int count) {
+  String folderServerCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -512,28 +512,28 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get groupCollapse => 'Colapsar';
+  String get folderCollapse => 'Colapsar';
 
   @override
-  String get groupShowHosts => 'Mostrar hosts';
+  String get folderShowHosts => 'Mostrar hosts';
 
   @override
-  String get groupConnectAll => 'Conectar todos';
+  String get folderConnectAll => 'Conectar todos';
 
   @override
-  String get groupFormTitleEdit => 'Editar grupo';
+  String get folderFormTitleEdit => 'Editar carpeta';
 
   @override
-  String get groupFormTitleNew => 'Nuevo grupo';
+  String get folderFormTitleNew => 'Nueva carpeta';
 
   @override
-  String get groupFormNameLabel => 'Nombre del grupo';
+  String get folderFormNameLabel => 'Nombre de la carpeta';
 
   @override
-  String get groupFormParentLabel => 'Grupo padre';
+  String get folderFormParentLabel => 'Carpeta padre';
 
   @override
-  String get groupFormParentNone => 'Ninguno (Raíz)';
+  String get folderFormParentNone => 'Ninguna (Raíz)';
 
   @override
   String get tagListTitle => 'Etiquetas';
@@ -899,10 +899,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get snippetFormDescriptionHint => 'Descripción opcional...';
 
   @override
-  String get snippetFormGroupLabel => 'Grupo';
+  String get snippetFormFolderLabel => 'Carpeta';
 
   @override
-  String get snippetFormNoGroup => 'Sin grupo';
+  String get snippetFormNoFolder => 'Sin carpeta';
 
   @override
   String get snippetFormNameRequired => 'El nombre es obligatorio';
@@ -1961,7 +1961,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get filterGroup => 'Grupo';
+  String get filterFolder => 'Carpeta';
 
   @override
   String get filterTags => 'Etiquetas';
@@ -2096,6 +2096,9 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get serverUrlLockedWhileLoggedIn =>
       'No se puede cambiar la URL del servidor mientras estás conectado. Cierra sesión primero.';
+
+  @override
+  String get serverListNoFolder => 'Sin categoría';
 
   @override
   String get autoSyncInterval => 'Intervalo de sincronización';

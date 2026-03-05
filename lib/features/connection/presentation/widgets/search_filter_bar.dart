@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/filter_bottom_sheet.dart';
@@ -128,9 +128,9 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
     final chips = <Widget>[];
 
     if (filter.groupId != null) {
-      final groupsAsync = ref.read(groupListProvider);
-      final groupName =
-          groupsAsync.value
+      final foldersAsync = ref.read(folderListProvider);
+      final folderName =
+          foldersAsync.value
               ?.where((g) => g.id == filter.groupId)
               .firstOrNull
               ?.name ??
@@ -139,7 +139,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
         Padding(
           padding: const EdgeInsets.only(right: 8),
           child: InputChip(
-            label: Text('${l10n.filterGroup}: $groupName'),
+            label: Text('${l10n.filterFolder}: $folderName'),
             onDeleted: () {
               ref.read(serverFilterProvider.notifier).state = filter.copyWith(
                 groupId: null,

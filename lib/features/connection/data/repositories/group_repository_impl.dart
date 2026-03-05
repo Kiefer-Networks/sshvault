@@ -100,6 +100,14 @@ class GroupRepositoryImpl implements GroupRepository {
     }
   }
 
+  static List<String> collectDescendantIds(String folderId, List<GroupEntity> all) {
+    final ids = <String>[folderId];
+    for (final child in all.where((g) => g.parentId == folderId)) {
+      ids.addAll(collectDescendantIds(child.id, all));
+    }
+    return ids;
+  }
+
   GroupEntity _buildTree(GroupEntity parent, List<GroupEntity> all) {
     final children = all
         .where((g) => g.parentId == parent.id)

@@ -18,7 +18,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navSnippets => 'Snippets';
 
   @override
-  String get navGroups => 'Groups';
+  String get navFolders => 'Folders';
 
   @override
   String get navTags => 'Tags';
@@ -338,7 +338,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serverActive => 'Active';
 
   @override
-  String get serverNoGroup => 'No Group';
+  String get serverNoFolder => 'No Folder';
 
   @override
   String get serverFormTitleEdit => 'Edit Server';
@@ -385,7 +385,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serverDetailUsername => 'Username';
 
   @override
-  String get serverDetailGroup => 'Group';
+  String get serverDetailFolder => 'Folder';
 
   @override
   String get serverDetailTags => 'Tags';
@@ -463,7 +463,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchServers => 'Search servers...';
 
   @override
-  String get filterAllGroups => 'All Groups';
+  String get filterAllFolders => 'All Folders';
 
   @override
   String get filterAll => 'All';
@@ -478,28 +478,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterClear => 'Clear';
 
   @override
-  String get groupListTitle => 'Groups';
+  String get folderListTitle => 'Folders';
 
   @override
-  String get groupListEmpty => 'No groups yet';
+  String get folderListEmpty => 'No folders yet';
 
   @override
-  String get groupListEmptySubtitle =>
-      'Create groups to organize your servers.';
+  String get folderListEmptySubtitle =>
+      'Create folders to organize your servers.';
 
   @override
-  String get groupAddButton => 'Add Group';
+  String get folderAddButton => 'Add Folder';
 
   @override
-  String get groupDeleteTitle => 'Delete Group';
+  String get folderDeleteTitle => 'Delete Folder';
 
   @override
-  String groupDeleteMessage(String name) {
-    return 'Delete \"$name\"? Servers in this group will become ungrouped.';
+  String folderDeleteMessage(String name) {
+    return 'Delete \"$name\"? Servers become unorganized.';
   }
 
   @override
-  String groupServerCount(int count) {
+  String folderServerCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -510,28 +510,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get groupCollapse => 'Collapse';
+  String get folderCollapse => 'Collapse';
 
   @override
-  String get groupShowHosts => 'Show hosts';
+  String get folderShowHosts => 'Show hosts';
 
   @override
-  String get groupConnectAll => 'Connect All';
+  String get folderConnectAll => 'Connect All';
 
   @override
-  String get groupFormTitleEdit => 'Edit Group';
+  String get folderFormTitleEdit => 'Edit Folder';
 
   @override
-  String get groupFormTitleNew => 'New Group';
+  String get folderFormTitleNew => 'New Folder';
 
   @override
-  String get groupFormNameLabel => 'Group Name';
+  String get folderFormNameLabel => 'Folder Name';
 
   @override
-  String get groupFormParentLabel => 'Parent Group';
+  String get folderFormParentLabel => 'Parent Folder';
 
   @override
-  String get groupFormParentNone => 'None (Root)';
+  String get folderFormParentNone => 'None (Root)';
 
   @override
   String get tagListTitle => 'Tags';
@@ -895,10 +895,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get snippetFormDescriptionHint => 'Optional description...';
 
   @override
-  String get snippetFormGroupLabel => 'Group';
+  String get snippetFormFolderLabel => 'Folder';
 
   @override
-  String get snippetFormNoGroup => 'No Group';
+  String get snippetFormNoFolder => 'No Folder';
 
   @override
   String get snippetFormNameRequired => 'Name is required';
@@ -1953,7 +1953,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get filterGroup => 'Group';
+  String get filterFolder => 'Folder';
 
   @override
   String get filterTags => 'Tags';
@@ -2085,6 +2085,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get serverUrlLockedWhileLoggedIn =>
       'Server URL cannot be changed while logged in. Log out first.';
+
+  @override
+  String get serverListNoFolder => 'Uncategorized';
 
   @override
   String get autoSyncInterval => 'Sync Interval';

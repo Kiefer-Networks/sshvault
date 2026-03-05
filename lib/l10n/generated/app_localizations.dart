@@ -118,11 +118,11 @@ abstract class AppLocalizations {
   /// **'Snippets'**
   String get navSnippets;
 
-  /// No description provided for @navGroups.
+  /// No description provided for @navFolders.
   ///
   /// In en, this message translates to:
-  /// **'Groups'**
-  String get navGroups;
+  /// **'Folders'**
+  String get navFolders;
 
   /// No description provided for @navTags.
   ///
@@ -718,11 +718,11 @@ abstract class AppLocalizations {
   /// **'Active'**
   String get serverActive;
 
-  /// No description provided for @serverNoGroup.
+  /// No description provided for @serverNoFolder.
   ///
   /// In en, this message translates to:
-  /// **'No Group'**
-  String get serverNoGroup;
+  /// **'No Folder'**
+  String get serverNoFolder;
 
   /// No description provided for @serverFormTitleEdit.
   ///
@@ -802,11 +802,11 @@ abstract class AppLocalizations {
   /// **'Username'**
   String get serverDetailUsername;
 
-  /// No description provided for @serverDetailGroup.
+  /// No description provided for @serverDetailFolder.
   ///
   /// In en, this message translates to:
-  /// **'Group'**
-  String get serverDetailGroup;
+  /// **'Folder'**
+  String get serverDetailFolder;
 
   /// No description provided for @serverDetailTags.
   ///
@@ -952,11 +952,11 @@ abstract class AppLocalizations {
   /// **'Search servers...'**
   String get searchServers;
 
-  /// No description provided for @filterAllGroups.
+  /// No description provided for @filterAllFolders.
   ///
   /// In en, this message translates to:
-  /// **'All Groups'**
-  String get filterAllGroups;
+  /// **'All Folders'**
+  String get filterAllFolders;
 
   /// No description provided for @filterAll.
   ///
@@ -982,95 +982,95 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get filterClear;
 
-  /// No description provided for @groupListTitle.
+  /// No description provided for @folderListTitle.
   ///
   /// In en, this message translates to:
-  /// **'Groups'**
-  String get groupListTitle;
+  /// **'Folders'**
+  String get folderListTitle;
 
-  /// No description provided for @groupListEmpty.
+  /// No description provided for @folderListEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No groups yet'**
-  String get groupListEmpty;
+  /// **'No folders yet'**
+  String get folderListEmpty;
 
-  /// No description provided for @groupListEmptySubtitle.
+  /// No description provided for @folderListEmptySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Create groups to organize your servers.'**
-  String get groupListEmptySubtitle;
+  /// **'Create folders to organize your servers.'**
+  String get folderListEmptySubtitle;
 
-  /// No description provided for @groupAddButton.
+  /// No description provided for @folderAddButton.
   ///
   /// In en, this message translates to:
-  /// **'Add Group'**
-  String get groupAddButton;
+  /// **'Add Folder'**
+  String get folderAddButton;
 
-  /// No description provided for @groupDeleteTitle.
+  /// No description provided for @folderDeleteTitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete Group'**
-  String get groupDeleteTitle;
+  /// **'Delete Folder'**
+  String get folderDeleteTitle;
 
-  /// No description provided for @groupDeleteMessage.
+  /// No description provided for @folderDeleteMessage.
   ///
   /// In en, this message translates to:
-  /// **'Delete \"{name}\"? Servers in this group will become ungrouped.'**
-  String groupDeleteMessage(String name);
+  /// **'Delete \"{name}\"? Servers become unorganized.'**
+  String folderDeleteMessage(String name);
 
-  /// No description provided for @groupServerCount.
+  /// No description provided for @folderServerCount.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 server} other{{count} servers}}'**
-  String groupServerCount(int count);
+  String folderServerCount(int count);
 
-  /// No description provided for @groupCollapse.
+  /// No description provided for @folderCollapse.
   ///
   /// In en, this message translates to:
   /// **'Collapse'**
-  String get groupCollapse;
+  String get folderCollapse;
 
-  /// No description provided for @groupShowHosts.
+  /// No description provided for @folderShowHosts.
   ///
   /// In en, this message translates to:
   /// **'Show hosts'**
-  String get groupShowHosts;
+  String get folderShowHosts;
 
-  /// No description provided for @groupConnectAll.
+  /// No description provided for @folderConnectAll.
   ///
   /// In en, this message translates to:
   /// **'Connect All'**
-  String get groupConnectAll;
+  String get folderConnectAll;
 
-  /// No description provided for @groupFormTitleEdit.
+  /// No description provided for @folderFormTitleEdit.
   ///
   /// In en, this message translates to:
-  /// **'Edit Group'**
-  String get groupFormTitleEdit;
+  /// **'Edit Folder'**
+  String get folderFormTitleEdit;
 
-  /// No description provided for @groupFormTitleNew.
+  /// No description provided for @folderFormTitleNew.
   ///
   /// In en, this message translates to:
-  /// **'New Group'**
-  String get groupFormTitleNew;
+  /// **'New Folder'**
+  String get folderFormTitleNew;
 
-  /// No description provided for @groupFormNameLabel.
+  /// No description provided for @folderFormNameLabel.
   ///
   /// In en, this message translates to:
-  /// **'Group Name'**
-  String get groupFormNameLabel;
+  /// **'Folder Name'**
+  String get folderFormNameLabel;
 
-  /// No description provided for @groupFormParentLabel.
+  /// No description provided for @folderFormParentLabel.
   ///
   /// In en, this message translates to:
-  /// **'Parent Group'**
-  String get groupFormParentLabel;
+  /// **'Parent Folder'**
+  String get folderFormParentLabel;
 
-  /// No description provided for @groupFormParentNone.
+  /// No description provided for @folderFormParentNone.
   ///
   /// In en, this message translates to:
   /// **'None (Root)'**
-  String get groupFormParentNone;
+  String get folderFormParentNone;
 
   /// No description provided for @tagListTitle.
   ///
@@ -1726,17 +1726,17 @@ abstract class AppLocalizations {
   /// **'Optional description...'**
   String get snippetFormDescriptionHint;
 
-  /// No description provided for @snippetFormGroupLabel.
+  /// No description provided for @snippetFormFolderLabel.
   ///
   /// In en, this message translates to:
-  /// **'Group'**
-  String get snippetFormGroupLabel;
+  /// **'Folder'**
+  String get snippetFormFolderLabel;
 
-  /// No description provided for @snippetFormNoGroup.
+  /// No description provided for @snippetFormNoFolder.
   ///
   /// In en, this message translates to:
-  /// **'No Group'**
-  String get snippetFormNoGroup;
+  /// **'No Folder'**
+  String get snippetFormNoFolder;
 
   /// No description provided for @snippetFormNameRequired.
   ///
@@ -3592,11 +3592,11 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 filter active} other{{count} filters active}}'**
   String filterActiveCount(int count);
 
-  /// No description provided for @filterGroup.
+  /// No description provided for @filterFolder.
   ///
   /// In en, this message translates to:
-  /// **'Group'**
-  String get filterGroup;
+  /// **'Folder'**
+  String get filterFolder;
 
   /// No description provided for @filterTags.
   ///
@@ -3813,6 +3813,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Server URL cannot be changed while logged in. Log out first.'**
   String get serverUrlLockedWhileLoggedIn;
+
+  /// No description provided for @serverListNoFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized'**
+  String get serverListNoFolder;
 
   /// No description provided for @autoSyncInterval.
   ///

@@ -3,9 +3,12 @@ import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/storage/secure_storage_service.dart';
+import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/server_dao.dart';
+import 'package:shellvault/features/connection/data/models/group_mapper.dart';
 import 'package:shellvault/features/connection/data/models/server_mapper.dart';
 import 'package:shellvault/features/connection/data/models/tag_mapper.dart';
+import 'package:shellvault/features/connection/data/repositories/group_repository_impl.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
@@ -13,6 +16,7 @@ import 'package:shellvault/features/connection/domain/repositories/server_reposi
 
 class ServerRepositoryImpl implements ServerRepository {
   final ServerDao _serverDao;
+  final GroupDao? _groupDao;
   final SecureStorageService _secureStorage;
   final SshKeyService _sshKeyService;
   final Uuid _uuid;
@@ -20,17 +24,32 @@ class ServerRepositoryImpl implements ServerRepository {
   ServerRepositoryImpl(
     this._serverDao,
     this._secureStorage, {
+    GroupDao? groupDao,
     SshKeyService? sshKeyService,
     Uuid? uuid,
-  }) : _sshKeyService = sshKeyService ?? SshKeyService(),
+  }) : _groupDao = groupDao,
+       _sshKeyService = sshKeyService ?? SshKeyService(),
        _uuid = uuid ?? const Uuid();
 
   @override
   Future<Result<List<ServerEntity>>> getServers({ServerFilter? filter}) async {
     try {
+      List<String>? groupIds;
+      if (filter?.groupId != null && _groupDao != null) {
+        final allGroups = await _groupDao.getAllGroups();
+        final allEntities = allGroups
+            .map((row) => GroupMapper.fromDrift(row))
+            .toList();
+        groupIds = GroupRepositoryImpl.collectDescendantIds(
+          filter!.groupId!,
+          allEntities,
+        );
+      }
+
       final rows = await _serverDao.getFilteredServers(
         searchQuery: filter?.searchQuery,
-        groupId: filter?.groupId,
+        groupId: groupIds == null ? filter?.groupId : null,
+        groupIds: groupIds,
         tagIds: filter?.tagIds.isEmpty ?? true ? null : filter?.tagIds,
         isActive: filter?.isActive,
       );

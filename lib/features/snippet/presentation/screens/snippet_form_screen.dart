@@ -7,7 +7,8 @@ import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:shellvault/features/connection/presentation/widgets/folder_tree_picker.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/tag_selector.dart';
 import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
@@ -125,7 +126,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final groupsAsync = ref.watch(groupListProvider);
+    final foldersAsync = ref.watch(folderListProvider);
     final formState = ref.watch(_snippetFormProvider);
 
     return AdaptiveScaffold.withAppBar(
@@ -236,36 +237,32 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // Group selector
-                  groupsAsync.when(
-                    data: (groups) {
-                      if (groups.isEmpty) return const SizedBox.shrink();
-                      return DropdownMenu<String?>(
-                        initialSelection: formState.groupId,
-                        expandedInsets: EdgeInsets.zero,
-                        requestFocusOnTap: false,
-                        label: Text(l10n.snippetFormGroupLabel),
-                        leadingIcon: const Icon(Icons.folder_outlined),
-                        dropdownMenuEntries: [
-                          DropdownMenuEntry<String?>(
-                            value: null,
-                            label: l10n.snippetFormNoGroup,
-                          ),
-                          ...groups.map(
-                            (g) => DropdownMenuEntry<String?>(
-                              value: g.id,
-                              label: g.name,
-                            ),
-                          ),
-                        ],
-                        onSelected: (v) =>
-                            ref.read(_snippetFormProvider.notifier).state =
-                                formState.copyWith(groupId: () => v),
-                      );
-                    },
-                    loading: () => const SizedBox.shrink(),
-                    error: (_, _) => const SizedBox.shrink(),
-                  ),
+                  // Folder selector
+                  Builder(builder: (context) {
+                    final folderName = foldersAsync.whenOrNull(
+                      data: (folders) => folders
+                          .where((f) => f.id == formState.groupId)
+                          .firstOrNull
+                          ?.name,
+                    );
+                    return ListTile(
+                      leading: const Icon(Icons.folder_outlined),
+                      title: Text(folderName ?? l10n.snippetFormNoFolder),
+                      subtitle: Text(l10n.snippetFormFolderLabel),
+                      trailing: const Icon(Icons.chevron_right),
+                      contentPadding: EdgeInsets.zero,
+                      onTap: () async {
+                        final result = await FolderTreePicker.show(
+                          context,
+                          selectedFolderId: formState.groupId,
+                        );
+                        if (result != formState.groupId) {
+                          ref.read(_snippetFormProvider.notifier).state =
+                              formState.copyWith(groupId: () => result);
+                        }
+                      },
+                    );
+                  }),
                   const SizedBox(height: 16),
 
                   // Tags

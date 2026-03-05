@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
@@ -98,7 +98,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final serversAsync = ref.watch(serverListProvider);
-    final groupsAsync = ref.watch(groupListProvider);
+    final foldersAsync = ref.watch(folderListProvider);
     final query = ref.watch(_serverPickerQueryProvider);
 
     return Dialog(
@@ -152,8 +152,8 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
             Flexible(
               child: serversAsync.when(
                 data: (servers) {
-                  final groups = groupsAsync.value ?? [];
-                  return _buildList(context, servers, groups, query);
+                  final folders = foldersAsync.value ?? [];
+                  return _buildList(context, servers, folders, query);
                 },
                 loading: () =>
                     const Center(child: CircularProgressIndicator.adaptive()),
@@ -235,8 +235,8 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
             _buildGroupHeader(
               theme,
               groupId != null
-                  ? groupMap[groupId] ?? l10n.serverNoGroup
-                  : l10n.serverNoGroup,
+                  ? groupMap[groupId] ?? l10n.serverNoFolder
+                  : l10n.serverNoFolder,
             ),
           for (final server in grouped[groupId]!)
             _buildServerTile(context, theme, server),

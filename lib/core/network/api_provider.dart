@@ -8,7 +8,7 @@ import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
 import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
@@ -49,7 +49,7 @@ final apiClientProvider = Provider<ApiClient>((ref) {
             }
             ref.invalidate(serverListProvider);
             ref.invalidate(sshKeyListProvider);
-            ref.invalidate(groupListProvider);
+            ref.invalidate(folderListProvider);
             ref.invalidate(tagListProvider);
             ref.invalidate(snippetListProvider);
             ref.invalidate(settingsProvider);

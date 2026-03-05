@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
@@ -31,6 +32,33 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   late List<String> _tagIds;
   late bool? _isActive;
 
+  List<Widget> _buildFolderFilterTree(List<GroupEntity> folders, int depth) {
+    final widgets = <Widget>[];
+    for (final folder in folders) {
+      widgets.add(
+        Padding(
+          padding: EdgeInsets.only(left: depth * 16.0),
+          child: FilterChip(
+            avatar: Icon(
+              Icons.folder,
+              size: 18,
+              color: Color(folder.color),
+            ),
+            label: Text(folder.name),
+            selected: _groupId == folder.id,
+            onSelected: (_) => setState(() {
+              _groupId = _groupId == folder.id ? null : folder.id;
+            }),
+          ),
+        ),
+      );
+      if (folder.children.isNotEmpty) {
+        widgets.addAll(_buildFolderFilterTree(folder.children, depth + 1));
+      }
+    }
+    return widgets;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +71,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final groupsAsync = ref.watch(groupListProvider);
+    final foldersAsync = ref.watch(folderTreeProvider);
     final tagsAsync = ref.watch(tagListProvider);
 
     return DraggableScrollableSheet(
@@ -94,32 +122,20 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
               controller: scrollController,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
-                // Group filter
-                Text(l10n.filterGroup, style: theme.textTheme.titleSmall),
+                // Folder filter
+                Text(l10n.filterFolder, style: theme.textTheme.titleSmall),
                 const SizedBox(height: 8),
-                groupsAsync.when(
-                  data: (groups) => Wrap(
-                    spacing: 8,
-                    runSpacing: 4,
+                foldersAsync.when(
+                  data: (folders) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       FilterChip(
-                        label: Text(l10n.filterAllGroups),
+                        label: Text(l10n.filterAllFolders),
                         selected: _groupId == null,
                         onSelected: (_) => setState(() => _groupId = null),
                       ),
-                      for (final group in groups)
-                        FilterChip(
-                          avatar: Icon(
-                            Icons.folder,
-                            size: 18,
-                            color: Color(group.color),
-                          ),
-                          label: Text(group.name),
-                          selected: _groupId == group.id,
-                          onSelected: (_) => setState(() {
-                            _groupId = _groupId == group.id ? null : group.id;
-                          }),
-                        ),
+                      const SizedBox(height: 4),
+                      ..._buildFolderFilterTree(folders, 0),
                     ],
                   ),
                   loading: () => const SizedBox.shrink(),

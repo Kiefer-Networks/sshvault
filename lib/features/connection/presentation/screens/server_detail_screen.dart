@@ -11,7 +11,7 @@ import 'package:shellvault/core/widgets/info_row.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/settings/section_card.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:shellvault/features/connection/presentation/widgets/status_badge.dart';
@@ -172,10 +172,10 @@ class ServerDetailScreen extends ConsumerWidget {
                   ),
                 ),
 
-                // Group
+                // Folder
                 if (server.groupId != null) ...[
                   const SizedBox(height: 16),
-                  _GroupSection(groupId: server.groupId!),
+                  _FolderSection(groupId: server.groupId!),
                 ],
 
                 // Distro
@@ -283,20 +283,20 @@ class ServerDetailScreen extends ConsumerWidget {
   }
 }
 
-class _GroupSection extends ConsumerWidget {
+class _FolderSection extends ConsumerWidget {
   final String groupId;
 
-  const _GroupSection({required this.groupId});
+  const _FolderSection({required this.groupId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final groups = ref.watch(groupListProvider);
+    final folders = ref.watch(folderListProvider);
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return groups.when(
-      data: (allGroups) {
-        final group = allGroups.where((g) => g.id == groupId).firstOrNull;
+    return folders.when(
+      data: (allFolders) {
+        final group = allFolders.where((g) => g.id == groupId).firstOrNull;
         if (group == null) return const SizedBox.shrink();
 
         return SectionCard(
@@ -304,7 +304,7 @@ class _GroupSection extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.serverDetailGroup, style: theme.textTheme.titleSmall),
+              Text(l10n.serverDetailFolder, style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               Row(
                 children: [

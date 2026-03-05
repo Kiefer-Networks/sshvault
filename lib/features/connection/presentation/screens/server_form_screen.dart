@@ -14,7 +14,8 @@ import 'package:shellvault/features/connection/domain/entities/auth_method.dart'
 import 'package:shellvault/features/connection/presentation/widgets/key_generation_dialog.dart';
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:shellvault/features/connection/presentation/widgets/folder_tree_picker.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
@@ -204,7 +205,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final groupsAsync = ref.watch(groupListProvider);
+    final foldersAsync = ref.watch(folderListProvider);
     final formState = ref.watch(_serverFormStateProvider);
 
     final l10n = AppLocalizations.of(context)!;
@@ -298,35 +299,34 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  groupsAsync.when(
-                    data: (groups) {
-                      if (groups.isEmpty) return const SizedBox.shrink();
-                      return DropdownMenu<String?>(
-                        initialSelection: formState.groupId,
-                        expandedInsets: EdgeInsets.zero,
-                        requestFocusOnTap: false,
-                        label: Text(l10n.navGroups),
-                        leadingIcon: const Icon(Icons.folder_outlined),
-                        dropdownMenuEntries: [
-                          DropdownMenuEntry<String?>(
-                            value: null,
-                            label: l10n.serverNoGroup,
-                          ),
-                          ...groups.map(
-                            (g) => DropdownMenuEntry<String?>(
-                              value: g.id,
-                              label: g.name,
-                            ),
-                          ),
-                        ],
-                        onSelected: (v) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(groupId: () => v),
-                      );
-                    },
-                    loading: () => const SizedBox.shrink(),
-                    error: (_, _) => const SizedBox.shrink(),
-                  ),
+                  Builder(builder: (context) {
+                    final folderName = foldersAsync.whenOrNull(
+                      data: (folders) => folders
+                          .where((f) => f.id == formState.groupId)
+                          .firstOrNull
+                          ?.name,
+                    );
+                    return ListTile(
+                      leading: const Icon(Icons.folder_outlined),
+                      title: Text(folderName ?? l10n.serverNoFolder),
+                      subtitle: Text(l10n.navFolders),
+                      trailing: const Icon(Icons.chevron_right),
+                      contentPadding: EdgeInsets.zero,
+                      onTap: () async {
+                        final result = await FolderTreePicker.show(
+                          context,
+                          selectedFolderId: formState.groupId,
+                        );
+                        if (result != formState.groupId) {
+                          ref
+                              .read(_serverFormStateProvider.notifier)
+                              .state = formState.copyWith(
+                            groupId: () => result,
+                          );
+                        }
+                      },
+                    );
+                  }),
                   const SizedBox(height: 16),
 
                   TagSelector(

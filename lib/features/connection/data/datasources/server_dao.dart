@@ -39,6 +39,7 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
   Future<List<Server>> getFilteredServers({
     String? searchQuery,
     String? groupId,
+    List<String>? groupIds,
     List<String>? tagIds,
     bool? isActive,
   }) async {
@@ -55,7 +56,9 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
         );
     }
 
-    if (groupId != null) {
+    if (groupIds != null && groupIds.isNotEmpty) {
+      query = query..where((s) => s.groupId.isIn(groupIds));
+    } else if (groupId != null) {
       query = query..where((s) => s.groupId.equals(groupId));
     }
 

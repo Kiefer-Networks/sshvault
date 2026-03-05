@@ -6,7 +6,7 @@ import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/group_providers.dart';
+import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
 import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
@@ -119,7 +119,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
 
         // Invalidate all data providers so they reload from DB
         ref.invalidate(serverListProvider);
-        ref.invalidate(groupListProvider);
+        ref.invalidate(folderListProvider);
         ref.invalidate(tagListProvider);
         ref.invalidate(sshKeyListProvider);
         ref.invalidate(snippetListProvider);
@@ -187,7 +187,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
 
         ref.invalidate(serverListProvider);
-        ref.invalidate(groupListProvider);
+        ref.invalidate(folderListProvider);
         ref.invalidate(tagListProvider);
         ref.invalidate(sshKeyListProvider);
         ref.invalidate(snippetListProvider);
