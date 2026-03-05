@@ -72,6 +72,7 @@ class SftpPane extends ConsumerWidget {
       fileList = RefreshIndicator(
         onRefresh: () => ref.read(sftpPaneProvider(side).notifier).refresh(),
         child: ListView.builder(
+          padding: const EdgeInsets.only(bottom: 64),
           itemCount: paneState.entries.length,
           itemBuilder: (context, index) {
             final entry = paneState.entries[index];
@@ -118,9 +119,21 @@ class SftpPane extends ConsumerWidget {
         const Divider(height: 1),
         SftpBreadcrumb(side: side),
         const Divider(height: 1),
-        SftpToolbar(side: side, isWide: isWide),
-        const Divider(height: 1),
-        Expanded(child: fileList),
+        Expanded(
+          child: Stack(
+            children: [
+              Positioned.fill(child: fileList),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: SftpFloatingToolbar(side: side, isWide: isWide),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
