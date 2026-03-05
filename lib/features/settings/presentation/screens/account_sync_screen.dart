@@ -672,7 +672,9 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                                 height: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Theme.of(context).colorScheme.onPrimary,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                 ),
                               )
                             : const Icon(Icons.payment),

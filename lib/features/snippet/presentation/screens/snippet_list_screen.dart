@@ -59,8 +59,8 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                     icon: const Icon(Icons.clear, size: 20),
                     onPressed: () {
                       _searchController.clear();
-                      ref.read(snippetFilterProvider.notifier).state =
-                          filter.copyWith(clearSearch: true);
+                      ref.read(snippetFilterProvider.notifier).state = filter
+                          .copyWith(clearSearch: true);
                     },
                   ),
               ],

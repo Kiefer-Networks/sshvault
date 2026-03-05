@@ -49,14 +49,14 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                         icon: const Icon(Icons.clear, size: 20),
                         onPressed: () {
                           _searchController.clear();
-                          ref.read(serverFilterProvider.notifier).state =
-                              filter.copyWith(searchQuery: '');
+                          ref.read(serverFilterProvider.notifier).state = filter
+                              .copyWith(searchQuery: '');
                         },
                       ),
                   ],
                   onChanged: (value) {
-                    ref.read(serverFilterProvider.notifier).state =
-                        filter.copyWith(searchQuery: value);
+                    ref.read(serverFilterProvider.notifier).state = filter
+                        .copyWith(searchQuery: value);
                   },
                 ),
               ),

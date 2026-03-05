@@ -91,8 +91,7 @@ class ServerGridCard extends StatelessWidget {
                     return TagChip(
                       tag: tag,
                       visualDensity: VisualDensity.compact,
-                      materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     );
                   }).toList(),
                 ),

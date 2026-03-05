@@ -43,10 +43,7 @@ class ColorPickerField extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: isSelected
-                        ? Border.all(
-                            color: colorScheme.onPrimary,
-                            width: 2.5,
-                          )
+                        ? Border.all(color: colorScheme.onPrimary, width: 2.5)
                         : null,
                     boxShadow: isSelected
                         ? [
