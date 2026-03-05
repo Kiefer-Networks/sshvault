@@ -9,11 +9,10 @@ final knownHostRepositoryProvider = Provider<KnownHostRepository>((ref) {
   return KnownHostRepositoryImpl(db.knownHostDao);
 });
 
-final knownHostListProvider = FutureProvider<List<KnownHostEntity>>((ref) async {
+final knownHostListProvider = FutureProvider<List<KnownHostEntity>>((
+  ref,
+) async {
   final repo = ref.watch(knownHostRepositoryProvider);
   final result = await repo.getAll();
-  return result.fold(
-    onSuccess: (hosts) => hosts,
-    onFailure: (_) => [],
-  );
+  return result.fold(onSuccess: (hosts) => hosts, onFailure: (_) => []);
 });

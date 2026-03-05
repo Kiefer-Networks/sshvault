@@ -132,8 +132,7 @@ class _KnownHostTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final fp = _formatFingerprint(host.fingerprint);
-    final truncatedFp =
-        fp.length > 24 ? '${fp.substring(0, 24)}...' : fp;
+    final truncatedFp = fp.length > 24 ? '${fp.substring(0, 24)}...' : fp;
 
     return Dismissible(
       key: ValueKey(host.id),

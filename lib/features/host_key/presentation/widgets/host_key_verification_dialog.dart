@@ -99,11 +99,7 @@ class HostKeyVerificationDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildFingerprintRow(
-    String label,
-    String hex,
-    TextTheme textTheme,
-  ) {
+  Widget _buildFingerprintRow(String label, String hex, TextTheme textTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

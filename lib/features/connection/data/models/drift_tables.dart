@@ -47,8 +47,7 @@ class Servers extends Table {
   TextColumn get postConnectCommands =>
       text().withDefault(const Constant(''))();
   // Dashboard
-  BoolColumn get isFavorite =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   DateTimeColumn get lastConnectedAt => dateTime().nullable()();
   // Sync
   TextColumn get ownerId => text().nullable()();

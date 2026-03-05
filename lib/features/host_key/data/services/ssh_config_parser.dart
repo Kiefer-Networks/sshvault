@@ -28,14 +28,16 @@ class SshConfigParser {
 
     void flushEntry() {
       if (currentHost != null) {
-        entries.add(SshConfigEntry(
-          host: currentHost!,
-          hostName: hostName,
-          port: port,
-          user: user,
-          identityFile: identityFile,
-          proxyJump: proxyJump,
-        ));
+        entries.add(
+          SshConfigEntry(
+            host: currentHost!,
+            hostName: hostName,
+            port: port,
+            user: user,
+            identityFile: identityFile,
+            proxyJump: proxyJump,
+          ),
+        );
       }
       currentHost = null;
       hostName = null;

@@ -29,7 +29,15 @@ part 'database.g.dart';
     AppSettings,
     KnownHosts,
   ],
-  daos: [ServerDao, SshKeyDao, GroupDao, TagDao, AppSettingsDao, SnippetDao, KnownHostDao],
+  daos: [
+    ServerDao,
+    SshKeyDao,
+    GroupDao,
+    TagDao,
+    AppSettingsDao,
+    SnippetDao,
+    KnownHostDao,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());

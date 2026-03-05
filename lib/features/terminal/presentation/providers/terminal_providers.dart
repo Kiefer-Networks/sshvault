@@ -202,8 +202,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
         proxyConfig: proxyConfig,
         proxyCredentials: proxyCredentials,
         onVerifyHostKey: _buildHostKeyVerifier(server),
-        onVerifyJumpHostKey:
-            jumpHost != null ? _buildHostKeyVerifier(jumpHost) : null,
+        onVerifyJumpHostKey: jumpHost != null
+            ? _buildHostKeyVerifier(jumpHost)
+            : null,
       );
 
       result.fold(
@@ -491,7 +492,8 @@ final secondarySessionIndexProvider = StateProvider<int?>((ref) => null);
 final secondarySessionProvider = Provider<SshSessionEntity?>((ref) {
   final sessions = ref.watch(sessionManagerProvider);
   final index = ref.watch(secondarySessionIndexProvider);
-  if (index == null || sessions.isEmpty || index >= sessions.length) return null;
+  if (index == null || sessions.isEmpty || index >= sessions.length)
+    return null;
   return sessions[index];
 });
 

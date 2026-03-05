@@ -81,8 +81,9 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
                     )
                   : const Icon(Icons.download),
               label: Text(l10n.sshConfigImportButton),
-              onPressed:
-                  _selected.isEmpty || _loading ? null : () => _import(l10n),
+              onPressed: _selected.isEmpty || _loading
+                  ? null
+                  : () => _import(l10n),
             ),
           ] else if (_textController.text.isNotEmpty) ...[
             Text(
@@ -98,8 +99,7 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
   List<Widget> _buildEntryList(AppLocalizations l10n) {
     return List.generate(_entries.length, (i) {
       final entry = _entries[i];
-      final hostKey =
-          '${entry.hostName ?? entry.host}:${entry.port}';
+      final hostKey = '${entry.hostName ?? entry.host}:${entry.port}';
       final isDuplicate = _existingHostKeys.contains(hostKey);
 
       return CheckboxListTile(
@@ -188,8 +188,9 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
         hostname: entry.hostName ?? entry.host,
         port: entry.port,
         username: entry.user ?? 'root',
-        authMethod:
-            entry.identityFile != null ? AuthMethod.key : AuthMethod.password,
+        authMethod: entry.identityFile != null
+            ? AuthMethod.key
+            : AuthMethod.password,
         color: 0xFF6C63FF,
         createdAt: now,
         updatedAt: now,

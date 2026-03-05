@@ -11,9 +11,7 @@ class KnownHostDao extends DatabaseAccessor<AppDatabase>
 
   Future<KnownHost?> findByHostAndPort(String hostname, int port) async {
     return (select(knownHosts)
-          ..where(
-            (t) => t.hostname.equals(hostname) & t.port.equals(port),
-          ))
+          ..where((t) => t.hostname.equals(hostname) & t.port.equals(port)))
         .getSingleOrNull();
   }
 
