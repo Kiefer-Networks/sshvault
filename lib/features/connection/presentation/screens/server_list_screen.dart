@@ -161,8 +161,7 @@ class ServerListScreen extends ConsumerWidget {
                           }
                         },
                         onDelete: () => _confirmDelete(context, ref, server),
-                        onFavoriteToggle: () =>
-                            _toggleFavorite(ref, server),
+                        onFavoriteToggle: () => _toggleFavorite(ref, server),
                       ),
                     );
                   }
@@ -608,8 +607,8 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         title,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }

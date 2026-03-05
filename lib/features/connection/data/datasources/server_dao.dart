@@ -113,12 +113,14 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
   }
 
   Future<void> setFavorite(String id, bool favorite) =>
-      (update(servers)..where((s) => s.id.equals(id)))
-          .write(ServersCompanion(isFavorite: Value(favorite)));
+      (update(servers)..where((s) => s.id.equals(id))).write(
+        ServersCompanion(isFavorite: Value(favorite)),
+      );
 
   Future<void> setLastConnectedAt(String id, DateTime time) =>
-      (update(servers)..where((s) => s.id.equals(id)))
-          .write(ServersCompanion(lastConnectedAt: Value(time)));
+      (update(servers)..where((s) => s.id.equals(id))).write(
+        ServersCompanion(lastConnectedAt: Value(time)),
+      );
 
   Future<List<Server>> getFavoriteServers() =>
       (select(servers)

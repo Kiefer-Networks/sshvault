@@ -159,52 +159,52 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
               child: activeSession == null
                   ? const Center(child: CircularProgressIndicator.adaptive())
                   : splitMode == SplitMode.horizontal &&
-                            secondarySession != null
-                      ? Row(
-                          children: [
-                            Expanded(
-                              child: _TerminalPane(
-                                session: activeSession,
-                                theme: terminalTheme,
-                                fontSize: fontSize,
-                                autofocus: true,
-                                onRetry: () => ref
-                                    .read(sessionManagerProvider.notifier)
-                                    .reconnectSession(activeSession.id),
-                                onClose: () => ref
-                                    .read(sessionManagerProvider.notifier)
-                                    .closeSession(activeSession.id),
-                              ),
-                            ),
-                            const VerticalDivider(width: 2),
-                            Expanded(
-                              child: _TerminalPane(
-                                session: secondarySession,
-                                theme: terminalTheme,
-                                fontSize: fontSize,
-                                autofocus: false,
-                                onRetry: () => ref
-                                    .read(sessionManagerProvider.notifier)
-                                    .reconnectSession(secondarySession.id),
-                                onClose: () => ref
-                                    .read(sessionManagerProvider.notifier)
-                                    .closeSession(secondarySession.id),
-                              ),
-                            ),
-                          ],
-                        )
-                      : _TerminalPane(
-                          session: activeSession,
-                          theme: terminalTheme,
-                          fontSize: fontSize,
-                          autofocus: true,
-                          onRetry: () => ref
-                              .read(sessionManagerProvider.notifier)
-                              .reconnectSession(activeSession.id),
-                          onClose: () => ref
-                              .read(sessionManagerProvider.notifier)
-                              .closeSession(activeSession.id),
+                        secondarySession != null
+                  ? Row(
+                      children: [
+                        Expanded(
+                          child: _TerminalPane(
+                            session: activeSession,
+                            theme: terminalTheme,
+                            fontSize: fontSize,
+                            autofocus: true,
+                            onRetry: () => ref
+                                .read(sessionManagerProvider.notifier)
+                                .reconnectSession(activeSession.id),
+                            onClose: () => ref
+                                .read(sessionManagerProvider.notifier)
+                                .closeSession(activeSession.id),
+                          ),
                         ),
+                        const VerticalDivider(width: 2),
+                        Expanded(
+                          child: _TerminalPane(
+                            session: secondarySession,
+                            theme: terminalTheme,
+                            fontSize: fontSize,
+                            autofocus: false,
+                            onRetry: () => ref
+                                .read(sessionManagerProvider.notifier)
+                                .reconnectSession(secondarySession.id),
+                            onClose: () => ref
+                                .read(sessionManagerProvider.notifier)
+                                .closeSession(secondarySession.id),
+                          ),
+                        ),
+                      ],
+                    )
+                  : _TerminalPane(
+                      session: activeSession,
+                      theme: terminalTheme,
+                      fontSize: fontSize,
+                      autofocus: true,
+                      onRetry: () => ref
+                          .read(sessionManagerProvider.notifier)
+                          .reconnectSession(activeSession.id),
+                      onClose: () => ref
+                          .read(sessionManagerProvider.notifier)
+                          .closeSession(activeSession.id),
+                    ),
             ),
 
             // Mobile keyboard toolbar

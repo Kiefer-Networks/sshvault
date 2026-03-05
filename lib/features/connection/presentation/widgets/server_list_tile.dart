@@ -145,10 +145,7 @@ class ServerListTile extends ConsumerWidget {
                 onPressed: onFavoriteToggle,
                 visualDensity: VisualDensity.compact,
                 padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(
-                  minWidth: 32,
-                  minHeight: 32,
-                ),
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               ),
             if (onDetail != null)
               IconButton(

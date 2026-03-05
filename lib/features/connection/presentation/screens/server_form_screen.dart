@@ -478,11 +478,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                   Text(
                     l10n.postConnectCommandsSubtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withAlpha(AppConstants.alpha153),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha(AppConstants.alpha153),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
