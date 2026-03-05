@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/error_state.dart';
 import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
@@ -236,7 +237,7 @@ class _FolderTile extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  expanded ? Icons.folder_open : Icons.folder,
+                  IconConstants.getIcon(folder.iconName),
                   color: folderColor,
                   size: 22,
                 ),

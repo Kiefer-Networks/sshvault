@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
 import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
@@ -39,7 +40,11 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
         Padding(
           padding: EdgeInsets.only(left: depth * 16.0),
           child: FilterChip(
-            avatar: Icon(Icons.folder, size: 18, color: Color(folder.color)),
+            avatar: Icon(
+              IconConstants.getIcon(folder.iconName),
+              size: 18,
+              color: Color(folder.color),
+            ),
             label: Text(folder.name),
             selected: _groupId == folder.id,
             onSelected: (_) => setState(() {

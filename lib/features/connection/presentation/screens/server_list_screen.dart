@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/core/routing/shell_navigation_provider.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/core/widgets/error_state.dart';
@@ -413,7 +414,7 @@ class _FolderSectionHeader extends StatelessWidget {
                 Icon(
                   isUncategorized
                       ? Icons.folder_off_outlined
-                      : (expanded ? Icons.folder_open : Icons.folder),
+                      : IconConstants.getIcon(folder.iconName),
                   color: folderColor,
                   size: 20,
                 ),
