@@ -35,9 +35,7 @@ final serverReachableProvider = StreamProvider<bool>((ref) async* {
       yield reachable;
     }
 
-    await Future<void>.delayed(
-      Duration(seconds: reachable ? 60 : 30),
-    );
+    await Future<void>.delayed(Duration(seconds: reachable ? 60 : 30));
   }
 });
 
@@ -58,9 +56,7 @@ final userProfileProvider = FutureProvider<UserEntity?>((ref) async {
   // Network error — try cache
   final cached = await dao.getValue(_cachedUserProfileKey);
   if (cached != null) {
-    return UserEntity.fromJson(
-      jsonDecode(cached) as Map<String, dynamic>,
-    );
+    return UserEntity.fromJson(jsonDecode(cached) as Map<String, dynamic>);
   }
   return null;
 });
@@ -93,9 +89,7 @@ final billingStatusProvider = FutureProvider<BillingStatus>((ref) async {
   // Network error — try cache
   final cached = await dao.getValue(_cachedBillingStatusKey);
   if (cached != null) {
-    return BillingStatus.fromJson(
-      jsonDecode(cached) as Map<String, dynamic>,
-    );
+    return BillingStatus.fromJson(jsonDecode(cached) as Map<String, dynamic>);
   }
   return const BillingStatus(active: false);
 });
