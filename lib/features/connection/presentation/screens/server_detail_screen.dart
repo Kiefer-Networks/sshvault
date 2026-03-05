@@ -175,7 +175,8 @@ class ServerDetailScreen extends ConsumerWidget {
                 ),
 
                 // Proxy
-                if (server.proxyType != ProxyType.none || server.useGlobalProxy) ...[
+                if (server.proxyType != ProxyType.none ||
+                    server.useGlobalProxy) ...[
                   const SizedBox(height: 16),
                   SectionCard(
                     padding: const EdgeInsets.all(16),
@@ -187,7 +188,8 @@ class ServerDetailScreen extends ConsumerWidget {
                           style: theme.textTheme.titleSmall,
                         ),
                         const SizedBox(height: 12),
-                        if (server.useGlobalProxy && server.proxyType == ProxyType.none)
+                        if (server.useGlobalProxy &&
+                            server.proxyType == ProxyType.none)
                           InfoRow(
                             icon: Icons.public,
                             label: l10n.proxyType,
@@ -514,7 +516,9 @@ class _VpnStatusRow extends ConsumerWidget {
       icon: Icons.shield_outlined,
       label: l10n.vpnRequired,
       value: vpnActive ? l10n.vpnActive : l10n.vpnInactive,
-      valueColor: vpnActive ? Colors.green : Theme.of(context).colorScheme.error,
+      valueColor: vpnActive
+          ? Colors.green
+          : Theme.of(context).colorScheme.error,
     );
   }
 }

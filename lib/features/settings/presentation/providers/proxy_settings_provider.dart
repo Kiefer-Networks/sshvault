@@ -12,8 +12,9 @@ final globalProxyConfigProvider = Provider<ProxyConfig?>((ref) {
   return settings.globalProxyConfig;
 });
 
-final globalProxyCredentialsProvider =
-    FutureProvider<ProxyCredentials>((ref) async {
+final globalProxyCredentialsProvider = FutureProvider<ProxyCredentials>((
+  ref,
+) async {
   const storage = FlutterSecureStorage();
   final password = await storage.read(key: _globalProxyPasswordKey);
   return ProxyCredentials(password: password);

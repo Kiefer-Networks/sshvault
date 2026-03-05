@@ -16,9 +16,11 @@ class AboutScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final packageInfo = ref.watch(packageInfoProvider);
-    final version = packageInfo.whenOrNull(
-      data: (info) => 'v${info.version} (${info.buildNumber})',
-    ) ?? 'v${AppConstants.appVersion}';
+    final version =
+        packageInfo.whenOrNull(
+          data: (info) => 'v${info.version} (${info.buildNumber})',
+        ) ??
+        'v${AppConstants.appVersion}';
 
     return AdaptiveScaffold(
       title: l10n.settingsSectionAbout,

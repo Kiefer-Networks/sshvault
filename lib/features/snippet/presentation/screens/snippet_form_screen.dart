@@ -238,31 +238,33 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
               child: Column(
                 children: [
                   // Folder selector
-                  Builder(builder: (context) {
-                    final folderName = foldersAsync.whenOrNull(
-                      data: (folders) => folders
-                          .where((f) => f.id == formState.groupId)
-                          .firstOrNull
-                          ?.name,
-                    );
-                    return ListTile(
-                      leading: const Icon(Icons.folder_outlined),
-                      title: Text(folderName ?? l10n.snippetFormNoFolder),
-                      subtitle: Text(l10n.snippetFormFolderLabel),
-                      trailing: const Icon(Icons.chevron_right),
-                      contentPadding: EdgeInsets.zero,
-                      onTap: () async {
-                        final result = await FolderTreePicker.show(
-                          context,
-                          selectedFolderId: formState.groupId,
-                        );
-                        if (result != formState.groupId) {
-                          ref.read(_snippetFormProvider.notifier).state =
-                              formState.copyWith(groupId: () => result);
-                        }
-                      },
-                    );
-                  }),
+                  Builder(
+                    builder: (context) {
+                      final folderName = foldersAsync.whenOrNull(
+                        data: (folders) => folders
+                            .where((f) => f.id == formState.groupId)
+                            .firstOrNull
+                            ?.name,
+                      );
+                      return ListTile(
+                        leading: const Icon(Icons.folder_outlined),
+                        title: Text(folderName ?? l10n.snippetFormNoFolder),
+                        subtitle: Text(l10n.snippetFormFolderLabel),
+                        trailing: const Icon(Icons.chevron_right),
+                        contentPadding: EdgeInsets.zero,
+                        onTap: () async {
+                          final result = await FolderTreePicker.show(
+                            context,
+                            selectedFolderId: formState.groupId,
+                          );
+                          if (result != formState.groupId) {
+                            ref.read(_snippetFormProvider.notifier).state =
+                                formState.copyWith(groupId: () => result);
+                          }
+                        },
+                      );
+                    },
+                  ),
                   const SizedBox(height: 16),
 
                   // Tags

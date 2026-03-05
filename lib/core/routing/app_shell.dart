@@ -85,11 +85,13 @@ const _baseSectionBreaks = {3}; // before SSH Keys
 
   // — Terminal (only when sessions exist) —
   if (showTerminal) {
-    items.add(_NavItem(
-      icon: Icons.terminal_outlined,
-      selectedIcon: Icons.terminal,
-      label: l10n.navTerminal,
-    ));
+    items.add(
+      _NavItem(
+        icon: Icons.terminal_outlined,
+        selectedIcon: Icons.terminal,
+        label: l10n.navTerminal,
+      ),
+    );
   }
 
   return (items: items, breaks: breaks);
@@ -545,11 +547,7 @@ class _AppDrawer extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(28, 24, 28, 8),
           child: Row(
             children: [
-              Image.asset(
-                'assets/images/app_icon.png',
-                width: 28,
-                height: 28,
-              ),
+              Image.asset('assets/images/app_icon.png', width: 28, height: 28),
               const SizedBox(width: 12),
               Text(
                 l10n.appName,

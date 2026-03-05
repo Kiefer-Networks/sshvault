@@ -58,18 +58,16 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     _periodicSyncTimer?.cancel();
     final settings = ref.read(settingsProvider).value;
     final intervalMinutes = settings?.autoSyncIntervalMinutes ?? 5;
-    _periodicSyncTimer = Timer.periodic(
-      Duration(minutes: intervalMinutes),
-      (_) {
-        final authStatus = ref.read(authProvider).value;
-        final s = ref.read(settingsProvider).value;
-        if (authStatus == AuthStatus.authenticated &&
-            (s?.autoSync ?? false)) {
-          _log.debug(_tag, 'Periodic sync triggered (${intervalMinutes}m)');
-          sync();
-        }
-      },
-    );
+    _periodicSyncTimer = Timer.periodic(Duration(minutes: intervalMinutes), (
+      _,
+    ) {
+      final authStatus = ref.read(authProvider).value;
+      final s = ref.read(settingsProvider).value;
+      if (authStatus == AuthStatus.authenticated && (s?.autoSync ?? false)) {
+        _log.debug(_tag, 'Periodic sync triggered (${intervalMinutes}m)');
+        sync();
+      }
+    });
   }
 
   Future<void> sync() async {

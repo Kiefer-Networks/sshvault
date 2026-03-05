@@ -124,8 +124,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
           int.tryParse(all[_keyKeyRotationReminder] ?? '') ?? 0,
       globalProxyType: all[_keyGlobalProxyType] ?? 'none',
       globalProxyHost: all[_keyGlobalProxyHost] ?? '',
-      globalProxyPort:
-          int.tryParse(all[_keyGlobalProxyPort] ?? '') ?? 1080,
+      globalProxyPort: int.tryParse(all[_keyGlobalProxyPort] ?? '') ?? 1080,
       globalProxyUsername: all[_keyGlobalProxyUsername] ?? '',
     );
   }

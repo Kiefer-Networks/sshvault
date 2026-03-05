@@ -24,7 +24,8 @@ class SftpFloatingToolbar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final paneState = ref.watch(sftpPaneProvider(side));
 
-    final shouldShow = !paneState.isLoading &&
+    final shouldShow =
+        !paneState.isLoading &&
         paneState.error == null &&
         !paneState.needsHostSelection;
 
@@ -89,10 +90,7 @@ class _FloatingToolbarContainer extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: children,
-        ),
+        child: Row(mainAxisSize: MainAxisSize.min, children: children),
       ),
     );
   }
@@ -147,8 +145,7 @@ class _NormalToolbarContent extends ConsumerWidget {
         IconButton(
           icon: const Icon(Icons.refresh, size: 20),
           tooltip: l10n.sftpRefresh,
-          onPressed: () =>
-              ref.read(sftpPaneProvider(side).notifier).refresh(),
+          onPressed: () => ref.read(sftpPaneProvider(side).notifier).refresh(),
         ),
         if (isRemote)
           IconButton(
@@ -278,10 +275,9 @@ class _SelectionToolbarContent extends ConsumerWidget {
         ),
         Text(
           l10n.sftpItemsSelected(selectedCount),
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const _ToolbarDivider(),
         IconButton(
@@ -303,11 +299,7 @@ class _SelectionToolbarContent extends ConsumerWidget {
             onPressed: () => _showChmodDialog(context, ref),
           ),
         IconButton(
-          icon: Icon(
-            Icons.delete_outline,
-            size: 20,
-            color: colorScheme.error,
-          ),
+          icon: Icon(Icons.delete_outline, size: 20, color: colorScheme.error),
           tooltip: l10n.sftpDelete,
           onPressed: () => _confirmDeleteSelected(context, ref),
         ),

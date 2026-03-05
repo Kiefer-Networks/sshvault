@@ -145,15 +145,12 @@ class FolderServerGroup {
   final List<ServerEntity> servers;
   final int depth;
 
-  const FolderServerGroup({
-    this.folder,
-    required this.servers,
-    this.depth = 0,
-  });
+  const FolderServerGroup({this.folder, required this.servers, this.depth = 0});
 }
 
-final folderGroupedServersProvider =
-    FutureProvider<List<FolderServerGroup>>((ref) async {
+final folderGroupedServersProvider = FutureProvider<List<FolderServerGroup>>((
+  ref,
+) async {
   final useCases = ref.watch(serverUseCasesProvider);
   final treeResult = await ref.watch(folderTreeProvider.future);
   final allServersResult = await useCases.getServers();
@@ -172,11 +169,9 @@ final folderGroupedServersProvider =
   void addFolder(GroupEntity folder, int depth) {
     final servers = serversByFolder.remove(folder.id) ?? [];
     if (servers.isNotEmpty || folder.children.isNotEmpty) {
-      groups.add(FolderServerGroup(
-        folder: folder,
-        servers: servers,
-        depth: depth,
-      ));
+      groups.add(
+        FolderServerGroup(folder: folder, servers: servers, depth: depth),
+      );
     }
     for (final child in folder.children) {
       addFolder(child, depth + 1);

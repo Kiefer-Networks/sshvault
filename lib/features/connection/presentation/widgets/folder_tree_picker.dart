@@ -53,12 +53,7 @@ class _FolderTreePickerDialog extends ConsumerWidget {
         treeAsync.when(
           data: (folders) {
             final nodes = <Widget>[];
-            _buildNodes(
-              context,
-              folders,
-              nodes,
-              depth: 0,
-            );
+            _buildNodes(context, folders, nodes, depth: 0);
             if (nodes.isEmpty) {
               return Padding(
                 padding: const EdgeInsets.all(24),
@@ -70,10 +65,7 @@ class _FolderTreePickerDialog extends ConsumerWidget {
                 ),
               );
             }
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: nodes,
-            );
+            return Column(mainAxisSize: MainAxisSize.min, children: nodes);
           },
           loading: () => const Padding(
             padding: EdgeInsets.all(24),
@@ -135,13 +127,12 @@ class _FolderOption extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ListTile(
-      contentPadding: EdgeInsets.only(
-        left: 24.0 + depth * 24.0,
-        right: 24.0,
-      ),
+      contentPadding: EdgeInsets.only(left: 24.0 + depth * 24.0, right: 24.0),
       leading: Icon(icon, color: iconColor, size: 22),
       title: Text(label),
-      trailing: isSelected ? Icon(Icons.check, color: theme.colorScheme.primary) : null,
+      trailing: isSelected
+          ? Icon(Icons.check, color: theme.colorScheme.primary)
+          : null,
       selected: isSelected,
       dense: true,
       onTap: onTap,

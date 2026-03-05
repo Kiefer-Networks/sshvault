@@ -64,9 +64,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
                       ],
                     );
                     if (v != null) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setAutoLockMinutes(v);
+                      ref.read(settingsProvider.notifier).setAutoLockMinutes(v);
                     }
                   },
                 ),
@@ -172,9 +170,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
                       ],
                     );
                     if (v != null) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setSessionTimeout(v);
+                      ref.read(settingsProvider.notifier).setSessionTimeout(v);
                     }
                   },
                 ),

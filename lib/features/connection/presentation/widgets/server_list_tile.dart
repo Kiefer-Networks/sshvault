@@ -40,9 +40,7 @@ class ServerListTile extends ConsumerWidget {
 
     // Determine live connection status from sessions
     final sessions = ref.watch(sessionManagerProvider);
-    final session = sessions
-        .where((s) => s.serverId == server.id)
-        .firstOrNull;
+    final session = sessions.where((s) => s.serverId == server.id).firstOrNull;
     final connectionStatus = session?.status;
 
     return Slidable(
@@ -90,9 +88,7 @@ class ServerListTile extends ConsumerWidget {
               Icon(
                 Icons.shield_outlined,
                 size: 16,
-                color: vpnActive
-                    ? Colors.green
-                    : theme.colorScheme.error,
+                color: vpnActive ? Colors.green : theme.colorScheme.error,
               ),
             ],
             const SizedBox(width: 8),
@@ -145,10 +141,7 @@ class _ConnectionStatusBadge extends ConsumerWidget {
   final SshConnectionStatus? connectionStatus;
   final ServerEntity server;
 
-  const _ConnectionStatusBadge({
-    this.connectionStatus,
-    required this.server,
-  });
+  const _ConnectionStatusBadge({this.connectionStatus, required this.server});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -173,9 +166,7 @@ class _ConnectionStatusBadge extends ConsumerWidget {
         glow = false;
       case null:
         // No active session — show TCP reachability
-        final reachability = ref.watch(
-          serverReachabilityProvider(server),
-        );
+        final reachability = ref.watch(serverReachabilityProvider(server));
         return reachability.when(
           loading: () => _badge(Colors.orange, glow: true),
           error: (_, _) => _badge(colorScheme.error, glow: false),

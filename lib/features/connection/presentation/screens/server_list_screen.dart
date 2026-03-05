@@ -75,7 +75,10 @@ class ServerListScreen extends ConsumerWidget {
 
     return groupedAsync.when(
       data: (groups) {
-        final totalServers = groups.fold<int>(0, (sum, g) => sum + g.servers.length);
+        final totalServers = groups.fold<int>(
+          0,
+          (sum, g) => sum + g.servers.length,
+        );
         if (totalServers == 0) {
           return EmptyState(
             icon: Icons.dns_outlined,
@@ -92,7 +95,8 @@ class ServerListScreen extends ConsumerWidget {
         return ListView.builder(
           padding: const EdgeInsets.only(bottom: 80),
           itemCount: groups.fold<int>(0, (sum, g) {
-            final expanded = g.folder == null ||
+            final expanded =
+                g.folder == null ||
                 ref.watch(_hostFolderExpandedProvider(g.folder!.id));
             return sum + 1 + (expanded ? g.servers.length : 0);
           }),
@@ -100,7 +104,8 @@ class ServerListScreen extends ConsumerWidget {
             var i = 0;
             for (final group in groups) {
               final key = group.folder?.id ?? '_uncategorized';
-              final expanded = group.folder == null ||
+              final expanded =
+                  group.folder == null ||
                   ref.watch(_hostFolderExpandedProvider(key));
 
               if (index == i) {
@@ -108,10 +113,13 @@ class ServerListScreen extends ConsumerWidget {
                   group: group,
                   expanded: expanded,
                   onToggle: group.folder != null
-                      ? () => ref
-                              .read(_hostFolderExpandedProvider(key).notifier)
-                              .state =
-                          !expanded
+                      ? () =>
+                            ref
+                                    .read(
+                                      _hostFolderExpandedProvider(key).notifier,
+                                    )
+                                    .state =
+                                !expanded
                       : null,
                 );
               }
@@ -198,8 +206,7 @@ class ServerListScreen extends ConsumerWidget {
               : _buildGrid(context, ref, servers),
         );
       },
-      loading: () =>
-          const Center(child: CircularProgressIndicator.adaptive()),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
       error: (error, _) => ErrorState(
         error: error,
         onRetry: () => ref.invalidate(serverListProvider),
@@ -207,7 +214,11 @@ class ServerListScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref, ServerEntity server) async {
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    ServerEntity server,
+  ) async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await ConfirmDialog.show(
       context,
@@ -382,8 +393,9 @@ class _FolderSectionHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final folder = group.folder;
     final isUncategorized = folder == null;
-    final folderColor =
-        isUncategorized ? theme.colorScheme.onSurfaceVariant : Color(folder.color);
+    final folderColor = isUncategorized
+        ? theme.colorScheme.onSurfaceVariant
+        : Color(folder.color);
     final name = isUncategorized ? l10n.serverListNoFolder : folder.name;
 
     return Padding(
@@ -416,7 +428,10 @@ class _FolderSectionHeader extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: folderColor.withAlpha(30),
                     borderRadius: BorderRadius.circular(12),

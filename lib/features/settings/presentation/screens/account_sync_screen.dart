@@ -430,10 +430,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         },
         onFailure: (f) {
           if (!mounted) return;
-          AdaptiveNotification.show(
-            context,
-            message: l10n.error(f.toString()),
-          );
+          AdaptiveNotification.show(context, message: l10n.error(f.toString()));
         },
       );
     } catch (e) {
@@ -507,7 +504,10 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
     );
   }
 
-  Future<void> _showAvatarOptions(AppLocalizations l10n, String currentAvatar) async {
+  Future<void> _showAvatarOptions(
+    AppLocalizations l10n,
+    String currentAvatar,
+  ) async {
     final result = await showModalBottomSheet<String>(
       context: context,
       builder: (ctx) => SafeArea(
@@ -574,10 +574,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
       );
     } catch (e) {
       if (mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: l10n.avatarUploadFailed,
-        );
+        AdaptiveNotification.show(context, message: l10n.avatarUploadFailed);
       }
     }
   }
@@ -716,7 +713,11 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               ),
             ),
           if (billing.active &&
-              const {'stripe', 'apple', 'google'}.contains(billing.provider)) ...[
+              const {
+                'stripe',
+                'apple',
+                'google',
+              }.contains(billing.provider)) ...[
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
@@ -1185,7 +1186,10 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             for (final minutes in options)
               ListTile(
                 leading: minutes == current
-                    ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
                     : const SizedBox(width: 24),
                 title: Text(l10n.autoSyncIntervalValue(minutes)),
                 onTap: () {

@@ -328,34 +328,33 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  Builder(builder: (context) {
-                    final folderName = foldersAsync.whenOrNull(
-                      data: (folders) => folders
-                          .where((f) => f.id == formState.groupId)
-                          .firstOrNull
-                          ?.name,
-                    );
-                    return ListTile(
-                      leading: const Icon(Icons.folder_outlined),
-                      title: Text(folderName ?? l10n.serverNoFolder),
-                      subtitle: Text(l10n.navFolders),
-                      trailing: const Icon(Icons.chevron_right),
-                      contentPadding: EdgeInsets.zero,
-                      onTap: () async {
-                        final result = await FolderTreePicker.show(
-                          context,
-                          selectedFolderId: formState.groupId,
-                        );
-                        if (result != formState.groupId) {
-                          ref
-                              .read(_serverFormStateProvider.notifier)
-                              .state = formState.copyWith(
-                            groupId: () => result,
+                  Builder(
+                    builder: (context) {
+                      final folderName = foldersAsync.whenOrNull(
+                        data: (folders) => folders
+                            .where((f) => f.id == formState.groupId)
+                            .firstOrNull
+                            ?.name,
+                      );
+                      return ListTile(
+                        leading: const Icon(Icons.folder_outlined),
+                        title: Text(folderName ?? l10n.serverNoFolder),
+                        subtitle: Text(l10n.navFolders),
+                        trailing: const Icon(Icons.chevron_right),
+                        contentPadding: EdgeInsets.zero,
+                        onTap: () async {
+                          final result = await FolderTreePicker.show(
+                            context,
+                            selectedFolderId: formState.groupId,
                           );
-                        }
-                      },
-                    );
-                  }),
+                          if (result != formState.groupId) {
+                            ref.read(_serverFormStateProvider.notifier).state =
+                                formState.copyWith(groupId: () => result);
+                          }
+                        },
+                      );
+                    },
+                  ),
                   const SizedBox(height: 16),
 
                   TagSelector(

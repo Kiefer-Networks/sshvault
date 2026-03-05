@@ -294,7 +294,9 @@ class _FolderTile extends ConsumerWidget {
                   ? () =>
                         ref
                                 .read(
-                                  _folderTileExpandedProvider(folder.id).notifier,
+                                  _folderTileExpandedProvider(
+                                    folder.id,
+                                  ).notifier,
                                 )
                                 .state =
                             !expanded

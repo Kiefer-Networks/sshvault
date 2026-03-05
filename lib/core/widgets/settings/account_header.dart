@@ -99,8 +99,7 @@ class AccountHeader extends StatelessWidget {
     return CircleAvatar(
       radius: 24,
       backgroundColor: colorScheme.primaryContainer,
-      backgroundImage:
-          avatarBytes != null ? MemoryImage(avatarBytes) : null,
+      backgroundImage: avatarBytes != null ? MemoryImage(avatarBytes) : null,
       child: avatarBytes == null
           ? Icon(
               isAuthenticated ? Icons.person : Icons.person_outline,

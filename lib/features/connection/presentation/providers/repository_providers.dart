@@ -24,7 +24,11 @@ import 'package:shellvault/features/snippet/domain/usecases/snippet_usecases.dar
 final serverRepositoryProvider = Provider<ServerRepository>((ref) {
   final db = ref.watch(databaseProvider);
   final secureStorage = ref.watch(secureStorageProvider);
-  return ServerRepositoryImpl(db.serverDao, secureStorage, groupDao: db.groupDao);
+  return ServerRepositoryImpl(
+    db.serverDao,
+    secureStorage,
+    groupDao: db.groupDao,
+  );
 });
 
 final sshKeyRepositoryProvider = Provider<SshKeyRepository>((ref) {

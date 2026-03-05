@@ -39,11 +39,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
         Padding(
           padding: EdgeInsets.only(left: depth * 16.0),
           child: FilterChip(
-            avatar: Icon(
-              Icons.folder,
-              size: 18,
-              color: Color(folder.color),
-            ),
+            avatar: Icon(Icons.folder, size: 18, color: Color(folder.color)),
             label: Text(folder.name),
             selected: _groupId == folder.id,
             onSelected: (_) => setState(() {

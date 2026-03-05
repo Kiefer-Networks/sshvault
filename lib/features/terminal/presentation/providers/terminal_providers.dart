@@ -157,8 +157,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
       // Check VPN requirement
       if (server.requiresVpn) {
-        final vpnActive =
-            ref.read(vpnActiveProvider).value ?? false;
+        final vpnActive = ref.read(vpnActiveProvider).value ?? false;
         if (!vpnActive) {
           session.terminal.write(
             '\r\n[Warning: VPN is not active but required for this server]\r\n',
@@ -175,8 +174,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       final proxyConfig = resolver.resolve(server, globalProxy);
       ProxyCredentials? proxyCredentials;
       if (proxyConfig != null && proxyConfig.type != ProxyType.none) {
-        proxyCredentials =
-            await ref.read(globalProxyCredentialsProvider.future);
+        proxyCredentials = await ref.read(
+          globalProxyCredentialsProvider.future,
+        );
       }
 
       // Connect

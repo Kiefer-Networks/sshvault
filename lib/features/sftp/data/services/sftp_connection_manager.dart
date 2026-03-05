@@ -94,8 +94,9 @@ class SftpConnectionManager {
 
         final SSHSocket socket;
         if (proxy != null && proxy.type != ProxyType.none) {
-          final proxyCreds =
-              await container.read(globalProxyCredentialsProvider.future);
+          final proxyCreds = await container.read(
+            globalProxyCredentialsProvider.future,
+          );
           switch (proxy.type) {
             case ProxyType.socks5:
               socket = await Socks5SSHSocket.connect(

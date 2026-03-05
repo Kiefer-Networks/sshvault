@@ -39,7 +39,8 @@ class Servers extends Table {
   TextColumn get proxyHost => text().withDefault(const Constant(''))();
   IntColumn get proxyPort => integer().withDefault(const Constant(1080))();
   TextColumn get proxyUsername => text().nullable()();
-  BoolColumn get useGlobalProxy => boolean().withDefault(const Constant(true))();
+  BoolColumn get useGlobalProxy =>
+      boolean().withDefault(const Constant(true))();
   // VPN
   BoolColumn get requiresVpn => boolean().withDefault(const Constant(false))();
   // Sync

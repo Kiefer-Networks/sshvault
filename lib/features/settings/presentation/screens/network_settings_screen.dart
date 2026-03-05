@@ -315,9 +315,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: l10n.proxyUsername,
-                    ),
+                    decoration: InputDecoration(labelText: l10n.proxyUsername),
                     onChanged: (v) => ref
                         .read(settingsProvider.notifier)
                         .setGlobalProxyUsername(v.trim()),
@@ -325,9 +323,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: l10n.proxyPassword,
-                    ),
+                    decoration: InputDecoration(labelText: l10n.proxyPassword),
                     obscureText: true,
                     onChanged: (v) => saveGlobalProxyPassword(v),
                   ),
@@ -341,11 +337,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                           port:
                               int.tryParse(_portController.text.trim()) ?? 1080,
                         );
-                        NetworkSettingsScreen._testProxy(
-                          context,
-                          l10n,
-                          proxy,
-                        );
+                        NetworkSettingsScreen._testProxy(context, l10n, proxy);
                       },
                       icon: const Icon(Icons.network_check, size: 18),
                       label: Text(l10n.proxyTestConnection),

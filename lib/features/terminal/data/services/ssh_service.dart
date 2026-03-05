@@ -270,7 +270,10 @@ class SshService {
     if (proxy == null || proxy.type == ProxyType.none) {
       return SSHSocket.connect(host, port, timeout: timeout);
     }
-    _log.info(_tag, 'Connecting via ${proxy.type.name} proxy ${proxy.host}:${proxy.port}');
+    _log.info(
+      _tag,
+      'Connecting via ${proxy.type.name} proxy ${proxy.host}:${proxy.port}',
+    );
     switch (proxy.type) {
       case ProxyType.socks5:
         return Socks5SSHSocket.connect(
