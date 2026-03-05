@@ -164,9 +164,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                           final iapProduct = isNativeIapPlatform
                               ? ref.watch(subscriptionStoreProvider).value
                               : null;
-                          final priceLabel =
-                              iapProduct?.price ??
-                              (isNativeIapPlatform ? '...' : '\u20AC9.99');
+                          final priceLabel = iapProduct?.price ?? '\u20AC9.99';
                           return Column(
                             children: [
                               Text(
@@ -655,9 +653,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                     purchaseStatus == SubscriptionPurchaseStatus.purchasing ||
                     purchaseStatus == SubscriptionPurchaseStatus.verifying;
 
-                final priceLabel =
-                    iapProduct?.price ??
-                    (isNativeIapPlatform ? '...' : '\u20AC9.99');
+                final priceLabel = iapProduct?.price ?? '\u20AC9.99';
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

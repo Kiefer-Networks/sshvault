@@ -361,9 +361,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                     purchaseStatus == SubscriptionPurchaseStatus.purchasing ||
                     purchaseStatus == SubscriptionPurchaseStatus.verifying;
 
-                final priceLabel =
-                    iapProduct?.price ??
-                    (isNativeIapPlatform ? '...' : '\u20AC9.99');
+                final priceLabel = iapProduct?.price ?? '\u20AC9.99';
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
