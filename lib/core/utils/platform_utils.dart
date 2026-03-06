@@ -10,14 +10,6 @@ bool get useCupertinoDesign => false;
 /// Currently always false — Material layout is used everywhere.
 bool get isCupertinoMobile => false;
 
-/// Whether the current platform supports native In-App Purchases.
-bool get isNativeIapPlatform {
-  if (kIsWeb) return false;
-  return defaultTargetPlatform == TargetPlatform.iOS ||
-      defaultTargetPlatform == TargetPlatform.android ||
-      defaultTargetPlatform == TargetPlatform.macOS;
-}
-
 /// Whether the current platform is a mobile device (iOS or Android).
 bool get isMobilePlatform {
   if (kIsWeb) return false;

@@ -2134,18 +2134,6 @@ abstract class AppLocalizations {
   /// **'Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.'**
   String get authWhyLogin;
 
-  /// No description provided for @authPricingInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'Cloud sync for all your devices — {price}'**
-  String authPricingInfo(String price);
-
-  /// No description provided for @authPricingHint.
-  ///
-  /// In en, this message translates to:
-  /// **'One purchase, unlimited devices.'**
-  String get authPricingHint;
-
   /// No description provided for @authEmailLabel.
   ///
   /// In en, this message translates to:
@@ -2434,18 +2422,6 @@ abstract class AppLocalizations {
   /// **'Sync'**
   String get syncTitle;
 
-  /// No description provided for @accountActivateSyncPrice.
-  ///
-  /// In en, this message translates to:
-  /// **'Activate Sync — {price}'**
-  String accountActivateSyncPrice(String price);
-
-  /// No description provided for @accountStoreFeeNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Price on mobile & macOS includes App Store / Play Store fees.'**
-  String get accountStoreFeeNote;
-
   /// No description provided for @settingsSectionNetwork.
   ///
   /// In en, this message translates to:
@@ -2541,30 +2517,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Member since'**
   String get accountMemberSince;
-
-  /// No description provided for @accountPaymentStatus.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment'**
-  String get accountPaymentStatus;
-
-  /// No description provided for @accountPaymentActive.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync active'**
-  String get accountPaymentActive;
-
-  /// No description provided for @accountPaymentInactive.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync not yet purchased'**
-  String get accountPaymentInactive;
-
-  /// No description provided for @accountUnlockSync.
-  ///
-  /// In en, this message translates to:
-  /// **'Activate Sync'**
-  String get accountUnlockSync;
 
   /// No description provided for @accountDevices.
   ///
@@ -3724,36 +3676,6 @@ abstract class AppLocalizations {
   /// **'Log out & delete data'**
   String get logoutAndDelete;
 
-  /// No description provided for @couponTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Redeem Coupon'**
-  String get couponTitle;
-
-  /// No description provided for @couponInputLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Coupon Code'**
-  String get couponInputLabel;
-
-  /// No description provided for @couponInputHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your coupon code'**
-  String get couponInputHint;
-
-  /// No description provided for @couponRedeemButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Redeem'**
-  String get couponRedeemButton;
-
-  /// No description provided for @couponSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Coupon redeemed successfully'**
-  String get couponSuccess;
-
   /// No description provided for @changeAvatar.
   ///
   /// In en, this message translates to:
@@ -4275,12 +4197,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connection failed: {message}'**
   String connectionTestFailed(String message);
-
-  /// No description provided for @purchaseFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Purchase failed'**
-  String get purchaseFailed;
 
   /// No description provided for @serverVerificationFailed.
   ///

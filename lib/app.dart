@@ -10,7 +10,6 @@ import 'package:sshvault/core/widgets/lock_screen.dart';
 import 'package:sshvault/core/widgets/security_warning_dialog.dart';
 import 'package:sshvault/core/network/api_provider.dart';
 import 'package:sshvault/core/services/logging_service.dart';
-import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
@@ -131,29 +130,26 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
     final settings = ref.read(settingsProvider).value;
     if (!(settings?.autoSync ?? true)) return;
 
-    ref
-        .read(billingStatusProvider.future)
-        .then((billing) async {
-          if (!billing.active || !mounted) return;
+    final auth = ref.read(authProvider).value;
+    if (auth != AuthStatus.authenticated) return;
 
-          // Check if sync password is set — if not, redirect to create it
-          final storage = ref.read(secureStorageProvider);
-          final pwResult = await storage.getSyncPassword();
-          final pw = pwResult.isSuccess ? pwResult.value : null;
-          if (!mounted) return;
+    Future<void>(() async {
+      final storage = ref.read(secureStorageProvider);
+      final pwResult = await storage.getSyncPassword();
+      final pw = pwResult.isSuccess ? pwResult.value : null;
+      if (!mounted) return;
 
-          if (pw == null || pw.isEmpty) {
-            AppRouter.router.go('/sync-password?mode=create');
-          } else {
-            ref.read(syncProvider.notifier).sync();
-          }
-        })
-        .catchError((Object e) {
-          LoggingService.instance.warning(
-            'SSHVaultApp',
-            'Sync password check failed: $e',
-          );
-        });
+      if (pw == null || pw.isEmpty) {
+        AppRouter.router.go('/sync-password?mode=create');
+      } else {
+        ref.read(syncProvider.notifier).sync();
+      }
+    }).catchError((Object e) {
+      LoggingService.instance.warning(
+        'SSHVaultApp',
+        'Sync password check failed: $e',
+      );
+    });
   }
 
   static const _localizationsDelegates = [

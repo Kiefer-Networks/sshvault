@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/error/failures.dart';
-import 'package:sshvault/core/utils/platform_utils.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
@@ -65,43 +64,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     Icons.cloud_sync_outlined,
                     size: 48,
                     color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(height: 12),
-                  Card(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Text(
-                            l10n.authPricingInfo(
-                              isNativeIapPlatform ? '€12.99' : '€9.99',
-                            ),
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            l10n.authPricingHint,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                   const SizedBox(height: 24),
                   SectionCard(

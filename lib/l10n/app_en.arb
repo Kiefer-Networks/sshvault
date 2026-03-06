@@ -406,9 +406,6 @@
   "authRegister": "Register",
   "authForgotPassword": "Forgot password?",
   "authWhyLogin": "Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.",
-  "authPricingInfo": "Cloud sync for all your devices — {price}",
-  "@authPricingInfo": { "placeholders": { "price": { "type": "String" } } },
-  "authPricingHint": "One purchase, unlimited devices.",
   "authEmailLabel": "Email",
   "authEmailRequired": "Email is required",
   "authEmailInvalid": "Invalid email address",
@@ -462,10 +459,6 @@
   "syncNeverSynced": "Never synced",
   "syncVaultVersion": "Vault Version",
   "syncTitle": "Sync",
-  "accountActivateSyncPrice": "Activate Sync — {price}",
-  "@accountActivateSyncPrice": { "placeholders": { "price": { "type": "String" } } },
-  "accountStoreFeeNote": "Price on mobile & macOS includes App Store / Play Store fees.",
-
   "settingsSectionNetwork": "Network & DNS",
   "settingsDnsServers": "DNS-over-HTTPS Servers",
   "settingsDnsDefault": "Default (Quad9 + Mullvad)",
@@ -484,10 +477,6 @@
   "accountNotLoggedIn": "Not logged in",
   "accountVerified": "Verified",
   "accountMemberSince": "Member since",
-  "accountPaymentStatus": "Payment",
-  "accountPaymentActive": "Sync active",
-  "accountPaymentInactive": "Sync not yet purchased",
-  "accountUnlockSync": "Activate Sync",
   "accountDevices": "Devices",
   "accountNoDevices": "No devices registered",
   "accountLastSync": "Last sync",
@@ -730,12 +719,6 @@
   "logoutOnly": "Log out only",
   "logoutAndDelete": "Log out & delete data",
 
-  "couponTitle": "Redeem Coupon",
-  "couponInputLabel": "Coupon Code",
-  "couponInputHint": "Enter your coupon code",
-  "couponRedeemButton": "Redeem",
-  "couponSuccess": "Coupon redeemed successfully",
-
   "changeAvatar": "Change Avatar",
   "removeAvatar": "Remove Avatar",
   "avatarUploadFailed": "Failed to upload avatar",
@@ -847,7 +830,6 @@
   "connectionTestSuccess": "Connection successful",
   "connectionTestFailed": "Connection failed: {message}",
   "@connectionTestFailed": { "placeholders": { "message": { "type": "String" } } },
-  "purchaseFailed": "Purchase failed",
   "serverVerificationFailed": "Server verification failed",
   "importSuccessful": "Import successful"
 }

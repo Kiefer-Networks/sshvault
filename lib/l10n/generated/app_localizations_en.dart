@@ -1110,14 +1110,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.';
 
   @override
-  String authPricingInfo(String price) {
-    return 'Cloud sync for all your devices — $price';
-  }
-
-  @override
-  String get authPricingHint => 'One purchase, unlimited devices.';
-
-  @override
   String get authEmailLabel => 'Email';
 
   @override
@@ -1273,15 +1265,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncTitle => 'Sync';
 
   @override
-  String accountActivateSyncPrice(String price) {
-    return 'Activate Sync — $price';
-  }
-
-  @override
-  String get accountStoreFeeNote =>
-      'Price on mobile & macOS includes App Store / Play Store fees.';
-
-  @override
   String get settingsSectionNetwork => 'Network & DNS';
 
   @override
@@ -1329,18 +1312,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountMemberSince => 'Member since';
-
-  @override
-  String get accountPaymentStatus => 'Payment';
-
-  @override
-  String get accountPaymentActive => 'Sync active';
-
-  @override
-  String get accountPaymentInactive => 'Sync not yet purchased';
-
-  @override
-  String get accountUnlockSync => 'Activate Sync';
 
   @override
   String get accountDevices => 'Devices';
@@ -2037,21 +2008,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutAndDelete => 'Log out & delete data';
 
   @override
-  String get couponTitle => 'Redeem Coupon';
-
-  @override
-  String get couponInputLabel => 'Coupon Code';
-
-  @override
-  String get couponInputHint => 'Enter your coupon code';
-
-  @override
-  String get couponRedeemButton => 'Redeem';
-
-  @override
-  String get couponSuccess => 'Coupon redeemed successfully';
-
-  @override
   String get changeAvatar => 'Change Avatar';
 
   @override
@@ -2331,9 +2287,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String connectionTestFailed(String message) {
     return 'Connection failed: $message';
   }
-
-  @override
-  String get purchaseFailed => 'Purchase failed';
 
   @override
   String get serverVerificationFailed => 'Server verification failed';

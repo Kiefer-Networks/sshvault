@@ -2,24 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/utils/date_formatter.dart';
-import 'package:sshvault/core/utils/platform_utils.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
-import 'package:sshvault/features/account/presentation/providers/subscription_purchase_provider.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
-
-final _couponLoadingProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class AccountSyncScreen extends ConsumerStatefulWidget {
   const AccountSyncScreen({super.key});
@@ -30,14 +24,11 @@ class AccountSyncScreen extends ConsumerStatefulWidget {
 
 class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   late final AppLifecycleListener _lifecycleListener;
-  final _couponController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
     _lifecycleListener = AppLifecycleListener(
       onResume: () {
-        ref.invalidate(billingStatusProvider);
         ref.invalidate(serverReachableProvider);
       },
     );
@@ -45,7 +36,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
 
   @override
   void dispose() {
-    _couponController.dispose();
     _lifecycleListener.dispose();
     super.dispose();
   }
@@ -130,37 +120,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Builder(
-                        builder: (context) {
-                          final iapProduct = isNativeIapPlatform
-                              ? ref.watch(syncStoreProvider).value
-                              : null;
-                          final priceLabel = iapProduct?.price ?? '\u20AC9.99';
-                          return Column(
-                            children: [
-                              Text(
-                                l10n.authPricingInfo(priceLabel),
-                                style: theme.textTheme.titleSmall,
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                l10n.authPricingHint,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
@@ -191,56 +150,30 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             const SizedBox(height: 16),
           ],
 
-          // Billing Card
-          if (isAuthenticated) ...[
-            SectionHeader(title: l10n.accountPaymentStatus),
-            SectionCard(child: _buildBillingCard(l10n, theme)),
-            const SizedBox(height: 16),
-          ],
-
-          // Coupon Redemption
-          if (isAuthenticated) ...[
-            SectionHeader(title: l10n.couponTitle),
-            SectionCard(child: _buildCouponCard(l10n, theme)),
-            const SizedBox(height: 16),
-          ],
-
           // Sync Controls
           SectionHeader(title: l10n.syncTitle),
           SettingsGroupCard(
             children: [
-              Builder(
-                builder: (context) {
-                  final billingActive =
-                      ref.watch(billingStatusProvider).value?.active ?? false;
-                  return SettingsSwitchTile(
-                    icon: Icons.sync,
-                    iconColor: AppColors.iconLightBlue,
-                    title: l10n.syncAutoSync,
-                    subtitleText: l10n.syncAutoSyncDescription,
-                    value: billingActive && (settings?.autoSync ?? true),
-                    onChanged: billingActive
-                        ? (v) {
-                            ref.read(settingsProvider.notifier).setAutoSync(v);
-                          }
-                        : null,
-                  );
+              SettingsSwitchTile(
+                icon: Icons.sync,
+                iconColor: AppColors.iconLightBlue,
+                title: l10n.syncAutoSync,
+                subtitleText: l10n.syncAutoSyncDescription,
+                value: settings?.autoSync ?? true,
+                onChanged: (v) {
+                  ref.read(settingsProvider.notifier).setAutoSync(v);
                 },
               ),
               if (settings?.autoSync ?? false)
                 Builder(
                   builder: (context) {
-                    final billingActive =
-                        ref.watch(billingStatusProvider).value?.active ?? false;
                     final interval = settings?.autoSyncIntervalMinutes ?? 5;
                     return SettingsTile(
                       icon: Icons.timer_outlined,
                       iconColor: AppColors.iconTeal,
                       title: l10n.autoSyncInterval,
                       subtitleText: l10n.autoSyncIntervalValue(interval),
-                      onTap: billingActive
-                          ? () => _showIntervalPicker(l10n, interval)
-                          : null,
+                      onTap: () => _showIntervalPicker(l10n, interval),
                     );
                   },
                 ),
@@ -350,74 +283,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         ],
       ),
     );
-  }
-
-  Widget _buildCouponCard(AppLocalizations l10n, ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TextField(
-          controller: _couponController,
-          textCapitalization: TextCapitalization.characters,
-          decoration: InputDecoration(
-            labelText: l10n.couponInputLabel,
-            hintText: l10n.couponInputHint,
-            prefixIcon: const Icon(Icons.confirmation_number_outlined),
-            border: const OutlineInputBorder(),
-          ),
-          enabled: !ref.watch(_couponLoadingProvider),
-        ),
-        const SizedBox(height: 12),
-        FilledButton.icon(
-          onPressed: ref.watch(_couponLoadingProvider)
-              ? null
-              : () => _redeemCoupon(l10n),
-          icon: ref.watch(_couponLoadingProvider)
-              ? SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                )
-              : const Icon(Icons.redeem),
-          label: Text(l10n.couponRedeemButton),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _redeemCoupon(AppLocalizations l10n) async {
-    final code = _couponController.text.trim();
-    if (code.isEmpty) return;
-
-    ref.read(_couponLoadingProvider.notifier).state = true;
-    try {
-      final repo = ref.read(accountRepositoryProvider);
-      final result = await repo.redeemCoupon(code);
-      result.fold(
-        onSuccess: (r) {
-          if (!mounted) return;
-          _couponController.clear();
-          ref.invalidate(billingStatusProvider);
-          AdaptiveNotification.show(context, message: l10n.couponSuccess);
-        },
-        onFailure: (f) {
-          if (!mounted) return;
-          AdaptiveNotification.show(context, message: l10n.error(f.toString()));
-        },
-      );
-    } catch (e) {
-      if (mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: l10n.error(errorMessage(e)),
-        );
-      }
-    } finally {
-      if (mounted) ref.read(_couponLoadingProvider.notifier).state = false;
-    }
   }
 
   Widget _buildUserCard(AppLocalizations l10n, ThemeData theme) {
@@ -581,99 +446,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
     }
   }
 
-  Widget _buildBillingCard(AppLocalizations l10n, ThemeData theme) {
-    final billingAsync = ref.watch(billingStatusProvider);
-    return billingAsync.when(
-      data: (billing) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                billing.active ? Icons.check_circle : Icons.cancel_outlined,
-                color: billing.active
-                    ? theme.colorScheme.tertiary
-                    : theme.colorScheme.error,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  billing.active
-                      ? l10n.accountPaymentActive
-                      : l10n.accountPaymentInactive,
-                ),
-              ),
-            ],
-          ),
-          if (!billing.active) ...[
-            const SizedBox(height: 12),
-            Builder(
-              builder: (context) {
-                final iapProduct = isNativeIapPlatform
-                    ? ref.watch(syncStoreProvider).value
-                    : null;
-                final purchaseStatus = ref.watch(syncPurchaseStatusProvider);
-                final isWorking =
-                    purchaseStatus == SyncPurchaseStatus.purchasing ||
-                    purchaseStatus == SyncPurchaseStatus.verifying;
-
-                final priceLabel = iapProduct?.price ?? '\u20AC9.99';
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: isWorking ? null : _checkout,
-                        icon: isWorking
-                            ? SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                ),
-                              )
-                            : const Icon(Icons.payment),
-                        label: Text(l10n.accountActivateSyncPrice(priceLabel)),
-                      ),
-                    ),
-                    if (purchaseStatus == SyncPurchaseStatus.error) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        mapPurchaseError(
-                          ref.watch(syncPurchaseErrorProvider),
-                          l10n,
-                        ),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.error,
-                        ),
-                      ),
-                    ],
-                    if (isNativeIapPlatform) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        l10n.accountStoreFeeNote,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
-                );
-              },
-            ),
-          ],
-        ],
-      ),
-      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
-      error: (e, _) => Text(l10n.error(errorMessage(e))),
-    );
-  }
-
   Widget _buildDevicesCard(AppLocalizations l10n, ThemeData theme) {
     final devicesAsync = ref.watch(deviceListProvider);
     return devicesAsync.when(
@@ -748,32 +520,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
       'web' => Icons.language,
       _ => Icons.devices,
     };
-  }
-
-  Future<void> _checkout() async {
-    if (isNativeIapPlatform) {
-      final store = ref.read(syncStoreProvider.notifier);
-      await store.purchase();
-      return;
-    }
-
-    try {
-      final repo = ref.read(accountRepositoryProvider);
-      final result = await repo.createCheckout();
-      if (result.isSuccess && result.value.isNotEmpty) {
-        final uri = Uri.tryParse(result.value);
-        if (uri != null) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: AppLocalizations.of(context)!.error(errorMessage(e)),
-        );
-      }
-    }
   }
 
   Future<void> _deleteDevice(String deviceId) async {

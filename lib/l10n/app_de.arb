@@ -381,9 +381,6 @@
   "authRegister": "Registrieren",
   "authForgotPassword": "Passwort vergessen?",
   "authWhyLogin": "Melde dich an, um verschlüsselte Cloud-Synchronisation auf allen Geräten zu aktivieren. Die App funktioniert auch ohne Konto komplett offline.",
-  "authPricingInfo": "Cloud-Sync für alle deine Geräte — {price}",
-  "@authPricingInfo": { "placeholders": { "price": { "type": "String" } } },
-  "authPricingHint": "Einmalkauf, unbegrenzte Geräte.",
   "authEmailLabel": "E-Mail",
   "authEmailRequired": "E-Mail ist erforderlich",
   "authEmailInvalid": "Ungültige E-Mail-Adresse",
@@ -437,10 +434,6 @@
   "syncNeverSynced": "Noch nie synchronisiert",
   "syncVaultVersion": "Vault-Version",
   "syncTitle": "Sync",
-  "accountActivateSyncPrice": "Sync aktivieren — {price}",
-  "@accountActivateSyncPrice": { "placeholders": { "price": { "type": "String" } } },
-  "accountStoreFeeNote": "Der Preis auf Mobilgeräten & macOS beinhaltet App Store / Play Store Gebühren.",
-
   "settingsSectionNetwork": "Netzwerk & DNS",
   "settingsDnsServers": "DNS-over-HTTPS Server",
   "settingsDnsDefault": "Standard (Quad9 + Mullvad)",
@@ -459,10 +452,6 @@
   "accountNotLoggedIn": "Nicht angemeldet",
   "accountVerified": "Verifiziert",
   "accountMemberSince": "Mitglied seit",
-  "accountPaymentStatus": "Zahlung",
-  "accountPaymentActive": "Sync aktiv",
-  "accountPaymentInactive": "Sync noch nicht erworben",
-  "accountUnlockSync": "Sync aktivieren",
   "accountDevices": "Geräte",
   "accountNoDevices": "Keine Geräte registriert",
   "accountLastSync": "Letzte Sync",
@@ -704,12 +693,6 @@
   "logoutOnly": "Nur abmelden",
   "logoutAndDelete": "Abmelden & Daten löschen",
 
-  "couponTitle": "Gutschein einlösen",
-  "couponInputLabel": "Gutschein-Code",
-  "couponInputHint": "Gutschein-Code eingeben",
-  "couponRedeemButton": "Einlösen",
-  "couponSuccess": "Gutschein erfolgreich eingelöst",
-
   "changeAvatar": "Avatar ändern",
   "removeAvatar": "Avatar entfernen",
   "avatarUploadFailed": "Avatar-Upload fehlgeschlagen",
@@ -821,7 +804,6 @@
   "connectionTestSuccess": "Verbindung erfolgreich",
   "connectionTestFailed": "Verbindung fehlgeschlagen: {message}",
   "@connectionTestFailed": { "placeholders": { "message": { "type": "String" } } },
-  "purchaseFailed": "Kauf fehlgeschlagen",
   "serverVerificationFailed": "Server-Verifizierung fehlgeschlagen",
   "importSuccessful": "Import erfolgreich"
 }

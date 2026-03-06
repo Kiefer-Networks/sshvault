@@ -59,7 +59,6 @@ dependencies:
   local_auth: ^3.0.1
 
   # In-App Purchase
-  in_app_purchase: ^3.2.0
 
   # UI
   cupertino_icons: ^1.0.8

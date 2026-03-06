@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart'
-    show CupertinoTextThemeData, CupertinoThemeData;
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 
@@ -122,10 +120,6 @@ abstract final class AppTheme {
             bottomRight: Radius.circular(16),
           ),
         ),
-      ),
-      cupertinoOverrideTheme: CupertinoThemeData(
-        primaryColor: colorScheme.primary,
-        textTheme: CupertinoTextThemeData(primaryColor: colorScheme.primary),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
@@ -262,11 +256,6 @@ abstract final class AppTheme {
             bottomRight: Radius.circular(16),
           ),
         ),
-      ),
-      cupertinoOverrideTheme: CupertinoThemeData(
-        brightness: Brightness.dark,
-        primaryColor: colorScheme.primary,
-        textTheme: CupertinoTextThemeData(primaryColor: colorScheme.primary),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {

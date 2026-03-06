@@ -1115,14 +1115,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'Inicia sesión para habilitar la sincronización cifrada en la nube en todos tus dispositivos. La app funciona completamente sin conexión sin una cuenta.';
 
   @override
-  String authPricingInfo(String price) {
-    return 'Sincronización en la nube para todos tus dispositivos — $price';
-  }
-
-  @override
-  String get authPricingHint => 'Una compra, dispositivos ilimitados.';
-
-  @override
   String get authEmailLabel => 'Correo electrónico';
 
   @override
@@ -1279,15 +1271,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get syncTitle => 'Sync';
 
   @override
-  String accountActivateSyncPrice(String price) {
-    return 'Activar Sync — $price';
-  }
-
-  @override
-  String get accountStoreFeeNote =>
-      'El precio en móviles y macOS incluye tarifas de App Store / Play Store.';
-
-  @override
   String get settingsSectionNetwork => 'Red y DNS';
 
   @override
@@ -1335,18 +1318,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get accountMemberSince => 'Miembro desde';
-
-  @override
-  String get accountPaymentStatus => 'Pago';
-
-  @override
-  String get accountPaymentActive => 'Sync activo';
-
-  @override
-  String get accountPaymentInactive => 'Sync aún no comprado';
-
-  @override
-  String get accountUnlockSync => 'Activar Sync';
 
   @override
   String get accountDevices => 'Dispositivos';
@@ -2048,21 +2019,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get logoutAndDelete => 'Cerrar sesión y eliminar datos';
 
   @override
-  String get couponTitle => 'Canjear cupón';
-
-  @override
-  String get couponInputLabel => 'Código de cupón';
-
-  @override
-  String get couponInputHint => 'Introduce tu código de cupón';
-
-  @override
-  String get couponRedeemButton => 'Canjear';
-
-  @override
-  String get couponSuccess => 'Cupón canjeado con éxito';
-
-  @override
   String get changeAvatar => 'Cambiar avatar';
 
   @override
@@ -2343,9 +2299,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String connectionTestFailed(String message) {
     return 'Conexión fallida: $message';
   }
-
-  @override
-  String get purchaseFailed => 'Compra fallida';
 
   @override
   String get serverVerificationFailed => 'Verificación del servidor fallida';

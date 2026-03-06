@@ -381,9 +381,6 @@
   "authRegister": "Registrarse",
   "authForgotPassword": "¿Olvidaste tu contraseña?",
   "authWhyLogin": "Inicia sesión para habilitar la sincronización cifrada en la nube en todos tus dispositivos. La app funciona completamente sin conexión sin una cuenta.",
-  "authPricingInfo": "Sincronización en la nube para todos tus dispositivos — {price}",
-  "@authPricingInfo": { "placeholders": { "price": { "type": "String" } } },
-  "authPricingHint": "Una compra, dispositivos ilimitados.",
   "authEmailLabel": "Correo electrónico",
   "authEmailRequired": "El correo electrónico es obligatorio",
   "authEmailInvalid": "Dirección de correo inválida",
@@ -437,10 +434,6 @@
   "syncNeverSynced": "Nunca sincronizado",
   "syncVaultVersion": "Versión del vault",
   "syncTitle": "Sync",
-  "accountActivateSyncPrice": "Activar Sync — {price}",
-  "@accountActivateSyncPrice": { "placeholders": { "price": { "type": "String" } } },
-  "accountStoreFeeNote": "El precio en móviles y macOS incluye tarifas de App Store / Play Store.",
-
   "settingsSectionNetwork": "Red y DNS",
   "settingsDnsServers": "Servidores DNS-over-HTTPS",
   "settingsDnsDefault": "Predeterminado (Quad9 + Mullvad)",
@@ -459,10 +452,6 @@
   "accountNotLoggedIn": "No conectado",
   "accountVerified": "Verificado",
   "accountMemberSince": "Miembro desde",
-  "accountPaymentStatus": "Pago",
-  "accountPaymentActive": "Sync activo",
-  "accountPaymentInactive": "Sync aún no comprado",
-  "accountUnlockSync": "Activar Sync",
   "accountDevices": "Dispositivos",
   "accountNoDevices": "No hay dispositivos registrados",
   "accountLastSync": "Última sincronización",
@@ -704,12 +693,6 @@
   "logoutOnly": "Solo cerrar sesión",
   "logoutAndDelete": "Cerrar sesión y eliminar datos",
 
-  "couponTitle": "Canjear cupón",
-  "couponInputLabel": "Código de cupón",
-  "couponInputHint": "Introduce tu código de cupón",
-  "couponRedeemButton": "Canjear",
-  "couponSuccess": "Cupón canjeado con éxito",
-
   "changeAvatar": "Cambiar avatar",
   "removeAvatar": "Eliminar avatar",
   "avatarUploadFailed": "Error al subir el avatar",
@@ -821,7 +804,6 @@
   "connectionTestSuccess": "Conexión exitosa",
   "connectionTestFailed": "Conexión fallida: {message}",
   "@connectionTestFailed": { "placeholders": { "message": { "type": "String" } } },
-  "purchaseFailed": "Compra fallida",
   "serverVerificationFailed": "Verificación del servidor fallida",
   "importSuccessful": "Importación exitosa"
 }

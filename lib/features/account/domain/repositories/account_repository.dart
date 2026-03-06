@@ -2,8 +2,6 @@ import 'dart:typed_data';
 
 import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/features/account/domain/entities/audit_log_entity.dart';
-import 'package:sshvault/features/account/domain/entities/billing_status.dart';
-import 'package:sshvault/features/account/domain/entities/coupon_redeem_result.dart';
 import 'package:sshvault/features/account/domain/entities/device_entity.dart';
 import 'package:sshvault/features/auth/domain/entities/user_entity.dart';
 
@@ -16,11 +14,6 @@ abstract class AccountRepository {
   Future<Result<String>> registerDevice(String name, String platform);
   Future<Result<void>> deleteDevice(String deviceId);
   Future<Result<int>> logoutAllDevices();
-  Future<Result<BillingStatus>> getBillingStatus();
-  Future<Result<String>> createCheckout();
-  Future<Result<BillingStatus>> verifyGooglePurchase(String purchaseToken);
-  Future<Result<BillingStatus>> verifyApplePurchase(String transactionId);
-  Future<Result<CouponRedeemResult>> redeemCoupon(String code);
   Future<Result<UserEntity>> uploadAvatar(Uint8List imageBytes);
   Future<Result<void>> deleteAvatar();
   Future<Result<AuditLogResult>> getAuditLogs({

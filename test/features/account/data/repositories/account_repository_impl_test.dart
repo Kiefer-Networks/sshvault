@@ -205,44 +205,6 @@ void main() {
     });
   });
 
-  group('getBillingStatus', () {
-    test('returns BillingStatus on success', () async {
-      when(() => mockApi.get('/v1/billing/status')).thenAnswer(
-        (_) async => const Success({
-          'active': true,
-          'provider': 'stripe',
-          'status': 'active',
-        }),
-      );
-
-      final result = await sut.getBillingStatus();
-      expect(result.isSuccess, isTrue);
-      expect(result.value.active, isTrue);
-      expect(result.value.provider, 'stripe');
-    });
-
-    test('returns failure on error', () async {
-      when(
-        () => mockApi.get('/v1/billing/status'),
-      ).thenAnswer((_) async => const Err(NetworkFailure('offline')));
-
-      final result = await sut.getBillingStatus();
-      expect(result.isFailure, isTrue);
-    });
-  });
-
-  group('createCheckout', () {
-    test('returns URL on success', () async {
-      when(() => mockApi.post('/v1/billing/checkout')).thenAnswer(
-        (_) async => const Success({'url': 'https://checkout.stripe.com/xxx'}),
-      );
-
-      final result = await sut.createCheckout();
-      expect(result.isSuccess, isTrue);
-      expect(result.value, contains('stripe.com'));
-    });
-  });
-
   group('getAuditLogs', () {
     test('returns AuditLogResult on success', () async {
       when(

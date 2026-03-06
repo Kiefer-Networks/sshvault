@@ -1118,14 +1118,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Melde dich an, um verschlüsselte Cloud-Synchronisation auf allen Geräten zu aktivieren. Die App funktioniert auch ohne Konto komplett offline.';
 
   @override
-  String authPricingInfo(String price) {
-    return 'Cloud-Sync für alle deine Geräte — $price';
-  }
-
-  @override
-  String get authPricingHint => 'Einmalkauf, unbegrenzte Geräte.';
-
-  @override
   String get authEmailLabel => 'E-Mail';
 
   @override
@@ -1281,15 +1273,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get syncTitle => 'Sync';
 
   @override
-  String accountActivateSyncPrice(String price) {
-    return 'Sync aktivieren — $price';
-  }
-
-  @override
-  String get accountStoreFeeNote =>
-      'Der Preis auf Mobilgeräten & macOS beinhaltet App Store / Play Store Gebühren.';
-
-  @override
   String get settingsSectionNetwork => 'Netzwerk & DNS';
 
   @override
@@ -1337,18 +1320,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get accountMemberSince => 'Mitglied seit';
-
-  @override
-  String get accountPaymentStatus => 'Zahlung';
-
-  @override
-  String get accountPaymentActive => 'Sync aktiv';
-
-  @override
-  String get accountPaymentInactive => 'Sync noch nicht erworben';
-
-  @override
-  String get accountUnlockSync => 'Sync aktivieren';
 
   @override
   String get accountDevices => 'Geräte';
@@ -2045,21 +2016,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get logoutAndDelete => 'Abmelden & Daten löschen';
 
   @override
-  String get couponTitle => 'Gutschein einlösen';
-
-  @override
-  String get couponInputLabel => 'Gutschein-Code';
-
-  @override
-  String get couponInputHint => 'Gutschein-Code eingeben';
-
-  @override
-  String get couponRedeemButton => 'Einlösen';
-
-  @override
-  String get couponSuccess => 'Gutschein erfolgreich eingelöst';
-
-  @override
   String get changeAvatar => 'Avatar ändern';
 
   @override
@@ -2340,9 +2296,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String connectionTestFailed(String message) {
     return 'Verbindung fehlgeschlagen: $message';
   }
-
-  @override
-  String get purchaseFailed => 'Kauf fehlgeschlagen';
 
   @override
   String get serverVerificationFailed => 'Server-Verifizierung fehlgeschlagen';

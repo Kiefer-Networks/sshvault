@@ -6,7 +6,6 @@ import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/network/api_provider.dart';
 import 'package:sshvault/core/storage/database_provider.dart';
 import 'package:sshvault/features/account/domain/entities/audit_log_entity.dart';
-import 'package:sshvault/features/account/domain/entities/billing_status.dart';
 import 'package:sshvault/features/account/domain/entities/device_entity.dart';
 import 'package:sshvault/features/account/presentation/providers/account_repository_providers.dart';
 
@@ -15,7 +14,6 @@ import 'package:sshvault/features/auth/presentation/providers/auth_providers.dar
 import 'package:sshvault/features/auth/domain/entities/user_entity.dart';
 
 const _cachedUserProfileKey = 'cached_user_profile';
-const _cachedBillingStatusKey = 'cached_billing_status';
 
 /// Checks whether the sync server is reachable via GET /health.
 /// Polls periodically: 30s when offline, 60s when online.
@@ -68,30 +66,6 @@ final deviceListProvider = FutureProvider<List<DeviceEntity>>((ref) async {
   final repo = ref.watch(accountRepositoryProvider);
   final result = await repo.getDevices();
   return result.isSuccess ? result.value : [];
-});
-
-final billingStatusProvider = FutureProvider<BillingStatus>((ref) async {
-  final auth = ref.watch(authProvider).value;
-  if (auth != AuthStatus.authenticated) {
-    return const BillingStatus(active: false);
-  }
-
-  final dao = ref.read(databaseProvider).appSettingsDao;
-  final repo = ref.watch(accountRepositoryProvider);
-  final result = await repo.getBillingStatus();
-
-  if (result.isSuccess) {
-    final billing = result.value;
-    await dao.setValue(_cachedBillingStatusKey, jsonEncode(billing.toJson()));
-    return billing;
-  }
-
-  // Network error — try cache
-  final cached = await dao.getValue(_cachedBillingStatusKey);
-  if (cached != null) {
-    return BillingStatus.fromJson(jsonDecode(cached) as Map<String, dynamic>);
-  }
-  return const BillingStatus(active: false);
 });
 
 final auditLogsProvider =

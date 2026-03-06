@@ -5,8 +5,6 @@ import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/features/account/domain/entities/audit_log_entity.dart';
-import 'package:sshvault/features/account/domain/entities/billing_status.dart';
-import 'package:sshvault/features/account/domain/entities/coupon_redeem_result.dart';
 import 'package:sshvault/features/account/domain/entities/device_entity.dart';
 import 'package:sshvault/features/account/domain/repositories/account_repository.dart';
 import 'package:sshvault/features/auth/domain/entities/user_entity.dart';
@@ -116,88 +114,6 @@ class AccountRepositoryImpl implements AccountRepository {
     final result = await _apiClient.delete('/v1/devices/$deviceId');
     return result.fold(
       onSuccess: (_) => const Success(null),
-      onFailure: (f) => Err(f),
-    );
-  }
-
-  @override
-  Future<Result<BillingStatus>> getBillingStatus() async {
-    final result = await _apiClient.get('/v1/billing/status');
-    return result.fold(
-      onSuccess: (data) {
-        try {
-          return Success(BillingStatus.fromJson(data));
-        } catch (e) {
-          return Err(NetworkFailure('Invalid billing response', cause: e));
-        }
-      },
-      onFailure: (f) => Err(f),
-    );
-  }
-
-  @override
-  Future<Result<String>> createCheckout() async {
-    final result = await _apiClient.post('/v1/billing/checkout');
-    return result.fold(
-      onSuccess: (data) => Success(data['url'] as String? ?? ''),
-      onFailure: (f) => Err(f),
-    );
-  }
-
-  @override
-  Future<Result<BillingStatus>> verifyGooglePurchase(
-    String purchaseToken,
-  ) async {
-    final result = await _apiClient.post(
-      '/v1/billing/verify-google',
-      data: {'purchase_token': purchaseToken},
-    );
-    return result.fold(
-      onSuccess: (data) {
-        try {
-          return Success(BillingStatus.fromJson(data));
-        } catch (e) {
-          return Err(NetworkFailure('Invalid verification response', cause: e));
-        }
-      },
-      onFailure: (f) => Err(f),
-    );
-  }
-
-  @override
-  Future<Result<BillingStatus>> verifyApplePurchase(
-    String transactionId,
-  ) async {
-    final result = await _apiClient.post(
-      '/v1/billing/verify-apple',
-      data: {'transaction_id': transactionId},
-    );
-    return result.fold(
-      onSuccess: (data) {
-        try {
-          return Success(BillingStatus.fromJson(data));
-        } catch (e) {
-          return Err(NetworkFailure('Invalid verification response', cause: e));
-        }
-      },
-      onFailure: (f) => Err(f),
-    );
-  }
-
-  @override
-  Future<Result<CouponRedeemResult>> redeemCoupon(String code) async {
-    final result = await _apiClient.post(
-      '/v1/billing/redeem',
-      data: {'code': code},
-    );
-    return result.fold(
-      onSuccess: (data) {
-        try {
-          return Success(CouponRedeemResult.fromJson(data));
-        } catch (e) {
-          return Err(NetworkFailure('Invalid coupon response', cause: e));
-        }
-      },
       onFailure: (f) => Err(f),
     );
   }

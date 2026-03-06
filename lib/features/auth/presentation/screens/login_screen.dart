@@ -4,10 +4,8 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/network/api_provider.dart';
-import 'package:sshvault/core/utils/platform_utils.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
-import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
@@ -73,46 +71,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Card(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            l10n.authPricingInfo(
-                              isNativeIapPlatform ? '€12.99' : '€9.99',
-                            ),
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            l10n.authPricingHint,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -244,14 +202,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _checkSyncPasswordAndNavigate() async {
-    // Check billing status first — no subscription means no vault to decrypt
-    final billing = await ref.read(billingStatusProvider.future);
-    if (!mounted) return;
-    if (!billing.active) {
-      context.go('/');
-      return;
-    }
-
     final storage = ref.read(secureStorageProvider);
     final syncPwResult = await storage.getSyncPassword();
     final syncPw = syncPwResult.isSuccess ? syncPwResult.value : null;

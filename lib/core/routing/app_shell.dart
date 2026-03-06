@@ -131,8 +131,7 @@ class AppShellState extends ConsumerState<AppShell> {
   void initState() {
     super.initState();
 
-    // Refresh billing/device providers on app resume (e.g. returning from
-    // browser after purchase, or after extended background).
+    // Refresh device providers on app resume (e.g. after extended background).
     _lifecycleListener = AppLifecycleListener(
       onResume: _refreshAccountProviders,
     );
@@ -187,7 +186,6 @@ class AppShellState extends ConsumerState<AppShell> {
     final auth = ref.read(authProvider).value;
     if (auth != AuthStatus.authenticated) return;
     ref.invalidate(userProfileProvider);
-    ref.invalidate(billingStatusProvider);
     ref.invalidate(deviceListProvider);
   }
 
@@ -537,8 +535,6 @@ class _SyncStatusIcon extends ConsumerWidget {
     if (!isAuthenticated) return const SizedBox.shrink();
 
     final syncState = ref.watch(syncProvider);
-    final billingActive =
-        ref.watch(billingStatusProvider).value?.active ?? false;
     final serverReachable = ref.watch(serverReachableProvider).value ?? true;
     final isSyncing = syncState.value == SyncStatus.syncing;
     final hasError = syncState.hasError;
@@ -563,7 +559,7 @@ class _SyncStatusIcon extends ConsumerWidget {
       icon = Icons.cloud_off;
       color = Theme.of(context).colorScheme.error;
       tooltip = null;
-    } else if (billingActive && syncState.value == SyncStatus.success) {
+    } else if (syncState.value == SyncStatus.success) {
       icon = Icons.cloud_done_outlined;
       color = Theme.of(context).colorScheme.primary;
       tooltip = null;
