@@ -1,11 +1,11 @@
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/data/datasources/server_dao.dart';
-import 'package:shellvault/features/connection/data/datasources/tag_dao.dart';
-import 'package:shellvault/features/connection/data/models/tag_mapper.dart';
-import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
-import 'package:shellvault/features/connection/domain/repositories/tag_repository.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/data/datasources/server_dao.dart';
+import 'package:sshvault/features/connection/data/datasources/tag_dao.dart';
+import 'package:sshvault/features/connection/data/models/tag_mapper.dart';
+import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
+import 'package:sshvault/features/connection/domain/repositories/tag_repository.dart';
 
 class TagRepositoryImpl implements TagRepository {
   final TagDao _tagDao;

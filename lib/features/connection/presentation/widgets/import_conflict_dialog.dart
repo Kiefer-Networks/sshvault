@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
-import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/features/connection/domain/repositories/export_import_repository.dart';
 
 class ImportConflictDialog extends StatelessWidget {
   const ImportConflictDialog({super.key});

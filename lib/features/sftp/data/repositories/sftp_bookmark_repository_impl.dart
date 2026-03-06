@@ -1,9 +1,9 @@
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/sftp/data/datasources/sftp_bookmark_dao.dart';
-import 'package:shellvault/features/sftp/data/models/sftp_bookmark_mapper.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_bookmark_entity.dart';
-import 'package:shellvault/features/sftp/domain/repositories/sftp_bookmark_repository.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/sftp/data/datasources/sftp_bookmark_dao.dart';
+import 'package:sshvault/features/sftp/data/models/sftp_bookmark_mapper.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_bookmark_entity.dart';
+import 'package:sshvault/features/sftp/domain/repositories/sftp_bookmark_repository.dart';
 
 class SftpBookmarkRepositoryImpl implements SftpBookmarkRepository {
   final SftpBookmarkDao _dao;

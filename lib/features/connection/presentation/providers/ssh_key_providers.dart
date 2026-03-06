@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/utils/auto_sync_mixin.dart';
-import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:sshvault/core/utils/auto_sync_mixin.dart';
+import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
 
 final sshKeyListProvider =
     AsyncNotifierProvider<SshKeyListNotifier, List<SshKeyEntity>>(

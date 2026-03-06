@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 /// DNS-over-HTTPS resolver to prevent DNS spoofing and cache poisoning.
 ///

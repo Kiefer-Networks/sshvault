@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
 
 part 'snippet_entity.freezed.dart';
 part 'snippet_entity.g.dart';

@@ -1,4 +1,4 @@
-import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
+import 'package:sshvault/features/auth/domain/entities/user_entity.dart';
 
 class AuthResponse {
   final UserEntity user;

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/network/api_provider.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/settings/section_card.dart';
-import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/network/api_provider.dart';
+import 'package:sshvault/core/utils/platform_utils.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/settings/section_card.dart';
+import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _obscurePasswordProvider = StateProvider.autoDispose<bool>((_) => true);
 

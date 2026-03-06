@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/features/sftp/domain/entities/transfer_item.dart';
-import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/features/sftp/domain/entities/transfer_item.dart';
+import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _transferPanelExpandedProvider = StateProvider.autoDispose<bool>(
   (ref) => false,

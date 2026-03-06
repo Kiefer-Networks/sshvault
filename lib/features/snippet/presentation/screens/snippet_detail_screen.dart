@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/error/failures.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/error/failures.dart';
 import 'package:flutter/services.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shellvault/core/utils/date_formatter.dart';
-import 'package:shellvault/core/widgets/info_row.dart';
-import 'package:shellvault/core/widgets/settings/section_card.dart';
-import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
-import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
-import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
-import 'package:shellvault/features/snippet/presentation/widgets/variable_fill_dialog.dart';
+import 'package:sshvault/core/utils/date_formatter.dart';
+import 'package:sshvault/core/widgets/info_row.dart';
+import 'package:sshvault/core/widgets/settings/section_card.dart';
+import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
+import 'package:sshvault/features/connection/presentation/widgets/tag_chip.dart';
+import 'package:sshvault/features/snippet/presentation/providers/snippet_providers.dart';
+import 'package:sshvault/features/snippet/presentation/widgets/variable_fill_dialog.dart';
 
 class SnippetDetailScreen extends ConsumerWidget {
   final String snippetId;

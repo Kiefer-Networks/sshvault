@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/network/api_client.dart';
-import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
-import 'package:shellvault/features/account/domain/entities/billing_status.dart';
-import 'package:shellvault/features/account/domain/entities/coupon_redeem_result.dart';
-import 'package:shellvault/features/account/domain/entities/device_entity.dart';
-import 'package:shellvault/features/account/domain/repositories/account_repository.dart';
-import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/network/api_client.dart';
+import 'package:sshvault/features/account/domain/entities/audit_log_entity.dart';
+import 'package:sshvault/features/account/domain/entities/billing_status.dart';
+import 'package:sshvault/features/account/domain/entities/coupon_redeem_result.dart';
+import 'package:sshvault/features/account/domain/entities/device_entity.dart';
+import 'package:sshvault/features/account/domain/repositories/account_repository.dart';
+import 'package:sshvault/features/auth/domain/entities/user_entity.dart';
 
 class AccountRepositoryImpl implements AccountRepository {
   final ApiClient _apiClient;
@@ -138,15 +138,6 @@ class AccountRepositoryImpl implements AccountRepository {
   @override
   Future<Result<String>> createCheckout() async {
     final result = await _apiClient.post('/v1/billing/checkout');
-    return result.fold(
-      onSuccess: (data) => Success(data['url'] as String? ?? ''),
-      onFailure: (f) => Err(f),
-    );
-  }
-
-  @override
-  Future<Result<String>> createPortal() async {
-    final result = await _apiClient.post('/v1/billing/portal');
     return result.fold(
       onSuccess: (data) => Success(data['url'] as String? ?? ''),
       onFailure: (f) => Err(f),

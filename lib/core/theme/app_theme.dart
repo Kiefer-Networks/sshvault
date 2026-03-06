@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart'
     show CupertinoTextThemeData, CupertinoThemeData;
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
 
 abstract final class AppTheme {
   static const _seedColor = Color(0xFF1A1A2E);

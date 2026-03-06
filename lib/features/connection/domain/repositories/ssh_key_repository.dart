@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
 
 abstract class SshKeyRepository {
   Future<Result<List<SshKeyEntity>>> getAllSshKeys();

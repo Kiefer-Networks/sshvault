@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/core/crypto/ssh_key_service.dart';
-import 'package:shellvault/core/crypto/ssh_key_type.dart';
+import 'package:sshvault/core/crypto/ssh_key_service.dart';
+import 'package:sshvault/core/crypto/ssh_key_type.dart';
 
 class _KeyGenReactiveState {
   final SshKeyType selectedType;

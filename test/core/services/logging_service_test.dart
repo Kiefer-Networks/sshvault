@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 void main() {
   late LoggingService sut;
@@ -114,7 +114,7 @@ void main() {
       sut.error('DB', 'query failed');
 
       final text = sut.exportAsText();
-      expect(text, contains('=== SSH Vault Log Export ==='));
+      expect(text, contains('=== SSHVault Log Export ==='));
       expect(text, contains('Entries: 2'));
       expect(text, contains('[INFO] [NET] connected'));
       expect(text, contains('[ERROR] [DB] query failed'));

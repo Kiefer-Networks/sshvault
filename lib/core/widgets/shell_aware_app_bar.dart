@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/routing/app_shell.dart';
+import 'package:sshvault/core/routing/app_shell.dart';
 
 /// Builds a Material [AppBar] that shows a hamburger menu icon on mobile
 /// layouts where the [AppShell] provides a [Drawer].

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:shellvault/core/network/api_client.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/network/api_client.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 /// Periodically verifies server availability and identity via heartbeat.
 ///

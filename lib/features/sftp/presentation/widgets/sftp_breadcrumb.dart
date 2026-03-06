@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
-import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/sftp_bookmark_bar.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
+import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/sftp_bookmark_bar.dart';
 
 class SftpBreadcrumb extends ConsumerStatefulWidget {
   final PaneSide side;

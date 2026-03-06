@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 /// A reusable error state widget showing an error icon, message, and retry
 /// button.  Used across list screens to replace duplicated error columns.

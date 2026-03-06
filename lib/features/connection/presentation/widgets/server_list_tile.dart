@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/services/vpn_detector_service.dart';
-import 'package:shellvault/core/widgets/settings/circle_icon.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/services/vpn_detector_service.dart';
+import 'package:sshvault/core/widgets/settings/circle_icon.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:shellvault/core/constants/icon_constants.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_reachability_provider.dart';
-import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
-import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
-import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
+import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_reachability_provider.dart';
+import 'package:sshvault/features/connection/presentation/widgets/tag_chip.dart';
+import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
+import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class ServerListTile extends ConsumerWidget {
   final ServerEntity server;

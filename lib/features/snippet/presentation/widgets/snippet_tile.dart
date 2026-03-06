@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/widgets/settings/circle_icon.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/widgets/settings/circle_icon.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:shellvault/features/connection/presentation/widgets/tag_chip.dart';
-import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
+import 'package:sshvault/features/connection/presentation/widgets/tag_chip.dart';
+import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
 
 class SnippetTile extends StatelessWidget {
   final SnippetEntity snippet;

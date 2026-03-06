@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/security/doh_resolver_service.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/settings/settings.dart';
-import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
-import 'package:shellvault/features/settings/presentation/providers/proxy_settings_provider.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/security/doh_resolver_service.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/settings/settings.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:sshvault/features/settings/presentation/providers/proxy_settings_provider.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class NetworkSettingsScreen extends ConsumerWidget {
   const NetworkSettingsScreen({super.key});

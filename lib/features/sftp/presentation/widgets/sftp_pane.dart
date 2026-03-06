@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/features/sftp/data/services/archive_service.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
-import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/file_preview_dialog.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/overwrite_confirm_dialog.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/sftp_bookmark_bar.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/sftp_breadcrumb.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/sftp_empty_state.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/sftp_entry_tile.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/sftp_server_picker.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/sftp_toolbar.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/features/sftp/data/services/archive_service.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
+import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/file_preview_dialog.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/overwrite_confirm_dialog.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/sftp_bookmark_bar.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/sftp_breadcrumb.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/sftp_empty_state.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/sftp_entry_tile.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/sftp_server_picker.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/sftp_toolbar.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpPane extends ConsumerWidget {
   final PaneSide side;

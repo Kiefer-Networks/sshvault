@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
-import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
+import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpServerPicker extends ConsumerWidget {
   final PaneSide side;

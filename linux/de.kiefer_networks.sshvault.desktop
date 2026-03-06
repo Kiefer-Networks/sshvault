@@ -1,12 +1,12 @@
 [Desktop Entry]
-Name=ShellVault
+Name=SSHVault
 GenericName=SSH Client
 Comment=Zero-knowledge encrypted SSH and terminal client
-Exec=shellvault %u
-Icon=de.kiefer_networks.shellvault
+Exec=sshvault %u
+Icon=de.kiefer_networks.sshvault
 Terminal=false
 Type=Application
 Categories=Network;RemoteAccess;Security;
 Keywords=ssh;terminal;sftp;server;remote;encrypted;
-StartupWMClass=shellvault
-MimeType=application/x-shellvault-export;
+StartupWMClass=sshvault
+MimeType=application/x-sshvault-export;

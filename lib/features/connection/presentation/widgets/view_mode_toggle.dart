@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 
 class ViewModeToggle extends ConsumerWidget {
   const ViewModeToggle({super.key});

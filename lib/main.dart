@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/app.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/core/storage/database.dart';
+import 'package:sshvault/app.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/core/storage/database.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +12,7 @@ void main() async {
 
   await AppDatabase.migrateDbLocationIfNeeded();
 
-  runApp(const ProviderScope(child: _LifecycleWrapper(child: ShellVaultApp())));
+  runApp(const ProviderScope(child: _LifecycleWrapper(child: SSHVaultApp())));
 }
 
 /// Observes app lifecycle events and logs them.

@@ -1,11 +1,11 @@
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/data/models/tag_mapper.dart';
-import 'package:shellvault/features/snippet/data/datasources/snippet_dao.dart';
-import 'package:shellvault/features/snippet/data/models/snippet_mapper.dart';
-import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
-import 'package:shellvault/features/snippet/domain/repositories/snippet_repository.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/data/models/tag_mapper.dart';
+import 'package:sshvault/features/snippet/data/datasources/snippet_dao.dart';
+import 'package:sshvault/features/snippet/data/models/snippet_mapper.dart';
+import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
+import 'package:sshvault/features/snippet/domain/repositories/snippet_repository.dart';
 
 class SnippetRepositoryImpl implements SnippetRepository {
   final SnippetDao _snippetDao;

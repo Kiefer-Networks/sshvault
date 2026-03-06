@@ -1,4 +1,4 @@
-import 'package:shellvault/core/error/result.dart';
+import 'package:sshvault/core/error/result.dart';
 
 enum ImportConflictStrategy { skip, overwrite, rename, mergeServerWins }
 

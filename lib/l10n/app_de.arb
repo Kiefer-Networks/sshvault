@@ -1,7 +1,7 @@
 {
   "@@locale": "de",
 
-  "appName": "SSH Vault",
+  "appName": "SSHVault",
 
   "navHosts": "Hosts",
   "navSnippets": "Snippets",
@@ -15,14 +15,14 @@
   "navSettings": "Einstellungen",
   "navAbout": "Über",
 
-  "lockScreenTitle": "SSH Vault ist gesperrt",
+  "lockScreenTitle": "SSHVault ist gesperrt",
   "lockScreenUnlock": "Entsperren",
   "lockScreenEnterPin": "PIN eingeben",
   "lockScreenLockedOut": "Zu viele Fehlversuche. Versuche es in {minutes} Min. erneut.",
   "@lockScreenLockedOut": { "placeholders": { "minutes": { "type": "int" } } },
 
   "pinDialogSetTitle": "PIN festlegen",
-  "pinDialogSetSubtitle": "Gib eine 6-stellige PIN ein, um SSH Vault zu schützen",
+  "pinDialogSetSubtitle": "Gib eine 6-stellige PIN ein, um SSHVault zu schützen",
   "pinDialogLabel": "PIN",
   "pinDialogHint": "000000",
   "pinDialogConfirmLabel": "PIN bestätigen",
@@ -79,7 +79,7 @@
   "settingsPreventScreenshots": "Screenshots verhindern",
   "settingsPreventScreenshotsDescription": "Screenshots und Bildschirmaufnahmen blockieren",
   "settingsEncryptExport": "Exporte standardmäßig verschlüsseln",
-  "settingsAbout": "Über SSH Vault",
+  "settingsAbout": "Über SSHVault",
   "settingsAboutLegalese": "von Kiefer Networks",
   "settingsAboutDescription": "Sicherer, selbst-gehosteter SSH-Client",
   "settingsLanguage": "Sprache",
@@ -381,9 +381,9 @@
   "authRegister": "Registrieren",
   "authForgotPassword": "Passwort vergessen?",
   "authWhyLogin": "Melde dich an, um verschlüsselte Cloud-Synchronisation auf allen Geräten zu aktivieren. Die App funktioniert auch ohne Konto komplett offline.",
-  "authPricingInfo": "Cloud-Sync für alle deine Geräte — {price}/Jahr",
+  "authPricingInfo": "Cloud-Sync für alle deine Geräte — {price}",
   "@authPricingInfo": { "placeholders": { "price": { "type": "String" } } },
-  "authPricingHint": "Ein Abo, unbegrenzt Geräte. Jederzeit kündbar.",
+  "authPricingHint": "Einmalkauf, unbegrenzte Geräte.",
   "authEmailLabel": "E-Mail",
   "authEmailRequired": "E-Mail ist erforderlich",
   "authEmailInvalid": "Ungültige E-Mail-Adresse",
@@ -437,10 +437,9 @@
   "syncNeverSynced": "Noch nie synchronisiert",
   "syncVaultVersion": "Vault-Version",
   "syncTitle": "Sync",
-  "accountActivateSyncPrice": "Sync aktivieren — {price}/Jahr",
+  "accountActivateSyncPrice": "Sync aktivieren — {price}",
   "@accountActivateSyncPrice": { "placeholders": { "price": { "type": "String" } } },
   "accountStoreFeeNote": "Der Preis auf Mobilgeräten & macOS beinhaltet App Store / Play Store Gebühren.",
-  "accountManageSubscription": "Abo verwalten & Rechnungen",
 
   "settingsSectionNetwork": "Netzwerk & DNS",
   "settingsDnsServers": "DNS-over-HTTPS Server",
@@ -461,7 +460,7 @@
   "accountVerified": "Verifiziert",
   "accountMemberSince": "Mitglied seit",
   "accountPaymentStatus": "Zahlung",
-  "accountPaymentActive": "Sync aktiv (Jahresabo)",
+  "accountPaymentActive": "Sync aktiv",
   "accountPaymentInactive": "Sync noch nicht erworben",
   "accountUnlockSync": "Sync aktivieren",
   "accountDevices": "Geräte",
@@ -476,7 +475,7 @@
 
   "serverConfigTitle": "Server-Konfiguration",
   "serverConfigSelfHosted": "Selbst-gehostet",
-  "serverConfigSelfHostedDescription": "Eigenen ShellVault-Server verwenden",
+  "serverConfigSelfHostedDescription": "Eigenen SSHVault-Server verwenden",
   "serverConfigUrlLabel": "Server-URL",
   "serverConfigTest": "Verbindung testen",
 
@@ -588,7 +587,7 @@
   "@sftpDownloadStarted": { "placeholders": { "count": { "type": "int" } } },
   "sftpDownloadComplete": "\"{fileName}\" heruntergeladen",
   "@sftpDownloadComplete": { "placeholders": { "fileName": { "type": "String" } } },
-  "sftpSavedToDownloads": "Gespeichert in Downloads/ShellVault",
+  "sftpSavedToDownloads": "Gespeichert in Downloads/SSHVault",
   "sftpSaveToFiles": "In Dateien sichern",
   "sftpFileSaved": "Datei gespeichert",
 
@@ -615,7 +614,7 @@
   "aboutVersion": "Version",
   "aboutBuild": "Build",
 
-  "settingsDohDescription": "DNS-over-HTTPS verschlüsselt DNS-Anfragen und verhindert DNS-Spoofing. ShellVault prüft Hostnamen gegen mehrere Provider, um Angriffe zu erkennen.",
+  "settingsDohDescription": "DNS-over-HTTPS verschlüsselt DNS-Anfragen und verhindert DNS-Spoofing. SSHVault prüft Hostnamen gegen mehrere Provider, um Angriffe zu erkennen.",
   "settingsDnsAddServer": "DNS-Server hinzufügen",
   "settingsDnsServerUrl": "Server-URL",
   "settingsDnsDefaultBadge": "Standard",
@@ -680,7 +679,6 @@
   "tagServerCount": "{count, plural, =1{1 Server} other{{count} Server}}",
   "@tagServerCount": { "placeholders": { "count": { "type": "int" } } },
 
-  "accountDeleteSubscriptionWarning": "Dein Abonnement muss manuell im App Store / Play Store gekündigt werden. Das Löschen deines Kontos kündigt mobile Abonnements nicht automatisch.",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 Sitzung widerrufen.} other{{count} Sitzungen widerrufen.}} Du wurdest abgemeldet.",
   "@logoutAllDevicesSuccessCount": { "placeholders": { "count": { "type": "int" } } },
 
@@ -711,13 +709,6 @@
   "couponInputHint": "Gutschein-Code eingeben",
   "couponRedeemButton": "Einlösen",
   "couponSuccess": "Gutschein erfolgreich eingelöst",
-
-  "subscriptionExpiresOn": "Verlängert sich am {date}",
-  "@subscriptionExpiresOn": {
-    "placeholders": {
-      "date": { "type": "String" }
-    }
-  },
 
   "changeAvatar": "Avatar ändern",
   "removeAvatar": "Avatar entfernen",
@@ -818,7 +809,7 @@
 
   "heartbeatLostMessage": "Der Server konnte nach mehreren Versuchen nicht erreicht werden. Zu deiner Sicherheit wurde die Sitzung beendet.",
   "attestationFailedTitle": "Server-Verifizierung fehlgeschlagen",
-  "attestationFailedMessage": "Der Server konnte nicht als legitimes ShellVault-Backend verifiziert werden. Dies kann auf einen Man-in-the-Middle-Angriff oder einen falsch konfigurierten Server hindeuten.",
+  "attestationFailedMessage": "Der Server konnte nicht als legitimes SSHVault-Backend verifiziert werden. Dies kann auf einen Man-in-the-Middle-Angriff oder einen falsch konfigurierten Server hindeuten.",
 
   "sectionLinks": "Links",
   "sectionDeveloper": "Entwickler",

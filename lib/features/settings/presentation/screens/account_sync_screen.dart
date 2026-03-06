@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -7,21 +6,19 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:shellvault/core/constants/app_colors.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/utils/date_formatter.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/settings/settings.dart';
-import 'package:shellvault/features/account/domain/entities/billing_status.dart';
-import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
-import 'package:shellvault/features/account/presentation/providers/subscription_purchase_provider.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_colors.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/utils/date_formatter.dart';
+import 'package:sshvault/core/utils/platform_utils.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/settings/settings.dart';
+import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
+import 'package:sshvault/features/account/presentation/providers/subscription_purchase_provider.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
-final _pollTimedOutProvider = StateProvider.autoDispose<bool>((ref) => false);
 final _couponLoadingProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class AccountSyncScreen extends ConsumerStatefulWidget {
@@ -33,7 +30,6 @@ class AccountSyncScreen extends ConsumerStatefulWidget {
 
 class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   late final AppLifecycleListener _lifecycleListener;
-  Timer? _billingPollTimer;
   final _couponController = TextEditingController();
 
   @override
@@ -49,31 +45,9 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
 
   @override
   void dispose() {
-    _billingPollTimer?.cancel();
     _couponController.dispose();
     _lifecycleListener.dispose();
     super.dispose();
-  }
-
-  void _startBillingPoll() {
-    _billingPollTimer?.cancel();
-    ref.read(_pollTimedOutProvider.notifier).state = false;
-    var attempts = 0;
-    _billingPollTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      attempts++;
-      ref.invalidate(billingStatusProvider);
-      final billing = ref.read(billingStatusProvider).value;
-      if (billing?.active ?? false) {
-        timer.cancel();
-        _billingPollTimer = null;
-      } else if (attempts >= 60) {
-        timer.cancel();
-        _billingPollTimer = null;
-        if (mounted) {
-          ref.read(_pollTimedOutProvider.notifier).state = true;
-        }
-      }
-    });
   }
 
   @override
@@ -162,7 +136,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                       child: Builder(
                         builder: (context) {
                           final iapProduct = isNativeIapPlatform
-                              ? ref.watch(subscriptionStoreProvider).value
+                              ? ref.watch(syncStoreProvider).value
                               : null;
                           final priceLabel = iapProduct?.price ?? '\u20AC9.99';
                           return Column(
@@ -609,7 +583,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
 
   Widget _buildBillingCard(AppLocalizations l10n, ThemeData theme) {
     final billingAsync = ref.watch(billingStatusProvider);
-    final pollTimedOut = ref.watch(_pollTimedOutProvider);
     return billingAsync.when(
       data: (billing) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,15 +603,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                       : l10n.accountPaymentInactive,
                 ),
               ),
-              if (!billing.active && pollTimedOut)
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  tooltip: l10n.syncNow,
-                  onPressed: () {
-                    ref.read(_pollTimedOutProvider.notifier).state = false;
-                    ref.invalidate(billingStatusProvider);
-                  },
-                ),
             ],
           ),
           if (!billing.active) ...[
@@ -646,14 +610,12 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             Builder(
               builder: (context) {
                 final iapProduct = isNativeIapPlatform
-                    ? ref.watch(subscriptionStoreProvider).value
+                    ? ref.watch(syncStoreProvider).value
                     : null;
-                final purchaseStatus = ref.watch(
-                  subscriptionPurchaseStatusProvider,
-                );
+                final purchaseStatus = ref.watch(syncPurchaseStatusProvider);
                 final isWorking =
-                    purchaseStatus == SubscriptionPurchaseStatus.purchasing ||
-                    purchaseStatus == SubscriptionPurchaseStatus.verifying;
+                    purchaseStatus == SyncPurchaseStatus.purchasing ||
+                    purchaseStatus == SyncPurchaseStatus.verifying;
 
                 final priceLabel = iapProduct?.price ?? '\u20AC9.99';
 
@@ -679,11 +641,11 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                         label: Text(l10n.accountActivateSyncPrice(priceLabel)),
                       ),
                     ),
-                    if (purchaseStatus == SubscriptionPurchaseStatus.error) ...[
+                    if (purchaseStatus == SyncPurchaseStatus.error) ...[
                       const SizedBox(height: 8),
                       Text(
                         mapPurchaseError(
-                          ref.watch(subscriptionPurchaseErrorProvider),
+                          ref.watch(syncPurchaseErrorProvider),
                           l10n,
                         ),
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -703,36 +665,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                   ],
                 );
               },
-            ),
-          ],
-          if (billing.active && billing.periodEnd != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                l10n.subscriptionExpiresOn(formatDate(billing.periodEnd!)),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-          if (billing.active &&
-              const {
-                'stripe',
-                'apple',
-                'google',
-              }.contains(billing.provider)) ...[
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => _openSubscriptionManagement(billing),
-                icon: Icon(
-                  billing.provider == 'apple' || billing.provider == 'google'
-                      ? Icons.store_outlined
-                      : Icons.receipt_long_outlined,
-                ),
-                label: Text(l10n.accountManageSubscription),
-              ),
             ),
           ],
         ],
@@ -820,51 +752,14 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
 
   Future<void> _checkout() async {
     if (isNativeIapPlatform) {
-      final store = ref.read(subscriptionStoreProvider.notifier);
-      await store.subscribe();
-      _startBillingPoll();
+      final store = ref.read(syncStoreProvider.notifier);
+      await store.purchase();
       return;
     }
 
     try {
       final repo = ref.read(accountRepositoryProvider);
       final result = await repo.createCheckout();
-      if (result.isSuccess && result.value.isNotEmpty) {
-        final uri = Uri.tryParse(result.value);
-        if (uri != null) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-          _startBillingPoll();
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: AppLocalizations.of(context)!.error(errorMessage(e)),
-        );
-      }
-    }
-  }
-
-  Future<void> _openSubscriptionManagement(BillingStatus billing) async {
-    switch (billing.provider) {
-      case 'apple':
-        await launchUrl(
-          Uri.parse('https://apps.apple.com/account/subscriptions'),
-          mode: LaunchMode.externalApplication,
-        );
-        return;
-      case 'google':
-        await launchUrl(
-          Uri.parse('https://play.google.com/store/account/subscriptions'),
-          mode: LaunchMode.externalApplication,
-        );
-        return;
-    }
-
-    try {
-      final repo = ref.read(accountRepositoryProvider);
-      final result = await repo.createPortal();
       if (result.isSuccess && result.value.isNotEmpty) {
         final uri = Uri.tryParse(result.value);
         if (uri != null) {
@@ -1209,19 +1104,10 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   }
 
   Future<void> _deleteAccount(AppLocalizations l10n) async {
-    final billing = ref.read(billingStatusProvider).value;
-
-    String message = l10n.accountDeleteWarning;
-    if (billing?.active == true) {
-      if (billing!.provider == 'apple' || billing.provider == 'google') {
-        message += '\n\n${l10n.accountDeleteSubscriptionWarning}';
-      }
-    }
-
     final confirmed = await showAdaptiveConfirmDialog(
       context,
       title: l10n.accountDeleteAccount,
-      message: message,
+      message: l10n.accountDeleteWarning,
       confirmLabel: l10n.delete,
       cancelLabel: l10n.cancel,
       isDestructive: true,

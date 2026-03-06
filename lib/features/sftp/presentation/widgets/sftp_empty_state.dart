@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpEmptyState extends StatelessWidget {
   const SftpEmptyState({super.key});

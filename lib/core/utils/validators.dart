@@ -1,4 +1,4 @@
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 abstract final class Validators {
   static final _hostnameRegex = RegExp(

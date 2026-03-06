@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/network/auth_interceptor.dart';
-import 'package:shellvault/core/storage/secure_storage_service.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/network/auth_interceptor.dart';
+import 'package:sshvault/core/storage/secure_storage_service.dart';
 import 'package:dio/dio.dart';
 
 class MockSecureStorageService extends Mock implements SecureStorageService {}

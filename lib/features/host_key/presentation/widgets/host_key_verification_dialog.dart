@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/features/host_key/domain/entities/known_host_entity.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class HostKeyVerificationDialog extends StatelessWidget {
   final String hostname;

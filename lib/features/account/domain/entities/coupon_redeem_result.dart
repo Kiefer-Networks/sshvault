@@ -1,13 +1,13 @@
-class CouponRedeemResult {
-  final bool syncGranted;
-  final int syncDays;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const CouponRedeemResult({required this.syncGranted, required this.syncDays});
+part 'coupon_redeem_result.freezed.dart';
+part 'coupon_redeem_result.g.dart';
 
-  factory CouponRedeemResult.fromJson(Map<String, dynamic> json) {
-    return CouponRedeemResult(
-      syncGranted: json['sync_granted'] as bool? ?? false,
-      syncDays: json['sync_days'] as int? ?? 0,
-    );
-  }
+@freezed
+abstract class CouponRedeemResult with _$CouponRedeemResult {
+  const factory CouponRedeemResult({@Default(false) bool syncGranted}) =
+      _CouponRedeemResult;
+
+  factory CouponRedeemResult.fromJson(Map<String, dynamic> json) =>
+      _$CouponRedeemResultFromJson(json);
 }

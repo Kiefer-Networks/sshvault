@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
-import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
-import 'package:shellvault/features/connection/presentation/widgets/filter_bottom_sheet.dart';
+import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/filter_bottom_sheet.dart';
 
 class SearchFilterBar extends ConsumerStatefulWidget {
   const SearchFilterBar({super.key});

@@ -1,8 +1,8 @@
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/network/api_client.dart';
-import 'package:shellvault/features/sync/domain/entities/vault_entity.dart';
-import 'package:shellvault/features/sync/domain/repositories/sync_repository.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/network/api_client.dart';
+import 'package:sshvault/features/sync/domain/entities/vault_entity.dart';
+import 'package:sshvault/features/sync/domain/repositories/sync_repository.dart';
 
 class SyncRepositoryImpl implements SyncRepository {
   final ApiClient _apiClient;

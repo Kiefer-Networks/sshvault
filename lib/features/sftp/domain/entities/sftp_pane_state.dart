@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
 
 part 'sftp_pane_state.freezed.dart';
 

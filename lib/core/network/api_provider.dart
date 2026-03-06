@@ -1,24 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/network/api_client.dart';
-import 'package:shellvault/core/network/auth_interceptor.dart';
-import 'package:shellvault/core/network/doh_interceptor.dart';
-import 'package:shellvault/core/network/pow_interceptor.dart';
-import 'package:shellvault/core/security/security_providers.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/core/storage/database_provider.dart';
-import 'package:shellvault/core/storage/secure_storage_provider.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/network/api_client.dart';
+import 'package:sshvault/core/network/auth_interceptor.dart';
+import 'package:sshvault/core/network/doh_interceptor.dart';
+import 'package:sshvault/core/network/pow_interceptor.dart';
+import 'package:sshvault/core/security/security_providers.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/core/storage/database_provider.dart';
+import 'package:sshvault/core/storage/secure_storage_provider.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/snippet/presentation/providers/snippet_providers.dart';
 
-export 'package:shellvault/core/storage/secure_storage_provider.dart';
+export 'package:sshvault/core/storage/secure_storage_provider.dart';
 
 final serverUrlProvider = StateProvider<String>((ref) {
   return AppConstants.defaultServerUrl;

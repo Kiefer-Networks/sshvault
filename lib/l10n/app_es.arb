@@ -1,7 +1,7 @@
 {
   "@@locale": "es",
 
-  "appName": "SSH Vault",
+  "appName": "SSHVault",
 
   "navHosts": "Hosts",
   "navSnippets": "Snippets",
@@ -15,14 +15,14 @@
   "navSettings": "Ajustes",
   "navAbout": "Acerca de",
 
-  "lockScreenTitle": "SSH Vault está bloqueado",
+  "lockScreenTitle": "SSHVault está bloqueado",
   "lockScreenUnlock": "Desbloquear",
   "lockScreenEnterPin": "Ingresar PIN",
   "lockScreenLockedOut": "Demasiados intentos fallidos. Intenta de nuevo en {minutes} min.",
   "@lockScreenLockedOut": { "placeholders": { "minutes": { "type": "int" } } },
 
   "pinDialogSetTitle": "Establecer PIN",
-  "pinDialogSetSubtitle": "Ingresa un PIN de 6 dígitos para proteger SSH Vault",
+  "pinDialogSetSubtitle": "Ingresa un PIN de 6 dígitos para proteger SSHVault",
   "pinDialogLabel": "PIN",
   "pinDialogHint": "000000",
   "pinDialogConfirmLabel": "Confirmar PIN",
@@ -79,7 +79,7 @@
   "settingsPreventScreenshots": "Prevenir capturas de pantalla",
   "settingsPreventScreenshotsDescription": "Bloquear capturas de pantalla y grabación de pantalla",
   "settingsEncryptExport": "Cifrar exportaciones por defecto",
-  "settingsAbout": "Acerca de SSH Vault",
+  "settingsAbout": "Acerca de SSHVault",
   "settingsAboutLegalese": "por Kiefer Networks",
   "settingsAboutDescription": "Cliente SSH seguro y autoalojado",
   "settingsLanguage": "Idioma",
@@ -381,9 +381,9 @@
   "authRegister": "Registrarse",
   "authForgotPassword": "¿Olvidaste tu contraseña?",
   "authWhyLogin": "Inicia sesión para habilitar la sincronización cifrada en la nube en todos tus dispositivos. La app funciona completamente sin conexión sin una cuenta.",
-  "authPricingInfo": "Sincronización en la nube para todos tus dispositivos — {price}/año",
+  "authPricingInfo": "Sincronización en la nube para todos tus dispositivos — {price}",
   "@authPricingInfo": { "placeholders": { "price": { "type": "String" } } },
-  "authPricingHint": "Una suscripción, dispositivos ilimitados. Cancela cuando quieras.",
+  "authPricingHint": "Una compra, dispositivos ilimitados.",
   "authEmailLabel": "Correo electrónico",
   "authEmailRequired": "El correo electrónico es obligatorio",
   "authEmailInvalid": "Dirección de correo inválida",
@@ -437,10 +437,9 @@
   "syncNeverSynced": "Nunca sincronizado",
   "syncVaultVersion": "Versión del vault",
   "syncTitle": "Sync",
-  "accountActivateSyncPrice": "Activar Sync — {price}/año",
+  "accountActivateSyncPrice": "Activar Sync — {price}",
   "@accountActivateSyncPrice": { "placeholders": { "price": { "type": "String" } } },
   "accountStoreFeeNote": "El precio en móviles y macOS incluye tarifas de App Store / Play Store.",
-  "accountManageSubscription": "Gestionar suscripción y facturas",
 
   "settingsSectionNetwork": "Red y DNS",
   "settingsDnsServers": "Servidores DNS-over-HTTPS",
@@ -461,7 +460,7 @@
   "accountVerified": "Verificado",
   "accountMemberSince": "Miembro desde",
   "accountPaymentStatus": "Pago",
-  "accountPaymentActive": "Sync activo (suscripción anual)",
+  "accountPaymentActive": "Sync activo",
   "accountPaymentInactive": "Sync aún no comprado",
   "accountUnlockSync": "Activar Sync",
   "accountDevices": "Dispositivos",
@@ -476,7 +475,7 @@
 
   "serverConfigTitle": "Configuración del servidor",
   "serverConfigSelfHosted": "Autoalojado",
-  "serverConfigSelfHostedDescription": "Usar tu propio servidor ShellVault",
+  "serverConfigSelfHostedDescription": "Usar tu propio servidor SSHVault",
   "serverConfigUrlLabel": "URL del servidor",
   "serverConfigTest": "Probar conexión",
 
@@ -588,7 +587,7 @@
   "@sftpDownloadStarted": { "placeholders": { "count": { "type": "int" } } },
   "sftpDownloadComplete": "\"{fileName}\" descargado",
   "@sftpDownloadComplete": { "placeholders": { "fileName": { "type": "String" } } },
-  "sftpSavedToDownloads": "Guardado en Downloads/ShellVault",
+  "sftpSavedToDownloads": "Guardado en Downloads/SSHVault",
   "sftpSaveToFiles": "Guardar en Archivos",
   "sftpFileSaved": "Archivo guardado",
 
@@ -615,7 +614,7 @@
   "aboutVersion": "Versión",
   "aboutBuild": "Build",
 
-  "settingsDohDescription": "DNS-over-HTTPS cifra las consultas DNS y previene el envenenamiento DNS. ShellVault verifica los nombres de host contra múltiples proveedores para detectar ataques.",
+  "settingsDohDescription": "DNS-over-HTTPS cifra las consultas DNS y previene el envenenamiento DNS. SSHVault verifica los nombres de host contra múltiples proveedores para detectar ataques.",
   "settingsDnsAddServer": "Añadir servidor DNS",
   "settingsDnsServerUrl": "URL del servidor",
   "settingsDnsDefaultBadge": "Predeterminado",
@@ -680,7 +679,6 @@
   "tagServerCount": "{count, plural, =1{1 servidor} other{{count} servidores}}",
   "@tagServerCount": { "placeholders": { "count": { "type": "int" } } },
 
-  "accountDeleteSubscriptionWarning": "Tu suscripción debe cancelarse manualmente en el App Store / Play Store. Eliminar tu cuenta no cancela automáticamente las suscripciones móviles.",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 sesión revocada.} other{{count} sesiones revocadas.}} Se ha cerrado tu sesión.",
   "@logoutAllDevicesSuccessCount": { "placeholders": { "count": { "type": "int" } } },
 
@@ -711,13 +709,6 @@
   "couponInputHint": "Introduce tu código de cupón",
   "couponRedeemButton": "Canjear",
   "couponSuccess": "Cupón canjeado con éxito",
-
-  "subscriptionExpiresOn": "Se renueva el {date}",
-  "@subscriptionExpiresOn": {
-    "placeholders": {
-      "date": { "type": "String" }
-    }
-  },
 
   "changeAvatar": "Cambiar avatar",
   "removeAvatar": "Eliminar avatar",
@@ -818,7 +809,7 @@
 
   "heartbeatLostMessage": "No se pudo contactar al servidor tras múltiples intentos. Por tu seguridad, la sesión ha sido terminada.",
   "attestationFailedTitle": "Verificación del servidor fallida",
-  "attestationFailedMessage": "No se pudo verificar el servidor como un backend legítimo de ShellVault. Esto puede indicar un ataque de intermediario o un servidor mal configurado.",
+  "attestationFailedMessage": "No se pudo verificar el servidor como un backend legítimo de SSHVault. Esto puede indicar un ataque de intermediario o un servidor mal configurado.",
 
   "sectionLinks": "Enlaces",
   "sectionDeveloper": "Desarrollador",

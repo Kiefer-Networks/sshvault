@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/host_key/domain/entities/known_host_entity.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
 
 abstract class KnownHostRepository {
   Future<Result<KnownHostEntity?>> findByHostAndPort(String hostname, int port);

@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:xterm/xterm.dart';
 
-import 'package:shellvault/features/terminal/presentation/widgets/virtual_keyboard.dart';
+import 'package:sshvault/features/terminal/presentation/widgets/virtual_keyboard.dart';
 
 class SshKeyboardToolbar extends StatelessWidget {
   final VirtualKeyboard virtualKeyboard;

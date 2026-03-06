@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_bookmark_entity.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_bookmark_entity.dart';
 
 abstract class SftpBookmarkRepository {
   Future<Result<List<SftpBookmarkEntity>>> getByServerId(String serverId);

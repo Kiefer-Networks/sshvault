@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>SSH Vault</string>
+	<string>SSHVault</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>SSH Vault</string>
+	<string>SSHVault</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -53,20 +53,20 @@
 		<false/>
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
-	<string>SSH Vault uses Face ID to protect your SSH credentials.</string>
+	<string>SSHVault uses Face ID to protect your SSH credentials.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>SSH Vault uses the camera to scan QR codes for server configuration import.</string>
+	<string>SSHVault uses the camera to scan QR codes for server configuration import.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>SSH Vault saves exported files to your photo library.</string>
+	<string>SSHVault saves exported files to your photo library.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>SSH Vault connects to servers on your local network.</string>
+	<string>SSHVault connects to servers on your local network.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_ssh._tcp</string>
 		<string>_sftp-ssh._tcp</string>
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>SSH Vault needs photo library access to upload files via SFTP.</string>
+	<string>SSHVault needs photo library access to upload files via SFTP.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<true/>
 	<key>ITSEncryptionExportComplianceCode</key>

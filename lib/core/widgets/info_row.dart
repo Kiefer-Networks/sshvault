@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
 
 /// A reusable row that displays an icon, label, and value.
 ///

@@ -8,10 +8,10 @@ import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:dartssh2/src/utils/bcrypt.dart' as openssh_bcrypt;
 import 'package:pointycastle/asn1.dart';
 import 'package:pointycastle/export.dart';
-import 'package:shellvault/core/crypto/crypto_utils.dart';
-import 'package:shellvault/core/crypto/ssh_key_type.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
+import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/crypto/ssh_key_type.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
 
 class SshKeyPair {
   final String privateKey;
@@ -78,7 +78,7 @@ class SshKeyService {
   /// Extract public key from a PEM-encoded private key (RSA, ECDSA, Ed25519).
   Future<Result<String>> extractPublicKey(
     String privateKeyPem, {
-    String comment = 'shellvault-extracted',
+    String comment = 'sshvault-extracted',
   }) async {
     try {
       final trimmed = privateKeyPem.trim();
@@ -470,7 +470,7 @@ class SshKeyService {
         );
         publicKey = _ed25519ToOpenSshPublicKey(
           publicKeyBytes,
-          'shellvault-extracted',
+          'sshvault-extracted',
         );
       }
 
@@ -513,10 +513,7 @@ class SshKeyService {
 
       // Replace placeholder comment in publicKey line if we found a real comment
       if (comment != null && comment.isNotEmpty) {
-        publicKey = publicKey.replaceFirst(
-          ' shellvault-extracted',
-          ' $comment',
-        );
+        publicKey = publicKey.replaceFirst(' sshvault-extracted', ' $comment');
       }
 
       return Success(

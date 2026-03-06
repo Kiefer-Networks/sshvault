@@ -1,4 +1,4 @@
-import 'package:shellvault/core/error/failures.dart';
+import 'package:sshvault/core/error/failures.dart';
 
 sealed class Result<T> {
   const Result();

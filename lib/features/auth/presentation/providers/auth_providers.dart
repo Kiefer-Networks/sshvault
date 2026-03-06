@@ -1,17 +1,17 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/network/api_provider.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/core/storage/database_provider.dart';
-import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_repository_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
+import 'package:sshvault/core/network/api_provider.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/core/storage/database_provider.dart';
+import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_repository_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/snippet/presentation/providers/snippet_providers.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 

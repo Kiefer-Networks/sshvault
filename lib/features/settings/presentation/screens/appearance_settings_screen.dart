@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/constants/app_colors.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/settings/settings.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
-import 'package:shellvault/features/terminal/presentation/widgets/terminal_theme_picker.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_colors.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/settings/settings.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
+import 'package:sshvault/features/terminal/presentation/widgets/terminal_theme_picker.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class AppearanceSettingsScreen extends ConsumerWidget {
   const AppearanceSettingsScreen({super.key});

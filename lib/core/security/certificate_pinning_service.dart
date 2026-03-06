@@ -3,10 +3,10 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' show sha256;
-import 'package:shellvault/core/crypto/crypto_utils.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 /// Validates server TLS certificates against pinned SHA-256 fingerprints.
 ///

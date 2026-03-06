@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
-import 'package:shellvault/core/storage/database.dart';
-import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
-import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+import 'package:sshvault/core/storage/database.dart';
+import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
 
 abstract final class ServerMapper {
   static ServerEntity fromDrift(Server row, {List<TagEntity> tags = const []}) {

@@ -1,18 +1,18 @@
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/crypto/ssh_key_service.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/storage/secure_storage_service.dart';
-import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
-import 'package:shellvault/features/connection/data/datasources/server_dao.dart';
-import 'package:shellvault/features/connection/data/models/group_mapper.dart';
-import 'package:shellvault/features/connection/data/models/server_mapper.dart';
-import 'package:shellvault/features/connection/data/models/tag_mapper.dart';
-import 'package:shellvault/features/connection/data/repositories/group_repository_impl.dart';
-import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
-import 'package:shellvault/features/connection/domain/repositories/server_repository.dart';
+import 'package:sshvault/core/crypto/ssh_key_service.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/storage/secure_storage_service.dart';
+import 'package:sshvault/features/connection/data/datasources/group_dao.dart';
+import 'package:sshvault/features/connection/data/datasources/server_dao.dart';
+import 'package:sshvault/features/connection/data/models/group_mapper.dart';
+import 'package:sshvault/features/connection/data/models/server_mapper.dart';
+import 'package:sshvault/features/connection/data/models/tag_mapper.dart';
+import 'package:sshvault/features/connection/data/repositories/group_repository_impl.dart';
+import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
+import 'package:sshvault/features/connection/domain/repositories/server_repository.dart';
 
 class ServerRepositoryImpl implements ServerRepository {
   final ServerDao _serverDao;

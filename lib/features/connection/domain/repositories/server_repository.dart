@@ -1,7 +1,7 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
 
 abstract class ServerRepository {
   Future<Result<List<ServerEntity>>> getServers({ServerFilter? filter});

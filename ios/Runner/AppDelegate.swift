@@ -17,7 +17,7 @@ import UIKit
 
     let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "ScreenProtectionPlugin")
     let channel = FlutterMethodChannel(
-      name: "de.kiefer-networks.shellvault/screen_protection",
+      name: "de.kiefer-networks.sshvault/screen_protection",
       binaryMessenger: registrar!.messenger())
     channel.setMethodCallHandler { [weak self] call, result in
       guard let self = self else { return }

@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
 
 abstract class GroupRepository {
   Future<Result<List<GroupEntity>>> getGroups();

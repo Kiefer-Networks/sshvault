@@ -9,7 +9,7 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get appName => 'SSH Vault';
+  String get appName => 'SSHVault';
 
   @override
   String get navHosts => 'Hosts';
@@ -45,7 +45,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navAbout => 'Acerca de';
 
   @override
-  String get lockScreenTitle => 'SSH Vault está bloqueado';
+  String get lockScreenTitle => 'SSHVault está bloqueado';
 
   @override
   String get lockScreenUnlock => 'Desbloquear';
@@ -63,7 +63,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pinDialogSetSubtitle =>
-      'Ingresa un PIN de 6 dígitos para proteger SSH Vault';
+      'Ingresa un PIN de 6 dígitos para proteger SSHVault';
 
   @override
   String get pinDialogLabel => 'PIN';
@@ -240,7 +240,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsEncryptExport => 'Cifrar exportaciones por defecto';
 
   @override
-  String get settingsAbout => 'Acerca de SSH Vault';
+  String get settingsAbout => 'Acerca de SSHVault';
 
   @override
   String get settingsAboutLegalese => 'por Kiefer Networks';
@@ -1116,12 +1116,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String authPricingInfo(String price) {
-    return 'Sincronización en la nube para todos tus dispositivos — $price/año';
+    return 'Sincronización en la nube para todos tus dispositivos — $price';
   }
 
   @override
-  String get authPricingHint =>
-      'Una suscripción, dispositivos ilimitados. Cancela cuando quieras.';
+  String get authPricingHint => 'Una compra, dispositivos ilimitados.';
 
   @override
   String get authEmailLabel => 'Correo electrónico';
@@ -1281,15 +1280,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String accountActivateSyncPrice(String price) {
-    return 'Activar Sync — $price/año';
+    return 'Activar Sync — $price';
   }
 
   @override
   String get accountStoreFeeNote =>
       'El precio en móviles y macOS incluye tarifas de App Store / Play Store.';
-
-  @override
-  String get accountManageSubscription => 'Gestionar suscripción y facturas';
 
   @override
   String get settingsSectionNetwork => 'Red y DNS';
@@ -1344,7 +1340,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountPaymentStatus => 'Pago';
 
   @override
-  String get accountPaymentActive => 'Sync activo (suscripción anual)';
+  String get accountPaymentActive => 'Sync activo';
 
   @override
   String get accountPaymentInactive => 'Sync aún no comprado';
@@ -1388,7 +1384,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get serverConfigSelfHostedDescription =>
-      'Usar tu propio servidor ShellVault';
+      'Usar tu propio servidor SSHVault';
 
   @override
   String get serverConfigUrlLabel => 'URL del servidor';
@@ -1725,7 +1721,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get sftpSavedToDownloads => 'Guardado en Downloads/ShellVault';
+  String get sftpSavedToDownloads => 'Guardado en Downloads/SSHVault';
 
   @override
   String get sftpSaveToFiles => 'Guardar en Archivos';
@@ -1803,7 +1799,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsDohDescription =>
-      'DNS-over-HTTPS cifra las consultas DNS y previene el envenenamiento DNS. ShellVault verifica los nombres de host contra múltiples proveedores para detectar ataques.';
+      'DNS-over-HTTPS cifra las consultas DNS y previene el envenenamiento DNS. SSHVault verifica los nombres de host contra múltiples proveedores para detectar ataques.';
 
   @override
   String get settingsDnsAddServer => 'Añadir servidor DNS';
@@ -1987,10 +1983,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get accountDeleteSubscriptionWarning =>
-      'Tu suscripción debe cancelarse manualmente en el App Store / Play Store. Eliminar tu cuenta no cancela automáticamente las suscripciones móviles.';
-
-  @override
   String logoutAllDevicesSuccessCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -2069,11 +2061,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get couponSuccess => 'Cupón canjeado con éxito';
-
-  @override
-  String subscriptionExpiresOn(String date) {
-    return 'Se renueva el $date';
-  }
 
   @override
   String get changeAvatar => 'Cambiar avatar';
@@ -2335,7 +2322,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attestationFailedMessage =>
-      'No se pudo verificar el servidor como un backend legítimo de ShellVault. Esto puede indicar un ataque de intermediario o un servidor mal configurado.';
+      'No se pudo verificar el servidor como un backend legítimo de SSHVault. Esto puede indicar un ataque de intermediario o un servidor mal configurado.';
 
   @override
   String get sectionLinks => 'Enlaces';

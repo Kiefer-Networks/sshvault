@@ -1,8 +1,8 @@
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/utils/validators.dart';
-import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
-import 'package:shellvault/features/connection/domain/repositories/group_repository.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/utils/validators.dart';
+import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
+import 'package:sshvault/features/connection/domain/repositories/group_repository.dart';
 
 class GroupUseCases {
   final GroupRepository _repository;

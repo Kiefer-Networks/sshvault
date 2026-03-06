@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/domain/repositories/server_repository.dart';
-import 'package:shellvault/features/connection/domain/usecases/server_usecases.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/domain/repositories/server_repository.dart';
+import 'package:sshvault/features/connection/domain/usecases/server_usecases.dart';
 
 class MockServerRepository extends Mock implements ServerRepository {}
 

@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
 
 class LocalFileService {
   Future<Result<List<SftpEntry>>> listDirectory(String path) async {
@@ -105,14 +105,14 @@ class LocalFileService {
     if (Platform.isAndroid) {
       final dl = await getDownloadsDirectory();
       dir = Directory(
-        p.join(dl?.path ?? '/storage/emulated/0/Download', 'ShellVault'),
+        p.join(dl?.path ?? '/storage/emulated/0/Download', 'SSHVault'),
       );
     } else if (Platform.isIOS) {
       final docs = await getApplicationDocumentsDirectory();
-      dir = Directory(p.join(docs.path, 'ShellVault'));
+      dir = Directory(p.join(docs.path, 'SSHVault'));
     } else {
       final dl = await getDownloadsDirectory();
-      dir = Directory(p.join(dl?.path ?? '.', 'ShellVault'));
+      dir = Directory(p.join(dl?.path ?? '.', 'SSHVault'));
     }
     if (!await dir.exists()) {
       await dir.create(recursive: true);

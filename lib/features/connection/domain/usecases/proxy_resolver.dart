@@ -1,5 +1,5 @@
-import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 
 class ProxyResolver {
   /// Resolves the effective proxy for a server.

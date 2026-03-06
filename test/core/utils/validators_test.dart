@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shellvault/core/utils/validators.dart';
+import 'package:sshvault/core/utils/validators.dart';
 
 void main() {
   group('validateHostname', () {

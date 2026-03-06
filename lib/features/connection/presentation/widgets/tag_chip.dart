@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
 
 class TagChip extends StatelessWidget {
   final TagEntity tag;

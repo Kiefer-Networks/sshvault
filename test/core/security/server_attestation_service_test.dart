@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/security/server_attestation_service.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/security/server_attestation_service.dart';
 
 void main() {
   const serverId = 'sshvault-api-prod';

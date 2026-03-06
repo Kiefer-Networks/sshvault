@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
-import 'package:shellvault/core/utils/validators.dart';
-import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
-import 'package:shellvault/features/connection/presentation/widgets/auth_method_selector.dart';
-import 'package:shellvault/features/connection/presentation/widgets/ssh_key_selector.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/utils/validators.dart';
+import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
+import 'package:sshvault/features/connection/presentation/widgets/auth_method_selector.dart';
+import 'package:sshvault/features/connection/presentation/widgets/ssh_key_selector.dart';
 
 class ServerFormFields extends StatelessWidget {
   final TextEditingController nameController;

@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
-import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
-import 'package:shellvault/features/connection/domain/entities/proxy_credentials.dart';
-import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_credentials.dart';
+import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:xterm/xterm.dart';
 
 typedef SshConnection = ({

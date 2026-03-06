@@ -1,8 +1,8 @@
-# ShellVault
+# SSHVault
 
 Secure, self-hosted SSH client with zero-knowledge sync.
 
-ShellVault is a cross-platform SSH terminal and SFTP file manager that encrypts all data client-side before syncing. The server never sees your plaintext credentials, keys, or session data.
+SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts all data client-side before syncing. The server never sees your plaintext credentials, keys, or session data.
 
 ## Features
 

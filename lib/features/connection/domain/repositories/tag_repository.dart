@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
 
 abstract class TagRepository {
   Future<Result<List<TagEntity>>> getTags();

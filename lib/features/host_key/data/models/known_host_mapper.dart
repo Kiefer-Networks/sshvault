@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:shellvault/core/storage/database.dart';
-import 'package:shellvault/features/host_key/domain/entities/known_host_entity.dart';
+import 'package:sshvault/core/storage/database.dart';
+import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
 
 abstract final class KnownHostMapper {
   static KnownHostEntity fromDrift(KnownHost row) {

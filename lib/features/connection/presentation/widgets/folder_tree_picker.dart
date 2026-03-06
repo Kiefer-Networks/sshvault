@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/constants/icon_constants.dart';
-import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class FolderTreePicker {
   static Future<String?> show(

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shellvault/core/utils/date_formatter.dart';
+import 'package:sshvault/core/utils/date_formatter.dart';
 
 void main() {
   group('formatDate', () {

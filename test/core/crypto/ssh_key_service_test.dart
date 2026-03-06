@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shellvault/core/crypto/ssh_key_service.dart';
-import 'package:shellvault/core/crypto/ssh_key_type.dart';
-import 'package:shellvault/core/error/failures.dart';
+import 'package:sshvault/core/crypto/ssh_key_service.dart';
+import 'package:sshvault/core/crypto/ssh_key_type.dart';
+import 'package:sshvault/core/error/failures.dart';
 
 void main() {
   late SshKeyService sut;

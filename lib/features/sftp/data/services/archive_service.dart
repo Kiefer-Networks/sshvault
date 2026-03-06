@@ -5,10 +5,10 @@ import 'package:archive/archive.dart';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/features/sftp/data/services/sftp_service.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/features/sftp/data/services/sftp_service.dart';
 
 class ArchiveService {
   static final _log = LoggingService.instance;
@@ -103,9 +103,7 @@ class ArchiveService {
     String remotePath,
     String remoteTargetDir,
   ) async {
-    final tempDir = await Directory.systemTemp.createTemp(
-      'shellvault_extract_',
-    );
+    final tempDir = await Directory.systemTemp.createTemp('sshvault_extract_');
     try {
       // Download archive to temp
       final localArchive = p.join(tempDir.path, p.posix.basename(remotePath));

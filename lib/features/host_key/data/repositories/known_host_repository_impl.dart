@@ -1,9 +1,9 @@
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/host_key/data/datasources/known_host_dao.dart';
-import 'package:shellvault/features/host_key/data/models/known_host_mapper.dart';
-import 'package:shellvault/features/host_key/domain/entities/known_host_entity.dart';
-import 'package:shellvault/features/host_key/domain/repositories/known_host_repository.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/host_key/data/datasources/known_host_dao.dart';
+import 'package:sshvault/features/host_key/data/models/known_host_mapper.dart';
+import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
+import 'package:sshvault/features/host_key/domain/repositories/known_host_repository.dart';
 
 class KnownHostRepositoryImpl implements KnownHostRepository {
   final KnownHostDao _dao;

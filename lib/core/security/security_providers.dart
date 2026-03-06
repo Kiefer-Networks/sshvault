@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/network/api_provider.dart';
-import 'package:shellvault/core/security/certificate_pinning_service.dart';
-import 'package:shellvault/core/security/doh_resolver_service.dart';
-import 'package:shellvault/core/security/heartbeat_service.dart';
-import 'package:shellvault/core/security/server_attestation_service.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/network/api_provider.dart';
+import 'package:sshvault/core/security/certificate_pinning_service.dart';
+import 'package:sshvault/core/security/doh_resolver_service.dart';
+import 'package:sshvault/core/security/heartbeat_service.dart';
+import 'package:sshvault/core/security/server_attestation_service.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 
 // ---------------------------------------------------------------------------
 // Certificate Pinning

@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:shellvault/core/crypto/crypto_utils.dart';
-import 'package:shellvault/core/crypto/encryption_service.dart';
-import 'package:shellvault/core/crypto/export_envelope.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
-import 'package:shellvault/features/sync/domain/repositories/sync_repository.dart';
+import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/crypto/encryption_service.dart';
+import 'package:sshvault/core/crypto/export_envelope.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/features/connection/domain/repositories/export_import_repository.dart';
+import 'package:sshvault/features/sync/domain/repositories/sync_repository.dart';
 
 class SyncUseCases {
   static final _log = LoggingService.instance;

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 
 /// Checks TCP reachability of a server by attempting a socket connection.
 final serverReachabilityProvider = FutureProvider.autoDispose

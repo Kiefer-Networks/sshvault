@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
 
 class SshKeySelector extends ConsumerWidget {
   final String? selectedKeyId;

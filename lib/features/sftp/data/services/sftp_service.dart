@@ -4,9 +4,9 @@ import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
 import 'package:path/path.dart' as p;
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
 
 class SftpService {
   static const _chunkSize = 16384; // 16 KB

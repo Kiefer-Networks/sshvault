@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
-import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
-import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/host_key/data/services/ssh_config_parser.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
+import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/host_key/data/services/ssh_config_parser.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _importEntriesProvider = StateProvider.autoDispose<List<SshConfigEntry>>(
   (ref) => [],

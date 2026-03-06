@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/network/api_client.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/network/api_client.dart';
 
 void main() {
   late ApiClient sut;

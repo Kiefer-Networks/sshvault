@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:shellvault/core/constants/app_colors.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/services/package_info_provider.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/settings/settings.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_colors.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/services/package_info_provider.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/settings/settings.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});

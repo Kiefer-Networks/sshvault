@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/network/api_client.dart';
-import 'package:shellvault/features/account/data/repositories/account_repository_impl.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/network/api_client.dart';
+import 'package:sshvault/features/account/data/repositories/account_repository_impl.dart';
 
 class MockApiClient extends Mock implements ApiClient {}
 
@@ -238,18 +238,6 @@ void main() {
       );
 
       final result = await sut.createCheckout();
-      expect(result.isSuccess, isTrue);
-      expect(result.value, contains('stripe.com'));
-    });
-  });
-
-  group('createPortal', () {
-    test('returns URL on success', () async {
-      when(() => mockApi.post('/v1/billing/portal')).thenAnswer(
-        (_) async => const Success({'url': 'https://portal.stripe.com/xxx'}),
-      );
-
-      final result = await sut.createPortal();
       expect(result.isSuccess, isTrue);
       expect(result.value, contains('stripe.com'));
     });

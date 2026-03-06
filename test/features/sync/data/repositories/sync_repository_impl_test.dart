@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/network/api_client.dart';
-import 'package:shellvault/features/sync/data/repositories/sync_repository_impl.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/network/api_client.dart';
+import 'package:sshvault/features/sync/data/repositories/sync_repository_impl.dart';
 
 class MockApiClient extends Mock implements ApiClient {}
 

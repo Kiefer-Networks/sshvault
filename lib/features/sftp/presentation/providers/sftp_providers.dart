@@ -2,21 +2,21 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:shellvault/core/error/failures.dart';
+import 'package:sshvault/core/error/failures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/sftp/data/services/archive_service.dart';
-import 'package:shellvault/features/sftp/data/services/local_file_service.dart';
-import 'package:shellvault/features/sftp/data/services/sftp_connection_manager.dart';
-import 'package:shellvault/features/sftp/data/services/sftp_service.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_state.dart';
-import 'package:shellvault/features/sftp/domain/entities/transfer_item.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/sftp/data/services/archive_service.dart';
+import 'package:sshvault/features/sftp/data/services/local_file_service.dart';
+import 'package:sshvault/features/sftp/data/services/sftp_connection_manager.dart';
+import 'package:sshvault/features/sftp/data/services/sftp_service.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_state.dart';
+import 'package:sshvault/features/sftp/domain/entities/transfer_item.dart';
 
 // ---------------------------------------------------------------------------
 // Service Providers

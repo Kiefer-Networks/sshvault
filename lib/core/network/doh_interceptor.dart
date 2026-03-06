@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:shellvault/core/security/doh_resolver_service.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/security/doh_resolver_service.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 /// Dio interceptor that resolves request hostnames via DNS-over-HTTPS
 /// before sending the request, replacing the URL with the resolved IP

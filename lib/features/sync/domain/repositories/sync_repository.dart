@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/sync/domain/entities/vault_entity.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/sync/domain/entities/vault_entity.dart';
 
 abstract class SyncRepository {
   Future<Result<VaultEntity>> getVault();

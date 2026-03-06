@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:shellvault/core/crypto/ssh_key_type.dart';
+import 'package:sshvault/core/crypto/ssh_key_type.dart';
 
 part 'ssh_key_entity.freezed.dart';
 part 'ssh_key_entity.g.dart';

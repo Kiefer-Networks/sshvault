@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/core/constants/color_constants.dart';
-import 'package:shellvault/core/constants/icon_constants.dart';
-import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:shellvault/features/connection/presentation/widgets/color_picker_field.dart';
-import 'package:shellvault/features/connection/presentation/widgets/folder_tree_picker.dart';
-import 'package:shellvault/features/connection/presentation/widgets/icon_picker_field.dart';
+import 'package:sshvault/core/constants/color_constants.dart';
+import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/color_picker_field.dart';
+import 'package:sshvault/features/connection/presentation/widgets/folder_tree_picker.dart';
+import 'package:sshvault/features/connection/presentation/widgets/icon_picker_field.dart';
 
 class _FolderFormReactiveState {
   final int color;

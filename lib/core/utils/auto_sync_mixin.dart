@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 
 /// Mixin that provides [triggerAutoSync] for AsyncNotifier subclasses.
 ///

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
-import 'package:shellvault/core/constants/icon_constants.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/icon_constants.dart';
 
 class IconPickerField extends StatelessWidget {
   final String selectedIcon;

@@ -1,8 +1,8 @@
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/network/api_client.dart';
-import 'package:shellvault/features/auth/domain/entities/auth_response.dart';
-import 'package:shellvault/features/auth/domain/repositories/auth_repository.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/network/api_client.dart';
+import 'package:sshvault/features/auth/domain/entities/auth_response.dart';
+import 'package:sshvault/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final ApiClient _apiClient;

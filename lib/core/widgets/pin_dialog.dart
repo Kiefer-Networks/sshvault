@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/widgets/pin_num_pad.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/widgets/pin_num_pad.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _pinDialogErrorProvider = StateProvider.autoDispose<String?>((_) => null);
 final _pinDialogInputProvider = StateProvider.autoDispose<String>((_) => '');

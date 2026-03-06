@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
 
 abstract class SnippetRepository {
   Future<Result<List<SnippetEntity>>> getSnippets();

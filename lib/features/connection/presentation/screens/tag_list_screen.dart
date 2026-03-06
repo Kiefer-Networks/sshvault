@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:shellvault/core/widgets/error_state.dart';
-import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
-import 'package:shellvault/features/connection/domain/entities/tag_entity.dart';
-import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
-import 'package:shellvault/features/connection/presentation/screens/tag_form_dialog.dart';
-import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
-import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
+import 'package:sshvault/core/widgets/error_state.dart';
+import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
+import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:sshvault/features/connection/presentation/screens/tag_form_dialog.dart';
+import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
+import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
 
 class TagListScreen extends ConsumerWidget {
   const TagListScreen({super.key});

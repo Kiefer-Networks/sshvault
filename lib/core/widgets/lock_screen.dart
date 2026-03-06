@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/core/storage/database_provider.dart';
-import 'package:shellvault/core/storage/secure_storage_provider.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/core/storage/database_provider.dart';
+import 'package:sshvault/core/storage/secure_storage_provider.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/services/biometric_provider.dart';
-import 'package:shellvault/core/widgets/pin_num_pad.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/core/services/biometric_provider.dart';
+import 'package:sshvault/core/widgets/pin_num_pad.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 
 class _LockState {
   final bool isUnlocked;

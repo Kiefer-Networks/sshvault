@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:shellvault/core/storage/database.dart';
-import 'package:shellvault/features/connection/data/models/drift_tables.dart';
+import 'package:sshvault/core/storage/database.dart';
+import 'package:sshvault/features/connection/data/models/drift_tables.dart';
 
 part 'snippet_dao.g.dart';
 

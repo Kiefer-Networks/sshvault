@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:uuid/uuid.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/storage/database.dart';
-import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
-import 'package:shellvault/features/connection/data/repositories/group_repository_impl.dart';
-import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/storage/database.dart';
+import 'package:sshvault/features/connection/data/datasources/group_dao.dart';
+import 'package:sshvault/features/connection/data/repositories/group_repository_impl.dart';
+import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
 
 class MockGroupDao extends Mock implements GroupDao {}
 

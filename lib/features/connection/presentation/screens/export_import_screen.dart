@@ -1,17 +1,17 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shellvault/core/widgets/settings/section_card.dart';
-import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
-import 'package:shellvault/features/connection/presentation/providers/export_import_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:shellvault/features/connection/presentation/widgets/export_password_dialog.dart';
-import 'package:shellvault/features/connection/presentation/widgets/import_conflict_dialog.dart';
+import 'package:sshvault/core/widgets/settings/section_card.dart';
+import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
+import 'package:sshvault/features/connection/presentation/providers/export_import_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/export_password_dialog.dart';
+import 'package:sshvault/features/connection/presentation/widgets/import_conflict_dialog.dart';
 
 class ExportImportScreen extends ConsumerWidget {
   const ExportImportScreen({super.key});

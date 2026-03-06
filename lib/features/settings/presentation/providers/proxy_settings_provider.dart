@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
-import 'package:shellvault/features/connection/domain/entities/proxy_credentials.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_credentials.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 
 const _globalProxyPasswordKey = 'global_proxy_password';
 

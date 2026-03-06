@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xterm/xterm.dart';
 
-import 'package:shellvault/core/routing/shell_navigation_provider.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
-import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
-import 'package:shellvault/features/terminal/domain/entities/ssh_session_entity.dart';
-import 'package:shellvault/features/terminal/domain/entities/terminal_theme_data.dart';
-import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
-import 'package:shellvault/features/terminal/presentation/widgets/connection_overlay.dart';
-import 'package:shellvault/features/terminal/presentation/widgets/session_tab_bar.dart';
-import 'package:shellvault/features/terminal/presentation/widgets/snippet_quick_panel.dart';
-import 'package:shellvault/features/terminal/presentation/widgets/ssh_keyboard_toolbar.dart';
-import 'package:shellvault/features/terminal/presentation/widgets/virtual_keyboard.dart';
+import 'package:sshvault/core/routing/shell_navigation_provider.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
+import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
+import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
+import 'package:sshvault/features/terminal/domain/entities/terminal_theme_data.dart';
+import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
+import 'package:sshvault/features/terminal/presentation/widgets/connection_overlay.dart';
+import 'package:sshvault/features/terminal/presentation/widgets/session_tab_bar.dart';
+import 'package:sshvault/features/terminal/presentation/widgets/snippet_quick_panel.dart';
+import 'package:sshvault/features/terminal/presentation/widgets/ssh_keyboard_toolbar.dart';
+import 'package:sshvault/features/terminal/presentation/widgets/virtual_keyboard.dart';
 
 /// Terminal branch screen — shown as a shell branch (index 6).
 ///

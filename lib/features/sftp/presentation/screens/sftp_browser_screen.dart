@@ -1,19 +1,19 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:shellvault/core/error/failures.dart';
+import 'package:sshvault/core/error/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
-import 'package:shellvault/features/sftp/domain/entities/transfer_item.dart';
-import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/sftp_pane.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/transfer_panel.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
+import 'package:sshvault/features/sftp/domain/entities/transfer_item.dart';
+import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/sftp_pane.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/transfer_panel.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpBrowserScreen extends ConsumerStatefulWidget {
   const SftpBrowserScreen({super.key});

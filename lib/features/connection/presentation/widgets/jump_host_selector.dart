@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
-import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 
 class JumpHostSelector extends ConsumerWidget {
   final String? currentServerId;

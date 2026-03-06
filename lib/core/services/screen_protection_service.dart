@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 /// Prevents screenshots and screen recording on mobile platforms.
 ///
@@ -11,7 +11,7 @@ class ScreenProtectionService {
   static final _log = LoggingService.instance;
   static const _tag = 'ScreenProtection';
   static const _channel = MethodChannel(
-    'de.kiefer-networks.shellvault/screen_protection',
+    'de.kiefer-networks.sshvault/screen_protection',
   );
 
   bool _enabled = false;

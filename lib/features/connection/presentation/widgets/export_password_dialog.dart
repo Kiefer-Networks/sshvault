@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/core/utils/validators.dart';
+import 'package:sshvault/core/utils/validators.dart';
 
 class _ExportPasswordVisibility {
   final bool obscurePassword;

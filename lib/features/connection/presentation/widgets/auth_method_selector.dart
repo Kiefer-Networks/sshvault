@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
-import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
 
 class AuthMethodSelector extends StatelessWidget {
   final AuthMethod selected;

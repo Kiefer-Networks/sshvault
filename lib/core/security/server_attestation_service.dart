@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:cryptography/cryptography.dart'
     show Ed25519, KeyPairType, Signature, SimplePublicKey;
-import 'package:shellvault/core/crypto/crypto_utils.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
-/// Verifies that the server is the expected ShellVault backend.
+/// Verifies that the server is the expected SSHVault backend.
 ///
 /// The server provides a signed attestation containing its identity,
 /// timestamp, and API version. The client verifies this attestation
@@ -78,7 +78,7 @@ class ServerAttestationService {
         return const Err(
           NetworkFailure(
             'Server identity verification failed. '
-            'The server is not the expected ShellVault backend.',
+            'The server is not the expected SSHVault backend.',
           ),
         );
       }

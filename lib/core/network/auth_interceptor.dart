@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/core/storage/secure_storage_service.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/core/storage/secure_storage_service.dart';
 
 typedef OnAuthExpired = Future<void> Function({bool sessionRevoked});
 

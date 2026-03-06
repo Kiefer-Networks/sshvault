@@ -1,39 +1,13 @@
-class BillingStatus {
-  final bool active;
-  final String provider;
-  final String status;
-  final DateTime? periodEnd;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const BillingStatus({
-    required this.active,
-    this.provider = '',
-    this.status = '',
-    this.periodEnd,
-  });
+part 'billing_status.freezed.dart';
+part 'billing_status.g.dart';
 
-  factory BillingStatus.fromJson(Map<String, dynamic> json) {
-    DateTime? periodEnd;
-    final sub = json['subscription'] as Map<String, dynamic>?;
-    if (sub != null) {
-      final raw = sub['current_period_end'];
-      if (raw is String && raw.isNotEmpty) {
-        periodEnd = DateTime.tryParse(raw);
-      }
-    }
+@freezed
+abstract class BillingStatus with _$BillingStatus {
+  const factory BillingStatus({@Default(false) bool active, String? provider}) =
+      _BillingStatus;
 
-    return BillingStatus(
-      active: json['active'] as bool? ?? false,
-      provider: json['provider'] as String? ?? '',
-      status: json['status'] as String? ?? '',
-      periodEnd: periodEnd,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    'active': active,
-    'provider': provider,
-    'status': status,
-    if (periodEnd != null)
-      'subscription': {'current_period_end': periodEnd!.toIso8601String()},
-  };
+  factory BillingStatus.fromJson(Map<String, dynamic> json) =>
+      _$BillingStatusFromJson(json);
 }

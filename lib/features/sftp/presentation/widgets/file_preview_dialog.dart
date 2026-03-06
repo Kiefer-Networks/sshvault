@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/error/failures.dart';
+import 'package:sshvault/core/error/failures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class _FilePreviewState {
   final bool loading;

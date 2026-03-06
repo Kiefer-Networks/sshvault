@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/widgets/error_state.dart';
-import 'package:shellvault/core/widgets/shell_aware_app_bar.dart';
-import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
-import 'package:shellvault/features/connection/presentation/providers/ssh_key_providers.dart';
-import 'package:shellvault/features/connection/presentation/screens/ssh_key_form_dialog.dart';
-import 'package:shellvault/features/connection/presentation/widgets/confirm_dialog.dart';
-import 'package:shellvault/features/connection/presentation/widgets/empty_state.dart';
-import 'package:shellvault/features/connection/presentation/widgets/ssh_key_tile.dart';
+import 'package:sshvault/core/widgets/error_state.dart';
+import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
+import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
+import 'package:sshvault/features/connection/presentation/screens/ssh_key_form_dialog.dart';
+import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
+import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
+import 'package:sshvault/features/connection/presentation/widgets/ssh_key_tile.dart';
 
 class SshKeyListScreen extends ConsumerWidget {
   const SshKeyListScreen({super.key});

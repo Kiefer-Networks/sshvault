@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/core/widgets/settings/section_card.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/settings/section_card.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:shellvault/features/connection/presentation/widgets/folder_tree_picker.dart';
-import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
-import 'package:shellvault/features/connection/presentation/widgets/tag_selector.dart';
-import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
-import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
-import 'package:shellvault/features/snippet/presentation/widgets/variable_editor.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/folder_tree_picker.dart';
+import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/tag_selector.dart';
+import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
+import 'package:sshvault/features/snippet/presentation/providers/snippet_providers.dart';
+import 'package:sshvault/features/snippet/presentation/widgets/variable_editor.dart';
 
 class _SnippetFormState {
   final String language;

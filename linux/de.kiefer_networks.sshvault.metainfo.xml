@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>de.kiefer_networks.shellvault</id>
-  <name>ShellVault</name>
+  <id>de.kiefer_networks.sshvault</id>
+  <name>SSHVault</name>
   <summary>Zero-knowledge encrypted SSH and terminal client</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>LicenseRef-proprietary</project_license>
 
   <description>
     <p>
-      ShellVault is a secure SSH client with zero-knowledge encrypted
+      SSHVault is a secure SSH client with zero-knowledge encrypted
       sync across devices. Manage SSH connections, keys, and snippets
       with end-to-end encryption — the server never sees your data.
     </p>
@@ -24,14 +24,14 @@
     </ul>
   </description>
 
-  <url type="homepage">https://shellvault.app</url>
+  <url type="homepage">https://sshvault.app</url>
   <url type="bugtracker">https://github.com/Kiefer-Networks/sshvault/issues</url>
 
   <developer id="de.kiefer_networks">
     <name>Kiefer Networks</name>
   </developer>
 
-  <launchable type="desktop-id">de.kiefer_networks.shellvault.desktop</launchable>
+  <launchable type="desktop-id">de.kiefer_networks.sshvault.desktop</launchable>
 
   <content_rating type="oars-1.1" />
 

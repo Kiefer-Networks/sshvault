@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "Kiefer Networks" "\0"
-            VALUE "FileDescription", "SSH Vault" "\0"
+            VALUE "FileDescription", "SSHVault" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "shellvault" "\0"
+            VALUE "InternalName", "sshvault" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 Kiefer Networks. All rights reserved." "\0"
-            VALUE "OriginalFilename", "shellvault.exe" "\0"
-            VALUE "ProductName", "SSH Vault" "\0"
+            VALUE "OriginalFilename", "sshvault.exe" "\0"
+            VALUE "ProductName", "SSHVault" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

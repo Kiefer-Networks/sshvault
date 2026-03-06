@@ -4,36 +4,35 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:shellvault/core/utils/platform_utils.dart';
-import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/utils/platform_utils.dart';
+import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
-/// Google Play / App Store subscription product ID.
-const kSubscriptionProductId = 'shellvault_sync_yearly';
+/// Google Play / App Store one-time purchase product ID.
+const kSyncProductId = 'sshvault_sync';
 
-/// Status of an in-progress subscription purchase.
-enum SubscriptionPurchaseStatus { idle, purchasing, verifying, success, error }
+/// Status of an in-progress sync purchase.
+enum SyncPurchaseStatus { idle, purchasing, verifying, success, error }
 
-/// Tracks the current subscription purchase status for UI feedback.
-final subscriptionPurchaseStatusProvider =
-    StateProvider<SubscriptionPurchaseStatus>(
-      (ref) => SubscriptionPurchaseStatus.idle,
-    );
+/// Tracks the current purchase status for UI feedback.
+final syncPurchaseStatusProvider = StateProvider<SyncPurchaseStatus>(
+  (ref) => SyncPurchaseStatus.idle,
+);
 
 /// Machine-readable error key from the last failed purchase.
 /// UI maps this to a localized string (e.g. 'server_verification_failed').
-final subscriptionPurchaseErrorProvider = StateProvider<String?>((ref) => null);
+final syncPurchaseErrorProvider = StateProvider<String?>((ref) => null);
 
 /// Well-known error key for server verification failures.
 const kPurchaseErrorServerVerificationFailed = 'server_verification_failed';
 
-/// Loads the subscription IAP product and handles the purchase stream.
-final subscriptionStoreProvider =
-    AsyncNotifierProvider<SubscriptionStoreNotifier, ProductDetails?>(
-      SubscriptionStoreNotifier.new,
+/// Loads the sync IAP product and handles the purchase stream.
+final syncStoreProvider =
+    AsyncNotifierProvider<SyncStoreNotifier, ProductDetails?>(
+      SyncStoreNotifier.new,
     );
 
-class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
+class SyncStoreNotifier extends AsyncNotifier<ProductDetails?> {
   StreamSubscription<List<PurchaseDetails>>? _sub;
 
   @override
@@ -48,37 +47,37 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
 
     _sub = iap.purchaseStream.listen(_onPurchaseUpdate);
 
-    final response = await iap.queryProductDetails({kSubscriptionProductId});
+    final response = await iap.queryProductDetails({kSyncProductId});
     if (response.productDetails.isEmpty) return null;
     return response.productDetails.first;
   }
 
   void _onPurchaseUpdate(List<PurchaseDetails> purchases) {
     for (final purchase in purchases) {
-      if (purchase.productID != kSubscriptionProductId) continue;
+      if (purchase.productID != kSyncProductId) continue;
 
       switch (purchase.status) {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
           _verifyPurchase(purchase);
         case PurchaseStatus.error:
-          ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-              SubscriptionPurchaseStatus.error;
-          ref.read(subscriptionPurchaseErrorProvider.notifier).state =
+          ref.read(syncPurchaseStatusProvider.notifier).state =
+              SyncPurchaseStatus.error;
+          ref.read(syncPurchaseErrorProvider.notifier).state =
               purchase.error?.message;
         case PurchaseStatus.pending:
-          ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-              SubscriptionPurchaseStatus.purchasing;
+          ref.read(syncPurchaseStatusProvider.notifier).state =
+              SyncPurchaseStatus.purchasing;
         case PurchaseStatus.canceled:
-          ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-              SubscriptionPurchaseStatus.idle;
+          ref.read(syncPurchaseStatusProvider.notifier).state =
+              SyncPurchaseStatus.idle;
       }
     }
   }
 
   Future<void> _verifyPurchase(PurchaseDetails purchase) async {
-    ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-        SubscriptionPurchaseStatus.verifying;
+    ref.read(syncPurchaseStatusProvider.notifier).state =
+        SyncPurchaseStatus.verifying;
 
     // On Android, send the purchase token to the server for verification.
     if (Platform.isAndroid) {
@@ -87,13 +86,13 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
       final result = await repo.verifyGooglePurchase(token);
 
       if (result.isSuccess && result.value.active) {
-        ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-            SubscriptionPurchaseStatus.success;
+        ref.read(syncPurchaseStatusProvider.notifier).state =
+            SyncPurchaseStatus.success;
         ref.invalidate(billingStatusProvider);
       } else {
-        ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-            SubscriptionPurchaseStatus.error;
-        ref.read(subscriptionPurchaseErrorProvider.notifier).state =
+        ref.read(syncPurchaseStatusProvider.notifier).state =
+            SyncPurchaseStatus.error;
+        ref.read(syncPurchaseErrorProvider.notifier).state =
             kPurchaseErrorServerVerificationFailed;
       }
     } else if (Platform.isIOS || Platform.isMacOS) {
@@ -102,13 +101,13 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
       final result = await repo.verifyApplePurchase(transactionId);
 
       if (result.isSuccess && result.value.active) {
-        ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-            SubscriptionPurchaseStatus.success;
+        ref.read(syncPurchaseStatusProvider.notifier).state =
+            SyncPurchaseStatus.success;
         ref.invalidate(billingStatusProvider);
       } else {
-        ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-            SubscriptionPurchaseStatus.error;
-        ref.read(subscriptionPurchaseErrorProvider.notifier).state =
+        ref.read(syncPurchaseStatusProvider.notifier).state =
+            SyncPurchaseStatus.error;
+        ref.read(syncPurchaseErrorProvider.notifier).state =
             kPurchaseErrorServerVerificationFailed;
       }
     }
@@ -117,14 +116,14 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
     await InAppPurchase.instance.completePurchase(purchase);
   }
 
-  /// Initiates a subscription purchase via the native store.
-  Future<void> subscribe() async {
+  /// Initiates a one-time sync purchase via the native store.
+  Future<void> purchase() async {
     final product = state.value;
     if (product == null) return;
 
-    ref.read(subscriptionPurchaseStatusProvider.notifier).state =
-        SubscriptionPurchaseStatus.purchasing;
-    ref.read(subscriptionPurchaseErrorProvider.notifier).state = null;
+    ref.read(syncPurchaseStatusProvider.notifier).state =
+        SyncPurchaseStatus.purchasing;
+    ref.read(syncPurchaseErrorProvider.notifier).state = null;
 
     final param = PurchaseParam(productDetails: product);
     await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);

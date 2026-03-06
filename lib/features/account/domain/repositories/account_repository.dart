@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
-import 'package:shellvault/features/account/domain/entities/billing_status.dart';
-import 'package:shellvault/features/account/domain/entities/coupon_redeem_result.dart';
-import 'package:shellvault/features/account/domain/entities/device_entity.dart';
-import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/account/domain/entities/audit_log_entity.dart';
+import 'package:sshvault/features/account/domain/entities/billing_status.dart';
+import 'package:sshvault/features/account/domain/entities/coupon_redeem_result.dart';
+import 'package:sshvault/features/account/domain/entities/device_entity.dart';
+import 'package:sshvault/features/auth/domain/entities/user_entity.dart';
 
 abstract class AccountRepository {
   Future<Result<UserEntity>> getProfile();
@@ -18,7 +18,6 @@ abstract class AccountRepository {
   Future<Result<int>> logoutAllDevices();
   Future<Result<BillingStatus>> getBillingStatus();
   Future<Result<String>> createCheckout();
-  Future<Result<String>> createPortal();
   Future<Result<BillingStatus>> verifyGooglePurchase(String purchaseToken);
   Future<Result<BillingStatus>> verifyApplePurchase(String transactionId);
   Future<Result<CouponRedeemResult>> redeemCoupon(String code);

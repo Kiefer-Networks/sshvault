@@ -4,12 +4,12 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/crypto/crypto_utils.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/core/storage/database_provider.dart';
-import 'package:shellvault/core/storage/secure_storage_provider.dart';
-import 'package:shellvault/features/settings/domain/entities/app_settings_entity.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/core/storage/database_provider.dart';
+import 'package:sshvault/core/storage/secure_storage_provider.dart';
+import 'package:sshvault/features/settings/domain/entities/app_settings_entity.dart';
 
 final settingsProvider =
     AsyncNotifierProvider<SettingsNotifier, AppSettingsEntity>(

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 class BiometricService {
   static final _log = LoggingService.instance;

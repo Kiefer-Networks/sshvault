@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:shellvault/core/security/proof_of_work_service.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/security/proof_of_work_service.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 /// Dio interceptor that handles 428 (Precondition Required) responses
 /// by automatically solving a PoW challenge and retrying the request.

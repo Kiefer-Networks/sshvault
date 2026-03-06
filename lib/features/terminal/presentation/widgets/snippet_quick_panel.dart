@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
-import 'package:shellvault/features/snippet/presentation/providers/snippet_providers.dart';
-import 'package:shellvault/features/snippet/presentation/widgets/variable_fill_dialog.dart';
+import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
+import 'package:sshvault/features/snippet/presentation/providers/snippet_providers.dart';
+import 'package:sshvault/features/snippet/presentation/widgets/variable_fill_dialog.dart';
 
 final _snippetSearchQueryProvider = StateProvider.autoDispose<String>(
   (ref) => '',

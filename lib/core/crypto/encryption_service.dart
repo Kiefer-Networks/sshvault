@@ -3,14 +3,14 @@ import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:pointycastle/export.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/crypto/crypto_utils.dart';
-import 'package:shellvault/core/crypto/encrypted_payload.dart';
-import 'package:shellvault/core/crypto/export_envelope.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/crypto/nonce_counter.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/crypto/encrypted_payload.dart';
+import 'package:sshvault/core/crypto/export_envelope.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/crypto/nonce_counter.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 class EncryptionService {
   static final _log = LoggingService.instance;

@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shellvault/core/crypto/nonce_counter.dart';
+import 'package:sshvault/core/crypto/nonce_counter.dart';
 
 class FakeSecureStorage extends Fake implements FlutterSecureStorage {
   final Map<String, String> _store = {};

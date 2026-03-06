@@ -238,7 +238,7 @@ class LoggingService {
     if (_buffer.isEmpty) return '';
 
     final sb = StringBuffer();
-    sb.writeln('=== SSH Vault Log Export ===');
+    sb.writeln('=== SSHVault Log Export ===');
     sb.writeln('Exported: ${DateTime.now().toIso8601String()}');
     sb.writeln('Entries: ${_buffer.length}');
     sb.writeln('===========================');

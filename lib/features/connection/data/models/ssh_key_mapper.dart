@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
-import 'package:shellvault/core/crypto/ssh_key_type.dart';
-import 'package:shellvault/core/storage/database.dart';
-import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
+import 'package:sshvault/core/crypto/ssh_key_type.dart';
+import 'package:sshvault/core/storage/database.dart';
+import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
 
 abstract final class SshKeyMapper {
   static SshKeyEntity fromDrift(SshKey row, {int linkedServerCount = 0}) {

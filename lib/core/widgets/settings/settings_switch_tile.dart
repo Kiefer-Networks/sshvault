@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/widgets/settings/circle_icon.dart';
+import 'package:sshvault/core/widgets/settings/circle_icon.dart';
 
 class SettingsSwitchTile extends StatelessWidget {
   final IconData icon;

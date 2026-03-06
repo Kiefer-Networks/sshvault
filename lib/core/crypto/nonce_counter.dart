@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/crypto/crypto_utils.dart';
-import 'package:shellvault/core/services/logging_service.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/services/logging_service.dart';
 
 /// Generates unique counter-based nonces for AES-256-GCM.
 ///

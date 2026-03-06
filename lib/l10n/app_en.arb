@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "appName": "SSH Vault",
+  "appName": "SSHVault",
 
   "navHosts": "Hosts",
   "navSnippets": "Snippets",
@@ -15,14 +15,14 @@
   "navSettings": "Settings",
   "navAbout": "About",
 
-  "lockScreenTitle": "SSH Vault is locked",
+  "lockScreenTitle": "SSHVault is locked",
   "lockScreenUnlock": "Unlock",
   "lockScreenEnterPin": "Enter PIN",
   "lockScreenLockedOut": "Too many failed attempts. Try again in {minutes} min.",
   "@lockScreenLockedOut": { "placeholders": { "minutes": { "type": "int" } } },
 
   "pinDialogSetTitle": "Set PIN Code",
-  "pinDialogSetSubtitle": "Enter a 6-digit PIN to protect SSH Vault",
+  "pinDialogSetSubtitle": "Enter a 6-digit PIN to protect SSHVault",
   "pinDialogLabel": "PIN",
   "pinDialogHint": "000000",
   "pinDialogConfirmLabel": "Confirm PIN",
@@ -82,7 +82,7 @@
   "settingsPreventScreenshots": "Prevent Screenshots",
   "settingsPreventScreenshotsDescription": "Block screenshots and screen recording",
   "settingsEncryptExport": "Encrypt Exports by Default",
-  "settingsAbout": "About SSH Vault",
+  "settingsAbout": "About SSHVault",
   "settingsAboutLegalese": "by Kiefer Networks",
   "settingsAboutDescription": "Secure, Self-Hosted SSH Client",
   "settingsLanguage": "Language",
@@ -406,9 +406,9 @@
   "authRegister": "Register",
   "authForgotPassword": "Forgot password?",
   "authWhyLogin": "Sign in to enable encrypted cloud sync across all your devices. The app works fully offline without an account.",
-  "authPricingInfo": "Cloud sync for all your devices — {price}/year",
+  "authPricingInfo": "Cloud sync for all your devices — {price}",
   "@authPricingInfo": { "placeholders": { "price": { "type": "String" } } },
-  "authPricingHint": "One subscription, unlimited devices. Cancel anytime.",
+  "authPricingHint": "One purchase, unlimited devices.",
   "authEmailLabel": "Email",
   "authEmailRequired": "Email is required",
   "authEmailInvalid": "Invalid email address",
@@ -462,10 +462,9 @@
   "syncNeverSynced": "Never synced",
   "syncVaultVersion": "Vault Version",
   "syncTitle": "Sync",
-  "accountActivateSyncPrice": "Activate Sync — {price}/year",
+  "accountActivateSyncPrice": "Activate Sync — {price}",
   "@accountActivateSyncPrice": { "placeholders": { "price": { "type": "String" } } },
   "accountStoreFeeNote": "Price on mobile & macOS includes App Store / Play Store fees.",
-  "accountManageSubscription": "Manage Subscription & Invoices",
 
   "settingsSectionNetwork": "Network & DNS",
   "settingsDnsServers": "DNS-over-HTTPS Servers",
@@ -486,7 +485,7 @@
   "accountVerified": "Verified",
   "accountMemberSince": "Member since",
   "accountPaymentStatus": "Payment",
-  "accountPaymentActive": "Sync active (yearly subscription)",
+  "accountPaymentActive": "Sync active",
   "accountPaymentInactive": "Sync not yet purchased",
   "accountUnlockSync": "Activate Sync",
   "accountDevices": "Devices",
@@ -501,7 +500,7 @@
 
   "serverConfigTitle": "Server Configuration",
   "serverConfigSelfHosted": "Self-Hosted",
-  "serverConfigSelfHostedDescription": "Use your own ShellVault server",
+  "serverConfigSelfHostedDescription": "Use your own SSHVault server",
   "serverConfigUrlLabel": "Server URL",
   "serverConfigTest": "Test Connection",
 
@@ -613,7 +612,7 @@
   "@sftpDownloadStarted": { "placeholders": { "count": { "type": "int" } } },
   "sftpDownloadComplete": "\"{fileName}\" downloaded",
   "@sftpDownloadComplete": { "placeholders": { "fileName": { "type": "String" } } },
-  "sftpSavedToDownloads": "Saved to Downloads/ShellVault",
+  "sftpSavedToDownloads": "Saved to Downloads/SSHVault",
   "sftpSaveToFiles": "Save to Files",
   "sftpFileSaved": "File saved",
 
@@ -641,7 +640,7 @@
   "aboutVersion": "Version",
   "aboutBuild": "Build",
 
-  "settingsDohDescription": "DNS-over-HTTPS encrypts DNS queries and prevents DNS spoofing. ShellVault checks hostnames against multiple providers to detect attacks.",
+  "settingsDohDescription": "DNS-over-HTTPS encrypts DNS queries and prevents DNS spoofing. SSHVault checks hostnames against multiple providers to detect attacks.",
   "settingsDnsAddServer": "Add DNS Server",
   "settingsDnsServerUrl": "Server URL",
   "settingsDnsDefaultBadge": "Default",
@@ -706,7 +705,6 @@
   "tagServerCount": "{count, plural, =1{1 server} other{{count} servers}}",
   "@tagServerCount": { "placeholders": { "count": { "type": "int" } } },
 
-  "accountDeleteSubscriptionWarning": "Your subscription must be cancelled manually in the App Store / Play Store. Deleting your account does not automatically cancel mobile subscriptions.",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 session revoked.} other{{count} sessions revoked.}} You have been logged out.",
   "@logoutAllDevicesSuccessCount": { "placeholders": { "count": { "type": "int" } } },
 
@@ -737,13 +735,6 @@
   "couponInputHint": "Enter your coupon code",
   "couponRedeemButton": "Redeem",
   "couponSuccess": "Coupon redeemed successfully",
-
-  "subscriptionExpiresOn": "Renews on {date}",
-  "@subscriptionExpiresOn": {
-    "placeholders": {
-      "date": { "type": "String" }
-    }
-  },
 
   "changeAvatar": "Change Avatar",
   "removeAvatar": "Remove Avatar",
@@ -844,7 +835,7 @@
 
   "heartbeatLostMessage": "The server could not be reached after multiple attempts. For your security, the session has been terminated.",
   "attestationFailedTitle": "Server Verification Failed",
-  "attestationFailedMessage": "The server could not be verified as a legitimate ShellVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.",
+  "attestationFailedMessage": "The server could not be verified as a legitimate SSHVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.",
 
   "sectionLinks": "Links",
   "sectionDeveloper": "Developer",

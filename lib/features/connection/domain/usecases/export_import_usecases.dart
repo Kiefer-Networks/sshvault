@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/domain/repositories/export_import_repository.dart';
 
 class ExportImportUseCases {
   final ExportImportRepository _repository;

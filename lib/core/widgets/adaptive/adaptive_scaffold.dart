@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive_app_bar.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive_app_bar.dart';
 
 /// A scaffold that builds its app bar from [title] or accepts a pre-built one.
 ///

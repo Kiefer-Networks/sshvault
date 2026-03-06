@@ -4,16 +4,16 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/features/connection/data/models/drift_tables.dart';
-import 'package:shellvault/features/connection/data/datasources/server_dao.dart';
-import 'package:shellvault/features/connection/data/datasources/ssh_key_dao.dart';
-import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
-import 'package:shellvault/features/connection/data/datasources/tag_dao.dart';
-import 'package:shellvault/features/host_key/data/datasources/known_host_dao.dart';
-import 'package:shellvault/features/settings/data/datasources/app_settings_dao.dart';
-import 'package:shellvault/features/sftp/data/datasources/sftp_bookmark_dao.dart';
-import 'package:shellvault/features/snippet/data/datasources/snippet_dao.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/features/connection/data/models/drift_tables.dart';
+import 'package:sshvault/features/connection/data/datasources/server_dao.dart';
+import 'package:sshvault/features/connection/data/datasources/ssh_key_dao.dart';
+import 'package:sshvault/features/connection/data/datasources/group_dao.dart';
+import 'package:sshvault/features/connection/data/datasources/tag_dao.dart';
+import 'package:sshvault/features/host_key/data/datasources/known_host_dao.dart';
+import 'package:sshvault/features/settings/data/datasources/app_settings_dao.dart';
+import 'package:sshvault/features/sftp/data/datasources/sftp_bookmark_dao.dart';
+import 'package:sshvault/features/snippet/data/datasources/snippet_dao.dart';
 
 part 'database.g.dart';
 

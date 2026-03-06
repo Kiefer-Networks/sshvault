@@ -1,5 +1,5 @@
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/auth/domain/entities/auth_response.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/auth/domain/entities/auth_response.dart';
 
 abstract class AuthRepository {
   Future<Result<AuthResponse>> register(String email, String password);

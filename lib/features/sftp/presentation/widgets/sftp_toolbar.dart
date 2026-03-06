@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_entry.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_pane_state.dart';
-import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/chmod_dialog.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/create_symlink_dialog.dart';
-import 'package:shellvault/features/sftp/presentation/widgets/new_directory_dialog.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_pane_state.dart';
+import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/chmod_dialog.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/create_symlink_dialog.dart';
+import 'package:sshvault/features/sftp/presentation/widgets/new_directory_dialog.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpFloatingToolbar extends ConsumerWidget {
   final PaneSide side;

@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/network/api_client.dart';
-import 'package:shellvault/core/network/api_provider.dart';
-import 'package:shellvault/core/storage/database_provider.dart';
-import 'package:shellvault/features/account/domain/entities/audit_log_entity.dart';
-import 'package:shellvault/features/account/domain/entities/billing_status.dart';
-import 'package:shellvault/features/account/domain/entities/device_entity.dart';
-import 'package:shellvault/features/account/presentation/providers/account_repository_providers.dart';
+import 'package:sshvault/core/network/api_client.dart';
+import 'package:sshvault/core/network/api_provider.dart';
+import 'package:sshvault/core/storage/database_provider.dart';
+import 'package:sshvault/features/account/domain/entities/audit_log_entity.dart';
+import 'package:sshvault/features/account/domain/entities/billing_status.dart';
+import 'package:sshvault/features/account/domain/entities/device_entity.dart';
+import 'package:sshvault/features/account/presentation/providers/account_repository_providers.dart';
 
-export 'package:shellvault/features/account/presentation/providers/account_repository_providers.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shellvault/features/auth/domain/entities/user_entity.dart';
+export 'package:sshvault/features/account/presentation/providers/account_repository_providers.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/features/auth/domain/entities/user_entity.dart';
 
 const _cachedUserProfileKey = 'cached_user_profile';
 const _cachedBillingStatusKey = 'cached_billing_status';

@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'SSH Vault'**
+  /// **'SSHVault'**
   String get appName;
 
   /// No description provided for @navHosts.
@@ -175,7 +175,7 @@ abstract class AppLocalizations {
   /// No description provided for @lockScreenTitle.
   ///
   /// In en, this message translates to:
-  /// **'SSH Vault is locked'**
+  /// **'SSHVault is locked'**
   String get lockScreenTitle;
 
   /// No description provided for @lockScreenUnlock.
@@ -205,7 +205,7 @@ abstract class AppLocalizations {
   /// No description provided for @pinDialogSetSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter a 6-digit PIN to protect SSH Vault'**
+  /// **'Enter a 6-digit PIN to protect SSHVault'**
   String get pinDialogSetSubtitle;
 
   /// No description provided for @pinDialogLabel.
@@ -535,7 +535,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsAbout.
   ///
   /// In en, this message translates to:
-  /// **'About SSH Vault'**
+  /// **'About SSHVault'**
   String get settingsAbout;
 
   /// No description provided for @settingsAboutLegalese.
@@ -2137,13 +2137,13 @@ abstract class AppLocalizations {
   /// No description provided for @authPricingInfo.
   ///
   /// In en, this message translates to:
-  /// **'Cloud sync for all your devices — {price}/year'**
+  /// **'Cloud sync for all your devices — {price}'**
   String authPricingInfo(String price);
 
   /// No description provided for @authPricingHint.
   ///
   /// In en, this message translates to:
-  /// **'One subscription, unlimited devices. Cancel anytime.'**
+  /// **'One purchase, unlimited devices.'**
   String get authPricingHint;
 
   /// No description provided for @authEmailLabel.
@@ -2437,7 +2437,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountActivateSyncPrice.
   ///
   /// In en, this message translates to:
-  /// **'Activate Sync — {price}/year'**
+  /// **'Activate Sync — {price}'**
   String accountActivateSyncPrice(String price);
 
   /// No description provided for @accountStoreFeeNote.
@@ -2445,12 +2445,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Price on mobile & macOS includes App Store / Play Store fees.'**
   String get accountStoreFeeNote;
-
-  /// No description provided for @accountManageSubscription.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage Subscription & Invoices'**
-  String get accountManageSubscription;
 
   /// No description provided for @settingsSectionNetwork.
   ///
@@ -2557,7 +2551,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountPaymentActive.
   ///
   /// In en, this message translates to:
-  /// **'Sync active (yearly subscription)'**
+  /// **'Sync active'**
   String get accountPaymentActive;
 
   /// No description provided for @accountPaymentInactive.
@@ -2641,7 +2635,7 @@ abstract class AppLocalizations {
   /// No description provided for @serverConfigSelfHostedDescription.
   ///
   /// In en, this message translates to:
-  /// **'Use your own ShellVault server'**
+  /// **'Use your own SSHVault server'**
   String get serverConfigSelfHostedDescription;
 
   /// No description provided for @serverConfigUrlLabel.
@@ -3187,7 +3181,7 @@ abstract class AppLocalizations {
   /// No description provided for @sftpSavedToDownloads.
   ///
   /// In en, this message translates to:
-  /// **'Saved to Downloads/ShellVault'**
+  /// **'Saved to Downloads/SSHVault'**
   String get sftpSavedToDownloads;
 
   /// No description provided for @sftpSaveToFiles.
@@ -3325,7 +3319,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDohDescription.
   ///
   /// In en, this message translates to:
-  /// **'DNS-over-HTTPS encrypts DNS queries and prevents DNS spoofing. ShellVault checks hostnames against multiple providers to detect attacks.'**
+  /// **'DNS-over-HTTPS encrypts DNS queries and prevents DNS spoofing. SSHVault checks hostnames against multiple providers to detect attacks.'**
   String get settingsDohDescription;
 
   /// No description provided for @settingsDnsAddServer.
@@ -3628,12 +3622,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 server} other{{count} servers}}'**
   String tagServerCount(int count);
 
-  /// No description provided for @accountDeleteSubscriptionWarning.
-  ///
-  /// In en, this message translates to:
-  /// **'Your subscription must be cancelled manually in the App Store / Play Store. Deleting your account does not automatically cancel mobile subscriptions.'**
-  String get accountDeleteSubscriptionWarning;
-
   /// No description provided for @logoutAllDevicesSuccessCount.
   ///
   /// In en, this message translates to:
@@ -3765,12 +3753,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coupon redeemed successfully'**
   String get couponSuccess;
-
-  /// No description provided for @subscriptionExpiresOn.
-  ///
-  /// In en, this message translates to:
-  /// **'Renews on {date}'**
-  String subscriptionExpiresOn(String date);
 
   /// No description provided for @changeAvatar.
   ///
@@ -4255,7 +4237,7 @@ abstract class AppLocalizations {
   /// No description provided for @attestationFailedMessage.
   ///
   /// In en, this message translates to:
-  /// **'The server could not be verified as a legitimate ShellVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.'**
+  /// **'The server could not be verified as a legitimate SSHVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.'**
   String get attestationFailedMessage;
 
   /// No description provided for @sectionLinks.

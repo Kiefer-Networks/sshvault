@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
 
 class AppSettingsEntity {
   final ThemeMode themeMode;

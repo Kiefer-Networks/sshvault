@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
-import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:sshvault/features/connection/domain/repositories/export_import_repository.dart';
+import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
 
 /// Sentinel value indicating a successful import.
 /// The UI layer maps this to the corresponding l10n string.

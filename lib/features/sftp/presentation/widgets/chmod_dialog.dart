@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shellvault/core/widgets/adaptive/adaptive_dialog.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive_dialog.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class ChmodDialog {
   static Future<int?> show(BuildContext context, {int? initialPermissions}) {

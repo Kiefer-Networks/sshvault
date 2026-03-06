@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shellvault/core/security/certificate_pinning_service.dart';
+import 'package:sshvault/core/security/certificate_pinning_service.dart';
 
 /// Builds a minimal DER-encoded X.509 certificate structure for testing.
 ///

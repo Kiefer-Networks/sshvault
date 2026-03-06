@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shellvault/core/constants/icon_constants.dart';
-import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
-import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
-import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
+import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _draftGroupIdProvider = StateProvider.autoDispose<String?>((ref) => null);
 final _draftTagIdsProvider = StateProvider.autoDispose<List<String>>(

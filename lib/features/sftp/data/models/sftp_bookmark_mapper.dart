@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:shellvault/core/storage/database.dart';
-import 'package:shellvault/features/sftp/domain/entities/sftp_bookmark_entity.dart';
+import 'package:sshvault/core/storage/database.dart';
+import 'package:sshvault/features/sftp/domain/entities/sftp_bookmark_entity.dart';
 
 abstract final class SftpBookmarkMapper {
   static SftpBookmarkEntity fromDrift(SftpBookmark row) {

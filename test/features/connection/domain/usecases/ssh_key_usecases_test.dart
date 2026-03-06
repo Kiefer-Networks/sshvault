@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shellvault/core/crypto/ssh_key_type.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.dart';
-import 'package:shellvault/features/connection/domain/repositories/ssh_key_repository.dart';
-import 'package:shellvault/features/connection/domain/usecases/ssh_key_usecases.dart';
+import 'package:sshvault/core/crypto/ssh_key_type.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
+import 'package:sshvault/features/connection/domain/repositories/ssh_key_repository.dart';
+import 'package:sshvault/features/connection/domain/usecases/ssh_key_usecases.dart';
 
 class MockSshKeyRepository extends Mock implements SshKeyRepository {}
 

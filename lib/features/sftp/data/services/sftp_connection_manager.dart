@@ -5,18 +5,18 @@ import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:shellvault/core/crypto/crypto_utils.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
-import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
-import 'package:shellvault/features/connection/domain/usecases/proxy_resolver.dart';
-import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
-import 'package:shellvault/features/host_key/domain/entities/known_host_entity.dart';
-import 'package:shellvault/features/host_key/presentation/providers/known_host_providers.dart';
-import 'package:shellvault/features/settings/presentation/providers/proxy_settings_provider.dart';
-import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
+import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
+import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
+import 'package:sshvault/features/connection/domain/usecases/proxy_resolver.dart';
+import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
+import 'package:sshvault/features/host_key/presentation/providers/known_host_providers.dart';
+import 'package:sshvault/features/settings/presentation/providers/proxy_settings_provider.dart';
+import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class SftpConnectionManager {
   static const _tag = 'SftpConnectionManager';

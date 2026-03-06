@@ -3,7 +3,7 @@ abstract final class AppConstants {
   static const String appVersion = '0.1.0';
 
   // Database
-  static const String databaseName = 'shellvault.db';
+  static const String databaseName = 'sshvault.db';
   static const int databaseVersion = 10;
 
   // SSH Defaults
@@ -23,7 +23,7 @@ abstract final class AppConstants {
 
   // Export
   static const int exportVersion = 2;
-  static const String exportFileName = 'shellvault_export';
+  static const String exportFileName = 'sshvault_export';
   static const String encryptedDataFile = 'data.json.enc';
 
   // Secure Storage Keys
@@ -70,7 +70,7 @@ abstract final class AppConstants {
   static const bool enforceCertificatePinning = true;
 
   // Security — Server Attestation
-  static const String expectedServerId = 'shellvault-api-v1';
+  static const String expectedServerId = 'sshvault-api-v1';
   // Ed25519 public key for attestation signature verification (base64-encoded).
   // Replace with the actual server public key before production deployment.
   static const String attestationPublicKeyBase64 =

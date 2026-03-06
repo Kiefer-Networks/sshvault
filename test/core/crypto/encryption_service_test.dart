@@ -5,8 +5,8 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pointycastle/export.dart';
-import 'package:shellvault/core/crypto/encryption_service.dart';
-import 'package:shellvault/core/crypto/export_envelope.dart';
+import 'package:sshvault/core/crypto/encryption_service.dart';
+import 'package:sshvault/core/crypto/export_envelope.dart';
 
 /// Build a v1 envelope (64 MiB Argon2id) for backward-compatibility testing.
 Future<ExportEnvelope> _buildV1Envelope(

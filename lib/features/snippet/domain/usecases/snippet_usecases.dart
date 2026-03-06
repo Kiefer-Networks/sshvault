@@ -1,8 +1,8 @@
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/error/result.dart';
-import 'package:shellvault/core/utils/validators.dart';
-import 'package:shellvault/features/snippet/domain/entities/snippet_entity.dart';
-import 'package:shellvault/features/snippet/domain/repositories/snippet_repository.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/utils/validators.dart';
+import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
+import 'package:sshvault/features/snippet/domain/repositories/snippet_repository.dart';
 
 class SnippetUseCases {
   final SnippetRepository _repository;

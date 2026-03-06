@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shellvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shellvault/core/routing/app_router.dart';
-import 'package:shellvault/core/security/security_providers.dart';
-import 'package:shellvault/core/services/screen_protection_service.dart';
-import 'package:shellvault/core/theme/app_theme.dart';
-import 'package:shellvault/core/widgets/lock_screen.dart';
-import 'package:shellvault/core/widgets/security_warning_dialog.dart';
-import 'package:shellvault/core/network/api_provider.dart';
-import 'package:shellvault/core/services/logging_service.dart';
-import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
-import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
+import 'package:sshvault/core/routing/app_router.dart';
+import 'package:sshvault/core/security/security_providers.dart';
+import 'package:sshvault/core/services/screen_protection_service.dart';
+import 'package:sshvault/core/theme/app_theme.dart';
+import 'package:sshvault/core/widgets/lock_screen.dart';
+import 'package:sshvault/core/widgets/security_warning_dialog.dart';
+import 'package:sshvault/core/network/api_provider.dart';
+import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 
-class ShellVaultApp extends ConsumerStatefulWidget {
-  const ShellVaultApp({super.key});
+class SSHVaultApp extends ConsumerStatefulWidget {
+  const SSHVaultApp({super.key});
 
   @override
-  ConsumerState<ShellVaultApp> createState() => _ShellVaultAppState();
+  ConsumerState<SSHVaultApp> createState() => _SSHVaultAppState();
 }
 
-class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
+class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
   bool _autoSyncTriggered = false;
   final _screenProtection = ScreenProtectionService();
 
@@ -150,7 +150,7 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
         })
         .catchError((Object e) {
           LoggingService.instance.warning(
-            'ShellVaultApp',
+            'SSHVaultApp',
             'Sync password check failed: $e',
           );
         });
@@ -171,7 +171,7 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     final locale = localeSetting.isEmpty ? null : Locale(localeSetting);
 
     return MaterialApp.router(
-      title: 'ShellVault',
+      title: 'SSHVault',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

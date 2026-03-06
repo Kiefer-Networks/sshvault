@@ -4,9 +4,9 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shellvault/core/constants/app_constants.dart';
-import 'package:shellvault/core/error/failures.dart';
-import 'package:shellvault/core/storage/secure_storage_service.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/storage/secure_storage_service.dart';
 
 class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
