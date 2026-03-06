@@ -808,5 +808,11 @@
   "sshConfigImportNoHosts": "No se encontraron hosts en la config",
 
   "sftpBookmarkAdd": "Agregar marcador",
-  "sftpBookmarkLabel": "Etiqueta"
+  "sftpBookmarkLabel": "Etiqueta",
+
+  "disconnect": "Desconectar",
+  "reportAndDisconnect": "Reportar y desconectar",
+  "continueAnyway": "Continuar de todos modos",
+  "insertSnippet": "Insertar snippet",
+  "seconds": "Segundos"
 }

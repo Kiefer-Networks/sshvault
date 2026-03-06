@@ -834,5 +834,11 @@
   "sshConfigImportNoHosts": "No hosts found in config",
 
   "sftpBookmarkAdd": "Add Bookmark",
-  "sftpBookmarkLabel": "Label"
+  "sftpBookmarkLabel": "Label",
+
+  "disconnect": "Disconnect",
+  "reportAndDisconnect": "Report & Disconnect",
+  "continueAnyway": "Continue Anyway",
+  "insertSnippet": "Insert Snippet",
+  "seconds": "Seconds"
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 /// Severity level for security warnings.
 enum SecuritySeverity { warning, critical }
@@ -68,6 +69,7 @@ class SecurityWarningDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final isCritical = severity == SecuritySeverity.critical;
 
     return Scaffold(
@@ -131,7 +133,7 @@ class SecurityWarningDialog extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onDisconnect,
                 icon: const Icon(Icons.power_settings_new),
-                label: const Text('Disconnect'),
+                label: Text(l10n.disconnect),
                 style: FilledButton.styleFrom(
                   backgroundColor: colorScheme.error,
                   foregroundColor: colorScheme.onError,
@@ -143,7 +145,7 @@ class SecurityWarningDialog extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: onReport,
                   icon: const Icon(Icons.flag),
-                  label: const Text('Report & Disconnect'),
+                  label: Text(l10n.reportAndDisconnect),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: isCritical
                         ? colorScheme.onErrorContainer
@@ -158,7 +160,7 @@ class SecurityWarningDialog extends StatelessWidget {
                 TextButton(
                   onPressed: onContinue,
                   child: Text(
-                    'Continue Anyway',
+                    l10n.continueAnyway,
                     style: TextStyle(
                       color: colorScheme.onTertiaryContainer.withAlpha(180),
                     ),

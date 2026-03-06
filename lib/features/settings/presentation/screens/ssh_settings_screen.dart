@@ -259,8 +259,8 @@ class SshSettingsScreen extends ConsumerWidget {
           child: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Seconds',
+            decoration: InputDecoration(
+              labelText: l10n.seconds,
               hintText: '30',
             ),
           ),
@@ -302,8 +302,8 @@ class SshSettingsScreen extends ConsumerWidget {
           child: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Seconds',
+            decoration: InputDecoration(
+              labelText: l10n.seconds,
               hintText: '15',
             ),
           ),

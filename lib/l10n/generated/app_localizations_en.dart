@@ -2298,4 +2298,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sftpBookmarkLabel => 'Label';
+
+  @override
+  String get disconnect => 'Disconnect';
+
+  @override
+  String get reportAndDisconnect => 'Report & Disconnect';
+
+  @override
+  String get continueAnyway => 'Continue Anyway';
+
+  @override
+  String get insertSnippet => 'Insert Snippet';
+
+  @override
+  String get seconds => 'Seconds';
 }

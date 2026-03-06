@@ -4209,6 +4209,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Label'**
   String get sftpBookmarkLabel;
+
+  /// No description provided for @disconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get disconnect;
+
+  /// No description provided for @reportAndDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Report & Disconnect'**
+  String get reportAndDisconnect;
+
+  /// No description provided for @continueAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Anyway'**
+  String get continueAnyway;
+
+  /// No description provided for @insertSnippet.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert Snippet'**
+  String get insertSnippet;
+
+  /// No description provided for @seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Seconds'**
+  String get seconds;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:xterm/xterm.dart';
 
 import 'package:shellvault/features/terminal/presentation/widgets/virtual_keyboard.dart';
@@ -138,7 +139,9 @@ class SshKeyboardToolbar extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: IconButton(
                             icon: const Icon(Icons.content_paste, size: 20),
-                            tooltip: 'Insert Snippet',
+                            tooltip: AppLocalizations.of(
+                              context,
+                            )!.insertSnippet,
                             onPressed: onSnippetTap,
                             style: IconButton.styleFrom(
                               backgroundColor:

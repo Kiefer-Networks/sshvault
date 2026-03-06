@@ -2310,4 +2310,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sftpBookmarkLabel => 'Etiqueta';
+
+  @override
+  String get disconnect => 'Desconectar';
+
+  @override
+  String get reportAndDisconnect => 'Reportar y desconectar';
+
+  @override
+  String get continueAnyway => 'Continuar de todos modos';
+
+  @override
+  String get insertSnippet => 'Insertar snippet';
+
+  @override
+  String get seconds => 'Segundos';
 }

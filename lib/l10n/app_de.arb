@@ -808,5 +808,11 @@
   "sshConfigImportNoHosts": "Keine Hosts in der Config gefunden",
 
   "sftpBookmarkAdd": "Lesezeichen hinzufügen",
-  "sftpBookmarkLabel": "Bezeichnung"
+  "sftpBookmarkLabel": "Bezeichnung",
+
+  "disconnect": "Trennen",
+  "reportAndDisconnect": "Melden & Trennen",
+  "continueAnyway": "Trotzdem fortfahren",
+  "insertSnippet": "Snippet einfügen",
+  "seconds": "Sekunden"
 }
