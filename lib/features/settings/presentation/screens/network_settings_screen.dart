@@ -16,7 +16,7 @@ class NetworkSettingsScreen extends ConsumerWidget {
 
   static final _defaultServers = [
     DohProvider.quad9.url,
-    DohProvider.mullvad.url,
+    DohProvider.cloudflare.url,
   ];
 
   @override

@@ -174,7 +174,7 @@ class DohResolverService {
       resolvers = [
         DohResolverService(provider: DohProvider.quad9, httpClient: httpClient),
         DohResolverService(
-          provider: DohProvider.mullvad,
+          provider: DohProvider.cloudflare,
           httpClient: httpClient,
         ),
       ];
@@ -276,8 +276,8 @@ enum DnsRecordType {
 /// - Quad9: Swiss non-profit, no logging, GDPR-compliant
 /// - Mullvad: Swedish privacy company, no logging, GDPR-compliant
 enum DohProvider {
-  quad9('https://dns.quad9.net:5053/dns-query'),
-  mullvad('https://dns.mullvad.net/dns-query');
+  quad9('https://dns.quad9.net/dns-query'),
+  cloudflare('https://cloudflare-dns.com/dns-query');
 
   final String url;
 

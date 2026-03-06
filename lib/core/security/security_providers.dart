@@ -43,7 +43,7 @@ final certificatePinningProvider = Provider<CertificatePinningService?>((ref) {
 /// Provides a [DohResolverService] instance for secure DNS resolution.
 final dohResolverProvider = Provider<DohResolverService>((ref) {
   final service = DohResolverService(
-    providers: [DohProvider.quad9, DohProvider.mullvad],
+    providers: [DohProvider.quad9, DohProvider.cloudflare],
   );
   ref.onDispose(service.close);
   return service;
@@ -80,7 +80,7 @@ final attestationCheckProvider = FutureProvider.autoDispose<bool>((ref) async {
   try {
     final nonce = ServerAttestationService.generateNonce();
     final result = await apiClient.get(
-      '/v1/attest',
+      '/v1/attestation',
       queryParameters: {'nonce': nonce},
     );
 
