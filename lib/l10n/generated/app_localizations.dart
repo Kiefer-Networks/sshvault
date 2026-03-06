@@ -3232,17 +3232,11 @@ abstract class AppLocalizations {
   /// **'Developed by Kiefer Networks'**
   String get aboutDeveloper;
 
-  /// No description provided for @aboutPrivacyPolicy.
+  /// No description provided for @aboutDonate.
   ///
   /// In en, this message translates to:
-  /// **'Privacy Policy'**
-  String get aboutPrivacyPolicy;
-
-  /// No description provided for @aboutTermsOfService.
-  ///
-  /// In en, this message translates to:
-  /// **'Terms of Service'**
-  String get aboutTermsOfService;
+  /// **'Donate'**
+  String get aboutDonate;
 
   /// No description provided for @aboutOpenSourceLicenses.
   ///

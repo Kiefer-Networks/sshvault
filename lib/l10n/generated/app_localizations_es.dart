@@ -1751,10 +1751,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get aboutDeveloper => 'Desarrollado por Kiefer Networks';
 
   @override
-  String get aboutPrivacyPolicy => 'Política de privacidad';
-
-  @override
-  String get aboutTermsOfService => 'Términos de servicio';
+  String get aboutDonate => 'Donar';
 
   @override
   String get aboutOpenSourceLicenses => 'Licencias de código abierto';

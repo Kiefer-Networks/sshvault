@@ -596,8 +596,7 @@
   "settingsSearchNoResults": "Keine Einstellungen gefunden",
 
   "aboutDeveloper": "Entwickelt von Kiefer Networks",
-  "aboutPrivacyPolicy": "Datenschutzerklärung",
-  "aboutTermsOfService": "Nutzungsbedingungen",
+  "aboutDonate": "Spenden",
   "aboutOpenSourceLicenses": "Open-Source-Lizenzen",
   "aboutWebsite": "Webseite",
   "aboutVersion": "Version",

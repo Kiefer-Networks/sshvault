@@ -73,30 +73,33 @@ class AboutScreen extends ConsumerWidget {
           SettingsGroupCard(
             children: [
               SettingsTile(
-                icon: Icons.privacy_tip_outlined,
-                iconColor: colorScheme.primary,
-                title: l10n.aboutPrivacyPolicy,
+                icon: Icons.language,
+                iconColor: AppColors.iconBlue,
+                title: l10n.aboutWebsite,
+                subtitleText: 'kiefer-networks.de',
                 trailing: Icon(
                   Icons.open_in_new,
                   size: 18,
                   color: colorScheme.onSurfaceVariant,
                 ),
-                onTap: () => _launchUrl('https://sshvault.app/privacy'),
+                onTap: () => _launchUrl('https://kiefer-networks.de'),
               ),
               SettingsTile(
-                icon: Icons.description_outlined,
-                iconColor: colorScheme.tertiary,
-                title: l10n.aboutTermsOfService,
+                icon: Icons.favorite_outline,
+                iconColor: AppColors.iconOrange,
+                title: l10n.aboutDonate,
+                subtitleText: 'Liberapay',
                 trailing: Icon(
                   Icons.open_in_new,
                   size: 18,
                   color: colorScheme.onSurfaceVariant,
                 ),
-                onTap: () => _launchUrl('https://sshvault.app/terms'),
+                onTap: () =>
+                    _launchUrl('https://de.liberapay.com/beli3ver'),
               ),
               SettingsTile(
                 icon: Icons.source_outlined,
-                iconColor: AppColors.iconOrange,
+                iconColor: colorScheme.tertiary,
                 title: l10n.aboutOpenSourceLicenses,
                 onTap: () => showLicensePage(
                   context: context,
@@ -112,18 +115,6 @@ class AboutScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              SettingsTile(
-                icon: Icons.language,
-                iconColor: AppColors.iconBlue,
-                title: l10n.aboutWebsite,
-                subtitleText: 'sshvault.app',
-                trailing: Icon(
-                  Icons.open_in_new,
-                  size: 18,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-                onTap: () => _launchUrl('https://sshvault.app'),
-              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -136,13 +127,13 @@ class AboutScreen extends ConsumerWidget {
                 icon: Icons.business_outlined,
                 iconColor: colorScheme.secondary,
                 title: l10n.aboutDeveloper,
-                subtitleText: 'kiefer-network.de',
+                subtitleText: 'kiefer-networks.de',
                 trailing: Icon(
                   Icons.open_in_new,
                   size: 18,
                   color: colorScheme.onSurfaceVariant,
                 ),
-                onTap: () => _launchUrl('https://kiefer-network.de'),
+                onTap: () => _launchUrl('https://kiefer-networks.de'),
               ),
             ],
           ),

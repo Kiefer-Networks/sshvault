@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,7 +14,7 @@ class DohResolverService {
   static final _log = LoggingService.instance;
   static const _tag = 'DoH';
 
-  final String _baseUrl;
+  final List<String> _urls;
   final Duration _cacheTtl;
   final HttpClient _httpClient;
 
@@ -22,11 +23,15 @@ class DohResolverService {
   DohResolverService({
     String? url,
     DohProvider provider = DohProvider.quad9,
+    List<DohProvider>? providers,
     Duration cacheTtl = const Duration(minutes: 5),
     HttpClient? httpClient,
-  }) : _baseUrl = url ?? provider.url,
+  }) : _urls = providers != null
+           ? providers.map((p) => p.url).toList()
+           : [url ?? provider.url],
        _cacheTtl = cacheTtl,
-       _httpClient = httpClient ?? HttpClient();
+       _httpClient = httpClient ?? HttpClient()
+         ..connectionTimeout = const Duration(seconds: 5);
 
   /// Resolve a hostname to a list of IP addresses using DNS-over-HTTPS.
   ///
@@ -44,21 +49,40 @@ class DohResolverService {
       return Success(cached.addresses);
     }
 
-    _log.debug(_tag, 'Resolving $hostname via $_baseUrl (${type.name})');
+    // Try each DoH provider in order until one succeeds
+    Result<List<String>>? lastError;
+    for (final baseUrl in _urls) {
+      final result = await _resolveVia(baseUrl, hostname, type);
+      if (result.isSuccess) return result;
+      lastError = result;
+    }
+
+    return lastError!;
+  }
+
+  Future<Result<List<String>>> _resolveVia(
+    String baseUrl,
+    String hostname,
+    DnsRecordType type,
+  ) async {
+    _log.debug(_tag, 'Resolving $hostname via $baseUrl (${type.name})');
 
     try {
       final uri = Uri.parse(
-        '$_baseUrl?name=${Uri.encodeComponent(hostname)}&type=${type.name}',
+        '$baseUrl?name=${Uri.encodeComponent(hostname)}&type=${type.name}',
       );
 
-      final request = await _httpClient.getUrl(uri);
+      final request = await _httpClient.getUrl(uri)
+          .timeout(const Duration(seconds: 5));
       request.headers.set('Accept', 'application/dns-json');
 
-      final response = await request.close();
+      final response = await request.close()
+          .timeout(const Duration(seconds: 5));
       if (response.statusCode != 200) {
         _log.error(
           _tag,
-          'DoH query failed for $hostname: HTTP ${response.statusCode}',
+          'DoH query failed for $hostname via $baseUrl: '
+          'HTTP ${response.statusCode}',
         );
         return Err(
           NetworkFailure(
@@ -75,7 +99,7 @@ class DohResolverService {
       if (status != 0) {
         _log.warning(
           _tag,
-          'DoH query for $hostname returned status $status (RCODE)',
+          'DoH query for $hostname via $baseUrl returned status $status',
         );
         return Err(NetworkFailure('DNS query failed with RCODE $status'));
       }
@@ -93,6 +117,7 @@ class DohResolverService {
       }
 
       // Cache result
+      final cacheKey = '$hostname:${type.value}';
       _cache[cacheKey] = _CachedResult(
         addresses: addresses,
         expiresAt: DateTime.now().add(_cacheTtl),
@@ -104,10 +129,13 @@ class DohResolverService {
       );
       return Success(addresses);
     } on SocketException catch (e) {
-      _log.error(_tag, 'DoH connection failed for $hostname: $e');
+      _log.error(_tag, 'DoH connection failed for $hostname via $baseUrl: $e');
       return Err(NetworkFailure('DoH connection failed', cause: e));
+    } on TimeoutException catch (e) {
+      _log.error(_tag, 'DoH resolution timed out for $hostname via $baseUrl');
+      return Err(NetworkFailure('DoH resolution timed out', cause: e));
     } catch (e) {
-      _log.error(_tag, 'DoH resolution failed for $hostname: $e');
+      _log.error(_tag, 'DoH resolution failed for $hostname via $baseUrl: $e');
       return Err(NetworkFailure('DNS resolution failed', cause: e));
     }
   }

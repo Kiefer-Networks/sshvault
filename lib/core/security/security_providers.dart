@@ -42,7 +42,9 @@ final certificatePinningProvider = Provider<CertificatePinningService?>((ref) {
 
 /// Provides a [DohResolverService] instance for secure DNS resolution.
 final dohResolverProvider = Provider<DohResolverService>((ref) {
-  final service = DohResolverService();
+  final service = DohResolverService(
+    providers: [DohProvider.quad9, DohProvider.mullvad],
+  );
   ref.onDispose(service.close);
   return service;
 });
