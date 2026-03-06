@@ -1,23 +1,51 @@
-# SSHVault
+<p align="center">
+  <img src="assets/images/app_icon.png" alt="ShellVault" width="128" height="128">
+</p>
 
-Secure, self-hosted SSH client with zero-knowledge sync.
+<h1 align="center">ShellVault</h1>
 
-SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts all data client-side before syncing. The server never sees your plaintext credentials, keys, or session data.
+<p align="center">
+  <strong>Zero-Knowledge Encrypted SSH Client</strong><br>
+  Secure, self-hosted, cross-platform terminal and SFTP manager
+</p>
+
+<p align="center">
+  <a href="https://github.com/Kiefer-Networks/sshvault/releases"><img src="https://img.shields.io/github/v/release/Kiefer-Networks/sshvault?style=flat-square" alt="Release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Kiefer-Networks/sshvault?style=flat-square" alt="License"></a>
+  <a href="https://kiefer-networks.de"><img src="https://img.shields.io/badge/by-Kiefer%20Networks-blue?style=flat-square" alt="Kiefer Networks"></a>
+  <a href="https://de.liberapay.com/beli3ver"><img src="https://img.shields.io/badge/donate-Liberapay-yellow?style=flat-square" alt="Donate"></a>
+</p>
+
+---
+
+ShellVault is a cross-platform SSH terminal and SFTP file manager that encrypts all data client-side before syncing. The server never sees your plaintext credentials, keys, or session data.
 
 ## Features
 
-- **SSH Terminal** — Split view, tabs, multiple simultaneous sessions
-- **SFTP File Manager** — Browse, transfer, rename, archive extraction, bookmarks
-- **Zero-Knowledge Encryption** — AES-256-GCM with Argon2id key derivation
-- **Host Key Verification** — Trust On First Use (TOFU) with known hosts management
-- **SSH Key Management** — Ed25519, RSA, ECDSA key generation and import
-- **Jump Hosts** — ProxyJump support for multi-hop connections
-- **Code Snippets** — Save and organize frequently used commands
-- **Server Organization** — Folders, tags, color codes, search
-- **Post-Connect Commands** — Auto-run commands after connection
-- **Biometric Lock** — Fingerprint/Face ID with PIN fallback and duress PIN
-- **Cross-Device Sync** — End-to-end encrypted via self-hosted backend
-- **Multi-Platform** — iOS, Android, macOS, Linux, Windows
+| Feature | Description |
+|---------|-------------|
+| **SSH Terminal** | Split view, tabs, multiple simultaneous sessions |
+| **SFTP File Manager** | Browse, transfer, rename, archive extraction, bookmarks |
+| **Zero-Knowledge Encryption** | AES-256-GCM with Argon2id key derivation |
+| **Host Key Verification** | Trust On First Use (TOFU) with known hosts management |
+| **SSH Key Management** | Ed25519, RSA, ECDSA key generation and import |
+| **SSH Config Import** | Import hosts and keys from `~/.ssh/config` on desktop |
+| **Jump Hosts** | ProxyJump support for multi-hop connections |
+| **Code Snippets** | Save and organize frequently used commands |
+| **Server Organization** | Folders, tags, color codes, search and filtering |
+| **Post-Connect Commands** | Auto-run commands after connection |
+| **Biometric Lock** | Fingerprint/Face ID with PIN fallback and duress PIN |
+| **Cross-Device Sync** | End-to-end encrypted via self-hosted backend |
+
+## Platforms
+
+| Platform | Status |
+|----------|--------|
+| Android | Supported |
+| iOS / iPadOS | Supported |
+| macOS | Supported |
+| Linux | Supported (Flatpak) |
+| Windows | Supported |
 
 ## Security
 
@@ -27,22 +55,24 @@ SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts al
 | Key Derivation | Argon2id (256 MiB, 3 iterations, p=1) |
 | SSH Transport | CSPRNG padding, SHA-256 fingerprints, constant-time MAC |
 | TLS | Certificate pinning (SPKI SHA-256) |
-| DNS | DNS-over-HTTPS with cross-provider verification |
-| Storage | Platform keychain (Keystore/Keychain/libsecret/DPAPI) |
+| DNS | DNS-over-HTTPS with multi-provider cross-verification |
+| Storage | Platform keychain (Keystore / Keychain / libsecret / DPAPI) |
 | PIN | Argon2id hashed, brute-force lockout, duress wipe |
+| Server | Response padding, timing equalization, PoW challenges |
 
 Weak algorithms (DH-group1, CBC ciphers, HMAC-MD5/SHA1, ssh-rsa) are excluded from default negotiation.
 
 ## Architecture
 
 - **Client:** Flutter 3.41+ / Dart 3.11+
-- **Backend:** [shellvault-server](https://github.com/Kiefer-Networks/sshvault-api) — Go 1.24+, PostgreSQL 16+, chi router
-- **State Management:** Riverpod
-- **Local Database:** Drift (SQLite)
-- **Routing:** go_router
+- **Backend:** [shellvault-server](https://github.com/Kiefer-Networks/sshvault-api) — Go 1.26+, PostgreSQL 16+, chi router
+- **State Management:** Riverpod (no setState)
+- **Local Database:** Drift (SQLite) + Platform Secure Storage
+- **Routing:** go_router (declarative)
 - **SSH:** dartssh2 (hardened fork)
+- **Design:** Material 3 on all platforms
 
-Clean Architecture with feature-based folder structure. No `setState()`, no `print()` — structured logging only.
+Clean Architecture with feature-based folder structure. Structured logging only.
 
 ## Building
 
@@ -54,26 +84,20 @@ Clean Architecture with feature-based folder structure. No `setState()`, no `pri
 ### Build
 
 ```bash
-# Install dependencies
 flutter pub get
-
-# Generate code (drift, freezed, riverpod)
 dart run build_runner build --delete-conflicting-outputs
-
-# Generate localizations
 flutter gen-l10n
-
-# Run
 flutter run
+```
 
-# Build Android AAB
-flutter build appbundle --release
+### Release builds
 
-# Build iOS
-flutter build ipa --release
-
-# Build Linux
-flutter build linux --release
+```bash
+flutter build appbundle --release   # Android
+flutter build ipa --release         # iOS
+flutter build linux --release       # Linux
+flutter build macos --release       # macOS
+flutter build windows --release     # Windows
 ```
 
 ### Tests
@@ -92,9 +116,15 @@ See [shellvault-server](https://github.com/Kiefer-Networks/sshvault-api) for set
 
 Available in English, German, and Spanish. Translation files are in `lib/l10n/`.
 
+## Donate
+
+If you find ShellVault useful, consider supporting development:
+
+[Donate via Liberapay](https://de.liberapay.com/beli3ver)
+
 ## License
 
-Copyright (C) 2024-2026 [Kiefer Networks](https://kiefer-network.de)
+Copyright (C) 2024-2026 [Kiefer Networks](https://kiefer-networks.de)
 
 This program is licensed under the [GNU Affero General Public License v3.0](LICENSE).
 

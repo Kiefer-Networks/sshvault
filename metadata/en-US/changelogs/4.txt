@@ -1,0 +1,13 @@
+v1.1.2
+
+- SSH config import now links keys to servers automatically
+- Simplified key management: select keys from dropdown, no more toggle
+- SSH key tile shows linked server names
+- Delete button in SSH key edit form when no servers linked
+- Key list and delete actions update live without app restart
+- DNS-over-HTTPS with multi-provider fallback (Quad9, Cloudflare)
+- Certificate pinning integrated at socket level
+- Desktop: SSH config import (~/.ssh/config) with key import
+- Linux: app icon in GNOME window switcher
+- Sync controls hidden before login
+- Various bug fixes and UI improvements

@@ -1,0 +1,13 @@
+v1.1.2
+
+- SSH-Config-Import verknuepft Schluessel jetzt automatisch mit Servern
+- Vereinfachte Schluesselverwaltung: Dropdown-Auswahl, kein Toggle mehr
+- SSH-Schluessel-Kachel zeigt verknuepfte Servernamen
+- Loeschen-Button im Schluessel-Bearbeitungsformular
+- Schluessel-Liste aktualisiert sich live ohne Neustart
+- DNS-over-HTTPS mit Multi-Provider-Fallback (Quad9, Cloudflare)
+- Zertifikats-Pinning auf Socket-Ebene integriert
+- Desktop: SSH-Config-Import (~/.ssh/config) mit Schluessel-Import
+- Linux: App-Icon im GNOME-Fensterwechsler
+- Sync-Steuerung erst nach Anmeldung sichtbar
+- Diverse Fehlerbehebungen und UI-Verbesserungen
