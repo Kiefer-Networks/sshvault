@@ -135,8 +135,8 @@ jobs:
         run: |
           mkdir -p linux/flatpak-dist
           cp -r build/linux/x64/release/bundle/* linux/flatpak-dist/
-          cp linux/de.kiefer_networks.shellvault.desktop linux/flatpak-dist/
-          cp linux/de.kiefer_networks.shellvault.metainfo.xml linux/flatpak-dist/
+          cp linux/de.kiefer_networks.sshvault.desktop linux/flatpak-dist/
+          cp linux/de.kiefer_networks.sshvault.metainfo.xml linux/flatpak-dist/
           mkdir -p linux/flatpak-dist/icons
           cp linux/icons/*.png linux/flatpak-dist/icons/
 
@@ -145,8 +145,8 @@ jobs:
           VERSION: ${{ needs.preflight.outputs.version }}
         run: |
           cd linux
-          flatpak-builder --force-clean --repo=repo build-dir de.kiefer_networks.shellvault.yml
-          flatpak build-bundle repo "ShellVault-${VERSION}.flatpak" de.kiefer_networks.shellvault
+          flatpak-builder --force-clean --repo=repo build-dir de.kiefer_networks.sshvault.yml
+          flatpak build-bundle repo "ShellVault-${VERSION}.flatpak" de.kiefer_networks.sshvault
           mv "ShellVault-${VERSION}.flatpak" ../
 
       - uses: actions/upload-artifact@v4
@@ -263,7 +263,7 @@ jobs:
           **Linux Flatpak:**
           ```bash
           flatpak install ShellVault-*.flatpak
-          flatpak run de.kiefer_networks.shellvault
+          flatpak run de.kiefer_networks.sshvault
           ```
           NOTES
 
