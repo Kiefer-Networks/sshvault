@@ -45,7 +45,7 @@ dependencies:
   path_provider: ^2.1.5
   file_picker: ^10.3.10
   share_plus: ^12.0.1
-  flutter_local_notifications: ^20.1.0
+  flutter_local_notifications: ^21.0.0
   url_launcher: ^6.3.1
   image_picker: ^1.1.2
 
@@ -84,7 +84,7 @@ dev_dependencies:
   mocktail: ^1.0.4
 
   # Code Generation
-  build_runner: 2.11.1
+  build_runner: ^2.12.2
   freezed: ^3.2.5
   json_serializable: ^6.13.0
   riverpod_generator: ^4.0.3
