@@ -2,6 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/connection/domain/repositories/export_import_repository.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
 
+/// Sentinel value indicating a successful import.
+/// The UI layer maps this to the corresponding l10n string.
+const importSuccessfulKey = '__import_successful__';
+
 class ExportImportNotifier extends Notifier<AsyncValue<String?>> {
   @override
   AsyncValue<String?> build() => const AsyncData(null);
@@ -40,7 +44,7 @@ class ExportImportNotifier extends Notifier<AsyncValue<String?>> {
     );
     return result.fold(
       onSuccess: (importResult) {
-        state = const AsyncData('Import successful');
+        state = const AsyncData(importSuccessfulKey);
         return importResult;
       },
       onFailure: (failure) {

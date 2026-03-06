@@ -2348,4 +2348,18 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pageNotFound => 'Página no encontrada';
+
+  @override
+  String get connectionTestSuccess => 'Conexión exitosa';
+
+  @override
+  String connectionTestFailed(String message) {
+    return 'Conexión fallida: $message';
+  }
+
+  @override
+  String get purchaseFailed => 'Compra fallida';
+
+  @override
+  String get importSuccessful => 'Importación exitosa';
 }

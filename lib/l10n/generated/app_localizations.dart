@@ -4281,6 +4281,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Page not found'**
   String get pageNotFound;
+
+  /// No description provided for @connectionTestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection successful'**
+  String get connectionTestSuccess;
+
+  /// No description provided for @connectionTestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection failed: {message}'**
+  String connectionTestFailed(String message);
+
+  /// No description provided for @purchaseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase failed'**
+  String get purchaseFailed;
+
+  /// No description provided for @importSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Import successful'**
+  String get importSuccessful;
 }
 
 class _AppLocalizationsDelegate

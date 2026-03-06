@@ -825,5 +825,11 @@
 
   "sectionDnsOverHttps": "DNS-over-HTTPS",
 
-  "pageNotFound": "Página no encontrada"
+  "pageNotFound": "Página no encontrada",
+
+  "connectionTestSuccess": "Conexión exitosa",
+  "connectionTestFailed": "Conexión fallida: {message}",
+  "@connectionTestFailed": { "placeholders": { "message": { "type": "String" } } },
+  "purchaseFailed": "Compra fallida",
+  "importSuccessful": "Importación exitosa"
 }

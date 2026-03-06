@@ -147,6 +147,8 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     final url = _urlController.text.trim();
     if (url.isEmpty) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     ref.read(_connectionTestProvider.notifier).state =
         const _ConnectionTestState(testing: true);
 
@@ -158,8 +160,8 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
           if (mounted) {
             ref
                 .read(_connectionTestProvider.notifier)
-                .state = const _ConnectionTestState(
-              result: 'Connection successful',
+                .state = _ConnectionTestState(
+              result: l10n.connectionTestSuccess,
               success: true,
             );
           }
@@ -169,7 +171,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
             ref
                 .read(_connectionTestProvider.notifier)
                 .state = _ConnectionTestState(
-              result: 'Connection failed: ${f.message}',
+              result: l10n.connectionTestFailed(f.message),
               success: false,
             );
           }
@@ -178,7 +180,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     } catch (e) {
       if (mounted) {
         ref.read(_connectionTestProvider.notifier).state = _ConnectionTestState(
-          result: 'Connection failed: $e',
+          result: l10n.connectionTestFailed(e.toString()),
           success: false,
         );
       }

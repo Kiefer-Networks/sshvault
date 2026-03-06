@@ -2336,4 +2336,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pageNotFound => 'Page not found';
+
+  @override
+  String get connectionTestSuccess => 'Connection successful';
+
+  @override
+  String connectionTestFailed(String message) {
+    return 'Connection failed: $message';
+  }
+
+  @override
+  String get purchaseFailed => 'Purchase failed';
+
+  @override
+  String get importSuccessful => 'Import successful';
 }

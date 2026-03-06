@@ -387,7 +387,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                       const SizedBox(height: 8),
                       Text(
                         ref.watch(subscriptionPurchaseErrorProvider) ??
-                            'Purchase failed',
+                            l10n.purchaseFailed,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.error,
                         ),

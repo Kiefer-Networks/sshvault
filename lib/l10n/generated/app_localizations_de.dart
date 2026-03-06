@@ -2345,4 +2345,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get pageNotFound => 'Seite nicht gefunden';
+
+  @override
+  String get connectionTestSuccess => 'Verbindung erfolgreich';
+
+  @override
+  String connectionTestFailed(String message) {
+    return 'Verbindung fehlgeschlagen: $message';
+  }
+
+  @override
+  String get purchaseFailed => 'Kauf fehlgeschlagen';
+
+  @override
+  String get importSuccessful => 'Import erfolgreich';
 }

@@ -112,7 +112,9 @@ class ExportSettingsScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    exportState.value!,
+                    exportState.value == importSuccessfulKey
+                        ? l10n.importSuccessful
+                        : exportState.value!,
                     style: TextStyle(
                       color: theme.colorScheme.onTertiaryContainer,
                     ),
