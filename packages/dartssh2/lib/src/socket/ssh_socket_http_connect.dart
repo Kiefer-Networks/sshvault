@@ -34,7 +34,8 @@ class HttpConnectSSHSocket implements SSHSocket {
       ..write('Host: $targetHost:$targetPort\r\n');
 
     if (username != null && username.isNotEmpty) {
-      final credentials = base64Encode(utf8.encode('$username:${password ?? ''}'));
+      final credentials =
+          base64Encode(utf8.encode('$username:${password ?? ''}'));
       buffer.write('Proxy-Authorization: Basic $credentials\r\n');
     }
 
@@ -57,9 +58,7 @@ class HttpConnectSSHSocket implements SSHSocket {
           // Check for 200 status
           final statusLine = response.split('\r\n').first;
           final parts = statusLine.split(' ');
-          final statusCode = parts.length > 1
-              ? int.tryParse(parts[1])
-              : null;
+          final statusCode = parts.length > 1 ? int.tryParse(parts[1]) : null;
           if (statusCode == 200) {
             completer.complete();
           } else {
