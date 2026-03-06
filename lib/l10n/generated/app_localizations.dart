@@ -712,6 +712,24 @@ abstract class AppLocalizations {
   /// **'Add Manually'**
   String get sshConfigAddManually;
 
+  /// No description provided for @sshConfigImportAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Import SSH Config again?'**
+  String get sshConfigImportAgain;
+
+  /// No description provided for @sshConfigImportKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Import SSH keys referenced by selected hosts?'**
+  String get sshConfigImportKeys;
+
+  /// No description provided for @sshConfigKeysImported.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} SSH key(s) imported'**
+  String sshConfigKeysImported(int count);
+
   /// No description provided for @serverDuplicated.
   ///
   /// In en, this message translates to:

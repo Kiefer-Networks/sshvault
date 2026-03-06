@@ -16,6 +16,9 @@ import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
 import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
+import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
+import 'package:sshvault/core/crypto/ssh_key_type.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
@@ -28,6 +31,8 @@ import 'package:sshvault/features/connection/presentation/providers/repository_p
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 
+final _sshConfigImportedProvider = StateProvider<bool>((ref) => false);
+
 final _hostFolderExpandedProvider = StateProvider.autoDispose
     .family<bool, String>((ref, key) => true);
 
@@ -38,7 +43,44 @@ class ServerListScreen extends ConsumerWidget {
       Platform.isLinux || Platform.isMacOS || Platform.isWindows;
 
   void _onAddServer(BuildContext context, WidgetRef ref) {
-    if (_isDesktop && SshConfigParser.configExists) {
+    if (!_isDesktop || !SshConfigParser.configExists) {
+      context.push('/server/new');
+      return;
+    }
+
+    final alreadyImported = ref.read(_sshConfigImportedProvider);
+    if (alreadyImported) {
+      _askReimportOrManual(context, ref);
+    } else {
+      _showSshConfigImportDialog(context, ref);
+    }
+  }
+
+  Future<void> _askReimportOrManual(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.sshConfigImportTitle),
+        content: Text(l10n.sshConfigImportAgain),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.sshConfigAddManually),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.sshConfigImportButton),
+          ),
+        ],
+      ),
+    );
+
+    if (!context.mounted) return;
+    if (result == true) {
       _showSshConfigImportDialog(context, ref);
     } else {
       context.push('/server/new');
@@ -89,7 +131,8 @@ class ServerListScreen extends ConsumerWidget {
                               setDialogState(() => selected[i] = v ?? false),
                           title: Text(e.name),
                           subtitle: Text(
-                            '${e.username}@${e.hostname}:${e.port}',
+                            '${e.username}@${e.hostname}:${e.port}'
+                            '${e.identityFile != null ? '  🔑' : ''}',
                           ),
                           dense: true,
                           controlAffinity: ListTileControlAffinity.leading,
@@ -109,7 +152,9 @@ class ServerListScreen extends ConsumerWidget {
                 child: Text(l10n.sshConfigAddManually),
               ),
               FilledButton(
-                onPressed: selectedCount > 0 ? () => Navigator.pop(ctx, true) : null,
+                onPressed: selectedCount > 0
+                    ? () => Navigator.pop(ctx, true)
+                    : null,
                 child: Text(l10n.sshConfigImportButton),
               ),
             ],
@@ -125,8 +170,44 @@ class ServerListScreen extends ConsumerWidget {
       if (selected[i]) toImport.add(entries[i]);
     }
 
+    // Check if any selected entries reference identity files
+    final entriesWithKeys =
+        toImport.where((e) => e.identityFile != null).toList();
+    var importKeys = false;
+    if (entriesWithKeys.isNotEmpty && context.mounted) {
+      importKeys = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(l10n.sshConfigImportKeys),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final e in entriesWithKeys)
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.vpn_key_outlined, size: 20),
+                      title: Text(e.name),
+                      subtitle: Text(e.identityFile!),
+                    ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text(l10n.cancel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text(l10n.sshConfigImportButton),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+    }
+
     var importedCount = 0;
-    final notifier = ref.read(serverListProvider.notifier);
+    final serverNotifier = ref.read(serverListProvider.notifier);
     for (final entry in toImport) {
       try {
         final server = ServerEntity(
@@ -142,19 +223,94 @@ class ServerListScreen extends ConsumerWidget {
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
-        await notifier.createServer(server, const ServerCredentials());
+        await serverNotifier.createServer(server, const ServerCredentials());
         importedCount++;
       } catch (_) {
-        // Skip entries that fail (e.g. duplicates)
+        // Skip entries that fail
       }
     }
 
-    if (context.mounted && importedCount > 0) {
-      AdaptiveNotification.show(
-        context,
-        message: l10n.sshConfigImportSuccess(importedCount),
-      );
+    // Import SSH keys if requested
+    var keysImported = 0;
+    if (importKeys) {
+      keysImported = await _importSshKeys(ref, entriesWithKeys);
     }
+
+    // Mark as imported and refresh providers
+    ref.read(_sshConfigImportedProvider.notifier).state = true;
+    ref.invalidate(serverListProvider);
+    ref.invalidate(folderGroupedServersProvider);
+
+    if (context.mounted) {
+      final messages = <String>[];
+      if (importedCount > 0) {
+        messages.add(l10n.sshConfigImportSuccess(importedCount));
+      }
+      if (keysImported > 0) {
+        messages.add(l10n.sshConfigKeysImported(keysImported));
+      }
+      if (messages.isNotEmpty) {
+        AdaptiveNotification.show(context, message: messages.join('. '));
+      }
+    }
+  }
+
+  static Future<int> _importSshKeys(
+    WidgetRef ref,
+    List<SshConfigEntry> entries,
+  ) async {
+    final keyNotifier = ref.read(sshKeyListProvider.notifier);
+    final home = Platform.environment['HOME'] ??
+        Platform.environment['USERPROFILE'] ??
+        '';
+    var count = 0;
+
+    for (final entry in entries) {
+      try {
+        var path = entry.identityFile!;
+        if (path.startsWith('~/')) {
+          path = '$home${path.substring(1)}';
+        }
+        final keyFile = File(path);
+        if (!keyFile.existsSync()) continue;
+
+        final privateKey = await keyFile.readAsString();
+        final keyType = _detectKeyType(privateKey);
+        final keyName = path.split(Platform.pathSeparator).last;
+
+        await keyNotifier.createSshKey(
+          SshKeyEntity(
+            id: '',
+            name: '${entry.name} ($keyName)',
+            keyType: keyType,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+          privateKey: privateKey,
+        );
+        count++;
+      } catch (_) {
+        // Skip keys that fail to read or import
+      }
+    }
+    return count;
+  }
+
+  static SshKeyType _detectKeyType(String privateKey) {
+    if (privateKey.contains('BEGIN OPENSSH PRIVATE KEY')) {
+      // Heuristic: check the key data for type hints
+      if (privateKey.contains('ssh-ed25519')) return SshKeyType.ed25519;
+      if (privateKey.contains('ecdsa-sha2')) return SshKeyType.ecdsa256;
+      return SshKeyType.ed25519; // Modern default
+    }
+    if (privateKey.contains('BEGIN RSA PRIVATE KEY') ||
+        privateKey.contains('BEGIN PRIVATE KEY')) {
+      return SshKeyType.rsa;
+    }
+    if (privateKey.contains('BEGIN EC PRIVATE KEY')) {
+      return SshKeyType.ecdsa256;
+    }
+    return SshKeyType.ed25519;
   }
 
   bool _hasActiveFilter(ServerFilter filter) {

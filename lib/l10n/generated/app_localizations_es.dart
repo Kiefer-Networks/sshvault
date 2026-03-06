@@ -339,6 +339,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sshConfigAddManually => 'Agregar manualmente';
 
   @override
+  String get sshConfigImportAgain => '¿Importar configuración SSH de nuevo?';
+
+  @override
+  String get sshConfigImportKeys =>
+      '¿Importar las claves SSH referenciadas por los hosts seleccionados?';
+
+  @override
+  String sshConfigKeysImported(int count) {
+    return '$count clave(s) SSH importada(s)';
+  }
+
+  @override
   String get serverDuplicated => 'Servidor duplicado';
 
   @override

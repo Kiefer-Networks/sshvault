@@ -125,6 +125,14 @@
   "sshConfigNotFound": "No SSH config file found",
   "sshConfigEmpty": "No hosts found in SSH config",
   "sshConfigAddManually": "Add Manually",
+  "sshConfigImportAgain": "Import SSH Config again?",
+  "sshConfigImportKeys": "Import SSH keys referenced by selected hosts?",
+  "sshConfigKeysImported": "{count} SSH key(s) imported",
+  "@sshConfigKeysImported": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "serverDuplicated": "Server duplicated",
   "serverDeleteTitle": "Delete Server",
   "serverDeleteMessage": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",

@@ -121,6 +121,14 @@
   "sshConfigNotFound": "No se encontró el archivo de configuración SSH",
   "sshConfigEmpty": "No se encontraron hosts en la configuración SSH",
   "sshConfigAddManually": "Agregar manualmente",
+  "sshConfigImportAgain": "¿Importar configuración SSH de nuevo?",
+  "sshConfigImportKeys": "¿Importar las claves SSH referenciadas por los hosts seleccionados?",
+  "sshConfigKeysImported": "{count} clave(s) SSH importada(s)",
+  "@sshConfigKeysImported": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "serverDuplicated": "Servidor duplicado",
   "serverDeleteTitle": "Eliminar servidor",
   "serverDeleteMessage": "¿Estás seguro de que deseas eliminar \"{name}\"? Esta acción no se puede deshacer.",
