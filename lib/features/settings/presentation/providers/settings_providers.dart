@@ -175,12 +175,17 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       secretKey: crypto.SecretKey(utf8.encode(pin)),
       nonce: salt,
     );
-    final hashBytes = await secretKey.extractBytes();
+    final hashBytes = Uint8List.fromList(await secretKey.extractBytes());
 
-    return _PinHashResult(
+    final result = _PinHashResult(
       hash: base64Encode(hashBytes),
       salt: base64Encode(salt),
     );
+
+    CryptoUtils.zeroMemory(salt);
+    CryptoUtils.zeroMemory(hashBytes);
+
+    return result;
   }
 
   /// Verifies a PIN against stored hash and salt with brute-force protection.

@@ -74,7 +74,7 @@ class NonceCounter {
         await _savePrefix(keyId, prefix);
       }
 
-      // Load, increment, and save counter
+      // Load and validate counter
       final counter = await _loadCounter(keyId);
       if (counter >= _maxCounter) {
         _log.error(
@@ -83,10 +83,15 @@ class NonceCounter {
         );
         throw StateError('Nonce counter exhausted for key $keyId');
       }
+
+      // Write-ahead: persist the incremented counter BEFORE building
+      // the nonce. If saving fails, the nonce is never returned,
+      // preventing nonce reuse on storage errors.
       final nextCounter = counter + 1;
       await _saveCounter(keyId, nextCounter);
 
-      // Build nonce: prefix (4) + counter (8) = 12 bytes
+      // Build nonce from the already-persisted counter value:
+      // prefix (4) + counter (8) = 12 bytes
       final nonce = Uint8List(AppConstants.aesNonceLength);
       nonce.setRange(0, 4, prefix);
       _writeUint64BE(nonce, 4, nextCounter);

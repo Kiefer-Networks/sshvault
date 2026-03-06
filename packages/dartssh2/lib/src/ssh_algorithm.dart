@@ -51,9 +51,8 @@ class SSHAlgorithms {
       SSHKexType.nistp256,
       SSHKexType.dhGexSha256,
       SSHKexType.dh14Sha256,
-      SSHKexType.dh14Sha1,
       SSHKexType.dhGexSha1,
-      SSHKexType.dh1Sha1,
+      SSHKexType.dh14Sha1,
     ],
     this.hostkey = const [
       SSHHostkeyType.ed25519,
@@ -71,14 +70,13 @@ class SSHAlgorithms {
       SSHCipherType.aes128cbc,
     ],
     this.mac = const [
-      SSHMacType.hmacSha256_96,
-      SSHMacType.hmacSha512_96,
       SSHMacType.hmacSha256Etm,
       SSHMacType.hmacSha512Etm,
-      SSHMacType.hmacSha1,
       SSHMacType.hmacSha256,
       SSHMacType.hmacSha512,
-      SSHMacType.hmacMd5,
+      SSHMacType.hmacSha256_96,
+      SSHMacType.hmacSha512_96,
+      SSHMacType.hmacSha1,
     ],
   });
 }

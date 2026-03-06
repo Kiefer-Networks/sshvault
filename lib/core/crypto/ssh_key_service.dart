@@ -138,6 +138,10 @@ class SshKeyService {
   // RSA
   // ---------------------------------------------------------------------------
 
+  // NOTE: RSA private key material uses Dart BigInt internally, which is
+  // immutable and cannot be reliably zeroed from memory. This is a known
+  // limitation of the Dart runtime — there is no safe way to scrub BigInt
+  // values after use.
   Result<SshKeyPair> _generateRsa(SshKeyOptions options) {
     _ensureInitialized();
     final bits = options.effectiveBits;
@@ -180,6 +184,9 @@ class SshKeyService {
   // ECDSA
   // ---------------------------------------------------------------------------
 
+  // NOTE: ECDSA private key material uses Dart BigInt internally, which is
+  // immutable and cannot be reliably zeroed from memory. This is a known
+  // limitation of the Dart runtime.
   Result<SshKeyPair> _generateEcdsa(SshKeyOptions options) {
     _ensureInitialized();
 
@@ -292,22 +299,27 @@ class SshKeyService {
     final publicKeyBytes = Uint8List.fromList(publicKey.bytes);
     final privateKeyBytes = Uint8List.fromList(privateKeyData);
 
-    final result = SshKeyPair(
-      privateKey: _ed25519ToOpenSshPrivateKey(
-        privateKeyBytes,
-        publicKeyBytes,
-        options.comment,
-        passphrase: options.passphrase,
-      ),
-      publicKey: _ed25519ToOpenSshPublicKey(publicKeyBytes, options.comment),
-      type: SshKeyType.ed25519,
-      comment: options.comment,
-    );
+    // Zero the original List<int> from extractPrivateKeyBytes
+    final privateKeyDataUint8 = Uint8List.fromList(privateKeyData);
 
-    // Zero private key material from memory
-    CryptoUtils.zeroMemory(privateKeyBytes);
+    try {
+      final result = SshKeyPair(
+        privateKey: _ed25519ToOpenSshPrivateKey(
+          privateKeyBytes,
+          publicKeyBytes,
+          options.comment,
+          passphrase: options.passphrase,
+        ),
+        publicKey: _ed25519ToOpenSshPublicKey(publicKeyBytes, options.comment),
+        type: SshKeyType.ed25519,
+        comment: options.comment,
+      );
 
-    return Success(result);
+      return Success(result);
+    } finally {
+      CryptoUtils.zeroMemory(privateKeyBytes);
+      CryptoUtils.zeroMemory(privateKeyDataUint8);
+    }
   }
 
   Future<Result<String>> _extractOpenSshPublicKey(
@@ -691,6 +703,7 @@ class SshKeyService {
     fullPrivKey.setRange(32, 64, publicKey);
     privSection.add(_uint32Bytes(fullPrivKey.length));
     privSection.add(fullPrivKey);
+    CryptoUtils.zeroMemory(fullPrivKey);
     // Comment
     final commentBytes = utf8.encode(comment);
     privSection.add(_uint32Bytes(commentBytes.length));
@@ -728,11 +741,16 @@ class SshKeyService {
 
       // bcrypt_pbkdf: derive 48 bytes (32 key + 16 IV)
       final derived = _bcryptPbkdf(utf8.encode(passphrase), salt, 48, rounds);
-      final aesKey = derived.sublist(0, 32);
-      final iv = derived.sublist(32, 48);
+      final aesKey = Uint8List.fromList(derived.sublist(0, 32));
+      final iv = Uint8List.fromList(derived.sublist(32, 48));
 
       // AES-256-CTR encrypt
       privSectionBytes = _aesCtrEncrypt(aesKey, iv, privSectionBytes);
+
+      // Zero derived key material
+      CryptoUtils.zeroMemory(derived);
+      CryptoUtils.zeroMemory(aesKey);
+      CryptoUtils.zeroMemory(iv);
 
       // KDF options: salt (string) + rounds (uint32)
       final kdfOptBuilder = BytesBuilder();

@@ -121,12 +121,13 @@ class EncryptionService {
     final sw = Stopwatch()..start();
     _log.info('Crypto', 'Encrypting data for export');
 
+    Uint8List? plaintext;
     try {
       final salt = CryptoUtils.secureRandomBytes(AppConstants.saltLength);
       final key = await _deriveKey(password, salt);
       _log.debug('Crypto', 'Key derived in ${sw.elapsedMilliseconds}ms');
 
-      final plaintext = Uint8List.fromList(utf8.encode(jsonData));
+      plaintext = Uint8List.fromList(utf8.encode(jsonData));
       final checksum = _sha256Hex(plaintext);
       final payload = await _encrypt(plaintext, key, keyId: 'export');
 
@@ -154,6 +155,8 @@ class EncryptionService {
         'Encryption failed after ${sw.elapsedMilliseconds}ms: $e',
       );
       return Err(CryptoFailure('Encryption failed', cause: e));
+    } finally {
+      if (plaintext != null) CryptoUtils.zeroMemory(plaintext);
     }
   }
 
@@ -164,6 +167,7 @@ class EncryptionService {
     final sw = Stopwatch()..start();
     _log.info('Crypto', 'Decrypting envelope v${envelope.version}');
 
+    Uint8List? plaintext;
     try {
       final salt = envelope.saltBytes;
       final key = await _deriveKey(
@@ -173,11 +177,7 @@ class EncryptionService {
       );
       _log.debug('Crypto', 'Key derived in ${sw.elapsedMilliseconds}ms');
 
-      final plaintext = _decrypt(
-        envelope.encryptedBytes,
-        key,
-        envelope.nonceBytes,
-      );
+      plaintext = _decrypt(envelope.encryptedBytes, key, envelope.nonceBytes);
 
       CryptoUtils.zeroMemory(key);
 
@@ -201,7 +201,10 @@ class EncryptionService {
         'Crypto',
         'Decryption completed in ${sw.elapsedMilliseconds}ms',
       );
-      return Success(utf8.decode(plaintext));
+      // Note: The resulting Dart String cannot be zeroed, but the
+      // Uint8List plaintext is zeroed in the finally block below.
+      final result = utf8.decode(plaintext);
+      return Success(result);
     } on ArgumentError catch (e) {
       sw.stop();
       _log.error(
@@ -219,6 +222,8 @@ class EncryptionService {
         'Decryption failed after ${sw.elapsedMilliseconds}ms: $e',
       );
       return Err(CryptoFailure('Decryption failed', cause: e));
+    } finally {
+      if (plaintext != null) CryptoUtils.zeroMemory(plaintext);
     }
   }
 }
