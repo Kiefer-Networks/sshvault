@@ -149,10 +149,7 @@ class _KnownHostTile extends StatelessWidget {
       child: ListTile(
         leading: const Icon(Icons.fingerprint),
         title: Text(
-          AppLocalizations.of(context)!.hostPortLabel(
-            host.hostname,
-            host.port,
-          ),
+          AppLocalizations.of(context)!.hostPortLabel(host.hostname, host.port),
         ),
         subtitle: Text(
           '${host.keyType}  $truncatedFp',

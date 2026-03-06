@@ -21,7 +21,13 @@ abstract class SftpEntry with _$SftpEntry {
   }) = _SftpEntry;
 
   static const _archiveExtensions = {
-    'zip', 'tar', 'gz', 'tgz', 'bz2', 'tbz2', '7z',
+    'zip',
+    'tar',
+    'gz',
+    'tgz',
+    'bz2',
+    'tbz2',
+    '7z',
   };
 
   bool get isArchive {

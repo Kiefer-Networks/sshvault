@@ -163,7 +163,8 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
   @override
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(settingsProvider);
-    final themeMode = switch (settingsAsync.value?.themeMode ?? AppThemeMode.system) {
+    final themeMode = switch (settingsAsync.value?.themeMode ??
+        AppThemeMode.system) {
       AppThemeMode.light => ThemeMode.light,
       AppThemeMode.dark => ThemeMode.dark,
       AppThemeMode.system => ThemeMode.system,
