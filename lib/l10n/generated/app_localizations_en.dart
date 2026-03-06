@@ -2313,4 +2313,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seconds => 'Seconds';
+
+  @override
+  String get heartbeatLostMessage =>
+      'The server could not be reached after multiple attempts. For your security, the session has been terminated.';
+
+  @override
+  String get attestationFailedTitle => 'Server Verification Failed';
+
+  @override
+  String get attestationFailedMessage =>
+      'The server could not be verified as a legitimate ShellVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.';
+
+  @override
+  String get sectionLinks => 'Links';
+
+  @override
+  String get sectionDeveloper => 'Developer';
+
+  @override
+  String get sectionDnsOverHttps => 'DNS-over-HTTPS';
+
+  @override
+  String get pageNotFound => 'Page not found';
 }

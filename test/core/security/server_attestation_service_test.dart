@@ -34,13 +34,11 @@ void main() {
   }) async {
     final sid = serverIdOverride ?? serverId;
     final ts =
-        timestampOverride ?? DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
+        timestampOverride ??
+        DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
 
     final message = '$sid|$ts|$apiVersion|$nonce';
-    final sig = await ed25519.sign(
-      utf8.encode(message),
-      keyPair: keyPair,
-    );
+    final sig = await ed25519.sign(utf8.encode(message), keyPair: keyPair);
 
     return {
       'server_id': sid,
@@ -86,8 +84,9 @@ void main() {
     test('accepts timestamp within allowed skew', () async {
       final slightlyOldTimestamp =
           DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000 - 60;
-      final json =
-          await buildValidAttestation(timestampOverride: slightlyOldTimestamp);
+      final json = await buildValidAttestation(
+        timestampOverride: slightlyOldTimestamp,
+      );
       final result = await sut.verify(json);
       expect(result.isSuccess, isTrue);
     });
@@ -163,7 +162,10 @@ void main() {
       );
 
       final json = await buildValidAttestation();
-      final result = await service.verify(json, expectedNonce: 'test-nonce-123');
+      final result = await service.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isSuccess, isTrue);
     });
   });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:shellvault/core/routing/app_shell.dart';
 import 'package:shellvault/features/account/presentation/screens/audit_log_screen.dart';
 import 'package:shellvault/features/account/presentation/screens/server_config_screen.dart';
@@ -272,7 +273,11 @@ abstract final class AppRouter {
         builder: (context, state) => const AuditLogScreen(),
       ),
     ],
-    errorBuilder: (context, state) =>
-        Scaffold(body: Center(child: Text('Page not found: ${state.uri}'))),
+    errorBuilder: (context, state) {
+      final l10n = AppLocalizations.of(context);
+      return Scaffold(
+        body: Center(child: Text(l10n?.pageNotFound ?? 'Page not found')),
+      );
+    },
   );
 }

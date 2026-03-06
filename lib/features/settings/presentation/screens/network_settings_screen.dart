@@ -38,7 +38,7 @@ class NetworkSettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             children: [
               const SizedBox(height: 8),
-              const SectionHeader(title: 'DNS-over-HTTPS'),
+              SectionHeader(title: l10n.sectionDnsOverHttps),
 
               // Description card
               SectionCard(

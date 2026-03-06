@@ -814,5 +814,16 @@
   "reportAndDisconnect": "Melden & Trennen",
   "continueAnyway": "Trotzdem fortfahren",
   "insertSnippet": "Snippet einfügen",
-  "seconds": "Sekunden"
+  "seconds": "Sekunden",
+
+  "heartbeatLostMessage": "Der Server konnte nach mehreren Versuchen nicht erreicht werden. Zu deiner Sicherheit wurde die Sitzung beendet.",
+  "attestationFailedTitle": "Server-Verifizierung fehlgeschlagen",
+  "attestationFailedMessage": "Der Server konnte nicht als legitimes ShellVault-Backend verifiziert werden. Dies kann auf einen Man-in-the-Middle-Angriff oder einen falsch konfigurierten Server hindeuten.",
+
+  "sectionLinks": "Links",
+  "sectionDeveloper": "Entwickler",
+
+  "sectionDnsOverHttps": "DNS-over-HTTPS",
+
+  "pageNotFound": "Seite nicht gefunden"
 }

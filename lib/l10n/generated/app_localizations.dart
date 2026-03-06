@@ -4239,6 +4239,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Seconds'**
   String get seconds;
+
+  /// No description provided for @heartbeatLostMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The server could not be reached after multiple attempts. For your security, the session has been terminated.'**
+  String get heartbeatLostMessage;
+
+  /// No description provided for @attestationFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Verification Failed'**
+  String get attestationFailedTitle;
+
+  /// No description provided for @attestationFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The server could not be verified as a legitimate ShellVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.'**
+  String get attestationFailedMessage;
+
+  /// No description provided for @sectionLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Links'**
+  String get sectionLinks;
+
+  /// No description provided for @sectionDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get sectionDeveloper;
+
+  /// No description provided for @sectionDnsOverHttps.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS-over-HTTPS'**
+  String get sectionDnsOverHttps;
+
+  /// No description provided for @pageNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Page not found'**
+  String get pageNotFound;
 }
 
 class _AppLocalizationsDelegate

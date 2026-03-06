@@ -840,5 +840,16 @@
   "reportAndDisconnect": "Report & Disconnect",
   "continueAnyway": "Continue Anyway",
   "insertSnippet": "Insert Snippet",
-  "seconds": "Seconds"
+  "seconds": "Seconds",
+
+  "heartbeatLostMessage": "The server could not be reached after multiple attempts. For your security, the session has been terminated.",
+  "attestationFailedTitle": "Server Verification Failed",
+  "attestationFailedMessage": "The server could not be verified as a legitimate ShellVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.",
+
+  "sectionLinks": "Links",
+  "sectionDeveloper": "Developer",
+
+  "sectionDnsOverHttps": "DNS-over-HTTPS",
+
+  "pageNotFound": "Page not found"
 }

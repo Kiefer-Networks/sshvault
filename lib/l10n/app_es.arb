@@ -814,5 +814,16 @@
   "reportAndDisconnect": "Reportar y desconectar",
   "continueAnyway": "Continuar de todos modos",
   "insertSnippet": "Insertar snippet",
-  "seconds": "Segundos"
+  "seconds": "Segundos",
+
+  "heartbeatLostMessage": "No se pudo contactar al servidor tras múltiples intentos. Por tu seguridad, la sesión ha sido terminada.",
+  "attestationFailedTitle": "Verificación del servidor fallida",
+  "attestationFailedMessage": "No se pudo verificar el servidor como un backend legítimo de ShellVault. Esto puede indicar un ataque de intermediario o un servidor mal configurado.",
+
+  "sectionLinks": "Enlaces",
+  "sectionDeveloper": "Desarrollador",
+
+  "sectionDnsOverHttps": "DNS-over-HTTPS",
+
+  "pageNotFound": "Página no encontrada"
 }

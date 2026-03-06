@@ -69,7 +69,7 @@ class AboutScreen extends ConsumerWidget {
           const SizedBox(height: 32),
 
           // Links
-          const SectionHeader(title: 'Links'),
+          SectionHeader(title: l10n.sectionLinks),
           SettingsGroupCard(
             children: [
               SettingsTile(
@@ -129,7 +129,7 @@ class AboutScreen extends ConsumerWidget {
           const SizedBox(height: 16),
 
           // Developer
-          const SectionHeader(title: 'Developer'),
+          SectionHeader(title: l10n.sectionDeveloper),
           SettingsGroupCard(
             children: [
               SettingsTile(

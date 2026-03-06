@@ -2322,4 +2322,27 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get seconds => 'Sekunden';
+
+  @override
+  String get heartbeatLostMessage =>
+      'Der Server konnte nach mehreren Versuchen nicht erreicht werden. Zu deiner Sicherheit wurde die Sitzung beendet.';
+
+  @override
+  String get attestationFailedTitle => 'Server-Verifizierung fehlgeschlagen';
+
+  @override
+  String get attestationFailedMessage =>
+      'Der Server konnte nicht als legitimes ShellVault-Backend verifiziert werden. Dies kann auf einen Man-in-the-Middle-Angriff oder einen falsch konfigurierten Server hindeuten.';
+
+  @override
+  String get sectionLinks => 'Links';
+
+  @override
+  String get sectionDeveloper => 'Entwickler';
+
+  @override
+  String get sectionDnsOverHttps => 'DNS-over-HTTPS';
+
+  @override
+  String get pageNotFound => 'Seite nicht gefunden';
 }

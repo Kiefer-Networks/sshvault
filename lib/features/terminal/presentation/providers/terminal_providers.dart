@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 import 'package:xterm/xterm.dart';
 
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/routing/app_router.dart';
@@ -51,6 +52,8 @@ final sessionManagerProvider =
 
 class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
   static const _uuid = Uuid();
+  // Transient status replaced once server name loads; no BuildContext available.
+  static const _connectingPlaceholder = 'Connecting...';
 
   @override
   List<SshSessionEntity> build() => [];
@@ -72,7 +75,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     final session = SshSessionEntity(
       id: sessionId,
       serverId: serverId,
-      title: 'Connecting...',
+      title: _connectingPlaceholder,
       terminal: terminal,
     );
 
@@ -398,7 +401,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       }
 
       if (known != null) {
-        if (known.fingerprint == hex) {
+        if (CryptoUtils.constantTimeStringEquals(known.fingerprint, hex)) {
           await repo.save(known.copyWith(lastSeenAt: DateTime.now()));
           return true;
         }

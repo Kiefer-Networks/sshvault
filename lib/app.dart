@@ -71,12 +71,11 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
       if (next && mounted) {
         final ctx = rootNavigatorKey.currentContext;
         if (ctx != null) {
+          final l10n = AppLocalizations.of(ctx)!;
           SecurityWarningDialog.show(
             ctx,
-            title: 'Connection Lost',
-            message:
-                'The server could not be reached after multiple attempts. '
-                'For your security, the session has been terminated.',
+            title: l10n.connectionLost,
+            message: l10n.heartbeatLostMessage,
             severity: SecuritySeverity.critical,
             onDisconnect: () {
               Navigator.of(ctx, rootNavigator: true).pop();
@@ -105,13 +104,11 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
       if (result == false && mounted) {
         final ctx = rootNavigatorKey.currentContext;
         if (ctx != null) {
+          final l10n = AppLocalizations.of(ctx)!;
           SecurityWarningDialog.show(
             ctx,
-            title: 'Server Verification Failed',
-            message:
-                'The server could not be verified as a legitimate '
-                'ShellVault backend. This may indicate a man-in-the-middle '
-                'attack or a misconfigured server.',
+            title: l10n.attestationFailedTitle,
+            message: l10n.attestationFailedMessage,
             severity: SecuritySeverity.warning,
             onDisconnect: () {
               Navigator.of(ctx, rootNavigator: true).pop();

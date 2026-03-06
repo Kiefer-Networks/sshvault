@@ -4,6 +4,7 @@ import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
 import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
 import 'package:shellvault/features/connection/domain/usecases/proxy_resolver.dart';
@@ -12,6 +13,9 @@ import 'package:shellvault/features/settings/presentation/providers/proxy_settin
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class SftpConnectionManager {
+  static const _tag = 'SftpConnectionManager';
+  static final _log = LoggingService.instance;
+
   final Map<String, SftpClient> _clients = {};
   // Keep SSHClient references alive so the underlying connection isn't GC'd
   final Map<String, SSHClient> _sshClients = {};
@@ -152,7 +156,8 @@ class SftpConnectionManager {
               ? () {
                   try {
                     return SSHKeyPair.fromPem(privateKey, passphrase);
-                  } catch (_) {
+                  } catch (e) {
+                    _log.warning(_tag, 'Failed to parse SSH key: $e');
                     return <SSHKeyPair>[];
                   }
                 }()

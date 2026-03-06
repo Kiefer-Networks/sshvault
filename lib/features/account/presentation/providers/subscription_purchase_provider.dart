@@ -88,6 +88,7 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
       } else {
         ref.read(subscriptionPurchaseStatusProvider.notifier).state =
             SubscriptionPurchaseStatus.error;
+        // TODO(l10n): Cannot localize from Notifier context — UI maps this key.
         ref.read(subscriptionPurchaseErrorProvider.notifier).state =
             'Server verification failed';
       }
@@ -103,6 +104,7 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
       } else {
         ref.read(subscriptionPurchaseStatusProvider.notifier).state =
             SubscriptionPurchaseStatus.error;
+        // TODO(l10n): Cannot localize from Notifier context — UI maps this key.
         ref.read(subscriptionPurchaseErrorProvider.notifier).state =
             'Server verification failed';
       }

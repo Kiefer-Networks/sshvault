@@ -146,7 +146,3 @@ final heartbeatProvider = Provider<HeartbeatService?>((ref) {
 /// Tracks whether the most recent logout was caused by heartbeat failure.
 /// The UI reads this to show the [SecurityWarningDialog].
 final heartbeatExpiredProvider = StateProvider<bool>((ref) => false);
-
-/// Tracks whether server attestation failed.
-/// The UI reads this to show the [SecurityWarningDialog].
-final attestationFailedProvider = StateProvider<bool>((ref) => false);
