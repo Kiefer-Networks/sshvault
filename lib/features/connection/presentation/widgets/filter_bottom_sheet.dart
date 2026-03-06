@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/icon_constants.dart';
 import 'package:shellvault/features/connection/domain/entities/group_entity.dart';
 import 'package:shellvault/features/connection/domain/entities/server_filter.dart';
 import 'package:shellvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:shellvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
+
+final _draftGroupIdProvider = StateProvider.autoDispose<String?>((ref) => null);
+final _draftTagIdsProvider = StateProvider.autoDispose<List<String>>(
+  (ref) => [],
+);
+final _draftIsActiveProvider = StateProvider.autoDispose<bool?>((ref) => null);
 
 class FilterBottomSheet extends ConsumerStatefulWidget {
   final ServerFilter currentFilter;
@@ -29,11 +36,25 @@ class FilterBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
-  late String? _groupId;
-  late List<String> _tagIds;
-  late bool? _isActive;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(_draftGroupIdProvider.notifier).state =
+          widget.currentFilter.groupId;
+      ref.read(_draftTagIdsProvider.notifier).state = List.from(
+        widget.currentFilter.tagIds,
+      );
+      ref.read(_draftIsActiveProvider.notifier).state =
+          widget.currentFilter.isActive;
+    });
+  }
 
-  List<Widget> _buildFolderFilterTree(List<GroupEntity> folders, int depth) {
+  List<Widget> _buildFolderFilterTree(
+    List<GroupEntity> folders,
+    int depth,
+    String? groupId,
+  ) {
     final widgets = <Widget>[];
     for (final folder in folders) {
       widgets.add(
@@ -46,26 +67,21 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
               color: Color(folder.color),
             ),
             label: Text(folder.name),
-            selected: _groupId == folder.id,
-            onSelected: (_) => setState(() {
-              _groupId = _groupId == folder.id ? null : folder.id;
-            }),
+            selected: groupId == folder.id,
+            onSelected: (_) {
+              ref.read(_draftGroupIdProvider.notifier).state =
+                  groupId == folder.id ? null : folder.id;
+            },
           ),
         ),
       );
       if (folder.children.isNotEmpty) {
-        widgets.addAll(_buildFolderFilterTree(folder.children, depth + 1));
+        widgets.addAll(
+          _buildFolderFilterTree(folder.children, depth + 1, groupId),
+        );
       }
     }
     return widgets;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _groupId = widget.currentFilter.groupId;
-    _tagIds = List.from(widget.currentFilter.tagIds);
-    _isActive = widget.currentFilter.isActive;
   }
 
   @override
@@ -74,6 +90,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
     final theme = Theme.of(context);
     final foldersAsync = ref.watch(folderTreeProvider);
     final tagsAsync = ref.watch(tagListProvider);
+    final groupId = ref.watch(_draftGroupIdProvider);
+    final tagIds = ref.watch(_draftTagIdsProvider);
+    final isActive = ref.watch(_draftIsActiveProvider);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -104,11 +123,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                 const Spacer(),
                 TextButton(
                   onPressed: () {
-                    setState(() {
-                      _groupId = null;
-                      _tagIds = [];
-                      _isActive = null;
-                    });
+                    ref.read(_draftGroupIdProvider.notifier).state = null;
+                    ref.read(_draftTagIdsProvider.notifier).state = [];
+                    ref.read(_draftIsActiveProvider.notifier).state = null;
                   },
                   child: Text(l10n.filterClearAll),
                 ),
@@ -132,11 +149,13 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                     children: [
                       FilterChip(
                         label: Text(l10n.filterAllFolders),
-                        selected: _groupId == null,
-                        onSelected: (_) => setState(() => _groupId = null),
+                        selected: groupId == null,
+                        onSelected: (_) {
+                          ref.read(_draftGroupIdProvider.notifier).state = null;
+                        },
                       ),
                       const SizedBox(height: 4),
-                      ..._buildFolderFilterTree(folders, 0),
+                      ..._buildFolderFilterTree(folders, 0, groupId),
                     ],
                   ),
                   loading: () => const SizedBox.shrink(),
@@ -160,14 +179,19 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                             color: Color(tag.color),
                           ),
                           label: Text(tag.name),
-                          selected: _tagIds.contains(tag.id),
-                          onSelected: (_) => setState(() {
-                            if (_tagIds.contains(tag.id)) {
-                              _tagIds.remove(tag.id);
+                          selected: tagIds.contains(tag.id),
+                          onSelected: (_) {
+                            final current = List<String>.from(
+                              ref.read(_draftTagIdsProvider),
+                            );
+                            if (current.contains(tag.id)) {
+                              current.remove(tag.id);
                             } else {
-                              _tagIds.add(tag.id);
+                              current.add(tag.id);
                             }
-                          }),
+                            ref.read(_draftTagIdsProvider.notifier).state =
+                                current;
+                          },
                         ),
                     ],
                   ),
@@ -185,22 +209,26 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   children: [
                     FilterChip(
                       label: Text(l10n.filterAll),
-                      selected: _isActive == null,
-                      onSelected: (_) => setState(() => _isActive = null),
+                      selected: isActive == null,
+                      onSelected: (_) {
+                        ref.read(_draftIsActiveProvider.notifier).state = null;
+                      },
                     ),
                     FilterChip(
                       label: Text(l10n.filterActive),
-                      selected: _isActive == true,
-                      onSelected: (_) => setState(
-                        () => _isActive = _isActive == true ? null : true,
-                      ),
+                      selected: isActive == true,
+                      onSelected: (_) {
+                        ref.read(_draftIsActiveProvider.notifier).state =
+                            isActive == true ? null : true;
+                      },
                     ),
                     FilterChip(
                       label: Text(l10n.filterInactive),
-                      selected: _isActive == false,
-                      onSelected: (_) => setState(
-                        () => _isActive = _isActive == false ? null : false,
-                      ),
+                      selected: isActive == false,
+                      onSelected: (_) {
+                        ref.read(_draftIsActiveProvider.notifier).state =
+                            isActive == false ? null : false;
+                      },
                     ),
                   ],
                 ),
@@ -220,9 +248,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                     context,
                     ServerFilter(
                       searchQuery: widget.currentFilter.searchQuery,
-                      groupId: _groupId,
-                      tagIds: _tagIds,
-                      isActive: _isActive,
+                      groupId: groupId,
+                      tagIds: tagIds,
+                      isActive: isActive,
                     ),
                   );
                 },

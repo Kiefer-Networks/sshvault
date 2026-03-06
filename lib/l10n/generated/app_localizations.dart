@@ -4197,6 +4197,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No hosts found in config'**
   String get sshConfigImportNoHosts;
+
+  /// No description provided for @sftpBookmarkAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Bookmark'**
+  String get sftpBookmarkAdd;
+
+  /// No description provided for @sftpBookmarkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Label'**
+  String get sftpBookmarkLabel;
 }
 
 class _AppLocalizationsDelegate

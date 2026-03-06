@@ -12,6 +12,7 @@ import 'package:shellvault/features/connection/data/datasources/group_dao.dart';
 import 'package:shellvault/features/connection/data/datasources/tag_dao.dart';
 import 'package:shellvault/features/host_key/data/datasources/known_host_dao.dart';
 import 'package:shellvault/features/settings/data/datasources/app_settings_dao.dart';
+import 'package:shellvault/features/sftp/data/datasources/sftp_bookmark_dao.dart';
 import 'package:shellvault/features/snippet/data/datasources/snippet_dao.dart';
 
 part 'database.g.dart';
@@ -28,6 +29,7 @@ part 'database.g.dart';
     SnippetVariables,
     AppSettings,
     KnownHosts,
+    SftpBookmarks,
   ],
   daos: [
     ServerDao,
@@ -37,6 +39,7 @@ part 'database.g.dart';
     AppSettingsDao,
     SnippetDao,
     KnownHostDao,
+    SftpBookmarkDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -99,7 +102,6 @@ class AppDatabase extends _$AppDatabase {
         if (from < 5) {
           await m.addColumn(servers, servers.jumpHostId);
         }
-        // Schema version 6 previously created teleportClusters (removed).
         if (from < 7) {
           await m.addColumn(servers, servers.proxyType);
           await m.addColumn(servers, servers.proxyHost);
@@ -115,6 +117,9 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from < 9) {
           await m.createTable(knownHosts);
+        }
+        if (from < 10) {
+          await m.createTable(sftpBookmarks);
         }
       },
     );

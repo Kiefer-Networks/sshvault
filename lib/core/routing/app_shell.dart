@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -268,11 +270,14 @@ class AppShellState extends ConsumerState<AppShell> {
     );
   }
 
+  static bool get _isDesktop =>
+      Platform.isLinux || Platform.isMacOS || Platform.isWindows;
+
   @override
   Widget build(BuildContext context) {
     final sessionCount = ref.watch(sessionManagerProvider).length;
 
-    return LayoutBuilder(
+    Widget shell = LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
 
@@ -294,6 +299,91 @@ class AppShellState extends ConsumerState<AppShell> {
           child: widget.navigationShell,
         );
       },
+    );
+
+    if (_isDesktop) {
+      shell = _DesktopShortcuts(
+        ref: ref,
+        navigationShell: widget.navigationShell,
+        child: shell,
+      );
+    }
+
+    return shell;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Desktop Keyboard Shortcuts
+// ---------------------------------------------------------------------------
+
+class _DesktopShortcuts extends StatelessWidget {
+  final WidgetRef ref;
+  final StatefulNavigationShell navigationShell;
+  final Widget child;
+
+  const _DesktopShortcuts({
+    required this.ref,
+    required this.navigationShell,
+    required this.child,
+  });
+
+  /// Use Meta on macOS, Control everywhere else.
+  static final bool _useMeta = Platform.isMacOS;
+
+  SingleActivator _shortcut(LogicalKeyboardKey key, {bool shift = false}) {
+    return SingleActivator(
+      key,
+      meta: _useMeta,
+      control: !_useMeta,
+      shift: shift,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CallbackShortcuts(
+      bindings: {
+        // Ctrl/Cmd+T → navigate to Hosts (to start new connection)
+        _shortcut(LogicalKeyboardKey.keyT): () {
+          navigationShell.goBranch(0, initialLocation: true);
+        },
+
+        // Ctrl/Cmd+W → close active terminal tab
+        _shortcut(LogicalKeyboardKey.keyW): () {
+          final sessions = ref.read(sessionManagerProvider);
+          if (sessions.isEmpty) return;
+          final active = ref.read(activeSessionProvider);
+          if (active != null) {
+            ref.read(sessionManagerProvider.notifier).closeSession(active.id);
+          }
+        },
+
+        // Ctrl/Cmd+Plus → increase font size
+        _shortcut(LogicalKeyboardKey.equal): () {
+          ref.read(terminalFontSizeProvider.notifier).increase();
+        },
+
+        // Ctrl/Cmd+Minus → decrease font size
+        _shortcut(LogicalKeyboardKey.minus): () {
+          ref.read(terminalFontSizeProvider.notifier).decrease();
+        },
+
+        // Ctrl/Cmd+1-9 → switch terminal tab
+        for (var i = 0; i < 9; i++)
+          _shortcut(LogicalKeyboardKey(0x31 + i)): () {
+            final sessions = ref.read(sessionManagerProvider);
+            if (i < sessions.length) {
+              ref.read(activeSessionIndexProvider.notifier).state = i;
+              // Navigate to terminal branch if not already there
+              final sessionCount = sessions.length;
+              if (sessionCount > 0) {
+                navigationShell.goBranch(AppConstants.terminalBranchIndex);
+              }
+            }
+          },
+      },
+      child: Focus(autofocus: true, child: child),
     );
   }
 }

@@ -137,6 +137,18 @@ class SnippetVariables extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class SftpBookmarks extends Table {
+  TextColumn get id => text()();
+  TextColumn get serverId => text().references(Servers, #id)();
+  TextColumn get path => text()();
+  TextColumn get label => text()();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class AppSettings extends Table {
   TextColumn get key => text()();
   TextColumn get value => text()();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:shellvault/features/sftp/presentation/widgets/sftp_bookmark_bar.dart';
 
 class SftpBreadcrumb extends ConsumerStatefulWidget {
   final PaneSide side;
@@ -60,6 +61,21 @@ class _SftpBreadcrumbState extends ConsumerState<SftpBreadcrumb> {
                   ref.read(sftpPaneProvider(widget.side).notifier).navigateUp(),
             ),
             const SizedBox(width: 4),
+            if (paneState.source is SftpPaneSourceRemote)
+              IconButton(
+                icon: const Icon(Icons.bookmark_add_outlined, size: 18),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                onPressed: () {
+                  final source = paneState.source as SftpPaneSourceRemote;
+                  SftpBookmarkBar.addBookmark(
+                    ref: ref,
+                    context: context,
+                    serverId: source.serverId,
+                    path: paneState.currentPath,
+                  );
+                },
+              ),
             Expanded(
               child: ListView.separated(
                 controller: _scrollController,

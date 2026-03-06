@@ -2304,4 +2304,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sshConfigImportNoHosts => 'No se encontraron hosts en la config';
+
+  @override
+  String get sftpBookmarkAdd => 'Agregar marcador';
+
+  @override
+  String get sftpBookmarkLabel => 'Etiqueta';
 }

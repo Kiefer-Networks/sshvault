@@ -805,5 +805,8 @@
   "sshConfigImportSuccess": "{count} servidores importados",
   "@sshConfigImportSuccess": { "placeholders": { "count": { "type": "int" } } },
   "sshConfigImportDuplicate": "Ya existe",
-  "sshConfigImportNoHosts": "No se encontraron hosts en la config"
+  "sshConfigImportNoHosts": "No se encontraron hosts en la config",
+
+  "sftpBookmarkAdd": "Agregar marcador",
+  "sftpBookmarkLabel": "Etiqueta"
 }

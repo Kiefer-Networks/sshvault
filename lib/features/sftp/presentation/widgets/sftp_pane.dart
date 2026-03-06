@@ -8,6 +8,7 @@ import 'package:shellvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:shellvault/features/sftp/presentation/providers/sftp_providers.dart';
 import 'package:shellvault/features/sftp/presentation/widgets/file_preview_dialog.dart';
 import 'package:shellvault/features/sftp/presentation/widgets/overwrite_confirm_dialog.dart';
+import 'package:shellvault/features/sftp/presentation/widgets/sftp_bookmark_bar.dart';
 import 'package:shellvault/features/sftp/presentation/widgets/sftp_breadcrumb.dart';
 import 'package:shellvault/features/sftp/presentation/widgets/sftp_empty_state.dart';
 import 'package:shellvault/features/sftp/presentation/widgets/sftp_entry_tile.dart';
@@ -109,6 +110,7 @@ class SftpPane extends ConsumerWidget {
         if (!paneState.needsHostSelection) ...[
           SftpBreadcrumb(side: side),
           const Divider(height: 1),
+          SftpBookmarkBar(side: side),
         ],
         Expanded(
           child: Stack(

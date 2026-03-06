@@ -492,8 +492,9 @@ final secondarySessionIndexProvider = StateProvider<int?>((ref) => null);
 final secondarySessionProvider = Provider<SshSessionEntity?>((ref) {
   final sessions = ref.watch(sessionManagerProvider);
   final index = ref.watch(secondarySessionIndexProvider);
-  if (index == null || sessions.isEmpty || index >= sessions.length)
+  if (index == null || sessions.isEmpty || index >= sessions.length) {
     return null;
+  }
   return sessions[index];
 });
 

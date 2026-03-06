@@ -22,6 +22,7 @@ import 'package:shellvault/features/sync/presentation/providers/sync_providers.d
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 final _pollTimedOutProvider = StateProvider.autoDispose<bool>((ref) => false);
+final _couponLoadingProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class AccountSyncScreen extends ConsumerStatefulWidget {
   const AccountSyncScreen({super.key});
@@ -34,7 +35,6 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
   late final AppLifecycleListener _lifecycleListener;
   Timer? _billingPollTimer;
   final _couponController = TextEditingController();
-  bool _couponLoading = false;
 
   @override
   void initState() {
@@ -391,12 +391,14 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             prefixIcon: const Icon(Icons.confirmation_number_outlined),
             border: const OutlineInputBorder(),
           ),
-          enabled: !_couponLoading,
+          enabled: !ref.watch(_couponLoadingProvider),
         ),
         const SizedBox(height: 12),
         FilledButton.icon(
-          onPressed: _couponLoading ? null : () => _redeemCoupon(l10n),
-          icon: _couponLoading
+          onPressed: ref.watch(_couponLoadingProvider)
+              ? null
+              : () => _redeemCoupon(l10n),
+          icon: ref.watch(_couponLoadingProvider)
               ? SizedBox(
                   width: 18,
                   height: 18,
@@ -416,7 +418,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
     final code = _couponController.text.trim();
     if (code.isEmpty) return;
 
-    setState(() => _couponLoading = true);
+    ref.read(_couponLoadingProvider.notifier).state = true;
     try {
       final repo = ref.read(accountRepositoryProvider);
       final result = await repo.redeemCoupon(code);
@@ -440,7 +442,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         );
       }
     } finally {
-      if (mounted) setState(() => _couponLoading = false);
+      if (mounted) ref.read(_couponLoadingProvider.notifier).state = false;
     }
   }
 

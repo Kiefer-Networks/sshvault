@@ -831,5 +831,8 @@
   "sshConfigImportSuccess": "{count} servers imported",
   "@sshConfigImportSuccess": { "placeholders": { "count": { "type": "int" } } },
   "sshConfigImportDuplicate": "Already exists",
-  "sshConfigImportNoHosts": "No hosts found in config"
+  "sshConfigImportNoHosts": "No hosts found in config",
+
+  "sftpBookmarkAdd": "Add Bookmark",
+  "sftpBookmarkLabel": "Label"
 }

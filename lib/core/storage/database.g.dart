@@ -5751,6 +5751,413 @@ class KnownHostsCompanion extends UpdateCompanion<KnownHost> {
   }
 }
 
+class $SftpBookmarksTable extends SftpBookmarks
+    with TableInfo<$SftpBookmarksTable, SftpBookmark> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SftpBookmarksTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _serverIdMeta = const VerificationMeta(
+    'serverId',
+  );
+  @override
+  late final GeneratedColumn<String> serverId = GeneratedColumn<String>(
+    'server_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES servers (id)',
+    ),
+  );
+  static const VerificationMeta _pathMeta = const VerificationMeta('path');
+  @override
+  late final GeneratedColumn<String> path = GeneratedColumn<String>(
+    'path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _labelMeta = const VerificationMeta('label');
+  @override
+  late final GeneratedColumn<String> label = GeneratedColumn<String>(
+    'label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    serverId,
+    path,
+    label,
+    sortOrder,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sftp_bookmarks';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SftpBookmark> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('server_id')) {
+      context.handle(
+        _serverIdMeta,
+        serverId.isAcceptableOrUnknown(data['server_id']!, _serverIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_serverIdMeta);
+    }
+    if (data.containsKey('path')) {
+      context.handle(
+        _pathMeta,
+        path.isAcceptableOrUnknown(data['path']!, _pathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pathMeta);
+    }
+    if (data.containsKey('label')) {
+      context.handle(
+        _labelMeta,
+        label.isAcceptableOrUnknown(data['label']!, _labelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_labelMeta);
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SftpBookmark map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SftpBookmark(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      serverId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_id'],
+      )!,
+      path: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}path'],
+      )!,
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SftpBookmarksTable createAlias(String alias) {
+    return $SftpBookmarksTable(attachedDatabase, alias);
+  }
+}
+
+class SftpBookmark extends DataClass implements Insertable<SftpBookmark> {
+  final String id;
+  final String serverId;
+  final String path;
+  final String label;
+  final int sortOrder;
+  final DateTime createdAt;
+  const SftpBookmark({
+    required this.id,
+    required this.serverId,
+    required this.path,
+    required this.label,
+    required this.sortOrder,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['server_id'] = Variable<String>(serverId);
+    map['path'] = Variable<String>(path);
+    map['label'] = Variable<String>(label);
+    map['sort_order'] = Variable<int>(sortOrder);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  SftpBookmarksCompanion toCompanion(bool nullToAbsent) {
+    return SftpBookmarksCompanion(
+      id: Value(id),
+      serverId: Value(serverId),
+      path: Value(path),
+      label: Value(label),
+      sortOrder: Value(sortOrder),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory SftpBookmark.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SftpBookmark(
+      id: serializer.fromJson<String>(json['id']),
+      serverId: serializer.fromJson<String>(json['serverId']),
+      path: serializer.fromJson<String>(json['path']),
+      label: serializer.fromJson<String>(json['label']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'serverId': serializer.toJson<String>(serverId),
+      'path': serializer.toJson<String>(path),
+      'label': serializer.toJson<String>(label),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  SftpBookmark copyWith({
+    String? id,
+    String? serverId,
+    String? path,
+    String? label,
+    int? sortOrder,
+    DateTime? createdAt,
+  }) => SftpBookmark(
+    id: id ?? this.id,
+    serverId: serverId ?? this.serverId,
+    path: path ?? this.path,
+    label: label ?? this.label,
+    sortOrder: sortOrder ?? this.sortOrder,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  SftpBookmark copyWithCompanion(SftpBookmarksCompanion data) {
+    return SftpBookmark(
+      id: data.id.present ? data.id.value : this.id,
+      serverId: data.serverId.present ? data.serverId.value : this.serverId,
+      path: data.path.present ? data.path.value : this.path,
+      label: data.label.present ? data.label.value : this.label,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SftpBookmark(')
+          ..write('id: $id, ')
+          ..write('serverId: $serverId, ')
+          ..write('path: $path, ')
+          ..write('label: $label, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, serverId, path, label, sortOrder, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SftpBookmark &&
+          other.id == this.id &&
+          other.serverId == this.serverId &&
+          other.path == this.path &&
+          other.label == this.label &&
+          other.sortOrder == this.sortOrder &&
+          other.createdAt == this.createdAt);
+}
+
+class SftpBookmarksCompanion extends UpdateCompanion<SftpBookmark> {
+  final Value<String> id;
+  final Value<String> serverId;
+  final Value<String> path;
+  final Value<String> label;
+  final Value<int> sortOrder;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const SftpBookmarksCompanion({
+    this.id = const Value.absent(),
+    this.serverId = const Value.absent(),
+    this.path = const Value.absent(),
+    this.label = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SftpBookmarksCompanion.insert({
+    required String id,
+    required String serverId,
+    required String path,
+    required String label,
+    this.sortOrder = const Value.absent(),
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       serverId = Value(serverId),
+       path = Value(path),
+       label = Value(label),
+       createdAt = Value(createdAt);
+  static Insertable<SftpBookmark> custom({
+    Expression<String>? id,
+    Expression<String>? serverId,
+    Expression<String>? path,
+    Expression<String>? label,
+    Expression<int>? sortOrder,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (serverId != null) 'server_id': serverId,
+      if (path != null) 'path': path,
+      if (label != null) 'label': label,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SftpBookmarksCompanion copyWith({
+    Value<String>? id,
+    Value<String>? serverId,
+    Value<String>? path,
+    Value<String>? label,
+    Value<int>? sortOrder,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return SftpBookmarksCompanion(
+      id: id ?? this.id,
+      serverId: serverId ?? this.serverId,
+      path: path ?? this.path,
+      label: label ?? this.label,
+      sortOrder: sortOrder ?? this.sortOrder,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (serverId.present) {
+      map['server_id'] = Variable<String>(serverId.value);
+    }
+    if (path.present) {
+      map['path'] = Variable<String>(path.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SftpBookmarksCompanion(')
+          ..write('id: $id, ')
+          ..write('serverId: $serverId, ')
+          ..write('path: $path, ')
+          ..write('label: $label, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5766,6 +6173,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   late final $KnownHostsTable knownHosts = $KnownHostsTable(this);
+  late final $SftpBookmarksTable sftpBookmarks = $SftpBookmarksTable(this);
   late final ServerDao serverDao = ServerDao(this as AppDatabase);
   late final SshKeyDao sshKeyDao = SshKeyDao(this as AppDatabase);
   late final GroupDao groupDao = GroupDao(this as AppDatabase);
@@ -5775,6 +6183,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final SnippetDao snippetDao = SnippetDao(this as AppDatabase);
   late final KnownHostDao knownHostDao = KnownHostDao(this as AppDatabase);
+  late final SftpBookmarkDao sftpBookmarkDao = SftpBookmarkDao(
+    this as AppDatabase,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5790,6 +6201,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     snippetVariables,
     appSettings,
     knownHosts,
+    sftpBookmarks,
   ];
   @override
   DriftDatabaseOptions get options =>
@@ -6954,6 +7366,24 @@ final class $$ServersTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$SftpBookmarksTable, List<SftpBookmark>>
+  _sftpBookmarksRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.sftpBookmarks,
+    aliasName: $_aliasNameGenerator(db.servers.id, db.sftpBookmarks.serverId),
+  );
+
+  $$SftpBookmarksTableProcessedTableManager get sftpBookmarksRefs {
+    final manager = $$SftpBookmarksTableTableManager(
+      $_db,
+      $_db.sftpBookmarks,
+    ).filter((f) => f.serverId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_sftpBookmarksRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ServersTableFilterComposer
@@ -7167,6 +7597,31 @@ class $$ServersTableFilterComposer
           }) => $$ServerTagsTableFilterComposer(
             $db: $db,
             $table: $db.serverTags,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> sftpBookmarksRefs(
+    Expression<bool> Function($$SftpBookmarksTableFilterComposer f) f,
+  ) {
+    final $$SftpBookmarksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.sftpBookmarks,
+      getReferencedColumn: (t) => t.serverId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SftpBookmarksTableFilterComposer(
+            $db: $db,
+            $table: $db.sftpBookmarks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7558,6 +8013,31 @@ class $$ServersTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> sftpBookmarksRefs<T extends Object>(
+    Expression<T> Function($$SftpBookmarksTableAnnotationComposer a) f,
+  ) {
+    final $$SftpBookmarksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.sftpBookmarks,
+      getReferencedColumn: (t) => t.serverId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SftpBookmarksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.sftpBookmarks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ServersTableTableManager
@@ -7577,6 +8057,7 @@ class $$ServersTableTableManager
             bool groupId,
             bool sshKeyId,
             bool serverTagsRefs,
+            bool sftpBookmarksRefs,
           })
         > {
   $$ServersTableTableManager(_$AppDatabase db, $ServersTable table)
@@ -7731,10 +8212,18 @@ class $$ServersTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({groupId = false, sshKeyId = false, serverTagsRefs = false}) {
+              ({
+                groupId = false,
+                sshKeyId = false,
+                serverTagsRefs = false,
+                sftpBookmarksRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
-                  explicitlyWatchedTables: [if (serverTagsRefs) db.serverTags],
+                  explicitlyWatchedTables: [
+                    if (serverTagsRefs) db.serverTags,
+                    if (sftpBookmarksRefs) db.sftpBookmarks,
+                  ],
                   addJoins:
                       <
                         T extends TableManagerState<
@@ -7803,6 +8292,27 @@ class $$ServersTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (sftpBookmarksRefs)
+                        await $_getPrefetchedData<
+                          Server,
+                          $ServersTable,
+                          SftpBookmark
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ServersTableReferences
+                              ._sftpBookmarksRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ServersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).sftpBookmarksRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.serverId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -7823,7 +8333,12 @@ typedef $$ServersTableProcessedTableManager =
       $$ServersTableUpdateCompanionBuilder,
       (Server, $$ServersTableReferences),
       Server,
-      PrefetchHooks Function({bool groupId, bool sshKeyId, bool serverTagsRefs})
+      PrefetchHooks Function({
+        bool groupId,
+        bool sshKeyId,
+        bool serverTagsRefs,
+        bool sftpBookmarksRefs,
+      })
     >;
 typedef $$TagsTableCreateCompanionBuilder =
     TagsCompanion Function({
@@ -10371,6 +10886,348 @@ typedef $$KnownHostsTableProcessedTableManager =
       KnownHost,
       PrefetchHooks Function()
     >;
+typedef $$SftpBookmarksTableCreateCompanionBuilder =
+    SftpBookmarksCompanion Function({
+      required String id,
+      required String serverId,
+      required String path,
+      required String label,
+      Value<int> sortOrder,
+      required DateTime createdAt,
+      Value<int> rowid,
+    });
+typedef $$SftpBookmarksTableUpdateCompanionBuilder =
+    SftpBookmarksCompanion Function({
+      Value<String> id,
+      Value<String> serverId,
+      Value<String> path,
+      Value<String> label,
+      Value<int> sortOrder,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+final class $$SftpBookmarksTableReferences
+    extends BaseReferences<_$AppDatabase, $SftpBookmarksTable, SftpBookmark> {
+  $$SftpBookmarksTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ServersTable _serverIdTable(_$AppDatabase db) =>
+      db.servers.createAlias(
+        $_aliasNameGenerator(db.sftpBookmarks.serverId, db.servers.id),
+      );
+
+  $$ServersTableProcessedTableManager get serverId {
+    final $_column = $_itemColumn<String>('server_id')!;
+
+    final manager = $$ServersTableTableManager(
+      $_db,
+      $_db.servers,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_serverIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SftpBookmarksTableFilterComposer
+    extends Composer<_$AppDatabase, $SftpBookmarksTable> {
+  $$SftpBookmarksTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get path => $composableBuilder(
+    column: $table.path,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get label => $composableBuilder(
+    column: $table.label,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ServersTableFilterComposer get serverId {
+    final $$ServersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.serverId,
+      referencedTable: $db.servers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ServersTableFilterComposer(
+            $db: $db,
+            $table: $db.servers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SftpBookmarksTableOrderingComposer
+    extends Composer<_$AppDatabase, $SftpBookmarksTable> {
+  $$SftpBookmarksTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get path => $composableBuilder(
+    column: $table.path,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get label => $composableBuilder(
+    column: $table.label,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ServersTableOrderingComposer get serverId {
+    final $$ServersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.serverId,
+      referencedTable: $db.servers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ServersTableOrderingComposer(
+            $db: $db,
+            $table: $db.servers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SftpBookmarksTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SftpBookmarksTable> {
+  $$SftpBookmarksTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get path =>
+      $composableBuilder(column: $table.path, builder: (column) => column);
+
+  GeneratedColumn<String> get label =>
+      $composableBuilder(column: $table.label, builder: (column) => column);
+
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$ServersTableAnnotationComposer get serverId {
+    final $$ServersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.serverId,
+      referencedTable: $db.servers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ServersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.servers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SftpBookmarksTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SftpBookmarksTable,
+          SftpBookmark,
+          $$SftpBookmarksTableFilterComposer,
+          $$SftpBookmarksTableOrderingComposer,
+          $$SftpBookmarksTableAnnotationComposer,
+          $$SftpBookmarksTableCreateCompanionBuilder,
+          $$SftpBookmarksTableUpdateCompanionBuilder,
+          (SftpBookmark, $$SftpBookmarksTableReferences),
+          SftpBookmark,
+          PrefetchHooks Function({bool serverId})
+        > {
+  $$SftpBookmarksTableTableManager(_$AppDatabase db, $SftpBookmarksTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SftpBookmarksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SftpBookmarksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SftpBookmarksTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> serverId = const Value.absent(),
+                Value<String> path = const Value.absent(),
+                Value<String> label = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SftpBookmarksCompanion(
+                id: id,
+                serverId: serverId,
+                path: path,
+                label: label,
+                sortOrder: sortOrder,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String serverId,
+                required String path,
+                required String label,
+                Value<int> sortOrder = const Value.absent(),
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SftpBookmarksCompanion.insert(
+                id: id,
+                serverId: serverId,
+                path: path,
+                label: label,
+                sortOrder: sortOrder,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SftpBookmarksTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({serverId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (serverId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.serverId,
+                                referencedTable: $$SftpBookmarksTableReferences
+                                    ._serverIdTable(db),
+                                referencedColumn: $$SftpBookmarksTableReferences
+                                    ._serverIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SftpBookmarksTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SftpBookmarksTable,
+      SftpBookmark,
+      $$SftpBookmarksTableFilterComposer,
+      $$SftpBookmarksTableOrderingComposer,
+      $$SftpBookmarksTableAnnotationComposer,
+      $$SftpBookmarksTableCreateCompanionBuilder,
+      $$SftpBookmarksTableUpdateCompanionBuilder,
+      (SftpBookmark, $$SftpBookmarksTableReferences),
+      SftpBookmark,
+      PrefetchHooks Function({bool serverId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -10394,4 +11251,6 @@ class $AppDatabaseManager {
       $$AppSettingsTableTableManager(_db, _db.appSettings);
   $$KnownHostsTableTableManager get knownHosts =>
       $$KnownHostsTableTableManager(_db, _db.knownHosts);
+  $$SftpBookmarksTableTableManager get sftpBookmarks =>
+      $$SftpBookmarksTableTableManager(_db, _db.sftpBookmarks);
 }

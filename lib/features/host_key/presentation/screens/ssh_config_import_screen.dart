@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 import 'package:shellvault/core/widgets/adaptive/adaptive.dart';
 import 'package:shellvault/features/connection/domain/entities/auth_method.dart';
@@ -10,6 +11,17 @@ import 'package:shellvault/features/connection/presentation/providers/repository
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/host_key/data/services/ssh_config_parser.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
+
+final _importEntriesProvider = StateProvider.autoDispose<List<SshConfigEntry>>(
+  (ref) => [],
+);
+final _importSelectedProvider = StateProvider.autoDispose<Set<int>>(
+  (ref) => {},
+);
+final _importLoadingProvider = StateProvider.autoDispose<bool>((ref) => false);
+final _existingHostKeysProvider = StateProvider.autoDispose<Set<String>>(
+  (ref) => {},
+);
 
 class SshConfigImportScreen extends ConsumerStatefulWidget {
   const SshConfigImportScreen({super.key});
@@ -22,10 +34,6 @@ class SshConfigImportScreen extends ConsumerStatefulWidget {
 class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
   final _textController = TextEditingController();
   final _parser = SshConfigParser();
-  List<SshConfigEntry> _entries = [];
-  final Set<int> _selected = {};
-  final Set<String> _existingHostKeys = {};
-  bool _loading = false;
 
   @override
   void dispose() {
@@ -36,6 +44,9 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final entries = ref.watch(_importEntriesProvider);
+    final selected = ref.watch(_importSelectedProvider);
+    final loading = ref.watch(_importLoadingProvider);
 
     return AdaptiveScaffold(
       title: l10n.sshConfigImportTitle,
@@ -64,16 +75,16 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
             onChanged: (_) => _parseContent(),
           ),
           const SizedBox(height: 16),
-          if (_entries.isNotEmpty) ...[
+          if (entries.isNotEmpty) ...[
             Text(
-              l10n.sshConfigImportParsed(_entries.length),
+              l10n.sshConfigImportParsed(entries.length),
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
-            ..._buildEntryList(l10n),
+            ..._buildEntryList(l10n, entries, selected),
             const SizedBox(height: 16),
             FilledButton.icon(
-              icon: _loading
+              icon: loading
                   ? const SizedBox(
                       width: 16,
                       height: 16,
@@ -81,7 +92,7 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
                     )
                   : const Icon(Icons.download),
               label: Text(l10n.sshConfigImportButton),
-              onPressed: _selected.isEmpty || _loading
+              onPressed: selected.isEmpty || loading
                   ? null
                   : () => _import(l10n),
             ),
@@ -96,22 +107,27 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
     );
   }
 
-  List<Widget> _buildEntryList(AppLocalizations l10n) {
-    return List.generate(_entries.length, (i) {
-      final entry = _entries[i];
+  List<Widget> _buildEntryList(
+    AppLocalizations l10n,
+    List<SshConfigEntry> entries,
+    Set<int> selected,
+  ) {
+    final existingKeys = ref.read(_existingHostKeysProvider);
+    return List.generate(entries.length, (i) {
+      final entry = entries[i];
       final hostKey = '${entry.hostName ?? entry.host}:${entry.port}';
-      final isDuplicate = _existingHostKeys.contains(hostKey);
+      final isDuplicate = existingKeys.contains(hostKey);
 
       return CheckboxListTile(
-        value: _selected.contains(i),
+        value: selected.contains(i),
         onChanged: (v) {
-          setState(() {
-            if (v == true) {
-              _selected.add(i);
-            } else {
-              _selected.remove(i);
-            }
-          });
+          final current = Set<int>.from(ref.read(_importSelectedProvider));
+          if (v == true) {
+            current.add(i);
+          } else {
+            current.remove(i);
+          }
+          ref.read(_importSelectedProvider.notifier).state = current;
         },
         title: Text(entry.host),
         subtitle: Text(
@@ -145,17 +161,17 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
   void _parseContent() {
     final parsed = _parser.parse(_textController.text);
     _loadExistingHosts().then((_) {
-      setState(() {
-        _entries = parsed;
-        _selected.clear();
-        for (int i = 0; i < parsed.length; i++) {
-          final e = parsed[i];
-          final key = '${e.hostName ?? e.host}:${e.port}';
-          if (!_existingHostKeys.contains(key)) {
-            _selected.add(i);
-          }
+      final existingKeys = ref.read(_existingHostKeysProvider);
+      final selected = <int>{};
+      for (int i = 0; i < parsed.length; i++) {
+        final e = parsed[i];
+        final key = '${e.hostName ?? e.host}:${e.port}';
+        if (!existingKeys.contains(key)) {
+          selected.add(i);
         }
-      });
+      }
+      ref.read(_importEntriesProvider.notifier).state = parsed;
+      ref.read(_importSelectedProvider.notifier).state = selected;
     });
   }
 
@@ -164,23 +180,26 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
     final result = await useCases.getServers();
     result.fold(
       onSuccess: (servers) {
-        _existingHostKeys.clear();
+        final keys = <String>{};
         for (final s in servers) {
-          _existingHostKeys.add('${s.hostname}:${s.port}');
+          keys.add('${s.hostname}:${s.port}');
         }
+        ref.read(_existingHostKeysProvider.notifier).state = keys;
       },
       onFailure: (_) {},
     );
   }
 
   Future<void> _import(AppLocalizations l10n) async {
-    setState(() => _loading = true);
+    ref.read(_importLoadingProvider.notifier).state = true;
     const uuid = Uuid();
     final useCases = ref.read(serverUseCasesProvider);
+    final entries = ref.read(_importEntriesProvider);
+    final selected = ref.read(_importSelectedProvider);
     int imported = 0;
 
-    for (final i in _selected) {
-      final entry = _entries[i];
+    for (final i in selected) {
+      final entry = entries[i];
       final now = DateTime.now();
       final server = ServerEntity(
         id: uuid.v4(),
@@ -203,7 +222,7 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
       if (result.isSuccess) imported++;
     }
 
-    setState(() => _loading = false);
+    ref.read(_importLoadingProvider.notifier).state = false;
 
     if (mounted) {
       ref.invalidate(serverListProvider);

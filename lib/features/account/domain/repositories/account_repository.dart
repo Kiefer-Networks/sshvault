@@ -21,7 +21,6 @@ abstract class AccountRepository {
   Future<Result<String>> createPortal();
   Future<Result<BillingStatus>> verifyGooglePurchase(String purchaseToken);
   Future<Result<BillingStatus>> verifyApplePurchase(String transactionId);
-  Future<Result<String>> createTeleportAddonCheckout();
   Future<Result<CouponRedeemResult>> redeemCoupon(String code);
   Future<Result<UserEntity>> uploadAvatar(Uint8List imageBytes);
   Future<Result<void>> deleteAvatar();
