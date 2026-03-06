@@ -11,7 +11,7 @@ import 'package:uuid/uuid.dart';
 import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/features/sftp/data/services/archive_service.dart';
 import 'package:sshvault/features/sftp/data/services/local_file_service.dart';
-import 'package:sshvault/features/sftp/data/services/sftp_connection_manager.dart';
+import 'package:sshvault/features/sftp/presentation/services/sftp_connection_manager.dart';
 import 'package:sshvault/features/sftp/data/services/sftp_service.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';

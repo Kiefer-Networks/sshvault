@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
+import 'package:sshvault/features/settings/domain/entities/app_settings_entity.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:sshvault/features/terminal/presentation/widgets/terminal_theme_picker.dart';
@@ -34,12 +35,12 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                   title: l10n.settingsTheme,
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: AdaptiveSegmentedControl<ThemeMode>(
+                    child: AdaptiveSegmentedControl<AppThemeMode>(
                       selected: settings.themeMode,
                       segments: {
-                        ThemeMode.system: l10n.settingsThemeSystem,
-                        ThemeMode.light: l10n.settingsThemeLight,
-                        ThemeMode.dark: l10n.settingsThemeDark,
+                        AppThemeMode.system: l10n.settingsThemeSystem,
+                        AppThemeMode.light: l10n.settingsThemeLight,
+                        AppThemeMode.dark: l10n.settingsThemeDark,
                       },
                       onChanged: (mode) {
                         ref.read(settingsProvider.notifier).setThemeMode(mode);

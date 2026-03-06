@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart' as crypto;
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/crypto/crypto_utils.dart';
@@ -203,19 +202,19 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     );
   }
 
-  ThemeMode _parseThemeMode(String? value) {
+  AppThemeMode _parseThemeMode(String? value) {
     return switch (value) {
-      'light' => ThemeMode.light,
-      'dark' => ThemeMode.dark,
-      _ => ThemeMode.system,
+      'light' => AppThemeMode.light,
+      'dark' => AppThemeMode.dark,
+      _ => AppThemeMode.system,
     };
   }
 
-  String _themeModeToString(ThemeMode mode) {
+  String _themeModeToString(AppThemeMode mode) {
     return switch (mode) {
-      ThemeMode.light => 'light',
-      ThemeMode.dark => 'dark',
-      ThemeMode.system => 'system',
+      AppThemeMode.light => 'light',
+      AppThemeMode.dark => 'dark',
+      AppThemeMode.system => 'system',
     };
   }
 
@@ -303,7 +302,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     return false;
   }
 
-  Future<void> setThemeMode(ThemeMode mode) async {
+  Future<void> setThemeMode(AppThemeMode mode) async {
     _log.info(_tag, 'Theme changed to ${_themeModeToString(mode)}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyThemeMode, _themeModeToString(mode));

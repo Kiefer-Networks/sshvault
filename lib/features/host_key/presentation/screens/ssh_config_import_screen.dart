@@ -10,7 +10,7 @@ import 'package:sshvault/features/connection/domain/entities/server_entity.dart'
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:sshvault/features/host_key/data/services/ssh_config_parser.dart';
+import 'package:sshvault/features/host_key/domain/services/ssh_config_parser.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _importEntriesProvider = StateProvider.autoDispose<List<SshConfigEntry>>(

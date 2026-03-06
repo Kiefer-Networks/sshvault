@@ -831,5 +831,19 @@
   "connectionTestFailed": "Connection failed: {message}",
   "@connectionTestFailed": { "placeholders": { "message": { "type": "String" } } },
   "serverVerificationFailed": "Server verification failed",
-  "importSuccessful": "Import successful"
+  "importSuccessful": "Import successful",
+
+  "hintExampleServerUrl": "https://your-server.example.com",
+  "hintExampleDohUrl": "https://dns.example.com/dns-query",
+  "hintExampleProxyHost": "192.168.1.1",
+  "hintExampleProxyPort": "1080",
+  "hintExampleTimeoutSeconds": "30",
+  "hintExampleKeepaliveSeconds": "15",
+
+  "jumpHostEntryLabel": "{name} ({hostname})",
+  "@jumpHostEntryLabel": { "placeholders": { "name": { "type": "String" }, "hostname": { "type": "String" } } },
+  "sshKeyEntryLabel": "{name} ({keyType})",
+  "@sshKeyEntryLabel": { "placeholders": { "name": { "type": "String" }, "keyType": { "type": "String" } } },
+  "hostPortLabel": "{hostname}:{port}",
+  "@hostPortLabel": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } }
 }

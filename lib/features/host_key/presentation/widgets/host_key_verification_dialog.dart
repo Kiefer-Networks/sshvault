@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
@@ -115,7 +116,7 @@ class HostKeyVerificationDialog extends StatelessWidget {
           child: Text(
             _formatFingerprint(hex),
             style: textTheme.bodySmall?.copyWith(
-              fontFamily: 'monospace',
+              fontFamily: AppConstants.monospaceFontFamily,
               letterSpacing: 0.5,
             ),
           ),

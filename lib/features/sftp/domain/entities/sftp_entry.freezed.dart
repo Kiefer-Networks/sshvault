@@ -213,8 +213,8 @@ return $default(_that.name,_that.path,_that.type,_that.size,_that.modified,_that
 /// @nodoc
 
 
-class _SftpEntry implements SftpEntry {
-  const _SftpEntry({required this.name, required this.path, required this.type, required this.size, required this.modified, this.permissions, this.owner, this.group, this.linkTarget});
+class _SftpEntry extends SftpEntry {
+  const _SftpEntry({required this.name, required this.path, required this.type, required this.size, required this.modified, this.permissions, this.owner, this.group, this.linkTarget}): super._();
   
 
 @override final  String name;

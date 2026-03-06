@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sshvault/features/terminal/domain/entities/terminal_theme_data.dart';
+import 'package:sshvault/features/terminal/presentation/models/terminal_theme_data.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class TerminalThemePicker extends ConsumerWidget {

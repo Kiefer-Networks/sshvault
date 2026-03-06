@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
-import 'package:sshvault/features/sftp/data/services/archive_service.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
@@ -207,7 +206,7 @@ class SftpPane extends ConsumerWidget {
                 );
               },
             ),
-            if (ArchiveService.isArchive(entry.name))
+            if (entry.isArchive)
               ListTile(
                 leading: const Icon(Icons.unarchive),
                 title: Text(l10n.sftpExtractArchive),

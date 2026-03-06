@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
-import 'package:sshvault/features/sftp/data/services/archive_service.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
@@ -81,7 +80,7 @@ class SftpEntryTile extends ConsumerWidget {
         ),
       );
     }
-    if (isFile && ArchiveService.isArchive(entry.name)) {
+    if (isFile && entry.isArchive) {
       startActions.add(
         SlidableAction(
           onPressed: (_) => _extractArchive(context, ref),
@@ -232,7 +231,7 @@ class SftpEntryTile extends ConsumerWidget {
     }
 
     // Extract (archive files only)
-    if (isFile && ArchiveService.isArchive(entry.name)) {
+    if (isFile && entry.isArchive) {
       items.add(
         PopupMenuItem(
           value: 'extract',

@@ -420,7 +420,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                         controller: _proxyHostController,
                         decoration: InputDecoration(
                           labelText: l10n.proxyHost,
-                          hintText: '192.168.1.1',
+                          hintText: l10n.hintExampleProxyHost,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -428,7 +428,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                         controller: _proxyPortController,
                         decoration: InputDecoration(
                           labelText: l10n.proxyPort,
-                          hintText: '1080',
+                          hintText: l10n.hintExampleProxyPort,
                         ),
                         keyboardType: TextInputType.number,
                       ),

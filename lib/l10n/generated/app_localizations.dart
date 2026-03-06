@@ -4209,6 +4209,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Import successful'**
   String get importSuccessful;
+
+  /// No description provided for @hintExampleServerUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'https://your-server.example.com'**
+  String get hintExampleServerUrl;
+
+  /// No description provided for @hintExampleDohUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'https://dns.example.com/dns-query'**
+  String get hintExampleDohUrl;
+
+  /// No description provided for @hintExampleProxyHost.
+  ///
+  /// In en, this message translates to:
+  /// **'192.168.1.1'**
+  String get hintExampleProxyHost;
+
+  /// No description provided for @hintExampleProxyPort.
+  ///
+  /// In en, this message translates to:
+  /// **'1080'**
+  String get hintExampleProxyPort;
+
+  /// No description provided for @hintExampleTimeoutSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'30'**
+  String get hintExampleTimeoutSeconds;
+
+  /// No description provided for @hintExampleKeepaliveSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'15'**
+  String get hintExampleKeepaliveSeconds;
+
+  /// No description provided for @jumpHostEntryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} ({hostname})'**
+  String jumpHostEntryLabel(String name, String hostname);
+
+  /// No description provided for @sshKeyEntryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} ({keyType})'**
+  String sshKeyEntryLabel(String name, String keyType);
+
+  /// No description provided for @hostPortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{hostname}:{port}'**
+  String hostPortLabel(String hostname, int port);
 }
 
 class _AppLocalizationsDelegate

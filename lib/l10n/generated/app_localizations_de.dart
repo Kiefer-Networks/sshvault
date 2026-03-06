@@ -2302,4 +2302,37 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get importSuccessful => 'Import erfolgreich';
+
+  @override
+  String get hintExampleServerUrl => 'https://your-server.example.com';
+
+  @override
+  String get hintExampleDohUrl => 'https://dns.example.com/dns-query';
+
+  @override
+  String get hintExampleProxyHost => '192.168.1.1';
+
+  @override
+  String get hintExampleProxyPort => '1080';
+
+  @override
+  String get hintExampleTimeoutSeconds => '30';
+
+  @override
+  String get hintExampleKeepaliveSeconds => '15';
+
+  @override
+  String jumpHostEntryLabel(String name, String hostname) {
+    return '$name ($hostname)';
+  }
+
+  @override
+  String sshKeyEntryLabel(String name, String keyType) {
+    return '$name ($keyType)';
+  }
+
+  @override
+  String hostPortLabel(String hostname, int port) {
+    return '$hostname:$port';
+  }
 }

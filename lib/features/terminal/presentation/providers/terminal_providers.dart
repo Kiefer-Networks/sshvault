@@ -29,7 +29,7 @@ import 'package:sshvault/features/host_key/presentation/widgets/host_key_verific
 import 'package:sshvault/features/settings/presentation/providers/proxy_settings_provider.dart';
 import 'package:sshvault/features/terminal/data/services/ssh_service.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
-import 'package:sshvault/features/terminal/domain/entities/terminal_theme_data.dart';
+import 'package:sshvault/features/terminal/presentation/models/terminal_theme_data.dart';
 
 // ---------------------------------------------------------------------------
 // SSH Service

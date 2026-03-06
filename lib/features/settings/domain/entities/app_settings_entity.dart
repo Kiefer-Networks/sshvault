@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
 
+enum AppThemeMode { system, light, dark }
+
 class AppSettingsEntity {
-  final ThemeMode themeMode;
+  final AppThemeMode themeMode;
   final int defaultSshPort;
   final String defaultUsername;
   final int autoLockMinutes;
@@ -41,7 +42,7 @@ class AppSettingsEntity {
   final String globalProxyUsername;
 
   const AppSettingsEntity({
-    this.themeMode = ThemeMode.system,
+    this.themeMode = AppThemeMode.system,
     this.defaultSshPort = 22,
     this.defaultUsername = 'root',
     this.autoLockMinutes = 5,
@@ -94,7 +95,7 @@ class AppSettingsEntity {
   bool get shouldLockout => failedPinAttempts >= AppConstants.maxPinAttempts;
 
   AppSettingsEntity copyWith({
-    ThemeMode? themeMode,
+    AppThemeMode? themeMode,
     int? defaultSshPort,
     String? defaultUsername,
     int? autoLockMinutes,

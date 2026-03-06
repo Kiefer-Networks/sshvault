@@ -41,7 +41,7 @@ class JumpHostSelector extends ConsumerWidget {
             ...available.map(
               (s) => DropdownMenuEntry<String?>(
                 value: s.id,
-                label: '${s.name} (${s.hostname})',
+                label: l10n.jumpHostEntryLabel(s.name, s.hostname),
               ),
             ),
           ],

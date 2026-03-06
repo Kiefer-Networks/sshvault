@@ -11,6 +11,7 @@ import 'package:sshvault/core/widgets/security_warning_dialog.dart';
 import 'package:sshvault/core/network/api_provider.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/features/settings/domain/entities/app_settings_entity.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 
@@ -162,7 +163,11 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
   @override
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(settingsProvider);
-    final themeMode = settingsAsync.value?.themeMode ?? ThemeMode.system;
+    final themeMode = switch (settingsAsync.value?.themeMode ?? AppThemeMode.system) {
+      AppThemeMode.light => ThemeMode.light,
+      AppThemeMode.dark => ThemeMode.dark,
+      AppThemeMode.system => ThemeMode.system,
+    };
     final localeSetting = settingsAsync.value?.locale ?? '';
     final locale = localeSetting.isEmpty ? null : Locale(localeSetting);
 

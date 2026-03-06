@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
 import 'package:sshvault/features/host_key/presentation/providers/known_host_providers.dart';
@@ -24,7 +26,7 @@ class KnownHostListScreen extends ConsumerWidget {
       ],
       body: hostsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => Center(child: Text(l10n.error(errorMessage(e)))),
         data: (hosts) {
           if (hosts.isEmpty) {
             return _EmptyState(l10n: l10n);
@@ -146,10 +148,17 @@ class _KnownHostTile extends StatelessWidget {
       onDismissed: (_) => onDelete(),
       child: ListTile(
         leading: const Icon(Icons.fingerprint),
-        title: Text('${host.hostname}:${host.port}'),
+        title: Text(
+          AppLocalizations.of(context)!.hostPortLabel(
+            host.hostname,
+            host.port,
+          ),
+        ),
         subtitle: Text(
           '${host.keyType}  $truncatedFp',
-          style: textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+          style: textTheme.bodySmall?.copyWith(
+            fontFamily: AppConstants.monospaceFontFamily,
+          ),
         ),
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline),

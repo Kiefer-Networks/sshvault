@@ -84,7 +84,7 @@ flutter test
 
 ## Backend
 
-The self-hosted backend handles encrypted vault sync, authentication, and subscription management. It never processes plaintext user data.
+The self-hosted backend handles encrypted vault sync and authentication. It never processes plaintext user data.
 
 See [shellvault-server](https://github.com/Kiefer-Networks/sshvault-api) for setup instructions.
 

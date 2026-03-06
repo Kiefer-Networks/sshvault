@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -150,7 +151,7 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
                 child: SelectableText(
                   preview.content ?? '',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
+                    fontFamily: AppConstants.monospaceFontFamily,
                   ),
                 ),
               ),

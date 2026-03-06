@@ -41,7 +41,7 @@ class SshKeySelector extends ConsumerWidget {
                 ...keys.map(
                   (k) => DropdownMenuEntry<String?>(
                     value: k.id,
-                    label: '${k.name} (${k.keyType.displayName})',
+                    label: l10n.sshKeyEntryLabel(k.name, k.keyType.displayName),
                   ),
                 ),
               ],

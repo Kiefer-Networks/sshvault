@@ -8,7 +8,7 @@ import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
-import 'package:sshvault/features/terminal/domain/entities/terminal_theme_data.dart';
+import 'package:sshvault/features/terminal/presentation/models/terminal_theme_data.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:sshvault/features/terminal/presentation/widgets/connection_overlay.dart';
 import 'package:sshvault/features/terminal/presentation/widgets/session_tab_bar.dart';

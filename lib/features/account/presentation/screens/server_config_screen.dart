@@ -95,7 +95,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
             keyboardType: TextInputType.url,
             decoration: InputDecoration(
               labelText: l10n.serverConfigUrlLabel,
-              hintText: 'https://your-server.example.com',
+              hintText: l10n.hintExampleServerUrl,
               prefixIcon: const Icon(Icons.link),
               suffixIcon: IconButton(
                 icon: testState.testing

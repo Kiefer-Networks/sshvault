@@ -261,7 +261,7 @@ class SshSettingsScreen extends ConsumerWidget {
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               labelText: l10n.seconds,
-              hintText: '30',
+              hintText: l10n.hintExampleTimeoutSeconds,
             ),
           ),
         ),
@@ -304,7 +304,7 @@ class SshSettingsScreen extends ConsumerWidget {
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               labelText: l10n.seconds,
-              hintText: '15',
+              hintText: l10n.hintExampleKeepaliveSeconds,
             ),
           ),
         ),

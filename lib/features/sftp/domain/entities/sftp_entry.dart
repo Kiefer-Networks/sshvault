@@ -6,6 +6,8 @@ enum SftpEntryType { file, directory, link }
 
 @freezed
 abstract class SftpEntry with _$SftpEntry {
+  const SftpEntry._();
+
   const factory SftpEntry({
     required String name,
     required String path,
@@ -17,4 +19,15 @@ abstract class SftpEntry with _$SftpEntry {
     String? group,
     String? linkTarget,
   }) = _SftpEntry;
+
+  static const _archiveExtensions = {
+    'zip', 'tar', 'gz', 'tgz', 'bz2', 'tbz2', '7z',
+  };
+
+  bool get isArchive {
+    final lower = name.toLowerCase();
+    if (lower.endsWith('.tar.gz') || lower.endsWith('.tar.bz2')) return true;
+    final ext = lower.split('.').last;
+    return _archiveExtensions.contains(ext);
+  }
 }

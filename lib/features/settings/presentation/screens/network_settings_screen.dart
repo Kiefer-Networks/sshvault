@@ -169,7 +169,7 @@ class NetworkSettingsScreen extends ConsumerWidget {
             controller: controller,
             decoration: InputDecoration(
               labelText: l10n.settingsDnsServerUrl,
-              hintText: 'https://dns.example.com/dns-query',
+              hintText: l10n.hintExampleDohUrl,
             ),
             keyboardType: TextInputType.url,
             autofocus: true,
@@ -290,7 +290,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                     controller: _hostController,
                     decoration: InputDecoration(
                       labelText: l10n.proxyHost,
-                      hintText: '192.168.1.1',
+                      hintText: l10n.hintExampleProxyHost,
                     ),
                     onChanged: (v) => ref
                         .read(settingsProvider.notifier)
@@ -301,7 +301,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                     controller: _portController,
                     decoration: InputDecoration(
                       labelText: l10n.proxyPort,
-                      hintText: '1080',
+                      hintText: l10n.hintExampleProxyPort,
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (v) {
