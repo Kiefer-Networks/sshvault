@@ -83,11 +83,13 @@ jobs:
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
           cat > android/key.properties <<EOF
-          storePassword=$STORE_PASSWORD
-          keyPassword=$KEY_PASSWORD
-          keyAlias=$KEY_ALIAS
+          storePassword=${STORE_PASSWORD}
+          keyPassword=${KEY_PASSWORD}
+          keyAlias=${KEY_ALIAS}
           storeFile=keystore.jks
           EOF
+          # Remove leading whitespace from heredoc
+          sed -i 's/^[[:space:]]*//' android/key.properties
 
       - name: Build APK
         run: flutter build apk --release
@@ -133,8 +135,8 @@ jobs:
 
       - name: Prepare Flatpak dist
         run: |
-          mkdir -p linux/flatpak-dist
-          cp -r build/linux/x64/release/bundle/* linux/flatpak-dist/
+          mkdir -p linux/flatpak-dist/bundle
+          cp -r build/linux/x64/release/bundle/* linux/flatpak-dist/bundle/
           cp linux/de.kiefer_networks.sshvault.desktop linux/flatpak-dist/
           cp linux/de.kiefer_networks.sshvault.metainfo.xml linux/flatpak-dist/
           mkdir -p linux/flatpak-dist/icons
