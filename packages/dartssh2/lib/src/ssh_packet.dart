@@ -1,3 +1,4 @@
+import 'dart:math' show Random;
 import 'dart:typed_data';
 
 /// Contains rfc4253 packet format related constants and helper functions.
@@ -46,7 +47,12 @@ abstract class SSHPacket {
     final result = BytesBuilder(copy: false);
     result.add(Uint8List.view(header.buffer));
     result.add(payload);
-    result.add(Uint8List(padding));
+    final secureRandom = Random.secure();
+    final randomPadding = Uint8List(padding);
+    for (var i = 0; i < padding; i++) {
+      randomPadding[i] = secureRandom.nextInt(256);
+    }
+    result.add(randomPadding);
     return result.takeBytes();
   }
 }

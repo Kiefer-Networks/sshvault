@@ -69,8 +69,13 @@ final apiClientProvider = Provider<ApiClient>((ref) {
           ref.invalidate(authProvider);
         },
       ),
-      PowInterceptor(),
     ],
+  );
+
+  // Add PoW interceptor after client creation so it can reference the
+  // parent Dio's httpClientAdapter (preserves certificate pinning).
+  client.dio.interceptors.add(
+    PowInterceptor(parentDio: client.dio),
   );
 
   return client;

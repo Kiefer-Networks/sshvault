@@ -185,7 +185,7 @@ class EncryptionService {
 
       // Verify checksum
       final checksum = _sha256Hex(plaintext);
-      if (checksum != envelope.checksum) {
+      if (!CryptoUtils.constantTimeStringEquals(checksum, envelope.checksum)) {
         sw.stop();
         _log.error(
           'Crypto',

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/crypto/encryption_service.dart';
 import 'package:shellvault/core/crypto/export_envelope.dart';
 import 'package:shellvault/core/error/failures.dart';
@@ -121,7 +122,7 @@ class SyncUseCases {
     // 3. Verify checksum
     if (vault.checksum != null) {
       final checksum = crypto.sha256.convert(blobBytes).toString();
-      if (checksum != vault.checksum) {
+      if (!CryptoUtils.constantTimeStringEquals(checksum, vault.checksum!)) {
         _log.error(_tag, 'Pull failed: blob checksum mismatch');
         return const Err(
           SyncFailure('Checksum mismatch — vault data may be corrupted'),

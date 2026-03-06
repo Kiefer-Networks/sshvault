@@ -4,14 +4,22 @@ import 'package:shellvault/core/services/logging_service.dart';
 
 /// Dio interceptor that handles 428 (Precondition Required) responses
 /// by automatically solving a PoW challenge and retrying the request.
+///
+/// Accepts the parent [Dio] instance so that internally created Dio instances
+/// for challenge-fetching and retry reuse the same [HttpClientAdapter]
+/// (including certificate pinning configuration).
 class PowInterceptor extends Interceptor {
   static final _log = LoggingService.instance;
   static const _tag = 'PoW';
 
   final ProofOfWorkService _powService;
+  final Dio _parentDio;
 
-  PowInterceptor({ProofOfWorkService? powService})
-    : _powService = powService ?? ProofOfWorkService();
+  PowInterceptor({
+    required Dio parentDio,
+    ProofOfWorkService? powService,
+  })  : _parentDio = parentDio,
+        _powService = powService ?? ProofOfWorkService();
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
@@ -25,7 +33,8 @@ class PowInterceptor extends Interceptor {
     );
 
     try {
-      // Fetch challenge from server using a plain Dio to avoid recursion
+      // Fetch challenge from server using a separate Dio to avoid recursion,
+      // but reuse the parent's httpClientAdapter to preserve certificate pinning.
       final challengeDio = Dio(
         BaseOptions(
           baseUrl: err.requestOptions.baseUrl,
@@ -34,6 +43,7 @@ class PowInterceptor extends Interceptor {
           headers: {'Content-Type': 'application/json'},
         ),
       );
+      challengeDio.httpClientAdapter = _parentDio.httpClientAdapter;
 
       final challengeResponse = await challengeDio.get<Map<String, dynamic>>(
         '/v1/auth/challenge',
@@ -78,6 +88,7 @@ class PowInterceptor extends Interceptor {
           receiveTimeout: opts.receiveTimeout,
         ),
       );
+      retryDio.httpClientAdapter = _parentDio.httpClientAdapter;
 
       final retryResponse = await retryDio.request<dynamic>(
         opts.path,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:shellvault/core/network/api_client.dart';
 import 'package:shellvault/core/error/result.dart';
@@ -41,8 +42,8 @@ class HeartbeatService {
     if (!_running) return;
     // Add +/- 15% jitter to prevent synchronized heartbeats
     final jitterMs = (interval.inMilliseconds * 0.15).round();
-    final rng = DateTime.now().microsecond;
-    final offset = (rng % (jitterMs * 2 + 1)) - jitterMs;
+    final rng = Random();
+    final offset = rng.nextInt(jitterMs * 2 + 1) - jitterMs;
     final nextInterval = Duration(
       milliseconds: interval.inMilliseconds + offset,
     );

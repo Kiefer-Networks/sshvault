@@ -58,15 +58,18 @@ void main() {
       expect(result.value.apiVersion, 1);
     });
 
-    test('accepts attestation without nonce check', () async {
+    test('accepts attestation with matching nonce', () async {
       final json = await buildValidAttestation(nonce: 'any-nonce');
-      final result = await sut.verify(json);
+      final result = await sut.verify(json, expectedNonce: 'any-nonce');
       expect(result.isSuccess, isTrue);
     });
 
     test('rejects wrong server ID', () async {
       final json = await buildValidAttestation(serverIdOverride: 'evil-server');
-      final result = await sut.verify(json);
+      final result = await sut.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isFailure, isTrue);
       expect(result.failure, isA<NetworkFailure>());
       expect(result.failure.message, contains('identity'));
@@ -76,7 +79,10 @@ void main() {
       final oldTimestamp =
           DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000 - 600;
       final json = await buildValidAttestation(timestampOverride: oldTimestamp);
-      final result = await sut.verify(json);
+      final result = await sut.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isFailure, isTrue);
       expect(result.failure.message, contains('timestamp'));
     });
@@ -87,13 +93,19 @@ void main() {
       final json = await buildValidAttestation(
         timestampOverride: slightlyOldTimestamp,
       );
-      final result = await sut.verify(json);
+      final result = await sut.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isSuccess, isTrue);
     });
 
     test('rejects API version below minimum', () async {
       final json = await buildValidAttestation(apiVersion: 0);
-      final result = await sut.verify(json);
+      final result = await sut.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isFailure, isTrue);
       expect(result.failure.message, contains('version'));
     });
@@ -102,7 +114,10 @@ void main() {
       final json = await buildValidAttestation(
         apiVersion: ServerAttestationService.minApiVersion,
       );
-      final result = await sut.verify(json);
+      final result = await sut.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isSuccess, isTrue);
     });
 
@@ -116,7 +131,10 @@ void main() {
     test('rejects tampered signature', () async {
       final json = await buildValidAttestation();
       json['signature'] = base64Encode(List.filled(64, 0));
-      final result = await sut.verify(json);
+      final result = await sut.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isFailure, isTrue);
       expect(result.failure.message, contains('signature'));
     });
@@ -125,7 +143,10 @@ void main() {
       final json = await buildValidAttestation();
       // Tamper with api_version after signing
       json['api_version'] = 2;
-      final result = await sut.verify(json);
+      final result = await sut.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isFailure, isTrue);
     });
 
@@ -143,12 +164,18 @@ void main() {
       // Sign with the original key pair
       final json = await buildValidAttestation();
       // But verify with the other service (different public key)
-      final result = await otherSut.verify(json);
+      final result = await otherSut.verify(
+        json,
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isFailure, isTrue);
     });
 
     test('returns failure for malformed JSON', () async {
-      final result = await sut.verify({'incomplete': true});
+      final result = await sut.verify(
+        {'incomplete': true},
+        expectedNonce: 'test-nonce-123',
+      );
       expect(result.isFailure, isTrue);
     });
   });

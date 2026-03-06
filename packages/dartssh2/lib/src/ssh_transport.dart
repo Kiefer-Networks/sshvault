@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math' show max;
+import 'dart:math' show Random, max;
 import 'dart:typed_data';
 
 import 'package:dartssh2/src/hostkey/hostkey_ecdsa.dart';
@@ -31,7 +31,7 @@ typedef SSHPrintHandler = void Function(String?);
 
 /// Function called when host key is received.
 /// [type] is the type of the host key, For example 'ssh-rsa',
-/// [fingerprint] md5 fingerprint of the host key.
+/// [fingerprint] SHA-256 fingerprint of the host key.
 typedef SSHHostkeyVerifyHandler = FutureOr<bool> Function(
   String type,
   Uint8List fingerprint,
@@ -234,10 +234,10 @@ class SSHTransport {
       payloadToEncrypt[0] = adjustedPaddingLength; // Set padding length
       payloadToEncrypt.setRange(1, 1 + data.length, data); // Copy data
 
-      // Add random padding
+      // Add cryptographically secure random padding
+      final secureRandom = Random.secure();
       for (var i = 0; i < adjustedPaddingLength; i++) {
-        payloadToEncrypt[1 + data.length + i] =
-            (DateTime.now().microsecondsSinceEpoch + i) & 0xFF;
+        payloadToEncrypt[1 + data.length + i] = secureRandom.nextInt(256);
       }
 
       // Verify that the payload length is a multiple of the block size
@@ -1026,7 +1026,7 @@ class SSHTransport {
     _sessionId ??= exchangeHash;
     _sharedSecret = sharedSecret;
 
-    final fingerprint = MD5Digest().process(hostkey);
+    final fingerprint = SHA256Digest().process(hostkey);
 
     if (_hostkeyVerified) {
       _sendNewKeys();

@@ -61,7 +61,7 @@ class ServerAttestationService {
   /// - `signature`: Base64-encoded Ed25519 signature
   Future<Result<ServerAttestation>> verify(
     Map<String, dynamic> json, {
-    String? expectedNonce,
+    required String expectedNonce,
   }) async {
     _log.debug(_tag, 'Verifying server attestation');
 
@@ -120,13 +120,7 @@ class ServerAttestationService {
       }
 
       // 4. Verify nonce (required for replay protection)
-      if (expectedNonce == null) {
-        _log.warning(
-          _tag,
-          'No expected nonce provided — replay protection disabled',
-        );
-      }
-      if (expectedNonce != null && attestation.nonce != expectedNonce) {
+      if (attestation.nonce != expectedNonce) {
         _log.error(_tag, 'Attestation nonce mismatch (possible replay attack)');
         return const Err(
           NetworkFailure(
