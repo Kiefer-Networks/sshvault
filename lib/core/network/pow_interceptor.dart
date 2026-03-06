@@ -15,11 +15,9 @@ class PowInterceptor extends Interceptor {
   final ProofOfWorkService _powService;
   final Dio _parentDio;
 
-  PowInterceptor({
-    required Dio parentDio,
-    ProofOfWorkService? powService,
-  })  : _parentDio = parentDio,
-        _powService = powService ?? ProofOfWorkService();
+  PowInterceptor({required Dio parentDio, ProofOfWorkService? powService})
+    : _parentDio = parentDio,
+      _powService = powService ?? ProofOfWorkService();
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
