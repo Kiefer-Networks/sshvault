@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:sshvault/core/widgets/settings/circle_icon.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
+import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
 
-class SshKeyTile extends StatelessWidget {
+class SshKeyTile extends ConsumerWidget {
   final SshKeyEntity sshKey;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -20,10 +22,12 @@ class SshKeyTile extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final canDelete = sshKey.linkedServerCount == 0;
+    final linkedServers = ref.watch(serversLinkedToKeyProvider(sshKey.id));
+    final serverNames = linkedServers.value ?? [];
+    final canDelete = serverNames.isEmpty;
 
     return Slidable(
       endActionPane: ActionPane(
@@ -107,21 +111,23 @@ class SshKeyTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            if (sshKey.linkedServerCount > 0)
+            if (serverNames.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(
-                  l10n.sshKeyTileLinkedServers(sshKey.linkedServerCount),
+                  serverNames.map((s) => s.name).join(', '),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withAlpha(
                       AppConstants.alpha153,
                     ),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
           ],
         ),
-        isThreeLine: sshKey.linkedServerCount > 0,
+        isThreeLine: serverNames.isNotEmpty,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

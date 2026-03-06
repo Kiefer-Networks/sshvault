@@ -7,6 +7,7 @@ import 'package:sshvault/features/connection/domain/entities/server_entity.dart'
 import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
 import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
 
 enum ViewMode { list, grid }
 
@@ -39,6 +40,7 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>>
     ref.invalidate(folderGroupedServersProvider);
     ref.invalidate(favoriteServersProvider);
     ref.invalidate(recentServersProvider);
+    ref.invalidate(sshKeyListProvider);
     if (serverId != null) {
       ref.invalidate(serverDetailProvider(serverId));
       ref.invalidate(serverCredentialsProvider(serverId));

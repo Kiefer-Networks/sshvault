@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
 
 class SshKeySelector extends ConsumerWidget {
@@ -22,40 +20,27 @@ class SshKeySelector extends ConsumerWidget {
 
     return keysAsync.when(
       data: (keys) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            DropdownMenu<String?>(
-              initialSelection: keys.any((k) => k.id == selectedKeyId)
-                  ? selectedKeyId
-                  : null,
-              expandedInsets: EdgeInsets.zero,
-              requestFocusOnTap: false,
-              label: Text(l10n.sshKeySelectorLabel),
-              leadingIcon: const Icon(Icons.vpn_key_outlined),
-              dropdownMenuEntries: [
-                DropdownMenuEntry<String?>(
-                  value: null,
-                  label: l10n.sshKeySelectorNone,
-                ),
-                ...keys.map(
-                  (k) => DropdownMenuEntry<String?>(
-                    value: k.id,
-                    label: l10n.sshKeyEntryLabel(k.name, k.keyType.displayName),
-                  ),
-                ),
-              ],
-              onSelected: onChanged,
+        return DropdownMenu<String?>(
+          initialSelection: keys.any((k) => k.id == selectedKeyId)
+              ? selectedKeyId
+              : null,
+          expandedInsets: EdgeInsets.zero,
+          requestFocusOnTap: false,
+          label: Text(l10n.sshKeySelectorLabel),
+          leadingIcon: const Icon(Icons.vpn_key_outlined),
+          dropdownMenuEntries: [
+            DropdownMenuEntry<String?>(
+              value: null,
+              label: l10n.sshKeySelectorNone,
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: AdaptiveButton.textIcon(
-                onPressed: () => context.push('/keys'),
-                icon: const Icon(Icons.settings, size: 16),
-                label: Text(l10n.sshKeySelectorManage),
+            ...keys.map(
+              (k) => DropdownMenuEntry<String?>(
+                value: k.id,
+                label: l10n.sshKeyEntryLabel(k.name, k.keyType.displayName),
               ),
             ),
           ],
+          onSelected: onChanged,
         );
       },
       loading: () => const LinearProgressIndicator(),

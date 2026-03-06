@@ -9,10 +9,8 @@ import 'package:sshvault/core/constants/color_constants.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
-import 'package:sshvault/core/crypto/crypto_provider.dart';
 import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
 import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
-import 'package:sshvault/features/connection/presentation/widgets/key_generation_dialog.dart';
 import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
@@ -31,7 +29,6 @@ class _ServerFormReactiveState {
   final String iconName;
   final String? groupId;
   final String? sshKeyId;
-  final bool useManagedKey;
   final List<String> selectedTagIds;
   final bool isActive;
   final bool saving;
@@ -48,7 +45,6 @@ class _ServerFormReactiveState {
     this.iconName = IconConstants.defaultIconName,
     this.groupId,
     this.sshKeyId,
-    this.useManagedKey = false,
     this.selectedTagIds = const [],
     this.isActive = true,
     this.saving = false,
@@ -64,7 +60,6 @@ class _ServerFormReactiveState {
     String? iconName,
     String? Function()? groupId,
     String? Function()? sshKeyId,
-    bool? useManagedKey,
     List<String>? selectedTagIds,
     bool? isActive,
     bool? saving,
@@ -79,7 +74,6 @@ class _ServerFormReactiveState {
       iconName: iconName ?? this.iconName,
       groupId: groupId != null ? groupId() : this.groupId,
       sshKeyId: sshKeyId != null ? sshKeyId() : this.sshKeyId,
-      useManagedKey: useManagedKey ?? this.useManagedKey,
       selectedTagIds: selectedTagIds ?? this.selectedTagIds,
       isActive: isActive ?? this.isActive,
       saving: saving ?? this.saving,
@@ -114,9 +108,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   final _portController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _privateKeyController = TextEditingController();
-  final _publicKeyController = TextEditingController();
-  final _passphraseController = TextEditingController();
   final _notesController = TextEditingController();
   final _proxyHostController = TextEditingController();
   final _proxyPortController = TextEditingController();
@@ -157,7 +148,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       iconName: result.iconName,
       groupId: result.groupId,
       sshKeyId: result.sshKeyId,
-      useManagedKey: result.sshKeyId != null,
       selectedTagIds: result.tags.map((t) => t.id).toList(),
       isActive: result.isActive,
       jumpHostId: result.jumpHostId,
@@ -171,9 +161,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     );
     if (!mounted) return;
     _passwordController.text = creds.password ?? '';
-    _privateKeyController.text = creds.privateKey ?? '';
-    _publicKeyController.text = creds.publicKey ?? '';
-    _passphraseController.text = creds.passphrase ?? '';
   }
 
   @override
@@ -183,9 +170,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     _portController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
-    _privateKeyController.dispose();
-    _publicKeyController.dispose();
-    _passphraseController.dispose();
     _notesController.dispose();
     _proxyHostController.dispose();
     _proxyPortController.dispose();
@@ -193,46 +177,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
     _proxyPasswordController.dispose();
     _postConnectController.dispose();
     super.dispose();
-  }
-
-  Future<void> _generateKeyPair() async {
-    final sshKeyService = ref.read(sshKeyServiceProvider);
-    final result = await KeyGenerationDialog.show(context, sshKeyService);
-    if (result != null && mounted) {
-      _privateKeyController.text = result.privateKey;
-      _publicKeyController.text = result.publicKey;
-      AdaptiveNotification.show(
-        context,
-        message: AppLocalizations.of(
-          context,
-        )!.serverFormKeyGenerated(result.type.displayName),
-      );
-    }
-  }
-
-  Future<void> _extractPublicKey() async {
-    final privateKey = _privateKeyController.text.trim();
-    if (privateKey.isEmpty) return;
-
-    final sshKeyService = ref.read(sshKeyServiceProvider);
-    final result = await sshKeyService.extractPublicKey(privateKey);
-    if (!mounted) return;
-    final l10n = AppLocalizations.of(context)!;
-    result.fold(
-      onSuccess: (publicKey) {
-        _publicKeyController.text = publicKey;
-        AdaptiveNotification.show(
-          context,
-          message: l10n.serverFormPublicKeyExtracted,
-        );
-      },
-      onFailure: (failure) {
-        AdaptiveNotification.show(
-          context,
-          message: l10n.serverFormPublicKeyError(failure.message),
-        );
-      },
-    );
   }
 
   @override
@@ -291,24 +235,11 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                     portController: _portController,
                     usernameController: _usernameController,
                     passwordController: _passwordController,
-                    privateKeyController: _privateKeyController,
-                    publicKeyController: _publicKeyController,
-                    passphraseController: _passphraseController,
                     notesController: _notesController,
                     authMethod: formState.authMethod,
                     onAuthMethodChanged: (m) =>
                         ref.read(_serverFormStateProvider.notifier).state =
                             formState.copyWith(authMethod: m),
-                    onGenerateKeyPair: _generateKeyPair,
-                    onExtractPublicKey: _extractPublicKey,
-                    useManagedKey: formState.useManagedKey,
-                    onUseManagedKeyChanged: (v) =>
-                        ref
-                            .read(_serverFormStateProvider.notifier)
-                            .state = formState.copyWith(
-                          useManagedKey: v,
-                          sshKeyId: v ? null : () => null,
-                        ),
                     selectedSshKeyId: formState.sshKeyId,
                     onSshKeyChanged: (id) =>
                         ref.read(_serverFormStateProvider.notifier).state =
@@ -557,7 +488,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         iconName: currentState.iconName,
         isActive: currentState.isActive,
         groupId: currentState.groupId,
-        sshKeyId: currentState.useManagedKey ? currentState.sshKeyId : null,
+        sshKeyId: currentState.sshKeyId,
         jumpHostId: currentState.jumpHostId,
         useGlobalProxy: currentState.useGlobalProxy,
         proxyType: currentState.proxyType,
@@ -577,15 +508,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         password: _passwordController.text.isEmpty
             ? null
             : _passwordController.text,
-        privateKey: _privateKeyController.text.isEmpty
-            ? null
-            : _privateKeyController.text,
-        publicKey: _publicKeyController.text.isEmpty
-            ? null
-            : _publicKeyController.text,
-        passphrase: _passphraseController.text.isEmpty
-            ? null
-            : _passphraseController.text,
       );
 
       final notifier = ref.read(serverListProvider.notifier);

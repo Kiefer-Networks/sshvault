@@ -12,6 +12,7 @@ import 'package:sshvault/core/crypto/crypto_provider.dart';
 import 'package:sshvault/core/crypto/ssh_key_type.dart';
 import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
 
 class _SshKeyFormReactiveState {
   final SshKeyType selectedType;
@@ -110,6 +111,24 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     }
     if (e is Failure) return e.message;
     return e.toString();
+  }
+
+  Future<void> _onDelete() async {
+    final l10n = AppLocalizations.of(context)!;
+    final key = widget.existingKey!;
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: l10n.sshKeyDeleteTitle,
+      message: l10n.sshKeyDeleteMessage(key.name),
+    );
+    if (confirmed == true && mounted) {
+      try {
+        await ref.read(sshKeyListProvider.notifier).deleteSshKey(key.id);
+        if (mounted) Navigator.pop(context, true);
+      } catch (e) {
+        if (mounted) _showError(_errorMessage(e));
+      }
+    }
   }
 
   void _onSave() {
@@ -297,6 +316,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           widget.isEditing ? l10n.sshKeyFormTitleEdit : l10n.sshKeyFormTitleAdd,
         ),
         actions: [
+          if (widget.isEditing)
+            _DeleteKeyButton(
+              keyId: widget.existingKey!.id,
+              onDelete: formState.saving ? null : _onDelete,
+            ),
           TextButton(
             onPressed: formState.saving ? null : _onSave,
             child: formState.saving
@@ -640,6 +664,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           ),
         ],
 
+        // Linked servers
+        _LinkedServersList(keyId: key.id),
+
         if (formState.error != null) ...[
           const SizedBox(height: 16),
           Text(
@@ -647,6 +674,60 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
             style: TextStyle(color: theme.colorScheme.error),
           ),
         ],
+      ],
+    );
+  }
+}
+
+class _DeleteKeyButton extends ConsumerWidget {
+  final String keyId;
+  final VoidCallback? onDelete;
+
+  const _DeleteKeyButton({required this.keyId, this.onDelete});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final linkedServers = ref.watch(serversLinkedToKeyProvider(keyId));
+    final canDelete = (linkedServers.value ?? []).isEmpty;
+    if (!canDelete) return const SizedBox.shrink();
+    return IconButton(
+      icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+      onPressed: onDelete,
+    );
+  }
+}
+
+class _LinkedServersList extends ConsumerWidget {
+  final String keyId;
+
+  const _LinkedServersList({required this.keyId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final linkedServers = ref.watch(serversLinkedToKeyProvider(keyId));
+    final servers = linkedServers.value ?? [];
+
+    if (servers.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        Text(
+          l10n.sshKeyTileLinkedServers(servers.length),
+          style: theme.textTheme.labelLarge,
+        ),
+        const SizedBox(height: 8),
+        for (final server in servers)
+          ListTile(
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.dns_outlined, size: 20, color: Color(server.color)),
+            title: Text(server.name),
+            subtitle: Text('${server.username}@${server.hostname}:${server.port}'),
+          ),
       ],
     );
   }

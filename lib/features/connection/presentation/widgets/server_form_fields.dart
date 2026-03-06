@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:sshvault/core/utils/validators.dart';
 import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
@@ -13,17 +12,10 @@ class ServerFormFields extends StatelessWidget {
   final TextEditingController portController;
   final TextEditingController usernameController;
   final TextEditingController passwordController;
-  final TextEditingController privateKeyController;
-  final TextEditingController publicKeyController;
-  final TextEditingController passphraseController;
   final TextEditingController notesController;
   final AuthMethod authMethod;
   final ValueChanged<AuthMethod> onAuthMethodChanged;
   final bool showCredentials;
-  final VoidCallback? onGenerateKeyPair;
-  final VoidCallback? onExtractPublicKey;
-  final bool useManagedKey;
-  final ValueChanged<bool>? onUseManagedKeyChanged;
   final String? selectedSshKeyId;
   final ValueChanged<String?>? onSshKeyChanged;
 
@@ -34,17 +26,10 @@ class ServerFormFields extends StatelessWidget {
     required this.portController,
     required this.usernameController,
     required this.passwordController,
-    required this.privateKeyController,
-    required this.publicKeyController,
-    required this.passphraseController,
     required this.notesController,
     required this.authMethod,
     required this.onAuthMethodChanged,
     this.showCredentials = true,
-    this.onGenerateKeyPair,
-    this.onExtractPublicKey,
-    this.useManagedKey = false,
-    this.onUseManagedKeyChanged,
     this.selectedSshKeyId,
     this.onSshKeyChanged,
   });
@@ -130,77 +115,11 @@ class ServerFormFields extends StatelessWidget {
           if (authMethod == AuthMethod.key ||
               authMethod == AuthMethod.both) ...[
             const SizedBox(height: 16),
-            if (onUseManagedKeyChanged != null)
-              AdaptiveSwitchTile(
-                title: l10n.serverFormUseManagedKey,
-                subtitle: useManagedKey
-                    ? l10n.serverFormManagedKeySubtitle
-                    : l10n.serverFormDirectKeySubtitle,
-                value: useManagedKey,
-                onChanged: onUseManagedKeyChanged,
-              ),
-            if (useManagedKey && onSshKeyChanged != null) ...[
-              const SizedBox(height: 8),
+            if (onSshKeyChanged != null)
               SshKeySelector(
                 selectedKeyId: selectedSshKeyId,
                 onChanged: onSshKeyChanged!,
               ),
-            ],
-            if (!useManagedKey) ...[
-              if (onGenerateKeyPair != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: OutlinedButton.icon(
-                    onPressed: onGenerateKeyPair,
-                    icon: const Icon(Icons.auto_fix_high, size: 18),
-                    label: Text(l10n.serverFormGenerateKey),
-                  ),
-                ),
-              TextFormField(
-                controller: privateKeyController,
-                decoration: InputDecoration(
-                  labelText: l10n.serverFormPrivateKeyLabel,
-                  prefixIcon: const Icon(Icons.vpn_key),
-                  hintText: l10n.serverFormPrivateKeyHint,
-                  suffixIcon:
-                      onExtractPublicKey != null &&
-                          privateKeyController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.key, size: 20),
-                          tooltip: l10n.serverFormExtractPublicKey,
-                          onPressed: onExtractPublicKey,
-                        )
-                      : null,
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLines: 3,
-                validator: useManagedKey
-                    ? null
-                    : Validators.sshKeyValidator(l10n),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: publicKeyController,
-                decoration: InputDecoration(
-                  labelText: l10n.serverFormPublicKeyLabel,
-                  prefixIcon: const Icon(Icons.key),
-                  hintText: l10n.serverFormPublicKeyHint,
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLines: 2,
-                readOnly: false,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: passphraseController,
-                decoration: InputDecoration(
-                  labelText: l10n.serverFormPassphraseLabel,
-                  prefixIcon: const Icon(Icons.lock_outline),
-                ),
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
-              ),
-            ],
           ],
         ],
         const SizedBox(height: 16),

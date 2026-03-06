@@ -206,10 +206,22 @@ class ServerListScreen extends ConsumerWidget {
           false;
     }
 
+    // Import SSH keys first so we can link them to servers
+    var keysImported = 0;
+    final keyIdByPath = <String, String>{};
+    if (importKeys) {
+      final result = await _importSshKeys(ref, entriesWithKeys);
+      keysImported = result.length;
+      keyIdByPath.addAll(result);
+    }
+
     var importedCount = 0;
     final serverNotifier = ref.read(serverListProvider.notifier);
     for (final entry in toImport) {
       try {
+        final sshKeyId = entry.identityFile != null
+            ? keyIdByPath[entry.identityFile]
+            : null;
         final server = ServerEntity(
           id: '',
           name: entry.name,
@@ -219,6 +231,7 @@ class ServerListScreen extends ConsumerWidget {
           authMethod: entry.identityFile != null
               ? AuthMethod.key
               : AuthMethod.password,
+          sshKeyId: sshKeyId,
           color: ColorConstants.defaultServerColor,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
@@ -228,12 +241,6 @@ class ServerListScreen extends ConsumerWidget {
       } catch (_) {
         // Skip entries that fail
       }
-    }
-
-    // Import SSH keys if requested
-    var keysImported = 0;
-    if (importKeys) {
-      keysImported = await _importSshKeys(ref, entriesWithKeys);
     }
 
     // Mark as imported and refresh providers
@@ -255,7 +262,8 @@ class ServerListScreen extends ConsumerWidget {
     }
   }
 
-  static Future<int> _importSshKeys(
+  /// Imports SSH keys and returns a map of identityFilePath → created key ID.
+  static Future<Map<String, String>> _importSshKeys(
     WidgetRef ref,
     List<SshConfigEntry> entries,
   ) async {
@@ -263,11 +271,12 @@ class ServerListScreen extends ConsumerWidget {
     final home = Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         '';
-    var count = 0;
+    final imported = <String, String>{};
 
     for (final entry in entries) {
       try {
-        var path = entry.identityFile!;
+        final originalPath = entry.identityFile!;
+        var path = originalPath;
         if (path.startsWith('~/')) {
           path = '$home${path.substring(1)}';
         }
@@ -278,7 +287,7 @@ class ServerListScreen extends ConsumerWidget {
         final keyType = _detectKeyType(privateKey);
         final keyName = path.split(Platform.pathSeparator).last;
 
-        await keyNotifier.createSshKey(
+        final created = await keyNotifier.createSshKey(
           SshKeyEntity(
             id: '',
             name: '${entry.name} ($keyName)',
@@ -288,12 +297,12 @@ class ServerListScreen extends ConsumerWidget {
           ),
           privateKey: privateKey,
         );
-        count++;
+        imported[originalPath] = created.id;
       } catch (_) {
         // Skip keys that fail to read or import
       }
     }
-    return count;
+    return imported;
   }
 
   static SshKeyType _detectKeyType(String privateKey) {

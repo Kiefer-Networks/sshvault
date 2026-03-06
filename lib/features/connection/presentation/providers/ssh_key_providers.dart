@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/utils/auto_sync_mixin.dart';
+import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
 
@@ -20,7 +21,7 @@ class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>>
     );
   }
 
-  Future<void> createSshKey(
+  Future<SshKeyEntity> createSshKey(
     SshKeyEntity key, {
     required String privateKey,
     String? passphrase,
@@ -31,10 +32,11 @@ class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>>
       privateKey: privateKey,
       passphrase: passphrase,
     );
-    result.fold(
-      onSuccess: (_) {
+    return result.fold(
+      onSuccess: (created) {
         ref.invalidateSelf();
         triggerAutoSync();
+        return created;
       },
       onFailure: (failure) => throw failure,
     );
@@ -78,5 +80,17 @@ final sshKeyDetailProvider = FutureProvider.family<SshKeyEntity, String>((
   return result.fold(
     onSuccess: (key) => key,
     onFailure: (failure) => throw failure,
+  );
+});
+
+/// Servers linked to a specific SSH key.
+final serversLinkedToKeyProvider =
+    FutureProvider.family<List<ServerEntity>, String>((ref, keyId) async {
+  final useCases = ref.watch(serverUseCasesProvider);
+  final result = await useCases.getServers();
+  return result.fold(
+    onSuccess: (servers) =>
+        servers.where((s) => s.sshKeyId == keyId).toList(),
+    onFailure: (_) => [],
   );
 });
