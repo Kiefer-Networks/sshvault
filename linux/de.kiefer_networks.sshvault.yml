@@ -44,7 +44,7 @@ modules:
   - name: sshvault
     buildsystem: simple
     build-commands:
-      - cp -r bundle/ /app/
+      - cp -r bundle/* /app/
       - chmod +x /app/sshvault
       - mkdir -p /app/bin
       - ln -s /app/sshvault /app/bin/sshvault
