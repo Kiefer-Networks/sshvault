@@ -11,3 +11,8 @@
 
 # Keep notification channel metadata
 -keep class androidx.core.app.NotificationCompat { *; }
+
+# Play Core deferred components (referenced by Flutter engine)
+-dontwarn com.google.android.play.core.splitcompat.SplitCompatApplication
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
