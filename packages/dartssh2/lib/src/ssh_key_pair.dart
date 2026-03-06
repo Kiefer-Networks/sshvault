@@ -279,7 +279,7 @@ abstract class OpenSSHKeyPair implements SSHKeyPair {
   @override
   String toPem() {
     final writer = SSHMessageWriter();
-    final checkInt = Random().nextInt(0xFFFFFFFF);
+    final checkInt = Random.secure().nextInt(0xFFFFFFFF);
 
     writer.writeUint32(checkInt);
     writer.writeUint32(checkInt);

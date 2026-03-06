@@ -164,7 +164,10 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       final data = await buildExportData();
       final jsonString = const JsonEncoder.withIndent('  ').convert(data);
 
-      final dir = await getApplicationDocumentsDirectory();
+      // Write to temporary directory instead of Documents to prevent
+      // plaintext export files from persisting in user-accessible storage.
+      // The share flow still works — share_plus copies from the temp path.
+      final dir = await getTemporaryDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final filePath =
           '${dir.path}/${AppConstants.exportFileName}_$timestamp.json';
@@ -201,7 +204,9 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
 
       final encoded = ZipEncoder().encode(archive);
 
-      final dir = await getApplicationDocumentsDirectory();
+      // Write to temporary directory to avoid persisting export files in
+      // user-accessible storage. The share flow copies from the temp path.
+      final dir = await getTemporaryDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final filePath =
           '${dir.path}/${AppConstants.exportFileName}_$timestamp.zip';

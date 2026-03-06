@@ -18,7 +18,7 @@ import 'package:dartssh2/src/ssh_kex_utils.dart';
 import 'package:dartssh2/src/ssh_packet.dart';
 import 'package:dartssh2/src/utils/int.dart';
 import 'package:dartssh2/src/hostkey/hostkey_ed25519.dart';
-import 'package:dartssh2/src/utils/list.dart';
+
 import 'package:dartssh2/src/message/msg_kex.dart';
 import 'package:dartssh2/src/message/msg_kex_dh.dart';
 import 'package:dartssh2/src/message/msg_kex_ecdh.dart';
@@ -611,7 +611,7 @@ class SSHTransport {
 
     final expectedMac = _remoteMac!.finish();
 
-    if (!expectedMac.equals(actualMac)) {
+    if (!_constantTimeEquals(expectedMac, actualMac)) {
       throw SSHPacketError(
         'MAC mismatch, expected: $expectedMac, actual: $actualMac',
       );
@@ -1126,5 +1126,16 @@ class SSHTransport {
 
     final messageId = data[0];
     return (messageId >= 20 && messageId <= 49) || messageId <= 4;
+  }
+
+  /// Constant-time comparison of two byte lists to prevent timing attacks
+  /// on MAC verification.
+  static bool _constantTimeEquals(Uint8List a, Uint8List b) {
+    if (a.length != b.length) return false;
+    var result = 0;
+    for (var i = 0; i < a.length; i++) {
+      result |= a[i] ^ b[i];
+    }
+    return result == 0;
   }
 }

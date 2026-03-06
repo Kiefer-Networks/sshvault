@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
+import 'package:shellvault/core/services/logging_service.dart';
+import 'package:shellvault/core/storage/database_provider.dart';
+import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/services/biometric_provider.dart';
@@ -246,6 +249,30 @@ class _LockScreenState extends ConsumerState<LockScreen>
     }
 
     ref.read(_lockStateProvider.notifier).setVerifying(true);
+
+    // Check duress PIN first — silently wipe all data and show a fake
+    // unlock so the coercing party sees an empty (reset) app.
+    final isDuress = await notifier.verifyDuressPin(_pin);
+    if (isDuress) {
+      LoggingService.instance.warning(
+        'LockScreen',
+        'Duress PIN entered — wiping all local data',
+      );
+      try {
+        await ref.read(secureStorageProvider).clearAllData();
+        final db = ref.read(databaseProvider);
+        await db.deleteAllData();
+      } catch (e) {
+        LoggingService.instance.error(
+          'LockScreen',
+          'Failed to wipe data during duress: $e',
+        );
+      }
+      if (!mounted) return;
+      // Show a normal unlock — the attacker sees an empty app
+      await _onUnlockSuccess();
+      return;
+    }
 
     final success = await notifier.verifyPin(_pin);
 

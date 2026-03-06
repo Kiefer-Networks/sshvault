@@ -7,9 +7,19 @@ import 'package:path/path.dart' as p;
 
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/sftp/data/services/sftp_service.dart';
 
 class ArchiveService {
+  static final _log = LoggingService.instance;
+  static const _tag = 'ArchiveService';
+
+  /// Maximum archive file size before extraction (500 MB).
+  static const _maxArchiveSize = 500 * 1024 * 1024;
+
+  /// Maximum total extracted size (2 GB).
+  static const _maxExtractedSize = 2 * 1024 * 1024 * 1024;
+
   static const supportedExtensions = {
     'zip',
     'tar',
@@ -37,24 +47,46 @@ class ArchiveService {
         return const Err(SftpFailure('Archive file not found'));
       }
 
+      final fileSize = await file.length();
+      if (fileSize > _maxArchiveSize) {
+        return const Err(SftpFailure('Archive exceeds maximum size limit'));
+      }
+
       final bytes = await file.readAsBytes();
       final archive = _decode(archivePath, bytes);
       if (archive == null) {
         return const Err(SftpFailure('Unsupported archive format'));
       }
 
+      final resolvedTarget = p.normalize(p.absolute(targetDir));
+      var totalExtracted = 0;
+
       for (final entry in archive) {
         final outPath = p.join(targetDir, entry.name);
+        final resolved = p.normalize(p.absolute(outPath));
+        if (!resolved.startsWith(resolvedTarget + p.separator) &&
+            resolved != resolvedTarget) {
+          _log.warning(_tag, 'Skipping path traversal entry: ${entry.name}');
+          continue;
+        }
+
         if (entry.isDirectory) {
-          await Directory(outPath).create(recursive: true);
+          await Directory(resolved).create(recursive: true);
         } else if (entry.isFile) {
-          final parent = Directory(p.dirname(outPath));
+          final parent = Directory(p.dirname(resolved));
           if (!await parent.exists()) {
             await parent.create(recursive: true);
           }
           final content = entry.readBytes();
           if (content != null) {
-            await File(outPath).writeAsBytes(content);
+            totalExtracted += content.length;
+            if (totalExtracted > _maxExtractedSize) {
+              _log.error(_tag, 'Archive extraction exceeded maximum size');
+              return const Err(
+                SftpFailure('Archive extraction exceeded maximum size'),
+              );
+            }
+            await File(resolved).writeAsBytes(content);
           }
         }
       }
@@ -87,29 +119,55 @@ class ArchiveService {
         return Err(downloadResult.failure);
       }
 
+      // Check archive file size before extraction
+      final archiveFile = File(localArchive);
+      final fileSize = await archiveFile.length();
+      if (fileSize > _maxArchiveSize) {
+        await tempDir.delete(recursive: true);
+        return const Err(SftpFailure('Archive exceeds maximum size limit'));
+      }
+
       // Extract locally into temp
       final extractDir = p.join(tempDir.path, 'extracted');
       await Directory(extractDir).create();
 
-      final bytes = await File(localArchive).readAsBytes();
+      final bytes = await archiveFile.readAsBytes();
       final archive = _decode(remotePath, bytes);
       if (archive == null) {
         await tempDir.delete(recursive: true);
         return const Err(SftpFailure('Unsupported archive format'));
       }
 
+      final resolvedExtractDir = p.normalize(p.absolute(extractDir));
+      var totalExtracted = 0;
+
       for (final entry in archive) {
         final outPath = p.join(extractDir, entry.name);
+        final resolved = p.normalize(p.absolute(outPath));
+        if (!resolved.startsWith(resolvedExtractDir + p.separator) &&
+            resolved != resolvedExtractDir) {
+          _log.warning(_tag, 'Skipping path traversal entry: ${entry.name}');
+          continue;
+        }
+
         if (entry.isDirectory) {
-          await Directory(outPath).create(recursive: true);
+          await Directory(resolved).create(recursive: true);
         } else if (entry.isFile) {
-          final parent = Directory(p.dirname(outPath));
+          final parent = Directory(p.dirname(resolved));
           if (!await parent.exists()) {
             await parent.create(recursive: true);
           }
           final content = entry.readBytes();
           if (content != null) {
-            await File(outPath).writeAsBytes(content);
+            totalExtracted += content.length;
+            if (totalExtracted > _maxExtractedSize) {
+              _log.error(_tag, 'Archive extraction exceeded maximum size');
+              await tempDir.delete(recursive: true);
+              return const Err(
+                SftpFailure('Archive extraction exceeded maximum size'),
+              );
+            }
+            await File(resolved).writeAsBytes(content);
           }
         }
       }

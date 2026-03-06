@@ -284,7 +284,17 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
     await refresh();
   }
 
+  bool _isValidFileName(String name) {
+    if (name.isEmpty) return false;
+    if (name.contains('/') || name.contains('\\')) return false;
+    if (name.contains('..')) return false;
+    if (name == '.' || name == '..') return false;
+    return true;
+  }
+
   Future<void> rename(String path, String newName) async {
+    if (!_isValidFileName(newName)) return;
+
     final source = state.source;
     final dirPath = state.source is SftpPaneSourceLocal
         ? p.dirname(path)
@@ -309,6 +319,8 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
   }
 
   Future<void> createDirectory(String name) async {
+    if (!_isValidFileName(name)) return;
+
     final source = state.source;
     final newPath = state.source is SftpPaneSourceLocal
         ? p.join(state.currentPath, name)

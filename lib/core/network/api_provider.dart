@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shellvault/core/constants/app_constants.dart';
@@ -40,36 +41,51 @@ final apiClientProvider = Provider<ApiClient>((ref) {
     interceptors: [
       // DoH resolution runs first, before auth headers are attached
       dohInterceptor,
-      AuthInterceptor(
-        storage,
-        ApiClient(baseUrl).dio,
-        onAuthExpired: ({bool sessionRevoked = false}) async {
-          if (sessionRevoked) {
-            LoggingService.instance.warning(
-              'ApiProvider',
-              'Session revoked remotely — wiping all local data',
-            );
-            await storage.clearAllData();
-            try {
-              final db = ref.read(databaseProvider);
-              await db.deleteAllData();
-            } catch (e) {
-              LoggingService.instance.error(
-                'ApiProvider',
-                'Failed to clear database: $e',
-              );
-            }
-            ref.invalidate(serverListProvider);
-            ref.invalidate(sshKeyListProvider);
-            ref.invalidate(folderListProvider);
-            ref.invalidate(tagListProvider);
-            ref.invalidate(snippetListProvider);
-            ref.invalidate(settingsProvider);
-          }
-          ref.invalidate(authProvider);
-        },
-      ),
     ],
+  );
+
+  // Create a refresh Dio that shares the main client's httpClientAdapter
+  // so token refresh requests go through the same certificate pinning.
+  final refreshDio = Dio(BaseOptions(
+    baseUrl: baseUrl,
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 15),
+    headers: {'Content-Type': 'application/json'},
+  ));
+  refreshDio.httpClientAdapter = client.dio.httpClientAdapter;
+
+  // Add AuthInterceptor after client creation so the refresh Dio can
+  // reuse the pinned httpClientAdapter (same pattern as PowInterceptor).
+  client.dio.interceptors.add(
+    AuthInterceptor(
+      storage,
+      refreshDio,
+      onAuthExpired: ({bool sessionRevoked = false}) async {
+        if (sessionRevoked) {
+          LoggingService.instance.warning(
+            'ApiProvider',
+            'Session revoked remotely — wiping all local data',
+          );
+          await storage.clearAllData();
+          try {
+            final db = ref.read(databaseProvider);
+            await db.deleteAllData();
+          } catch (e) {
+            LoggingService.instance.error(
+              'ApiProvider',
+              'Failed to clear database: $e',
+            );
+          }
+          ref.invalidate(serverListProvider);
+          ref.invalidate(sshKeyListProvider);
+          ref.invalidate(folderListProvider);
+          ref.invalidate(tagListProvider);
+          ref.invalidate(snippetListProvider);
+          ref.invalidate(settingsProvider);
+        }
+        ref.invalidate(authProvider);
+      },
+    ),
   );
 
   // Add PoW interceptor after client creation so it can reference the
