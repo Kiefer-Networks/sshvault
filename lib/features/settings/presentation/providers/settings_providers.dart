@@ -71,10 +71,14 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     // Read PIN secrets from secure storage
     final secPinHash = await _readSecure(secureStorage, _secKeyPinHash);
     final secPinSalt = await _readSecure(secureStorage, _secKeyPinSalt);
-    final secDuressPinHash =
-        await _readSecure(secureStorage, _secKeyDuressPinHash);
-    final secDuressPinSalt =
-        await _readSecure(secureStorage, _secKeyDuressPinSalt);
+    final secDuressPinHash = await _readSecure(
+      secureStorage,
+      _secKeyDuressPinHash,
+    );
+    final secDuressPinSalt = await _readSecure(
+      secureStorage,
+      _secKeyDuressPinSalt,
+    );
 
     // Migrate PIN data from database to secure storage if needed
     final dbPinHash = all[_keyPinHash];
@@ -94,28 +98,17 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
         pinHash.isEmpty &&
         (dbPinHash == null || dbPinHash.isEmpty)) {
       final hashResult = await _hashPin(legacyPin);
-      await secureStorage.write(
-        key: _secKeyPinHash,
-        value: hashResult.hash,
-      );
-      await secureStorage.write(
-        key: _secKeyPinSalt,
-        value: hashResult.salt,
-      );
+      await secureStorage.write(key: _secKeyPinHash, value: hashResult.hash);
+      await secureStorage.write(key: _secKeyPinSalt, value: hashResult.salt);
       await dao.deleteValue('pin_code');
       pinHash = hashResult.hash;
       pinSalt = hashResult.salt;
     }
 
     // Migrate existing PIN hash/salt from DB to secure storage
-    if (pinHash.isEmpty &&
-        dbPinHash != null &&
-        dbPinHash.isNotEmpty) {
+    if (pinHash.isEmpty && dbPinHash != null && dbPinHash.isNotEmpty) {
       await secureStorage.write(key: _secKeyPinHash, value: dbPinHash);
-      await secureStorage.write(
-        key: _secKeyPinSalt,
-        value: dbPinSalt ?? '',
-      );
+      await secureStorage.write(key: _secKeyPinSalt, value: dbPinSalt ?? '');
       await dao.setValue(_keyPinHash, '');
       await dao.setValue(_keyPinSalt, '');
       pinHash = dbPinHash;
@@ -152,10 +145,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   }
 
   /// Reads a value from secure storage, returning empty string on failure.
-  Future<String> _readSecure(
-    dynamic secureStorage,
-    String key,
-  ) async {
+  Future<String> _readSecure(dynamic secureStorage, String key) async {
     try {
       final result = await secureStorage.read(key: key);
       return result ?? '';

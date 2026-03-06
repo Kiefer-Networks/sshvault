@@ -238,10 +238,7 @@ class SftpConnectionManager {
           lastSeenAt: now,
         ),
       );
-      _log.info(
-        _tag,
-        'TOFU: Stored new host key for $hostname:$port ($type)',
-      );
+      _log.info(_tag, 'TOFU: Stored new host key for $hostname:$port ($type)');
       return true;
     };
   }
