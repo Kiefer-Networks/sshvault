@@ -56,7 +56,9 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
         final windows = await info.windowsInfo;
         return windows.computerName;
       }
-    } catch (_) {}
+    } catch (e) {
+      _log.warning(_tag, 'Device info unavailable: $e');
+    }
     return null;
   }
 
