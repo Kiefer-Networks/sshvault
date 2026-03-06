@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -5,9 +7,13 @@ import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
+import 'package:sshvault/core/utils/ssh_config_parser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/error_state.dart';
 import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
+import 'package:sshvault/core/constants/color_constants.dart';
+import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
+import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
@@ -27,6 +33,129 @@ final _hostFolderExpandedProvider = StateProvider.autoDispose
 
 class ServerListScreen extends ConsumerWidget {
   const ServerListScreen({super.key});
+
+  static bool get _isDesktop =>
+      Platform.isLinux || Platform.isMacOS || Platform.isWindows;
+
+  void _onAddServer(BuildContext context, WidgetRef ref) {
+    if (_isDesktop && SshConfigParser.configExists) {
+      _showSshConfigImportDialog(context, ref);
+    } else {
+      context.push('/server/new');
+    }
+  }
+
+  Future<void> _showSshConfigImportDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final entries = await SshConfigParser.parse();
+
+    if (!context.mounted) return;
+
+    if (entries.isEmpty) {
+      context.push('/server/new');
+      return;
+    }
+
+    final selected = List<bool>.filled(entries.length, true);
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          final selectedCount = selected.where((s) => s).length;
+          return AlertDialog(
+            title: Text(l10n.sshConfigImportTitle),
+            content: SizedBox(
+              width: 480,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.sshConfigImportMessage(entries.length)),
+                  const SizedBox(height: 16),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 300),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: entries.length,
+                      itemBuilder: (_, i) {
+                        final e = entries[i];
+                        return CheckboxListTile(
+                          value: selected[i],
+                          onChanged: (v) =>
+                              setDialogState(() => selected[i] = v ?? false),
+                          title: Text(e.name),
+                          subtitle: Text(
+                            '${e.username}@${e.hostname}:${e.port}',
+                          ),
+                          dense: true,
+                          controlAffinity: ListTileControlAffinity.leading,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx, false);
+                  context.push('/server/new');
+                },
+                child: Text(l10n.sshConfigAddManually),
+              ),
+              FilledButton(
+                onPressed: selectedCount > 0 ? () => Navigator.pop(ctx, true) : null,
+                child: Text(l10n.sshConfigImportButton),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    if (result != true || !context.mounted) return;
+
+    final toImport = <SshConfigEntry>[];
+    for (var i = 0; i < entries.length; i++) {
+      if (selected[i]) toImport.add(entries[i]);
+    }
+
+    var importedCount = 0;
+    final notifier = ref.read(serverListProvider.notifier);
+    for (final entry in toImport) {
+      try {
+        final server = ServerEntity(
+          id: '',
+          name: entry.name,
+          hostname: entry.hostname,
+          port: entry.port,
+          username: entry.username,
+          authMethod: entry.identityFile != null
+              ? AuthMethod.key
+              : AuthMethod.password,
+          color: ColorConstants.defaultServerColor,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        await notifier.createServer(server, const ServerCredentials());
+        importedCount++;
+      } catch (_) {
+        // Skip entries that fail (e.g. duplicates)
+      }
+    }
+
+    if (context.mounted && importedCount > 0) {
+      AdaptiveNotification.show(
+        context,
+        message: l10n.sshConfigImportSuccess(importedCount),
+      );
+    }
+  }
 
   bool _hasActiveFilter(ServerFilter filter) {
     return filter.searchQuery.isNotEmpty ||
@@ -51,7 +180,7 @@ class ServerListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'addServerFab',
-        onPressed: () => context.push('/server/new'),
+        onPressed: () => _onAddServer(context, ref),
         child: const Icon(Icons.add),
       ),
       body: Column(
@@ -89,7 +218,7 @@ class ServerListScreen extends ConsumerWidget {
             title: l10n.serverListEmpty,
             subtitle: l10n.serverListEmptySubtitle,
             action: FilledButton.icon(
-              onPressed: () => context.push('/server/new'),
+              onPressed: () => _onAddServer(context, ref),
               icon: const Icon(Icons.add),
               label: Text(l10n.serverAddButton),
             ),
@@ -197,7 +326,7 @@ class ServerListScreen extends ConsumerWidget {
             title: l10n.serverListEmpty,
             subtitle: l10n.serverListEmptySubtitle,
             action: FilledButton.icon(
-              onPressed: () => context.push('/server/new'),
+              onPressed: () => _onAddServer(context, ref),
               icon: const Icon(Icons.add),
               label: Text(l10n.serverAddButton),
             ),

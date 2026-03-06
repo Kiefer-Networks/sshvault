@@ -108,6 +108,23 @@
   "serverListEmpty": "No servers yet",
   "serverListEmptySubtitle": "Add your first SSH server to get started.",
   "serverAddButton": "Add Server",
+  "sshConfigImportTitle": "Import SSH Config",
+  "sshConfigImportMessage": "Found {count} host(s) in ~/.ssh/config. Import them?",
+  "@sshConfigImportMessage": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "sshConfigImportButton": "Import",
+  "sshConfigImportSuccess": "{count} server(s) imported",
+  "@sshConfigImportSuccess": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "sshConfigNotFound": "No SSH config file found",
+  "sshConfigEmpty": "No hosts found in SSH config",
+  "sshConfigAddManually": "Add Manually",
   "serverDuplicated": "Server duplicated",
   "serverDeleteTitle": "Delete Server",
   "serverDeleteMessage": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",

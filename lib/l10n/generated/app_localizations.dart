@@ -670,6 +670,48 @@ abstract class AppLocalizations {
   /// **'Add Server'**
   String get serverAddButton;
 
+  /// No description provided for @sshConfigImportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import SSH Config'**
+  String get sshConfigImportTitle;
+
+  /// No description provided for @sshConfigImportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Found {count} host(s) in ~/.ssh/config. Import them?'**
+  String sshConfigImportMessage(int count);
+
+  /// No description provided for @sshConfigImportButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Selected'**
+  String get sshConfigImportButton;
+
+  /// No description provided for @sshConfigImportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} servers imported'**
+  String sshConfigImportSuccess(int count);
+
+  /// No description provided for @sshConfigNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No SSH config file found'**
+  String get sshConfigNotFound;
+
+  /// No description provided for @sshConfigEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No hosts found in SSH config'**
+  String get sshConfigEmpty;
+
+  /// No description provided for @sshConfigAddManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Manually'**
+  String get sshConfigAddManually;
+
   /// No description provided for @serverDuplicated.
   ///
   /// In en, this message translates to:
@@ -4048,12 +4090,6 @@ abstract class AppLocalizations {
   /// **'Last seen'**
   String get hostKeyLastSeen;
 
-  /// No description provided for @sshConfigImportTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Import SSH Config'**
-  String get sshConfigImportTitle;
-
   /// No description provided for @sshConfigImportPickFile.
   ///
   /// In en, this message translates to:
@@ -4071,18 +4107,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} hosts found'**
   String sshConfigImportParsed(int count);
-
-  /// No description provided for @sshConfigImportButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Import Selected'**
-  String get sshConfigImportButton;
-
-  /// No description provided for @sshConfigImportSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} servers imported'**
-  String sshConfigImportSuccess(int count);
 
   /// No description provided for @sshConfigImportDuplicate.
   ///
