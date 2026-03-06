@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/network/auth_interceptor.dart';
-import 'package:sshvault/core/network/doh_interceptor.dart';
 import 'package:sshvault/core/network/pow_interceptor.dart';
 import 'package:sshvault/core/security/security_providers.dart';
 import 'package:sshvault/core/services/logging_service.dart';
@@ -28,20 +27,15 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   final baseUrl = ref.watch(serverUrlProvider);
   final storage = ref.watch(secureStorageProvider);
 
-  // Certificate pinning — creates a custom HttpClient with pin validation
+  // Certificate pinning + DNS-over-HTTPS integrated at HttpClient level
   final pinningService = ref.watch(certificatePinningProvider);
-
-  // DNS-over-HTTPS resolver — intercepts requests to resolve via DoH
   final dohResolver = ref.watch(dohResolverProvider);
-  final dohInterceptor = DohInterceptor(dohResolver);
 
   final client = ApiClient(
     baseUrl,
-    createHttpClient: pinningService?.createHttpClient,
-    interceptors: [
-      // DoH resolution runs first, before auth headers are attached
-      dohInterceptor,
-    ],
+    createHttpClient: pinningService != null
+        ? () => pinningService.createHttpClient(dohResolver: dohResolver)
+        : null,
   );
 
   // Create a refresh Dio that shares the main client's httpClientAdapter

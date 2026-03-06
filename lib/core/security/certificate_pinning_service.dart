@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart' show sha256;
 import 'package:sshvault/core/crypto/crypto_utils.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/security/doh_resolver_service.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 
 /// Validates server TLS certificates against pinned SHA-256 fingerprints.
@@ -89,13 +90,17 @@ class CertificatePinningService {
 
   /// Creates an [HttpClient] with certificate pinning enabled.
   ///
+  /// If a [dohResolver] is provided, DNS resolution is performed via
+  /// DNS-over-HTTPS at the socket level. The hostname is preserved for
+  /// TLS/SNI so certificate validation works correctly.
+  ///
   /// Use this to configure Dio's HTTP adapter:
   /// ```dart
   /// final adapter = IOHttpClientAdapter();
   /// adapter.createHttpClient = () => pinningService.createHttpClient();
   /// dio.httpClientAdapter = adapter;
   /// ```
-  HttpClient createHttpClient() {
+  HttpClient createHttpClient({DohResolverService? dohResolver}) {
     final client = HttpClient();
     client.badCertificateCallback = (cert, host, port) {
       final result = validateCertificate(cert, host);
@@ -107,7 +112,53 @@ class CertificatePinningService {
       }
       return result.isSuccess;
     };
+
+    if (dohResolver != null) {
+      final cache = <String, String>{};
+      client.connectionFactory =
+          (Uri uri, String? proxyHost, int? proxyPort) {
+        return _dohConnectionFactory(
+          uri,
+          proxyHost,
+          proxyPort,
+          dohResolver,
+          cache,
+        );
+      };
+    }
+
     return client;
+  }
+
+  static Future<ConnectionTask<Socket>> _dohConnectionFactory(
+    Uri uri,
+    String? proxyHost,
+    int? proxyPort,
+    DohResolverService resolver,
+    Map<String, String> cache,
+  ) async {
+    final hostname = uri.host;
+    var targetHost = hostname;
+
+    // Try cached result first, then DoH resolve
+    final cached = cache[hostname];
+    if (cached != null) {
+      targetHost = cached;
+    } else {
+      final result = await resolver.resolveFirst(hostname);
+      if (result.isSuccess) {
+        targetHost = result.value;
+        cache[hostname] = targetHost;
+        _log.debug(_tag, 'DoH resolved $hostname → $targetHost');
+      } else {
+        _log.warning(
+          _tag,
+          'DoH failed for $hostname — falling back to OS DNS',
+        );
+      }
+    }
+
+    return Socket.startConnect(targetHost, uri.port);
   }
 
   /// Compute SHA-256 hash of the SubjectPublicKeyInfo (SPKI) from a
