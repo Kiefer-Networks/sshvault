@@ -170,7 +170,7 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     _log.debug(_tag, 'Auth tokens persisted');
   }
 
-  /// Account-related providers (billing, devices, profile) already
+  /// Account-related providers (devices, profile) already
   /// `ref.watch(authProvider)`, so they rebuild automatically when auth
   /// state changes.  No manual `ref.invalidate()` needed — calling it
   /// inside the auth state update would trigger an immediate rebuild that
