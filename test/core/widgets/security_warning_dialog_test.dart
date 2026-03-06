@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shellvault/core/widgets/security_warning_dialog.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 void main() {
   Widget buildTestApp({required Widget child}) {
-    return MaterialApp(home: child);
+    return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    );
   }
 
   group('SecurityWarningDialog — critical severity', () {
@@ -302,6 +307,8 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Builder(
             builder: (context) => Scaffold(
               body: ElevatedButton(
