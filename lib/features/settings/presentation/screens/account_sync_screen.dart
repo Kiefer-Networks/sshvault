@@ -151,51 +151,53 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
           ],
 
           // Sync Controls
-          SectionHeader(title: l10n.syncTitle),
-          SettingsGroupCard(
-            children: [
-              SettingsSwitchTile(
-                icon: Icons.sync,
-                iconColor: AppColors.iconLightBlue,
-                title: l10n.syncAutoSync,
-                subtitleText: l10n.syncAutoSyncDescription,
-                value: settings?.autoSync ?? true,
-                onChanged: (v) {
-                  ref.read(settingsProvider.notifier).setAutoSync(v);
-                },
-              ),
-              if (settings?.autoSync ?? false)
-                Builder(
-                  builder: (context) {
-                    final interval = settings?.autoSyncIntervalMinutes ?? 5;
-                    return SettingsTile(
-                      icon: Icons.timer_outlined,
-                      iconColor: AppColors.iconTeal,
-                      title: l10n.autoSyncInterval,
-                      subtitleText: l10n.autoSyncIntervalValue(interval),
-                      onTap: () => _showIntervalPicker(l10n, interval),
-                    );
+          if (isAuthenticated) ...[
+            SectionHeader(title: l10n.syncTitle),
+            SettingsGroupCard(
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.sync,
+                  iconColor: AppColors.iconLightBlue,
+                  title: l10n.syncAutoSync,
+                  subtitleText: l10n.syncAutoSyncDescription,
+                  value: settings?.autoSync ?? true,
+                  onChanged: (v) {
+                    ref.read(settingsProvider.notifier).setAutoSync(v);
                   },
                 ),
-              SettingsTile(
-                icon: isSyncing
-                    ? Icons.hourglass_top
-                    : Icons.cloud_sync_outlined,
-                iconColor: AppColors.iconBlue,
-                title: l10n.syncNow,
-                subtitle: _buildSyncStatus(l10n, syncState),
-                onTap: isSyncing
-                    ? null
-                    : () => ref.read(syncProvider.notifier).sync(),
-              ),
-              SettingsTile(
-                icon: Icons.history,
-                iconColor: AppColors.iconGrey,
-                title: l10n.syncVaultVersion,
-                subtitleText: 'v${settings?.localVaultVersion ?? 0}',
-              ),
-            ],
-          ),
+                if (settings?.autoSync ?? false)
+                  Builder(
+                    builder: (context) {
+                      final interval = settings?.autoSyncIntervalMinutes ?? 5;
+                      return SettingsTile(
+                        icon: Icons.timer_outlined,
+                        iconColor: AppColors.iconTeal,
+                        title: l10n.autoSyncInterval,
+                        subtitleText: l10n.autoSyncIntervalValue(interval),
+                        onTap: () => _showIntervalPicker(l10n, interval),
+                      );
+                    },
+                  ),
+                SettingsTile(
+                  icon: isSyncing
+                      ? Icons.hourglass_top
+                      : Icons.cloud_sync_outlined,
+                  iconColor: AppColors.iconBlue,
+                  title: l10n.syncNow,
+                  subtitle: _buildSyncStatus(l10n, syncState),
+                  onTap: isSyncing
+                      ? null
+                      : () => ref.read(syncProvider.notifier).sync(),
+                ),
+                SettingsTile(
+                  icon: Icons.history,
+                  iconColor: AppColors.iconGrey,
+                  title: l10n.syncVaultVersion,
+                  subtitleText: 'v${settings?.localVaultVersion ?? 0}',
+                ),
+              ],
+            ),
+          ],
 
           // Devices Card
           if (isAuthenticated) ...[
