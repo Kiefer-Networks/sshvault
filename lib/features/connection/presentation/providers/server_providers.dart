@@ -36,6 +36,9 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>>
 
   void _invalidateAll({String? serverId}) {
     ref.invalidateSelf();
+    ref.invalidate(folderGroupedServersProvider);
+    ref.invalidate(favoriteServersProvider);
+    ref.invalidate(recentServersProvider);
     if (serverId != null) {
       ref.invalidate(serverDetailProvider(serverId));
       ref.invalidate(serverCredentialsProvider(serverId));
