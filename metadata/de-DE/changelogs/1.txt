@@ -1,0 +1,11 @@
+Erstveröffentlichung.
+
+- SSH-Terminal mit xterm-Emulation
+- SFTP-Dateibrowser
+- Zero-Knowledge-verschlüsselter Sync
+- Host-Key-Verifizierung (TOFU)
+- Multi-Session und geteiltes Terminal
+- Snippet-Manager
+- SSH-Config-Import
+- Biometrische und PIN-Sperre
+- Material 3 Design

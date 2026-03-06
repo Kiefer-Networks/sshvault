@@ -1,0 +1,11 @@
+Initial release.
+
+- SSH terminal with xterm emulation
+- SFTP file browser
+- Zero-knowledge encrypted sync
+- Host key verification (TOFU)
+- Multi-session and split terminal
+- Snippet manager
+- SSH config import
+- Biometric and PIN lock
+- Material 3 design

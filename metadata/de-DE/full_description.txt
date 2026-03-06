@@ -1,0 +1,27 @@
+SSHVault ist ein plattformübergreifender SSH- und SFTP-Client mit Zero-Knowledge-verschlüsseltem Cloud-Sync. Alle Zugangsdaten, SSH-Keys und Server-Konfigurationen werden clientseitig mit AES-256-GCM verschlüsselt, bevor sie dein Gerät verlassen. Der Server sieht niemals Klartextdaten.
+
+Funktionen:
+- SSH-Terminal mit xterm-Emulation und 256 Farben
+- SFTP-Dateibrowser mit Lesezeichen und integriertem Editor
+- Host-Key-Verifizierung (Trust On First Use)
+- Multi-Session und geteiltes Terminal
+- Snippet-Manager für gespeicherte Befehle
+- Post-Connect-Befehle für Automatisierung
+- SSH-Config-Import aus ~/.ssh/config
+- Proxy-Unterstützung (SOCKS5 und HTTP)
+- Biometrische und PIN-Sperre
+- Selbstgehosteter Sync-Server (Docker)
+- Ende-zu-Ende-verschlüsselter Sync über unbegrenzte Geräte
+- Export und Import aller Daten
+- Material 3 Design auf allen Plattformen
+
+Sicherheit:
+- Zero-Knowledge-Architektur: Der Server kann deine Daten nicht lesen
+- AES-256-GCM-Verschlüsselung mit Argon2id-Schlüsselableitung
+- Zählerbasierte Nonces zur Vermeidung von Nonce-Wiederverwendung
+- Zertifikat-Pinning und DNS-over-HTTPS
+- Server-Attestierung über Ed25519-Signaturen
+- Kein Tracking, keine Analyse, keine Telemetrie
+- Vollständig quelloffenes Backend (AGPL-3.0)
+
+SSHVault ist komplett kostenlos ohne In-App-Käufe, ohne Abonnements und ohne Funktionseinschränkungen. Das Selbsthosten des Sync-Servers ist kostenlos und erfordert nur Docker und PostgreSQL.
