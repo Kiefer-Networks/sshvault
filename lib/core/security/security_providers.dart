@@ -83,9 +83,12 @@ final attestationCheckProvider = FutureProvider.autoDispose<bool>((ref) async {
     );
 
     if (result.isFailure) {
-      log.warning(tag, 'Attestation endpoint unreachable: ${result.failure}');
-      // Treat as soft failure — server may not support attestation yet
-      return true;
+      log.warning(
+        tag,
+        'Attestation endpoint unreachable: ${result.failure}. '
+        'Rejecting — a MITM could be blocking the attestation endpoint.',
+      );
+      return false;
     }
 
     final verification = await attestation.verify(

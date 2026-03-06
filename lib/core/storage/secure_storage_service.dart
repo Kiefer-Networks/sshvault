@@ -387,4 +387,21 @@ class SecureStorageService {
       return Err(StorageFailure('Failed to clear all data', cause: e));
     }
   }
+
+  // --- Generic key-value access ---
+
+  /// Writes an arbitrary key-value pair to secure storage.
+  Future<void> write({required String key, required String value}) async {
+    await _storage.write(key: key, value: value);
+  }
+
+  /// Reads an arbitrary value from secure storage. Returns null if not found.
+  Future<String?> read({required String key}) async {
+    return _storage.read(key: key);
+  }
+
+  /// Deletes an arbitrary key from secure storage.
+  Future<void> delete({required String key}) async {
+    await _storage.delete(key: key);
+  }
 }

@@ -857,5 +857,6 @@
   "connectionTestFailed": "Connection failed: {message}",
   "@connectionTestFailed": { "placeholders": { "message": { "type": "String" } } },
   "purchaseFailed": "Purchase failed",
+  "serverVerificationFailed": "Server verification failed",
   "importSuccessful": "Import successful"
 }

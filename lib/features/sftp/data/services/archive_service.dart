@@ -199,10 +199,16 @@ class ArchiveService {
 
     if (lower.endsWith('.tar.gz') || lower.endsWith('.tgz')) {
       final decompressed = const GZipDecoder().decodeBytes(bytes);
+      if (decompressed.length > _maxExtractedSize) {
+        throw Exception('Decompressed archive exceeds maximum size limit');
+      }
       return TarDecoder().decodeBytes(decompressed);
     }
     if (lower.endsWith('.tar.bz2') || lower.endsWith('.tbz2')) {
       final decompressed = BZip2Decoder().decodeBytes(bytes);
+      if (decompressed.length > _maxExtractedSize) {
+        throw Exception('Decompressed archive exceeds maximum size limit');
+      }
       return TarDecoder().decodeBytes(decompressed);
     }
 
@@ -220,6 +226,10 @@ class ArchiveService {
   Archive? _tryGzipTar(Uint8List bytes) {
     try {
       final decompressed = const GZipDecoder().decodeBytes(bytes);
+      if (decompressed.length > _maxExtractedSize) {
+        _log.error(_tag, 'Decompressed gzip archive exceeds maximum size');
+        return null;
+      }
       return TarDecoder().decodeBytes(decompressed);
     } catch (_) {
       return null;
@@ -229,6 +239,10 @@ class ArchiveService {
   Archive? _tryBzip2Tar(Uint8List bytes) {
     try {
       final decompressed = BZip2Decoder().decodeBytes(bytes);
+      if (decompressed.length > _maxExtractedSize) {
+        _log.error(_tag, 'Decompressed bzip2 archive exceeds maximum size');
+        return null;
+      }
       return TarDecoder().decodeBytes(decompressed);
     } catch (_) {
       return null;

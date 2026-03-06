@@ -682,8 +682,10 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                     if (purchaseStatus == SubscriptionPurchaseStatus.error) ...[
                       const SizedBox(height: 8),
                       Text(
-                        ref.watch(subscriptionPurchaseErrorProvider) ??
-                            l10n.purchaseFailed,
+                        mapPurchaseError(
+                          ref.watch(subscriptionPurchaseErrorProvider),
+                          l10n,
+                        ),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.error,
                         ),

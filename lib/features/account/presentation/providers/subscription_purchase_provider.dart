@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shellvault/core/utils/platform_utils.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
+import 'package:shellvault/l10n/generated/app_localizations.dart';
 
 /// Google Play / App Store subscription product ID.
 const kSubscriptionProductId = 'shellvault_sync_yearly';
@@ -19,8 +20,12 @@ final subscriptionPurchaseStatusProvider =
       (ref) => SubscriptionPurchaseStatus.idle,
     );
 
-/// Optional error message from the last failed purchase.
+/// Machine-readable error key from the last failed purchase.
+/// UI maps this to a localized string (e.g. 'server_verification_failed').
 final subscriptionPurchaseErrorProvider = StateProvider<String?>((ref) => null);
+
+/// Well-known error key for server verification failures.
+const kPurchaseErrorServerVerificationFailed = 'server_verification_failed';
 
 /// Loads the subscription IAP product and handles the purchase stream.
 final subscriptionStoreProvider =
@@ -88,9 +93,8 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
       } else {
         ref.read(subscriptionPurchaseStatusProvider.notifier).state =
             SubscriptionPurchaseStatus.error;
-        // TODO(l10n): Cannot localize from Notifier context — UI maps this key.
         ref.read(subscriptionPurchaseErrorProvider.notifier).state =
-            'Server verification failed';
+            kPurchaseErrorServerVerificationFailed;
       }
     } else if (Platform.isIOS || Platform.isMacOS) {
       final transactionId = purchase.verificationData.serverVerificationData;
@@ -104,9 +108,8 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
       } else {
         ref.read(subscriptionPurchaseStatusProvider.notifier).state =
             SubscriptionPurchaseStatus.error;
-        // TODO(l10n): Cannot localize from Notifier context — UI maps this key.
         ref.read(subscriptionPurchaseErrorProvider.notifier).state =
-            'Server verification failed';
+            kPurchaseErrorServerVerificationFailed;
       }
     }
 
@@ -126,4 +129,14 @@ class SubscriptionStoreNotifier extends AsyncNotifier<ProductDetails?> {
     final param = PurchaseParam(productDetails: product);
     await InAppPurchase.instance.buyNonConsumable(purchaseParam: param);
   }
+}
+
+/// Maps a machine-readable purchase error key to a localized string.
+/// Falls back to [AppLocalizations.purchaseFailed] for unknown keys or null.
+String mapPurchaseError(String? errorKey, AppLocalizations l10n) {
+  if (errorKey == null) return l10n.purchaseFailed;
+  return switch (errorKey) {
+    kPurchaseErrorServerVerificationFailed => l10n.serverVerificationFailed,
+    _ => errorKey,
+  };
 }

@@ -8,6 +8,7 @@ import 'package:shellvault/core/constants/app_constants.dart';
 import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
+import 'package:shellvault/core/storage/secure_storage_provider.dart';
 import 'package:shellvault/features/settings/domain/entities/app_settings_entity.dart';
 
 final settingsProvider =
@@ -53,39 +54,122 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyGlobalProxyPort = 'global_proxy_port';
   static const _keyGlobalProxyUsername = 'global_proxy_username';
 
+  // Secure storage keys for PIN-related secrets
+  static const _secKeyPinHash = 'settings_pin_hash';
+  static const _secKeyPinSalt = 'settings_pin_salt';
+  static const _secKeyDuressPinHash = 'settings_duress_pin_hash';
+  static const _secKeyDuressPinSalt = 'settings_duress_pin_salt';
+
   @override
   Future<AppSettingsEntity> build() async {
     final dao = ref.watch(databaseProvider).appSettingsDao;
+    final secureStorage = ref.watch(secureStorageProvider);
 
     // Single query instead of 17+ sequential reads
     final all = await dao.getAll();
 
-    final pinHash = all[_keyPinHash];
+    // Read PIN secrets from secure storage
+    final secPinHash = await _readSecure(secureStorage, _secKeyPinHash);
+    final secPinSalt = await _readSecure(secureStorage, _secKeyPinSalt);
+    final secDuressPinHash =
+        await _readSecure(secureStorage, _secKeyDuressPinHash);
+    final secDuressPinSalt =
+        await _readSecure(secureStorage, _secKeyDuressPinSalt);
+
+    // Migrate PIN data from database to secure storage if needed
+    final dbPinHash = all[_keyPinHash];
+    final dbPinSalt = all[_keyPinSalt];
+    final dbDuressPinHash = all[_keyDuressPinHash];
+    final dbDuressPinSalt = all[_keyDuressPinSalt];
+
+    String pinHash = secPinHash;
+    String pinSalt = secPinSalt;
+    String duressPinHash = secDuressPinHash;
+    String duressPinSalt = secDuressPinSalt;
 
     // Migrate legacy plaintext PIN to hash if present
     final legacyPin = all['pin_code'];
     if (legacyPin != null &&
         legacyPin.isNotEmpty &&
-        (pinHash == null || pinHash.isEmpty)) {
+        pinHash.isEmpty &&
+        (dbPinHash == null || dbPinHash.isEmpty)) {
       final hashResult = await _hashPin(legacyPin);
-      await dao.setValue(_keyPinHash, hashResult.hash);
-      await dao.setValue(_keyPinSalt, hashResult.salt);
-      await dao.deleteValue('pin_code');
-
-      return _buildEntity(
-        all,
-        pinHash: hashResult.hash,
-        pinSalt: hashResult.salt,
+      await secureStorage.write(
+        key: _secKeyPinHash,
+        value: hashResult.hash,
       );
+      await secureStorage.write(
+        key: _secKeyPinSalt,
+        value: hashResult.salt,
+      );
+      await dao.deleteValue('pin_code');
+      pinHash = hashResult.hash;
+      pinSalt = hashResult.salt;
     }
 
-    return _buildEntity(all);
+    // Migrate existing PIN hash/salt from DB to secure storage
+    if (pinHash.isEmpty &&
+        dbPinHash != null &&
+        dbPinHash.isNotEmpty) {
+      await secureStorage.write(key: _secKeyPinHash, value: dbPinHash);
+      await secureStorage.write(
+        key: _secKeyPinSalt,
+        value: dbPinSalt ?? '',
+      );
+      await dao.setValue(_keyPinHash, '');
+      await dao.setValue(_keyPinSalt, '');
+      pinHash = dbPinHash;
+      pinSalt = dbPinSalt ?? '';
+      _log.info(_tag, 'Migrated PIN hash to secure storage');
+    }
+
+    // Migrate existing duress PIN hash/salt from DB to secure storage
+    if (duressPinHash.isEmpty &&
+        dbDuressPinHash != null &&
+        dbDuressPinHash.isNotEmpty) {
+      await secureStorage.write(
+        key: _secKeyDuressPinHash,
+        value: dbDuressPinHash,
+      );
+      await secureStorage.write(
+        key: _secKeyDuressPinSalt,
+        value: dbDuressPinSalt ?? '',
+      );
+      await dao.setValue(_keyDuressPinHash, '');
+      await dao.setValue(_keyDuressPinSalt, '');
+      duressPinHash = dbDuressPinHash;
+      duressPinSalt = dbDuressPinSalt ?? '';
+      _log.info(_tag, 'Migrated duress PIN hash to secure storage');
+    }
+
+    return _buildEntity(
+      all,
+      pinHash: pinHash,
+      pinSalt: pinSalt,
+      duressPinHash: duressPinHash,
+      duressPinSalt: duressPinSalt,
+    );
+  }
+
+  /// Reads a value from secure storage, returning empty string on failure.
+  Future<String> _readSecure(
+    dynamic secureStorage,
+    String key,
+  ) async {
+    try {
+      final result = await secureStorage.read(key: key);
+      return result ?? '';
+    } catch (_) {
+      return '';
+    }
   }
 
   AppSettingsEntity _buildEntity(
     Map<String, String> all, {
     String? pinHash,
     String? pinSalt,
+    String? duressPinHash,
+    String? duressPinSalt,
   }) {
     return AppSettingsEntity(
       themeMode: _parseThemeMode(all[_keyThemeMode]),
@@ -94,8 +178,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       autoLockMinutes: int.tryParse(all[_keyAutoLockMinutes] ?? '') ?? 5,
       biometricUnlock: all[_keyBiometricUnlock] == 'true',
       encryptExportByDefault: all[_keyEncryptExportDefault] != 'false',
-      pinHash: pinHash ?? all[_keyPinHash] ?? '',
-      pinSalt: pinSalt ?? all[_keyPinSalt] ?? '',
+      pinHash: pinHash ?? '',
+      pinSalt: pinSalt ?? '',
       dismissedSecurityHint: all[_keyDismissedSecurityHint] == 'true',
       locale: all[_keyLocale] ?? '',
       failedPinAttempts: int.tryParse(all[_keyFailedAttempts] ?? '') ?? 0,
@@ -118,8 +202,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       clipboardAutoClearSecs:
           int.tryParse(all[_keyClipboardAutoClear] ?? '') ?? 0,
       sessionTimeoutMins: int.tryParse(all[_keySessionTimeout] ?? '') ?? 0,
-      duressPinHash: all[_keyDuressPinHash] ?? '',
-      duressPinSalt: all[_keyDuressPinSalt] ?? '',
+      duressPinHash: duressPinHash ?? '',
+      duressPinSalt: duressPinSalt ?? '',
       keyRotationReminderDays:
           int.tryParse(all[_keyKeyRotationReminder] ?? '') ?? 0,
       globalProxyType: all[_keyGlobalProxyType] ?? 'none',
@@ -277,11 +361,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   /// Sets a new PIN code (app-level lock only, no database encryption).
   Future<void> setPinCode(String pin) async {
     _log.info(_tag, 'PIN code set');
-    final dao = ref.read(databaseProvider).appSettingsDao;
+    final secureStorage = ref.read(secureStorageProvider);
     final hashResult = await _hashPin(pin);
 
-    await dao.setValue(_keyPinHash, hashResult.hash);
-    await dao.setValue(_keyPinSalt, hashResult.salt);
+    await secureStorage.write(key: _secKeyPinHash, value: hashResult.hash);
+    await secureStorage.write(key: _secKeyPinSalt, value: hashResult.salt);
 
     ref.invalidateSelf();
   }
@@ -290,8 +374,13 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   Future<void> clearPinCode() async {
     _log.info(_tag, 'PIN code removed');
     final dao = ref.read(databaseProvider).appSettingsDao;
+    final secureStorage = ref.read(secureStorageProvider);
 
-    // Clear PIN hash and salt
+    // Clear PIN hash and salt from secure storage
+    await secureStorage.delete(key: _secKeyPinHash);
+    await secureStorage.delete(key: _secKeyPinSalt);
+
+    // Also clear any remnants from database (migration cleanup)
     await dao.setValue(_keyPinHash, '');
     await dao.setValue(_keyPinSalt, '');
 
@@ -413,16 +502,29 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
 
   Future<void> setDuressPin(String pin) async {
     _log.info(_tag, 'Duress PIN set');
-    final dao = ref.read(databaseProvider).appSettingsDao;
+    final secureStorage = ref.read(secureStorageProvider);
     final hashResult = await _hashPin(pin);
-    await dao.setValue(_keyDuressPinHash, hashResult.hash);
-    await dao.setValue(_keyDuressPinSalt, hashResult.salt);
+    await secureStorage.write(
+      key: _secKeyDuressPinHash,
+      value: hashResult.hash,
+    );
+    await secureStorage.write(
+      key: _secKeyDuressPinSalt,
+      value: hashResult.salt,
+    );
     ref.invalidateSelf();
   }
 
   Future<void> clearDuressPin() async {
     _log.info(_tag, 'Duress PIN removed');
     final dao = ref.read(databaseProvider).appSettingsDao;
+    final secureStorage = ref.read(secureStorageProvider);
+
+    // Clear from secure storage
+    await secureStorage.delete(key: _secKeyDuressPinHash);
+    await secureStorage.delete(key: _secKeyDuressPinSalt);
+
+    // Also clear any remnants from database (migration cleanup)
     await dao.setValue(_keyDuressPinHash, '');
     await dao.setValue(_keyDuressPinSalt, '');
     ref.invalidateSelf();

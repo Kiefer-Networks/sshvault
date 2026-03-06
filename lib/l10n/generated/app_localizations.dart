@@ -4300,6 +4300,12 @@ abstract class AppLocalizations {
   /// **'Purchase failed'**
   String get purchaseFailed;
 
+  /// No description provided for @serverVerificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Server verification failed'**
+  String get serverVerificationFailed;
+
   /// No description provided for @importSuccessful.
   ///
   /// In en, this message translates to:

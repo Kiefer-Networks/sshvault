@@ -2349,5 +2349,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get purchaseFailed => 'Purchase failed';
 
   @override
+  String get serverVerificationFailed => 'Server verification failed';
+
+  @override
   String get importSuccessful => 'Import successful';
 }

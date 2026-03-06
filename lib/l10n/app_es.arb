@@ -831,5 +831,6 @@
   "connectionTestFailed": "Conexión fallida: {message}",
   "@connectionTestFailed": { "placeholders": { "message": { "type": "String" } } },
   "purchaseFailed": "Compra fallida",
+  "serverVerificationFailed": "Verificación del servidor fallida",
   "importSuccessful": "Importación exitosa"
 }

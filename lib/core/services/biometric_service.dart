@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 
 class BiometricService {
+  static final _log = LoggingService.instance;
+  static const _tag = 'Biometric';
+
   final LocalAuthentication _auth = LocalAuthentication();
 
   /// Returns true if the current platform supports biometric/local auth.
@@ -18,7 +22,8 @@ class BiometricService {
     if (!isPlatformSupported) return false;
     try {
       return await _auth.isDeviceSupported();
-    } catch (_) {
+    } catch (e) {
+      _log.warning(_tag, 'Failed to check biometric availability: $e');
       return false;
     }
   }
@@ -28,7 +33,8 @@ class BiometricService {
     if (!isPlatformSupported) return [];
     try {
       return await _auth.getAvailableBiometrics();
-    } catch (_) {
+    } catch (e) {
+      _log.warning(_tag, 'Failed to get available biometric types: $e');
       return [];
     }
   }
@@ -40,7 +46,8 @@ class BiometricService {
     if (!isPlatformSupported) return false;
     try {
       return await _auth.authenticate(localizedReason: reason);
-    } catch (_) {
+    } catch (e) {
+      _log.warning(_tag, 'Biometric authentication failed: $e');
       return false;
     }
   }

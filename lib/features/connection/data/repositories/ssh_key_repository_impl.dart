@@ -2,6 +2,7 @@ import 'package:uuid/uuid.dart';
 import 'package:shellvault/core/crypto/ssh_key_service.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/storage/secure_storage_service.dart';
 import 'package:shellvault/features/connection/data/datasources/ssh_key_dao.dart';
 import 'package:shellvault/features/connection/data/models/ssh_key_mapper.dart';
@@ -9,6 +10,9 @@ import 'package:shellvault/features/connection/domain/entities/ssh_key_entity.da
 import 'package:shellvault/features/connection/domain/repositories/ssh_key_repository.dart';
 
 class SshKeyRepositoryImpl implements SshKeyRepository {
+  static final _log = LoggingService.instance;
+  static const _tag = 'SshKeyRepository';
+
   final SshKeyDao _sshKeyDao;
   final SecureStorageService _secureStorage;
   final SshKeyService _sshKeyService;
@@ -77,7 +81,8 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
       if (fingerprint.isEmpty && publicKey.isNotEmpty) {
         try {
           fingerprint = _sshKeyService.computeFingerprint(publicKey);
-        } catch (_) {
+        } catch (e) {
+          _log.warning(_tag, 'Failed to compute SSH key fingerprint: $e');
           fingerprint = '';
         }
       }

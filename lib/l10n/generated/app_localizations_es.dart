@@ -2361,5 +2361,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get purchaseFailed => 'Compra fallida';
 
   @override
+  String get serverVerificationFailed => 'Verificación del servidor fallida';
+
+  @override
   String get importSuccessful => 'Importación exitosa';
 }

@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+
+import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
 import 'package:shellvault/core/services/logging_service.dart';
@@ -9,12 +13,15 @@ import 'package:shellvault/features/connection/domain/entities/auth_method.dart'
 import 'package:shellvault/features/connection/domain/entities/proxy_config.dart';
 import 'package:shellvault/features/connection/domain/usecases/proxy_resolver.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:shellvault/features/host_key/domain/entities/known_host_entity.dart';
+import 'package:shellvault/features/host_key/presentation/providers/known_host_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/proxy_settings_provider.dart';
 import 'package:shellvault/features/terminal/presentation/providers/terminal_providers.dart';
 
 class SftpConnectionManager {
   static const _tag = 'SftpConnectionManager';
   static final _log = LoggingService.instance;
+  static const _uuid = Uuid();
 
   final Map<String, SftpClient> _clients = {};
   // Keep SSHClient references alive so the underlying connection isn't GC'd
@@ -143,6 +150,11 @@ class SftpConnectionManager {
         client = SSHClient(
           socket,
           username: server.username,
+          onVerifyHostKey: _buildHostKeyVerifier(
+            server.hostname,
+            server.port,
+            container,
+          ),
           onPasswordRequest:
               server.authMethod != AuthMethod.key &&
                   credentials.password != null &&
@@ -175,6 +187,67 @@ class SftpConnectionManager {
     } catch (e) {
       return Err(SftpFailure('Failed to connect SFTP', cause: e));
     }
+  }
+
+  /// Builds a host key verification callback for SFTP connections.
+  ///
+  /// Uses Trust-On-First-Use (TOFU): new keys are accepted and stored,
+  /// known matching keys are accepted silently, and changed keys are
+  /// rejected (no UI dialog available in the SFTP context).
+  static SSHHostkeyVerifyHandler _buildHostKeyVerifier(
+    String hostname,
+    int port,
+    ProviderContainer container,
+  ) {
+    return (String type, Uint8List fingerprint) async {
+      final hex = _fingerprintToHex(fingerprint);
+      final repo = container.read(knownHostRepositoryProvider);
+      final existing = await repo.findByHostAndPort(hostname, port);
+
+      KnownHostEntity? known;
+      if (existing.isSuccess) {
+        known = existing.value;
+      }
+
+      if (known != null) {
+        if (CryptoUtils.constantTimeStringEquals(known.fingerprint, hex)) {
+          // Known host, fingerprint matches — update lastSeenAt
+          await repo.save(known.copyWith(lastSeenAt: DateTime.now()));
+          return true;
+        }
+        // Key CHANGED — reject without dialog (no BuildContext in SFTP)
+        _log.warning(
+          _tag,
+          'Host key CHANGED for $hostname:$port '
+          '(expected ${known.fingerprint}, got $hex). '
+          'Rejecting SFTP connection.',
+        );
+        return false;
+      }
+
+      // First connection — TOFU: accept and store
+      final now = DateTime.now();
+      await repo.save(
+        KnownHostEntity(
+          id: _uuid.v4(),
+          hostname: hostname,
+          port: port,
+          keyType: type,
+          fingerprint: hex,
+          firstSeenAt: now,
+          lastSeenAt: now,
+        ),
+      );
+      _log.info(
+        _tag,
+        'TOFU: Stored new host key for $hostname:$port ($type)',
+      );
+      return true;
+    };
+  }
+
+  static String _fingerprintToHex(Uint8List bytes) {
+    return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(':');
   }
 
   void closeClient(String serverId) {

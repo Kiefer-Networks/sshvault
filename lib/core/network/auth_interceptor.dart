@@ -99,8 +99,8 @@ class AuthInterceptor extends Interceptor {
         opts.headers['Authorization'] = 'Bearer $token';
         final retryResponse = await _dio.fetch(opts);
         return handler.resolve(retryResponse);
-      } catch (_) {
-        // Refresh failed — propagate the original error.
+      } catch (e) {
+        _log.warning(_tag, 'Concurrent token refresh failed: $e');
         return handler.next(err);
       }
     }

@@ -2358,5 +2358,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get purchaseFailed => 'Kauf fehlgeschlagen';
 
   @override
+  String get serverVerificationFailed => 'Server-Verifizierung fehlgeschlagen';
+
+  @override
   String get importSuccessful => 'Import erfolgreich';
 }
