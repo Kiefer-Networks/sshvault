@@ -46,12 +46,14 @@ final apiClientProvider = Provider<ApiClient>((ref) {
 
   // Create a refresh Dio that shares the main client's httpClientAdapter
   // so token refresh requests go through the same certificate pinning.
-  final refreshDio = Dio(BaseOptions(
-    baseUrl: baseUrl,
-    connectTimeout: const Duration(seconds: 15),
-    receiveTimeout: const Duration(seconds: 15),
-    headers: {'Content-Type': 'application/json'},
-  ));
+  final refreshDio = Dio(
+    BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+      headers: {'Content-Type': 'application/json'},
+    ),
+  );
   refreshDio.httpClientAdapter = client.dio.httpClientAdapter;
 
   // Add AuthInterceptor after client creation so the refresh Dio can
