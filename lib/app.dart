@@ -3,14 +3,16 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shellvault/core/routing/app_router.dart';
+import 'package:shellvault/core/security/security_providers.dart';
 import 'package:shellvault/core/services/screen_protection_service.dart';
 import 'package:shellvault/core/theme/app_theme.dart';
 import 'package:shellvault/core/widgets/lock_screen.dart';
+import 'package:shellvault/core/widgets/security_warning_dialog.dart';
 import 'package:shellvault/core/network/api_provider.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 
 class ShellVaultApp extends ConsumerStatefulWidget {
@@ -30,6 +32,9 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _applyScreenProtection();
       _listenForAutoSync();
+      _watchHeartbeatExpiry();
+      _watchAttestationResult();
+      _initHeartbeat();
     });
   }
 
@@ -47,6 +52,82 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
         _triggerAutoSync();
       }
     }, fireImmediately: true);
+  }
+
+  /// Initialize heartbeat service when authenticated.
+  /// The provider handles start/stop lifecycle via auth state.
+  void _initHeartbeat() {
+    ref.listenManual(authProvider, (prev, next) {
+      if (next.value == AuthStatus.authenticated) {
+        // Reading the heartbeat provider starts the service
+        ref.read(heartbeatProvider);
+      }
+    }, fireImmediately: true);
+  }
+
+  /// Watch for heartbeat expiry and show critical security warning.
+  void _watchHeartbeatExpiry() {
+    ref.listenManual(heartbeatExpiredProvider, (prev, next) {
+      if (next && mounted) {
+        final ctx = rootNavigatorKey.currentContext;
+        if (ctx != null) {
+          SecurityWarningDialog.show(
+            ctx,
+            title: 'Connection Lost',
+            message:
+                'The server could not be reached after multiple attempts. '
+                'For your security, the session has been terminated.',
+            severity: SecuritySeverity.critical,
+            onDisconnect: () {
+              Navigator.of(ctx, rootNavigator: true).pop();
+              ref.read(heartbeatExpiredProvider.notifier).state = false;
+            },
+          );
+        }
+      }
+    }, fireImmediately: false);
+  }
+
+  /// Watch for attestation results and show warning on failure.
+  void _watchAttestationResult() {
+    ref.listenManual(authProvider, (prev, next) {
+      if (next.value == AuthStatus.authenticated) {
+        // Trigger attestation check as a background task
+        _performAttestationCheck();
+      }
+    }, fireImmediately: true);
+  }
+
+  void _performAttestationCheck() {
+    // Listen for the attestation result
+    ref.listenManual(attestationCheckProvider, (prev, next) {
+      final result = next.value;
+      if (result == false && mounted) {
+        final ctx = rootNavigatorKey.currentContext;
+        if (ctx != null) {
+          SecurityWarningDialog.show(
+            ctx,
+            title: 'Server Verification Failed',
+            message:
+                'The server could not be verified as a legitimate '
+                'ShellVault backend. This may indicate a man-in-the-middle '
+                'attack or a misconfigured server.',
+            severity: SecuritySeverity.warning,
+            onDisconnect: () {
+              Navigator.of(ctx, rootNavigator: true).pop();
+              ref.read(authProvider.notifier).logout();
+            },
+            onContinue: () {
+              Navigator.of(ctx, rootNavigator: true).pop();
+              LoggingService.instance.warning(
+                'Security',
+                'User chose to continue despite attestation failure',
+              );
+            },
+          );
+        }
+      }
+    }, fireImmediately: false);
   }
 
   void _triggerAutoSync() {
