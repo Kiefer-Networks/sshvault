@@ -65,10 +65,10 @@ class SSHAlgorithms {
       SSHHostkeyType.ecdsa256,
     ],
     this.cipher = const [
-      SSHCipherType.aes128ctr,
-      SSHCipherType.aes128cbc,
       SSHCipherType.aes256ctr,
       SSHCipherType.aes256cbc,
+      SSHCipherType.aes128ctr,
+      SSHCipherType.aes128cbc,
     ],
     this.mac = const [
       SSHMacType.hmacSha256_96,
