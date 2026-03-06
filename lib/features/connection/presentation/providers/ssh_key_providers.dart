@@ -86,11 +86,11 @@ final sshKeyDetailProvider = FutureProvider.family<SshKeyEntity, String>((
 /// Servers linked to a specific SSH key.
 final serversLinkedToKeyProvider =
     FutureProvider.family<List<ServerEntity>, String>((ref, keyId) async {
-  final useCases = ref.watch(serverUseCasesProvider);
-  final result = await useCases.getServers();
-  return result.fold(
-    onSuccess: (servers) =>
-        servers.where((s) => s.sshKeyId == keyId).toList(),
-    onFailure: (_) => [],
-  );
-});
+      final useCases = ref.watch(serverUseCasesProvider);
+      final result = await useCases.getServers();
+      return result.fold(
+        onSuccess: (servers) =>
+            servers.where((s) => s.sshKeyId == keyId).toList(),
+        onFailure: (_) => [],
+      );
+    });

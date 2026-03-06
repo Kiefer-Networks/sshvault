@@ -56,10 +56,7 @@ class ServerListScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _askReimportOrManual(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
+  Future<void> _askReimportOrManual(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
     final result = await showDialog<bool>(
       context: context,
@@ -171,11 +168,13 @@ class ServerListScreen extends ConsumerWidget {
     }
 
     // Check if any selected entries reference identity files
-    final entriesWithKeys =
-        toImport.where((e) => e.identityFile != null).toList();
+    final entriesWithKeys = toImport
+        .where((e) => e.identityFile != null)
+        .toList();
     var importKeys = false;
     if (entriesWithKeys.isNotEmpty && context.mounted) {
-      importKeys = await showDialog<bool>(
+      importKeys =
+          await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
               title: Text(l10n.sshConfigImportKeys),
@@ -268,7 +267,8 @@ class ServerListScreen extends ConsumerWidget {
     List<SshConfigEntry> entries,
   ) async {
     final keyNotifier = ref.read(sshKeyListProvider.notifier);
-    final home = Platform.environment['HOME'] ??
+    final home =
+        Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         '';
     final imported = <String, String>{};

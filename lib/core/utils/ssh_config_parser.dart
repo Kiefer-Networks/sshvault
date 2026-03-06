@@ -33,7 +33,8 @@ class SshConfigParser {
 
   /// Returns the platform-appropriate path to ~/.ssh/config.
   static String get defaultConfigPath {
-    final home = Platform.environment['HOME'] ??
+    final home =
+        Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         '';
     return '$home${Platform.pathSeparator}.ssh${Platform.pathSeparator}config';
@@ -75,14 +76,16 @@ class SshConfigParser {
 
     void flushEntry() {
       if (currentHost != null && hostname != null) {
-        entries.add(SshConfigEntry(
-          name: currentHost!,
-          hostname: hostname!,
-          port: port,
-          username: username,
-          identityFile: identityFile,
-          proxyJump: proxyJump,
-        ));
+        entries.add(
+          SshConfigEntry(
+            name: currentHost!,
+            hostname: hostname!,
+            port: port,
+            username: username,
+            identityFile: identityFile,
+            proxyJump: proxyJump,
+          ),
+        );
       }
       currentHost = null;
       hostname = null;

@@ -115,8 +115,7 @@ class CertificatePinningService {
 
     if (dohResolver != null) {
       final cache = <String, String>{};
-      client.connectionFactory =
-          (Uri uri, String? proxyHost, int? proxyPort) {
+      client.connectionFactory = (Uri uri, String? proxyHost, int? proxyPort) {
         return _dohConnectionFactory(
           uri,
           proxyHost,
@@ -151,10 +150,7 @@ class CertificatePinningService {
         cache[hostname] = targetHost;
         _log.debug(_tag, 'DoH resolved $hostname → $targetHost');
       } else {
-        _log.warning(
-          _tag,
-          'DoH failed for $hostname — falling back to OS DNS',
-        );
+        _log.warning(_tag, 'DoH failed for $hostname — falling back to OS DNS');
       }
     }
 

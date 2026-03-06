@@ -72,12 +72,14 @@ class DohResolverService {
         '$baseUrl?name=${Uri.encodeComponent(hostname)}&type=${type.name}',
       );
 
-      final request = await _httpClient.getUrl(uri)
+      final request = await _httpClient
+          .getUrl(uri)
           .timeout(const Duration(seconds: 5));
       request.headers.set('Accept', 'application/dns-json');
 
-      final response = await request.close()
-          .timeout(const Duration(seconds: 5));
+      final response = await request.close().timeout(
+        const Duration(seconds: 5),
+      );
       if (response.statusCode != 200) {
         _log.error(
           _tag,

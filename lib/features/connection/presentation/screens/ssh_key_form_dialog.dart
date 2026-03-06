@@ -724,9 +724,15 @@ class _LinkedServersList extends ConsumerWidget {
           ListTile(
             dense: true,
             contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.dns_outlined, size: 20, color: Color(server.color)),
+            leading: Icon(
+              Icons.dns_outlined,
+              size: 20,
+              color: Color(server.color),
+            ),
             title: Text(server.name),
-            subtitle: Text('${server.username}@${server.hostname}:${server.port}'),
+            subtitle: Text(
+              '${server.username}@${server.hostname}:${server.port}',
+            ),
           ),
       ],
     );

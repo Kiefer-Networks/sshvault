@@ -94,8 +94,7 @@ class AboutScreen extends ConsumerWidget {
                   size: 18,
                   color: colorScheme.onSurfaceVariant,
                 ),
-                onTap: () =>
-                    _launchUrl('https://de.liberapay.com/beli3ver'),
+                onTap: () => _launchUrl('https://de.liberapay.com/beli3ver'),
               ),
               SettingsTile(
                 icon: Icons.source_outlined,
