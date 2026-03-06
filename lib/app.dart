@@ -10,6 +10,7 @@ import 'package:shellvault/core/network/api_provider.dart';
 import 'package:shellvault/features/account/presentation/providers/account_providers.dart';
 import 'package:shellvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shellvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/sync/presentation/providers/sync_providers.dart';
 
 class ShellVaultApp extends ConsumerStatefulWidget {
@@ -69,7 +70,12 @@ class _ShellVaultAppState extends ConsumerState<ShellVaultApp> {
             ref.read(syncProvider.notifier).sync();
           }
         })
-        .catchError((_) {});
+        .catchError((Object e) {
+          LoggingService.instance.warning(
+            'ShellVaultApp',
+            'Sync password check failed: $e',
+          );
+        });
   }
 
   static const _localizationsDelegates = [

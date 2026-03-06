@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import 'package:xterm/xterm.dart';
 
 import 'package:shellvault/core/error/failures.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/core/routing/app_router.dart';
 import 'package:shellvault/core/services/vpn_detector_service.dart';
 import 'package:shellvault/core/storage/database_provider.dart';
@@ -340,16 +341,31 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
           await serverUseCases.updateServer(updated, null);
           ref.invalidate(serverDetailProvider(serverId));
         },
-        onFailure: (_) {},
+        onFailure: (f) {
+          LoggingService.instance.debug(
+            'SessionManager',
+            'Distribution detection failed: $f',
+          );
+        },
       );
-    } catch (_) {}
+    } catch (e) {
+      LoggingService.instance.debug(
+        'SessionManager',
+        'Distribution detection failed: $e',
+      );
+    }
   }
 
   Future<void> _updateLastConnectedAt(String serverId) async {
     try {
       final db = ref.read(databaseProvider);
       await db.serverDao.setLastConnectedAt(serverId, DateTime.now());
-    } catch (_) {}
+    } catch (e) {
+      LoggingService.instance.warning(
+        'SessionManager',
+        'Failed to update last connected timestamp: $e',
+      );
+    }
   }
 
   Future<void> _executePostConnectCommands(

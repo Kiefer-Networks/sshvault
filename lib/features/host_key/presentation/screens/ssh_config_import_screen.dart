@@ -8,6 +8,7 @@ import 'package:shellvault/features/connection/domain/entities/auth_method.dart'
 import 'package:shellvault/features/connection/domain/entities/server_credentials.dart';
 import 'package:shellvault/features/connection/domain/entities/server_entity.dart';
 import 'package:shellvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:shellvault/core/services/logging_service.dart';
 import 'package:shellvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:shellvault/features/host_key/data/services/ssh_config_parser.dart';
 import 'package:shellvault/l10n/generated/app_localizations.dart';
@@ -186,7 +187,12 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
         }
         ref.read(_existingHostKeysProvider.notifier).state = keys;
       },
-      onFailure: (_) {},
+      onFailure: (f) {
+        LoggingService.instance.error(
+          'SshConfigImport',
+          'SSH config import failed: $f',
+        );
+      },
     );
   }
 
