@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:crypto/crypto.dart' show sha256, Hmac;
+import 'package:cryptography/cryptography.dart'
+    show Ed25519, KeyPairType, Signature, SimplePublicKey;
 import 'package:shellvault/core/crypto/crypto_utils.dart';
 import 'package:shellvault/core/error/failures.dart';
 import 'package:shellvault/core/error/result.dart';
@@ -11,7 +10,7 @@ import 'package:shellvault/core/services/logging_service.dart';
 ///
 /// The server provides a signed attestation containing its identity,
 /// timestamp, and API version. The client verifies this attestation
-/// using a shared trust anchor (HMAC-SHA256 with a known key).
+/// using the server's Ed25519 public key.
 ///
 /// This prevents connecting to rogue servers that may try to intercept
 /// or modify sync data.
@@ -28,27 +27,42 @@ class ServerAttestationService {
   /// Expected server identity string.
   final String _expectedServerId;
 
-  /// HMAC key for verifying attestation signatures.
-  final Uint8List _hmacKey;
+  /// Ed25519 public key for verifying attestation signatures.
+  final SimplePublicKey _publicKey;
+
+  /// Ed25519 algorithm instance.
+  final Ed25519 _ed25519 = Ed25519();
 
   ServerAttestationService({
     required String expectedServerId,
-    required Uint8List hmacKey,
+    required SimplePublicKey publicKey,
   }) : _expectedServerId = expectedServerId,
-       _hmacKey = hmacKey;
+       _publicKey = publicKey;
+
+  /// Create an instance from a base64-encoded Ed25519 public key.
+  factory ServerAttestationService.fromBase64Key({
+    required String expectedServerId,
+    required String publicKeyBase64,
+  }) {
+    final keyBytes = base64Decode(publicKeyBase64);
+    return ServerAttestationService(
+      expectedServerId: expectedServerId,
+      publicKey: SimplePublicKey(keyBytes, type: KeyPairType.ed25519),
+    );
+  }
 
   /// Verify a server attestation response.
   ///
   /// The attestation [json] should contain:
   /// - `server_id`: Server identity string
-  /// - `timestamp`: ISO-8601 UTC timestamp
+  /// - `timestamp`: Unix timestamp (seconds since epoch)
   /// - `api_version`: Integer API version
   /// - `nonce`: Client-provided nonce (for replay protection)
-  /// - `signature`: HMAC-SHA256 of the canonical payload
-  Result<ServerAttestation> verify(
+  /// - `signature`: Base64-encoded Ed25519 signature
+  Future<Result<ServerAttestation>> verify(
     Map<String, dynamic> json, {
     String? expectedNonce,
-  }) {
+  }) async {
     _log.debug(_tag, 'Verifying server attestation');
 
     try {
@@ -71,7 +85,11 @@ class ServerAttestationService {
 
       // 2. Verify timestamp (clock skew check)
       final now = DateTime.now().toUtc();
-      final skew = now.difference(attestation.timestamp).inSeconds.abs();
+      final serverTime = DateTime.fromMillisecondsSinceEpoch(
+        attestation.timestamp * 1000,
+        isUtc: true,
+      );
+      final skew = now.difference(serverTime).inSeconds.abs();
       if (skew > maxClockSkewSeconds) {
         _log.error(
           _tag,
@@ -117,17 +135,15 @@ class ServerAttestationService {
         );
       }
 
-      // 5. Verify HMAC signature
-      final canonical = _buildCanonicalPayload(attestation);
-      final expectedSignature = _computeHmac(canonical);
+      // 5. Verify Ed25519 signature
+      final message = _buildCanonicalPayload(attestation);
+      final signatureBytes = base64Decode(attestation.signature);
+      final messageBytes = utf8.encode(message);
 
-      // Constant-time comparison to prevent timing side-channel
-      final sigBytes = utf8.encode(attestation.signature);
-      final expectedBytes = utf8.encode(expectedSignature);
-      final sigMatch =
-          sigBytes.length == expectedBytes.length &&
-          CryptoUtils.constantTimeEquals(sigBytes, expectedBytes);
-      if (!sigMatch) {
+      final signature = Signature(signatureBytes, publicKey: _publicKey);
+      final isValid = await _ed25519.verify(messageBytes, signature: signature);
+
+      if (!isValid) {
         _log.error(_tag, 'Attestation signature verification failed');
         return const Err(
           NetworkFailure(
@@ -154,28 +170,21 @@ class ServerAttestationService {
     return base64Url.encode(CryptoUtils.secureRandomBytes(16));
   }
 
-  /// Build canonical payload for HMAC verification.
+  /// Build canonical payload matching the server's signing format.
   ///
-  /// Format: "server_id|timestamp_iso|api_version|nonce"
+  /// Format: "server_id|unix_timestamp|api_version|nonce"
   String _buildCanonicalPayload(ServerAttestation attestation) {
     return '${attestation.serverId}'
-        '|${attestation.timestamp.toIso8601String()}'
+        '|${attestation.timestamp}'
         '|${attestation.apiVersion}'
         '|${attestation.nonce}';
-  }
-
-  /// Compute HMAC-SHA256 of a payload.
-  String _computeHmac(String payload) {
-    final hmac = Hmac(sha256, _hmacKey);
-    final digest = hmac.convert(utf8.encode(payload));
-    return base64Encode(digest.bytes);
   }
 }
 
 /// Parsed server attestation data.
 class ServerAttestation {
   final String serverId;
-  final DateTime timestamp;
+  final int timestamp;
   final int apiVersion;
   final String nonce;
   final String signature;
@@ -191,7 +200,7 @@ class ServerAttestation {
   factory ServerAttestation.fromJson(Map<String, dynamic> json) {
     return ServerAttestation(
       serverId: json['server_id'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String),
+      timestamp: json['timestamp'] as int,
       apiVersion: json['api_version'] as int,
       nonce: json['nonce'] as String,
       signature: json['signature'] as String,
@@ -200,7 +209,7 @@ class ServerAttestation {
 
   Map<String, dynamic> toJson() => {
     'server_id': serverId,
-    'timestamp': timestamp.toIso8601String(),
+    'timestamp': timestamp,
     'api_version': apiVersion,
     'nonce': nonce,
     'signature': signature,

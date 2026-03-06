@@ -55,6 +55,31 @@ abstract final class AppConstants {
   static const String serverUrlKey = 'sv_server_url';
   static const String deviceIdKey = 'sv_device_id';
 
+  // Security — Certificate Pinning
+  // SPKI SHA-256 hashes for api.sshvault.app (base64-encoded).
+  // Update these when rotating server certificates.
+  static const List<String> certificatePinHashes = [
+    // Primary pin — placeholder, replace with actual SPKI hash
+    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
+    // Backup pin — placeholder, replace with actual SPKI hash
+    'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=',
+  ];
+
+  /// Whether certificate pinning is enforced.
+  /// Set to false for self-hosted or development environments.
+  static const bool enforceCertificatePinning = true;
+
+  // Security — Server Attestation
+  static const String expectedServerId = 'shellvault-api-v1';
+  // Ed25519 public key for attestation signature verification (base64-encoded).
+  // Replace with the actual server public key before production deployment.
+  static const String attestationPublicKeyBase64 =
+      'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
+
+  // Security — Heartbeat
+  static const int heartbeatIntervalSeconds = 60;
+  static const int heartbeatMaxFailures = 3;
+
   // Typography
   static const String monospaceFontFamily = 'monospace';
 
