@@ -157,10 +157,51 @@ jobs:
           path: '*.flatpak'
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Windows (MSIX)
+  # macOS App
+  # ─────────────────────────────────────────────────────────────────────────
+  build-macos:
+    name: macOS (App)
+    needs: preflight
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Build macOS
+        run: flutter build macos --release
+
+      - name: Create DMG
+        env:
+          VERSION: ${{ needs.preflight.outputs.version }}
+        run: |
+          APP_PATH="build/macos/Build/Products/Release/sshvault.app"
+          if [ ! -d "$APP_PATH" ]; then
+            APP_PATH=$(find build/macos -name "*.app" -type d | head -1)
+          fi
+          mkdir -p dmg-staging
+          cp -R "$APP_PATH" dmg-staging/
+          ln -s /Applications dmg-staging/Applications
+          hdiutil create -volname "ShellVault" \
+            -srcfolder dmg-staging \
+            -ov -format UDZO \
+            "ShellVault-${VERSION}-macos.dmg"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-dmg
+          path: '*.dmg'
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Windows
   # ─────────────────────────────────────────────────────────────────────────
   build-windows:
-    name: Windows (MSIX)
+    name: Windows
     needs: preflight
     runs-on: windows-latest
     steps:
@@ -182,11 +223,19 @@ jobs:
           dart pub global run msix:create --build-windows false
         continue-on-error: true
 
+      - name: Package as ZIP
+        env:
+          VERSION: ${{ needs.preflight.outputs.version }}
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "build\windows\x64\runner\Release\*" `
+            -DestinationPath "ShellVault-${env:VERSION}-windows.zip"
+
       - uses: actions/upload-artifact@v4
         with:
-          name: windows-msix
+          name: windows-build
           path: |
-            build/windows/x64/runner/Release/**
+            ShellVault-*.zip
             build/windows/x64/*.msix
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -194,7 +243,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   release:
     name: Create GitHub Release
-    needs: [preflight, build-android, build-flatpak, build-windows]
+    needs: [preflight, build-android, build-flatpak, build-macos, build-windows]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -208,7 +257,7 @@ jobs:
       - name: List artifacts
         run: find artifacts/ -type f | head -50
 
-      - name: Rename artifacts
+      - name: Collect release assets
         env:
           VERSION: ${{ needs.preflight.outputs.version }}
         run: |
@@ -218,56 +267,63 @@ jobs:
           cp artifacts/android-apk/app-release.apk \
              "release-assets/ShellVault-${VERSION}-android.apk" 2>/dev/null || true
 
-          # Linux (Flatpak only)
+          # Linux (Flatpak)
           cp artifacts/linux-flatpak/*.flatpak release-assets/ 2>/dev/null || true
 
-          # Windows
-          cp artifacts/windows-msix/*.msix \
-             "release-assets/ShellVault-${VERSION}-windows.msix" 2>/dev/null || true
+          # macOS
+          cp artifacts/macos-dmg/*.dmg release-assets/ 2>/dev/null || true
+
+          # Windows — prefer MSIX, fall back to ZIP
+          if ls artifacts/windows-build/*.msix 1>/dev/null 2>&1; then
+            cp artifacts/windows-build/*.msix \
+               "release-assets/ShellVault-${VERSION}-windows.msix" 2>/dev/null || true
+          fi
+          cp artifacts/windows-build/*.zip release-assets/ 2>/dev/null || true
 
           ls -lh release-assets/
 
       - name: Generate release notes
-        id: notes
         env:
           VERSION: ${{ needs.preflight.outputs.version }}
         run: |
-          PREV_TAG=$(git tag --sort=-version:refname | grep '^v' | head -2 | tail -1)
-          if [ -z "$PREV_TAG" ]; then
-            PREV_TAG=$(git rev-list --max-parents=0 HEAD)
+          # Read changelog if available
+          CHANGELOG=""
+          if [ -f "metadata/en-US/changelogs/${BUILD_NUMBER:-4}.txt" ]; then
+            CHANGELOG=$(cat "metadata/en-US/changelogs/${BUILD_NUMBER:-4}.txt")
           fi
 
-          cat > release-notes.md <<'NOTES'
-          ## ShellVault ${{ needs.preflight.outputs.version }}
+          cat > release-notes.md <<NOTES
+          ## ShellVault ${VERSION}
 
-          ### Highlights
-
-          - **Material 3** — Consistent Material Design on all platforms
-          - **Security Hardening** — PoW challenges, response padding, timing equalization
-          - **Crypto** — Counter-based nonces, Argon2id 256 MiB, memory zeroing
-          - **DNS Cross-Check** — Multi-resolver DoH verification
-          - **Server Attestation** — Ed25519-signed attestation endpoint
-          - **Comprehensive Tests** — 431+ unit tests across all layers
-          - **CI/CD Pipeline** — Automated lint, analyze, test, and multi-platform builds
+          ${CHANGELOG}
 
           ### Downloads
 
           | Platform | File |
           |----------|------|
-          | Android | `ShellVault-*-android.apk` |
-          | Linux (Flatpak) | `ShellVault-*.flatpak` |
-          | Windows | `ShellVault-*-windows.msix` |
+          | Android (signed APK) | \`ShellVault-${VERSION}-android.apk\` |
+          | Linux (Flatpak) | \`ShellVault-${VERSION}.flatpak\` |
+          | macOS (DMG) | \`ShellVault-${VERSION}-macos.dmg\` |
+          | Windows (ZIP) | \`ShellVault-${VERSION}-windows.zip\` |
 
           ### Install
 
-          **Android:** Download and install the APK (enable "Unknown sources" if needed).
+          **Android:** Download and install the APK.
 
-          **Linux Flatpak:**
-          ```bash
-          flatpak install ShellVault-*.flatpak
+          **Linux:**
+          \`\`\`bash
+          flatpak install ShellVault-${VERSION}.flatpak
           flatpak run de.kiefer_networks.sshvault
-          ```
+          \`\`\`
+
+          **macOS:** Open the DMG and drag ShellVault to Applications.
+
+          **Windows:** Extract the ZIP and run \`sshvault.exe\`.
+
+          ---
+          **License:** AGPL-3.0 | **Website:** [kiefer-networks.de](https://kiefer-networks.de) | **Donate:** [Liberapay](https://de.liberapay.com/beli3ver)
           NOTES
+          sed -i 's/^          //' release-notes.md
 
       - uses: softprops/action-gh-release@v2
         with:
