@@ -18,6 +18,8 @@ finish-args:
   # File picker / export
   - --filesystem=home:ro
   - --filesystem=xdg-download
+  # SSH config and key import
+  - --filesystem=~/.ssh:ro
   # Notifications
   - --talk-name=org.freedesktop.Notifications
   # SSH agent forwarding
