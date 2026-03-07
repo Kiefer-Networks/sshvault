@@ -329,6 +329,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: ShellVault ${{ needs.preflight.outputs.version }}
-          draft: true
+          draft: false
           body_path: release-notes.md
           files: release-assets/*
