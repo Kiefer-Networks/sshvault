@@ -54,7 +54,7 @@ ShellVault is a cross-platform SSH terminal and SFTP file manager that encrypts 
 | Encryption | AES-256-GCM, 12-byte counter nonces |
 | Key Derivation | Argon2id (256 MiB, 3 iterations, p=1) |
 | SSH Transport | CSPRNG padding, SHA-256 fingerprints, constant-time MAC |
-| TLS | Certificate pinning (SPKI SHA-256) |
+| Server Attestation | Ed25519 TOFU key pinning (official + self-hosted) |
 | DNS | DNS-over-HTTPS with multi-provider cross-verification |
 | Storage | Platform keychain (Keystore / Keychain / libsecret / DPAPI) |
 | PIN | Argon2id hashed, brute-force lockout, duress wipe |

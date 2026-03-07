@@ -56,20 +56,6 @@ abstract final class AppConstants {
   static const String deviceIdKey = 'sv_device_id';
   static const String attestationKeyPrefix = 'sv_attest_pubkey_';
 
-  // Security — Certificate Pinning
-  // SPKI SHA-256 hashes for api.sshvault.app (base64-encoded).
-  // Update these when rotating server certificates.
-  static const List<String> certificatePinHashes = [
-    // Primary pin — placeholder, replace with actual SPKI hash
-    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
-    // Backup pin — placeholder, replace with actual SPKI hash
-    'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=',
-  ];
-
-  /// Whether certificate pinning is enforced.
-  /// Set to false for self-hosted or development environments.
-  static const bool enforceCertificatePinning = true;
-
   // Security — Server Attestation
   static const String expectedServerId = 'sshvault-api-v1';
   // Ed25519 public key for attestation signature verification (base64-encoded).

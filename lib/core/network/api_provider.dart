@@ -4,7 +4,6 @@ import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/network/auth_interceptor.dart';
 import 'package:sshvault/core/network/pow_interceptor.dart';
-import 'package:sshvault/core/security/security_providers.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/core/storage/database_provider.dart';
 import 'package:sshvault/core/storage/secure_storage_provider.dart';
@@ -31,21 +30,9 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   final baseUrl = ref.watch(serverUrlProvider);
   final storage = ref.watch(secureStorageProvider);
 
-  // Certificate pinning at HttpClient level.
-  // DoH is NOT used in connectionFactory — Dart's HttpClient on iOS
-  // does not wrap connectionFactory sockets in TLS, causing plain HTTP
-  // to be sent to HTTPS ports. DoH cross-check runs separately.
-  final pinningService = ref.watch(certificatePinningProvider);
+  final client = ApiClient(baseUrl);
 
-  final client = ApiClient(
-    baseUrl,
-    createHttpClient: pinningService != null
-        ? () => pinningService.createHttpClient()
-        : null,
-  );
-
-  // Create a refresh Dio that shares the main client's httpClientAdapter
-  // so token refresh requests go through the same certificate pinning.
+  // Create a refresh Dio that shares the main client's httpClientAdapter.
   final refreshDio = Dio(
     BaseOptions(
       baseUrl: baseUrl,
@@ -56,8 +43,6 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   );
   refreshDio.httpClientAdapter = client.dio.httpClientAdapter;
 
-  // Add AuthInterceptor after client creation so the refresh Dio can
-  // reuse the pinned httpClientAdapter (same pattern as PowInterceptor).
   client.dio.interceptors.add(
     AuthInterceptor(
       storage,
@@ -90,8 +75,6 @@ final apiClientProvider = Provider<ApiClient>((ref) {
     ),
   );
 
-  // Add PoW interceptor after client creation so it can reference the
-  // parent Dio's httpClientAdapter (preserves certificate pinning).
   client.dio.interceptors.add(PowInterceptor(parentDio: client.dio));
 
   return client;

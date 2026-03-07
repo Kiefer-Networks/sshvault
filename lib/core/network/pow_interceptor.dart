@@ -6,8 +6,7 @@ import 'package:sshvault/core/services/logging_service.dart';
 /// by automatically solving a PoW challenge and retrying the request.
 ///
 /// Accepts the parent [Dio] instance so that internally created Dio instances
-/// for challenge-fetching and retry reuse the same [HttpClientAdapter]
-/// (including certificate pinning configuration).
+/// for challenge-fetching and retry reuse the same [HttpClientAdapter].
 class PowInterceptor extends Interceptor {
   static final _log = LoggingService.instance;
   static const _tag = 'PoW';
@@ -42,7 +41,7 @@ class PowInterceptor extends Interceptor {
 
     try {
       // Fetch challenge from server using a separate Dio to avoid recursion,
-      // but reuse the parent's httpClientAdapter to preserve certificate pinning.
+      // but reuse the parent's httpClientAdapter.
       final challengeDio = Dio(
         BaseOptions(
           baseUrl: err.requestOptions.baseUrl,

@@ -2,39 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/network/api_provider.dart';
-import 'package:sshvault/core/security/certificate_pinning_service.dart';
 import 'package:sshvault/core/security/doh_resolver_service.dart';
 import 'package:sshvault/core/security/heartbeat_service.dart';
 import 'package:sshvault/core/security/server_attestation_service.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
-
-// ---------------------------------------------------------------------------
-// Certificate Pinning
-// ---------------------------------------------------------------------------
-
-/// Provides a [CertificatePinningService] configured with the SPKI pins
-/// for the production API domain.
-///
-/// Returns `null` when pinning is disabled (self-hosted / development).
-final certificatePinningProvider = Provider<CertificatePinningService?>((ref) {
-  if (!AppConstants.enforceCertificatePinning) {
-    LoggingService.instance.info(
-      'Security',
-      'Certificate pinning disabled by configuration',
-    );
-    return null;
-  }
-
-  final apiHost = Uri.parse(ref.watch(serverUrlProvider)).host;
-  if (apiHost.isEmpty) return null;
-
-  final pins = AppConstants.certificatePinHashes
-      .map((h) => CertificatePin.sha256(h))
-      .toList();
-
-  return CertificatePinningService(pins: {apiHost: pins});
-});
 
 // ---------------------------------------------------------------------------
 // DNS-over-HTTPS

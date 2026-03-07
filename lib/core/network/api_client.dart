@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/core/services/logging_service.dart';
@@ -12,26 +9,15 @@ class ApiClient {
 
   final Dio _dio;
 
-  ApiClient(
-    String baseUrl, {
-    List<Interceptor>? interceptors,
-    HttpClient Function()? createHttpClient,
-  }) : _dio = Dio(
-         BaseOptions(
-           baseUrl: baseUrl,
-           connectTimeout: const Duration(seconds: 15),
-           receiveTimeout: const Duration(seconds: 15),
-           headers: {'Content-Type': 'application/json'},
-         ),
-       ) {
-    // Configure custom HttpClient for certificate pinning
-    if (createHttpClient != null) {
-      final adapter = IOHttpClientAdapter();
-      adapter.createHttpClient = createHttpClient;
-      _dio.httpClientAdapter = adapter;
-      _log.info(_tag, 'ApiClient using custom HttpClient (cert pinning)');
-    }
-
+  ApiClient(String baseUrl, {List<Interceptor>? interceptors})
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: baseUrl,
+          connectTimeout: const Duration(seconds: 15),
+          receiveTimeout: const Duration(seconds: 15),
+          headers: {'Content-Type': 'application/json'},
+        ),
+      ) {
     if (interceptors != null) {
       _dio.interceptors.addAll(interceptors);
     }
