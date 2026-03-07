@@ -1,0 +1,1 @@
+* Fixed Flatpak sandbox permissions: grant read access to ~/.ssh for SSH config and key import
