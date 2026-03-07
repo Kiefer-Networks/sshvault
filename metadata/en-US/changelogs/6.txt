@@ -1,0 +1,4 @@
+* Fixed login failure caused by TLS bypass in DNS-over-HTTPS connection factory
+* Fixed custom server URL not being restored after app restart
+* Improved network error diagnostics for faster troubleshooting
+* Fixed async interceptor signatures for reliable request handling

@@ -77,6 +77,25 @@ class ApiClient {
         _tag,
         'POST $path failed: ${failure.statusCode ?? 'N/A'} ${failure.message}',
       );
+      // Extended diagnostics for non-server responses
+      if (e.response != null) {
+        final headers = e.response!.headers.map;
+        final hasVia = headers.containsKey('via');
+        final server = headers['server']?.join(', ') ?? 'unknown';
+        _log.error(
+          _tag,
+          'Response diagnostics — server: $server, '
+          'via: ${hasVia ? headers["via"]!.join(", ") : "absent"}, '
+          'data type: ${e.response!.data?.runtimeType}, '
+          'redirects: ${e.response!.redirects.length}',
+        );
+      } else {
+        _log.error(
+          _tag,
+          'No response object — DioExceptionType: ${e.type}, '
+          'message: ${e.message}',
+        );
+      }
       return Err(failure);
     } catch (e) {
       _log.error(_tag, 'POST $path unexpected error: $e');
@@ -135,6 +154,9 @@ class ApiClient {
     String message;
     if (data is Map<String, dynamic> && data.containsKey('error')) {
       message = data['error'] as String;
+    } else if (data is String && data.isNotEmpty) {
+      // Plain-text or HTML error from reverse proxy
+      message = data.length > 200 ? data.substring(0, 200) : data;
     } else {
       message = switch (e.type) {
         DioExceptionType.connectionTimeout => 'Connection timed out',

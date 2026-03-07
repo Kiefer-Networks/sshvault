@@ -20,7 +20,17 @@ class PowInterceptor extends Interceptor {
       _powService = powService ?? ProofOfWorkService();
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    _log.debug(
+      _tag,
+      '${err.requestOptions.method} ${err.requestOptions.path} '
+      'returned ${err.response?.statusCode ?? 'N/A'} '
+      '(type: ${err.type}, data type: ${err.response?.data?.runtimeType})',
+    );
+
     if (err.response?.statusCode != 428) {
       return handler.next(err);
     }

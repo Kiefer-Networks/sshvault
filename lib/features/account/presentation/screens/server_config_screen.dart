@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/network/api_client.dart';
-import 'package:sshvault/core/network/api_provider.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
@@ -34,8 +33,10 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
   @override
   void initState() {
     super.initState();
-    final settings = ref.read(settingsProvider).value;
-    _urlController.text = settings?.serverUrl ?? AppConstants.defaultServerUrl;
+    final url = ref.read(settingsProvider).value?.serverUrl;
+    _urlController.text = (url != null && url.isNotEmpty)
+        ? url
+        : AppConstants.defaultServerUrl;
   }
 
   @override
@@ -140,7 +141,6 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
   void _saveUrl(String url) {
     if (url.isEmpty) return;
     ref.read(settingsProvider.notifier).setServerUrl(url);
-    ref.read(serverUrlProvider.notifier).state = url;
   }
 
   Future<void> _testConnection() async {

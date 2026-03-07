@@ -1,0 +1,4 @@
+* Login-Fehler behoben: TLS-Bypass in der DNS-over-HTTPS Connection Factory
+* Benutzerdefinierte Server-URL wird nach App-Neustart wieder korrekt geladen
+* Verbesserte Netzwerk-Fehlerdiagnose fuer schnellere Fehlersuche
+* Async-Interceptor-Signaturen fuer zuverlaessige Request-Verarbeitung korrigiert

@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/network/auth_interceptor.dart';
@@ -19,22 +18,29 @@ import 'package:sshvault/features/snippet/presentation/providers/snippet_provide
 
 export 'package:sshvault/core/storage/secure_storage_provider.dart';
 
-final serverUrlProvider = StateProvider<String>((ref) {
-  return AppConstants.defaultServerUrl;
+/// The active server URL, derived from persisted settings.
+///
+/// Falls back to [AppConstants.defaultServerUrl] when no custom URL is stored.
+/// Updates automatically when settings change — no manual override needed.
+final serverUrlProvider = Provider<String>((ref) {
+  final url = ref.watch(settingsProvider).value?.serverUrl;
+  return (url != null && url.isNotEmpty) ? url : AppConstants.defaultServerUrl;
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   final baseUrl = ref.watch(serverUrlProvider);
   final storage = ref.watch(secureStorageProvider);
 
-  // Certificate pinning + DNS-over-HTTPS integrated at HttpClient level
+  // Certificate pinning at HttpClient level.
+  // DoH is NOT used in connectionFactory — Dart's HttpClient on iOS
+  // does not wrap connectionFactory sockets in TLS, causing plain HTTP
+  // to be sent to HTTPS ports. DoH cross-check runs separately.
   final pinningService = ref.watch(certificatePinningProvider);
-  final dohResolver = ref.watch(dohResolverProvider);
 
   final client = ApiClient(
     baseUrl,
     createHttpClient: pinningService != null
-        ? () => pinningService.createHttpClient(dohResolver: dohResolver)
+        ? () => pinningService.createHttpClient()
         : null,
   );
 
