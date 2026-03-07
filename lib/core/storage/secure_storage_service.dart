@@ -341,9 +341,9 @@ class SecureStorageService {
       await _storage.delete(key: AppConstants.refreshTokenKey);
       await _storage.delete(key: AppConstants.tokenExpiryKey);
       await _storage.delete(key: AppConstants.userEmailKey);
-      await _storage.delete(key: AppConstants.syncPasswordKey);
-      await _storage.delete(key: AppConstants.dekStorageKey);
-      await _storage.delete(key: AppConstants.deviceIdKey);
+      // Sync password, DEK, and device ID intentionally preserved —
+      // they must survive token expiry so re-login doesn't require
+      // the user to re-enter the encryption passphrase.
       return const Success(null);
     } catch (e) {
       return Err(StorageFailure('Failed to clear auth tokens', cause: e));
@@ -385,6 +385,35 @@ class SecureStorageService {
       return const Success(null);
     } catch (e) {
       return Err(StorageFailure('Failed to clear all data', cause: e));
+    }
+  }
+
+  // --- Attestation Public Key (per server URL) ---
+
+  String _attestationKeyId(String serverUrl) =>
+      '${AppConstants.attestationKeyPrefix}${Uri.parse(serverUrl).host}';
+
+  Future<Result<void>> saveAttestationKey(
+    String serverUrl,
+    String publicKeyBase64,
+  ) async {
+    try {
+      await _storage.write(
+        key: _attestationKeyId(serverUrl),
+        value: publicKeyBase64,
+      );
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to save attestation key', cause: e));
+    }
+  }
+
+  Future<Result<String?>> getAttestationKey(String serverUrl) async {
+    try {
+      final value = await _storage.read(key: _attestationKeyId(serverUrl));
+      return Success(value);
+    } catch (e) {
+      return Err(StorageFailure('Failed to read attestation key', cause: e));
     }
   }
 

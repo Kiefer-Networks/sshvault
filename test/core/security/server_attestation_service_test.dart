@@ -193,7 +193,7 @@ void main() {
 
       expect(roundTripped['server_id'], json['server_id']);
       expect(roundTripped['timestamp'], json['timestamp']);
-      expect(roundTripped['api_version'], json['api_version']);
+      expect(roundTripped['api_version'], json['api_version'].toString());
       expect(roundTripped['nonce'], json['nonce']);
       expect(roundTripped['signature'], json['signature']);
     });

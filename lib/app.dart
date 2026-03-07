@@ -87,43 +87,59 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
     }, fireImmediately: false);
   }
 
-  /// Watch for attestation results and show warning on failure.
-  void _watchAttestationResult() {
-    ref.listenManual(authProvider, (prev, next) {
-      if (next.value == AuthStatus.authenticated) {
-        // Trigger attestation check as a background task
-        _performAttestationCheck();
-      }
-    }, fireImmediately: true);
-  }
+  /// Watch for attestation results and show warning on failure or key change.
+  bool _attestationDialogShown = false;
 
-  void _performAttestationCheck() {
-    // Listen for the attestation result
+  void _watchAttestationResult() {
     ref.listenManual(attestationCheckProvider, (prev, next) {
-      final result = next.value;
-      if (result == false && mounted) {
-        final ctx = rootNavigatorKey.currentContext;
-        if (ctx != null) {
-          final l10n = AppLocalizations.of(ctx)!;
-          SecurityWarningDialog.show(
-            ctx,
-            title: l10n.attestationFailedTitle,
-            message: l10n.attestationFailedMessage,
-            severity: SecuritySeverity.warning,
-            onDisconnect: () {
-              Navigator.of(ctx, rootNavigator: true).pop();
-              ref.read(authProvider.notifier).logout();
-            },
-            onContinue: () {
-              Navigator.of(ctx, rootNavigator: true).pop();
-              LoggingService.instance.warning(
-                'Security',
-                'User chose to continue despite attestation failure',
-              );
-            },
-          );
-        }
+      // Only react to completed results, not AsyncLoading (which preserves
+      // the previous value and would re-trigger the dialog during logout).
+      if (next is! AsyncData<AttestationStatus>) return;
+      final status = next.value;
+
+      if (status == AttestationStatus.passed) {
+        _attestationDialogShown = false;
+        return;
       }
+
+      if (!mounted || _attestationDialogShown) return;
+      _attestationDialogShown = true;
+
+      final ctx = rootNavigatorKey.currentContext;
+      if (ctx == null) {
+        _attestationDialogShown = false;
+        return;
+      }
+
+      final l10n = AppLocalizations.of(ctx)!;
+      final isKeyChanged = status == AttestationStatus.keyChanged;
+
+      SecurityWarningDialog.show(
+        ctx,
+        title: isKeyChanged
+            ? l10n.attestationKeyChangedTitle
+            : l10n.attestationFailedTitle,
+        message: isKeyChanged
+            ? l10n.attestationKeyChangedMessage
+            : l10n.attestationFailedMessage,
+        severity: isKeyChanged
+            ? SecuritySeverity.critical
+            : SecuritySeverity.warning,
+        onDisconnect: () {
+          Navigator.of(ctx, rootNavigator: true).pop();
+          ref.read(authProvider.notifier).logout();
+          AppRouter.router.go('/login');
+        },
+        onContinue: isKeyChanged
+            ? null
+            : () {
+                Navigator.of(ctx, rootNavigator: true).pop();
+                LoggingService.instance.warning(
+                  'Security',
+                  'User chose to continue despite attestation failure',
+                );
+              },
+      );
     }, fireImmediately: false);
   }
 
@@ -139,6 +155,7 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       final pwResult = await storage.getSyncPassword();
       final pw = pwResult.isSuccess ? pwResult.value : null;
       if (!mounted) return;
+      if (ref.read(authProvider).value != AuthStatus.authenticated) return;
 
       if (pw == null || pw.isEmpty) {
         AppRouter.router.go('/sync-password?mode=create');

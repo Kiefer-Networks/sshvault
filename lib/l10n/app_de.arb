@@ -817,6 +817,8 @@
   "heartbeatLostMessage": "Der Server konnte nach mehreren Versuchen nicht erreicht werden. Zu deiner Sicherheit wurde die Sitzung beendet.",
   "attestationFailedTitle": "Server-Verifizierung fehlgeschlagen",
   "attestationFailedMessage": "Der Server konnte nicht als legitimes SSHVault-Backend verifiziert werden. Dies kann auf einen Man-in-the-Middle-Angriff oder einen falsch konfigurierten Server hindeuten.",
+  "attestationKeyChangedTitle": "Serverschlüssel geändert",
+  "attestationKeyChangedMessage": "Der Attestierungsschlüssel des Servers hat sich seit der ersten Verbindung geändert. Dies kann auf einen Man-in-the-Middle-Angriff hindeuten. Fahre NICHT fort, es sei denn, der Serveradministrator hat eine Schlüsselrotation bestätigt.",
 
   "sectionLinks": "Links",
   "sectionDeveloper": "Entwickler",

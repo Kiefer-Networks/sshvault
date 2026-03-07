@@ -170,7 +170,7 @@ class ServerAttestationService {
   String _buildCanonicalPayload(ServerAttestation attestation) {
     return '${attestation.serverId}'
         '|${attestation.timestamp}'
-        '|${attestation.apiVersion}'
+        '|${attestation.rawApiVersion}'
         '|${attestation.nonce}';
   }
 }
@@ -180,6 +180,10 @@ class ServerAttestation {
   final String serverId;
   final int timestamp;
   final int apiVersion;
+
+  /// Raw api_version string as received from the server (e.g. "v1").
+  /// Used in the canonical payload to match the server's signing format.
+  final String rawApiVersion;
   final String nonce;
   final String signature;
 
@@ -187,24 +191,44 @@ class ServerAttestation {
     required this.serverId,
     required this.timestamp,
     required this.apiVersion,
+    required this.rawApiVersion,
     required this.nonce,
     required this.signature,
   });
 
   factory ServerAttestation.fromJson(Map<String, dynamic> json) {
+    final rawVersion = json['api_version'].toString();
     return ServerAttestation(
       serverId: json['server_id'] as String,
-      timestamp: json['timestamp'] as int,
-      apiVersion: json['api_version'] as int,
+      timestamp: _toInt(json['timestamp']),
+      apiVersion: _parseVersion(rawVersion),
+      rawApiVersion: rawVersion,
       nonce: json['nonce'] as String,
       signature: json['signature'] as String,
     );
   }
 
+  /// Parse a value that may be int or String to int.
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.parse(value);
+    throw FormatException(
+      'Expected int or numeric String, got ${value.runtimeType}',
+    );
+  }
+
+  /// Parse a version string that may have a "v" prefix (e.g. "v1" → 1).
+  static int _parseVersion(String value) {
+    final cleaned = value.startsWith('v') || value.startsWith('V')
+        ? value.substring(1)
+        : value;
+    return int.parse(cleaned);
+  }
+
   Map<String, dynamic> toJson() => {
     'server_id': serverId,
     'timestamp': timestamp,
-    'api_version': apiVersion,
+    'api_version': rawApiVersion,
     'nonce': nonce,
     'signature': signature,
   };

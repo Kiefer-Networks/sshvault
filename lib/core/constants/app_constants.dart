@@ -54,6 +54,7 @@ abstract final class AppConstants {
   static const String userEmailKey = 'sv_user_email';
   static const String serverUrlKey = 'sv_server_url';
   static const String deviceIdKey = 'sv_device_id';
+  static const String attestationKeyPrefix = 'sv_attest_pubkey_';
 
   // Security — Certificate Pinning
   // SPKI SHA-256 hashes for api.sshvault.app (base64-encoded).
@@ -74,7 +75,7 @@ abstract final class AppConstants {
   // Ed25519 public key for attestation signature verification (base64-encoded).
   // Replace with the actual server public key before production deployment.
   static const String attestationPublicKeyBase64 =
-      'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
+      'u4hL9b4NSrluOM8TEZDQHrTDOgKnOKpZYJPgnXVX9no=';
 
   // Security — Heartbeat
   static const int heartbeatIntervalSeconds = 60;

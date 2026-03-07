@@ -4198,6 +4198,18 @@ abstract class AppLocalizations {
   /// **'The server could not be verified as a legitimate SSHVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.'**
   String get attestationFailedMessage;
 
+  /// No description provided for @attestationKeyChangedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Key Changed'**
+  String get attestationKeyChangedTitle;
+
+  /// No description provided for @attestationKeyChangedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The server\'s attestation key has changed since the initial connection. This may indicate a man-in-the-middle attack. Do NOT continue unless the server administrator has confirmed a key rotation.'**
+  String get attestationKeyChangedMessage;
+
   /// No description provided for @sectionLinks.
   ///
   /// In en, this message translates to:

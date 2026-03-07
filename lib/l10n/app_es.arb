@@ -817,6 +817,8 @@
   "heartbeatLostMessage": "No se pudo contactar al servidor tras múltiples intentos. Por tu seguridad, la sesión ha sido terminada.",
   "attestationFailedTitle": "Verificación del servidor fallida",
   "attestationFailedMessage": "No se pudo verificar el servidor como un backend legítimo de SSHVault. Esto puede indicar un ataque de intermediario o un servidor mal configurado.",
+  "attestationKeyChangedTitle": "Clave del servidor cambiada",
+  "attestationKeyChangedMessage": "La clave de atestación del servidor ha cambiado desde la conexión inicial. Esto puede indicar un ataque de intermediario. NO continúes a menos que el administrador del servidor haya confirmado una rotación de claves.",
 
   "sectionLinks": "Enlaces",
   "sectionDeveloper": "Desarrollador",

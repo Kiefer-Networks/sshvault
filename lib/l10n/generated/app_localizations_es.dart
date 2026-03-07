@@ -2306,6 +2306,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo verificar el servidor como un backend legítimo de SSHVault. Esto puede indicar un ataque de intermediario o un servidor mal configurado.';
 
   @override
+  String get attestationKeyChangedTitle => 'Clave del servidor cambiada';
+
+  @override
+  String get attestationKeyChangedMessage =>
+      'La clave de atestación del servidor ha cambiado desde la conexión inicial. Esto puede indicar un ataque de intermediario. NO continúes a menos que el administrador del servidor haya confirmado una rotación de claves.';
+
+  @override
   String get sectionLinks => 'Enlaces';
 
   @override

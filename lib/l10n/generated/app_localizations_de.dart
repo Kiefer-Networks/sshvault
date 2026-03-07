@@ -2301,6 +2301,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Der Server konnte nicht als legitimes SSHVault-Backend verifiziert werden. Dies kann auf einen Man-in-the-Middle-Angriff oder einen falsch konfigurierten Server hindeuten.';
 
   @override
+  String get attestationKeyChangedTitle => 'Serverschlüssel geändert';
+
+  @override
+  String get attestationKeyChangedMessage =>
+      'Der Attestierungsschlüssel des Servers hat sich seit der ersten Verbindung geändert. Dies kann auf einen Man-in-the-Middle-Angriff hindeuten. Fahre NICHT fort, es sei denn, der Serveradministrator hat eine Schlüsselrotation bestätigt.';
+
+  @override
   String get sectionLinks => 'Links';
 
   @override

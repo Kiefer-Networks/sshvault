@@ -843,6 +843,8 @@
   "heartbeatLostMessage": "The server could not be reached after multiple attempts. For your security, the session has been terminated.",
   "attestationFailedTitle": "Server Verification Failed",
   "attestationFailedMessage": "The server could not be verified as a legitimate SSHVault backend. This may indicate a man-in-the-middle attack or a misconfigured server.",
+  "attestationKeyChangedTitle": "Server Key Changed",
+  "attestationKeyChangedMessage": "The server's attestation key has changed since the initial connection. This may indicate a man-in-the-middle attack. Do NOT continue unless the server administrator has confirmed a key rotation.",
 
   "sectionLinks": "Links",
   "sectionDeveloper": "Developer",

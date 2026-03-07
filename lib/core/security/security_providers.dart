@@ -53,31 +53,99 @@ final dohResolverProvider = Provider<DohResolverService>((ref) {
 // Server Attestation
 // ---------------------------------------------------------------------------
 
-/// Provides a [ServerAttestationService] for verifying server identity.
-final serverAttestationProvider = Provider<ServerAttestationService>((ref) {
-  return ServerAttestationService.fromBase64Key(
-    expectedServerId: AppConstants.expectedServerId,
-    publicKeyBase64: AppConstants.attestationPublicKeyBase64,
-  );
-});
+/// Result of an attestation check.
+enum AttestationStatus {
+  /// Attestation passed or skipped (not authenticated).
+  passed,
+
+  /// Attestation signature or identity verification failed.
+  failed,
+
+  /// The server's attestation public key has changed since it was first
+  /// pinned (TOFU). This may indicate a MITM attack.
+  keyChanged,
+}
+
+/// Whether the current server URL is the official SSHVault API.
+bool _isOfficialServer(String serverUrl) {
+  return Uri.parse(serverUrl).host ==
+      Uri.parse(AppConstants.defaultServerUrl).host;
+}
 
 /// Performs a background attestation check after the user authenticates.
 ///
-/// Returns `true` if attestation passed or was skipped, `false` if it failed.
-/// Does not block the UI — callers should handle failure asynchronously.
-final attestationCheckProvider = FutureProvider.autoDispose<bool>((ref) async {
+/// Resolves the attestation public key dynamically:
+/// - **Official server**: uses the hardcoded key from [AppConstants].
+/// - **Custom server**: Trust-On-First-Use (TOFU) — fetches the key from
+///   `/v1/attestation/pubkey` on first connect and pins it in secure storage.
+///   Subsequent connections verify against the pinned key.
+///
+/// If the server's public key changes after initial pinning, returns
+/// [AttestationStatus.keyChanged] (critical security event).
+final attestationCheckProvider = FutureProvider.autoDispose<AttestationStatus>((
+  ref,
+) async {
   final log = LoggingService.instance;
   const tag = 'Attest';
 
-  final authStatus = ref.watch(authProvider).value;
-  if (authStatus != AuthStatus.authenticated) {
-    return true; // Not authenticated, nothing to check
+  final authAsync = ref.watch(authProvider);
+  if (authAsync.isLoading || authAsync.value != AuthStatus.authenticated) {
+    return AttestationStatus.passed;
   }
 
+  final serverUrl = ref.read(serverUrlProvider);
   final apiClient = ref.read(apiClientProvider);
-  final attestation = ref.read(serverAttestationProvider);
+  final storage = ref.read(secureStorageProvider);
 
   try {
+    // --- Step 1: Resolve the attestation public key ---
+    String? publicKeyBase64;
+
+    // Check for a stored (pinned) key for this server.
+    final storedKeyResult = await storage.getAttestationKey(serverUrl);
+    final storedKey = storedKeyResult.isSuccess ? storedKeyResult.value : null;
+
+    if (storedKey != null) {
+      publicKeyBase64 = storedKey;
+      log.debug(
+        tag,
+        'Using pinned attestation key for ${Uri.parse(serverUrl).host}',
+      );
+    } else if (_isOfficialServer(serverUrl)) {
+      // Official server: use hardcoded key and pin it.
+      publicKeyBase64 = AppConstants.attestationPublicKeyBase64;
+      await storage.saveAttestationKey(serverUrl, publicKeyBase64);
+      log.info(tag, 'Pinned hardcoded key for official server');
+    } else {
+      // Custom server, first connection: TOFU — fetch and pin the key.
+      final pubKeyResult = await apiClient.get('/v1/attestation/pubkey');
+      if (pubKeyResult.isFailure) {
+        log.warning(
+          tag,
+          'Cannot fetch attestation public key: ${pubKeyResult.failure}. '
+          'Skipping attestation for first connection.',
+        );
+        return AttestationStatus.passed;
+      }
+      final fetchedKey = pubKeyResult.value['public_key'] as String?;
+      if (fetchedKey == null || fetchedKey.isEmpty) {
+        log.warning(tag, 'Server returned empty attestation public key');
+        return AttestationStatus.failed;
+      }
+      publicKeyBase64 = fetchedKey;
+      await storage.saveAttestationKey(serverUrl, publicKeyBase64);
+      log.info(
+        tag,
+        'TOFU: pinned attestation key for ${Uri.parse(serverUrl).host}',
+      );
+    }
+
+    // --- Step 2: Verify attestation with the resolved key ---
+    final attestation = ServerAttestationService.fromBase64Key(
+      expectedServerId: AppConstants.expectedServerId,
+      publicKeyBase64: publicKeyBase64,
+    );
+
     final nonce = ServerAttestationService.generateNonce();
     final result = await apiClient.get(
       '/v1/attestation',
@@ -90,23 +158,40 @@ final attestationCheckProvider = FutureProvider.autoDispose<bool>((ref) async {
         'Attestation endpoint unreachable: ${result.failure}. '
         'Rejecting — a MITM could be blocking the attestation endpoint.',
       );
-      return false;
+      return AttestationStatus.failed;
     }
 
     final verification = await attestation.verify(
       result.value,
       expectedNonce: nonce,
     );
-    if (verification.isFailure) {
-      log.error(tag, 'Server attestation FAILED: ${verification.failure}');
-      return false;
+
+    if (verification.isSuccess) {
+      log.info(tag, 'Server attestation passed');
+      return AttestationStatus.passed;
     }
 
-    log.info(tag, 'Server attestation passed');
-    return true;
+    // --- Step 3: Verification failed — check if key changed ---
+    log.error(tag, 'Server attestation FAILED: ${verification.failure}');
+
+    final pubKeyResult = await apiClient.get('/v1/attestation/pubkey');
+    if (pubKeyResult.isSuccess) {
+      final currentKey = pubKeyResult.value['public_key'] as String?;
+      if (currentKey != null && currentKey != publicKeyBase64) {
+        log.error(
+          tag,
+          'ATTESTATION KEY CHANGED! '
+          'Stored: ${publicKeyBase64.substring(0, 8)}..., '
+          'Server: ${currentKey.substring(0, 8)}...',
+        );
+        return AttestationStatus.keyChanged;
+      }
+    }
+
+    return AttestationStatus.failed;
   } catch (e) {
     log.error(tag, 'Attestation check threw: $e');
-    return false;
+    return AttestationStatus.failed;
   }
 });
 
