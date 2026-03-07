@@ -469,13 +469,11 @@ void main() {
       verify(
         () => mockStorage.delete(key: AppConstants.userEmailKey),
       ).called(1);
-      verify(
-        () => mockStorage.delete(key: AppConstants.syncPasswordKey),
-      ).called(1);
-      verify(
-        () => mockStorage.delete(key: AppConstants.dekStorageKey),
-      ).called(1);
-      verify(() => mockStorage.delete(key: AppConstants.deviceIdKey)).called(1);
+      // Sync password, DEK, and device ID are intentionally preserved
+      // so re-login doesn't require re-entering the encryption passphrase.
+      verifyNever(() => mockStorage.delete(key: AppConstants.syncPasswordKey));
+      verifyNever(() => mockStorage.delete(key: AppConstants.dekStorageKey));
+      verifyNever(() => mockStorage.delete(key: AppConstants.deviceIdKey));
     });
 
     test('clearAuthTokens returns StorageFailure on error', () async {
