@@ -157,11 +157,11 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       if (!mounted) return;
       if (ref.read(authProvider).value != AuthStatus.authenticated) return;
 
-      if (pw == null || pw.isEmpty) {
-        AppRouter.router.go('/sync-password?mode=create');
-      } else {
+      if (pw != null && pw.isNotEmpty) {
         ref.read(syncProvider.notifier).sync();
       }
+      // No sync password set — skip auto-sync silently.
+      // User can set it up manually via Settings → Sync.
     }).catchError((Object e) {
       LoggingService.instance.warning(
         'SSHVaultApp',
