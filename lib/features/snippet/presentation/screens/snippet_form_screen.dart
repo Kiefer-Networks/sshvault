@@ -155,9 +155,12 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
       ),
       body: Form(
         key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
             SectionCard(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -290,7 +293,9 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
               ),
             ),
             const SizedBox(height: 32),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

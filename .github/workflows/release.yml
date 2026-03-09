@@ -47,10 +47,10 @@ jobs:
       - run: flutter test
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Android APK
+  # Android APK + AAB
   # ─────────────────────────────────────────────────────────────────────────
   build-android:
-    name: Android (APK)
+    name: Android (APK + AAB)
     needs: preflight
     runs-on: ubuntu-latest
     steps:
@@ -96,10 +96,25 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
+      - name: Build AAB
+        run: flutter build appbundle --release
+
+      - name: Rename AAB
+        env:
+          VERSION: ${{ needs.preflight.outputs.version }}
+        run: |
+          cp build/app/outputs/bundle/release/app-release.aab \
+             "SSHVault-${VERSION}.aab"
+
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: SSHVault-*.aab
 
   # ─────────────────────────────────────────────────────────────────────────
   # Linux Flatpak
@@ -296,9 +311,11 @@ jobs:
         run: |
           mkdir -p release-assets
 
-          # Android
+          # Android APK + AAB
           cp artifacts/android-apk/app-release.apk \
              "release-assets/SSHVault-${VERSION}-android.apk" 2>/dev/null || true
+          cp artifacts/android-aab/SSHVault-*.aab \
+             "release-assets/SSHVault-${VERSION}.aab" 2>/dev/null || true
 
           # Linux (Flatpak)
           cp artifacts/linux-flatpak/*.flatpak release-assets/ 2>/dev/null || true
@@ -337,6 +354,7 @@ jobs:
           | Platform | File |
           |----------|------|
           | Android (signed APK) | \`SSHVault-${VERSION}-android.apk\` |
+          | Android (AAB for Play Store) | \`SSHVault-${VERSION}.aab\` |
           | Linux (Flatpak) | \`SSHVault-${VERSION}.flatpak\` |
           | macOS (DMG) | \`SSHVault-${VERSION}-macos.dmg\` |
           | Windows (MSIX) | \`SSHVault-${VERSION}-windows.msix\` |

@@ -1,0 +1,4 @@
+* Behoben: Sync-Passwort muss jetzt vor dem Zugriff auf die App eingerichtet werden
+* Behoben: Formularfelder werden auf Tablets nicht mehr über die volle Breite gestreckt (max 600dp)
+* Paket-Bezeichner von shellvault zu sshvault auf allen Plattformen umbenannt
+* CI: Android App Bundle (AAB) wird jetzt zusammen mit APK gebaut und veröffentlicht

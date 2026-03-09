@@ -1,0 +1,4 @@
+* Fixed: Sync password setup is now required before accessing the app
+* Fixed: Form fields no longer stretch full-width on tablets (max 600dp)
+* Renamed package identifiers from shellvault to sshvault across all platforms
+* CI: Android App Bundle (AAB) is now built and published alongside APK

@@ -159,9 +159,12 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
 
       if (pw != null && pw.isNotEmpty) {
         ref.read(syncProvider.notifier).sync();
+      } else {
+        // No sync password set — redirect to setup screen.
+        // This handles the case where the user logged in but closed the app
+        // before setting the sync password.
+        AppRouter.router.go('/sync-password?mode=create');
       }
-      // No sync password set — skip auto-sync silently.
-      // User can set it up manually via Settings → Sync.
     }).catchError((Object e) {
       LoggingService.instance.warning(
         'SSHVaultApp',
