@@ -5,9 +5,34 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
+import 'app_localizations_cs.dart';
+import 'app_localizations_da.dart';
 import 'app_localizations_de.dart';
+import 'app_localizations_el.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fi.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_he.dart';
+import 'app_localizations_hi.dart';
+import 'app_localizations_hu.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_nb.dart';
+import 'app_localizations_nl.dart';
+import 'app_localizations_pl.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_ro.dart';
+import 'app_localizations_ru.dart';
+import 'app_localizations_sv.dart';
+import 'app_localizations_th.dart';
+import 'app_localizations_tr.dart';
+import 'app_localizations_uk.dart';
+import 'app_localizations_vi.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -95,9 +120,34 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('cs'),
+    Locale('da'),
     Locale('de'),
+    Locale('el'),
     Locale('en'),
     Locale('es'),
+    Locale('fi'),
+    Locale('fr'),
+    Locale('he'),
+    Locale('hi'),
+    Locale('hu'),
+    Locale('id'),
+    Locale('it'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('nb'),
+    Locale('nl'),
+    Locale('pl'),
+    Locale('pt'),
+    Locale('ro'),
+    Locale('ru'),
+    Locale('sv'),
+    Locale('th'),
+    Locale('tr'),
+    Locale('uk'),
+    Locale('vi'),
+    Locale('zh'),
   ];
 
   /// No description provided for @appName.
@@ -579,6 +629,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Español'**
   String get settingsLanguageEs;
+
+  /// No description provided for @settingsLanguageFr.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get settingsLanguageFr;
+
+  /// No description provided for @settingsLanguagePt.
+  ///
+  /// In en, this message translates to:
+  /// **'Português'**
+  String get settingsLanguagePt;
+
+  /// No description provided for @settingsLanguageIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get settingsLanguageIt;
+
+  /// No description provided for @settingsLanguageRu.
+  ///
+  /// In en, this message translates to:
+  /// **'Русский'**
+  String get settingsLanguageRu;
+
+  /// No description provided for @settingsLanguageUk.
+  ///
+  /// In en, this message translates to:
+  /// **'Українська'**
+  String get settingsLanguageUk;
+
+  /// No description provided for @settingsLanguagePl.
+  ///
+  /// In en, this message translates to:
+  /// **'Polski'**
+  String get settingsLanguagePl;
+
+  /// No description provided for @settingsLanguageJa.
+  ///
+  /// In en, this message translates to:
+  /// **'日本語'**
+  String get settingsLanguageJa;
+
+  /// No description provided for @settingsLanguageKo.
+  ///
+  /// In en, this message translates to:
+  /// **'한국어'**
+  String get settingsLanguageKo;
+
+  /// No description provided for @settingsLanguageZh.
+  ///
+  /// In en, this message translates to:
+  /// **'中文'**
+  String get settingsLanguageZh;
+
+  /// No description provided for @settingsLanguageAr.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get settingsLanguageAr;
+
+  /// No description provided for @settingsLanguageHi.
+  ///
+  /// In en, this message translates to:
+  /// **'हिन्दी'**
+  String get settingsLanguageHi;
+
+  /// No description provided for @settingsLanguageTr.
+  ///
+  /// In en, this message translates to:
+  /// **'Türkçe'**
+  String get settingsLanguageTr;
+
+  /// No description provided for @settingsLanguageSv.
+  ///
+  /// In en, this message translates to:
+  /// **'Svenska'**
+  String get settingsLanguageSv;
+
+  /// No description provided for @settingsLanguageNb.
+  ///
+  /// In en, this message translates to:
+  /// **'Norsk bokmål'**
+  String get settingsLanguageNb;
+
+  /// No description provided for @settingsLanguageDa.
+  ///
+  /// In en, this message translates to:
+  /// **'Dansk'**
+  String get settingsLanguageDa;
+
+  /// No description provided for @settingsLanguageFi.
+  ///
+  /// In en, this message translates to:
+  /// **'Suomi'**
+  String get settingsLanguageFi;
+
+  /// No description provided for @settingsLanguageCs.
+  ///
+  /// In en, this message translates to:
+  /// **'Čeština'**
+  String get settingsLanguageCs;
+
+  /// No description provided for @settingsLanguageHu.
+  ///
+  /// In en, this message translates to:
+  /// **'Magyar'**
+  String get settingsLanguageHu;
+
+  /// No description provided for @settingsLanguageRo.
+  ///
+  /// In en, this message translates to:
+  /// **'Română'**
+  String get settingsLanguageRo;
+
+  /// No description provided for @settingsLanguageTh.
+  ///
+  /// In en, this message translates to:
+  /// **'ไทย'**
+  String get settingsLanguageTh;
+
+  /// No description provided for @settingsLanguageVi.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiếng Việt'**
+  String get settingsLanguageVi;
+
+  /// No description provided for @settingsLanguageNl.
+  ///
+  /// In en, this message translates to:
+  /// **'Nederlands'**
+  String get settingsLanguageNl;
+
+  /// No description provided for @settingsLanguageId.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahasa Indonesia'**
+  String get settingsLanguageId;
+
+  /// No description provided for @settingsLanguageEl.
+  ///
+  /// In en, this message translates to:
+  /// **'Ελληνικά'**
+  String get settingsLanguageEl;
+
+  /// No description provided for @settingsLanguageHe.
+  ///
+  /// In en, this message translates to:
+  /// **'עברית'**
+  String get settingsLanguageHe;
 
   /// No description provided for @cancel.
   ///
@@ -4323,8 +4523,36 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'ar',
+    'cs',
+    'da',
+    'de',
+    'el',
+    'en',
+    'es',
+    'fi',
+    'fr',
+    'he',
+    'hi',
+    'hu',
+    'id',
+    'it',
+    'ja',
+    'ko',
+    'nb',
+    'nl',
+    'pl',
+    'pt',
+    'ro',
+    'ru',
+    'sv',
+    'th',
+    'tr',
+    'uk',
+    'vi',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -4333,12 +4561,62 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'cs':
+      return AppLocalizationsCs();
+    case 'da':
+      return AppLocalizationsDa();
     case 'de':
       return AppLocalizationsDe();
+    case 'el':
+      return AppLocalizationsEl();
     case 'en':
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fi':
+      return AppLocalizationsFi();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'he':
+      return AppLocalizationsHe();
+    case 'hi':
+      return AppLocalizationsHi();
+    case 'hu':
+      return AppLocalizationsHu();
+    case 'id':
+      return AppLocalizationsId();
+    case 'it':
+      return AppLocalizationsIt();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'nb':
+      return AppLocalizationsNb();
+    case 'nl':
+      return AppLocalizationsNl();
+    case 'pl':
+      return AppLocalizationsPl();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'ro':
+      return AppLocalizationsRo();
+    case 'ru':
+      return AppLocalizationsRu();
+    case 'sv':
+      return AppLocalizationsSv();
+    case 'th':
+      return AppLocalizationsTh();
+    case 'tr':
+      return AppLocalizationsTr();
+    case 'uk':
+      return AppLocalizationsUk();
+    case 'vi':
+      return AppLocalizationsVi();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

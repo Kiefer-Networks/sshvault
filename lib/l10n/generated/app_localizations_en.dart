@@ -262,6 +262,81 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLanguageEs => 'Español';
 
   @override
+  String get settingsLanguageFr => 'Français';
+
+  @override
+  String get settingsLanguagePt => 'Português';
+
+  @override
+  String get settingsLanguageIt => 'Italiano';
+
+  @override
+  String get settingsLanguageRu => 'Русский';
+
+  @override
+  String get settingsLanguageUk => 'Українська';
+
+  @override
+  String get settingsLanguagePl => 'Polski';
+
+  @override
+  String get settingsLanguageJa => '日本語';
+
+  @override
+  String get settingsLanguageKo => '한국어';
+
+  @override
+  String get settingsLanguageZh => '中文';
+
+  @override
+  String get settingsLanguageAr => 'العربية';
+
+  @override
+  String get settingsLanguageHi => 'हिन्दी';
+
+  @override
+  String get settingsLanguageTr => 'Türkçe';
+
+  @override
+  String get settingsLanguageSv => 'Svenska';
+
+  @override
+  String get settingsLanguageNb => 'Norsk bokmål';
+
+  @override
+  String get settingsLanguageDa => 'Dansk';
+
+  @override
+  String get settingsLanguageFi => 'Suomi';
+
+  @override
+  String get settingsLanguageCs => 'Čeština';
+
+  @override
+  String get settingsLanguageHu => 'Magyar';
+
+  @override
+  String get settingsLanguageRo => 'Română';
+
+  @override
+  String get settingsLanguageTh => 'ไทย';
+
+  @override
+  String get settingsLanguageVi => 'Tiếng Việt';
+
+  @override
+  String get settingsLanguageNl => 'Nederlands';
+
+  @override
+  String get settingsLanguageId => 'Bahasa Indonesia';
+
+  @override
+  String get settingsLanguageEl => 'Ελληνικά';
+
+  @override
+  String get settingsLanguageHe => 'עברית';
+
+  @override
   String get cancel => 'Cancel';
 
   @override

@@ -70,12 +70,112 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                           label: l10n.settingsLanguageEn,
                         ),
                         SelectionOption(
+                          value: 'ar',
+                          label: l10n.settingsLanguageAr,
+                        ),
+                        SelectionOption(
+                          value: 'cs',
+                          label: l10n.settingsLanguageCs,
+                        ),
+                        SelectionOption(
+                          value: 'da',
+                          label: l10n.settingsLanguageDa,
+                        ),
+                        SelectionOption(
                           value: 'de',
                           label: l10n.settingsLanguageDe,
                         ),
                         SelectionOption(
+                          value: 'el',
+                          label: l10n.settingsLanguageEl,
+                        ),
+                        SelectionOption(
                           value: 'es',
                           label: l10n.settingsLanguageEs,
+                        ),
+                        SelectionOption(
+                          value: 'fi',
+                          label: l10n.settingsLanguageFi,
+                        ),
+                        SelectionOption(
+                          value: 'fr',
+                          label: l10n.settingsLanguageFr,
+                        ),
+                        SelectionOption(
+                          value: 'he',
+                          label: l10n.settingsLanguageHe,
+                        ),
+                        SelectionOption(
+                          value: 'hi',
+                          label: l10n.settingsLanguageHi,
+                        ),
+                        SelectionOption(
+                          value: 'hu',
+                          label: l10n.settingsLanguageHu,
+                        ),
+                        SelectionOption(
+                          value: 'id',
+                          label: l10n.settingsLanguageId,
+                        ),
+                        SelectionOption(
+                          value: 'it',
+                          label: l10n.settingsLanguageIt,
+                        ),
+                        SelectionOption(
+                          value: 'ja',
+                          label: l10n.settingsLanguageJa,
+                        ),
+                        SelectionOption(
+                          value: 'ko',
+                          label: l10n.settingsLanguageKo,
+                        ),
+                        SelectionOption(
+                          value: 'nb',
+                          label: l10n.settingsLanguageNb,
+                        ),
+                        SelectionOption(
+                          value: 'nl',
+                          label: l10n.settingsLanguageNl,
+                        ),
+                        SelectionOption(
+                          value: 'pl',
+                          label: l10n.settingsLanguagePl,
+                        ),
+                        SelectionOption(
+                          value: 'pt',
+                          label: l10n.settingsLanguagePt,
+                        ),
+                        SelectionOption(
+                          value: 'ro',
+                          label: l10n.settingsLanguageRo,
+                        ),
+                        SelectionOption(
+                          value: 'ru',
+                          label: l10n.settingsLanguageRu,
+                        ),
+                        SelectionOption(
+                          value: 'sv',
+                          label: l10n.settingsLanguageSv,
+                        ),
+                        SelectionOption(
+                          value: 'th',
+                          label: l10n.settingsLanguageTh,
+                        ),
+                        SelectionOption(
+                          value: 'tr',
+                          label: l10n.settingsLanguageTr,
+                        ),
+                        SelectionOption(
+                          value: 'uk',
+                          label: l10n.settingsLanguageUk,
+                        ),
+                        SelectionOption(
+                          value: 'vi',
+                          label: l10n.settingsLanguageVi,
+                        ),
+                        SelectionOption(
+                          value: 'zh',
+                          label: l10n.settingsLanguageZh,
                         ),
                       ],
                     );
@@ -158,9 +258,34 @@ class AppearanceSettingsScreen extends ConsumerWidget {
 
   String _localeLabel(AppLocalizations l10n, String locale) {
     return switch (locale) {
-      'en' => l10n.settingsLanguageEn,
+      'ar' => l10n.settingsLanguageAr,
+      'cs' => l10n.settingsLanguageCs,
+      'da' => l10n.settingsLanguageDa,
       'de' => l10n.settingsLanguageDe,
+      'el' => l10n.settingsLanguageEl,
+      'en' => l10n.settingsLanguageEn,
       'es' => l10n.settingsLanguageEs,
+      'fi' => l10n.settingsLanguageFi,
+      'fr' => l10n.settingsLanguageFr,
+      'he' => l10n.settingsLanguageHe,
+      'hi' => l10n.settingsLanguageHi,
+      'hu' => l10n.settingsLanguageHu,
+      'id' => l10n.settingsLanguageId,
+      'it' => l10n.settingsLanguageIt,
+      'ja' => l10n.settingsLanguageJa,
+      'ko' => l10n.settingsLanguageKo,
+      'nb' => l10n.settingsLanguageNb,
+      'nl' => l10n.settingsLanguageNl,
+      'pl' => l10n.settingsLanguagePl,
+      'pt' => l10n.settingsLanguagePt,
+      'ro' => l10n.settingsLanguageRo,
+      'ru' => l10n.settingsLanguageRu,
+      'sv' => l10n.settingsLanguageSv,
+      'th' => l10n.settingsLanguageTh,
+      'tr' => l10n.settingsLanguageTr,
+      'uk' => l10n.settingsLanguageUk,
+      'vi' => l10n.settingsLanguageVi,
+      'zh' => l10n.settingsLanguageZh,
       _ => l10n.settingsLanguageSystem,
     };
   }
