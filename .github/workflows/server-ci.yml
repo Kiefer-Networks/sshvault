@@ -13,7 +13,7 @@ on:
 
 defaults:
   run:
-    working-directory: ../shellvault-server
+    working-directory: ../sshvault-server
 
 env:
   GO_VERSION: '1.25'
@@ -49,8 +49,8 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_DB: shellvault_test
-          POSTGRES_USER: shellvault
+          POSTGRES_DB: sshvault_test
+          POSTGRES_USER: sshvault
           POSTGRES_PASSWORD: testpass
         ports:
           - 5432:5432
@@ -72,7 +72,7 @@ jobs:
 
       - name: Run tests with race detection
         env:
-          DATABASE_URL: postgres://shellvault:testpass@localhost:5432/shellvault_test?sslmode=disable
+          DATABASE_URL: postgres://sshvault:testpass@localhost:5432/sshvault_test?sslmode=disable
         run: go test -race -count=1 -timeout 300s ./...
 
   security:
@@ -106,4 +106,4 @@ jobs:
           token: ${{ secrets.SERVER_REPO_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -f docker/Dockerfile -t shellvault-server:ci .
+        run: docker build -f docker/Dockerfile -t sshvault-server:ci .

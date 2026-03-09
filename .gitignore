@@ -1,5 +1,5 @@
 # ============================================================================
-# ShellVault .gitignore
+# SSHVault .gitignore
 # ============================================================================
 
 # --------------------------------------------------------------------------
@@ -12,9 +12,7 @@
 .cursorindexingignore
 .cursorules
 .copilot/
-.github/copilot/
 copilot-*.md
-.codeium/
 .tabnine/
 .tabnine_root
 .aider*
@@ -28,7 +26,6 @@ copilot-*.md
 .bolt/
 .v0/
 ai-*.log
-*-ai-generated*
 *.ai.bak
 CLAUDE.md
 coding.md
@@ -54,7 +51,7 @@ pubspec.lock
 # --------------------------------------------------------------------------
 # Go Backend
 # --------------------------------------------------------------------------
-server/shellvault-server
+server/sshvault-server
 server/bin/
 server/vendor/
 server/*.exe

@@ -150,8 +150,8 @@ jobs:
         run: |
           cd linux
           flatpak-builder --force-clean --repo=repo build-dir de.kiefer_networks.sshvault.yml
-          flatpak build-bundle repo "ShellVault-${VERSION}.flatpak" de.kiefer_networks.sshvault
-          mv "ShellVault-${VERSION}.flatpak" ../
+          flatpak build-bundle repo "SSHVault-${VERSION}.flatpak" de.kiefer_networks.sshvault
+          mv "SSHVault-${VERSION}.flatpak" ../
 
       - uses: actions/upload-artifact@v4
         with:
@@ -189,10 +189,10 @@ jobs:
           mkdir -p dmg-staging
           cp -R "$APP_PATH" dmg-staging/
           ln -s /Applications dmg-staging/Applications
-          hdiutil create -volname "ShellVault" \
+          hdiutil create -volname "SSHVault" \
             -srcfolder dmg-staging \
             -ov -format UDZO \
-            "ShellVault-${VERSION}-macos.dmg"
+            "SSHVault-${VERSION}-macos.dmg"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -236,7 +236,7 @@ jobs:
         run: |
           $msix = Get-ChildItem -Path "build\windows\x64\runner\Release" -Filter "*.msix" | Select-Object -First 1
           if ($msix) {
-            Copy-Item $msix.FullName "ShellVault-${env:VERSION}-windows.msix"
+            Copy-Item $msix.FullName "SSHVault-${env:VERSION}-windows.msix"
           }
 
       # Upload unsigned MSIX for SignPath signing
@@ -245,7 +245,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-msix-unsigned
-          path: ShellVault-*.msix
+          path: SSHVault-*.msix
 
       # SignPath signing (only if configured)
       - name: Sign MSIX with SignPath
@@ -269,7 +269,7 @@ jobs:
           name: windows-build
           path: |
             signed-msix/*.msix
-            ShellVault-*.msix
+            SSHVault-*.msix
 
   # ─────────────────────────────────────────────────────────────────────────
   # GitHub Release
@@ -298,7 +298,7 @@ jobs:
 
           # Android
           cp artifacts/android-apk/app-release.apk \
-             "release-assets/ShellVault-${VERSION}-android.apk" 2>/dev/null || true
+             "release-assets/SSHVault-${VERSION}-android.apk" 2>/dev/null || true
 
           # Linux (Flatpak)
           cp artifacts/linux-flatpak/*.flatpak release-assets/ 2>/dev/null || true
@@ -309,10 +309,10 @@ jobs:
           # Windows MSIX — prefer signed, fall back to unsigned
           if ls artifacts/windows-build/signed-msix/*.msix 1>/dev/null 2>&1; then
             cp artifacts/windows-build/signed-msix/*.msix \
-               "release-assets/ShellVault-${VERSION}-windows.msix" 2>/dev/null || true
+               "release-assets/SSHVault-${VERSION}-windows.msix" 2>/dev/null || true
           elif ls artifacts/windows-build/*.msix 1>/dev/null 2>&1; then
-            cp artifacts/windows-build/ShellVault-*.msix \
-               "release-assets/ShellVault-${VERSION}-windows.msix" 2>/dev/null || true
+            cp artifacts/windows-build/SSHVault-*.msix \
+               "release-assets/SSHVault-${VERSION}-windows.msix" 2>/dev/null || true
           fi
 
           ls -lh release-assets/
@@ -328,7 +328,7 @@ jobs:
           fi
 
           cat > release-notes.md <<NOTES
-          ## ShellVault ${VERSION}
+          ## SSHVault ${VERSION}
 
           ${CHANGELOG}
 
@@ -336,10 +336,10 @@ jobs:
 
           | Platform | File |
           |----------|------|
-          | Android (signed APK) | \`ShellVault-${VERSION}-android.apk\` |
-          | Linux (Flatpak) | \`ShellVault-${VERSION}.flatpak\` |
-          | macOS (DMG) | \`ShellVault-${VERSION}-macos.dmg\` |
-          | Windows (MSIX) | \`ShellVault-${VERSION}-windows.msix\` |
+          | Android (signed APK) | \`SSHVault-${VERSION}-android.apk\` |
+          | Linux (Flatpak) | \`SSHVault-${VERSION}.flatpak\` |
+          | macOS (DMG) | \`SSHVault-${VERSION}-macos.dmg\` |
+          | Windows (MSIX) | \`SSHVault-${VERSION}-windows.msix\` |
 
           ### Install
 
@@ -347,11 +347,11 @@ jobs:
 
           **Linux:**
           \`\`\`bash
-          flatpak install ShellVault-${VERSION}.flatpak
+          flatpak install SSHVault-${VERSION}.flatpak
           flatpak run de.kiefer_networks.sshvault
           \`\`\`
 
-          **macOS:** Open the DMG and drag ShellVault to Applications.
+          **macOS:** Open the DMG and drag SSHVault to Applications.
 
           **Windows:** Double-click the MSIX to install. Updates are handled automatically.
 
@@ -363,7 +363,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: ShellVault ${{ needs.preflight.outputs.version }}
+          name: SSHVault ${{ needs.preflight.outputs.version }}
           draft: false
           body_path: release-notes.md
           files: release-assets/*

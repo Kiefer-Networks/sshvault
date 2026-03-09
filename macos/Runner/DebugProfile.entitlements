@@ -18,7 +18,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)de.kiefer-networks.shellvault</string>
+		<string>$(AppIdentifierPrefix)de.kiefer-networks.sshvault</string>
 	</array>
 </dict>
 </plist>

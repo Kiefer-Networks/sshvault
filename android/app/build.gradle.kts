@@ -15,7 +15,7 @@ plugins {
 }
 
 android {
-    namespace = "de.kiefer_networks.shellvault"
+    namespace = "de.kiefer_networks.sshvault"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "de.kiefer_networks.shellvault"
+        applicationId = "de.kiefer_networks.sshvault"
         minSdk = 33
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

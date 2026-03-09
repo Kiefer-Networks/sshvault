@@ -1,7 +1,7 @@
 name: sshvault
 description: "Secure, self-hosted SSH client with zero-knowledge sync"
 publish_to: 'none'
-version: 1.3.1+11
+version: 1.3.2+12
 
 environment:
   sdk: ^3.11.0
@@ -91,10 +91,10 @@ dev_dependencies:
   msix: ^3.16.13
 
 msix_config:
-  display_name: ShellVault
+  display_name: SSHVault
   publisher_display_name: Kiefer Networks
-  identity_name: de.kiefer-networks.shellvault
-  msix_version: 1.3.1.0
+  identity_name: de.kiefer-networks.sshvault
+  msix_version: 1.3.2.0
   logo_path: windows/runner/resources/app_icon.ico
   capabilities: internetClient
   languages: en, de, es, fr, pt, it, ru, uk, pl, ja, ko, zh, ar, hi, tr, sv, nb, da, fi, cs, hu, ro, th, vi, nl, id, el, he

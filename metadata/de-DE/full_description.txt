@@ -13,14 +13,15 @@ Funktionen:
 - Selbstgehosteter Sync-Server (Docker)
 - Ende-zu-Ende-verschlüsselter Sync über unbegrenzte Geräte
 - Export und Import aller Daten
+- 27 Sprachen unterstützt
 - Material 3 Design auf allen Plattformen
 
 Sicherheit:
 - Zero-Knowledge-Architektur: Der Server kann deine Daten nicht lesen
 - AES-256-GCM-Verschlüsselung mit Argon2id-Schlüsselableitung
 - Zählerbasierte Nonces zur Vermeidung von Nonce-Wiederverwendung
-- Zertifikat-Pinning und DNS-over-HTTPS
-- Server-Attestierung über Ed25519-Signaturen
+- DNS-over-HTTPS mit Multi-Resolver-Gegenprüfung
+- Server-Attestierung über Ed25519-TOFU-Key-Pinning
 - Kein Tracking, keine Analyse, keine Telemetrie
 - Vollständig quelloffenes Backend (AGPL-3.0)
 

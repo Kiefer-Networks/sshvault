@@ -1,0 +1,5 @@
+* 27 Sprachen: Arabisch, Chinesisch, Dänisch, Finnisch, Französisch, Griechisch, Hebräisch, Hindi, Indonesisch, Italienisch, Japanisch, Koreanisch, Niederländisch, Norwegisch, Polnisch, Portugiesisch, Rumänisch, Russisch, Schwedisch, Thai, Tschechisch, Türkisch, Ukrainisch, Ungarisch, Vietnamesisch und mehr
+* Behoben: Hosts werden jetzt sofort nach der Synchronisation angezeigt (kein Neustart nötig)
+* Behoben: Verschlüsselungspasswort wird nicht mehr bei jedem Login abgefragt
+* Verbesserte Server-Sicherheit mit Ed25519 TOFU-Attestierung
+* Windows: Wird jetzt als MSIX bereitgestellt für saubere Installation und Auto-Updates

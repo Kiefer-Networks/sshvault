@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/images/app_icon.png" alt="ShellVault" width="128" height="128">
+  <img src="assets/images/app_icon.png" alt="SSHVault" width="128" height="128">
 </p>
 
-<h1 align="center">ShellVault</h1>
+<h1 align="center">SSHVault</h1>
 
 <p align="center">
   <strong>Zero-Knowledge Encrypted SSH Client</strong><br>
@@ -18,7 +18,7 @@
 
 ---
 
-ShellVault is a cross-platform SSH terminal and SFTP file manager that encrypts all data client-side before syncing. The server never sees your plaintext credentials, keys, or session data.
+SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts all data client-side before syncing. The server never sees your plaintext credentials, keys, or session data.
 
 ## Features
 
@@ -65,7 +65,7 @@ Weak algorithms (DH-group1, CBC ciphers, HMAC-MD5/SHA1, ssh-rsa) are excluded fr
 ## Architecture
 
 - **Client:** Flutter 3.41+ / Dart 3.11+
-- **Backend:** [shellvault-server](https://github.com/Kiefer-Networks/sshvault-api) — Go 1.26+, PostgreSQL 16+, chi router
+- **Backend:** [sshvault-server](https://github.com/Kiefer-Networks/sshvault-api) — Go 1.26+, PostgreSQL 16+, chi router
 - **State Management:** Riverpod (no setState)
 - **Local Database:** Drift (SQLite) + Platform Secure Storage
 - **Routing:** go_router (declarative)
@@ -110,7 +110,7 @@ flutter test
 
 The self-hosted backend handles encrypted vault sync and authentication. It never processes plaintext user data.
 
-See [shellvault-server](https://github.com/Kiefer-Networks/sshvault-api) for setup instructions.
+See [sshvault-server](https://github.com/Kiefer-Networks/sshvault-api) for setup instructions.
 
 ## Localization
 
@@ -118,7 +118,7 @@ Available in English, German, and Spanish. Translation files are in `lib/l10n/`.
 
 ## Donate
 
-If you find ShellVault useful, consider supporting development:
+If you find SSHVault useful, consider supporting development:
 
 [Donate via Liberapay](https://de.liberapay.com/beli3ver)
 

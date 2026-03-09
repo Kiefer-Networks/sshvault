@@ -1,0 +1,5 @@
+* 27 languages: Arabic, Chinese, Czech, Danish, Dutch, Finnish, French, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian, Polish, Portuguese, Romanian, Russian, Swedish, Thai, Turkish, Ukrainian, Vietnamese and more
+* Fixed: Hosts now appear immediately after sync (no restart needed)
+* Fixed: Encryption password prompt no longer shows on every login
+* Improved server security with Ed25519 TOFU attestation
+* Windows: Now distributed as MSIX for proper installation and auto-updates

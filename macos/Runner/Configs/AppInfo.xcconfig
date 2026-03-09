@@ -8,7 +8,7 @@
 PRODUCT_NAME = SSHVault
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = de.kiefer-networks.shellvault
+PRODUCT_BUNDLE_IDENTIFIER = de.kiefer-networks.sshvault
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 Kiefer Networks. All rights reserved.

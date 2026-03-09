@@ -13,14 +13,15 @@ Features:
 - Self-hosted sync server (Docker)
 - End-to-end encrypted sync across unlimited devices
 - Export and import of all data
+- 27 languages supported
 - Material 3 design on all platforms
 
 Security:
 - Zero-knowledge architecture: the server cannot read your data
 - AES-256-GCM encryption with Argon2id key derivation
 - Counter-based nonces to prevent nonce reuse
-- Certificate pinning and DNS-over-HTTPS
-- Server attestation via Ed25519 signatures
+- DNS-over-HTTPS with multi-resolver cross-check
+- Server attestation via Ed25519 TOFU key pinning
 - No tracking, no analytics, no telemetry
 - Fully open-source backend (AGPL-3.0)
 

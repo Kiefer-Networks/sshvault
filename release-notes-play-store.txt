@@ -1,0 +1,94 @@
+================================================================================
+RELEASE NOTES (v1.3.1)
+================================================================================
+
+<en-US>
+* 27 languages: Arabic, Chinese, Czech, Danish, Dutch, Finnish, French, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian, Polish, Portuguese, Romanian, Russian, Swedish, Thai, Turkish, Ukrainian, Vietnamese and more
+* Fixed: Hosts now appear immediately after sync (no restart needed)
+* Fixed: Encryption password prompt no longer shows on every login
+* Improved server security with Ed25519 TOFU attestation
+* Windows: Now distributed as MSIX for proper installation and auto-updates
+</en-US>
+<de-DE>
+* 27 Sprachen: Arabisch, Chinesisch, Dänisch, Finnisch, Französisch, Griechisch, Hebräisch, Hindi, Indonesisch, Italienisch, Japanisch, Koreanisch, Niederländisch, Norwegisch, Polnisch, Portugiesisch, Rumänisch, Russisch, Schwedisch, Thai, Tschechisch, Türkisch, Ukrainisch, Ungarisch, Vietnamesisch und mehr
+* Behoben: Hosts werden jetzt sofort nach der Synchronisation angezeigt (kein Neustart nötig)
+* Behoben: Verschlüsselungspasswort wird nicht mehr bei jedem Login abgefragt
+* Verbesserte Server-Sicherheit mit Ed25519 TOFU-Attestierung
+* Windows: Wird jetzt als MSIX bereitgestellt für saubere Installation und Auto-Updates
+</de-DE>
+
+================================================================================
+SHORT DESCRIPTION (max 80 characters)
+================================================================================
+
+<en-US>
+Zero-knowledge encrypted SSH client with self-hosted sync
+</en-US>
+<de-DE>
+Zero-Knowledge-verschlüsselter SSH-Client mit selbstgehostetem Sync
+</de-DE>
+
+================================================================================
+FULL DESCRIPTION
+================================================================================
+
+<en-US>
+SSHVault is a cross-platform SSH and SFTP client with zero-knowledge encrypted cloud sync. All credentials, SSH keys, and server configurations are encrypted client-side with AES-256-GCM before leaving your device. The server never sees plaintext data.
+
+Features:
+- SSH terminal with xterm emulation and 256 colors
+- SFTP file browser with bookmarks and inline editor
+- Host key verification (Trust On First Use)
+- Multi-session and split terminal support
+- Snippet manager for saved commands
+- Post-connect commands for automation
+- SSH config import from ~/.ssh/config
+- Proxy support (SOCKS5 and HTTP)
+- Biometric and PIN lock
+- Self-hosted sync server (Docker)
+- End-to-end encrypted sync across unlimited devices
+- Export and import of all data
+- 27 languages supported
+- Material 3 design on all platforms
+
+Security:
+- Zero-knowledge architecture: the server cannot read your data
+- AES-256-GCM encryption with Argon2id key derivation
+- Counter-based nonces to prevent nonce reuse
+- DNS-over-HTTPS with multi-resolver cross-check
+- Server attestation via Ed25519 TOFU key pinning
+- No tracking, no analytics, no telemetry
+- Fully open-source backend (AGPL-3.0)
+
+SSHVault is completely free with no in-app purchases, no subscriptions, and no feature restrictions. Self-hosting the sync server is free and requires only Docker and PostgreSQL.
+</en-US>
+<de-DE>
+SSHVault ist ein plattformübergreifender SSH- und SFTP-Client mit Zero-Knowledge-verschlüsseltem Cloud-Sync. Alle Zugangsdaten, SSH-Keys und Server-Konfigurationen werden clientseitig mit AES-256-GCM verschlüsselt, bevor sie dein Gerät verlassen. Der Server sieht niemals Klartextdaten.
+
+Funktionen:
+- SSH-Terminal mit xterm-Emulation und 256 Farben
+- SFTP-Dateibrowser mit Lesezeichen und integriertem Editor
+- Host-Key-Verifizierung (Trust On First Use)
+- Multi-Session und geteiltes Terminal
+- Snippet-Manager für gespeicherte Befehle
+- Post-Connect-Befehle für Automatisierung
+- SSH-Config-Import aus ~/.ssh/config
+- Proxy-Unterstützung (SOCKS5 und HTTP)
+- Biometrische und PIN-Sperre
+- Selbstgehosteter Sync-Server (Docker)
+- Ende-zu-Ende-verschlüsselter Sync über unbegrenzte Geräte
+- Export und Import aller Daten
+- 27 Sprachen unterstützt
+- Material 3 Design auf allen Plattformen
+
+Sicherheit:
+- Zero-Knowledge-Architektur: Der Server kann deine Daten nicht lesen
+- AES-256-GCM-Verschlüsselung mit Argon2id-Schlüsselableitung
+- Zählerbasierte Nonces zur Vermeidung von Nonce-Wiederverwendung
+- DNS-over-HTTPS mit Multi-Resolver-Gegenprüfung
+- Server-Attestierung über Ed25519-TOFU-Key-Pinning
+- Kein Tracking, keine Analyse, keine Telemetrie
+- Vollständig quelloffenes Backend (AGPL-3.0)
+
+SSHVault ist komplett kostenlos ohne In-App-Käufe, ohne Abonnements und ohne Funktionseinschränkungen. Das Selbsthosten des Sync-Servers ist kostenlos und erfordert nur Docker und PostgreSQL.
+</de-DE>
