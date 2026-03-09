@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Usuń urządzenie",
+  "deviceDeleteConfirmMessage": "Czy na pewno chcesz usunąć \"{name}\"? Urządzenie zostanie natychmiast wylogowane.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "To jest Twoje obecne urządzenie. Zostaniesz natychmiast wylogowany.",
+  "deviceDeleteSuccess": "Urządzenie usunięte",
+  "deviceDeletedCurrentLogout": "Obecne urządzenie usunięte. Zostałeś wylogowany.",
+  "thisDevice": "To urządzenie"
 }

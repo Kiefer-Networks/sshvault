@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Видалити пристрій",
+  "deviceDeleteConfirmMessage": "Ви впевнені, що хочете видалити \"{name}\"? Пристрій буде негайно відключено.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Це ваш поточний пристрій. Вас буде негайно відключено.",
+  "deviceDeleteSuccess": "Пристрій видалено",
+  "deviceDeletedCurrentLogout": "Поточний пристрій видалено. Вас було відключено.",
+  "thisDevice": "Цей пристрій"
 }

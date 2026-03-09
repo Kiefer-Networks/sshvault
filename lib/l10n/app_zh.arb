@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "移除设备",
+  "deviceDeleteConfirmMessage": "确定要移除\"{name}\"吗？该设备将立即注销。",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "这是您当前的设备。您将立即注销。",
+  "deviceDeleteSuccess": "设备已移除",
+  "deviceDeletedCurrentLogout": "当前设备已移除。您已注销。",
+  "thisDevice": "此设备"
 }

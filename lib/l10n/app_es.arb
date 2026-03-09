@@ -1013,5 +1013,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Eliminar dispositivo",
+  "deviceDeleteConfirmMessage": "¿Seguro que quieres eliminar \"{name}\"? El dispositivo se cerrará sesión inmediatamente.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Este es tu dispositivo actual. Se cerrará la sesión inmediatamente.",
+  "deviceDeleteSuccess": "Dispositivo eliminado",
+  "deviceDeletedCurrentLogout": "Dispositivo actual eliminado. Se ha cerrado la sesión.",
+  "thisDevice": "Este dispositivo"
 }

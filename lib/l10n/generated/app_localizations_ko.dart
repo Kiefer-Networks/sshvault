@@ -2398,4 +2398,24 @@ class AppLocalizationsKo extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => '기기 제거';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return '\"$name\"을(를) 제거하시겠습니까? 기기가 즉시 로그아웃됩니다.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage => '현재 사용 중인 기기입니다. 즉시 로그아웃됩니다.';
+
+  @override
+  String get deviceDeleteSuccess => '기기가 제거되었습니다';
+
+  @override
+  String get deviceDeletedCurrentLogout => '현재 기기가 제거되었습니다. 로그아웃되었습니다.';
+
+  @override
+  String get thisDevice => '이 기기';
 }

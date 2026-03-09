@@ -161,138 +161,138 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-            SectionCard(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Name
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: l10n.snippetFormNameLabel,
-                      hintText: l10n.snippetFormNameHint,
-                      prefixIcon: const Icon(Icons.label_outline),
-                    ),
-                    keyboardType: TextInputType.text,
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l10n.snippetFormNameRequired
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
+                SectionCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // Name
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          labelText: l10n.snippetFormNameLabel,
+                          hintText: l10n.snippetFormNameHint,
+                          prefixIcon: const Icon(Icons.label_outline),
+                        ),
+                        keyboardType: TextInputType.text,
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? l10n.snippetFormNameRequired
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
 
-                  // Language
-                  DropdownMenu<String>(
-                    initialSelection: formState.language,
-                    expandedInsets: EdgeInsets.zero,
-                    requestFocusOnTap: false,
-                    label: Text(l10n.snippetFormLanguageLabel),
-                    leadingIcon: const Icon(Icons.code),
-                    dropdownMenuEntries: _languages
-                        .map((l) => DropdownMenuEntry(value: l, label: l))
-                        .toList(),
-                    onSelected: (v) {
-                      if (v != null) {
-                        ref.read(_snippetFormProvider.notifier).state =
-                            formState.copyWith(language: v);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Content
-                  TextFormField(
-                    controller: _contentController,
-                    decoration: InputDecoration(
-                      labelText: l10n.snippetFormContentLabel,
-                      hintText: l10n.snippetFormContentHint,
-                      alignLabelWithHint: true,
-                    ),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 10,
-                    minLines: 5,
-                    style: const TextStyle(
-                      fontFamily: AppConstants.monospaceFontFamily,
-                    ),
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l10n.snippetFormContentRequired
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Description
-                  TextFormField(
-                    controller: _descriptionController,
-                    decoration: InputDecoration(
-                      labelText: l10n.snippetFormDescriptionLabel,
-                      hintText: l10n.snippetFormDescriptionHint,
-                      prefixIcon: const Icon(Icons.description_outlined),
-                    ),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 3,
-                    minLines: 1,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            SectionCard(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Folder selector
-                  Builder(
-                    builder: (context) {
-                      final folderName = foldersAsync.whenOrNull(
-                        data: (folders) => folders
-                            .where((f) => f.id == formState.groupId)
-                            .firstOrNull
-                            ?.name,
-                      );
-                      return ListTile(
-                        leading: const Icon(Icons.folder_outlined),
-                        title: Text(folderName ?? l10n.snippetFormNoFolder),
-                        subtitle: Text(l10n.snippetFormFolderLabel),
-                        trailing: const Icon(Icons.chevron_right),
-                        contentPadding: EdgeInsets.zero,
-                        onTap: () async {
-                          final result = await FolderTreePicker.show(
-                            context,
-                            selectedFolderId: formState.groupId,
-                          );
-                          if (result != formState.groupId) {
+                      // Language
+                      DropdownMenu<String>(
+                        initialSelection: formState.language,
+                        expandedInsets: EdgeInsets.zero,
+                        requestFocusOnTap: false,
+                        label: Text(l10n.snippetFormLanguageLabel),
+                        leadingIcon: const Icon(Icons.code),
+                        dropdownMenuEntries: _languages
+                            .map((l) => DropdownMenuEntry(value: l, label: l))
+                            .toList(),
+                        onSelected: (v) {
+                          if (v != null) {
                             ref.read(_snippetFormProvider.notifier).state =
-                                formState.copyWith(groupId: () => result);
+                                formState.copyWith(language: v);
                           }
                         },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                      ),
+                      const SizedBox(height: 16),
 
-                  // Tags
-                  TagSelector(
-                    selectedTagIds: formState.selectedTagIds,
-                    onChanged: (ids) =>
+                      // Content
+                      TextFormField(
+                        controller: _contentController,
+                        decoration: InputDecoration(
+                          labelText: l10n.snippetFormContentLabel,
+                          hintText: l10n.snippetFormContentHint,
+                          alignLabelWithHint: true,
+                        ),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 10,
+                        minLines: 5,
+                        style: const TextStyle(
+                          fontFamily: AppConstants.monospaceFontFamily,
+                        ),
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? l10n.snippetFormContentRequired
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Description
+                      TextFormField(
+                        controller: _descriptionController,
+                        decoration: InputDecoration(
+                          labelText: l10n.snippetFormDescriptionLabel,
+                          hintText: l10n.snippetFormDescriptionHint,
+                          prefixIcon: const Icon(Icons.description_outlined),
+                        ),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 3,
+                        minLines: 1,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                SectionCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // Folder selector
+                      Builder(
+                        builder: (context) {
+                          final folderName = foldersAsync.whenOrNull(
+                            data: (folders) => folders
+                                .where((f) => f.id == formState.groupId)
+                                .firstOrNull
+                                ?.name,
+                          );
+                          return ListTile(
+                            leading: const Icon(Icons.folder_outlined),
+                            title: Text(folderName ?? l10n.snippetFormNoFolder),
+                            subtitle: Text(l10n.snippetFormFolderLabel),
+                            trailing: const Icon(Icons.chevron_right),
+                            contentPadding: EdgeInsets.zero,
+                            onTap: () async {
+                              final result = await FolderTreePicker.show(
+                                context,
+                                selectedFolderId: formState.groupId,
+                              );
+                              if (result != formState.groupId) {
+                                ref.read(_snippetFormProvider.notifier).state =
+                                    formState.copyWith(groupId: () => result);
+                              }
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Tags
+                      TagSelector(
+                        selectedTagIds: formState.selectedTagIds,
+                        onChanged: (ids) =>
+                            ref.read(_snippetFormProvider.notifier).state =
+                                formState.copyWith(selectedTagIds: ids),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Variables
+                SectionCard(
+                  padding: const EdgeInsets.all(16),
+                  child: VariableEditor(
+                    variables: formState.variables,
+                    onChanged: (vars) =>
                         ref.read(_snippetFormProvider.notifier).state =
-                            formState.copyWith(selectedTagIds: ids),
+                            formState.copyWith(variables: vars),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Variables
-            SectionCard(
-              padding: const EdgeInsets.all(16),
-              child: VariableEditor(
-                variables: formState.variables,
-                onChanged: (vars) =>
-                    ref.read(_snippetFormProvider.notifier).state = formState
-                        .copyWith(variables: vars),
-              ),
-            ),
-            const SizedBox(height: 32),
+                ),
+                const SizedBox(height: 32),
               ],
             ),
           ),

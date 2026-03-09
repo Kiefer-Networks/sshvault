@@ -2434,4 +2434,26 @@ class AppLocalizationsNb extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Fjern enhet';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'Er du sikker på at du vil fjerne \"$name\"? Enheten logges ut umiddelbart.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'Dette er din nåværende enhet. Du logges ut umiddelbart.';
+
+  @override
+  String get deviceDeleteSuccess => 'Enhet fjernet';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Nåværende enhet fjernet. Du er logget ut.';
+
+  @override
+  String get thisDevice => 'Denne enheten';
 }

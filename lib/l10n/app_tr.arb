@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Cihazı Kaldır",
+  "deviceDeleteConfirmMessage": "\"{name}\" cihazını kaldırmak istediğinizden emin misiniz? Cihaz hemen çıkış yapacak.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Bu mevcut cihazınız. Hemen çıkış yapılacak.",
+  "deviceDeleteSuccess": "Cihaz kaldırıldı",
+  "deviceDeletedCurrentLogout": "Mevcut cihaz kaldırıldı. Çıkış yapıldı.",
+  "thisDevice": "Bu cihaz"
 }

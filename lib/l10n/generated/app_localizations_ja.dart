@@ -2394,4 +2394,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'デバイスを削除';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return '\"$name\"を削除してもよろしいですか？デバイスは直ちにログアウトされます。';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage => 'これは現在のデバイスです。直ちにログアウトされます。';
+
+  @override
+  String get deviceDeleteSuccess => 'デバイスを削除しました';
+
+  @override
+  String get deviceDeletedCurrentLogout => '現在のデバイスを削除しました。ログアウトされました。';
+
+  @override
+  String get thisDevice => 'このデバイス';
 }

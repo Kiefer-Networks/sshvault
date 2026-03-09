@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Odebrat zařízení",
+  "deviceDeleteConfirmMessage": "Opravdu chcete odebrat \"{name}\"? Zařízení bude okamžitě odhlášeno.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Toto je vaše aktuální zařízení. Budete okamžitě odhlášeni.",
+  "deviceDeleteSuccess": "Zařízení odebráno",
+  "deviceDeletedCurrentLogout": "Aktuální zařízení odebráno. Byli jste odhlášeni.",
+  "thisDevice": "Toto zařízení"
 }

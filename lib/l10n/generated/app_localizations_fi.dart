@@ -2439,4 +2439,26 @@ class AppLocalizationsFi extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Poista laite';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'Haluatko varmasti poistaa laitteen \"$name\"? Laite kirjataan ulos välittömästi.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'Tämä on nykyinen laitteesi. Sinut kirjataan ulos välittömästi.';
+
+  @override
+  String get deviceDeleteSuccess => 'Laite poistettu';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Nykyinen laite poistettu. Sinut on kirjattu ulos.';
+
+  @override
+  String get thisDevice => 'Tämä laite';
 }

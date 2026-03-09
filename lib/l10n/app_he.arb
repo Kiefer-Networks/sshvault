@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "הסרת מכשיר",
+  "deviceDeleteConfirmMessage": "האם אתה בטוח שברצונך להסיר את \"{name}\"? המכשיר יתנתק מיד.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "זהו המכשיר הנוכחי שלך. תתנתק מיד.",
+  "deviceDeleteSuccess": "המכשיר הוסר",
+  "deviceDeletedCurrentLogout": "המכשיר הנוכחי הוסר. התנתקת.",
+  "thisDevice": "מכשיר זה"
 }

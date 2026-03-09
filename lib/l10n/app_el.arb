@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Αφαίρεση συσκευής",
+  "deviceDeleteConfirmMessage": "Είστε σίγουροι ότι θέλετε να αφαιρέσετε \"{name}\"; Η συσκευή θα αποσυνδεθεί αμέσως.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Αυτή είναι η τρέχουσα συσκευή σας. Θα αποσυνδεθείτε αμέσως.",
+  "deviceDeleteSuccess": "Η συσκευή αφαιρέθηκε",
+  "deviceDeletedCurrentLogout": "Η τρέχουσα συσκευή αφαιρέθηκε. Αποσυνδεθήκατε.",
+  "thisDevice": "Αυτή η συσκευή"
 }

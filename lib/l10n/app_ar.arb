@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "إزالة الجهاز",
+  "deviceDeleteConfirmMessage": "هل أنت متأكد من إزالة \"{name}\"؟ سيتم تسجيل خروج الجهاز فوراً.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "هذا هو جهازك الحالي. سيتم تسجيل خروجك فوراً.",
+  "deviceDeleteSuccess": "تم إزالة الجهاز",
+  "deviceDeletedCurrentLogout": "تم إزالة الجهاز الحالي. تم تسجيل خروجك.",
+  "thisDevice": "هذا الجهاز"
 }

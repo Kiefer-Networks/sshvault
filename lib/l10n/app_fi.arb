@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Poista laite",
+  "deviceDeleteConfirmMessage": "Haluatko varmasti poistaa laitteen \"{name}\"? Laite kirjataan ulos välittömästi.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Tämä on nykyinen laitteesi. Sinut kirjataan ulos välittömästi.",
+  "deviceDeleteSuccess": "Laite poistettu",
+  "deviceDeletedCurrentLogout": "Nykyinen laite poistettu. Sinut on kirjattu ulos.",
+  "thisDevice": "Tämä laite"
 }

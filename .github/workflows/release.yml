@@ -337,11 +337,12 @@ jobs:
       - name: Generate release notes
         env:
           VERSION: ${{ needs.preflight.outputs.version }}
+          BUILD_NUMBER: ${{ needs.preflight.outputs.build_number }}
         run: |
           # Read changelog if available
           CHANGELOG=""
-          if [ -f "metadata/en-US/changelogs/${BUILD_NUMBER:-4}.txt" ]; then
-            CHANGELOG=$(cat "metadata/en-US/changelogs/${BUILD_NUMBER:-4}.txt")
+          if [ -f "metadata/en-US/changelogs/${BUILD_NUMBER}.txt" ]; then
+            CHANGELOG=$(cat "metadata/en-US/changelogs/${BUILD_NUMBER}.txt")
           fi
 
           cat > release-notes.md <<NOTES

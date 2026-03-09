@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Eszköz eltávolítása",
+  "deviceDeleteConfirmMessage": "Biztosan el szeretnéd távolítani a(z) \"{name}\" eszközt? Az eszköz azonnal kijelentkezik.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Ez a jelenlegi eszközöd. Azonnal kijelentkezel.",
+  "deviceDeleteSuccess": "Eszköz eltávolítva",
+  "deviceDeletedCurrentLogout": "Jelenlegi eszköz eltávolítva. Kijelentkeztél.",
+  "thisDevice": "Ez az eszköz"
 }

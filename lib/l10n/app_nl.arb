@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Apparaat verwijderen",
+  "deviceDeleteConfirmMessage": "Weet je zeker dat je \"{name}\" wilt verwijderen? Het apparaat wordt onmiddellijk uitgelogd.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Dit is je huidige apparaat. Je wordt onmiddellijk uitgelogd.",
+  "deviceDeleteSuccess": "Apparaat verwijderd",
+  "deviceDeletedCurrentLogout": "Huidig apparaat verwijderd. Je bent uitgelogd.",
+  "thisDevice": "Dit apparaat"
 }

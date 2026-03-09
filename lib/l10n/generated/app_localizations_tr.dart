@@ -2434,4 +2434,26 @@ class AppLocalizationsTr extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Cihazı Kaldır';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return '\"$name\" cihazını kaldırmak istediğinizden emin misiniz? Cihaz hemen çıkış yapacak.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'Bu mevcut cihazınız. Hemen çıkış yapılacak.';
+
+  @override
+  String get deviceDeleteSuccess => 'Cihaz kaldırıldı';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Mevcut cihaz kaldırıldı. Çıkış yapıldı.';
+
+  @override
+  String get thisDevice => 'Bu cihaz';
 }

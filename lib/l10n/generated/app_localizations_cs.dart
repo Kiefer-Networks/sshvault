@@ -2432,4 +2432,26 @@ class AppLocalizationsCs extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Odebrat zařízení';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'Opravdu chcete odebrat \"$name\"? Zařízení bude okamžitě odhlášeno.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'Toto je vaše aktuální zařízení. Budete okamžitě odhlášeni.';
+
+  @override
+  String get deviceDeleteSuccess => 'Zařízení odebráno';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Aktuální zařízení odebráno. Byli jste odhlášeni.';
+
+  @override
+  String get thisDevice => 'Toto zařízení';
 }

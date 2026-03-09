@@ -2438,4 +2438,26 @@ class AppLocalizationsPl extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Usuń urządzenie';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'Czy na pewno chcesz usunąć \"$name\"? Urządzenie zostanie natychmiast wylogowane.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'To jest Twoje obecne urządzenie. Zostaniesz natychmiast wylogowany.';
+
+  @override
+  String get deviceDeleteSuccess => 'Urządzenie usunięte';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Obecne urządzenie usunięte. Zostałeś wylogowany.';
+
+  @override
+  String get thisDevice => 'To urządzenie';
 }

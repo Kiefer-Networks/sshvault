@@ -10,10 +10,17 @@ import 'package:sshvault/core/utils/date_formatter.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
+import 'package:sshvault/core/storage/secure_storage_provider.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
+
+final _currentDeviceIdProvider = FutureProvider<String?>((ref) async {
+  final storage = ref.watch(secureStorageProvider);
+  final result = await storage.getDeviceId();
+  return result.isSuccess ? result.value : null;
+});
 
 class AccountSyncScreen extends ConsumerStatefulWidget {
   const AccountSyncScreen({super.key});
@@ -450,38 +457,59 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
 
   Widget _buildDevicesCard(AppLocalizations l10n, ThemeData theme) {
     final devicesAsync = ref.watch(deviceListProvider);
+    final currentDeviceIdAsync = ref.watch(_currentDeviceIdProvider);
+    final currentDeviceId = currentDeviceIdAsync.value;
+
     return devicesAsync.when(
       data: (devices) => devices.isEmpty
           ? Text(l10n.accountNoDevices)
           : Column(
-              children: devices
-                  .map(
-                    (d) => ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(_platformIcon(d.platform)),
-                      title: Text(d.name),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (d.lastSync != null)
-                            Text(
-                              '${l10n.accountLastSync}: ${formatDate(d.lastSync!)}',
-                            ),
-                          if (d.lastSeen != null)
-                            Text(
-                              '${l10n.deviceLastSeen}: ${formatDate(d.lastSeen!)}',
-                            ),
-                          if (d.lastIp != null && d.lastIp!.isNotEmpty)
-                            Text('${l10n.deviceIpAddress}: ${d.lastIp}'),
-                        ],
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline, size: 20),
-                        onPressed: () => _deleteDevice(d.id),
-                      ),
-                    ),
-                  )
-                  .toList(),
+              children: devices.map((d) {
+                final isCurrentDevice =
+                    currentDeviceId != null && d.id == currentDeviceId;
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(_platformIcon(d.platform)),
+                  title: Row(
+                    children: [
+                      Flexible(child: Text(d.name)),
+                      if (isCurrentDevice) ...[
+                        const SizedBox(width: 8),
+                        Chip(
+                          label: Text(
+                            l10n.thisDevice,
+                            style: theme.textTheme.labelSmall,
+                          ),
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          padding: EdgeInsets.zero,
+                        ),
+                      ],
+                    ],
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (d.lastSync != null)
+                        Text(
+                          '${l10n.accountLastSync}: ${formatDate(d.lastSync!)}',
+                        ),
+                      if (d.lastSeen != null)
+                        Text(
+                          '${l10n.deviceLastSeen}: ${formatDate(d.lastSeen!)}',
+                        ),
+                      if (d.lastIp != null && d.lastIp!.isNotEmpty)
+                        Text('${l10n.deviceIpAddress}: ${d.lastIp}'),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete_outline, size: 20),
+                    onPressed: () =>
+                        _confirmDeleteDevice(d.id, d.name, isCurrentDevice),
+                  ),
+                );
+              }).toList(),
             ),
       loading: () => const Center(child: CircularProgressIndicator.adaptive()),
       error: (e, _) => Text(l10n.error(errorMessage(e))),
@@ -524,16 +552,47 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
     };
   }
 
-  Future<void> _deleteDevice(String deviceId) async {
+  Future<void> _confirmDeleteDevice(
+    String deviceId,
+    String deviceName,
+    bool isCurrentDevice,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.deviceDeleteConfirmTitle,
+      message: isCurrentDevice
+          ? l10n.deviceDeleteCurrentConfirmMessage
+          : l10n.deviceDeleteConfirmMessage(deviceName),
+      confirmLabel: l10n.delete,
+      cancelLabel: l10n.cancel,
+      isDestructive: true,
+    );
+    if (confirmed != true || !mounted) return;
+
     try {
       final repo = ref.read(accountRepositoryProvider);
       await repo.deleteDevice(deviceId);
-      ref.invalidate(deviceListProvider);
+
+      if (!mounted) return;
+
+      if (isCurrentDevice) {
+        final router = GoRouter.of(context);
+        AdaptiveNotification.show(
+          context,
+          message: l10n.deviceDeletedCurrentLogout,
+        );
+        await ref.read(authProvider.notifier).logout(deleteLocalData: true);
+        if (mounted) router.go('/');
+      } else {
+        ref.invalidate(deviceListProvider);
+        AdaptiveNotification.show(context, message: l10n.deviceDeleteSuccess);
+      }
     } catch (e) {
       if (mounted) {
         AdaptiveNotification.show(
           context,
-          message: AppLocalizations.of(context)!.error(errorMessage(e)),
+          message: l10n.error(errorMessage(e)),
         );
       }
     }

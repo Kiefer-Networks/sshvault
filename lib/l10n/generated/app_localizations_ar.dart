@@ -2419,4 +2419,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'إزالة الجهاز';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'هل أنت متأكد من إزالة \"$name\"؟ سيتم تسجيل خروج الجهاز فوراً.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'هذا هو جهازك الحالي. سيتم تسجيل خروجك فوراً.';
+
+  @override
+  String get deviceDeleteSuccess => 'تم إزالة الجهاز';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'تم إزالة الجهاز الحالي. تم تسجيل خروجك.';
+
+  @override
+  String get thisDevice => 'هذا الجهاز';
 }

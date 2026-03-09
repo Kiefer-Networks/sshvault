@@ -896,5 +896,13 @@
   "sshKeyEntryLabel": "{name} ({keyType})",
   "@sshKeyEntryLabel": { "placeholders": { "name": { "type": "String" }, "keyType": { "type": "String" } } },
   "hostPortLabel": "{hostname}:{port}",
-  "@hostPortLabel": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } }
+  "@hostPortLabel": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+
+  "deviceDeleteConfirmTitle": "Remove Device",
+  "deviceDeleteConfirmMessage": "Are you sure you want to remove \"{name}\"? The device will be logged out immediately.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "This is your current device. You will be logged out immediately.",
+  "deviceDeleteSuccess": "Device removed",
+  "deviceDeletedCurrentLogout": "Current device removed. You have been logged out.",
+  "thisDevice": "This device"
 }

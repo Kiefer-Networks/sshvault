@@ -2381,4 +2381,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => '移除设备';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return '确定要移除\"$name\"吗？该设备将立即注销。';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage => '这是您当前的设备。您将立即注销。';
+
+  @override
+  String get deviceDeleteSuccess => '设备已移除';
+
+  @override
+  String get deviceDeletedCurrentLogout => '当前设备已移除。您已注销。';
+
+  @override
+  String get thisDevice => '此设备';
 }

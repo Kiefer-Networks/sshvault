@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Rimuovi dispositivo",
+  "deviceDeleteConfirmMessage": "Sei sicuro di voler rimuovere \"{name}\"? Il dispositivo verrà disconnesso immediatamente.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Questo è il tuo dispositivo attuale. Verrai disconnesso immediatamente.",
+  "deviceDeleteSuccess": "Dispositivo rimosso",
+  "deviceDeletedCurrentLogout": "Dispositivo attuale rimosso. Sei stato disconnesso.",
+  "thisDevice": "Questo dispositivo"
 }

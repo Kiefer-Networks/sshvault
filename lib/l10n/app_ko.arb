@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "기기 제거",
+  "deviceDeleteConfirmMessage": "\"{name}\"을(를) 제거하시겠습니까? 기기가 즉시 로그아웃됩니다.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "현재 사용 중인 기기입니다. 즉시 로그아웃됩니다.",
+  "deviceDeleteSuccess": "기기가 제거되었습니다",
+  "deviceDeletedCurrentLogout": "현재 기기가 제거되었습니다. 로그아웃되었습니다.",
+  "thisDevice": "이 기기"
 }

@@ -4511,6 +4511,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{hostname}:{port}'**
   String hostPortLabel(String hostname, int port);
+
+  /// No description provided for @deviceDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Device'**
+  String get deviceDeleteConfirmTitle;
+
+  /// No description provided for @deviceDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove \"{name}\"? The device will be logged out immediately.'**
+  String deviceDeleteConfirmMessage(String name);
+
+  /// No description provided for @deviceDeleteCurrentConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your current device. You will be logged out immediately.'**
+  String get deviceDeleteCurrentConfirmMessage;
+
+  /// No description provided for @deviceDeleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Device removed'**
+  String get deviceDeleteSuccess;
+
+  /// No description provided for @deviceDeletedCurrentLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Current device removed. You have been logged out.'**
+  String get deviceDeletedCurrentLogout;
+
+  /// No description provided for @thisDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'This device'**
+  String get thisDevice;
 }
 
 class _AppLocalizationsDelegate

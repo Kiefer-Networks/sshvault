@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Fjern enhed",
+  "deviceDeleteConfirmMessage": "Er du sikker på, at du vil fjerne \"{name}\"? Enheden logges ud med det samme.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Dette er din nuværende enhed. Du logges ud med det samme.",
+  "deviceDeleteSuccess": "Enhed fjernet",
+  "deviceDeletedCurrentLogout": "Nuværende enhed fjernet. Du er logget ud.",
+  "thisDevice": "Denne enhed"
 }

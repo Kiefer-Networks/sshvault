@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Hapus Perangkat",
+  "deviceDeleteConfirmMessage": "Yakin ingin menghapus \"{name}\"? Perangkat akan segera keluar.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Ini adalah perangkat Anda saat ini. Anda akan segera keluar.",
+  "deviceDeleteSuccess": "Perangkat dihapus",
+  "deviceDeletedCurrentLogout": "Perangkat saat ini dihapus. Anda telah keluar.",
+  "thisDevice": "Perangkat ini"
 }

@@ -2443,4 +2443,26 @@ class AppLocalizationsHu extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Eszköz eltávolítása';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'Biztosan el szeretnéd távolítani a(z) \"$name\" eszközt? Az eszköz azonnal kijelentkezik.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'Ez a jelenlegi eszközöd. Azonnal kijelentkezel.';
+
+  @override
+  String get deviceDeleteSuccess => 'Eszköz eltávolítva';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Jelenlegi eszköz eltávolítva. Kijelentkeztél.';
+
+  @override
+  String get thisDevice => 'Ez az eszköz';
 }

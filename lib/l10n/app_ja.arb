@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "デバイスを削除",
+  "deviceDeleteConfirmMessage": "\"{name}\"を削除してもよろしいですか？デバイスは直ちにログアウトされます。",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "これは現在のデバイスです。直ちにログアウトされます。",
+  "deviceDeleteSuccess": "デバイスを削除しました",
+  "deviceDeletedCurrentLogout": "現在のデバイスを削除しました。ログアウトされました。",
+  "thisDevice": "このデバイス"
 }

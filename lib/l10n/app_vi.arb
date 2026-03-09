@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Xóa thiết bị",
+  "deviceDeleteConfirmMessage": "Bạn có chắc muốn xóa \"{name}\"? Thiết bị sẽ bị đăng xuất ngay lập tức.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Đây là thiết bị hiện tại của bạn. Bạn sẽ bị đăng xuất ngay lập tức.",
+  "deviceDeleteSuccess": "Đã xóa thiết bị",
+  "deviceDeletedCurrentLogout": "Đã xóa thiết bị hiện tại. Bạn đã được đăng xuất.",
+  "thisDevice": "Thiết bị này"
 }

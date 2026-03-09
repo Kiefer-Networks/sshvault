@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "Eliminare dispozitiv",
+  "deviceDeleteConfirmMessage": "Sigur doriți să eliminați \"{name}\"? Dispozitivul va fi deconectat imediat.",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "Acesta este dispozitivul dvs. actual. Veți fi deconectat imediat.",
+  "deviceDeleteSuccess": "Dispozitiv eliminat",
+  "deviceDeletedCurrentLogout": "Dispozitivul actual a fost eliminat. Ați fost deconectat.",
+  "thisDevice": "Acest dispozitiv"
 }

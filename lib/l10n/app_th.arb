@@ -726,5 +726,12 @@
   "settingsLanguageNl": "Nederlands",
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
-  "settingsLanguageHe": "עברית"
+  "settingsLanguageHe": "עברית",
+  "deviceDeleteConfirmTitle": "ลบอุปกรณ์",
+  "deviceDeleteConfirmMessage": "คุณแน่ใจหรือไม่ว่าต้องการลบ \"{name}\"? อุปกรณ์จะถูกออกจากระบบทันที",
+  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "deviceDeleteCurrentConfirmMessage": "นี่คืออุปกรณ์ปัจจุบันของคุณ คุณจะถูกออกจากระบบทันที",
+  "deviceDeleteSuccess": "ลบอุปกรณ์แล้ว",
+  "deviceDeletedCurrentLogout": "ลบอุปกรณ์ปัจจุบันแล้ว คุณออกจากระบบแล้ว",
+  "thisDevice": "อุปกรณ์นี้"
 }

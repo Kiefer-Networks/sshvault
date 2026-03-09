@@ -2439,4 +2439,26 @@ class AppLocalizationsUk extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Видалити пристрій';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'Ви впевнені, що хочете видалити \"$name\"? Пристрій буде негайно відключено.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'Це ваш поточний пристрій. Вас буде негайно відключено.';
+
+  @override
+  String get deviceDeleteSuccess => 'Пристрій видалено';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Поточний пристрій видалено. Вас було відключено.';
+
+  @override
+  String get thisDevice => 'Цей пристрій';
 }

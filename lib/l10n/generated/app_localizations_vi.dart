@@ -2430,4 +2430,26 @@ class AppLocalizationsVi extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Xóa thiết bị';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'Bạn có chắc muốn xóa \"$name\"? Thiết bị sẽ bị đăng xuất ngay lập tức.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'Đây là thiết bị hiện tại của bạn. Bạn sẽ bị đăng xuất ngay lập tức.';
+
+  @override
+  String get deviceDeleteSuccess => 'Đã xóa thiết bị';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Đã xóa thiết bị hiện tại. Bạn đã được đăng xuất.';
+
+  @override
+  String get thisDevice => 'Thiết bị này';
 }

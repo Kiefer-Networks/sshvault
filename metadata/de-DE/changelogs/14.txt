@@ -1,0 +1,4 @@
+* Behoben: Gerät löschen zeigt jetzt Bestätigungsdialog und entfernt es sofort
+* Behoben: Löschen des aktuellen Geräts löst jetzt Abmeldung aus
+* Neu: Aktuelles Gerät wird in der Geräteliste markiert
+* Behoben: Android 15 randlose Anzeige (enableEdgeToEdge)

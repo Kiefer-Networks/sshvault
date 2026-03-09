@@ -1,0 +1,4 @@
+* Fixed: Deleting a device now shows confirmation dialog and removes it immediately
+* Fixed: Deleting the current device now triggers logout
+* Added: Current device is visually marked in the device list
+* Fixed: Android 15 edge-to-edge display support (enableEdgeToEdge)

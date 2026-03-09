@@ -2442,4 +2442,26 @@ class AppLocalizationsRo extends AppLocalizations {
   String hostPortLabel(String hostname, int port) {
     return '$hostname:$port';
   }
+
+  @override
+  String get deviceDeleteConfirmTitle => 'Eliminare dispozitiv';
+
+  @override
+  String deviceDeleteConfirmMessage(String name) {
+    return 'Sigur doriți să eliminați \"$name\"? Dispozitivul va fi deconectat imediat.';
+  }
+
+  @override
+  String get deviceDeleteCurrentConfirmMessage =>
+      'Acesta este dispozitivul dvs. actual. Veți fi deconectat imediat.';
+
+  @override
+  String get deviceDeleteSuccess => 'Dispozitiv eliminat';
+
+  @override
+  String get deviceDeletedCurrentLogout =>
+      'Dispozitivul actual a fost eliminat. Ați fost deconectat.';
+
+  @override
+  String get thisDevice => 'Acest dispozitiv';
 }
