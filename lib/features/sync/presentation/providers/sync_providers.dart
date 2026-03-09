@@ -70,6 +70,20 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     });
   }
 
+  /// Invalidate all data providers so they reload from DB after sync.
+  void _invalidateAllDataProviders() {
+    ref.invalidate(serverListProvider);
+    ref.invalidate(folderListProvider);
+    ref.invalidate(folderTreeProvider);
+    ref.invalidate(folderGroupedServersProvider);
+    ref.invalidate(favoriteServersProvider);
+    ref.invalidate(recentServersProvider);
+    ref.invalidate(tagListProvider);
+    ref.invalidate(sshKeyListProvider);
+    ref.invalidate(snippetListProvider);
+    ref.invalidate(settingsProvider);
+  }
+
   Future<void> sync() async {
     // Check auth status
     final authStatus = ref.read(authProvider).value;
@@ -116,12 +130,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
 
         // Invalidate all data providers so they reload from DB
-        ref.invalidate(serverListProvider);
-        ref.invalidate(folderListProvider);
-        ref.invalidate(tagListProvider);
-        ref.invalidate(sshKeyListProvider);
-        ref.invalidate(snippetListProvider);
-        ref.invalidate(settingsProvider);
+        _invalidateAllDataProviders();
 
         _log.info(_tag, 'Sync successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
@@ -185,12 +194,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
       onSuccess: (newVersion) {
         ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
 
-        ref.invalidate(serverListProvider);
-        ref.invalidate(folderListProvider);
-        ref.invalidate(tagListProvider);
-        ref.invalidate(sshKeyListProvider);
-        ref.invalidate(snippetListProvider);
-        ref.invalidate(settingsProvider);
+        _invalidateAllDataProviders();
 
         _log.info(_tag, 'Pull-only successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
