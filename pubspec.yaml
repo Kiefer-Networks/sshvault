@@ -51,6 +51,7 @@ dependencies:
 
   # Networking
   dio: ^5.7.0
+  connectivity_plus: ^6.1.4
 
   # Device Info
   device_info_plus: ^12.3.0
