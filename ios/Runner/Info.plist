@@ -68,9 +68,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>SSHVault needs photo library access to upload files via SFTP.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
-	<true/>
-	<key>ITSEncryptionExportComplianceCode</key>
-	<string></string>
+	<false/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
@@ -80,7 +78,6 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
