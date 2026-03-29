@@ -389,19 +389,8 @@ class AppLocalizationsHu extends AppLocalizations {
   String get serverAddButton => 'Kiszolgáló hozzáadása';
 
   @override
-  String get sshConfigImportTitle => 'SSH konfiguráció importálása';
-
-  @override
   String sshConfigImportMessage(int count) {
     return '$count gazdagép található a ~/.ssh/config fájlban. Importálja őket?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'Kiválasztottak importálása';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count kiszolgáló importálva';
   }
 
   @override
@@ -2329,6 +2318,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get hostKeyLastSeen => 'Utoljára látva';
 
   @override
+  String get sshConfigImportTitle => 'SSH konfiguráció importálása';
+
+  @override
   String get sshConfigImportPickFile => 'SSH konfigurációs fájl kiválasztása';
 
   @override
@@ -2337,6 +2329,14 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return '$count gazdagép található';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Kiválasztottak importálása';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count kiszolgáló importálva';
   }
 
   @override

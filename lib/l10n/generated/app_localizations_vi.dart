@@ -385,19 +385,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get serverAddButton => 'Them may chu';
 
   @override
-  String get sshConfigImportTitle => 'Nhap cau hinh SSH';
-
-  @override
   String sshConfigImportMessage(int count) {
     return 'Tim thay $count may chu trong ~/.ssh/config. Nhap chung?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'Nhap';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return 'Da nhap $count may chu';
   }
 
   @override
@@ -2316,6 +2305,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get hostKeyLastSeen => 'Lan cuoi thay';
 
   @override
+  String get sshConfigImportTitle => 'Nhap cau hinh SSH';
+
+  @override
   String get sshConfigImportPickFile => 'Chon tep cau hinh SSH';
 
   @override
@@ -2324,6 +2316,14 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return 'Tim thay $count may chu';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Nhap';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return 'Da nhap $count may chu';
   }
 
   @override

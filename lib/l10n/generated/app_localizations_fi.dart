@@ -389,19 +389,8 @@ class AppLocalizationsFi extends AppLocalizations {
   String get serverAddButton => 'Lisää palvelin';
 
   @override
-  String get sshConfigImportTitle => 'Tuo SSH-asetukset';
-
-  @override
   String sshConfigImportMessage(int count) {
     return 'Löydettiin $count palvelin(ta) tiedostosta ~/.ssh/config. Tuodaanko ne?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'Tuo valitut';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count palvelinta tuotu';
   }
 
   @override
@@ -2326,6 +2315,9 @@ class AppLocalizationsFi extends AppLocalizations {
   String get hostKeyLastSeen => 'Nähty viimeksi';
 
   @override
+  String get sshConfigImportTitle => 'Tuo SSH-asetukset';
+
+  @override
   String get sshConfigImportPickFile => 'Valitse SSH-asetustiedosto';
 
   @override
@@ -2334,6 +2326,14 @@ class AppLocalizationsFi extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return '$count palvelinta löydetty';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Tuo valitut';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count palvelinta tuotu';
   }
 
   @override

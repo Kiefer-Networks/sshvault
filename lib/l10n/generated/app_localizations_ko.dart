@@ -382,19 +382,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get serverAddButton => '서버 추가';
 
   @override
-  String get sshConfigImportTitle => 'SSH 설정 가져오기';
-
-  @override
   String sshConfigImportMessage(int count) {
     return '~/.ssh/config에서 $count개의 호스트를 찾았습니다. 가져오시겠습니까?';
-  }
-
-  @override
-  String get sshConfigImportButton => '가져오기';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count개의 서버를 가져왔습니다';
   }
 
   @override
@@ -2285,6 +2274,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hostKeyLastSeen => '마지막 확인';
 
   @override
+  String get sshConfigImportTitle => 'SSH 설정 가져오기';
+
+  @override
   String get sshConfigImportPickFile => 'SSH 설정 파일 선택';
 
   @override
@@ -2293,6 +2285,14 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return '$count개의 호스트를 찾았습니다';
+  }
+
+  @override
+  String get sshConfigImportButton => '가져오기';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count개의 서버를 가져왔습니다';
   }
 
   @override

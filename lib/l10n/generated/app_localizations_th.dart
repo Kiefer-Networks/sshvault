@@ -384,19 +384,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get serverAddButton => 'เพิ่มเซิร์ฟเวอร์';
 
   @override
-  String get sshConfigImportTitle => 'นำเข้าการตั้งค่า SSH';
-
-  @override
   String sshConfigImportMessage(int count) {
     return 'พบ $count โฮสต์ใน ~/.ssh/config นำเข้าหรือไม่?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'นำเข้า';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return 'นำเข้า $count เซิร์ฟเวอร์แล้ว';
   }
 
   @override
@@ -2314,6 +2303,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get hostKeyLastSeen => 'พบล่าสุด';
 
   @override
+  String get sshConfigImportTitle => 'นำเข้าการตั้งค่า SSH';
+
+  @override
   String get sshConfigImportPickFile => 'เลือกไฟล์การตั้งค่า SSH';
 
   @override
@@ -2322,6 +2314,14 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return 'พบ $count โฮสต์';
+  }
+
+  @override
+  String get sshConfigImportButton => 'นำเข้า';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return 'นำเข้า $count เซิร์ฟเวอร์แล้ว';
   }
 
   @override

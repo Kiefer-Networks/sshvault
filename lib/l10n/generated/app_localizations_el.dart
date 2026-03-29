@@ -387,19 +387,8 @@ class AppLocalizationsEl extends AppLocalizations {
   String get serverAddButton => 'Προσθήκη διακομιστή';
 
   @override
-  String get sshConfigImportTitle => 'Εισαγωγή ρύθμισης SSH';
-
-  @override
   String sshConfigImportMessage(int count) {
     return 'Βρέθηκαν $count host(s) στο ~/.ssh/config. Εισαγωγή;';
-  }
-
-  @override
-  String get sshConfigImportButton => 'Εισαγωγή';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count διακομιστές εισήχθησαν';
   }
 
   @override
@@ -2330,6 +2319,9 @@ class AppLocalizationsEl extends AppLocalizations {
   String get hostKeyLastSeen => 'Τελευταία εμφάνιση';
 
   @override
+  String get sshConfigImportTitle => 'Εισαγωγή ρύθμισης SSH';
+
+  @override
   String get sshConfigImportPickFile => 'Επιλογή αρχείου ρύθμισης SSH';
 
   @override
@@ -2338,6 +2330,14 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return 'Βρέθηκαν $count hosts';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Εισαγωγή';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count διακομιστές εισήχθησαν';
   }
 
   @override

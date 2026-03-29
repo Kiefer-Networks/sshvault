@@ -387,19 +387,8 @@ class AppLocalizationsRo extends AppLocalizations {
   String get serverAddButton => 'Adaugare server';
 
   @override
-  String get sshConfigImportTitle => 'Import configuratie SSH';
-
-  @override
   String sshConfigImportMessage(int count) {
     return '$count gazda(e) gasite in ~/.ssh/config. Le importati?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'Import';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count server(e) importate';
   }
 
   @override
@@ -2328,6 +2317,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get hostKeyLastSeen => 'Ultima aparitie';
 
   @override
+  String get sshConfigImportTitle => 'Import configuratie SSH';
+
+  @override
   String get sshConfigImportPickFile => 'Selectare fisier de configurare SSH';
 
   @override
@@ -2336,6 +2328,14 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return '$count gazde gasite';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Import';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count server(e) importate';
   }
 
   @override

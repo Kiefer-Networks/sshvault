@@ -388,19 +388,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get serverAddButton => 'Sunucu Ekle';
 
   @override
-  String get sshConfigImportTitle => 'SSH Yapılandırmasını İçe Aktar';
-
-  @override
   String sshConfigImportMessage(int count) {
     return '~/.ssh/config dosyasında $count sunucu bulundu. İçe aktarılsın mı?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'Seçilenleri İçe Aktar';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count sunucu içe aktarıldı';
   }
 
   @override
@@ -2321,6 +2310,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get hostKeyLastSeen => 'Son görülme';
 
   @override
+  String get sshConfigImportTitle => 'SSH Yapılandırmasını İçe Aktar';
+
+  @override
   String get sshConfigImportPickFile => 'SSH Yapılandırma Dosyasını Seçin';
 
   @override
@@ -2329,6 +2321,14 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return '$count sunucu bulundu';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Seçilenleri İçe Aktar';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count sunucu içe aktarıldı';
   }
 
   @override
