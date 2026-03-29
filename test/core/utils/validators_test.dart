@@ -30,9 +30,21 @@ void main() {
       expect(Validators.validateHostname('1.2.3.999'), isNotNull);
     });
 
-    test('accepts IPv6-like addresses (contains colon, no spaces)', () {
+    test('accepts valid IPv6 addresses', () {
       expect(Validators.validateHostname('::1'), isNull);
       expect(Validators.validateHostname('fe80::1'), isNull);
+      expect(Validators.validateHostname('2001:db8::1'), isNull);
+      expect(Validators.validateHostname('[::1]'), isNull);
+      expect(Validators.validateHostname('[fe80::1]'), isNull);
+      expect(Validators.validateHostname('::ffff:192.168.1.1'), isNull);
+    });
+
+    test('rejects invalid IPv6 addresses', () {
+      expect(Validators.validateHostname('::::::::'), isNotNull);
+      expect(Validators.validateHostname(':'), isNotNull);
+      expect(Validators.validateHostname('foo:bar:baz'), isNotNull);
+      expect(Validators.validateHostname('fe80::1 extra'), isNotNull);
+      expect(Validators.validateHostname('http://example.com:8080'), isNotNull);
     });
 
     test('rejects invalid hostnames', () {

@@ -403,7 +403,7 @@ void main() {
   });
 
   group('SecureStorageService — sync password and email', () {
-    test('saveSyncPassword writes to storage', () async {
+    test('saveSyncPassword writes password and timestamp', () async {
       when(
         () => mockStorage.write(
           key: any(named: 'key'),
@@ -413,16 +413,124 @@ void main() {
 
       final result = await sut.saveSyncPassword('sync-pass');
       expect(result.isSuccess, isTrue);
+      verify(
+        () => mockStorage.write(
+          key: AppConstants.syncPasswordKey,
+          value: 'sync-pass',
+        ),
+      ).called(1);
+      verify(
+        () => mockStorage.write(
+          key: AppConstants.syncPasswordLastUsedKey,
+          value: any(named: 'value'),
+        ),
+      ).called(1);
     });
 
-    test('getSyncPassword reads from storage', () async {
+    test('getSyncPassword reads from storage and updates timestamp', () async {
+      when(
+        () => mockStorage.read(key: AppConstants.syncPasswordLastUsedKey),
+      ).thenAnswer((_) async => DateTime.now().toUtc().toIso8601String());
       when(
         () => mockStorage.read(key: AppConstants.syncPasswordKey),
       ).thenAnswer((_) async => 'sync-pass');
+      when(
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
+      ).thenAnswer((_) async {});
 
       final result = await sut.getSyncPassword();
       expect(result.isSuccess, isTrue);
       expect(result.value, 'sync-pass');
+      verify(
+        () => mockStorage.write(
+          key: AppConstants.syncPasswordLastUsedKey,
+          value: any(named: 'value'),
+        ),
+      ).called(1);
+    });
+
+    test('getSyncPassword returns null and deletes when expired', () async {
+      final expired = DateTime.now()
+          .toUtc()
+          .subtract(const Duration(days: 31))
+          .toIso8601String();
+      when(
+        () => mockStorage.read(key: AppConstants.syncPasswordLastUsedKey),
+      ).thenAnswer((_) async => expired);
+      when(
+        () => mockStorage.delete(key: any(named: 'key')),
+      ).thenAnswer((_) async {});
+
+      final result = await sut.getSyncPassword();
+      expect(result.isSuccess, isTrue);
+      expect(result.value, isNull);
+      verify(
+        () => mockStorage.delete(key: AppConstants.syncPasswordKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.syncPasswordLastUsedKey),
+      ).called(1);
+    });
+
+    test('getSyncPassword does not expire within 30 days', () async {
+      final recent = DateTime.now()
+          .toUtc()
+          .subtract(const Duration(days: 29))
+          .toIso8601String();
+      when(
+        () => mockStorage.read(key: AppConstants.syncPasswordLastUsedKey),
+      ).thenAnswer((_) async => recent);
+      when(
+        () => mockStorage.read(key: AppConstants.syncPasswordKey),
+      ).thenAnswer((_) async => 'sync-pass');
+      when(
+        () => mockStorage.write(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        ),
+      ).thenAnswer((_) async {});
+
+      final result = await sut.getSyncPassword();
+      expect(result.isSuccess, isTrue);
+      expect(result.value, 'sync-pass');
+    });
+
+    test('getSyncPassword returns null without deleting when no password stored',
+        () async {
+      when(
+        () => mockStorage.read(key: AppConstants.syncPasswordLastUsedKey),
+      ).thenAnswer((_) async => null);
+      when(
+        () => mockStorage.read(key: AppConstants.syncPasswordKey),
+      ).thenAnswer((_) async => null);
+
+      final result = await sut.getSyncPassword();
+      expect(result.isSuccess, isTrue);
+      expect(result.value, isNull);
+      verifyNever(
+        () => mockStorage.write(
+          key: AppConstants.syncPasswordLastUsedKey,
+          value: any(named: 'value'),
+        ),
+      );
+    });
+
+    test('deleteSyncPassword removes password and timestamp', () async {
+      when(
+        () => mockStorage.delete(key: any(named: 'key')),
+      ).thenAnswer((_) async {});
+
+      final result = await sut.deleteSyncPassword();
+      expect(result.isSuccess, isTrue);
+      verify(
+        () => mockStorage.delete(key: AppConstants.syncPasswordKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.syncPasswordLastUsedKey),
+      ).called(1);
     });
 
     test('saveUserEmail writes to storage', () async {
@@ -449,7 +557,8 @@ void main() {
   });
 
   group('SecureStorageService — clearAuthTokens', () {
-    test('deletes all auth-related keys', () async {
+    test('deletes all auth-related keys, preserves sync password by default',
+        () async {
       when(
         () => mockStorage.delete(key: any(named: 'key')),
       ).thenAnswer((_) async {});
@@ -469,11 +578,41 @@ void main() {
       verify(
         () => mockStorage.delete(key: AppConstants.userEmailKey),
       ).called(1);
-      // Sync password, DEK, and device ID are intentionally preserved
-      // so re-login doesn't require re-entering the encryption passphrase.
       verifyNever(() => mockStorage.delete(key: AppConstants.syncPasswordKey));
+      verifyNever(
+        () => mockStorage.delete(key: AppConstants.syncPasswordLastUsedKey),
+      );
       verifyNever(() => mockStorage.delete(key: AppConstants.dekStorageKey));
       verifyNever(() => mockStorage.delete(key: AppConstants.deviceIdKey));
+    });
+
+    test('deletes sync password when forgetPasswordOnLogout is true', () async {
+      when(
+        () => mockStorage.delete(key: any(named: 'key')),
+      ).thenAnswer((_) async {});
+
+      final result =
+          await sut.clearAuthTokens(forgetPasswordOnLogout: true);
+      expect(result.isSuccess, isTrue);
+
+      verify(
+        () => mockStorage.delete(key: AppConstants.accessTokenKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.refreshTokenKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.tokenExpiryKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.userEmailKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.syncPasswordKey),
+      ).called(1);
+      verify(
+        () => mockStorage.delete(key: AppConstants.syncPasswordLastUsedKey),
+      ).called(1);
     });
 
     test('clearAuthTokens returns StorageFailure on error', () async {

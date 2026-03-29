@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -202,9 +205,10 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
         ? existingIdResult.value
         : null;
     if (existingId != null && existingId.isNotEmpty) {
+      final idHash = sha256.convert(utf8.encode(existingId)).toString().substring(0, 8);
       _log.debug(
         _tag,
-        'Device already registered (id=${existingId.substring(0, 8)}...)',
+        'Device already registered (hash=$idHash)',
       );
       return;
     }
@@ -220,7 +224,8 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
         onSuccess: (id) async {
           if (id.isNotEmpty) {
             await storage.saveDeviceId(id);
-            _log.info(_tag, 'Device registered: $deviceName ($platform) → $id');
+            final regHash = sha256.convert(utf8.encode(id)).toString().substring(0, 8);
+            _log.info(_tag, 'Device registered: $deviceName ($platform) → hash=$regHash');
           } else {
             _log.warning(_tag, 'Device registration returned empty ID');
           }
