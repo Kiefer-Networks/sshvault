@@ -389,19 +389,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get serverAddButton => 'Aggiungi server';
 
   @override
-  String get sshConfigImportTitle => 'Importa configurazione SSH';
-
-  @override
   String sshConfigImportMessage(int count) {
     return '$count host trovati in ~/.ssh/config. Importarli?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'Importa selezionati';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count server importati';
   }
 
   @override
@@ -2329,6 +2318,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get hostKeyLastSeen => 'Visto l\'ultima volta';
 
   @override
+  String get sshConfigImportTitle => 'Importa configurazione SSH';
+
+  @override
   String get sshConfigImportPickFile => 'Seleziona file di configurazione SSH';
 
   @override
@@ -2338,6 +2330,14 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return '$count host trovati';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Importa selezionati';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count server importati';
   }
 
   @override

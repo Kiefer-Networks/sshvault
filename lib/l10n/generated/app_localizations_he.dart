@@ -385,19 +385,8 @@ class AppLocalizationsHe extends AppLocalizations {
   String get serverAddButton => 'הוספת שרת';
 
   @override
-  String get sshConfigImportTitle => 'ייבוא תצורת SSH';
-
-  @override
   String sshConfigImportMessage(int count) {
     return 'נמצאו $count שרתים ב-~/.ssh/config. לייבא?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'ייבוא';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count שרתים יובאו';
   }
 
   @override
@@ -2300,6 +2289,9 @@ class AppLocalizationsHe extends AppLocalizations {
   String get hostKeyLastSeen => 'נראה לאחרונה';
 
   @override
+  String get sshConfigImportTitle => 'ייבוא תצורת SSH';
+
+  @override
   String get sshConfigImportPickFile => 'בחר קובץ תצורת SSH';
 
   @override
@@ -2308,6 +2300,14 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return 'נמצאו $count שרתים';
+  }
+
+  @override
+  String get sshConfigImportButton => 'ייבוא';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count שרתים יובאו';
   }
 
   @override

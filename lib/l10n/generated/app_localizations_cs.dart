@@ -385,19 +385,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get serverAddButton => 'Přidat server';
 
   @override
-  String get sshConfigImportTitle => 'Import SSH konfigurace';
-
-  @override
   String sshConfigImportMessage(int count) {
     return 'Nalezeno $count hostitelů v ~/.ssh/config. Importovat?';
-  }
-
-  @override
-  String get sshConfigImportButton => 'Importovat vybrané';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count serverů importováno';
   }
 
   @override
@@ -2318,6 +2307,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get hostKeyLastSeen => 'Naposledy viděn';
 
   @override
+  String get sshConfigImportTitle => 'Import SSH konfigurace';
+
+  @override
   String get sshConfigImportPickFile => 'Vybrat soubor SSH konfigurace';
 
   @override
@@ -2326,6 +2318,14 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return 'Nalezeno $count hostitelů';
+  }
+
+  @override
+  String get sshConfigImportButton => 'Importovat vybrané';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count serverů importováno';
   }
 
   @override

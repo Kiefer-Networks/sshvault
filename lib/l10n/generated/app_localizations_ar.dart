@@ -385,19 +385,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serverAddButton => 'إضافة خادم';
 
   @override
-  String get sshConfigImportTitle => 'استيراد إعدادات SSH';
-
-  @override
   String sshConfigImportMessage(int count) {
     return 'تم العثور على $count مضيف(ين) في ~/.ssh/config. هل تريد استيرادهم؟';
-  }
-
-  @override
-  String get sshConfigImportButton => 'استيراد المحدد';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return 'تم استيراد $count خادم';
   }
 
   @override
@@ -2306,6 +2295,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get hostKeyLastSeen => 'آخر ظهور';
 
   @override
+  String get sshConfigImportTitle => 'استيراد إعدادات SSH';
+
+  @override
   String get sshConfigImportPickFile => 'اختر ملف إعدادات SSH';
 
   @override
@@ -2314,6 +2306,14 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return 'تم العثور على $count مضيف';
+  }
+
+  @override
+  String get sshConfigImportButton => 'استيراد المحدد';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return 'تم استيراد $count خادم';
   }
 
   @override

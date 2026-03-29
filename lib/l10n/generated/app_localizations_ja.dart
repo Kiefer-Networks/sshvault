@@ -381,19 +381,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get serverAddButton => 'サーバーを追加';
 
   @override
-  String get sshConfigImportTitle => 'SSH設定をインポート';
-
-  @override
   String sshConfigImportMessage(int count) {
     return '~/.ssh/configに$count件のホストが見つかりました。インポートしますか？';
-  }
-
-  @override
-  String get sshConfigImportButton => 'インポート';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '$count件のサーバーをインポートしました';
   }
 
   @override
@@ -2281,6 +2270,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get hostKeyLastSeen => '最終確認';
 
   @override
+  String get sshConfigImportTitle => 'SSH設定をインポート';
+
+  @override
   String get sshConfigImportPickFile => 'SSH設定ファイルを選択';
 
   @override
@@ -2289,6 +2281,14 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return '$count件のホストが見つかりました';
+  }
+
+  @override
+  String get sshConfigImportButton => 'インポート';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '$count件のサーバーをインポートしました';
   }
 
   @override

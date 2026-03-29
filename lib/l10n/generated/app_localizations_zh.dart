@@ -379,19 +379,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get serverAddButton => '添加服务器';
 
   @override
-  String get sshConfigImportTitle => '导入 SSH 配置';
-
-  @override
   String sshConfigImportMessage(int count) {
     return '在 ~/.ssh/config 中找到 $count 个主机。是否导入？';
-  }
-
-  @override
-  String get sshConfigImportButton => '导入';
-
-  @override
-  String sshConfigImportSuccess(int count) {
-    return '已导入 $count 台服务器';
   }
 
   @override
@@ -2269,6 +2258,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hostKeyLastSeen => '上次发现';
 
   @override
+  String get sshConfigImportTitle => '导入 SSH 配置';
+
+  @override
   String get sshConfigImportPickFile => '选择 SSH 配置文件';
 
   @override
@@ -2277,6 +2269,14 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String sshConfigImportParsed(int count) {
     return '找到 $count 个主机';
+  }
+
+  @override
+  String get sshConfigImportButton => '导入';
+
+  @override
+  String sshConfigImportSuccess(int count) {
+    return '已导入 $count 台服务器';
   }
 
   @override
