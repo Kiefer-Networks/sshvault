@@ -19,7 +19,7 @@ class ServerAttestationService {
   static const _tag = 'Attest';
 
   /// Maximum allowed clock skew between client and server (seconds).
-  static const int maxClockSkewSeconds = 300;
+  static const int maxClockSkewSeconds = 90;
 
   /// Minimum API version the client supports.
   static const int minApiVersion = 1;

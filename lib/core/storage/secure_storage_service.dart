@@ -7,6 +7,8 @@ import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/error/result.dart';
 
 class SecureStorageService {
+  static const Duration _passwordTimeout = Duration(days: 30);
+
   final FlutterSecureStorage _storage;
 
   SecureStorageService({FlutterSecureStorage? storage})
@@ -302,6 +304,10 @@ class SecureStorageService {
   Future<Result<void>> saveSyncPassword(String password) async {
     try {
       await _storage.write(key: AppConstants.syncPasswordKey, value: password);
+      await _storage.write(
+        key: AppConstants.syncPasswordLastUsedKey,
+        value: DateTime.now().toUtc().toIso8601String(),
+      );
       return const Success(null);
     } catch (e) {
       return Err(StorageFailure('Failed to save sync password', cause: e));
@@ -310,11 +316,44 @@ class SecureStorageService {
 
   Future<Result<String?>> getSyncPassword() async {
     try {
+      final lastUsed = await _storage.read(
+        key: AppConstants.syncPasswordLastUsedKey,
+      );
+      if (lastUsed != null) {
+        final lastUsedDate = DateTime.tryParse(lastUsed);
+        if (lastUsedDate != null &&
+            DateTime.now().toUtc().difference(lastUsedDate) >
+                _passwordTimeout) {
+          await _deleteSyncPasswordKeys();
+          return const Success(null);
+        }
+      }
+
       final value = await _storage.read(key: AppConstants.syncPasswordKey);
+      if (value != null) {
+        await _storage.write(
+          key: AppConstants.syncPasswordLastUsedKey,
+          value: DateTime.now().toUtc().toIso8601String(),
+        );
+      }
       return Success(value);
     } catch (e) {
       return Err(StorageFailure('Failed to read sync password', cause: e));
     }
+  }
+
+  Future<Result<void>> deleteSyncPassword() async {
+    try {
+      await _deleteSyncPasswordKeys();
+      return const Success(null);
+    } catch (e) {
+      return Err(StorageFailure('Failed to delete sync password', cause: e));
+    }
+  }
+
+  Future<void> _deleteSyncPasswordKeys() async {
+    await _storage.delete(key: AppConstants.syncPasswordKey);
+    await _storage.delete(key: AppConstants.syncPasswordLastUsedKey);
   }
 
   Future<Result<void>> saveUserEmail(String email) async {
@@ -335,15 +374,20 @@ class SecureStorageService {
     }
   }
 
-  Future<Result<void>> clearAuthTokens() async {
+  Future<Result<void>> clearAuthTokens({
+    bool forgetPasswordOnLogout = false,
+  }) async {
     try {
       await _storage.delete(key: AppConstants.accessTokenKey);
       await _storage.delete(key: AppConstants.refreshTokenKey);
       await _storage.delete(key: AppConstants.tokenExpiryKey);
       await _storage.delete(key: AppConstants.userEmailKey);
-      // Sync password, DEK, and device ID intentionally preserved —
-      // they must survive token expiry so re-login doesn't require
-      // the user to re-enter the encryption passphrase.
+      if (forgetPasswordOnLogout) {
+        await _deleteSyncPasswordKeys();
+      }
+      // Unless forgetPasswordOnLogout is set, sync password, DEK, and
+      // device ID are intentionally preserved so re-login doesn't
+      // require the user to re-enter the encryption passphrase.
       return const Success(null);
     } catch (e) {
       return Err(StorageFailure('Failed to clear auth tokens', cause: e));

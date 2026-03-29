@@ -24,7 +24,17 @@ abstract final class Validators {
         final parts = trimmed.split('.').map(int.parse);
         if (parts.every((p) => p >= 0 && p <= 255)) return null;
       }
-      if (trimmed.contains(':') && !trimmed.contains(' ')) return null;
+      if (trimmed.contains(':')) {
+        final ipv6 = trimmed.startsWith('[') && trimmed.endsWith(']')
+            ? trimmed.substring(1, trimmed.length - 1)
+            : trimmed;
+        if (RegExp(r'^[0-9a-fA-F:]+(\.[0-9]{1,3})*$').hasMatch(ipv6) &&
+            RegExp(r'[0-9a-fA-F]').hasMatch(ipv6) &&
+            !ipv6.contains(' ')) {
+          return null;
+        }
+        return l10n.validatorHostnameInvalid;
+      }
       return l10n.validatorHostnameInvalid;
     };
   }
@@ -108,7 +118,17 @@ abstract final class Validators {
       final parts = trimmed.split('.').map(int.parse);
       if (parts.every((p) => p >= 0 && p <= 255)) return null;
     }
-    if (trimmed.contains(':') && !trimmed.contains(' ')) return null;
+    if (trimmed.contains(':')) {
+      final ipv6 = trimmed.startsWith('[') && trimmed.endsWith(']')
+          ? trimmed.substring(1, trimmed.length - 1)
+          : trimmed;
+      if (RegExp(r'^[0-9a-fA-F:]+(\.[0-9]{1,3})*$').hasMatch(ipv6) &&
+          RegExp(r'[0-9a-fA-F]').hasMatch(ipv6) &&
+          !ipv6.contains(' ')) {
+        return null;
+      }
+      return 'Invalid hostname or IP address';
+    }
     return 'Invalid hostname or IP address';
   }
 
