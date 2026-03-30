@@ -33,6 +33,7 @@ modules:
       - -Dvapi=false
       - -Dgtk_doc=false
       - -Dintrospection=false
+      - --libdir=lib
     cleanup:
       - /bin
       - /include
