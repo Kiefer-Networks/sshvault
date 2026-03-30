@@ -1216,9 +1216,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get authHasAccount => '이미 계정이 있으신가요?';
 
   @override
-  String get authSelfHosted => '셀프 호스트 서버';
-
-  @override
   String get authResetEmailSent => '계정이 존재하면 이메일로 재설정 링크가 전송됩니다.';
 
   @override
@@ -1421,16 +1418,36 @@ class AppLocalizationsKo extends AppLocalizations {
   String get serverConfigTitle => '서버 설정';
 
   @override
-  String get serverConfigSelfHosted => '셀프 호스트';
-
-  @override
-  String get serverConfigSelfHostedDescription => '자체 SSHVault 서버 사용';
-
-  @override
   String get serverConfigUrlLabel => '서버 URL';
 
   @override
   String get serverConfigTest => '연결 테스트';
+
+  @override
+  String get serverSetupTitle => '서버 설정';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault는 엔드투엔드 암호화 동기화를 위해 자체 호스팅 서버가 필요합니다. 시작하려면 자체 인스턴스를 배포하세요.';
+
+  @override
+  String get serverSetupRepoLink => 'GitHub에서 보기';
+
+  @override
+  String get serverSetupContinue => '계속';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => '활동 로그';

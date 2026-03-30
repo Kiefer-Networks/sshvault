@@ -1224,9 +1224,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get authHasAccount => 'כבר יש לך חשבון?';
 
   @override
-  String get authSelfHosted => 'שרת מתארח עצמאית';
-
-  @override
   String get authResetEmailSent =>
       'אם קיים חשבון, קישור איפוס נשלח לאימייל שלך.';
 
@@ -1433,16 +1430,36 @@ class AppLocalizationsHe extends AppLocalizations {
   String get serverConfigTitle => 'תצורת שרת';
 
   @override
-  String get serverConfigSelfHosted => 'מתארח עצמאית';
-
-  @override
-  String get serverConfigSelfHostedDescription => 'השתמש בשרת SSHVault שלך';
-
-  @override
   String get serverConfigUrlLabel => 'כתובת שרת';
 
   @override
   String get serverConfigTest => 'בדיקת חיבור';
+
+  @override
+  String get serverSetupTitle => 'הגדרת שרת';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault דורש שרת מתארח עצמאית לסנכרון מוצפן מקצה לקצה. פרוס את המופע שלך כדי להתחיל.';
+
+  @override
+  String get serverSetupRepoLink => 'הצג ב-GitHub';
+
+  @override
+  String get serverSetupContinue => 'המשך';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'יומן פעילות';

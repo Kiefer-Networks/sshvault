@@ -1210,9 +1210,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authHasAccount => '已有账户？';
 
   @override
-  String get authSelfHosted => '自托管服务器';
-
-  @override
   String get authResetEmailSent => '如果账户存在，重置链接已发送到您的邮箱。';
 
   @override
@@ -1409,16 +1406,36 @@ class AppLocalizationsZh extends AppLocalizations {
   String get serverConfigTitle => '服务器配置';
 
   @override
-  String get serverConfigSelfHosted => '自托管';
-
-  @override
-  String get serverConfigSelfHostedDescription => '使用您自己的 SSHVault 服务器';
-
-  @override
   String get serverConfigUrlLabel => '服务器 URL';
 
   @override
   String get serverConfigTest => '测试连接';
+
+  @override
+  String get serverSetupTitle => '服务器设置';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault 需要自托管服务器进行端到端加密同步。部署您自己的实例以开始使用。';
+
+  @override
+  String get serverSetupRepoLink => '在 GitHub 上查看';
+
+  @override
+  String get serverSetupContinue => '继续';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => '活动日志';

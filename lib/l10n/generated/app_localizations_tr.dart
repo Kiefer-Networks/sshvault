@@ -1239,9 +1239,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get authHasAccount => 'Zaten hesabınız var mı?';
 
   @override
-  String get authSelfHosted => 'Kendi Sunucunuz';
-
-  @override
   String get authResetEmailSent =>
       'Hesap mevcutsa, e-postanıza bir sıfırlama bağlantısı gönderildi.';
 
@@ -1450,17 +1447,36 @@ class AppLocalizationsTr extends AppLocalizations {
   String get serverConfigTitle => 'Sunucu Yapılandırması';
 
   @override
-  String get serverConfigSelfHosted => 'Kendi Sunucunuz';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Kendi SSHVault sunucunuzu kullanın';
-
-  @override
   String get serverConfigUrlLabel => 'Sunucu URL';
 
   @override
   String get serverConfigTest => 'Bağlantıyı Test Et';
+
+  @override
+  String get serverSetupTitle => 'Sunucu Kurulumu';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault, uçtan uca şifreli senkronizasyon için kendi sunucunuzu gerektirir. Başlamak için kendi örneğinizi dağıtın.';
+
+  @override
+  String get serverSetupRepoLink => 'GitHub\'da Görüntüle';
+
+  @override
+  String get serverSetupContinue => 'Devam Et';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Etkinlik Günlüğü';

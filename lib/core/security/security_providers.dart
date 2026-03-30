@@ -38,19 +38,11 @@ enum AttestationStatus {
   keyChanged,
 }
 
-/// Whether the current server URL is the official SSHVault API.
-bool _isOfficialServer(String serverUrl) {
-  return Uri.parse(serverUrl).host ==
-      Uri.parse(AppConstants.defaultServerUrl).host;
-}
-
 /// Performs a background attestation check after the user authenticates.
 ///
-/// Resolves the attestation public key dynamically:
-/// - **Official server**: uses the hardcoded key from [AppConstants].
-/// - **Custom server**: Trust-On-First-Use (TOFU) — fetches the key from
-///   `/v1/attestation/pubkey` on first connect and pins it in secure storage.
-///   Subsequent connections verify against the pinned key.
+/// Resolves the attestation public key via Trust-On-First-Use (TOFU):
+/// fetches the key from `/v1/attestation/pubkey` on first connect and pins
+/// it in secure storage. Subsequent connections verify against the pinned key.
 ///
 /// If the server's public key changes after initial pinning, returns
 /// [AttestationStatus.keyChanged] (critical security event).
@@ -83,13 +75,8 @@ final attestationCheckProvider = FutureProvider.autoDispose<AttestationStatus>((
         tag,
         'Using pinned attestation key for ${Uri.parse(serverUrl).host}',
       );
-    } else if (_isOfficialServer(serverUrl)) {
-      // Official server: use hardcoded key and pin it.
-      publicKeyBase64 = AppConstants.attestationPublicKeyBase64;
-      await storage.saveAttestationKey(serverUrl, publicKeyBase64);
-      log.info(tag, 'Pinned hardcoded key for official server');
     } else {
-      // Custom server, first connection: TOFU — fetch and pin the key.
+      // First connection: TOFU — fetch and pin the key.
       final pubKeyResult = await apiClient.get('/v1/attestation/pubkey');
       if (pubKeyResult.isFailure) {
         log.warning(

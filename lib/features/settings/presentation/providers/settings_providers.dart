@@ -399,13 +399,6 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     ref.invalidateSelf();
   }
 
-  Future<void> setSelfHosted(bool selfHosted) async {
-    _log.info(_tag, 'Self-hosted ${selfHosted ? 'enabled' : 'disabled'}');
-    final dao = ref.read(databaseProvider).appSettingsDao;
-    await dao.setValue(_keySelfHosted, selfHosted.toString());
-    ref.invalidateSelf();
-  }
-
   Future<void> setAutoSync(bool enabled) async {
     _log.info(_tag, 'Auto-sync ${enabled ? 'enabled' : 'disabled'}');
     final dao = ref.read(databaseProvider).appSettingsDao;

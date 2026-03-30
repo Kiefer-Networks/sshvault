@@ -1241,9 +1241,6 @@ class AppLocalizationsRo extends AppLocalizations {
   String get authHasAccount => 'Aveti deja un cont?';
 
   @override
-  String get authSelfHosted => 'Server auto-gazduit';
-
-  @override
   String get authResetEmailSent =>
       'Daca exista un cont, un link de resetare a fost trimis pe email.';
 
@@ -1453,17 +1450,36 @@ class AppLocalizationsRo extends AppLocalizations {
   String get serverConfigTitle => 'Configurare server';
 
   @override
-  String get serverConfigSelfHosted => 'Auto-gazduit';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Utilizati propriul server SSHVault';
-
-  @override
   String get serverConfigUrlLabel => 'URL server';
 
   @override
   String get serverConfigTest => 'Testare conexiune';
+
+  @override
+  String get serverSetupTitle => 'Configurare server';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault necesită un server auto-găzduit pentru sincronizarea criptată end-to-end. Implementați propria instanță pentru a începe.';
+
+  @override
+  String get serverSetupRepoLink => 'Vezi pe GitHub';
+
+  @override
+  String get serverSetupContinue => 'Continuare';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Jurnal activitate';

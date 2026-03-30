@@ -1239,9 +1239,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get authHasAccount => 'Вже маєте обліковий запис?';
 
   @override
-  String get authSelfHosted => 'Власний сервер';
-
-  @override
   String get authResetEmailSent =>
       'Якщо обліковий запис існує, посилання для скидання надіслано на вашу електронну пошту.';
 
@@ -1450,17 +1447,36 @@ class AppLocalizationsUk extends AppLocalizations {
   String get serverConfigTitle => 'Конфігурація сервера';
 
   @override
-  String get serverConfigSelfHosted => 'Власний сервер';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Використовуйте власний сервер SSHVault';
-
-  @override
   String get serverConfigUrlLabel => 'URL сервера';
 
   @override
   String get serverConfigTest => 'Перевірити з\'єднання';
+
+  @override
+  String get serverSetupTitle => 'Налаштування сервера';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault потребує власний сервер для наскрізної зашифрованої синхронізації. Розгорніть свій екземпляр, щоб почати.';
+
+  @override
+  String get serverSetupRepoLink => 'Переглянути на GitHub';
+
+  @override
+  String get serverSetupContinue => 'Продовжити';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Журнал дій';

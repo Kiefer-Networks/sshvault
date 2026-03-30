@@ -1235,9 +1235,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authHasAccount => 'Da co tai khoan?';
 
   @override
-  String get authSelfHosted => 'May chu tu luu tru';
-
-  @override
   String get authResetEmailSent =>
       'Neu tai khoan ton tai, lien ket dat lai da duoc gui den email cua ban.';
 
@@ -1446,17 +1443,36 @@ class AppLocalizationsVi extends AppLocalizations {
   String get serverConfigTitle => 'Cau hinh may chu';
 
   @override
-  String get serverConfigSelfHosted => 'Tu luu tru';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Su dung may chu SSHVault cua rieng ban';
-
-  @override
   String get serverConfigUrlLabel => 'URL may chu';
 
   @override
   String get serverConfigTest => 'Kiem tra ket noi';
+
+  @override
+  String get serverSetupTitle => 'Cài đặt máy chủ';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault yêu cầu máy chủ tự host để đồng bộ mã hóa đầu cuối. Triển khai phiên bản của bạn để bắt đầu.';
+
+  @override
+  String get serverSetupRepoLink => 'Xem trên GitHub';
+
+  @override
+  String get serverSetupContinue => 'Tiếp tục';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Nhat ky hoat dong';
