@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/network/auth_interceptor.dart';
 import 'package:sshvault/core/network/pow_interceptor.dart';
@@ -19,11 +18,11 @@ export 'package:sshvault/core/storage/secure_storage_provider.dart';
 
 /// The active server URL, derived from persisted settings.
 ///
-/// Falls back to [AppConstants.defaultServerUrl] when no custom URL is stored.
-/// Updates automatically when settings change — no manual override needed.
+/// Returns an empty string when no server is configured.
+/// Sync features must check for an empty URL before making API calls.
 final serverUrlProvider = Provider<String>((ref) {
   final url = ref.watch(settingsProvider).value?.serverUrl;
-  return (url != null && url.isNotEmpty) ? url : AppConstants.defaultServerUrl;
+  return (url != null && url.isNotEmpty) ? url : '';
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {

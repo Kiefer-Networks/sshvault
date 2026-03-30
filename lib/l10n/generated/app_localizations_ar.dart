@@ -1228,9 +1228,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authHasAccount => 'لديك حساب بالفعل؟';
 
   @override
-  String get authSelfHosted => 'خادم ذاتي الاستضافة';
-
-  @override
   String get authResetEmailSent =>
       'إذا كان الحساب موجودًا، فقد تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.';
 
@@ -1438,17 +1435,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serverConfigTitle => 'تكوين الخادم';
 
   @override
-  String get serverConfigSelfHosted => 'ذاتي الاستضافة';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'استخدم خادم SSHVault الخاص بك';
-
-  @override
   String get serverConfigUrlLabel => 'عنوان الخادم';
 
   @override
   String get serverConfigTest => 'اختبار الاتصال';
+
+  @override
+  String get serverSetupTitle => 'إعداد الخادم';
+
+  @override
+  String get serverSetupInfoCard =>
+      'يتطلب ShellVault خادمًا مستضافًا ذاتيًا للمزامنة المشفرة من طرف إلى طرف. انشر مثيلك الخاص للبدء.';
+
+  @override
+  String get serverSetupRepoLink => 'عرض على GitHub';
+
+  @override
+  String get serverSetupContinue => 'متابعة';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'سجل النشاط';

@@ -1235,9 +1235,6 @@ class AppLocalizationsNb extends AppLocalizations {
   String get authHasAccount => 'Har du allerede en konto?';
 
   @override
-  String get authSelfHosted => 'Selvhostet server';
-
-  @override
   String get authResetEmailSent =>
       'Hvis en konto finnes, har en tilbakestillingslenke blitt sendt til e-posten din.';
 
@@ -1446,17 +1443,36 @@ class AppLocalizationsNb extends AppLocalizations {
   String get serverConfigTitle => 'Serverkonfigurasjon';
 
   @override
-  String get serverConfigSelfHosted => 'Selvhostet';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Bruk din egen SSHVault-server';
-
-  @override
   String get serverConfigUrlLabel => 'Server-URL';
 
   @override
   String get serverConfigTest => 'Test tilkobling';
+
+  @override
+  String get serverSetupTitle => 'Serveroppsett';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault krever en selvhostet server for ende-til-ende kryptert synkronisering. Distribuer din egen instans for å komme i gang.';
+
+  @override
+  String get serverSetupRepoLink => 'Vis på GitHub';
+
+  @override
+  String get serverSetupContinue => 'Fortsett';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Aktivitetslogg';

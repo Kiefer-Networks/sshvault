@@ -130,7 +130,18 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
-                      onPressed: () => context.push('/login'),
+                      onPressed: () async {
+                        final serverUrl =
+                            ref.read(settingsProvider).value?.serverUrl ?? '';
+                        if (serverUrl.isEmpty) {
+                          await context.push('/server-config');
+                          if (!context.mounted) return;
+                          final updatedUrl =
+                              ref.read(settingsProvider).value?.serverUrl ?? '';
+                          if (updatedUrl.isEmpty) return;
+                        }
+                        if (context.mounted) context.push('/login');
+                      },
                       icon: const Icon(Icons.login),
                       label: Text(l10n.authLogin),
                     ),
@@ -139,7 +150,18 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
-                      onPressed: () => context.push('/register'),
+                      onPressed: () async {
+                        final serverUrl =
+                            ref.read(settingsProvider).value?.serverUrl ?? '';
+                        if (serverUrl.isEmpty) {
+                          await context.push('/server-config');
+                          if (!context.mounted) return;
+                          final updatedUrl =
+                              ref.read(settingsProvider).value?.serverUrl ?? '';
+                          if (updatedUrl.isEmpty) return;
+                        }
+                        if (context.mounted) context.push('/register');
+                      },
                       icon: const Icon(Icons.person_add_outlined),
                       label: Text(l10n.authRegister),
                     ),
@@ -268,24 +290,36 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             ),
           ],
 
-          // Server URL Config
+          // Server Configuration
           const SizedBox(height: 16),
-          SectionHeader(title: l10n.settingsSyncServerUrl),
+          SectionHeader(title: l10n.serverConfigTitle),
           SettingsGroupCard(
             children: [
-              SettingsTile(
-                icon: Icons.cloud_outlined,
-                iconColor: AppColors.iconBlueGrey,
-                title: l10n.settingsSyncServerUrl,
-                subtitleText: settings?.serverUrl.isEmpty ?? true
-                    ? l10n.settingsSyncDefaultServer
-                    : settings!.serverUrl,
-                trailing: Icon(
-                  Icons.chevron_right,
-                  color: theme.colorScheme.onSurfaceVariant,
+              if (settings?.serverUrl.isNotEmpty ?? false) ...[
+                SettingsTile(
+                  icon: Icons.cloud_outlined,
+                  iconColor: AppColors.iconBlueGrey,
+                  title: l10n.serverConfigUrlLabel,
+                  subtitleText: settings!.serverUrl,
                 ),
-                onTap: () => context.push('/server-config'),
-              ),
+                SettingsTile(
+                  icon: Icons.swap_horiz,
+                  iconColor: theme.colorScheme.error,
+                  title: l10n.settingsChangeServer,
+                  onTap: () => _changeServer(l10n),
+                ),
+              ] else
+                SettingsTile(
+                  icon: Icons.cloud_off_outlined,
+                  iconColor: AppColors.iconBlueGrey,
+                  title: l10n.settingsServerNotConfigured,
+                  subtitleText: l10n.settingsSetupSync,
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  onTap: () => context.push('/server-config'),
+                ),
             ],
           ),
           const SizedBox(height: 16),
@@ -935,5 +969,21 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         }
       }
     }
+  }
+
+  Future<void> _changeServer(AppLocalizations l10n) async {
+    final confirmed = await showAdaptiveConfirmDialog(
+      context,
+      title: l10n.settingsChangeServer,
+      message: l10n.settingsChangeServerConfirm,
+      confirmLabel: l10n.settingsChangeServer,
+      cancelLabel: l10n.cancel,
+      isDestructive: true,
+    );
+    if (confirmed != true || !mounted) return;
+    final router = GoRouter.of(context);
+    await ref.read(authProvider.notifier).logout(deleteLocalData: false);
+    await ref.read(settingsProvider.notifier).setServerUrl('');
+    if (mounted) router.go('/server-config');
   }
 }

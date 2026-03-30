@@ -1240,9 +1240,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get authHasAccount => 'Masz już konto?';
 
   @override
-  String get authSelfHosted => 'Własny serwer';
-
-  @override
   String get authResetEmailSent =>
       'Jeśli konto istnieje, link do resetowania został wysłany na Twój adres e-mail.';
 
@@ -1451,17 +1448,36 @@ class AppLocalizationsPl extends AppLocalizations {
   String get serverConfigTitle => 'Konfiguracja serwera';
 
   @override
-  String get serverConfigSelfHosted => 'Własny serwer';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Użyj własnego serwera SSHVault';
-
-  @override
   String get serverConfigUrlLabel => 'Adres URL serwera';
 
   @override
   String get serverConfigTest => 'Testuj połączenie';
+
+  @override
+  String get serverSetupTitle => 'Konfiguracja serwera';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault wymaga własnego serwera do szyfrowanej synchronizacji end-to-end. Wdróż własną instancję, aby rozpocząć.';
+
+  @override
+  String get serverSetupRepoLink => 'Zobacz na GitHub';
+
+  @override
+  String get serverSetupContinue => 'Kontynuuj';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Dziennik aktywności';

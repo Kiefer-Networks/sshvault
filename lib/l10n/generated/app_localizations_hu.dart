@@ -1242,9 +1242,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get authHasAccount => 'Már van fiókja?';
 
   @override
-  String get authSelfHosted => 'Saját üzemeltetésű kiszolgáló';
-
-  @override
   String get authResetEmailSent =>
       'Ha létezik a fiók, egy visszaállítási link lett elküldve az e-mail címére.';
 
@@ -1453,17 +1450,36 @@ class AppLocalizationsHu extends AppLocalizations {
   String get serverConfigTitle => 'Szerver konfiguráció';
 
   @override
-  String get serverConfigSelfHosted => 'Saját üzemeltetésű';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Saját SSHVault szerver használata';
-
-  @override
   String get serverConfigUrlLabel => 'Szerver URL';
 
   @override
   String get serverConfigTest => 'Kapcsolat tesztelése';
+
+  @override
+  String get serverSetupTitle => 'Szerver beállítása';
+
+  @override
+  String get serverSetupInfoCard =>
+      'A ShellVault saját szervert igényel a végponttól végpontig titkosított szinkronizáláshoz. Telepítse saját példányát a kezdéshez.';
+
+  @override
+  String get serverSetupRepoLink => 'Megtekintés a GitHubon';
+
+  @override
+  String get serverSetupContinue => 'Folytatás';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Tevékenységnapló';

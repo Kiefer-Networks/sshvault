@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
-import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class _ConnectionTestState {
   final bool testing;
@@ -34,9 +33,9 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
   void initState() {
     super.initState();
     final url = ref.read(settingsProvider).value?.serverUrl;
-    _urlController.text = (url != null && url.isNotEmpty)
-        ? url
-        : AppConstants.defaultServerUrl;
+    if (url != null && url.isNotEmpty) {
+      _urlController.text = url;
+    }
   }
 
   @override
@@ -49,103 +48,146 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final settingsAsync = ref.watch(settingsProvider);
-    final settings = settingsAsync.value;
-    final isSelfHosted = settings?.selfHosted ?? false;
     final testState = ref.watch(_connectionTestProvider);
-    final authState = ref.watch(authProvider);
-    final isLoggedIn = authState.value == AuthStatus.authenticated;
+    final canContinue = testState.success == true;
 
     return AdaptiveScaffold(
-      title: l10n.serverConfigTitle,
+      title: l10n.serverSetupTitle,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Self-hosted toggle
-          AdaptiveSwitchTile(
-            secondary: const Icon(Icons.dns_outlined),
-            title: l10n.serverConfigSelfHosted,
-            subtitle: l10n.serverConfigSelfHostedDescription,
-            value: isSelfHosted,
-            onChanged: isLoggedIn
-                ? null
-                : (v) {
-                    ref.read(settingsProvider.notifier).setSelfHosted(v);
-                    if (!v) {
-                      _urlController.text = AppConstants.defaultServerUrl;
-                      _saveUrl(AppConstants.defaultServerUrl);
-                    }
-                  },
-          ),
-          if (isLoggedIn)
-            Padding(
-              padding: const EdgeInsets.only(top: 4, left: 16, right: 16),
-              child: Text(
-                l10n.serverUrlLockedWhileLoggedIn,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+          Card(
+            color: theme.colorScheme.primaryContainer,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        color: theme.colorScheme.onPrimaryContainer,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          l10n.serverSetupInfoCard,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () => launchUrl(
+                      Uri.parse(
+                        'https://github.com/Kiefer-Networks/sshvault-api',
+                      ),
+                      mode: LaunchMode.externalApplication,
+                    ),
+                    icon: const Icon(Icons.open_in_new, size: 18),
+                    label: Text(l10n.serverSetupRepoLink),
+                  ),
+                ],
               ),
             ),
-          const SizedBox(height: 16),
+          ),
+          const SizedBox(height: 24),
 
-          // Server URL
           TextField(
             controller: _urlController,
-            enabled: isSelfHosted && !isLoggedIn,
             keyboardType: TextInputType.url,
             decoration: InputDecoration(
               labelText: l10n.serverConfigUrlLabel,
               hintText: l10n.hintExampleServerUrl,
               prefixIcon: const Icon(Icons.link),
-              suffixIcon: IconButton(
-                icon: testState.testing
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.check_circle_outline),
-                tooltip: l10n.serverConfigTest,
-                onPressed: testState.testing ? null : _testConnection,
-              ),
             ),
-            onSubmitted: (_) => _saveUrl(_urlController.text.trim()),
+            onChanged: (_) {
+              ref.read(_connectionTestProvider.notifier).state =
+                  const _ConnectionTestState();
+            },
           ),
+          const SizedBox(height: 16),
+
+          OutlinedButton(
+            onPressed: testState.testing ? null : _testConnection,
+            child: testState.testing
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.check_circle_outline, size: 18),
+                      const SizedBox(width: 8),
+                      Text(l10n.serverConfigTest),
+                    ],
+                  ),
+          ),
+
           if (testState.result != null)
             Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                testState.result!,
-                style: TextStyle(
-                  color: testState.success == true
-                      ? theme.colorScheme.tertiary
-                      : theme.colorScheme.error,
-                ),
+              padding: const EdgeInsets.only(top: 12),
+              child: Row(
+                children: [
+                  Icon(
+                    testState.success == true
+                        ? Icons.check_circle
+                        : Icons.error_outline,
+                    size: 20,
+                    color: testState.success == true
+                        ? theme.colorScheme.tertiary
+                        : theme.colorScheme.error,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      testState.result!,
+                      style: TextStyle(
+                        color: testState.success == true
+                            ? theme.colorScheme.tertiary
+                            : theme.colorScheme.error,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          const SizedBox(height: 8),
-          if (isSelfHosted)
-            Align(
-              alignment: Alignment.centerRight,
-              child: AdaptiveButton.filled(
-                onPressed: () => _saveUrl(_urlController.text.trim()),
-                child: Text(l10n.save),
-              ),
-            ),
+          const SizedBox(height: 24),
+
+          AdaptiveButton.filled(
+            onPressed: canContinue ? _saveAndContinue : null,
+            child: Text(l10n.serverSetupContinue),
+          ),
         ],
       ),
     );
   }
 
-  void _saveUrl(String url) {
+  void _saveAndContinue() {
+    final url = _urlController.text.trim();
     if (url.isEmpty) return;
     ref.read(settingsProvider.notifier).setServerUrl(url);
+    Navigator.of(context).pop();
   }
 
   Future<void> _testConnection() async {
     final url = _urlController.text.trim();
     if (url.isEmpty) return;
+
+    if (!url.startsWith('https://')) {
+      final l10n = AppLocalizations.of(context)!;
+      ref.read(_connectionTestProvider.notifier).state = _ConnectionTestState(
+        result: l10n.connectionTestFailed('HTTPS required'),
+        success: false,
+      );
+      return;
+    }
 
     final l10n = AppLocalizations.of(context)!;
 

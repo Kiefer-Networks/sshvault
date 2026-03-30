@@ -1238,9 +1238,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get authHasAccount => 'पहले से अकाउंट है?';
 
   @override
-  String get authSelfHosted => 'सेल्फ़-होस्टेड सर्वर';
-
-  @override
   String get authResetEmailSent =>
       'यदि अकाउंट मौजूद है, तो आपके ईमेल पर रीसेट लिंक भेजा गया है।';
 
@@ -1449,17 +1446,36 @@ class AppLocalizationsHi extends AppLocalizations {
   String get serverConfigTitle => 'सर्वर कॉन्फ़िगरेशन';
 
   @override
-  String get serverConfigSelfHosted => 'सेल्फ़-होस्टेड';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'अपना SSHVault सर्वर उपयोग करें';
-
-  @override
   String get serverConfigUrlLabel => 'सर्वर URL';
 
   @override
   String get serverConfigTest => 'कनेक्शन टेस्ट करें';
+
+  @override
+  String get serverSetupTitle => 'सर्वर सेटअप';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault को एंड-टू-एंड एन्क्रिप्टेड सिंक के लिए एक स्वयं-होस्ट किया गया सर्वर चाहिए। शुरू करने के लिए अपना खुद का इंस्टेंस तैनात करें।';
+
+  @override
+  String get serverSetupRepoLink => 'GitHub पर देखें';
+
+  @override
+  String get serverSetupContinue => 'जारी रखें';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'गतिविधि लॉग';

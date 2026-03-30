@@ -1236,9 +1236,6 @@ class AppLocalizationsCs extends AppLocalizations {
   String get authHasAccount => 'Již máte účet?';
 
   @override
-  String get authSelfHosted => 'Self-hosted server';
-
-  @override
   String get authResetEmailSent =>
       'Pokud účet existuje, byl na váš e-mail odeslán odkaz pro resetování.';
 
@@ -1447,17 +1444,36 @@ class AppLocalizationsCs extends AppLocalizations {
   String get serverConfigTitle => 'Konfigurace serveru';
 
   @override
-  String get serverConfigSelfHosted => 'Self-hosted';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Použijte vlastní SSHVault server';
-
-  @override
   String get serverConfigUrlLabel => 'URL serveru';
 
   @override
   String get serverConfigTest => 'Otestovat připojení';
+
+  @override
+  String get serverSetupTitle => 'Nastavení serveru';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault vyžaduje vlastní server pro end-to-end šifrovanou synchronizaci. Nasaďte vlastní instanci, abyste mohli začít.';
+
+  @override
+  String get serverSetupRepoLink => 'Zobrazit na GitHubu';
+
+  @override
+  String get serverSetupContinue => 'Pokračovat';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Protokol aktivit';

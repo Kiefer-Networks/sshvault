@@ -7,6 +7,7 @@ import 'package:sshvault/core/network/api_provider.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _obscurePasswordProvider = StateProvider.autoDispose<bool>((_) => true);
@@ -74,6 +75,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
+
+                  Builder(
+                    builder: (context) {
+                      final serverUrl =
+                          ref.watch(settingsProvider).value?.serverUrl ?? '';
+                      if (serverUrl.isEmpty) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Chip(
+                          avatar: const Icon(Icons.dns_outlined, size: 18),
+                          label: Text(
+                            Uri.parse(serverUrl).host,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
 
                   SectionCard(
                     padding: const EdgeInsets.all(20),
@@ -172,19 +191,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-
-                  // Self-hosted link
-                  AdaptiveButton.text(
-                    onPressed: () => context.push('/server-config'),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.dns_outlined, size: 18),
-                        const SizedBox(width: 8),
-                        Text(l10n.authSelfHosted),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),

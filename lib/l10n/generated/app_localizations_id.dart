@@ -1238,9 +1238,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get authHasAccount => 'Sudah punya akun?';
 
   @override
-  String get authSelfHosted => 'Server yang Dihosting Sendiri';
-
-  @override
   String get authResetEmailSent =>
       'Jika akun ada, tautan reset telah dikirim ke email Anda.';
 
@@ -1449,17 +1446,36 @@ class AppLocalizationsId extends AppLocalizations {
   String get serverConfigTitle => 'Konfigurasi Server';
 
   @override
-  String get serverConfigSelfHosted => 'Dihosting Sendiri';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Gunakan server SSHVault Anda sendiri';
-
-  @override
   String get serverConfigUrlLabel => 'URL Server';
 
   @override
   String get serverConfigTest => 'Tes Koneksi';
+
+  @override
+  String get serverSetupTitle => 'Pengaturan Server';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault memerlukan server yang dihosting sendiri untuk sinkronisasi terenkripsi ujung ke ujung. Deploy instansi Anda sendiri untuk memulai.';
+
+  @override
+  String get serverSetupRepoLink => 'Lihat di GitHub';
+
+  @override
+  String get serverSetupContinue => 'Lanjutkan';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Log Aktivitas';

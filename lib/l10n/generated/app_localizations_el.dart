@@ -1244,9 +1244,6 @@ class AppLocalizationsEl extends AppLocalizations {
   String get authHasAccount => 'Έχετε ήδη λογαριασμό;';
 
   @override
-  String get authSelfHosted => 'Αυτο-φιλοξενούμενος διακομιστής';
-
-  @override
   String get authResetEmailSent =>
       'Εάν υπάρχει λογαριασμός, ένας σύνδεσμος επαναφοράς έχει σταλεί στο email σας.';
 
@@ -1455,17 +1452,36 @@ class AppLocalizationsEl extends AppLocalizations {
   String get serverConfigTitle => 'Ρύθμιση διακομιστή';
 
   @override
-  String get serverConfigSelfHosted => 'Αυτο-φιλοξενούμενος';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Χρησιμοποιήστε τον δικό σας διακομιστή SSHVault';
-
-  @override
   String get serverConfigUrlLabel => 'URL διακομιστή';
 
   @override
   String get serverConfigTest => 'Δοκιμή σύνδεσης';
+
+  @override
+  String get serverSetupTitle => 'Ρύθμιση διακομιστή';
+
+  @override
+  String get serverSetupInfoCard =>
+      'Το ShellVault απαιτεί αυτο-φιλοξενούμενο διακομιστή για κρυπτογραφημένο συγχρονισμό από άκρο σε άκρο. Αναπτύξτε τη δική σας παρουσία για να ξεκινήσετε.';
+
+  @override
+  String get serverSetupRepoLink => 'Προβολή στο GitHub';
+
+  @override
+  String get serverSetupContinue => 'Συνέχεια';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Αρχείο δραστηριότητας';

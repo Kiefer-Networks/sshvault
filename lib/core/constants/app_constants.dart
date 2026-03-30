@@ -46,7 +46,6 @@ abstract final class AppConstants {
   static const int defaultPageSize = 50;
 
   // Auth / Sync
-  static const String defaultServerUrl = 'https://api.sshvault.app';
   static const String accessTokenKey = 'sv_access_token';
   static const String refreshTokenKey = 'sv_refresh_token';
   static const String tokenExpiryKey = 'sv_token_expiry';
@@ -59,10 +58,6 @@ abstract final class AppConstants {
 
   // Security — Server Attestation
   static const String expectedServerId = 'sshvault-api-v1';
-  // Ed25519 public key for attestation signature verification (base64-encoded).
-  // Replace with the actual server public key before production deployment.
-  static const String attestationPublicKeyBase64 =
-      'u4hL9b4NSrluOM8TEZDQHrTDOgKnOKpZYJPgnXVX9no=';
 
   // Security — Heartbeat
   static const int heartbeatIntervalSeconds = 60;

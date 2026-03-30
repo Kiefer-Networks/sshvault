@@ -1214,9 +1214,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get authHasAccount => 'すでにアカウントをお持ちですか？';
 
   @override
-  String get authSelfHosted => 'セルフホストサーバー';
-
-  @override
   String get authResetEmailSent => 'アカウントが存在する場合、リセットリンクをメールに送信しました。';
 
   @override
@@ -1417,16 +1414,36 @@ class AppLocalizationsJa extends AppLocalizations {
   String get serverConfigTitle => 'サーバー設定';
 
   @override
-  String get serverConfigSelfHosted => 'セルフホスト';
-
-  @override
-  String get serverConfigSelfHostedDescription => '独自のSSHVaultサーバーを使用';
-
-  @override
   String get serverConfigUrlLabel => 'サーバーURL';
 
   @override
   String get serverConfigTest => '接続テスト';
+
+  @override
+  String get serverSetupTitle => 'サーバーセットアップ';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVaultはエンドツーエンド暗号化同期のためにセルフホストサーバーが必要です。開始するには独自のインスタンスをデプロイしてください。';
+
+  @override
+  String get serverSetupRepoLink => 'GitHubで表示';
+
+  @override
+  String get serverSetupContinue => '続行';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'アクティビティログ';

@@ -2424,12 +2424,6 @@ abstract class AppLocalizations {
   /// **'Already have an account?'**
   String get authHasAccount;
 
-  /// No description provided for @authSelfHosted.
-  ///
-  /// In en, this message translates to:
-  /// **'Self-Hosted Server'**
-  String get authSelfHosted;
-
   /// No description provided for @authResetEmailSent.
   ///
   /// In en, this message translates to:
@@ -2820,18 +2814,6 @@ abstract class AppLocalizations {
   /// **'Server Configuration'**
   String get serverConfigTitle;
 
-  /// No description provided for @serverConfigSelfHosted.
-  ///
-  /// In en, this message translates to:
-  /// **'Self-Hosted'**
-  String get serverConfigSelfHosted;
-
-  /// No description provided for @serverConfigSelfHostedDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Use your own SSHVault server'**
-  String get serverConfigSelfHostedDescription;
-
   /// No description provided for @serverConfigUrlLabel.
   ///
   /// In en, this message translates to:
@@ -2843,6 +2825,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Test Connection'**
   String get serverConfigTest;
+
+  /// No description provided for @serverSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Setup'**
+  String get serverSetupTitle;
+
+  /// No description provided for @serverSetupInfoCard.
+  ///
+  /// In en, this message translates to:
+  /// **'ShellVault requires a self-hosted server for end-to-end encrypted sync. Deploy your own instance to get started.'**
+  String get serverSetupInfoCard;
+
+  /// No description provided for @serverSetupRepoLink.
+  ///
+  /// In en, this message translates to:
+  /// **'View on GitHub'**
+  String get serverSetupRepoLink;
+
+  /// No description provided for @serverSetupContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get serverSetupContinue;
+
+  /// No description provided for @settingsServerNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'No server configured'**
+  String get settingsServerNotConfigured;
+
+  /// No description provided for @settingsSetupSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up sync to back up your data'**
+  String get settingsSetupSync;
+
+  /// No description provided for @settingsChangeServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Server'**
+  String get settingsChangeServer;
+
+  /// No description provided for @settingsChangeServerConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the server will log you out. Continue?'**
+  String get settingsChangeServerConfirm;
 
   /// No description provided for @auditLogTitle.
   ///

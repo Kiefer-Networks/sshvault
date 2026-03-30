@@ -1241,9 +1241,6 @@ class AppLocalizationsFi extends AppLocalizations {
   String get authHasAccount => 'Onko sinulla jo tili?';
 
   @override
-  String get authSelfHosted => 'Itse ylläpidetty palvelin';
-
-  @override
   String get authResetEmailSent =>
       'Jos tili on olemassa, salasanan palautuslinkki on lähetetty sähköpostiisi.';
 
@@ -1452,17 +1449,36 @@ class AppLocalizationsFi extends AppLocalizations {
   String get serverConfigTitle => 'Palvelimen asetukset';
 
   @override
-  String get serverConfigSelfHosted => 'Itse ylläpidetty';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'Käytä omaa SSHVault-palvelinta';
-
-  @override
   String get serverConfigUrlLabel => 'Palvelimen URL';
 
   @override
   String get serverConfigTest => 'Testaa yhteys';
+
+  @override
+  String get serverSetupTitle => 'Palvelimen asennus';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault vaatii oman palvelimen päästä päähän salattuun synkronointiin. Ota käyttöön oma instanssi aloittaaksesi.';
+
+  @override
+  String get serverSetupRepoLink => 'Katso GitHubissa';
+
+  @override
+  String get serverSetupContinue => 'Jatka';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'Toimintoloki';

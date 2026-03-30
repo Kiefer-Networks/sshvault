@@ -1233,9 +1233,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get authHasAccount => 'มีบัญชีอยู่แล้ว?';
 
   @override
-  String get authSelfHosted => 'เซิร์ฟเวอร์โฮสต์เอง';
-
-  @override
   String get authResetEmailSent =>
       'หากมีบัญชีอยู่ ลิงก์รีเซ็ตจะถูกส่งไปยังอีเมลของคุณ';
 
@@ -1442,17 +1439,36 @@ class AppLocalizationsTh extends AppLocalizations {
   String get serverConfigTitle => 'การกำหนดค่าเซิร์ฟเวอร์';
 
   @override
-  String get serverConfigSelfHosted => 'โฮสต์เอง';
-
-  @override
-  String get serverConfigSelfHostedDescription =>
-      'ใช้เซิร์ฟเวอร์ SSHVault ของคุณเอง';
-
-  @override
   String get serverConfigUrlLabel => 'URL เซิร์ฟเวอร์';
 
   @override
   String get serverConfigTest => 'ทดสอบการเชื่อมต่อ';
+
+  @override
+  String get serverSetupTitle => 'ตั้งค่าเซิร์ฟเวอร์';
+
+  @override
+  String get serverSetupInfoCard =>
+      'ShellVault ต้องการเซิร์ฟเวอร์ที่โฮสต์เองสำหรับการซิงค์แบบเข้ารหัสจากต้นทางถึงปลายทาง ปรับใช้อินสแตนซ์ของคุณเองเพื่อเริ่มต้น';
+
+  @override
+  String get serverSetupRepoLink => 'ดูบน GitHub';
+
+  @override
+  String get serverSetupContinue => 'ดำเนินการต่อ';
+
+  @override
+  String get settingsServerNotConfigured => 'No server configured';
+
+  @override
+  String get settingsSetupSync => 'Set up sync to back up your data';
+
+  @override
+  String get settingsChangeServer => 'Change Server';
+
+  @override
+  String get settingsChangeServerConfirm =>
+      'Changing the server will log you out. Continue?';
 
   @override
   String get auditLogTitle => 'บันทึกกิจกรรม';
