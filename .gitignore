@@ -179,3 +179,4 @@ migrate_working_dir/
 .atom/
 *.pyc
 node_modules/
+linux/flatpak-dist/
