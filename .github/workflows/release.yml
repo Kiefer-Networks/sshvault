@@ -180,7 +180,6 @@ jobs:
     name: macOS (App)
     needs: preflight
     runs-on: macos-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -190,6 +189,15 @@ jobs:
           cache: true
 
       - run: flutter pub get
+
+      - name: Disable code signing for CI
+        run: |
+          # Override signing settings so the build succeeds without
+          # an Apple Developer account on the runner.
+          cd macos
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development"/CODE_SIGN_IDENTITY = "-"/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/DEVELOPMENT_TEAM = 2W8Z745MAL/DEVELOPMENT_TEAM = ""/g' Runner.xcodeproj/project.pbxproj
 
       - name: Build macOS
         run: flutter build macos --release
