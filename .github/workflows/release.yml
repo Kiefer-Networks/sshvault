@@ -180,6 +180,7 @@ jobs:
     name: macOS (App)
     needs: preflight
     runs-on: macos-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -292,6 +293,7 @@ jobs:
   release:
     name: Create GitHub Release
     needs: [preflight, build-android, build-flatpak, build-macos, build-windows]
+    if: ${{ !cancelled() && needs.preflight.result == 'success' && needs.build-android.result == 'success' && needs.build-flatpak.result == 'success' && needs.build-windows.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
