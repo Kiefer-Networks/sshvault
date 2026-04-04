@@ -224,10 +224,10 @@ jobs:
           path: '*.dmg'
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Windows (MSIX)
+  # Windows (EXE Installer)
   # ─────────────────────────────────────────────────────────────────────────
   build-windows:
-    name: Windows (MSIX)
+    name: Windows (EXE)
     needs: preflight
     runs-on: windows-latest
     steps:
@@ -243,57 +243,17 @@ jobs:
       - name: Build Windows
         run: flutter build windows --release
 
-      - name: Create MSIX
+      - name: Create EXE installer
         env:
           VERSION: ${{ needs.preflight.outputs.version }}
         shell: pwsh
         run: |
-          # Update msix_version in pubspec.yaml to match release version
-          $v = "$env:VERSION.0"
-          (Get-Content pubspec.yaml) -replace 'msix_version: .+', "msix_version: $v" | Set-Content pubspec.yaml
-          dart run msix:create --build-windows false
+          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' /DAppVersion="$env:VERSION" windows\installer.iss
 
-      - name: Rename MSIX
-        env:
-          VERSION: ${{ needs.preflight.outputs.version }}
-        shell: pwsh
-        run: |
-          $msix = Get-ChildItem -Path "build\windows\x64\runner\Release" -Filter "*.msix" | Select-Object -First 1
-          if ($msix) {
-            Copy-Item $msix.FullName "SSHVault-${env:VERSION}-windows.msix"
-          }
-
-      # Upload unsigned MSIX for SignPath signing
-      - name: Upload unsigned MSIX
-        id: upload-unsigned-msix
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-msix-unsigned
-          path: SSHVault-*.msix
-
-      # SignPath signing (only if configured)
-      - name: Sign MSIX with SignPath
-        if: vars.SIGNPATH_ORGANIZATION_ID != ''
-        id: sign-msix
-        uses: signpath/github-action-submit-signing-request@v1
-        with:
-          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
-          organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
-          project-slug: '${{ vars.SIGNPATH_PROJECT_SLUG }}'
-          signing-policy-slug: '${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}'
-          github-artifact-id: '${{ steps.upload-unsigned-msix.outputs.artifact-id }}'
-          wait-for-completion: true
-          output-artifact-directory: signed-msix
-        continue-on-error: true
-
-      # Upload final artifact (signed if available, unsigned otherwise)
-      - name: Upload Windows MSIX
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: |
-            signed-msix/*.msix
-            SSHVault-*.msix
+          path: installer-output/*.exe
 
   # ─────────────────────────────────────────────────────────────────────────
   # GitHub Release
@@ -333,14 +293,8 @@ jobs:
           # macOS
           cp artifacts/macos-dmg/*.dmg release-assets/ 2>/dev/null || true
 
-          # Windows MSIX — prefer signed, fall back to unsigned
-          if ls artifacts/windows-build/signed-msix/*.msix 1>/dev/null 2>&1; then
-            cp artifacts/windows-build/signed-msix/*.msix \
-               "release-assets/SSHVault-${VERSION}-windows.msix" 2>/dev/null || true
-          elif ls artifacts/windows-build/*.msix 1>/dev/null 2>&1; then
-            cp artifacts/windows-build/SSHVault-*.msix \
-               "release-assets/SSHVault-${VERSION}-windows.msix" 2>/dev/null || true
-          fi
+          # Windows EXE installer
+          cp artifacts/windows-build/*.exe release-assets/ 2>/dev/null || true
 
           ls -lh release-assets/
 
@@ -368,7 +322,7 @@ jobs:
           | Android (AAB for Play Store) | \`SSHVault-${VERSION}.aab\` |
           | Linux (Flatpak) | \`SSHVault-${VERSION}.flatpak\` |
           | macOS (DMG) | \`SSHVault-${VERSION}-macos.dmg\` |
-          | Windows (MSIX) | \`SSHVault-${VERSION}-windows.msix\` |
+          | Windows (EXE) | \`SSHVault-${VERSION}-windows-setup.exe\` |
 
           ### Install
 
@@ -382,7 +336,7 @@ jobs:
 
           **macOS:** Open the DMG and drag SSHVault to Applications.
 
-          **Windows:** Double-click the MSIX to install. Updates are handled automatically.
+          **Windows:** Run the setup EXE and follow the installer.
 
           ---
           **License:** AGPL-3.0 | **Website:** [kiefer-networks.de](https://kiefer-networks.de) | **Donate:** [Liberapay](https://de.liberapay.com/beli3ver)

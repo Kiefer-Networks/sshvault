@@ -180,3 +180,4 @@ migrate_working_dir/
 *.pyc
 node_modules/
 linux/flatpak-dist/
+windows/msix-signing.pfx

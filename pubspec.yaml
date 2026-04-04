@@ -87,20 +87,6 @@ dev_dependencies:
   json_serializable: ^6.13.0
   riverpod_generator: ^4.0.3
   drift_dev: ^2.31.0
-  msix: ^3.16.13
-
-msix_config:
-  display_name: SSHVault
-  publisher_display_name: Kiefer Networks
-  publisher: CN=Kiefer Networks, O=Kiefer Networks, C=DE
-  identity_name: de.kiefer-networks.sshvault
-  msix_version: 1.3.4.0
-  logo_path: windows/runner/resources/app_icon.ico
-  capabilities: internetClient
-  languages: en, de, es, fr, pt, it, ru, uk, pl, ja, ko, zh, ar, hi, tr, sv, nb, da, fi, cs, hu, ro, th, vi, nl, id, el, he
-  architecture: x64
-  sign_msix: false
-  install_certificate: false
 
 dependency_overrides:
   # Local fork with SFTP subsystem await fix (sendSubsystem was not awaited in sftp())
