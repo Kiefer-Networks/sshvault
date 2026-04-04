@@ -240,7 +240,12 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
 
           // Apply button
           Padding(
-            padding: EdgeInsets.fromLTRB(Spacing.lg, Spacing.sm, Spacing.lg, Spacing.lg),
+            padding: EdgeInsets.fromLTRB(
+              Spacing.lg,
+              Spacing.sm,
+              Spacing.lg,
+              Spacing.lg,
+            ),
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(

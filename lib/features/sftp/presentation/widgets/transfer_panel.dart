@@ -151,7 +151,10 @@ class _TransferItemTile extends ConsumerWidget {
     final fileName = item.sourcePath.split('/').last;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Spacing.lg, vertical: Spacing.xxs),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Spacing.lg,
+        vertical: Spacing.xxs,
+      ),
       child: Row(
         children: [
           Icon(

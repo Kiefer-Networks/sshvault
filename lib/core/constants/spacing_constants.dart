@@ -26,19 +26,26 @@ abstract final class Spacing {
   static const EdgeInsets paddingAllSm = EdgeInsets.all(sm);
   static const EdgeInsets paddingAllXxxl = EdgeInsets.all(xxxxl);
 
-  static const EdgeInsets paddingHorizontalLg =
-      EdgeInsets.symmetric(horizontal: lg);
-  static const EdgeInsets paddingHorizontalXxl =
-      EdgeInsets.symmetric(horizontal: xxl);
-  static const EdgeInsets paddingHorizontalXxxl =
-      EdgeInsets.symmetric(horizontal: xxxxl);
-  static const EdgeInsets paddingHorizontalSm =
-      EdgeInsets.symmetric(horizontal: sm);
-  static const EdgeInsets paddingHorizontalXxs =
-      EdgeInsets.symmetric(horizontal: xxs);
+  static const EdgeInsets paddingHorizontalLg = EdgeInsets.symmetric(
+    horizontal: lg,
+  );
+  static const EdgeInsets paddingHorizontalXxl = EdgeInsets.symmetric(
+    horizontal: xxl,
+  );
+  static const EdgeInsets paddingHorizontalXxxl = EdgeInsets.symmetric(
+    horizontal: xxxxl,
+  );
+  static const EdgeInsets paddingHorizontalSm = EdgeInsets.symmetric(
+    horizontal: sm,
+  );
+  static const EdgeInsets paddingHorizontalXxs = EdgeInsets.symmetric(
+    horizontal: xxs,
+  );
 
-  static const EdgeInsets paddingHorizontalLgVerticalSm =
-      EdgeInsets.symmetric(horizontal: lg, vertical: sm);
+  static const EdgeInsets paddingHorizontalLgVerticalSm = EdgeInsets.symmetric(
+    horizontal: lg,
+    vertical: sm,
+  );
 
   // --- common SizedBox spacers ---
   static const SizedBox verticalXxs = SizedBox(height: xxs);

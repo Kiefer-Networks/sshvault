@@ -35,7 +35,12 @@ Future<void> showAdaptiveActionSheet(
         children: [
           if (title != null)
             Padding(
-              padding: EdgeInsets.fromLTRB(Spacing.lg, Spacing.lg, Spacing.lg, Spacing.sm),
+              padding: EdgeInsets.fromLTRB(
+                Spacing.lg,
+                Spacing.lg,
+                Spacing.lg,
+                Spacing.sm,
+              ),
               child: Text(title, style: Theme.of(ctx).textTheme.titleMedium),
             ),
           ...actions.map((a) {

@@ -49,7 +49,12 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.fromLTRB(Spacing.lg, Spacing.sm, Spacing.lg, Spacing.xxs),
+            padding: const EdgeInsets.fromLTRB(
+              Spacing.lg,
+              Spacing.sm,
+              Spacing.lg,
+              Spacing.xxs,
+            ),
             child: SearchBar(
               controller: _searchController,
               hintText: l10n.snippetSearchHint,

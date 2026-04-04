@@ -59,8 +59,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
 
     final brightness = Theme.of(context).brightness;
     final terminalTheme = themeKeyAsync.when(
-      data: (key) =>
-          TerminalThemePresets.getTheme(key, brightness: brightness),
+      data: (key) => TerminalThemePresets.getTheme(key, brightness: brightness),
       loading: () => TerminalThemePresets.getTheme(
         TerminalThemeKey.defaultDark,
         brightness: brightness,

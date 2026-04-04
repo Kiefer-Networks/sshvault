@@ -874,7 +874,12 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
       context: context,
       builder: (ctx) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(Spacing.xxl, Spacing.xxl, Spacing.xxl, Spacing.lg),
+          padding: const EdgeInsets.fromLTRB(
+            Spacing.xxl,
+            Spacing.xxl,
+            Spacing.xxl,
+            Spacing.lg,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,

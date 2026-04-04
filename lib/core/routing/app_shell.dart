@@ -635,7 +635,12 @@ class _AppDrawer extends StatelessWidget {
       children: [
         // Branding header
         Padding(
-          padding: EdgeInsets.fromLTRB(Spacing.xxxl, Spacing.xxl, Spacing.xxxl, Spacing.sm),
+          padding: EdgeInsets.fromLTRB(
+            Spacing.xxxl,
+            Spacing.xxl,
+            Spacing.xxxl,
+            Spacing.sm,
+          ),
           child: Row(
             children: [
               Image.asset('assets/images/app_icon.png', width: 28, height: 28),
@@ -651,7 +656,12 @@ class _AppDrawer extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(Spacing.xxxl, Spacing.sm, Spacing.xxxl, Spacing.sm),
+          padding: EdgeInsets.fromLTRB(
+            Spacing.xxxl,
+            Spacing.sm,
+            Spacing.xxxl,
+            Spacing.sm,
+          ),
           child: const Divider(),
         ),
 
@@ -659,7 +669,12 @@ class _AppDrawer extends StatelessWidget {
         for (var i = 0; i < items.length; i++) ...[
           if (breaks.contains(i))
             Padding(
-              padding: EdgeInsets.fromLTRB(Spacing.xxxl, Spacing.xxs, Spacing.xxxl, Spacing.xxs),
+              padding: EdgeInsets.fromLTRB(
+                Spacing.xxxl,
+                Spacing.xxs,
+                Spacing.xxxl,
+                Spacing.xxs,
+              ),
               child: const Divider(),
             ),
           NavigationDrawerDestination(
@@ -709,11 +724,19 @@ class _DrawerSettingsSection extends ConsumerWidget {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(Spacing.xxxl, Spacing.lg, Spacing.xxxl, Spacing.sm),
+          padding: EdgeInsets.fromLTRB(
+            Spacing.xxxl,
+            Spacing.lg,
+            Spacing.xxxl,
+            Spacing.sm,
+          ),
           child: const Divider(),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: Spacing.md, vertical: Spacing.xxxs),
+          padding: EdgeInsets.symmetric(
+            horizontal: Spacing.md,
+            vertical: Spacing.xxxs,
+          ),
           child: ListTile(
             leading: iconWidget,
             title: Text(l10n.navSettings),
