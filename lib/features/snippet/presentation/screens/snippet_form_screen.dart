@@ -3,6 +3,7 @@ import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -159,10 +160,10 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: ListView(
-              padding: const EdgeInsets.all(16),
+              padding: Spacing.paddingAllLg,
               children: [
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     children: [
                       // Name
@@ -178,7 +179,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                             ? l10n.snippetFormNameRequired
                             : null,
                       ),
-                      const SizedBox(height: 16),
+                      Spacing.verticalLg,
 
                       // Language
                       DropdownMenu<String>(
@@ -197,7 +198,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                           }
                         },
                       ),
-                      const SizedBox(height: 16),
+                      Spacing.verticalLg,
 
                       // Content
                       TextFormField(
@@ -217,7 +218,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                             ? l10n.snippetFormContentRequired
                             : null,
                       ),
-                      const SizedBox(height: 16),
+                      Spacing.verticalLg,
 
                       // Description
                       TextFormField(
@@ -234,10 +235,10 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     children: [
                       // Folder selector
@@ -268,7 +269,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                           );
                         },
                       ),
-                      const SizedBox(height: 16),
+                      Spacing.verticalLg,
 
                       // Tags
                       TagSelector(
@@ -280,11 +281,11 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Variables
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: VariableEditor(
                     variables: formState.variables,
                     onChanged: (vars) =>
@@ -292,7 +293,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
                             formState.copyWith(variables: vars),
                   ),
                 ),
-                const SizedBox(height: 32),
+                Spacing.verticalXxxl,
               ],
             ),
           ),

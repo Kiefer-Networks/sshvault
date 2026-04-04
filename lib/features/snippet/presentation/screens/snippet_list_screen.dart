@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,7 +49,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+            padding: const EdgeInsets.fromLTRB(Spacing.lg, Spacing.sm, Spacing.lg, Spacing.xxs),
             child: SearchBar(
               controller: _searchController,
               hintText: l10n.snippetSearchHint,
@@ -75,7 +76,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
           // Language filter chips
           if (filter.language != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: Spacing.paddingHorizontalLg,
               child: Row(
                 children: [
                   Chip(
@@ -89,7 +90,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
               ),
             ),
 
-          const SizedBox(height: 8),
+          Spacing.verticalSm,
 
           // List
           Expanded(
@@ -109,9 +110,9 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                 }
 
                 return ListView.separated(
-                  padding: const EdgeInsets.only(bottom: 80),
+                  padding: const EdgeInsets.only(bottom: Spacing.fabClearance),
                   itemCount: snippets.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 4),
+                  separatorBuilder: (_, _) => Spacing.verticalXxs,
                   itemBuilder: (context, index) {
                     final snippet = snippets[index];
                     return SnippetTile(

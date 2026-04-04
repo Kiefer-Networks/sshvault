@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class _ForgotPasswordState {
@@ -64,7 +65,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       title: l10n.authForgotPassword,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: Spacing.paddingAllXxl,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: fpState.sent
@@ -76,13 +77,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         size: 64,
                         color: Theme.of(context).colorScheme.tertiary,
                       ),
-                      const SizedBox(height: 16),
+                      Spacing.verticalLg,
                       Text(
                         l10n.authResetEmailSent,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      const SizedBox(height: 24),
+                      Spacing.verticalXxl,
                       AdaptiveButton.filled(
                         onPressed: () => Navigator.pop(context),
                         child: Text(l10n.authBackToLogin),
@@ -99,7 +100,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                           l10n.authResetDescription,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        const SizedBox(height: 24),
+                        Spacing.verticalXxl,
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -114,7 +115,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 24),
+                        Spacing.verticalXxl,
                         AdaptiveButton.filled(
                           onPressed: fpState.loading ? null : _sendReset,
                           child: fpState.loading

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 
 class EmptyState extends StatelessWidget {
   final IconData icon;
@@ -20,7 +21,7 @@ class EmptyState extends StatelessWidget {
     final theme = Theme.of(context);
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: Spacing.paddingAllXxxl,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -31,7 +32,7 @@ class EmptyState extends StatelessWidget {
                 AppConstants.alpha51,
               ),
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             Text(
               title,
               style: theme.textTheme.titleLarge?.copyWith(
@@ -41,7 +42,7 @@ class EmptyState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             Text(
               subtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -51,7 +52,7 @@ class EmptyState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            if (action != null) ...[const SizedBox(height: 24), action!],
+            if (action != null) ...[Spacing.verticalXxl, action!],
           ],
         ),
       ),

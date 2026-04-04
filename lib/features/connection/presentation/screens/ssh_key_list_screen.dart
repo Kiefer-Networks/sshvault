@@ -3,6 +3,7 @@ import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/widgets/error_state.dart';
 import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
@@ -48,9 +49,9 @@ class SshKeyListScreen extends ConsumerWidget {
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.only(bottom: 80),
+            padding: EdgeInsets.only(bottom: Spacing.fabClearance),
             itemCount: keys.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 4),
+            separatorBuilder: (_, _) => Spacing.verticalXxs,
             itemBuilder: (context, index) {
               final key = keys[index];
               return SshKeyTile(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 /// Severity level for security warnings.
@@ -78,7 +79,7 @@ class SecurityWarningDialog extends StatelessWidget {
           : colorScheme.tertiaryContainer,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: Spacing.paddingAllXxl,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -89,7 +90,7 @@ class SecurityWarningDialog extends StatelessWidget {
                     ? colorScheme.onErrorContainer
                     : colorScheme.onTertiaryContainer,
               ),
-              const SizedBox(height: 24),
+              Spacing.verticalXxl,
               Text(
                 title,
                 style: theme.textTheme.headlineMedium?.copyWith(
@@ -100,7 +101,7 @@ class SecurityWarningDialog extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              Spacing.verticalLg,
               Text(
                 message,
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -111,9 +112,9 @@ class SecurityWarningDialog extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               if (details != null) ...[
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: Spacing.paddingAllMd,
                   decoration: BoxDecoration(
                     color: colorScheme.surface.withAlpha(80),
                     borderRadius: BorderRadius.circular(8),
@@ -129,7 +130,7 @@ class SecurityWarningDialog extends StatelessWidget {
                   ),
                 ),
               ],
-              const SizedBox(height: 32),
+              Spacing.verticalXxxl,
               FilledButton.icon(
                 onPressed: onDisconnect,
                 icon: const Icon(Icons.power_settings_new),
@@ -141,7 +142,7 @@ class SecurityWarningDialog extends StatelessWidget {
                 ),
               ),
               if (onReport != null) ...[
-                const SizedBox(height: 12),
+                Spacing.verticalMd,
                 OutlinedButton.icon(
                   onPressed: onReport,
                   icon: const Icon(Icons.flag),
@@ -156,7 +157,7 @@ class SecurityWarningDialog extends StatelessWidget {
               ],
               // Only show "Continue" for non-critical warnings
               if (!isCritical && onContinue != null) ...[
-                const SizedBox(height: 12),
+                Spacing.verticalMd,
                 TextButton(
                   onPressed: onContinue,
                   child: Text(

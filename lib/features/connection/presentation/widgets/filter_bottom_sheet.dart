@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
 import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
 import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
@@ -59,7 +60,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
     for (final folder in folders) {
       widgets.add(
         Padding(
-          padding: EdgeInsets.only(left: depth * 16.0),
+          padding: EdgeInsets.only(left: depth * Spacing.lg),
           child: FilterChip(
             avatar: Icon(
               IconConstants.getIcon(folder.iconName),
@@ -103,7 +104,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
         children: [
           // Handle
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(vertical: Spacing.md),
             child: Container(
               width: 32,
               height: 4,
@@ -116,7 +117,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
 
           // Title
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: Spacing.paddingHorizontalLg,
             child: Row(
               children: [
                 Text(l10n.filterTitle, style: theme.textTheme.titleLarge),
@@ -132,17 +133,17 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          Spacing.verticalSm,
 
           // Scrollable content
           Expanded(
             child: ListView(
               controller: scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: Spacing.paddingHorizontalLg,
               children: [
                 // Folder filter
                 Text(l10n.filterFolder, style: theme.textTheme.titleSmall),
-                const SizedBox(height: 8),
+                Spacing.verticalSm,
                 foldersAsync.when(
                   data: (folders) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,18 +155,18 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                           ref.read(_draftGroupIdProvider.notifier).state = null;
                         },
                       ),
-                      const SizedBox(height: 4),
+                      Spacing.verticalXxs,
                       ..._buildFolderFilterTree(folders, 0, groupId),
                     ],
                   ),
                   loading: () => const SizedBox.shrink(),
                   error: (_, _) => const SizedBox.shrink(),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Tag filter
                 Text(l10n.filterTags, style: theme.textTheme.titleSmall),
-                const SizedBox(height: 8),
+                Spacing.verticalSm,
                 tagsAsync.when(
                   data: (tags) => Wrap(
                     spacing: 8,
@@ -198,11 +199,11 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   loading: () => const SizedBox.shrink(),
                   error: (_, _) => const SizedBox.shrink(),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Status filter
                 Text(l10n.filterStatus, style: theme.textTheme.titleSmall),
-                const SizedBox(height: 8),
+                Spacing.verticalSm,
                 Wrap(
                   spacing: 8,
                   runSpacing: 4,
@@ -232,14 +233,14 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                Spacing.verticalXxl,
               ],
             ),
           ),
 
           // Apply button
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: EdgeInsets.fromLTRB(Spacing.lg, Spacing.sm, Spacing.lg, Spacing.lg),
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(

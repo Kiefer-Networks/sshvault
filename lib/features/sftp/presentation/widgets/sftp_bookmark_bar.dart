@@ -5,6 +5,7 @@ import 'package:sshvault/features/sftp/domain/entities/sftp_bookmark_entity.dart
 import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_bookmark_providers.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpBookmarkBar extends ConsumerWidget {
@@ -28,9 +29,9 @@ class SftpBookmarkBar extends ConsumerWidget {
           height: 36,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: Spacing.paddingHorizontalSm,
             itemCount: bookmarks.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 4),
+            separatorBuilder: (_, _) => Spacing.horizontalXxs,
             itemBuilder: (context, index) {
               final bm = bookmarks[index];
               final isCurrent = paneState.currentPath == bm.path;

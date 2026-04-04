@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:sshvault/core/widgets/settings/circle_icon.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
@@ -77,9 +78,9 @@ class SshKeyTile extends ConsumerWidget {
         title: Row(
           children: [
             Expanded(child: Text(sshKey.name, overflow: TextOverflow.ellipsis)),
-            const SizedBox(width: 8),
+            Spacing.horizontalSm,
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: 2),
               decoration: BoxDecoration(
                 color: theme.colorScheme.secondaryContainer,
                 borderRadius: BorderRadius.circular(8),
@@ -97,7 +98,7 @@ class SshKeyTile extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (sshKey.fingerprint.isNotEmpty) ...[
-              const SizedBox(height: 2),
+              SizedBox(height: Spacing.xxxs),
               Text(
                 sshKey.fingerprint,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -113,7 +114,7 @@ class SshKeyTile extends ConsumerWidget {
             ],
             if (serverNames.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(top: 2),
+                padding: EdgeInsets.only(top: Spacing.xxxs),
                 child: Text(
                   serverNames.map((s) => s.name).join(', '),
                   style: theme.textTheme.bodySmall?.copyWith(

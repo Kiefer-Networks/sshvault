@@ -8,6 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/core/widgets/error_state.dart';
 import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
@@ -65,9 +66,9 @@ class FolderBrowserScreen extends ConsumerWidget {
 
           final widgets = _buildFolderList(context, ref, folders);
           return ListView.separated(
-            padding: const EdgeInsets.only(bottom: 80),
+            padding: EdgeInsets.only(bottom: Spacing.fabClearance),
             itemCount: widgets.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 4),
+            separatorBuilder: (_, _) => Spacing.verticalXxs,
             itemBuilder: (_, index) => widgets[index],
           );
         },
@@ -226,8 +227,8 @@ class _FolderTile extends ConsumerWidget {
                 : null,
             child: ListTile(
               contentPadding: EdgeInsets.only(
-                left: 16.0 + depth * 24.0,
-                right: 16.0,
+                left: Spacing.lg + depth * Spacing.xxl,
+                right: Spacing.lg,
               ),
               leading: Container(
                 width: 44,
@@ -265,8 +266,8 @@ class _FolderTile extends ConsumerWidget {
                             label: Text(l10n.folderConnectAll),
                             style: OutlinedButton.styleFrom(
                               visualDensity: VisualDensity.compact,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Spacing.md,
                               ),
                             ),
                           ),
@@ -321,7 +322,7 @@ class _FolderServerList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final serversAsync = ref.watch(serversByGroupProvider(folderId));
     final theme = Theme.of(context);
-    final indent = 16.0 + depth * 24.0 + 24.0;
+    final indent = Spacing.lg + depth * Spacing.xxl + Spacing.xxl;
 
     return serversAsync.when(
       data: (servers) {
@@ -347,7 +348,7 @@ class _FolderServerList extends ConsumerWidget {
         );
       },
       loading: () => Padding(
-        padding: EdgeInsets.only(left: indent, top: 8, bottom: 8),
+        padding: EdgeInsets.only(left: indent, top: Spacing.sm, bottom: Spacing.sm),
         child: const SizedBox(
           height: 20,
           width: 20,
@@ -383,7 +384,7 @@ class _ServerSubTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: EdgeInsets.only(left: indent, right: 16),
+      contentPadding: EdgeInsets.only(left: indent, right: Spacing.lg),
       dense: true,
       leading: Icon(Icons.dns_outlined, size: 18, color: Color(server.color)),
       title: Text(

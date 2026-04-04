@@ -13,6 +13,7 @@ import 'package:sshvault/features/sftp/domain/entities/transfer_item.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
 import 'package:sshvault/features/sftp/presentation/widgets/sftp_pane.dart';
 import 'package:sshvault/features/sftp/presentation/widgets/transfer_panel.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpBrowserScreen extends ConsumerStatefulWidget {
@@ -39,14 +40,14 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: Spacing.paddingAllLg,
               child: Row(
                 children: [
                   Icon(
                     Icons.check_circle,
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
-                  const SizedBox(width: 12),
+                  Spacing.horizontalMd,
                   Expanded(
                     child: Text(
                       l10n.sftpDownloadComplete(fileName),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 
 /// A reusable row that displays an icon, label, and value.
 ///
@@ -27,7 +28,7 @@ class InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: Spacing.sm),
       child: Row(
         children: [
           Icon(
@@ -35,7 +36,7 @@ class InfoRow extends StatelessWidget {
             size: 18,
             color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
           ),
-          const SizedBox(width: 8),
+          Spacing.horizontalSm,
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -44,7 +45,7 @@ class InfoRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          Spacing.horizontalMd,
           Expanded(
             child: Text(
               value,
@@ -56,7 +57,7 @@ class InfoRow extends StatelessWidget {
             ),
           ),
           if (onTap != null) ...[
-            const SizedBox(width: 4),
+            Spacing.horizontalXxs,
             IconButton(
               onPressed: onTap,
               icon: Icon(
@@ -71,7 +72,7 @@ class InfoRow extends StatelessWidget {
               padding: EdgeInsets.zero,
             ),
           ],
-          if (trailing != null) ...[const SizedBox(width: 4), trailing!],
+          if (trailing != null) ...[Spacing.horizontalXxs, trailing!],
         ],
       ),
     );

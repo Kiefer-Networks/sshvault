@@ -5,6 +5,7 @@ import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
 import 'package:sshvault/features/host_key/presentation/providers/known_host_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class KnownHostListScreen extends ConsumerWidget {
@@ -32,7 +33,7 @@ class KnownHostListScreen extends ConsumerWidget {
             return _EmptyState(l10n: l10n);
           }
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: Spacing.sm),
             itemCount: hosts.length,
             itemBuilder: (context, index) {
               final host = hosts[index];
@@ -93,7 +94,7 @@ class _EmptyState extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: Spacing.paddingAllXxxl,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -102,13 +103,13 @@ class _EmptyState extends StatelessWidget {
               size: 64,
               color: Theme.of(context).colorScheme.outline,
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             Text(
               l10n.hostKeyEmpty,
               style: textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             Text(
               l10n.hostKeyEmptySubtitle,
               style: textTheme.bodyMedium?.copyWith(
@@ -141,7 +142,7 @@ class _KnownHostTile extends StatelessWidget {
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.only(right: Spacing.lg),
         color: colorScheme.error,
         child: Icon(Icons.delete, color: colorScheme.onError),
       ),

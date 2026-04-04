@@ -6,6 +6,7 @@ import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _obscurePasswordProvider = StateProvider.autoDispose<bool>((_) => true);
@@ -40,7 +41,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     ref.listen(authProvider, (prev, next) {
       if (next.value == AuthStatus.authenticated && mounted) {
-        context.go('/');
+        context.go('/sync-password?mode=create');
       }
       if (next.hasError && mounted) {
         AdaptiveNotification.show(context, message: errorMessage(next.error!));
@@ -51,7 +52,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       title: l10n.authRegister,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: Spacing.paddingAllXxl,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: Form(
@@ -65,9 +66,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     size: 48,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  const SizedBox(height: 24),
+                  Spacing.verticalXxl,
                   SectionCard(
-                    padding: const EdgeInsets.all(20),
+                    padding: Spacing.paddingAllXl,
                     child: Column(
                       children: [
                         TextFormField(
@@ -86,7 +87,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
+                        Spacing.verticalLg,
                         TextFormField(
                           controller: _passwordController,
                           obscureText: obscurePassword,
@@ -116,7 +117,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
+                        Spacing.verticalLg,
                         TextFormField(
                           controller: _confirmController,
                           obscureText: obscurePassword,
@@ -131,7 +132,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 24),
+                        Spacing.verticalXxl,
                         AdaptiveButton.filled(
                           onPressed: isLoading ? null : _register,
                           child: isLoading
@@ -147,7 +148,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

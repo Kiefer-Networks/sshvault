@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/features/sftp/presentation/widgets/sftp_bookmark_bar.dart';
 
 class SftpBreadcrumb extends ConsumerStatefulWidget {
@@ -50,7 +51,7 @@ class _SftpBreadcrumbState extends ConsumerState<SftpBreadcrumb> {
     return SizedBox(
       height: 36,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: Spacing.paddingHorizontalSm,
         child: Row(
           children: [
             IconButton(
@@ -60,7 +61,7 @@ class _SftpBreadcrumbState extends ConsumerState<SftpBreadcrumb> {
               onPressed: () =>
                   ref.read(sftpPaneProvider(widget.side).notifier).navigateUp(),
             ),
-            const SizedBox(width: 4),
+            Spacing.horizontalXxs,
             if (paneState.source is SftpPaneSourceRemote)
               IconButton(
                 icon: const Icon(Icons.bookmark_add_outlined, size: 18),

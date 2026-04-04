@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class HostKeyVerificationDialog extends StatelessWidget {
@@ -49,16 +50,16 @@ class HostKeyVerificationDialog extends StatelessWidget {
                   ? l10n.hostKeyChangedMessage(hostname, port)
                   : l10n.hostKeyNewMessage(hostname, port),
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             _buildInfoRow(l10n.hostKeyType, keyType, textTheme),
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             _buildFingerprintRow(
               _isChanged ? l10n.hostKeyFingerprint : l10n.hostKeyFingerprint,
               fingerprint,
               textTheme,
             ),
             if (_isChanged && existingHost != null) ...[
-              const SizedBox(height: 8),
+              Spacing.verticalSm,
               _buildFingerprintRow(
                 l10n.hostKeyPreviousFingerprint,
                 existingHost!.fingerprint,
@@ -94,7 +95,7 @@ class HostKeyVerificationDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: textTheme.labelSmall),
-        const SizedBox(height: 2),
+        const SizedBox(height: Spacing.xxxs),
         Text(value, style: textTheme.bodyMedium),
       ],
     );
@@ -105,10 +106,10 @@ class HostKeyVerificationDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: textTheme.labelSmall),
-        const SizedBox(height: 2),
+        const SizedBox(height: Spacing.xxxs),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(8),
+          padding: Spacing.paddingAllSm,
           decoration: BoxDecoration(
             color: Colors.black12,
             borderRadius: BorderRadius.circular(6),

@@ -9,6 +9,7 @@ import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
 import 'package:sshvault/features/settings/presentation/providers/proxy_settings_provider.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class NetworkSettingsScreen extends ConsumerWidget {
@@ -35,9 +36,9 @@ class NetworkSettingsScreen extends ConsumerWidget {
           final isCustom = settings.dnsServers.isNotEmpty;
 
           return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: Spacing.paddingHorizontalLgVerticalSm,
             children: [
-              const SizedBox(height: 8),
+              Spacing.verticalSm,
               SectionHeader(title: l10n.sectionDnsOverHttps),
 
               // Description card
@@ -49,7 +50,7 @@ class NetworkSettingsScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              Spacing.verticalLg,
 
               // DNS Server list
               SettingsGroupCard(
@@ -101,14 +102,14 @@ class NetworkSettingsScreen extends ConsumerWidget {
               ),
 
               // --- Default Proxy ---
-              const SizedBox(height: 24),
+              Spacing.verticalXxl,
               SectionHeader(title: l10n.proxyDefaultProxy),
               const _ProxySettingsSection(),
-              const SizedBox(height: 16),
+              Spacing.verticalLg,
 
               // Reset button
               if (isCustom) ...[
-                const SizedBox(height: 12),
+                Spacing.verticalMd,
                 Center(
                   child: TextButton.icon(
                     onPressed: () {
@@ -119,7 +120,7 @@ class NetworkSettingsScreen extends ConsumerWidget {
                   ),
                 ),
               ],
-              const SizedBox(height: 16),
+              Spacing.verticalLg,
             ],
           );
         },
@@ -254,7 +255,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
 
         return SectionCard(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: Spacing.paddingAllLg,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -285,7 +286,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                   },
                 ),
                 if (proxyType != ProxyType.none) ...[
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   TextFormField(
                     controller: _hostController,
                     decoration: InputDecoration(
@@ -296,7 +297,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                         .read(settingsProvider.notifier)
                         .setGlobalProxyHost(v.trim()),
                   ),
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   TextFormField(
                     controller: _portController,
                     decoration: InputDecoration(
@@ -313,7 +314,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                       }
                     },
                   ),
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(labelText: l10n.proxyUsername),
@@ -321,14 +322,14 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
                         .read(settingsProvider.notifier)
                         .setGlobalProxyUsername(v.trim()),
                   ),
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(labelText: l10n.proxyPassword),
                     obscureText: true,
                     onChanged: (v) => saveGlobalProxyPassword(v),
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   Center(
                     child: FilledButton.tonalIcon(
                       onPressed: () {

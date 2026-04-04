@@ -14,6 +14,7 @@ import 'package:sshvault/core/storage/secure_storage_provider.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _currentDeviceIdProvider = FutureProvider<String?>((ref) async {
@@ -62,7 +63,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
     return AdaptiveScaffold(
       title: l10n.settingsAccountAndSync,
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: Spacing.paddingHorizontalLgVerticalSm,
         children: [
           // Server Reachability Banner
           if (isAuthenticated) ...[
@@ -71,7 +72,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                 final reachable = ref.watch(serverReachableProvider);
                 if (reachable.value == false || reachable.hasError) {
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.only(bottom: Spacing.lg),
                     child: MaterialBanner(
                       leading: Icon(
                         Icons.cloud_off,
@@ -86,7 +87,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                               color: theme.colorScheme.error,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          Spacing.verticalXxs,
                           Text(
                             l10n.syncServerUnreachableHint,
                             style: theme.textTheme.bodySmall,
@@ -120,13 +121,13 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                     size: 48,
                     color: theme.colorScheme.primary,
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   Text(
                     l10n.authWhyLogin,
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
@@ -146,7 +147,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                       label: Text(l10n.authLogin),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  Spacing.verticalSm,
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
@@ -169,14 +170,14 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
           ],
 
           // User Card
           if (isAuthenticated) ...[
             SectionHeader(title: l10n.accountTitle),
             SectionCard(child: _buildUserCard(l10n, theme)),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
           ],
 
           // Sync Controls
@@ -230,14 +231,14 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
 
           // Devices Card
           if (isAuthenticated) ...[
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             SectionHeader(title: l10n.accountDevices),
             SectionCard(child: _buildDevicesCard(l10n, theme)),
           ],
 
           // Account Actions
           if (isAuthenticated) ...[
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             SectionHeader(title: l10n.accountTitle),
             SettingsGroupCard(
               children: [
@@ -277,7 +278,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             SettingsGroupCard(
               children: [
                 SettingsTile(
@@ -291,7 +292,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
           ],
 
           // Server Configuration
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           SectionHeader(title: l10n.serverConfigTitle),
           SettingsGroupCard(
             children: [
@@ -322,7 +323,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                 ),
             ],
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
         ],
       ),
     );
@@ -351,7 +352,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                         : null,
                   ),
                 ),
-                const SizedBox(width: 16),
+                Spacing.horizontalLg,
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,7 +366,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                               size: 16,
                               color: theme.colorScheme.tertiary,
                             ),
-                            const SizedBox(width: 4),
+                            Spacing.horizontalXxs,
                             Text(
                               l10n.accountVerified,
                               style: theme.textTheme.bodySmall,
@@ -508,7 +509,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                     children: [
                       Flexible(child: Text(d.name)),
                       if (isCurrentDevice) ...[
-                        const SizedBox(width: 8),
+                        Spacing.horizontalSm,
                         Chip(
                           label: Text(
                             l10n.thisDevice,
@@ -644,7 +645,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             obscureText: true,
             decoration: InputDecoration(labelText: l10n.accountOldPassword),
           ),
-          const SizedBox(height: 8),
+          Spacing.verticalSm,
           TextField(
             controller: newPw,
             obscureText: true,
@@ -716,7 +717,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               color: Theme.of(context).colorScheme.error,
             ),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           TextField(
             controller: oldPw,
             obscureText: true,
@@ -724,7 +725,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               labelText: l10n.changeEncryptionOldPassword,
             ),
           ),
-          const SizedBox(height: 8),
+          Spacing.verticalSm,
           TextField(
             controller: newPw,
             obscureText: true,
@@ -732,7 +733,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               labelText: l10n.changeEncryptionNewPassword,
             ),
           ),
-          const SizedBox(height: 8),
+          Spacing.verticalSm,
           TextField(
             controller: confirmPw,
             obscureText: true,
@@ -873,15 +874,15 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
       context: context,
       builder: (ctx) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          padding: const EdgeInsets.fromLTRB(Spacing.xxl, Spacing.xxl, Spacing.xxl, Spacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(l10n.logoutDialogTitle, style: theme.textTheme.titleLarge),
-              const SizedBox(height: 12),
+              Spacing.verticalMd,
               Text(l10n.logoutDialogMessage, style: theme.textTheme.bodyMedium),
-              const SizedBox(height: 24),
+              Spacing.verticalXxl,
               FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: theme.colorScheme.error,
@@ -890,7 +891,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                 onPressed: () => Navigator.pop(ctx, true),
                 child: Text(l10n.logoutAndDelete),
               ),
-              const SizedBox(height: 8),
+              Spacing.verticalSm,
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
                 child: Text(l10n.logoutOnly),
@@ -915,7 +916,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: Spacing.paddingAllLg,
               child: Text(
                 l10n.autoSyncInterval,
                 style: Theme.of(context).textTheme.titleMedium,

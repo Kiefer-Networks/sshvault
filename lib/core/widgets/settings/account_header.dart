@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 
 class AccountHeader extends StatelessWidget {
   final String? email;
@@ -36,11 +37,11 @@ class AccountHeader extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: Spacing.paddingAllLg,
           child: Row(
             children: [
               _buildAvatar(colorScheme),
-              const SizedBox(width: 16),
+              Spacing.horizontalLg,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +55,7 @@ class AccountHeader extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (isAuthenticated) ...[
-                      const SizedBox(height: 2),
+                      SizedBox(height: Spacing.xxxs),
                       Row(
                         children: [
                           if (isVerified) ...[
@@ -63,7 +64,7 @@ class AccountHeader extends StatelessWidget {
                               size: 14,
                               color: colorScheme.tertiary,
                             ),
-                            const SizedBox(width: 4),
+                            Spacing.horizontalXxs,
                           ],
                           Text(
                             authenticatedLabel,

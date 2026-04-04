@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/widgets/settings/circle_icon.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sshvault/features/connection/presentation/widgets/tag_chip.dart';
@@ -61,7 +62,7 @@ class SnippetTile extends StatelessWidget {
             Expanded(
               child: Text(snippet.name, overflow: TextOverflow.ellipsis),
             ),
-            const SizedBox(width: 8),
+            Spacing.horizontalSm,
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
@@ -81,7 +82,7 @@ class SnippetTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (snippet.description.isNotEmpty) ...[
-              const SizedBox(height: 2),
+              const SizedBox(height: Spacing.xxxs),
               Text(
                 snippet.description,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -93,7 +94,7 @@ class SnippetTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ] else if (snippet.content.isNotEmpty) ...[
-              const SizedBox(height: 2),
+              const SizedBox(height: Spacing.xxxs),
               Text(
                 snippet.content.length > 80
                     ? '${snippet.content.substring(0, 80)}...'
@@ -109,7 +110,7 @@ class SnippetTile extends StatelessWidget {
               ),
             ],
             if (snippet.tags.isNotEmpty) ...[
-              const SizedBox(height: 4),
+              Spacing.verticalXxs,
               Wrap(
                 spacing: 4,
                 runSpacing: 2,

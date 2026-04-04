@@ -13,6 +13,7 @@ import 'package:sshvault/features/sftp/presentation/widgets/sftp_empty_state.dar
 import 'package:sshvault/features/sftp/presentation/widgets/sftp_entry_tile.dart';
 import 'package:sshvault/features/sftp/presentation/widgets/sftp_server_picker.dart';
 import 'package:sshvault/features/sftp/presentation/widgets/sftp_toolbar.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpPane extends ConsumerWidget {
@@ -38,7 +39,7 @@ class SftpPane extends ConsumerWidget {
     } else if (paneState.error != null) {
       fileList = Center(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: Spacing.paddingAllLg,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -47,13 +48,13 @@ class SftpPane extends ConsumerWidget {
                 size: 48,
                 color: Theme.of(context).colorScheme.error,
               ),
-              const SizedBox(height: 8),
+              Spacing.verticalSm,
               Text(
                 paneState.error!,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
-              const SizedBox(height: 16),
+              Spacing.verticalLg,
               FilledButton.icon(
                 onPressed: () =>
                     ref.read(sftpPaneProvider(side).notifier).refresh(),
@@ -70,7 +71,7 @@ class SftpPane extends ConsumerWidget {
       fileList = RefreshIndicator(
         onRefresh: () => ref.read(sftpPaneProvider(side).notifier).refresh(),
         child: ListView.builder(
-          padding: const EdgeInsets.only(bottom: 64),
+          padding: const EdgeInsets.only(bottom: Spacing.fabClearance),
           itemCount: paneState.entries.length,
           itemBuilder: (context, index) {
             final entry = paneState.entries[index];
@@ -168,7 +169,7 @@ class SftpPane extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: Spacing.paddingAllLg,
               child: Text(
                 entry.name,
                 style: Theme.of(context).textTheme.titleSmall,

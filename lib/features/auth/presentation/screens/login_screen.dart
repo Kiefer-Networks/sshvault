@@ -8,6 +8,7 @@ import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _obscurePasswordProvider = StateProvider.autoDispose<bool>((_) => true);
@@ -52,7 +53,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       title: l10n.authLogin,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: Spacing.paddingAllXxl,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: Form(
@@ -66,7 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     size: 64,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   Text(
                     l10n.authWhyLogin,
                     textAlign: TextAlign.center,
@@ -74,7 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  Spacing.verticalXxl,
 
                   Builder(
                     builder: (context) {
@@ -82,7 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ref.watch(settingsProvider).value?.serverUrl ?? '';
                       if (serverUrl.isEmpty) return const SizedBox.shrink();
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.only(bottom: Spacing.lg),
                         child: Chip(
                           avatar: const Icon(Icons.dns_outlined, size: 18),
                           label: Text(
@@ -95,7 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
 
                   SectionCard(
-                    padding: const EdgeInsets.all(20),
+                    padding: Spacing.paddingAllXl,
                     child: Column(
                       children: [
                         // Email field
@@ -117,7 +118,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
+                        Spacing.verticalLg,
 
                         // Password field
                         TextFormField(
@@ -149,7 +150,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 8),
+                        Spacing.verticalSm,
 
                         // Forgot password link
                         Align(
@@ -159,7 +160,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             child: Text(l10n.authForgotPassword),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        Spacing.verticalLg,
 
                         // Login button
                         AdaptiveButton.filled(
@@ -177,7 +178,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
 
                   // Register link
                   Row(
@@ -190,7 +191,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  Spacing.verticalSm,
                 ],
               ),
             ),

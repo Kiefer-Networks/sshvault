@@ -8,6 +8,7 @@ import 'package:sshvault/core/widgets/pin_dialog.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SecuritySettingsScreen extends ConsumerWidget {
@@ -22,10 +23,10 @@ class SecuritySettingsScreen extends ConsumerWidget {
       title: l10n.settingsSectionSecurity,
       body: settingsAsync.when(
         data: (settings) => ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: Spacing.paddingHorizontalLgVerticalSm,
           children: [
             // App Lock section
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             SectionHeader(title: l10n.settingsSectionAppLock),
             SettingsGroupCard(
               children: [
@@ -76,7 +77,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
             ),
 
             // Privacy section
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             SectionHeader(title: l10n.settingsSectionPrivacy),
             SettingsGroupCard(
               children: [
@@ -179,7 +180,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
             ),
 
             // Reminders section
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             SectionHeader(title: l10n.settingsSectionReminders),
             SettingsGroupCard(
               children: [
@@ -227,7 +228,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
             ),
 
             // Status section
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             SectionHeader(title: l10n.settingsSectionStatus),
             SettingsGroupCard(
               children: [
@@ -239,7 +240,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
           ],
         ),
         loading: () =>

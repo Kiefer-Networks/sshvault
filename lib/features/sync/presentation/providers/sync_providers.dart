@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/network/api_provider.dart';
@@ -71,17 +72,30 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
   }
 
   /// Invalidate all data providers so they reload from DB after sync.
+  ///
+  /// After invalidation, explicitly read the providers in the next frame
+  /// to force an immediate rebuild. Without this, FutureProviders that are
+  /// not actively watched (e.g. on a background tab) may stay stale until
+  /// the user navigates to them.
   void _invalidateAllDataProviders() {
-    ref.invalidate(serverListProvider);
     ref.invalidate(folderListProvider);
     ref.invalidate(folderTreeProvider);
-    ref.invalidate(folderGroupedServersProvider);
-    ref.invalidate(favoriteServersProvider);
-    ref.invalidate(recentServersProvider);
     ref.invalidate(tagListProvider);
     ref.invalidate(sshKeyListProvider);
     ref.invalidate(snippetListProvider);
     ref.invalidate(settingsProvider);
+    ref.invalidate(serverListProvider);
+    ref.invalidate(favoriteServersProvider);
+    ref.invalidate(recentServersProvider);
+    ref.invalidate(folderGroupedServersProvider);
+
+    // Force providers to rebuild in the next frame so UI updates immediately
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(serverListProvider);
+      ref.read(folderGroupedServersProvider);
+      ref.read(favoriteServersProvider);
+      ref.read(recentServersProvider);
+    });
   }
 
   Future<void> sync() async {

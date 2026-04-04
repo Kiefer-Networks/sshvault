@@ -6,6 +6,7 @@ import 'package:sshvault/core/utils/date_formatter.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/account/domain/entities/audit_log_entity.dart';
 import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _auditCategoryProvider = StateProvider.autoDispose<String?>(
@@ -42,12 +43,12 @@ class AuditLogScreen extends ConsumerWidget {
           // Category filter
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: Spacing.paddingHorizontalLgVerticalSm,
             child: Row(
               children: _categories.map((cat) {
                 final isSelected = cat == selectedCategory;
                 return Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.only(right: Spacing.sm),
                   child: FilterChip(
                     label: Text(cat ?? l10n.auditLogAll),
                     selected: isSelected,
@@ -72,7 +73,7 @@ class AuditLogScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: Spacing.paddingHorizontalLg,
                         itemCount: result.logs.length,
                         separatorBuilder: (_, _) => const Divider(height: 1),
                         itemBuilder: (context, index) {
@@ -83,7 +84,7 @@ class AuditLogScreen extends ConsumerWidget {
                     // Pagination
                     if (result.total > result.limit)
                       Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: Spacing.paddingAllLg,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -141,7 +142,7 @@ class _AuditLogTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: 4),
+      contentPadding: const EdgeInsets.symmetric(vertical: Spacing.xxs),
       leading: _levelIcon(context, entry.level),
       title: Text(
         '${entry.category} / ${entry.action}',

@@ -11,6 +11,7 @@ import 'package:sshvault/features/connection/presentation/providers/server_provi
 import 'package:sshvault/features/connection/presentation/widgets/export_password_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/import_conflict_dialog.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class ExportSettingsScreen extends ConsumerWidget {
@@ -27,10 +28,10 @@ class ExportSettingsScreen extends ConsumerWidget {
       title: l10n.settingsSectionExport,
       body: settingsAsync.when(
         data: (settings) => ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: Spacing.paddingHorizontalLgVerticalSm,
           children: [
             // Export Section
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             SectionHeader(title: l10n.exportSectionTitle),
             SettingsGroupCard(
               children: [
@@ -63,7 +64,7 @@ class ExportSettingsScreen extends ConsumerWidget {
             ),
 
             // Import Section
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             SectionHeader(title: l10n.settingsSectionImport),
             SettingsGroupCard(
               children: [
@@ -78,14 +79,14 @@ class ExportSettingsScreen extends ConsumerWidget {
             ),
 
             // Status
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             if (exportState.isLoading)
               const Center(child: CircularProgressIndicator.adaptive()),
             if (exportState.hasError)
               Card(
                 color: theme.colorScheme.errorContainer,
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: Spacing.paddingAllMd,
                   child: Row(
                     children: [
                       Icon(
@@ -93,7 +94,7 @@ class ExportSettingsScreen extends ConsumerWidget {
                         color: theme.colorScheme.onErrorContainer,
                         size: 20,
                       ),
-                      const SizedBox(width: 8),
+                      Spacing.horizontalSm,
                       Expanded(
                         child: Text(
                           errorMessage(exportState.error!),
@@ -110,7 +111,7 @@ class ExportSettingsScreen extends ConsumerWidget {
               Card(
                 color: theme.colorScheme.tertiaryContainer,
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: Spacing.paddingAllMd,
                   child: Text(
                     exportState.value == importSuccessfulKey
                         ? l10n.importSuccessful
@@ -121,7 +122,7 @@ class ExportSettingsScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
           ],
         ),
         loading: () =>

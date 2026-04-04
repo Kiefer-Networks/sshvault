@@ -5,6 +5,7 @@ import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SshSettingsScreen extends ConsumerWidget {
@@ -19,10 +20,10 @@ class SshSettingsScreen extends ConsumerWidget {
       title: l10n.settingsSectionSshDefaults,
       body: settingsAsync.when(
         data: (settings) => ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: Spacing.paddingHorizontalLgVerticalSm,
           children: [
             // Connection section
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             SectionHeader(title: l10n.settingsSectionConnection),
             SettingsGroupCard(
               children: [
@@ -108,7 +109,7 @@ class SshSettingsScreen extends ConsumerWidget {
             ),
 
             // Terminal section
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             SectionHeader(title: l10n.settingsSectionTerminal),
             SettingsGroupCard(
               children: [
@@ -150,7 +151,7 @@ class SshSettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
           ],
         ),
         loading: () =>

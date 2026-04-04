@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive_dialog.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class CreateSymlinkDialog {
@@ -22,7 +23,7 @@ class CreateSymlinkDialog {
               border: const OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           TextField(
             controller: nameController,
             decoration: InputDecoration(
@@ -37,7 +38,7 @@ class CreateSymlinkDialog {
           onPressed: () => Navigator.pop(context),
           child: Text(l10n.cancel),
         ),
-        const SizedBox(width: 8),
+        Spacing.horizontalSm,
         FilledButton(
           onPressed: () {
             final target = targetController.text.trim();

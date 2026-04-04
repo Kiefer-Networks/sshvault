@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
 
@@ -33,7 +34,7 @@ class VariableEditor extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        Spacing.verticalSm,
         if (variables.isEmpty)
           Text(
             l10n.variableEditorEmpty,
@@ -90,7 +91,7 @@ class _VariableRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: Spacing.sm),
       child: Row(
         children: [
           Expanded(
@@ -108,7 +109,7 @@ class _VariableRow extends StatelessWidget {
               onChanged: (value) => onChanged(variable.copyWith(name: value)),
             ),
           ),
-          const SizedBox(width: 8),
+          Spacing.horizontalSm,
           Expanded(
             flex: 2,
             child: TextFormField(
@@ -127,7 +128,7 @@ class _VariableRow extends StatelessWidget {
                   onChanged(variable.copyWith(defaultValue: value)),
             ),
           ),
-          const SizedBox(width: 4),
+          Spacing.horizontalXxs,
           IconButton(
             icon: Icon(
               Icons.remove_circle_outline,

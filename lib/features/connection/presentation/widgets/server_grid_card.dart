@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
@@ -37,7 +38,7 @@ class ServerGridCard extends StatelessWidget {
         onLongPress: onLongPress,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: Spacing.paddingAllLg,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -72,11 +73,11 @@ class ServerGridCard extends StatelessWidget {
                               ),
                       ),
                     ),
-                  const SizedBox(width: 4),
+                  Spacing.horizontalXxs,
                   StatusBadge(isActive: server.isActive),
                 ],
               ),
-              const SizedBox(height: 12),
+              Spacing.verticalMd,
               Text(
                 server.name,
                 style: theme.textTheme.titleSmall?.copyWith(
@@ -85,7 +86,7 @@ class ServerGridCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
+              Spacing.verticalXxs,
               Text(
                 '${server.username}@${server.hostname}',
                 style: theme.textTheme.bodySmall?.copyWith(

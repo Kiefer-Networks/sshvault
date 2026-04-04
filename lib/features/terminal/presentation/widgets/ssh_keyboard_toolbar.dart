@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:xterm/xterm.dart';
 
@@ -49,7 +50,7 @@ class SshKeyboardToolbar extends StatelessWidget {
                   height: 40,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: Spacing.paddingHorizontalXxs,
                     children: [
                       _KeyButton(
                         label: 'Esc',
@@ -78,7 +79,7 @@ class SshKeyboardToolbar extends StatelessWidget {
                         onTap: () =>
                             virtualKeyboard.sendKey(TerminalKey.pageDown),
                       ),
-                      const SizedBox(width: 8),
+                      Spacing.horizontalSm,
                       _KeyButton(
                         icon: Icons.arrow_back,
                         onTap: () =>
@@ -99,7 +100,7 @@ class SshKeyboardToolbar extends StatelessWidget {
                         onTap: () =>
                             virtualKeyboard.sendKey(TerminalKey.arrowRight),
                       ),
-                      const SizedBox(width: 8),
+                      Spacing.horizontalSm,
                       for (int i = 1; i <= 12; i++)
                         _KeyButton(
                           label: 'F$i',
@@ -117,7 +118,7 @@ class SshKeyboardToolbar extends StatelessWidget {
                   height: 40,
                   child: Row(
                     children: [
-                      const SizedBox(width: 4),
+                      Spacing.horizontalXxs,
                       _ModifierButton(
                         label: 'Ctrl',
                         isActive: virtualKeyboard.ctrl,
@@ -136,7 +137,7 @@ class SshKeyboardToolbar extends StatelessWidget {
                       const Spacer(),
                       if (onSnippetTap != null)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          padding: Spacing.paddingHorizontalXxs,
                           child: IconButton(
                             icon: const Icon(Icons.content_paste, size: 20),
                             tooltip: AppLocalizations.of(
@@ -151,7 +152,7 @@ class SshKeyboardToolbar extends StatelessWidget {
                             ),
                           ),
                         ),
-                      const SizedBox(width: 4),
+                      Spacing.horizontalXxs,
                     ],
                   ),
                 ),
@@ -184,7 +185,7 @@ class _KeyButton extends StatelessWidget {
           onTap: onTap,
           child: Container(
             constraints: const BoxConstraints(minWidth: 36),
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: Spacing.paddingHorizontalSm,
             alignment: Alignment.center,
             child: icon != null
                 ? Icon(icon, size: 16, color: theme.colorScheme.onSurface)

@@ -7,6 +7,7 @@ import 'package:sshvault/features/connection/presentation/providers/folder_provi
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpServerPicker extends ConsumerWidget {
@@ -52,7 +53,7 @@ class SftpServerPicker extends ConsumerWidget {
                 size: 20,
                 color: theme.colorScheme.primary,
               ),
-              const SizedBox(width: 8),
+              Spacing.horizontalSm,
               Expanded(
                 child: Text(
                   currentLabel,
@@ -110,7 +111,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+              padding: const EdgeInsets.fromLTRB(Spacing.xxl, Spacing.xl, Spacing.xxl, 0),
               child: Text(
                 l10n.sftpSelectServer,
                 style: theme.textTheme.titleLarge,
@@ -118,7 +119,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
             ),
             // Search field
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              padding: const EdgeInsets.fromLTRB(Spacing.lg, Spacing.md, Spacing.lg, Spacing.sm),
               child: TextField(
                 controller: _searchController,
                 autofocus: true,
@@ -141,7 +142,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: Spacing.md),
                 ),
                 onChanged: (value) =>
                     ref.read(_serverPickerQueryProvider.notifier).state = value,
@@ -212,7 +213,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
     if (!showLocal && filtered.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: Spacing.paddingAllXxl,
           child: Text(
             l10n.serverListEmpty,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -225,7 +226,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
 
     return ListView(
       shrinkWrap: true,
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: Spacing.sm),
       children: [
         // Local device option
         if (showLocal) _buildLocalTile(context, theme, l10n),
@@ -275,7 +276,7 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
 
   Widget _buildGroupHeader(ThemeData theme, String name) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.fromLTRB(Spacing.lg, Spacing.md, Spacing.lg, Spacing.xxs),
       child: Text(
         name,
         style: theme.textTheme.labelSmall?.copyWith(

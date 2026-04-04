@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:xterm/xterm.dart';
 
 enum TerminalThemeKey {
+  auto,
   defaultDark,
+  defaultLight,
   dracula,
   solarizedDark,
   solarizedLight,
@@ -12,7 +14,9 @@ enum TerminalThemeKey {
   gruvboxDark;
 
   String get displayName => switch (this) {
+    auto => 'Auto',
     defaultDark => 'Default Dark',
+    defaultLight => 'Default Light',
     dracula => 'Dracula',
     solarizedDark => 'Solarized Dark',
     solarizedLight => 'Solarized Light',
@@ -46,6 +50,31 @@ abstract final class TerminalThemePresets {
       brightMagenta: Color(0xFFD670D6),
       brightCyan: Color(0xFF29B8DB),
       brightWhite: Color(0xFFFFFFFF),
+      searchHitBackground: Color(0xFFFFDF5D),
+      searchHitBackgroundCurrent: Color(0xFFFF9632),
+      searchHitForeground: Color(0xFF000000),
+    ),
+    TerminalThemeKey.defaultLight: TerminalTheme(
+      cursor: Color(0xFF333333),
+      selection: Color(0x40005AF5),
+      foreground: Color(0xFF333333),
+      background: Color(0xFFFAFAFA),
+      black: Color(0xFF000000),
+      red: Color(0xFFCD3131),
+      green: Color(0xFF00BC7C),
+      yellow: Color(0xFFA5A500),
+      blue: Color(0xFF0451A5),
+      magenta: Color(0xFFBC05BC),
+      cyan: Color(0xFF0598BC),
+      white: Color(0xFF555555),
+      brightBlack: Color(0xFF666666),
+      brightRed: Color(0xFFCD3131),
+      brightGreen: Color(0xFF14CE14),
+      brightYellow: Color(0xFFB5BA00),
+      brightBlue: Color(0xFF0451A5),
+      brightMagenta: Color(0xFFBC05BC),
+      brightCyan: Color(0xFF0598BC),
+      brightWhite: Color(0xFFA5A5A5),
       searchHitBackground: Color(0xFFFFDF5D),
       searchHitBackgroundCurrent: Color(0xFFFF9632),
       searchHitForeground: Color(0xFF000000),
@@ -227,6 +256,19 @@ abstract final class TerminalThemePresets {
     ),
   };
 
-  static TerminalTheme getTheme(TerminalThemeKey key) =>
-      presets[key] ?? presets[TerminalThemeKey.defaultDark]!;
+  /// Returns the terminal theme for the given key.
+  ///
+  /// When [key] is [TerminalThemeKey.auto], the returned theme adapts to the
+  /// given [brightness] (defaults to [Brightness.dark]).
+  static TerminalTheme getTheme(
+    TerminalThemeKey key, {
+    Brightness brightness = Brightness.dark,
+  }) {
+    if (key == TerminalThemeKey.auto) {
+      return brightness == Brightness.light
+          ? presets[TerminalThemeKey.defaultLight]!
+          : presets[TerminalThemeKey.defaultDark]!;
+    }
+    return presets[key] ?? presets[TerminalThemeKey.defaultDark]!;
+  }
 }

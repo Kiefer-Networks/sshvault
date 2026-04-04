@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -73,7 +74,7 @@ class _SnippetQuickPanelContentState
         ),
         // Title
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: Spacing.paddingAllLg,
           child: Text(
             l10n.snippetQuickPanelTitle,
             style: theme.textTheme.titleMedium,
@@ -81,7 +82,7 @@ class _SnippetQuickPanelContentState
         ),
         // Search
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: Spacing.paddingHorizontalLg,
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
@@ -97,7 +98,7 @@ class _SnippetQuickPanelContentState
                 ref.read(_snippetSearchQueryProvider.notifier).state = value,
           ),
         ),
-        const SizedBox(height: 8),
+        Spacing.verticalSm,
         // List
         Expanded(
           child: snippetsAsync.when(
@@ -133,7 +134,7 @@ class _SnippetQuickPanelContentState
 
               return ListView.separated(
                 controller: widget.scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: Spacing.paddingHorizontalLg,
                 itemCount: filtered.length,
                 separatorBuilder: (_, _) => const Divider(height: 1),
                 itemBuilder: (context, index) {

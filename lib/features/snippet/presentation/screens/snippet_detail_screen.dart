@@ -3,6 +3,7 @@ import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:flutter/services.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -52,13 +53,13 @@ class SnippetDetailScreen extends ConsumerWidget {
       body: snippetAsync.when(
         data: (snippet) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: Spacing.paddingAllLg,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
                 SectionCard(
-                  padding: const EdgeInsets.all(20),
+                  padding: Spacing.paddingAllXl,
                   child: Row(
                     children: [
                       Container(
@@ -76,7 +77,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                           size: 28,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      Spacing.horizontalLg,
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +88,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            Spacing.verticalXxs,
                             Chip(
                               label: Text(snippet.language),
                               visualDensity: VisualDensity.compact,
@@ -100,11 +101,11 @@ class SnippetDetailScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Content
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -141,10 +142,10 @@ class SnippetDetailScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      Spacing.verticalSm,
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(12),
+                        padding: Spacing.paddingAllMd,
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(8),
@@ -159,12 +160,12 @@ class SnippetDetailScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Description
                 if (snippet.description.isNotEmpty) ...[
                   SectionCard(
-                    padding: const EdgeInsets.all(16),
+                    padding: Spacing.paddingAllLg,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -172,7 +173,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                           l10n.snippetDetailDescription,
                           style: theme.textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 8),
+                        Spacing.verticalSm,
                         Text(
                           snippet.description,
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -184,13 +185,13 @@ class SnippetDetailScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                 ],
 
                 // Variables
                 if (snippet.variables.isNotEmpty) ...[
                   SectionCard(
-                    padding: const EdgeInsets.all(16),
+                    padding: Spacing.paddingAllLg,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -198,10 +199,10 @@ class SnippetDetailScreen extends ConsumerWidget {
                           l10n.snippetDetailVariables,
                           style: theme.textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 8),
+                        Spacing.verticalSm,
                         ...snippet.variables.map(
                           (v) => Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
+                            padding: const EdgeInsets.only(bottom: Spacing.xxs),
                             child: Row(
                               children: [
                                 Text(
@@ -213,7 +214,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 if (v.defaultValue.isNotEmpty) ...[
-                                  const SizedBox(width: 8),
+                                  Spacing.horizontalSm,
                                   Text(
                                     '= ${v.defaultValue}',
                                     style: theme.textTheme.bodySmall?.copyWith(
@@ -229,13 +230,13 @@ class SnippetDetailScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                 ],
 
                 // Tags
                 if (snippet.tags.isNotEmpty) ...[
                   SectionCard(
-                    padding: const EdgeInsets.all(16),
+                    padding: Spacing.paddingAllLg,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -243,7 +244,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                           l10n.snippetDetailTags,
                           style: theme.textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 8),
+                        Spacing.verticalSm,
                         Wrap(
                           spacing: 8,
                           runSpacing: 4,
@@ -254,12 +255,12 @@ class SnippetDetailScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                 ],
 
                 // Metadata
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -267,7 +268,7 @@ class SnippetDetailScreen extends ConsumerWidget {
                         l10n.snippetDetailInfo,
                         style: theme.textTheme.titleSmall,
                       ),
-                      const SizedBox(height: 12),
+                      Spacing.verticalMd,
                       InfoRow(
                         icon: Icons.calendar_today,
                         label: l10n.snippetDetailCreated,

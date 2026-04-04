@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
 import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
@@ -35,7 +36,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
       children: [
         // Search bar + filter button
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: Spacing.paddingHorizontalLg,
           child: Row(
             children: [
               Expanded(
@@ -60,7 +61,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                   },
                 ),
               ),
-              const SizedBox(width: 8),
+              Spacing.horizontalSm,
               Badge(
                 isLabelVisible: activeFilterCount > 0,
                 label: Text('$activeFilterCount'),
@@ -80,15 +81,15 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
 
         // Active filter chips
         if (activeFilterCount > 0) ...[
-          const SizedBox(height: 8),
+          Spacing.verticalSm,
           SizedBox(
             height: 36,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: Spacing.paddingHorizontalLg,
               children: [
                 ..._buildActiveFilterChips(filter, l10n),
-                const SizedBox(width: 8),
+                Spacing.horizontalSm,
                 ActionChip(
                   label: Text(l10n.filterClearAll),
                   avatar: const Icon(Icons.clear_all, size: 16),
@@ -130,7 +131,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           '';
       chips.add(
         Padding(
-          padding: const EdgeInsets.only(right: 8),
+          padding: EdgeInsets.only(right: Spacing.sm),
           child: InputChip(
             label: Text('${l10n.filterFolder}: $folderName'),
             onDeleted: () {
@@ -149,7 +150,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           tagsAsync.value?.where((t) => t.id == tagId).firstOrNull?.name ?? '';
       chips.add(
         Padding(
-          padding: const EdgeInsets.only(right: 8),
+          padding: EdgeInsets.only(right: Spacing.sm),
           child: InputChip(
             label: Text(tagName),
             onDeleted: () {
@@ -166,7 +167,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
     if (filter.isActive != null) {
       chips.add(
         Padding(
-          padding: const EdgeInsets.only(right: 8),
+          padding: EdgeInsets.only(right: Spacing.sm),
           child: InputChip(
             label: Text(
               filter.isActive! ? l10n.filterActive : l10n.filterInactive,

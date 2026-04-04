@@ -8,6 +8,7 @@ import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dar
 import 'package:sshvault/features/sftp/presentation/widgets/chmod_dialog.dart';
 import 'package:sshvault/features/sftp/presentation/widgets/create_symlink_dialog.dart';
 import 'package:sshvault/features/sftp/presentation/widgets/new_directory_dialog.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpFloatingToolbar extends ConsumerWidget {
@@ -37,7 +38,7 @@ class SftpFloatingToolbar extends ConsumerWidget {
         duration: const Duration(milliseconds: 250),
         opacity: shouldShow ? 1.0 : 0.0,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: Spacing.md),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 250),
             transitionBuilder: (child, animation) {
@@ -89,7 +90,7 @@ class _FloatingToolbarContainer extends StatelessWidget {
       color: color,
       clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
+        padding: Spacing.paddingHorizontalXxs,
         child: Row(mainAxisSize: MainAxisSize.min, children: children),
       ),
     );
@@ -102,7 +103,7 @@ class _ToolbarDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: Spacing.sm),
       child: SizedBox(
         height: 24,
         child: VerticalDivider(
