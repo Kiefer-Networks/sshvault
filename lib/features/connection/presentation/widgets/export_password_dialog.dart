@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/utils/validators.dart';
 
 class _ExportPasswordVisibility {
@@ -67,7 +68,7 @@ class _ExportPasswordDialogState extends ConsumerState<ExportPasswordDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(l10n.exportPasswordDescription),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           TextFormField(
             controller: _passwordController,
             obscureText: visibility.obscurePassword,
@@ -90,7 +91,7 @@ class _ExportPasswordDialogState extends ConsumerState<ExportPasswordDialog> {
             keyboardType: TextInputType.visiblePassword,
             validator: Validators.exportPasswordValidator(l10n),
           ),
-          const SizedBox(height: 12),
+          Spacing.verticalMd,
           TextFormField(
             controller: _confirmController,
             obscureText: visibility.obscureConfirm,

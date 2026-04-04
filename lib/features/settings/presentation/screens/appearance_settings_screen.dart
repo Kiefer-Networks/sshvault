@@ -8,6 +8,7 @@ import 'package:sshvault/features/settings/presentation/providers/settings_provi
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:sshvault/features/terminal/presentation/widgets/terminal_theme_picker.dart';
 import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class AppearanceSettingsScreen extends ConsumerWidget {
@@ -22,10 +23,10 @@ class AppearanceSettingsScreen extends ConsumerWidget {
       title: l10n.settingsSectionAppearance,
       body: settingsAsync.when(
         data: (settings) => ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: Spacing.paddingHorizontalLgVerticalSm,
           children: [
             // Theme & Language
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             SectionHeader(title: l10n.settingsSectionAppearance),
             SettingsGroupCard(
               children: [
@@ -34,7 +35,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                   iconColor: Theme.of(context).colorScheme.primary,
                   title: l10n.settingsTheme,
                   subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: Spacing.sm),
                     child: AdaptiveSegmentedControl<AppThemeMode>(
                       selected: settings.themeMode,
                       segments: {
@@ -188,7 +189,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
             ),
 
             // Terminal
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             SectionHeader(title: l10n.settingsSectionTerminal),
             SettingsGroupCard(
               children: [
@@ -245,7 +246,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
           ],
         ),
         loading: () =>

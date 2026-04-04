@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/services/vpn_detector_service.dart';
 import 'package:sshvault/core/widgets/settings/circle_icon.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -86,7 +87,7 @@ class ServerListTile extends ConsumerWidget {
           children: [
             Expanded(child: Text(server.name, overflow: TextOverflow.ellipsis)),
             if (server.requiresVpn) ...[
-              const SizedBox(width: 4),
+              Spacing.horizontalXxs,
               Icon(
                 Icons.shield_outlined,
                 size: 16,
@@ -95,7 +96,7 @@ class ServerListTile extends ConsumerWidget {
                     : theme.colorScheme.error,
               ),
             ],
-            const SizedBox(width: 8),
+            Spacing.horizontalSm,
             _ConnectionStatusBadge(
               connectionStatus: connectionStatus,
               server: server,
@@ -116,7 +117,7 @@ class ServerListTile extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
             if (server.tags.isNotEmpty) ...[
-              const SizedBox(height: 4),
+              Spacing.verticalXxs,
               Wrap(
                 spacing: 4,
                 children: server.tags

@@ -3,6 +3,7 @@ import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/widgets/error_state.dart';
 import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
@@ -49,9 +50,9 @@ class TagListScreen extends ConsumerWidget {
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.only(bottom: 80),
+            padding: EdgeInsets.only(bottom: Spacing.fabClearance),
             itemCount: tags.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 4),
+            separatorBuilder: (_, _) => Spacing.verticalXxs,
             itemBuilder: (context, index) {
               final tag = tags[index];
               return _TagTile(

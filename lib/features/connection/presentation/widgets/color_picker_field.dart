@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:sshvault/core/constants/color_constants.dart';
 
@@ -23,10 +24,10 @@ class ColorPickerField extends StatelessWidget {
           AppLocalizations.of(context)!.colorPickerLabel,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: 8),
+        Spacing.verticalSm,
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: Spacing.sm,
+          runSpacing: Spacing.sm,
           children: ColorConstants.serverColors.map((sc) {
             final isSelected = sc.value == selectedColor;
             return Material(

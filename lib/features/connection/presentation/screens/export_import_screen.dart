@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -25,25 +26,25 @@ class ExportImportScreen extends ConsumerWidget {
     return AdaptiveScaffold.withAppBar(
       appBar: buildShellAppBar(context, title: l10n.exportImportTitle),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: Spacing.paddingAllLg,
         children: [
           // Export Section
           SectionCard(
-            padding: const EdgeInsets.all(20),
+            padding: Spacing.paddingAllXl,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(Icons.upload, color: theme.colorScheme.primary),
-                    const SizedBox(width: 8),
+                    Spacing.horizontalSm,
                     Text(
                       l10n.exportSectionTitle,
                       style: theme.textTheme.titleMedium,
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -52,7 +53,7 @@ class ExportImportScreen extends ConsumerWidget {
                     label: Text(l10n.exportJsonButton),
                   ),
                 ),
-                const SizedBox(height: 8),
+                Spacing.verticalSm,
                 SizedBox(
                   width: double.infinity,
                   child: AdaptiveButton.filledIcon(
@@ -64,25 +65,25 @@ class ExportImportScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
 
           // Import Section
           SectionCard(
-            padding: const EdgeInsets.all(20),
+            padding: Spacing.paddingAllXl,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(Icons.download, color: theme.colorScheme.secondary),
-                    const SizedBox(width: 8),
+                    Spacing.horizontalSm,
                     Text(
                       l10n.importSectionTitle,
                       style: theme.textTheme.titleMedium,
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -91,7 +92,7 @@ class ExportImportScreen extends ConsumerWidget {
                     label: Text(l10n.importButton),
                   ),
                 ),
-                const SizedBox(height: 8),
+                Spacing.verticalSm,
                 Text(
                   l10n.importSupportedFormats,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -103,7 +104,7 @@ class ExportImportScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
 
           // Status
           if (exportState.isLoading)
@@ -112,7 +113,7 @@ class ExportImportScreen extends ConsumerWidget {
             Card(
               color: theme.colorScheme.error.withAlpha(AppConstants.alpha26),
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: Spacing.paddingAllMd,
                 child: Text(
                   l10n.error(errorMessage(exportState.error!)),
                   style: TextStyle(color: theme.colorScheme.error),
@@ -123,7 +124,7 @@ class ExportImportScreen extends ConsumerWidget {
             Card(
               color: theme.colorScheme.tertiaryContainer,
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: Spacing.paddingAllMd,
                 child: Text(
                   exportState.value == importSuccessfulKey
                       ? l10n.importSuccessful

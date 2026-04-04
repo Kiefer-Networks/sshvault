@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
 
@@ -97,12 +98,12 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
                   ),
                   keyboardType: TextInputType.text,
                 ),
-                const SizedBox(height: 12),
+                Spacing.verticalMd,
               ],
-              const SizedBox(height: 8),
+              Spacing.verticalSm,
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(12),
+                padding: Spacing.paddingAllMd,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
@@ -123,7 +124,7 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    Spacing.verticalSm,
                     ListenableBuilder(
                       listenable: Listenable.merge(
                         _controllers.values.toList(),

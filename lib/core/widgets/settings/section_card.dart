@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 
 enum SectionCardVariant { standard, elevated, outlined }
 
@@ -49,7 +50,7 @@ class SectionCard extends StatelessWidget {
       color: backgroundColor,
       clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding: padding ?? const EdgeInsets.all(16),
+        padding: padding ?? Spacing.paddingAllLg,
         child: child,
       ),
     );

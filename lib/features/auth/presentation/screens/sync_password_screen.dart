@@ -6,6 +6,7 @@ import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:sshvault/features/sync/presentation/widgets/first_sync_dialog.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 enum SyncPasswordMode { create, enter }
@@ -101,7 +102,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
           : l10n.syncPasswordTitleEnter,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: Spacing.paddingAllXxl,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: Form(
@@ -115,7 +116,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                     size: 64,
                     color: theme.colorScheme.primary,
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   Text(
                     _isCreateMode
                         ? l10n.syncPasswordDescription
@@ -124,18 +125,18 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                     style: theme.textTheme.bodyMedium,
                   ),
                   if (_isCreateMode) ...[
-                    const SizedBox(height: 8),
+                    Spacing.verticalSm,
                     Card(
                       color: theme.colorScheme.errorContainer,
                       child: Padding(
-                        padding: const EdgeInsets.all(12),
+                        padding: Spacing.paddingAllMd,
                         child: Row(
                           children: [
                             Icon(
                               Icons.warning_amber_rounded,
                               color: theme.colorScheme.onErrorContainer,
                             ),
-                            const SizedBox(width: 12),
+                            Spacing.horizontalMd,
                             Expanded(
                               child: Text(
                                 l10n.syncPasswordWarning,
@@ -149,7 +150,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                       ),
                     ),
                   ],
-                  const SizedBox(height: 24),
+                  Spacing.verticalXxl,
 
                   // Password field
                   TextFormField(
@@ -179,7 +180,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
 
                   // Confirm field only in create mode
                   if (_isCreateMode) ...[
-                    const SizedBox(height: 16),
+                    Spacing.verticalLg,
                     TextFormField(
                       controller: _confirmController,
                       obscureText: formState.obscure,
@@ -198,7 +199,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
 
                   // Error message
                   if (formState.errorMessage != null) ...[
-                    const SizedBox(height: 12),
+                    Spacing.verticalMd,
                     Text(
                       formState.errorMessage!,
                       style: TextStyle(color: theme.colorScheme.error),
@@ -206,7 +207,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                     ),
                   ],
 
-                  const SizedBox(height: 24),
+                  Spacing.verticalXxl,
                   AdaptiveButton.filled(
                     onPressed: formState.saving ? null : _save,
                     child: formState.saving

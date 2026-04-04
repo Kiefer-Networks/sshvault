@@ -11,6 +11,7 @@ import 'package:sshvault/features/connection/presentation/providers/repository_p
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:sshvault/features/host_key/domain/services/ssh_config_parser.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _importEntriesProvider = StateProvider.autoDispose<List<SshConfigEntry>>(
@@ -52,7 +53,7 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
     return AdaptiveScaffold(
       title: l10n.sshConfigImportTitle,
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: Spacing.paddingAllLg,
         children: [
           Row(
             children: [
@@ -65,7 +66,7 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           TextField(
             controller: _textController,
             maxLines: 6,
@@ -75,15 +76,15 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
             ),
             onChanged: (_) => _parseContent(),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           if (entries.isNotEmpty) ...[
             Text(
               l10n.sshConfigImportParsed(entries.length),
               style: Theme.of(context).textTheme.titleSmall,
             ),
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             ..._buildEntryList(l10n, entries, selected),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             FilledButton.icon(
               icon: loading
                   ? const SizedBox(

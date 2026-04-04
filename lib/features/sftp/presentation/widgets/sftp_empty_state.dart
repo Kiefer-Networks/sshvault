@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class SftpEmptyState extends StatelessWidget {
@@ -18,7 +19,7 @@ class SftpEmptyState extends StatelessWidget {
             size: 48,
             color: theme.colorScheme.onSurfaceVariant.withAlpha(128),
           ),
-          const SizedBox(height: 12),
+          Spacing.verticalMd,
           Text(
             l10n.sftpEmptyDirectory,
             style: theme.textTheme.bodyLarge?.copyWith(

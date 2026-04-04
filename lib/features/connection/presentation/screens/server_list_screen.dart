@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/core/utils/ssh_config_parser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
@@ -114,7 +115,7 @@ class ServerListScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.sshConfigImportMessage(entries.length)),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxHeight: 300),
                     child: ListView.builder(
@@ -341,7 +342,7 @@ class ServerListScreen extends ConsumerWidget {
       appBar: buildShellAppBar(
         context,
         title: l10n.serverListTitle,
-        actions: [const ViewModeToggle(), const SizedBox(width: 8)],
+        actions: [const ViewModeToggle(), Spacing.horizontalSm],
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'addServerFab',
@@ -352,7 +353,7 @@ class ServerListScreen extends ConsumerWidget {
         children: [
           const _DashboardHeader(),
           const SearchFilterBar(),
-          const SizedBox(height: 8),
+          Spacing.verticalSm,
           Expanded(
             child: useGrouped
                 ? _buildFolderGroupedView(context, ref, viewMode, l10n)
@@ -391,7 +392,7 @@ class ServerListScreen extends ConsumerWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.only(bottom: 80),
+          padding: EdgeInsets.only(bottom: Spacing.fabClearance),
           itemCount: groups.fold<int>(0, (sum, g) {
             final expanded =
                 g.folder == null ||
@@ -427,7 +428,7 @@ class ServerListScreen extends ConsumerWidget {
                 for (final server in group.servers) {
                   if (index == i) {
                     return Padding(
-                      padding: EdgeInsets.only(left: group.depth * 24.0),
+                      padding: EdgeInsets.only(left: group.depth * Spacing.xxl),
                       child: ServerListTile(
                         server: server,
                         onTap: () async {
@@ -532,9 +533,9 @@ class ServerListScreen extends ConsumerWidget {
   Widget _buildList(BuildContext context, WidgetRef ref, List servers) {
     return ListView.separated(
       key: const ValueKey('list'),
-      padding: const EdgeInsets.only(bottom: 80),
+      padding: EdgeInsets.only(bottom: Spacing.fabClearance),
       itemCount: servers.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 4),
+      separatorBuilder: (_, _) => Spacing.verticalXxs,
       itemBuilder: (context, index) {
         final server = servers[index];
         return ServerListTile(
@@ -586,7 +587,7 @@ class ServerListScreen extends ConsumerWidget {
   Widget _buildGrid(BuildContext context, WidgetRef ref, List servers) {
     return GridView.builder(
       key: const ValueKey('grid'),
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+      padding: EdgeInsets.fromLTRB(Spacing.lg, 0, Spacing.lg, Spacing.fabClearance),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 300,
         childAspectRatio: 0.95,
@@ -721,7 +722,7 @@ class _FolderSectionHeader extends StatelessWidget {
     final name = isUncategorized ? l10n.serverListNoFolder : folder.name;
 
     return Padding(
-      padding: EdgeInsets.only(left: group.depth * 24.0),
+      padding: EdgeInsets.only(left: group.depth * Spacing.xxl),
       child: ListTile(
         onTap: onToggle,
         tileColor: theme.colorScheme.surfaceContainerHighest,
@@ -749,7 +750,7 @@ class _FolderSectionHeader extends StatelessWidget {
               textColor: folderColor,
             ),
             if (onToggle != null) ...[
-              const SizedBox(width: 4),
+              Spacing.horizontalXxs,
               Icon(
                 expanded ? Icons.expand_less : Icons.expand_more,
                 size: 20,
@@ -782,7 +783,7 @@ class _DashboardHeader extends ConsumerWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(top: 8),
+      padding: EdgeInsets.only(top: Spacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -793,9 +794,9 @@ class _DashboardHeader extends ConsumerWidget {
               height: 48,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: Spacing.paddingHorizontalLg,
                 itemCount: sessions.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                separatorBuilder: (_, _) => Spacing.horizontalSm,
                 itemBuilder: (context, index) {
                   final session = sessions[index];
                   return ActionChip(
@@ -826,9 +827,9 @@ class _DashboardHeader extends ConsumerWidget {
               height: 48,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: Spacing.paddingHorizontalLg,
                 itemCount: favorites.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                separatorBuilder: (_, _) => Spacing.horizontalSm,
                 itemBuilder: (context, index) {
                   final server = favorites[index];
                   return ActionChip(
@@ -858,9 +859,9 @@ class _DashboardHeader extends ConsumerWidget {
               height: 48,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: Spacing.paddingHorizontalLg,
                 itemCount: recents.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                separatorBuilder: (_, _) => Spacing.horizontalSm,
                 itemBuilder: (context, index) {
                   final server = recents[index];
                   return ActionChip(
@@ -883,7 +884,7 @@ class _DashboardHeader extends ConsumerWidget {
               ),
             ),
           ],
-          const SizedBox(height: 4),
+          Spacing.verticalXxs,
         ],
       ),
     );
@@ -897,7 +898,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: Spacing.lg, vertical: Spacing.xxs),
       child: Text(
         title,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(

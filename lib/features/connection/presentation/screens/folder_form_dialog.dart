@@ -3,6 +3,7 @@ import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/constants/color_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
@@ -120,7 +121,7 @@ class _FolderFormDialogState extends ConsumerState<FolderFormDialog> {
         actions: [TextButton(onPressed: _save, child: Text(saveText))],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: Spacing.paddingAllLg,
         children: [
           TextField(
             controller: _nameController,
@@ -131,7 +132,7 @@ class _FolderFormDialogState extends ConsumerState<FolderFormDialog> {
             keyboardType: TextInputType.text,
             autofocus: true,
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           ListTile(
             leading: const Icon(Icons.account_tree),
             title: Text(parentName ?? l10n.folderFormParentNone),
@@ -149,14 +150,14 @@ class _FolderFormDialogState extends ConsumerState<FolderFormDialog> {
               }
             },
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           ColorPickerField(
             selectedColor: formState.color,
             onColorChanged: (c) =>
                 ref.read(_folderFormStateProvider.notifier).state = formState
                     .copyWith(color: c),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           IconPickerField(
             selectedIcon: formState.iconName,
             onIconChanged: (i) =>

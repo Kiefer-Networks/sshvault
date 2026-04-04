@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive_dialog.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class RenameDialog {
@@ -33,7 +34,7 @@ class RenameDialog {
           onPressed: () => Navigator.pop(context),
           child: Text(l10n.cancel),
         ),
-        const SizedBox(width: 8),
+        Spacing.horizontalSm,
         FilledButton(
           onPressed: () => Navigator.pop(context, controller.text.trim()),
           child: Text(l10n.save),

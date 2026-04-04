@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/utils/date_formatter.dart';
 import 'package:sshvault/core/widgets/info_row.dart';
 import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
@@ -77,13 +78,13 @@ class ServerDetailScreen extends ConsumerWidget {
       body: serverAsync.when(
         data: (server) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: Spacing.paddingAllLg,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header Card
                 SectionCard(
-                  padding: const EdgeInsets.all(20),
+                  padding: Spacing.paddingAllXl,
                   child: Row(
                     children: [
                       Container(
@@ -101,7 +102,7 @@ class ServerDetailScreen extends ConsumerWidget {
                           size: 28,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      Spacing.horizontalLg,
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +120,7 @@ class ServerDetailScreen extends ConsumerWidget {
                                 StatusBadge(isActive: server.isActive),
                               ],
                             ),
-                            const SizedBox(height: 4),
+                            Spacing.verticalXxs,
                             Text(
                               switch (server.authMethod) {
                                 AuthMethod.password => l10n.authMethodPassword,
@@ -138,11 +139,11 @@ class ServerDetailScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Connection Info
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -150,7 +151,7 @@ class ServerDetailScreen extends ConsumerWidget {
                         l10n.serverDetailConnection,
                         style: theme.textTheme.titleSmall,
                       ),
-                      const SizedBox(height: 12),
+                      Spacing.verticalMd,
                       InfoRow(
                         icon: Icons.dns_outlined,
                         label: l10n.serverDetailHost,
@@ -177,9 +178,9 @@ class ServerDetailScreen extends ConsumerWidget {
                 // Proxy
                 if (server.proxyType != ProxyType.none ||
                     server.useGlobalProxy) ...[
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   SectionCard(
-                    padding: const EdgeInsets.all(16),
+                    padding: Spacing.paddingAllLg,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -187,7 +188,7 @@ class ServerDetailScreen extends ConsumerWidget {
                           l10n.proxySettings,
                           style: theme.textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 12),
+                        Spacing.verticalMd,
                         if (server.useGlobalProxy &&
                             server.proxyType == ProxyType.none)
                           InfoRow(
@@ -221,7 +222,7 @@ class ServerDetailScreen extends ConsumerWidget {
 
                 // Folder
                 if (server.groupId != null) ...[
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                   _FolderSection(groupId: server.groupId!),
                 ],
 
@@ -232,12 +233,12 @@ class ServerDetailScreen extends ConsumerWidget {
                   distroName: server.distroName,
                 ),
 
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Tags
                 if (server.tags.isNotEmpty) ...[
                   SectionCard(
-                    padding: const EdgeInsets.all(16),
+                    padding: Spacing.paddingAllLg,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -245,7 +246,7 @@ class ServerDetailScreen extends ConsumerWidget {
                           l10n.serverDetailTags,
                           style: theme.textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 8),
+                        Spacing.verticalSm,
                         Wrap(
                           spacing: 8,
                           runSpacing: 4,
@@ -256,13 +257,13 @@ class ServerDetailScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                 ],
 
                 // Notes
                 if (server.notes.isNotEmpty) ...[
                   SectionCard(
-                    padding: const EdgeInsets.all(16),
+                    padding: Spacing.paddingAllLg,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -270,7 +271,7 @@ class ServerDetailScreen extends ConsumerWidget {
                           l10n.serverDetailNotes,
                           style: theme.textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 8),
+                        Spacing.verticalSm,
                         Text(
                           server.notes,
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -282,12 +283,12 @@ class ServerDetailScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
                 ],
 
                 // Metadata
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -295,7 +296,7 @@ class ServerDetailScreen extends ConsumerWidget {
                         l10n.serverDetailInfo,
                         style: theme.textTheme.titleSmall,
                       ),
-                      const SizedBox(height: 12),
+                      Spacing.verticalMd,
                       InfoRow(
                         icon: Icons.calendar_today,
                         label: l10n.serverDetailCreated,
@@ -347,12 +348,12 @@ class _FolderSection extends ConsumerWidget {
         if (group == null) return const SizedBox.shrink();
 
         return SectionCard(
-          padding: const EdgeInsets.all(16),
+          padding: Spacing.paddingAllLg,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(l10n.serverDetailFolder, style: theme.textTheme.titleSmall),
-              const SizedBox(height: 8),
+              Spacing.verticalSm,
               Row(
                 children: [
                   Container(
@@ -368,7 +369,7 @@ class _FolderSection extends ConsumerWidget {
                       size: 18,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  Spacing.horizontalMd,
                   Text(group.name, style: theme.textTheme.bodyLarge),
                 ],
               ),
@@ -412,18 +413,18 @@ class _DistroSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: EdgeInsets.only(top: Spacing.lg),
       child: SectionCard(
-        padding: const EdgeInsets.all(16),
+        padding: Spacing.paddingAllLg,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(l10n.serverDetailDistro, style: theme.textTheme.titleSmall),
-            const SizedBox(height: 8),
+            Spacing.verticalSm,
             Row(
               children: [
                 _DistroLogo(distroId: effectiveId),
-                const SizedBox(width: 12),
+                Spacing.horizontalMd,
                 Expanded(
                   child: Text(effectiveName, style: theme.textTheme.bodyLarge),
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -81,7 +82,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
     return Container(
       width: 32,
       height: 4,
-      margin: const EdgeInsets.symmetric(vertical: 12),
+      margin: EdgeInsets.symmetric(vertical: Spacing.md),
       decoration: BoxDecoration(
         color: theme.colorScheme.onSurfaceVariant.withAlpha(102),
         borderRadius: BorderRadius.circular(2),
@@ -140,19 +141,19 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
         children: [
           _buildDragHandle(theme),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: Spacing.paddingHorizontalXxl,
             child: Text(l10n.keyGenTitle, style: theme.textTheme.titleLarge),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Flexible(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: Spacing.paddingHorizontalXxl,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(l10n.keyGenKeyType, style: theme.textTheme.titleSmall),
-                  const SizedBox(height: 8),
+                  Spacing.verticalSm,
                   DropdownMenu<SshKeyType>(
                     initialSelection: genState.selectedType,
                     expandedInsets: EdgeInsets.zero,
@@ -176,11 +177,11 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                             );
                           },
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
 
                   if (genState.selectedType.allowedBitLengths.isNotEmpty) ...[
                     Text(l10n.keyGenKeySize, style: theme.textTheme.titleSmall),
-                    const SizedBox(height: 8),
+                    Spacing.verticalSm,
                     DropdownMenu<int>(
                       initialSelection: genState.selectedBits > 0
                           ? genState.selectedBits
@@ -207,12 +208,12 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                               }
                             },
                     ),
-                    const SizedBox(height: 16),
+                    Spacing.verticalLg,
                   ],
 
                   if (genState.selectedType.allowedBitLengths.isEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
+                      padding: EdgeInsets.only(bottom: Spacing.lg),
                       child: Row(
                         children: [
                           Icon(
@@ -220,7 +221,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                             size: 16,
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
-                          const SizedBox(width: 8),
+                          Spacing.horizontalSm,
                           Text(
                             genState.selectedType.keySizeLabel,
                             style: theme.textTheme.bodySmall?.copyWith(
@@ -232,7 +233,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                     ),
 
                   Text(l10n.keyGenComment, style: theme.textTheme.titleSmall),
-                  const SizedBox(height: 8),
+                  Spacing.verticalSm,
                   TextFormField(
                     controller: _commentController,
                     enabled: !genState.generating,
@@ -243,13 +244,13 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                     ),
                     keyboardType: TextInputType.text,
                   ),
-                  const SizedBox(height: 16),
+                  Spacing.verticalLg,
 
                   Text(
                     l10n.keyGenPassphrase,
                     style: theme.textTheme.titleSmall,
                   ),
-                  const SizedBox(height: 8),
+                  Spacing.verticalSm,
                   TextFormField(
                     controller: _passphraseController,
                     enabled: !genState.generating,
@@ -263,7 +264,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                   ),
 
                   if (genState.error != null) ...[
-                    const SizedBox(height: 16),
+                    Spacing.verticalLg,
                     Text(
                       genState.error!,
                       style: TextStyle(color: theme.colorScheme.error),
@@ -273,9 +274,9 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            padding: EdgeInsets.fromLTRB(Spacing.xxl, 0, Spacing.xxl, Spacing.xxl),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -285,7 +286,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                       : () => Navigator.pop(context),
                   child: Text(l10n.cancel),
                 ),
-                const SizedBox(width: 8),
+                Spacing.horizontalSm,
                 FilledButton.icon(
                   onPressed: genState.generating ? null : _generate,
                   icon: genState.generating
@@ -324,11 +325,11 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
         children: [
           _buildDragHandle(theme),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: Spacing.paddingHorizontalXxl,
             child: Row(
               children: [
                 Icon(Icons.check_circle, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
+                Spacing.horizontalSm,
                 Expanded(
                   child: Text(
                     l10n.keyGenResultTitle(result.type.displayName),
@@ -338,10 +339,10 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Flexible(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: Spacing.paddingHorizontalXxl,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -352,7 +353,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                     icon: Icons.key,
                     theme: theme,
                   ),
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   _KeyPreviewCard(
                     label: l10n.keyGenPrivateKey,
                     value: result.privateKey,
@@ -360,7 +361,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                     theme: theme,
                     isPrivate: true,
                   ),
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   Row(
                     children: [
                       Icon(
@@ -368,7 +369,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                         size: 14,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      const SizedBox(width: 6),
+                      Spacing.horizontalXs,
                       Expanded(
                         child: Text(
                           l10n.keyGenCommentInfo(result.comment),
@@ -383,9 +384,9 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            padding: EdgeInsets.fromLTRB(Spacing.xxl, 0, Spacing.xxl, Spacing.xxl),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -397,7 +398,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                   },
                   child: Text(l10n.keyGenAnother),
                 ),
-                const SizedBox(width: 8),
+                Spacing.horizontalSm,
                 FilledButton(
                   onPressed: () => Navigator.pop(context, result),
                   child: Text(l10n.keyGenUseThisKey),
@@ -434,14 +435,14 @@ class _KeyPreviewCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: Spacing.paddingAllMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(icon, size: 16, color: theme.colorScheme.primary),
-                const SizedBox(width: 6),
+                Spacing.horizontalXs,
                 Text(label, style: theme.textTheme.labelLarge),
                 const Spacer(),
                 IconButton(
@@ -460,7 +461,7 @@ class _KeyPreviewCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            Spacing.verticalXxs,
             Text(
               displayValue,
               style: theme.textTheme.bodySmall?.copyWith(

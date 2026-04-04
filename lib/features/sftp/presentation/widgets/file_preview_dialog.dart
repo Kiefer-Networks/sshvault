@@ -10,6 +10,7 @@ import 'package:sshvault/features/sftp/domain/entities/sftp_entry.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
 import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class _FilePreviewState {
@@ -175,7 +176,7 @@ class _FileInfoView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Icons.info_outline, size: 48, color: theme.colorScheme.primary),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         _infoRow(l10n.sftpFileType, entry.type.name, theme),
         _infoRow(l10n.sftpFileSize, _formatSize(entry.size), theme),
         _infoRow(
@@ -199,7 +200,7 @@ class _FileInfoView extends StatelessWidget {
 
   Widget _infoRow(String label, String value, ThemeData theme) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: Spacing.xxs),
       child: Row(
         children: [
           SizedBox(

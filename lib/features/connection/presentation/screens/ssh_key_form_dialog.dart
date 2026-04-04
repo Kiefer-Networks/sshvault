@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -344,7 +345,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       ),
       body: widget.isEditing
           ? ListView(
-              padding: const EdgeInsets.all(16),
+              padding: Spacing.paddingAllLg,
               children: [_buildEditForm(theme, formState)],
             )
           : TabBarView(
@@ -363,7 +364,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   ) {
     final l10n = AppLocalizations.of(context)!;
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: Spacing.paddingAllLg,
       children: [
         TextFormField(
           controller: _nameController,
@@ -375,7 +376,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         DropdownMenu<SshKeyType>(
           initialSelection: formState.selectedType,
           expandedInsets: EdgeInsets.zero,
@@ -396,7 +397,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
                       );
                 },
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         if (formState.selectedType.allowedBitLengths.isNotEmpty)
           DropdownMenu<int>(
             initialSelection: formState.selectedBits > 0
@@ -431,7 +432,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
                 size: 16,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
-              const SizedBox(width: 8),
+              Spacing.horizontalSm,
               Text(
                 formState.selectedType.keySizeLabel,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -440,7 +441,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
               ),
             ],
           ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         TextFormField(
           controller: _commentController,
           decoration: InputDecoration(
@@ -451,7 +452,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           keyboardType: TextInputType.text,
         ),
         if (formState.error != null) ...[
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Text(
             formState.error!,
             style: TextStyle(color: theme.colorScheme.error),
@@ -526,7 +527,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   Widget _buildImportForm(ThemeData theme, _SshKeyFormReactiveState formState) {
     final l10n = AppLocalizations.of(context)!;
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: Spacing.paddingAllLg,
       children: [
         TextFormField(
           controller: _nameController,
@@ -538,13 +539,13 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         OutlinedButton.icon(
           onPressed: formState.saving ? null : _pickKeyFile,
           icon: const Icon(Icons.file_open),
           label: Text(l10n.sshKeyFormImportFromFile),
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         TextFormField(
           controller: _privateKeyController,
           decoration: InputDecoration(
@@ -555,7 +556,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           keyboardType: TextInputType.multiline,
           maxLines: 5,
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         TextFormField(
           controller: _passphraseController,
           decoration: InputDecoration(
@@ -565,7 +566,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           keyboardType: TextInputType.visiblePassword,
           obscureText: true,
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         TextFormField(
           controller: _commentController,
           decoration: InputDecoration(
@@ -575,7 +576,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           keyboardType: TextInputType.text,
         ),
         if (formState.error != null) ...[
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Text(
             formState.error!,
             style: TextStyle(color: theme.colorScheme.error),
@@ -601,7 +602,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         TextFormField(
           controller: _commentController,
           decoration: InputDecoration(
@@ -610,13 +611,13 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           ),
           keyboardType: TextInputType.text,
         ),
-        const SizedBox(height: 24),
+        Spacing.verticalXxl,
 
         // Key type
         Row(
           children: [
             Icon(Icons.vpn_key, size: 18, color: theme.colorScheme.primary),
-            const SizedBox(width: 8),
+            Spacing.horizontalSm,
             Text(l10n.sshKeyFormKeyType, style: theme.textTheme.labelLarge),
             const Spacer(),
             Text(
@@ -630,9 +631,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
 
         // Fingerprint
         if (key.fingerprint.isNotEmpty) ...[
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Text(l10n.sshKeyFingerprint, style: theme.textTheme.labelLarge),
-          const SizedBox(height: 4),
+          Spacing.verticalXxs,
           SelectableText(
             key.fingerprint,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -644,12 +645,12 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
 
         // Public key
         if (key.publicKey.isNotEmpty) ...[
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Text(l10n.sshKeyPublicKey, style: theme.textTheme.labelLarge),
-          const SizedBox(height: 4),
+          Spacing.verticalXxs,
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(12),
+            padding: Spacing.paddingAllMd,
             decoration: BoxDecoration(
               color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(8),
@@ -668,7 +669,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         _LinkedServersList(keyId: key.id),
 
         if (formState.error != null) ...[
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           Text(
             formState.error!,
             style: TextStyle(color: theme.colorScheme.error),
@@ -714,12 +715,12 @@ class _LinkedServersList extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 24),
+        Spacing.verticalXxl,
         Text(
           l10n.sshKeyTileLinkedServers(servers.length),
           style: theme.textTheme.labelLarge,
         ),
-        const SizedBox(height: 8),
+        Spacing.verticalSm,
         for (final server in servers)
           ListTile(
             dense: true,

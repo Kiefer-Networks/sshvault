@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
 
@@ -25,10 +26,10 @@ class IconPickerField extends StatelessWidget {
           AppLocalizations.of(context)!.iconPickerLabel,
           style: theme.textTheme.titleSmall,
         ),
-        const SizedBox(height: 8),
+        Spacing.verticalSm,
         Wrap(
-          spacing: 6,
-          runSpacing: 6,
+          spacing: Spacing.xs,
+          runSpacing: Spacing.xs,
           children: IconConstants.serverIcons.map((si) {
             final isSelected = si.name == selectedIcon;
             return Material(

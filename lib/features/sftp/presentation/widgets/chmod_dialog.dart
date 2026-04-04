@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive_dialog.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class ChmodDialog {
@@ -16,7 +17,7 @@ class ChmodDialog {
           onPressed: () => Navigator.pop(context),
           child: Text(l10n.cancel),
         ),
-        const SizedBox(width: 8),
+        Spacing.horizontalSm,
         FilledButton(
           onPressed: () => Navigator.pop(context, permissions.value),
           child: Text(l10n.save),
@@ -97,7 +98,7 @@ class _ChmodContentState extends State<_ChmodContent> {
               maxLength: 3,
               onChanged: _updateFromText,
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             _buildGroup(l10n.sftpChmodOwner, l10n, mode, 0x100, 0x080, 0x040),
             _buildGroup(l10n.sftpChmodGroup, l10n, mode, 0x020, 0x010, 0x008),
             _buildGroup(l10n.sftpChmodOther, l10n, mode, 0x004, 0x002, 0x001),
@@ -116,7 +117,7 @@ class _ChmodContentState extends State<_ChmodContent> {
     int execBit,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: Spacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

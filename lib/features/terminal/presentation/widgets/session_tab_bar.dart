@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -29,7 +30,7 @@ class SessionTabBar extends ConsumerWidget {
       ),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 4),
+        padding: Spacing.paddingHorizontalXxs,
         itemCount: sessions.length,
         itemBuilder: (context, index) {
           final session = sessions[index];
@@ -56,7 +57,7 @@ class SessionTabBar extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _StatusDot(status: session.status),
-                    const SizedBox(width: 6),
+                    Spacing.horizontalXs,
                     Flexible(
                       child: Text(
                         session.title,
@@ -73,7 +74,7 @@ class SessionTabBar extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    Spacing.horizontalXxs,
                     _CloseButton(
                       session: session,
                       onClose: () {
@@ -142,7 +143,7 @@ class _CloseButton extends StatelessWidget {
         }
       },
       child: Padding(
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(Spacing.xxxs),
         child: Icon(
           Icons.close,
           size: 14,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/core/storage/database_provider.dart';
 import 'package:sshvault/core/storage/secure_storage_provider.dart';
@@ -316,7 +317,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: Spacing.paddingHorizontalXxxl,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -327,10 +328,10 @@ class _LockScreenState extends ConsumerState<LockScreen>
                     ? theme.colorScheme.error
                     : theme.colorScheme.primary,
               ),
-              const SizedBox(height: 16),
+              Spacing.verticalLg,
               Text(l10n.lockScreenTitle, style: theme.textTheme.headlineSmall),
               if (isLockedOut) ...[
-                const SizedBox(height: 8),
+                Spacing.verticalSm,
                 Text(
                   l10n.lockScreenLockedOut(
                     settings!.remainingLockout.inMinutes + 1,
@@ -340,7 +341,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                   ),
                 ),
               ],
-              const SizedBox(height: 32),
+              Spacing.verticalXxxl,
 
               if (settings?.hasPin ?? false) ...[
                 PinDotIndicator(
@@ -348,7 +349,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                   hasError: lockState.pinError != null,
                 ),
                 if (lockState.pinError != null) ...[
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   Text(
                     lockState.pinError!,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -358,14 +359,14 @@ class _LockScreenState extends ConsumerState<LockScreen>
                   ),
                 ],
                 if (lockState.isVerifying) ...[
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   const SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ],
-                const SizedBox(height: 32),
+                Spacing.verticalXxxl,
                 PinNumPad(
                   onDigit: _onDigit,
                   onBackspace: _onBackspace,

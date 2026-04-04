@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
@@ -21,14 +22,14 @@ class SettingsHubScreen extends ConsumerWidget {
     return AdaptiveScaffold(
       title: l10n.settingsTitle,
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: Spacing.paddingHorizontalLgVerticalSm,
         children: [
           // Account Header
           _AccountHeaderBuilder(
             isAuthenticated: isAuthenticated,
             onTap: () => context.push('/settings/account'),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
 
           // General
           SettingsGroupCard(
@@ -49,7 +50,7 @@ class SettingsHubScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          Spacing.verticalMd,
 
           // Security & Data
           SettingsGroupCard(
@@ -84,7 +85,7 @@ class SettingsHubScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          Spacing.verticalMd,
 
           // Info
           SettingsGroupCard(
@@ -99,7 +100,7 @@ class SettingsHubScreen extends ConsumerWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
         ],
       ),
     );

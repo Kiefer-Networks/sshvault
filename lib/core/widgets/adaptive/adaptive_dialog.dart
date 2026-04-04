@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 
 /// Shows a confirmation dialog as a modal bottom sheet (Android 16 style).
 Future<bool?> showAdaptiveConfirmDialog(
@@ -23,12 +24,12 @@ Future<bool?> showAdaptiveConfirmDialog(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: Spacing.paddingHorizontalXxl,
               child: Text(title, style: theme.textTheme.titleLarge),
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: Spacing.paddingHorizontalXxl,
               child: Text(
                 message,
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -36,9 +37,9 @@ Future<bool?> showAdaptiveConfirmDialog(
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            Spacing.verticalXxl,
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              padding: EdgeInsets.fromLTRB(Spacing.xxl, 0, Spacing.xxl, Spacing.xxl),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -46,7 +47,7 @@ Future<bool?> showAdaptiveConfirmDialog(
                     onPressed: () => Navigator.pop(ctx, false),
                     child: Text(cancelLabel),
                   ),
-                  const SizedBox(width: 8),
+                  Spacing.horizontalSm,
                   FilledButton(
                     onPressed: () => Navigator.pop(ctx, true),
                     style: confirmColor != null
@@ -88,21 +89,21 @@ Future<T?> showAdaptiveFormDialog<T>(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[icon, const SizedBox(height: 8)],
+            if (icon != null) ...[icon, Spacing.verticalSm],
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: Spacing.paddingHorizontalXxl,
               child: Text(title, style: theme.textTheme.titleLarge),
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             Flexible(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: Spacing.paddingHorizontalXxl,
                 child: content,
               ),
             ),
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              padding: EdgeInsets.fromLTRB(Spacing.xxl, 0, Spacing.xxl, Spacing.xxl),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: materialActions,

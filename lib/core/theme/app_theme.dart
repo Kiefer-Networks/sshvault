@@ -269,3 +269,68 @@ abstract final class AppTheme {
     );
   }
 }
+
+/// Scales a [TextTheme] for responsive typography based on screen width.
+///
+/// Uses Material 3 window-size classes:
+/// - Compact (< 600 dp): base sizes
+/// - Medium (600–1200 dp): +1 dp
+/// - Expanded (>= 1200 dp): +2 dp
+TextTheme responsiveTextTheme(TextTheme base, double screenWidth) {
+  final double scale;
+  if (screenWidth >= 1200) {
+    scale = 2;
+  } else if (screenWidth >= 600) {
+    scale = 1;
+  } else {
+    return base;
+  }
+
+  return base.copyWith(
+    displayLarge: base.displayLarge?.copyWith(
+      fontSize: (base.displayLarge!.fontSize ?? 57) + scale,
+    ),
+    displayMedium: base.displayMedium?.copyWith(
+      fontSize: (base.displayMedium!.fontSize ?? 45) + scale,
+    ),
+    displaySmall: base.displaySmall?.copyWith(
+      fontSize: (base.displaySmall!.fontSize ?? 36) + scale,
+    ),
+    headlineLarge: base.headlineLarge?.copyWith(
+      fontSize: (base.headlineLarge!.fontSize ?? 32) + scale,
+    ),
+    headlineMedium: base.headlineMedium?.copyWith(
+      fontSize: (base.headlineMedium!.fontSize ?? 28) + scale,
+    ),
+    headlineSmall: base.headlineSmall?.copyWith(
+      fontSize: (base.headlineSmall!.fontSize ?? 24) + scale,
+    ),
+    titleLarge: base.titleLarge?.copyWith(
+      fontSize: (base.titleLarge!.fontSize ?? 22) + scale,
+    ),
+    titleMedium: base.titleMedium?.copyWith(
+      fontSize: (base.titleMedium!.fontSize ?? 16) + scale,
+    ),
+    titleSmall: base.titleSmall?.copyWith(
+      fontSize: (base.titleSmall!.fontSize ?? 14) + scale,
+    ),
+    bodyLarge: base.bodyLarge?.copyWith(
+      fontSize: (base.bodyLarge!.fontSize ?? 14) + scale,
+    ),
+    bodyMedium: base.bodyMedium?.copyWith(
+      fontSize: (base.bodyMedium!.fontSize ?? 12) + scale,
+    ),
+    bodySmall: base.bodySmall?.copyWith(
+      fontSize: (base.bodySmall!.fontSize ?? 11) + scale,
+    ),
+    labelLarge: base.labelLarge?.copyWith(
+      fontSize: (base.labelLarge!.fontSize ?? 14) + scale,
+    ),
+    labelMedium: base.labelMedium?.copyWith(
+      fontSize: (base.labelMedium!.fontSize ?? 12) + scale,
+    ),
+    labelSmall: base.labelSmall?.copyWith(
+      fontSize: (base.labelSmall!.fontSize ?? 11) + scale,
+    ),
+  );
+}

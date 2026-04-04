@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/utils/validators.dart';
 import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
 import 'package:sshvault/features/connection/presentation/widgets/auth_method_selector.dart';
@@ -50,7 +51,7 @@ class ServerFormFields extends StatelessWidget {
           validator: Validators.serverNameValidator(l10n),
           textInputAction: TextInputAction.next,
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -67,7 +68,7 @@ class ServerFormFields extends StatelessWidget {
                 textInputAction: TextInputAction.next,
               ),
             ),
-            const SizedBox(width: 12),
+            Spacing.horizontalMd,
             Expanded(
               child: TextFormField(
                 controller: portController,
@@ -82,7 +83,7 @@ class ServerFormFields extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         TextFormField(
           controller: usernameController,
           decoration: InputDecoration(
@@ -93,13 +94,13 @@ class ServerFormFields extends StatelessWidget {
           validator: Validators.usernameValidator(l10n),
           textInputAction: TextInputAction.next,
         ),
-        const SizedBox(height: 20),
+        Spacing.verticalXl,
         AuthMethodSelector(
           selected: authMethod,
           onChanged: onAuthMethodChanged,
         ),
         if (showCredentials) ...[
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           if (authMethod == AuthMethod.password ||
               authMethod == AuthMethod.both)
             TextFormField(
@@ -114,7 +115,7 @@ class ServerFormFields extends StatelessWidget {
             ),
           if (authMethod == AuthMethod.key ||
               authMethod == AuthMethod.both) ...[
-            const SizedBox(height: 16),
+            Spacing.verticalLg,
             if (onSshKeyChanged != null)
               SshKeySelector(
                 selectedKeyId: selectedSshKeyId,
@@ -122,7 +123,7 @@ class ServerFormFields extends StatelessWidget {
               ),
           ],
         ],
-        const SizedBox(height: 16),
+        Spacing.verticalLg,
         TextFormField(
           controller: notesController,
           decoration: InputDecoration(

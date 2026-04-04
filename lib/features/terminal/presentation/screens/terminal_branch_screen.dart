@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xterm/xterm.dart';
@@ -56,12 +57,18 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
       });
     }
 
+    final brightness = Theme.of(context).brightness;
     final terminalTheme = themeKeyAsync.when(
-      data: (key) => TerminalThemePresets.getTheme(key),
-      loading: () =>
-          TerminalThemePresets.getTheme(TerminalThemeKey.defaultDark),
-      error: (_, _) =>
-          TerminalThemePresets.getTheme(TerminalThemeKey.defaultDark),
+      data: (key) =>
+          TerminalThemePresets.getTheme(key, brightness: brightness),
+      loading: () => TerminalThemePresets.getTheme(
+        TerminalThemeKey.defaultDark,
+        brightness: brightness,
+      ),
+      error: (_, _) => TerminalThemePresets.getTheme(
+        TerminalThemeKey.defaultDark,
+        brightness: brightness,
+      ),
     );
 
     final fontSize = fontSizeAsync.when(
@@ -144,7 +151,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
               );
             },
           ),
-          const SizedBox(width: 4),
+          Spacing.horizontalXxs,
         ],
       ),
       body: SafeArea(

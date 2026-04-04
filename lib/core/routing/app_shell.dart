@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -450,8 +451,8 @@ class _DesktopScaffold extends StatelessWidget {
             extended: extended,
             leading: Padding(
               padding: EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: extended ? 16 : 0,
+                vertical: Spacing.sm,
+                horizontal: extended ? Spacing.lg : 0,
               ),
               child: extended
                   ? Row(
@@ -462,7 +463,7 @@ class _DesktopScaffold extends StatelessWidget {
                           width: 24,
                           height: 24,
                         ),
-                        const SizedBox(width: 12),
+                        Spacing.horizontalMd,
                         Text(
                           l10n.appName,
                           style: theme.textTheme.titleMedium?.copyWith(
@@ -481,7 +482,7 @@ class _DesktopScaffold extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
+                  padding: EdgeInsets.only(bottom: Spacing.lg),
                   child: _SettingsRailButton(),
                 ),
               ),
@@ -490,7 +491,7 @@ class _DesktopScaffold extends StatelessWidget {
               for (var i = 0; i < items.length; i++)
                 NavigationRailDestination(
                   padding: breaks.contains(i)
-                      ? const EdgeInsets.only(top: 12)
+                      ? EdgeInsets.only(top: Spacing.md)
                       : EdgeInsets.zero,
                   icon: showTerminal && i == items.length - 1
                       ? Badge(
@@ -543,9 +544,9 @@ class _SyncStatusIcon extends ConsumerWidget {
     final Color color;
     final String? tooltip;
     if (isSyncing) {
-      return const Padding(
-        padding: EdgeInsets.only(left: 8),
-        child: SizedBox(
+      return Padding(
+        padding: EdgeInsets.only(left: Spacing.sm),
+        child: const SizedBox(
           width: 16,
           height: 16,
           child: CircularProgressIndicator(strokeWidth: 2),
@@ -570,7 +571,7 @@ class _SyncStatusIcon extends ConsumerWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(left: 8),
+      padding: EdgeInsets.only(left: Spacing.sm),
       child: Tooltip(
         message: tooltip ?? '',
         child: Icon(icon, size: 20, color: color),
@@ -634,11 +635,11 @@ class _AppDrawer extends StatelessWidget {
       children: [
         // Branding header
         Padding(
-          padding: const EdgeInsets.fromLTRB(28, 24, 28, 8),
+          padding: EdgeInsets.fromLTRB(Spacing.xxxl, Spacing.xxl, Spacing.xxxl, Spacing.sm),
           child: Row(
             children: [
               Image.asset('assets/images/app_icon.png', width: 28, height: 28),
-              const SizedBox(width: 12),
+              Spacing.horizontalMd,
               Text(
                 l10n.appName,
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -649,17 +650,17 @@ class _AppDrawer extends StatelessWidget {
             ],
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(28, 8, 28, 8),
-          child: Divider(),
+        Padding(
+          padding: EdgeInsets.fromLTRB(Spacing.xxxl, Spacing.sm, Spacing.xxxl, Spacing.sm),
+          child: const Divider(),
         ),
 
         // Nav destinations with section dividers
         for (var i = 0; i < items.length; i++) ...[
           if (breaks.contains(i))
-            const Padding(
-              padding: EdgeInsets.fromLTRB(28, 4, 28, 4),
-              child: Divider(),
+            Padding(
+              padding: EdgeInsets.fromLTRB(Spacing.xxxl, Spacing.xxs, Spacing.xxxl, Spacing.xxs),
+              child: const Divider(),
             ),
           NavigationDrawerDestination(
             icon: showTerminal && i == items.length - 1
@@ -707,12 +708,12 @@ class _DrawerSettingsSection extends ConsumerWidget {
 
     return Column(
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(28, 16, 28, 8),
-          child: Divider(),
+        Padding(
+          padding: EdgeInsets.fromLTRB(Spacing.xxxl, Spacing.lg, Spacing.xxxl, Spacing.sm),
+          child: const Divider(),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+          padding: EdgeInsets.symmetric(horizontal: Spacing.md, vertical: Spacing.xxxs),
           child: ListTile(
             leading: iconWidget,
             title: Text(l10n.navSettings),
@@ -723,7 +724,7 @@ class _DrawerSettingsSection extends ConsumerWidget {
             },
           ),
         ),
-        const SizedBox(height: 8),
+        Spacing.verticalSm,
       ],
     );
   }

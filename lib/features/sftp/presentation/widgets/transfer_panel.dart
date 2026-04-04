@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/features/sftp/domain/entities/transfer_item.dart';
 import 'package:sshvault/features/sftp/presentation/providers/sftp_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _transferPanelExpandedProvider = StateProvider.autoDispose<bool>(
@@ -54,7 +55,7 @@ class TransferPanel extends ConsumerWidget {
           onTap: () => ref.read(_transferPanelExpandedProvider.notifier).state =
               !expanded,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: Spacing.paddingHorizontalLgVerticalSm,
             child: Row(
               children: [
                 Icon(
@@ -66,9 +67,9 @@ class TransferPanel extends ConsumerWidget {
                       ? theme.colorScheme.primary
                       : theme.colorScheme.tertiary,
                 ),
-                const SizedBox(width: 8),
+                Spacing.horizontalSm,
                 Text(l10n.sftpTransfers, style: theme.textTheme.titleSmall),
-                const SizedBox(width: 8),
+                Spacing.horizontalSm,
                 Text(summary, style: theme.textTheme.bodySmall),
                 const Spacer(),
                 if (transfers.any(
@@ -95,7 +96,7 @@ class TransferPanel extends ConsumerWidget {
         // Active transfer progress
         if (!expanded && activeCount > 0)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: Spacing.paddingHorizontalLg,
             child: LinearProgressIndicator(value: _overallProgress(transfers)),
           ),
 
@@ -150,7 +151,7 @@ class _TransferItemTile extends ConsumerWidget {
     final fileName = item.sourcePath.split('/').last;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: Spacing.lg, vertical: Spacing.xxs),
       child: Row(
         children: [
           Icon(
@@ -158,7 +159,7 @@ class _TransferItemTile extends ConsumerWidget {
             size: 16,
             color: theme.colorScheme.onSurfaceVariant,
           ),
-          const SizedBox(width: 8),
+          Spacing.horizontalSm,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +170,7 @@ class _TransferItemTile extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall,
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: Spacing.xxxs),
                 if (item.status == TransferStatus.active)
                   LinearProgressIndicator(value: progress)
                 else
@@ -182,7 +183,7 @@ class _TransferItemTile extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          Spacing.horizontalSm,
           if (item.status == TransferStatus.active)
             IconButton(
               icon: const Icon(Icons.pause, size: 16),

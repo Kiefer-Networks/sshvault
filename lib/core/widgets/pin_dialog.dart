@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/widgets/pin_num_pad.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
@@ -131,7 +132,7 @@ class _PinDialogState extends ConsumerState<PinDialog> {
         ),
         body: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
+            padding: Spacing.paddingHorizontalXxxl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -142,11 +143,11 @@ class _PinDialogState extends ConsumerState<PinDialog> {
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 24),
+                  Spacing.verticalXxl,
                 ],
                 PinDotIndicator(length: pin.length, hasError: error != null),
                 if (error != null) ...[
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   Text(
                     error,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -155,7 +156,7 @@ class _PinDialogState extends ConsumerState<PinDialog> {
                     textAlign: TextAlign.center,
                   ),
                 ],
-                const SizedBox(height: 32),
+                Spacing.verticalXxxl,
                 PinNumPad(onDigit: _onDigit, onBackspace: _onBackspace),
               ],
             ),
@@ -253,13 +254,13 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
         ),
         body: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
+            padding: Spacing.paddingHorizontalXxxl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 PinDotIndicator(length: pin.length, hasError: error != null),
                 if (error != null) ...[
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   Text(
                     error,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -269,14 +270,14 @@ class _PinVerifyDialogState extends ConsumerState<_PinVerifyDialog> {
                   ),
                 ],
                 if (verifying) ...[
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   const SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ],
-                const SizedBox(height: 32),
+                Spacing.verticalXxxl,
                 PinNumPad(onDigit: _onDigit, onBackspace: _onBackspace),
               ],
             ),

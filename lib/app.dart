@@ -159,12 +159,10 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
 
       if (pw != null && pw.isNotEmpty) {
         ref.read(syncProvider.notifier).sync();
-      } else {
-        // No sync password set — redirect to setup screen.
-        // This handles the case where the user logged in but closed the app
-        // before setting the sync password.
-        AppRouter.router.go('/sync-password?mode=create');
       }
+      // If no sync password is set, do nothing here — the login/register
+      // screens handle the redirect to the sync-password setup page with
+      // the correct mode (enter for login, create for registration).
     }).catchError((Object e) {
       LoggingService.instance.warning(
         'SSHVaultApp',
@@ -202,7 +200,17 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       localizationsDelegates: _localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: AppRouter.router,
-      builder: (context, child) => _wrapWithLock(settingsAsync, child),
+      builder: (context, child) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final baseTheme = Theme.of(context);
+        final scaledTheme = baseTheme.copyWith(
+          textTheme: responsiveTextTheme(baseTheme.textTheme, screenWidth),
+        );
+        return Theme(
+          data: scaledTheme,
+          child: _wrapWithLock(settingsAsync, child),
+        );
+      },
     );
   }
 

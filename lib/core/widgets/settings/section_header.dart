@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 
 class SectionHeader extends StatelessWidget {
   final String title;
@@ -8,7 +9,7 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 4),
+      padding: EdgeInsets.only(left: Spacing.lg, bottom: Spacing.xxs),
       child: Text(
         title,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(

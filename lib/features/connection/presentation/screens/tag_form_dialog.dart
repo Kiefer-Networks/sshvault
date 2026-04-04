@@ -3,6 +3,7 @@ import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/constants/color_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:sshvault/features/connection/presentation/widgets/color_picker_field.dart';
@@ -78,7 +79,7 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
         actions: [TextButton(onPressed: _save, child: Text(saveText))],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: Spacing.paddingAllLg,
         children: [
           TextField(
             controller: _nameController,
@@ -89,7 +90,7 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
             keyboardType: TextInputType.text,
             autofocus: true,
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
           ColorPickerField(
             selectedColor: color,
             onColorChanged: (c) =>

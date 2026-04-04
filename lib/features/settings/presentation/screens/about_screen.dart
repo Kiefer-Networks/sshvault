@@ -6,6 +6,7 @@ import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/services/package_info_provider.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 class AboutScreen extends ConsumerWidget {
@@ -26,9 +27,9 @@ class AboutScreen extends ConsumerWidget {
     return AdaptiveScaffold(
       title: l10n.settingsSectionAbout,
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: Spacing.paddingHorizontalLgVerticalSm,
         children: [
-          const SizedBox(height: 24),
+          Spacing.verticalXxl,
 
           // App Icon + Name + Version
           Center(
@@ -42,21 +43,21 @@ class AboutScreen extends ConsumerWidget {
                     height: 80,
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
                 Text(
                   AppConstants.appName,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                Spacing.verticalXxs,
                 Text(
                   version,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 4),
+                Spacing.verticalXxs,
                 Text(
                   l10n.settingsAboutDescription,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -66,7 +67,7 @@ class AboutScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 32),
+          Spacing.verticalXxxl,
 
           // Links
           SectionHeader(title: l10n.sectionLinks),
@@ -105,7 +106,7 @@ class AboutScreen extends ConsumerWidget {
                   applicationName: AppConstants.appName,
                   applicationVersion: version,
                   applicationIcon: Padding(
-                    padding: const EdgeInsets.all(8),
+                    padding: Spacing.paddingAllSm,
                     child: Image.asset(
                       'assets/images/app_icon.png',
                       width: 48,
@@ -116,7 +117,7 @@ class AboutScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
 
           // Developer
           SectionHeader(title: l10n.sectionDeveloper),
@@ -136,12 +137,12 @@ class AboutScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
 
           // Legal
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: Spacing.paddingAllLg,
               child: Text(
                 l10n.settingsAboutLegalese,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -150,7 +151,7 @@ class AboutScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
         ],
       ),
     );

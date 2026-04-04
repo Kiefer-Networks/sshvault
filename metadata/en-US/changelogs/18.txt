@@ -1,0 +1,4 @@
+- Introduce design-system spacing tokens for consistent UI layout
+- Terminal theme now adapts to light/dark mode with new Auto option
+- Add Default Light terminal color scheme
+- Responsive typography scales font sizes on larger screens

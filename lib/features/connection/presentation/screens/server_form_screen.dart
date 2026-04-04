@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/constants/color_constants.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
@@ -226,10 +227,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: ListView(
-              padding: const EdgeInsets.all(16),
+              padding: Spacing.paddingAllLg,
               children: [
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     children: [
                       ServerFormFields(
@@ -248,7 +249,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                             ref.read(_serverFormStateProvider.notifier).state =
                                 formState.copyWith(sshKeyId: () => id),
                       ),
-                      const SizedBox(height: 16),
+                      Spacing.verticalLg,
                       JumpHostSelector(
                         currentServerId: widget.serverId,
                         selectedJumpHostId: formState.jumpHostId,
@@ -259,10 +260,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     children: [
                       Builder(
@@ -295,7 +296,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                           );
                         },
                       ),
-                      const SizedBox(height: 16),
+                      Spacing.verticalLg,
 
                       TagSelector(
                         selectedTagIds: formState.selectedTagIds,
@@ -306,11 +307,11 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Proxy Section
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -318,7 +319,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                         l10n.proxySettings,
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
-                      const SizedBox(height: 12),
+                      Spacing.verticalMd,
                       SwitchListTile(
                         title: Text(l10n.proxyUseGlobal),
                         value: formState.useGlobalProxy,
@@ -328,7 +329,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                                 formState.copyWith(useGlobalProxy: v),
                       ),
                       if (!formState.useGlobalProxy) ...[
-                        const SizedBox(height: 8),
+                        Spacing.verticalSm,
                         DropdownMenu<ProxyType>(
                           initialSelection: formState.proxyType,
                           label: Text(l10n.proxyType),
@@ -355,7 +356,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                               ),
                         ),
                         if (formState.proxyType != ProxyType.none) ...[
-                          const SizedBox(height: 12),
+                          Spacing.verticalMd,
                           TextFormField(
                             controller: _proxyHostController,
                             decoration: InputDecoration(
@@ -363,7 +364,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                               hintText: l10n.hintExampleProxyHost,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          Spacing.verticalMd,
                           TextFormField(
                             controller: _proxyPortController,
                             decoration: InputDecoration(
@@ -372,14 +373,14 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                             ),
                             keyboardType: TextInputType.number,
                           ),
-                          const SizedBox(height: 12),
+                          Spacing.verticalMd,
                           TextFormField(
                             controller: _proxyUsernameController,
                             decoration: InputDecoration(
                               labelText: l10n.proxyUsername,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          Spacing.verticalMd,
                           TextFormField(
                             controller: _proxyPasswordController,
                             decoration: InputDecoration(
@@ -389,7 +390,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                           ),
                         ],
                       ],
-                      const SizedBox(height: 8),
+                      Spacing.verticalSm,
                       SwitchListTile(
                         title: Text(l10n.vpnRequired),
                         subtitle: Text(l10n.vpnRequiredTooltip),
@@ -402,11 +403,11 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 // Post-Connect Commands
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -414,7 +415,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                         l10n.postConnectCommands,
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
-                      const SizedBox(height: 4),
+                      Spacing.verticalXxs,
                       Text(
                         l10n.postConnectCommandsSubtitle,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -422,7 +423,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                               .withAlpha(AppConstants.alpha153),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      Spacing.verticalMd,
                       TextFormField(
                         controller: _postConnectController,
                         decoration: InputDecoration(
@@ -435,10 +436,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
 
                 SectionCard(
-                  padding: const EdgeInsets.all(16),
+                  padding: Spacing.paddingAllLg,
                   child: Column(
                     children: [
                       ColorPickerField(
@@ -447,7 +448,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                             ref.read(_serverFormStateProvider.notifier).state =
                                 formState.copyWith(color: c),
                       ),
-                      const SizedBox(height: 16),
+                      Spacing.verticalLg,
 
                       IconPickerField(
                         selectedIcon: formState.iconName,
@@ -459,7 +460,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
+                Spacing.verticalXxxl,
               ],
             ),
           ),

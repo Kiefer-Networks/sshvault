@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/features/terminal/presentation/models/terminal_theme_data.dart';
@@ -30,10 +31,14 @@ class TerminalThemePicker extends ConsumerWidget {
             return ListView.separated(
               shrinkWrap: true,
               itemCount: TerminalThemeKey.values.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 4),
+              separatorBuilder: (_, _) => Spacing.verticalXxs,
               itemBuilder: (context, index) {
                 final key = TerminalThemeKey.values[index];
-                final preset = TerminalThemePresets.getTheme(key);
+                final brightness = Theme.of(context).brightness;
+              final preset = TerminalThemePresets.getTheme(
+                key,
+                brightness: brightness,
+              );
                 final isSelected = key == currentKey;
 
                 return ListTile(
@@ -109,7 +114,7 @@ class _ColorSwatchPreview extends StatelessWidget {
         color: background,
         borderRadius: BorderRadius.circular(8),
       ),
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(Spacing.xxs),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -117,7 +122,7 @@ class _ColorSwatchPreview extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [_dot(foreground), _dot(red), _dot(green)],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: Spacing.xxxs),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

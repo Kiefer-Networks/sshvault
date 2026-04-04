@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 
 /// A single action for a bottom sheet.
 class AdaptiveAction {
@@ -34,7 +35,7 @@ Future<void> showAdaptiveActionSheet(
         children: [
           if (title != null)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              padding: EdgeInsets.fromLTRB(Spacing.lg, Spacing.lg, Spacing.lg, Spacing.sm),
               child: Text(title, style: Theme.of(ctx).textTheme.titleMedium),
             ),
           ...actions.map((a) {
@@ -52,7 +53,7 @@ Future<void> showAdaptiveActionSheet(
               },
             );
           }),
-          const SizedBox(height: 8),
+          Spacing.verticalSm,
         ],
       ),
     ),

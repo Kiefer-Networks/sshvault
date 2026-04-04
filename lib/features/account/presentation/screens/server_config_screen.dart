@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,12 +55,12 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     return AdaptiveScaffold(
       title: l10n.serverSetupTitle,
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: Spacing.paddingAllLg,
         children: [
           Card(
             color: theme.colorScheme.primaryContainer,
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: Spacing.paddingAllLg,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -69,7 +70,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                         Icons.info_outline,
                         color: theme.colorScheme.onPrimaryContainer,
                       ),
-                      const SizedBox(width: 8),
+                      Spacing.horizontalSm,
                       Expanded(
                         child: Text(
                           l10n.serverSetupInfoCard,
@@ -80,7 +81,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  Spacing.verticalMd,
                   OutlinedButton.icon(
                     onPressed: () => launchUrl(
                       Uri.parse(
@@ -95,7 +96,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          Spacing.verticalXxl,
 
           TextField(
             controller: _urlController,
@@ -110,7 +111,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                   const _ConnectionTestState();
             },
           ),
-          const SizedBox(height: 16),
+          Spacing.verticalLg,
 
           OutlinedButton(
             onPressed: testState.testing ? null : _testConnection,
@@ -124,7 +125,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.check_circle_outline, size: 18),
-                      const SizedBox(width: 8),
+                      Spacing.horizontalSm,
                       Text(l10n.serverConfigTest),
                     ],
                   ),
@@ -132,7 +133,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
 
           if (testState.result != null)
             Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.only(top: Spacing.md),
               child: Row(
                 children: [
                   Icon(
@@ -144,7 +145,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                         ? theme.colorScheme.tertiary
                         : theme.colorScheme.error,
                   ),
-                  const SizedBox(width: 8),
+                  Spacing.horizontalSm,
                   Expanded(
                     child: Text(
                       testState.result!,
@@ -158,7 +159,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
                 ],
               ),
             ),
-          const SizedBox(height: 24),
+          Spacing.verticalXxl,
 
           AdaptiveButton.filled(
             onPressed: canContinue ? _saveAndContinue : null,

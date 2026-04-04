@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
@@ -28,7 +29,7 @@ class TagSelector extends ConsumerWidget {
           l10n.tagSelectorLabel,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: 8),
+        Spacing.verticalSm,
         tagsAsync.when(
           data: (tags) {
             if (tags.isEmpty) {

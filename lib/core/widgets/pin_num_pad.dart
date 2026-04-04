@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 
 class PinDotIndicator extends StatelessWidget {
   final int length;
@@ -22,7 +23,7 @@ class PinDotIndicator extends StatelessWidget {
         final filled = i < length;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          margin: const EdgeInsets.symmetric(horizontal: 8),
+          margin: Spacing.paddingHorizontalSm,
           width: 14,
           height: 14,
           decoration: BoxDecoration(
@@ -72,7 +73,7 @@ class PinNumPad extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: rows.map((row) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
+          padding: EdgeInsets.symmetric(vertical: Spacing.xs),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: row.map((key) {
@@ -121,7 +122,7 @@ class _NumPadButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: Spacing.md),
       child: SizedBox(
         width: 72,
         height: 72,

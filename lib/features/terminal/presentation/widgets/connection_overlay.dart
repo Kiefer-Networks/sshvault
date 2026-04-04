@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 
@@ -77,12 +78,12 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
         child: Card(
           elevation: 3,
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: Spacing.paddingAllXxl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const CircularProgressIndicator.adaptive(),
-                const SizedBox(height: 16),
+                Spacing.verticalLg,
                 Text(
                   widget.status == SshConnectionStatus.authenticating
                       ? l10n.connectionAuthenticating

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
+import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -56,7 +57,7 @@ class _FolderTreePickerDialog extends ConsumerWidget {
             _buildNodes(context, folders, nodes, depth: 0);
             if (nodes.isEmpty) {
               return Padding(
-                padding: const EdgeInsets.all(24),
+                padding: Spacing.paddingAllXxl,
                 child: Text(
                   l10n.folderListEmpty,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -67,8 +68,8 @@ class _FolderTreePickerDialog extends ConsumerWidget {
             }
             return Column(mainAxisSize: MainAxisSize.min, children: nodes);
           },
-          loading: () => const Padding(
-            padding: EdgeInsets.all(24),
+          loading: () => Padding(
+            padding: Spacing.paddingAllXxl,
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),
           error: (_, _) => const SizedBox.shrink(),
@@ -127,7 +128,7 @@ class _FolderOption extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ListTile(
-      contentPadding: EdgeInsets.only(left: 24.0 + depth * 24.0, right: 24.0),
+      contentPadding: EdgeInsets.only(left: Spacing.xxl + depth * Spacing.xxl, right: Spacing.xxl),
       leading: Icon(icon, color: iconColor, size: 22),
       title: Text(label),
       trailing: isSelected
