@@ -35,10 +35,10 @@ class TerminalThemePicker extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final key = TerminalThemeKey.values[index];
                 final brightness = Theme.of(context).brightness;
-              final preset = TerminalThemePresets.getTheme(
-                key,
-                brightness: brightness,
-              );
+                final preset = TerminalThemePresets.getTheme(
+                  key,
+                  brightness: brightness,
+                );
                 final isSelected = key == currentKey;
 
                 return ListTile(

@@ -111,7 +111,12 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.fromLTRB(Spacing.xxl, Spacing.xl, Spacing.xxl, 0),
+              padding: const EdgeInsets.fromLTRB(
+                Spacing.xxl,
+                Spacing.xl,
+                Spacing.xxl,
+                0,
+              ),
               child: Text(
                 l10n.sftpSelectServer,
                 style: theme.textTheme.titleLarge,
@@ -119,7 +124,12 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
             ),
             // Search field
             Padding(
-              padding: const EdgeInsets.fromLTRB(Spacing.lg, Spacing.md, Spacing.lg, Spacing.sm),
+              padding: const EdgeInsets.fromLTRB(
+                Spacing.lg,
+                Spacing.md,
+                Spacing.lg,
+                Spacing.sm,
+              ),
               child: TextField(
                 controller: _searchController,
                 autofocus: true,
@@ -142,7 +152,9 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: Spacing.md),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: Spacing.md,
+                  ),
                 ),
                 onChanged: (value) =>
                     ref.read(_serverPickerQueryProvider.notifier).state = value,
@@ -276,7 +288,12 @@ class _ServerPickerDialogState extends ConsumerState<_ServerPickerDialog> {
 
   Widget _buildGroupHeader(ThemeData theme, String name) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(Spacing.lg, Spacing.md, Spacing.lg, Spacing.xxs),
+      padding: const EdgeInsets.fromLTRB(
+        Spacing.lg,
+        Spacing.md,
+        Spacing.lg,
+        Spacing.xxs,
+      ),
       child: Text(
         name,
         style: theme.textTheme.labelSmall?.copyWith(

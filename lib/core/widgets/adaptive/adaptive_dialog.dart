@@ -39,7 +39,12 @@ Future<bool?> showAdaptiveConfirmDialog(
             ),
             Spacing.verticalXxl,
             Padding(
-              padding: EdgeInsets.fromLTRB(Spacing.xxl, 0, Spacing.xxl, Spacing.xxl),
+              padding: EdgeInsets.fromLTRB(
+                Spacing.xxl,
+                0,
+                Spacing.xxl,
+                Spacing.xxl,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -103,7 +108,12 @@ Future<T?> showAdaptiveFormDialog<T>(
             ),
             Spacing.verticalLg,
             Padding(
-              padding: EdgeInsets.fromLTRB(Spacing.xxl, 0, Spacing.xxl, Spacing.xxl),
+              padding: EdgeInsets.fromLTRB(
+                Spacing.xxl,
+                0,
+                Spacing.xxl,
+                Spacing.xxl,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: materialActions,

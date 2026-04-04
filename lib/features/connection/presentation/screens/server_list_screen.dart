@@ -587,7 +587,12 @@ class ServerListScreen extends ConsumerWidget {
   Widget _buildGrid(BuildContext context, WidgetRef ref, List servers) {
     return GridView.builder(
       key: const ValueKey('grid'),
-      padding: EdgeInsets.fromLTRB(Spacing.lg, 0, Spacing.lg, Spacing.fabClearance),
+      padding: EdgeInsets.fromLTRB(
+        Spacing.lg,
+        0,
+        Spacing.lg,
+        Spacing.fabClearance,
+      ),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 300,
         childAspectRatio: 0.95,
@@ -898,7 +903,10 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Spacing.lg, vertical: Spacing.xxs),
+      padding: EdgeInsets.symmetric(
+        horizontal: Spacing.lg,
+        vertical: Spacing.xxs,
+      ),
       child: Text(
         title,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(

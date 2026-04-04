@@ -49,10 +49,7 @@ class SectionCard extends StatelessWidget {
       ),
       color: backgroundColor,
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: padding ?? Spacing.paddingAllLg,
-        child: child,
-      ),
+      child: Padding(padding: padding ?? Spacing.paddingAllLg, child: child),
     );
   }
 }

@@ -348,7 +348,11 @@ class _FolderServerList extends ConsumerWidget {
         );
       },
       loading: () => Padding(
-        padding: EdgeInsets.only(left: indent, top: Spacing.sm, bottom: Spacing.sm),
+        padding: EdgeInsets.only(
+          left: indent,
+          top: Spacing.sm,
+          bottom: Spacing.sm,
+        ),
         child: const SizedBox(
           height: 20,
           width: 20,

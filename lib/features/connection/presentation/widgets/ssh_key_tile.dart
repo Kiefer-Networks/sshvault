@@ -80,7 +80,10 @@ class SshKeyTile extends ConsumerWidget {
             Expanded(child: Text(sshKey.name, overflow: TextOverflow.ellipsis)),
             Spacing.horizontalSm,
             Container(
-              padding: EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: 2),
+              padding: EdgeInsets.symmetric(
+                horizontal: Spacing.sm,
+                vertical: 2,
+              ),
               decoration: BoxDecoration(
                 color: theme.colorScheme.secondaryContainer,
                 borderRadius: BorderRadius.circular(8),

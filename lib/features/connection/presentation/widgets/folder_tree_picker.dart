@@ -128,7 +128,10 @@ class _FolderOption extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ListTile(
-      contentPadding: EdgeInsets.only(left: Spacing.xxl + depth * Spacing.xxl, right: Spacing.xxl),
+      contentPadding: EdgeInsets.only(
+        left: Spacing.xxl + depth * Spacing.xxl,
+        right: Spacing.xxl,
+      ),
       leading: Icon(icon, color: iconColor, size: 22),
       title: Text(label),
       trailing: isSelected
