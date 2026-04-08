@@ -15,16 +15,25 @@ class ErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.error_outline, size: 48),
-          Spacing.verticalLg,
-          Text(l10n.error(errorMessage(error))),
-          Spacing.verticalLg,
-          AdaptiveButton.filled(onPressed: onRetry, child: Text(l10n.retry)),
-        ],
+    return Semantics(
+      liveRegion: true,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 48),
+            Spacing.verticalLg,
+            Text(l10n.error(errorMessage(error))),
+            Spacing.verticalLg,
+            Tooltip(
+              message: l10n.retry,
+              child: AdaptiveButton.filled(
+                onPressed: onRetry,
+                child: Text(l10n.retry),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

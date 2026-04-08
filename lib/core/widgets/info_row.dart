@@ -27,7 +27,10 @@ class InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
+    return Semantics(
+      label: '$label: $value',
+      excludeSemantics: true,
+      child: Padding(
       padding: EdgeInsets.only(bottom: Spacing.sm),
       child: Row(
         children: [
@@ -58,23 +61,27 @@ class InfoRow extends StatelessWidget {
           ),
           if (onTap != null) ...[
             Spacing.horizontalXxs,
-            IconButton(
-              onPressed: onTap,
-              icon: Icon(
-                Icons.copy,
-                size: 16,
-                color: theme.colorScheme.onSurface.withAlpha(
-                  AppConstants.alpha102,
+            Tooltip(
+              message: label,
+              child: IconButton(
+                onPressed: onTap,
+                icon: Icon(
+                  Icons.copy,
+                  size: 16,
+                  color: theme.colorScheme.onSurface.withAlpha(
+                    AppConstants.alpha102,
+                  ),
                 ),
+                visualDensity: VisualDensity.compact,
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                padding: EdgeInsets.zero,
               ),
-              visualDensity: VisualDensity.compact,
-              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              padding: EdgeInsets.zero,
             ),
           ],
           if (trailing != null) ...[Spacing.horizontalXxs, trailing!],
         ],
       ),
+    ),
     );
   }
 }

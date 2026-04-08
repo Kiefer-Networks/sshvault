@@ -17,31 +17,37 @@ class PinDotIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(maxLength, (i) {
-        final filled = i < length;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          margin: Spacing.paddingHorizontalSm,
-          width: 14,
-          height: 14,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: filled
-                ? (hasError ? colorScheme.error : colorScheme.primary)
-                : Colors.transparent,
-            border: Border.all(
-              color: hasError
-                  ? colorScheme.error
-                  : (filled
-                        ? colorScheme.primary
-                        : colorScheme.onSurfaceVariant),
-              width: 2,
-            ),
-          ),
-        );
-      }),
+    return Semantics(
+      label: 'PIN: $length of $maxLength digits entered',
+      readOnly: true,
+      child: ExcludeSemantics(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(maxLength, (i) {
+            final filled = i < length;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              margin: Spacing.paddingHorizontalSm,
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: filled
+                    ? (hasError ? colorScheme.error : colorScheme.primary)
+                    : Colors.transparent,
+                border: Border.all(
+                  color: hasError
+                      ? colorScheme.error
+                      : (filled
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant),
+                  width: 2,
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
     );
   }
 }
@@ -78,30 +84,46 @@ class PinNumPad extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: row.map((key) {
               if (key == 'backspace') {
-                return _NumPadButton(
-                  onPressed: onBackspace,
-                  child: const Icon(Icons.backspace_outlined),
+                return Semantics(
+                  button: true,
+                  label: 'Backspace',
+                  child: Tooltip(
+                    message: 'Delete',
+                    child: _NumPadButton(
+                      onPressed: onBackspace,
+                      child: const Icon(Icons.backspace_outlined),
+                    ),
+                  ),
                 );
               }
               if (key == 'confirm') {
                 return bottomRightChild != null
-                    ? _NumPadButton(
-                        onPressed: onConfirm,
-                        child: bottomRightChild!,
+                    ? Tooltip(
+                        message: 'Biometric unlock',
+                        child: _NumPadButton(
+                          onPressed: onConfirm,
+                          child: bottomRightChild!,
+                        ),
                       )
                     : _NumPadButton(
                         onPressed: onConfirm,
                         child: const Icon(Icons.check),
                       );
               }
-              return _NumPadButton(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  onDigit(key);
-                },
-                child: Text(
-                  key,
-                  style: Theme.of(context).textTheme.headlineMedium,
+              return Semantics(
+                button: true,
+                label: 'Digit $key',
+                child: _NumPadButton(
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    onDigit(key);
+                  },
+                  child: ExcludeSemantics(
+                    child: Text(
+                      key,
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  ),
                 ),
               );
             }).toList(),

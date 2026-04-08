@@ -21,19 +21,23 @@ class SettingsSwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SwitchListTile(
-      secondary: CircleIcon(icon: icon, color: iconColor),
-      title: Text(title),
-      subtitle: subtitleText != null
-          ? Text(
-              subtitleText!,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            )
-          : null,
-      value: value,
-      onChanged: onChanged,
+    return Semantics(
+      label: '$title, ${value ? 'enabled' : 'disabled'}',
+      toggled: value,
+      child: SwitchListTile(
+        secondary: CircleIcon(icon: icon, color: iconColor),
+        title: Text(title),
+        subtitle: subtitleText != null
+            ? Text(
+                subtitleText!,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              )
+            : null,
+        value: value,
+        onChanged: onChanged,
+      ),
     );
   }
 }

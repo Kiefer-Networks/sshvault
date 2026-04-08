@@ -23,21 +23,25 @@ class SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleIcon(icon: icon, color: iconColor),
-      title: Text(title),
-      subtitle:
-          subtitle ??
-          (subtitleText != null
-              ? Text(
-                  subtitleText!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                )
-              : null),
-      trailing: trailing,
-      onTap: onTap,
+    return Semantics(
+      label: subtitleText != null ? '$title, $subtitleText' : title,
+      button: onTap != null,
+      child: ListTile(
+        leading: CircleIcon(icon: icon, color: iconColor),
+        title: Text(title),
+        subtitle:
+            subtitle ??
+            (subtitleText != null
+                ? Text(
+                    subtitleText!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  )
+                : null),
+        trailing: trailing,
+        onTap: onTap,
+      ),
     );
   }
 }

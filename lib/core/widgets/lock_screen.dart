@@ -321,12 +321,14 @@ class _LockScreenState extends ConsumerState<LockScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                isLockedOut ? Icons.lock : Icons.lock_outline,
-                size: 64,
-                color: isLockedOut
-                    ? theme.colorScheme.error
-                    : theme.colorScheme.primary,
+              ExcludeSemantics(
+                child: Icon(
+                  isLockedOut ? Icons.lock : Icons.lock_outline,
+                  size: 64,
+                  color: isLockedOut
+                      ? theme.colorScheme.error
+                      : theme.colorScheme.primary,
+                ),
               ),
               Spacing.verticalLg,
               Text(l10n.lockScreenTitle, style: theme.textTheme.headlineSmall),
@@ -378,12 +380,15 @@ class _LockScreenState extends ConsumerState<LockScreen>
               ],
 
               if (!(settings?.hasPin ?? false) && hasBiometric) ...[
-                IconButton.filled(
-                  onPressed: lockState.isAuthenticating || isLockedOut
-                      ? null
-                      : _tryBiometric,
-                  icon: const Icon(Icons.fingerprint),
-                  iconSize: 48,
+                Tooltip(
+                  message: l10n.lockScreenTitle,
+                  child: IconButton.filled(
+                    onPressed: lockState.isAuthenticating || isLockedOut
+                        ? null
+                        : _tryBiometric,
+                    icon: const Icon(Icons.fingerprint),
+                    iconSize: 48,
+                  ),
                 ),
               ],
             ],
