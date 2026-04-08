@@ -132,31 +132,35 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
           ),
 
           if (testState.result != null)
-            Padding(
-              padding: const EdgeInsets.only(top: Spacing.md),
-              child: Row(
-                children: [
-                  Icon(
-                    testState.success == true
-                        ? Icons.check_circle
-                        : Icons.error_outline,
-                    size: 20,
-                    color: testState.success == true
-                        ? theme.colorScheme.tertiary
-                        : theme.colorScheme.error,
-                  ),
-                  Spacing.horizontalSm,
-                  Expanded(
-                    child: Text(
-                      testState.result!,
-                      style: TextStyle(
-                        color: testState.success == true
-                            ? theme.colorScheme.tertiary
-                            : theme.colorScheme.error,
+            Semantics(
+              liveRegion: true,
+              label: testState.result,
+              child: Padding(
+                padding: const EdgeInsets.only(top: Spacing.md),
+                child: Row(
+                  children: [
+                    Icon(
+                      testState.success == true
+                          ? Icons.check_circle
+                          : Icons.error_outline,
+                      size: 20,
+                      color: testState.success == true
+                          ? theme.colorScheme.tertiary
+                          : theme.colorScheme.error,
+                    ),
+                    Spacing.horizontalSm,
+                    Expanded(
+                      child: Text(
+                        testState.result!,
+                        style: TextStyle(
+                          color: testState.success == true
+                              ? theme.colorScheme.tertiary
+                              : theme.colorScheme.error,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           Spacing.verticalXxl,

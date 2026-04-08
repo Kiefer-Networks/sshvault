@@ -34,19 +34,29 @@ class SettingsHubScreen extends ConsumerWidget {
           // General
           SettingsGroupCard(
             children: [
-              SettingsCategoryTile(
-                icon: Icons.palette_outlined,
-                iconColor: colorScheme.primary,
-                title: l10n.settingsSectionAppearance,
-                subtitle: l10n.settingsAppearanceSubtitle,
-                onTap: () => context.push('/settings/appearance'),
+              Semantics(
+                button: true,
+                label: l10n.settingsSectionAppearance,
+                hint: l10n.settingsAppearanceSubtitle,
+                child: SettingsCategoryTile(
+                  icon: Icons.palette_outlined,
+                  iconColor: colorScheme.primary,
+                  title: l10n.settingsSectionAppearance,
+                  subtitle: l10n.settingsAppearanceSubtitle,
+                  onTap: () => context.push('/settings/appearance'),
+                ),
               ),
-              SettingsCategoryTile(
-                icon: Icons.terminal,
-                iconColor: AppColors.iconOrange,
-                title: l10n.settingsSectionSshDefaults,
-                subtitle: l10n.settingsSshSubtitle,
-                onTap: () => context.push('/settings/ssh'),
+              Semantics(
+                button: true,
+                label: l10n.settingsSectionSshDefaults,
+                hint: l10n.settingsSshSubtitle,
+                child: SettingsCategoryTile(
+                  icon: Icons.terminal,
+                  iconColor: AppColors.iconOrange,
+                  title: l10n.settingsSectionSshDefaults,
+                  subtitle: l10n.settingsSshSubtitle,
+                  onTap: () => context.push('/settings/ssh'),
+                ),
               ),
             ],
           ),
@@ -55,33 +65,53 @@ class SettingsHubScreen extends ConsumerWidget {
           // Security & Data
           SettingsGroupCard(
             children: [
-              SettingsCategoryTile(
-                icon: Icons.security,
-                iconColor: AppColors.iconRed,
-                title: l10n.settingsSectionSecurity,
-                subtitle: l10n.settingsSecuritySubtitle,
-                onTap: () => context.push('/settings/security'),
+              Semantics(
+                button: true,
+                label: l10n.settingsSectionSecurity,
+                hint: l10n.settingsSecuritySubtitle,
+                child: SettingsCategoryTile(
+                  icon: Icons.security,
+                  iconColor: AppColors.iconRed,
+                  title: l10n.settingsSectionSecurity,
+                  subtitle: l10n.settingsSecuritySubtitle,
+                  onTap: () => context.push('/settings/security'),
+                ),
               ),
-              SettingsCategoryTile(
-                icon: Icons.dns_outlined,
-                iconColor: AppColors.iconCyan,
-                title: l10n.settingsSectionNetwork,
-                subtitle: l10n.settingsNetworkSubtitle,
-                onTap: () => context.push('/settings/network'),
+              Semantics(
+                button: true,
+                label: l10n.settingsSectionNetwork,
+                hint: l10n.settingsNetworkSubtitle,
+                child: SettingsCategoryTile(
+                  icon: Icons.dns_outlined,
+                  iconColor: AppColors.iconCyan,
+                  title: l10n.settingsSectionNetwork,
+                  subtitle: l10n.settingsNetworkSubtitle,
+                  onTap: () => context.push('/settings/network'),
+                ),
               ),
-              SettingsCategoryTile(
-                icon: Icons.fingerprint,
-                iconColor: AppColors.iconGreen,
-                title: l10n.knownHostsTitle,
-                subtitle: l10n.knownHostsSubtitle,
-                onTap: () => context.push('/settings/known-hosts'),
+              Semantics(
+                button: true,
+                label: l10n.knownHostsTitle,
+                hint: l10n.knownHostsSubtitle,
+                child: SettingsCategoryTile(
+                  icon: Icons.fingerprint,
+                  iconColor: AppColors.iconGreen,
+                  title: l10n.knownHostsTitle,
+                  subtitle: l10n.knownHostsSubtitle,
+                  onTap: () => context.push('/settings/known-hosts'),
+                ),
               ),
-              SettingsCategoryTile(
-                icon: Icons.import_export,
-                iconColor: AppColors.iconDeepOrange,
-                title: l10n.settingsSectionExport,
-                subtitle: l10n.settingsExportBackupSubtitle,
-                onTap: () => context.push('/settings/export'),
+              Semantics(
+                button: true,
+                label: l10n.settingsSectionExport,
+                hint: l10n.settingsExportBackupSubtitle,
+                child: SettingsCategoryTile(
+                  icon: Icons.import_export,
+                  iconColor: AppColors.iconDeepOrange,
+                  title: l10n.settingsSectionExport,
+                  subtitle: l10n.settingsExportBackupSubtitle,
+                  onTap: () => context.push('/settings/export'),
+                ),
               ),
             ],
           ),
@@ -90,12 +120,17 @@ class SettingsHubScreen extends ConsumerWidget {
           // Info
           SettingsGroupCard(
             children: [
-              SettingsCategoryTile(
-                icon: Icons.info_outline,
-                iconColor: colorScheme.secondary,
-                title: l10n.settingsSectionAbout,
-                subtitle: l10n.settingsAboutSubtitle,
-                onTap: () => context.push('/settings/about'),
+              Semantics(
+                button: true,
+                label: l10n.settingsSectionAbout,
+                hint: l10n.settingsAboutSubtitle,
+                child: SettingsCategoryTile(
+                  icon: Icons.info_outline,
+                  iconColor: colorScheme.secondary,
+                  title: l10n.settingsSectionAbout,
+                  subtitle: l10n.settingsAboutSubtitle,
+                  onTap: () => context.push('/settings/about'),
+                ),
               ),
             ],
           ),

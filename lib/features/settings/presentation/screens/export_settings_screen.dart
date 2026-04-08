@@ -83,41 +83,47 @@ class ExportSettingsScreen extends ConsumerWidget {
             if (exportState.isLoading)
               const Center(child: CircularProgressIndicator.adaptive()),
             if (exportState.hasError)
-              Card(
-                color: theme.colorScheme.errorContainer,
-                child: Padding(
-                  padding: Spacing.paddingAllMd,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        color: theme.colorScheme.onErrorContainer,
-                        size: 20,
-                      ),
-                      Spacing.horizontalSm,
-                      Expanded(
-                        child: Text(
-                          errorMessage(exportState.error!),
-                          style: TextStyle(
-                            color: theme.colorScheme.onErrorContainer,
+              Semantics(
+                liveRegion: true,
+                child: Card(
+                  color: theme.colorScheme.errorContainer,
+                  child: Padding(
+                    padding: Spacing.paddingAllMd,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: theme.colorScheme.onErrorContainer,
+                          size: 20,
+                        ),
+                        Spacing.horizontalSm,
+                        Expanded(
+                          child: Text(
+                            errorMessage(exportState.error!),
+                            style: TextStyle(
+                              color: theme.colorScheme.onErrorContainer,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             if (exportState.hasValue && exportState.value != null)
-              Card(
-                color: theme.colorScheme.tertiaryContainer,
-                child: Padding(
-                  padding: Spacing.paddingAllMd,
-                  child: Text(
-                    exportState.value == importSuccessfulKey
-                        ? l10n.importSuccessful
-                        : exportState.value!,
-                    style: TextStyle(
-                      color: theme.colorScheme.onTertiaryContainer,
+              Semantics(
+                liveRegion: true,
+                child: Card(
+                  color: theme.colorScheme.tertiaryContainer,
+                  child: Padding(
+                    padding: Spacing.paddingAllMd,
+                    child: Text(
+                      exportState.value == importSuccessfulKey
+                          ? l10n.importSuccessful
+                          : exportState.value!,
+                      style: TextStyle(
+                        color: theme.colorScheme.onTertiaryContainer,
+                      ),
                     ),
                   ),
                 ),

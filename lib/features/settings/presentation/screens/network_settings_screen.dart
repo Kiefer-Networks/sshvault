@@ -56,7 +56,9 @@ class NetworkSettingsScreen extends ConsumerWidget {
               SettingsGroupCard(
                 children: [
                   for (final url in servers)
-                    ListTile(
+                    Semantics(
+                      label: url,
+                      child: ListTile(
                       leading: Icon(
                         Icons.dns_outlined,
                         color: theme.colorScheme.primary,
@@ -74,21 +76,29 @@ class NetworkSettingsScreen extends ConsumerWidget {
                               ),
                             )
                           : null,
-                      trailing: IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          size: 20,
-                          color: theme.colorScheme.onSurfaceVariant,
+                      trailing: Tooltip(
+                        message: l10n.settingsDnsRemoveServerTooltip,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          onPressed: () {
+                            final newList = servers
+                                .where((s) => s != url)
+                                .toList();
+                            ref
+                                .read(settingsProvider.notifier)
+                                .setDnsServers(newList.join(','));
+                            AdaptiveNotification.show(
+                              context,
+                              message: l10n.settingsDnsServerRemoved,
+                            );
+                          },
                         ),
-                        onPressed: () {
-                          final newList = servers
-                              .where((s) => s != url)
-                              .toList();
-                          ref
-                              .read(settingsProvider.notifier)
-                              .setDnsServers(newList.join(','));
-                        },
                       ),
+                    ),
                     ),
                   ListTile(
                     leading: Icon(Icons.add, color: theme.colorScheme.primary),
@@ -114,6 +124,10 @@ class NetworkSettingsScreen extends ConsumerWidget {
                   child: TextButton.icon(
                     onPressed: () {
                       ref.read(settingsProvider.notifier).setDnsServers('');
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsDnsResetSuccess,
+                      );
                     },
                     icon: const Icon(Icons.restore, size: 18),
                     label: Text(l10n.settingsDnsResetDefaults),
@@ -192,6 +206,12 @@ class NetworkSettingsScreen extends ConsumerWidget {
         if (url.startsWith('https://')) {
           final newList = [...currentServers, url];
           ref.read(settingsProvider.notifier).setDnsServers(newList.join(','));
+          if (context.mounted) {
+            AdaptiveNotification.show(
+              context,
+              message: l10n.settingsDnsServerAdded,
+            );
+          }
         } else if (context.mounted) {
           AdaptiveNotification.show(
             context,

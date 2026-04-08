@@ -30,7 +30,10 @@ class SecuritySettingsScreen extends ConsumerWidget {
             SectionHeader(title: l10n.settingsSectionAppLock),
             SettingsGroupCard(
               children: [
-                SettingsTile(
+                Semantics(
+                  button: true,
+                  label: l10n.settingsAutoLock,
+                  child: SettingsTile(
                   icon: Icons.lock_clock_outlined,
                   iconColor: AppColors.iconRed,
                   title: l10n.settingsAutoLock,
@@ -67,8 +70,15 @@ class SecuritySettingsScreen extends ConsumerWidget {
                     );
                     if (v != null) {
                       ref.read(settingsProvider.notifier).setAutoLockMinutes(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      }
                     }
                   },
+                ),
                 ),
                 _BiometricTile(settings: settings),
                 _PinTile(settings: settings),
@@ -92,6 +102,10 @@ class SecuritySettingsScreen extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .setPreventScreenshots(v);
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsUpdated,
+                      );
                     },
                   ),
                 SettingsTile(
@@ -135,6 +149,12 @@ class SecuritySettingsScreen extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .setClipboardAutoClear(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      }
                     }
                   },
                 ),
@@ -173,6 +193,12 @@ class SecuritySettingsScreen extends ConsumerWidget {
                     );
                     if (v != null) {
                       ref.read(settingsProvider.notifier).setSessionTimeout(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      }
                     }
                   },
                 ),
@@ -221,6 +247,12 @@ class SecuritySettingsScreen extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .setKeyRotationReminder(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      }
                     }
                   },
                 ),
@@ -232,11 +264,14 @@ class SecuritySettingsScreen extends ConsumerWidget {
             SectionHeader(title: l10n.settingsSectionStatus),
             SettingsGroupCard(
               children: [
-                SettingsTile(
-                  icon: Icons.warning_amber_outlined,
-                  iconColor: AppColors.iconGrey,
-                  title: l10n.settingsFailedAttempts,
-                  subtitleText: settings.failedPinAttempts.toString(),
+                Semantics(
+                  label: '${l10n.settingsFailedAttempts}: ${settings.failedPinAttempts}',
+                  child: SettingsTile(
+                    icon: Icons.warning_amber_outlined,
+                    iconColor: AppColors.iconGrey,
+                    title: l10n.settingsFailedAttempts,
+                    subtitleText: settings.failedPinAttempts.toString(),
+                  ),
                 ),
               ],
             ),
@@ -289,9 +324,21 @@ class _BiometricTile extends ConsumerWidget {
                     ref
                         .read(settingsProvider.notifier)
                         .setBiometricUnlock(true);
+                    if (context.mounted) {
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsBiometricEnabled,
+                      );
+                    }
                   }
                 } else {
                   ref.read(settingsProvider.notifier).setBiometricUnlock(false);
+                  if (context.mounted) {
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.settingsBiometricDisabled,
+                    );
+                  }
                 }
               }
             : null,
@@ -327,6 +374,12 @@ class _PinTile extends ConsumerWidget {
         final pin = await PinDialog.showSetPin(context);
         if (pin != null) {
           await ref.read(settingsProvider.notifier).setPinCode(pin);
+          if (context.mounted) {
+            AdaptiveNotification.show(
+              context,
+              message: l10n.settingsPinSetSuccess,
+            );
+          }
         }
       },
     );
@@ -354,6 +407,12 @@ class _PinTile extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(settingsProvider.notifier).clearPinCode();
+      if (context.mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.settingsPinRemovedSuccess,
+        );
+      }
     }
   }
 }
@@ -403,6 +462,12 @@ class _DuressPinTile extends ConsumerWidget {
     final pin = await PinDialog.showSetPin(context);
     if (pin != null) {
       await ref.read(settingsProvider.notifier).setDuressPin(pin);
+      if (context.mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.settingsDuressPinSetSuccess,
+        );
+      }
     }
   }
 
@@ -421,6 +486,12 @@ class _DuressPinTile extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(settingsProvider.notifier).clearDuressPin();
+      if (context.mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.settingsDuressPinRemovedSuccess,
+        );
+      }
     }
   }
 }

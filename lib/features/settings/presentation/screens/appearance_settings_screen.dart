@@ -30,7 +30,9 @@ class AppearanceSettingsScreen extends ConsumerWidget {
             SectionHeader(title: l10n.settingsSectionAppearance),
             SettingsGroupCard(
               children: [
-                SettingsTile(
+                Semantics(
+                  label: l10n.settingsTheme,
+                  child: SettingsTile(
                   icon: Icons.palette_outlined,
                   iconColor: Theme.of(context).colorScheme.primary,
                   title: l10n.settingsTheme,
@@ -45,11 +47,19 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                       },
                       onChanged: (mode) {
                         ref.read(settingsProvider.notifier).setThemeMode(mode);
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsThemeChanged,
+                        );
                       },
                     ),
                   ),
                 ),
-                SettingsTile(
+                ),
+                Semantics(
+                  button: true,
+                  label: l10n.settingsLanguage,
+                  child: SettingsTile(
                   icon: Icons.language,
                   iconColor: Theme.of(context).colorScheme.tertiary,
                   title: l10n.settingsLanguage,
@@ -182,8 +192,15 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                     );
                     if (v != null) {
                       ref.read(settingsProvider.notifier).setLocale(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsLanguageChanged,
+                        );
+                      }
                     }
                   },
+                ),
                 ),
               ],
             ),
@@ -223,21 +240,27 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove),
-                            onPressed: fontSize <= 8
-                                ? null
-                                : () => ref
-                                      .read(terminalFontSizeProvider.notifier)
-                                      .decrease(),
+                          Tooltip(
+                            message: l10n.settingsFontSizeDecreaseTooltip,
+                            child: IconButton(
+                              icon: const Icon(Icons.remove),
+                              onPressed: fontSize <= 8
+                                  ? null
+                                  : () => ref
+                                        .read(terminalFontSizeProvider.notifier)
+                                        .decrease(),
+                            ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            onPressed: fontSize >= 24
-                                ? null
-                                : () => ref
-                                      .read(terminalFontSizeProvider.notifier)
-                                      .increase(),
+                          Tooltip(
+                            message: l10n.settingsFontSizeIncreaseTooltip,
+                            child: IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: fontSize >= 24
+                                  ? null
+                                  : () => ref
+                                        .read(terminalFontSizeProvider.notifier)
+                                        .increase(),
+                            ),
                           ),
                         ],
                       ),

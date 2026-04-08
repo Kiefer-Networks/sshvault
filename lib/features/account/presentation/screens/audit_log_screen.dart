@@ -88,33 +88,43 @@ class AuditLogScreen extends ConsumerWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            IconButton(
-                              icon: const Icon(Icons.chevron_left),
-                              onPressed: offset > 0
-                                  ? () {
-                                      ref
-                                          .read(_auditOffsetProvider.notifier)
-                                          .state = (offset - result.limit)
-                                          .clamp(0, result.total);
-                                    }
-                                  : null,
+                            Tooltip(
+                              message:
+                                  MaterialLocalizations.of(context)
+                                      .previousPageTooltip,
+                              child: IconButton(
+                                icon: const Icon(Icons.chevron_left),
+                                onPressed: offset > 0
+                                    ? () {
+                                        ref
+                                            .read(_auditOffsetProvider.notifier)
+                                            .state = (offset - result.limit)
+                                            .clamp(0, result.total);
+                                      }
+                                    : null,
+                              ),
                             ),
                             Text(
                               '${offset + 1}–${(offset + result.logs.length).clamp(0, result.total)} / ${result.total}',
                               style: theme.textTheme.bodySmall,
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.chevron_right),
-                              onPressed: offset + result.limit < result.total
-                                  ? () {
-                                      ref
-                                              .read(
-                                                _auditOffsetProvider.notifier,
-                                              )
-                                              .state =
-                                          offset + result.limit;
-                                    }
-                                  : null,
+                            Tooltip(
+                              message:
+                                  MaterialLocalizations.of(context)
+                                      .nextPageTooltip,
+                              child: IconButton(
+                                icon: const Icon(Icons.chevron_right),
+                                onPressed: offset + result.limit < result.total
+                                    ? () {
+                                        ref
+                                                .read(
+                                                  _auditOffsetProvider.notifier,
+                                                )
+                                                .state =
+                                            offset + result.limit;
+                                      }
+                                    : null,
+                              ),
                             ),
                           ],
                         ),
@@ -141,37 +151,41 @@ class _AuditLogTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: Spacing.xxs),
-      leading: _levelIcon(context, entry.level),
-      title: Text(
-        '${entry.category} / ${entry.action}',
-        style: theme.textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
+    return Semantics(
+      label:
+          '${entry.level}: ${entry.category} ${entry.action}, ${formatDate(entry.timestamp)}',
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(vertical: Spacing.xxs),
+        leading: _levelIcon(context, entry.level),
+        title: Text(
+          '${entry.category} / ${entry.action}',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(formatDate(entry.timestamp), style: theme.textTheme.bodySmall),
-          if (entry.ipAddress.isNotEmpty)
-            Text(
-              entry.ipAddress,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(formatDate(entry.timestamp), style: theme.textTheme.bodySmall),
+            if (entry.ipAddress.isNotEmpty)
+              Text(
+                entry.ipAddress,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
+        trailing: entry.resourceType.isNotEmpty
+            ? Chip(
+                label: Text(
+                  entry.resourceType,
+                  style: theme.textTheme.labelSmall,
+                ),
+                visualDensity: VisualDensity.compact,
+              )
+            : null,
       ),
-      trailing: entry.resourceType.isNotEmpty
-          ? Chip(
-              label: Text(
-                entry.resourceType,
-                style: theme.textTheme.labelSmall,
-              ),
-              visualDensity: VisualDensity.compact,
-            )
-          : null,
     );
   }
 
