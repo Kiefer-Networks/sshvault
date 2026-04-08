@@ -73,7 +73,12 @@ class SecurityWarningDialog extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isCritical = severity == SecuritySeverity.critical;
 
-    return Scaffold(
+    return Semantics(
+      liveRegion: true,
+      label: isCritical
+          ? l10n.disconnect
+          : title,
+      child: Scaffold(
       backgroundColor: isCritical
           ? colorScheme.errorContainer
           : colorScheme.tertiaryContainer,
@@ -89,6 +94,9 @@ class SecurityWarningDialog extends StatelessWidget {
                 color: isCritical
                     ? colorScheme.onErrorContainer
                     : colorScheme.onTertiaryContainer,
+                semanticLabel: isCritical
+                    ? l10n.disconnect
+                    : title,
               ),
               Spacing.verticalXxl,
               Text(
@@ -131,27 +139,33 @@ class SecurityWarningDialog extends StatelessWidget {
                 ),
               ],
               Spacing.verticalXxxl,
-              FilledButton.icon(
-                onPressed: onDisconnect,
-                icon: const Icon(Icons.power_settings_new),
-                label: Text(l10n.disconnect),
-                style: FilledButton.styleFrom(
-                  backgroundColor: colorScheme.error,
-                  foregroundColor: colorScheme.onError,
-                  minimumSize: const Size(double.infinity, 48),
+              Tooltip(
+                message: l10n.disconnect,
+                child: FilledButton.icon(
+                  onPressed: onDisconnect,
+                  icon: const Icon(Icons.power_settings_new),
+                  label: Text(l10n.disconnect),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: colorScheme.error,
+                    foregroundColor: colorScheme.onError,
+                    minimumSize: const Size(double.infinity, 48),
+                  ),
                 ),
               ),
               if (onReport != null) ...[
                 Spacing.verticalMd,
-                OutlinedButton.icon(
-                  onPressed: onReport,
-                  icon: const Icon(Icons.flag),
-                  label: Text(l10n.reportAndDisconnect),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: isCritical
-                        ? colorScheme.onErrorContainer
-                        : colorScheme.onTertiaryContainer,
-                    minimumSize: const Size(double.infinity, 48),
+                Tooltip(
+                  message: l10n.reportAndDisconnect,
+                  child: OutlinedButton.icon(
+                    onPressed: onReport,
+                    icon: const Icon(Icons.flag),
+                    label: Text(l10n.reportAndDisconnect),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: isCritical
+                          ? colorScheme.onErrorContainer
+                          : colorScheme.onTertiaryContainer,
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
                   ),
                 ),
               ],
@@ -172,6 +186,7 @@ class SecurityWarningDialog extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
