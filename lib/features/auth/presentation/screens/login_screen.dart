@@ -58,6 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             constraints: const BoxConstraints(maxWidth: 400),
             child: Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -128,19 +129,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           decoration: InputDecoration(
                             labelText: l10n.authPasswordLabel,
                             prefixIcon: const Icon(Icons.lock_outlined),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                obscurePassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
+                            suffixIcon: Tooltip(
+                              message: obscurePassword
+                                  ? 'Show password'
+                                  : 'Hide password',
+                              child: IconButton(
+                                icon: Icon(
+                                  obscurePassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                ),
+                                onPressed: () =>
+                                    ref
+                                            .read(
+                                              _obscurePasswordProvider.notifier,
+                                            )
+                                            .state =
+                                        !obscurePassword,
                               ),
-                              onPressed: () =>
-                                  ref
-                                          .read(
-                                            _obscurePasswordProvider.notifier,
-                                          )
-                                          .state =
-                                      !obscurePassword,
                             ),
                           ),
                           validator: (v) {

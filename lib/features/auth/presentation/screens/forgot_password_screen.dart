@@ -92,6 +92,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   )
                 : Form(
                     key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -144,7 +145,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       await ref
           .read(authProvider.notifier)
           .forgotPassword(_emailController.text.trim());
-      if (mounted) ref.read(_forgotPasswordProvider.notifier).setSent(true);
+      if (mounted) {
+        ref.read(_forgotPasswordProvider.notifier).setSent(true);
+        AdaptiveNotification.show(context, message: AppLocalizations.of(context)!.authResetEmailSent);
+      }
     } catch (e) {
       if (mounted) {
         AdaptiveNotification.show(context, message: errorMessage(e));
