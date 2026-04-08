@@ -27,13 +27,17 @@ class SshSettingsScreen extends ConsumerWidget {
             SectionHeader(title: l10n.settingsSectionConnection),
             SettingsGroupCard(
               children: [
-                SettingsTile(
-                  icon: Icons.numbers,
-                  iconColor: AppColors.iconOrange,
-                  title: l10n.settingsDefaultPort,
-                  subtitleText: settings.defaultSshPort.toString(),
-                  onTap: () =>
-                      _editPort(context, ref, l10n, settings.defaultSshPort),
+                Semantics(
+                  button: true,
+                  label: '${l10n.settingsDefaultPort}: ${settings.defaultSshPort}',
+                  child: SettingsTile(
+                    icon: Icons.numbers,
+                    iconColor: AppColors.iconOrange,
+                    title: l10n.settingsDefaultPort,
+                    subtitleText: settings.defaultSshPort.toString(),
+                    onTap: () =>
+                        _editPort(context, ref, l10n, settings.defaultSshPort),
+                  ),
                 ),
                 SettingsTile(
                   icon: Icons.person_outline,
@@ -74,6 +78,12 @@ class SshSettingsScreen extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .setDefaultAuthMethod(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      }
                     }
                   },
                 ),
@@ -121,6 +131,10 @@ class SshSettingsScreen extends ConsumerWidget {
                   value: settings.sshCompression,
                   onChanged: (v) {
                     ref.read(settingsProvider.notifier).setSshCompression(v);
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.settingsUpdated,
+                    );
                   },
                 ),
                 SettingsTile(
@@ -146,6 +160,12 @@ class SshSettingsScreen extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .setDefaultTerminalType(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      }
                     }
                   },
                 ),
@@ -198,6 +218,12 @@ class SshSettingsScreen extends ConsumerWidget {
         final port = int.tryParse(result);
         if (port != null && port > 0 && port <= 65535) {
           ref.read(settingsProvider.notifier).setDefaultSshPort(port);
+          if (context.mounted) {
+            AdaptiveNotification.show(
+              context,
+              message: l10n.settingsUpdated,
+            );
+          }
         }
       }
     } finally {
@@ -239,6 +265,12 @@ class SshSettingsScreen extends ConsumerWidget {
       );
       if (result != null && result.trim().isNotEmpty) {
         ref.read(settingsProvider.notifier).setDefaultUsername(result.trim());
+        if (context.mounted) {
+          AdaptiveNotification.show(
+            context,
+            message: l10n.settingsUpdated,
+          );
+        }
       }
     } finally {
       WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
@@ -281,6 +313,12 @@ class SshSettingsScreen extends ConsumerWidget {
         final secs = int.tryParse(result);
         if (secs != null && secs > 0 && secs <= 300) {
           ref.read(settingsProvider.notifier).setConnectionTimeout(secs);
+          if (context.mounted) {
+            AdaptiveNotification.show(
+              context,
+              message: l10n.settingsUpdated,
+            );
+          }
         }
       }
     } finally {
@@ -324,6 +362,12 @@ class SshSettingsScreen extends ConsumerWidget {
         final secs = int.tryParse(result);
         if (secs != null && secs >= 0 && secs <= 300) {
           ref.read(settingsProvider.notifier).setKeepaliveInterval(secs);
+          if (context.mounted) {
+            AdaptiveNotification.show(
+              context,
+              message: l10n.settingsUpdated,
+            );
+          }
         }
       }
     } finally {

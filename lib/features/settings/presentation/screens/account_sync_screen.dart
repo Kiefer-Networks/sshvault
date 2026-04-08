@@ -60,6 +60,13 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
     final isSyncing =
         syncState.value == SyncStatus.syncing || syncState.isLoading;
 
+    ref.listen<AsyncValue<SyncStatus>>(syncProvider, (prev, next) {
+      if (prev?.value == SyncStatus.syncing &&
+          next.value == SyncStatus.success) {
+        AdaptiveNotification.show(context, message: l10n.syncSuccess);
+      }
+    });
+
     return AdaptiveScaffold(
       title: l10n.settingsAccountAndSync,
       body: ListView(
@@ -71,7 +78,10 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               builder: (context) {
                 final reachable = ref.watch(serverReachableProvider);
                 if (reachable.value == false || reachable.hasError) {
-                  return Padding(
+                  return Semantics(
+                    liveRegion: true,
+                    label: l10n.syncServerUnreachable,
+                    child: Padding(
                     padding: const EdgeInsets.only(bottom: Spacing.lg),
                     child: MaterialBanner(
                       leading: Icon(
@@ -103,6 +113,7 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                           child: Text(l10n.serverConfigTest),
                         ),
                       ],
+                    ),
                     ),
                   );
                 }
@@ -502,46 +513,53 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
               children: devices.map((d) {
                 final isCurrentDevice =
                     currentDeviceId != null && d.id == currentDeviceId;
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(_platformIcon(d.platform)),
-                  title: Row(
-                    children: [
-                      Flexible(child: Text(d.name)),
-                      if (isCurrentDevice) ...[
-                        Spacing.horizontalSm,
-                        Chip(
-                          label: Text(
-                            l10n.thisDevice,
-                            style: theme.textTheme.labelSmall,
+                return Semantics(
+                  label:
+                      '${d.name}, ${d.platform}${isCurrentDevice ? ', ${l10n.thisDevice}' : ''}',
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(_platformIcon(d.platform)),
+                    title: Row(
+                      children: [
+                        Flexible(child: Text(d.name)),
+                        if (isCurrentDevice) ...[
+                          Spacing.horizontalSm,
+                          Chip(
+                            label: Text(
+                              l10n.thisDevice,
+                              style: theme.textTheme.labelSmall,
+                            ),
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: VisualDensity.compact,
+                            padding: EdgeInsets.zero,
                           ),
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.zero,
-                        ),
+                        ],
                       ],
-                    ],
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (d.lastSync != null)
-                        Text(
-                          '${l10n.accountLastSync}: ${formatDate(d.lastSync!)}',
-                        ),
-                      if (d.lastSeen != null)
-                        Text(
-                          '${l10n.deviceLastSeen}: ${formatDate(d.lastSeen!)}',
-                        ),
-                      if (d.lastIp != null && d.lastIp!.isNotEmpty)
-                        Text('${l10n.deviceIpAddress}: ${d.lastIp}'),
-                    ],
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 20),
-                    onPressed: () =>
-                        _confirmDeleteDevice(d.id, d.name, isCurrentDevice),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (d.lastSync != null)
+                          Text(
+                            '${l10n.accountLastSync}: ${formatDate(d.lastSync!)}',
+                          ),
+                        if (d.lastSeen != null)
+                          Text(
+                            '${l10n.deviceLastSeen}: ${formatDate(d.lastSeen!)}',
+                          ),
+                        if (d.lastIp != null && d.lastIp!.isNotEmpty)
+                          Text('${l10n.deviceIpAddress}: ${d.lastIp}'),
+                      ],
+                    ),
+                    trailing: Tooltip(
+                      message: l10n.delete,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete_outline, size: 20),
+                        onPressed: () =>
+                            _confirmDeleteDevice(d.id, d.name, isCurrentDevice),
+                      ),
+                    ),
                   ),
                 );
               }).toList(),
