@@ -444,7 +444,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get serverFormTitleAdd => '서버 추가';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => '서버 저장됨';
 
   @override
   String get serverFormUpdateButton => '서버 업데이트';
@@ -780,19 +780,19 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH 키 저장됨';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH 키 삭제됨';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => '태그 저장됨';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => '태그 삭제됨';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => '폴더 삭제됨';
 
   @override
   String get sshKeyTileUnlinkFirst => '먼저 모든 서버에서 연결을 해제하세요';
@@ -1197,49 +1197,49 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsLogsSaved => '로그가 저장되었습니다';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => '설정 업데이트됨';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => '테마 변경됨';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => '언어 변경됨';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN 설정됨';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN 제거됨';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => '긴급 PIN 설정됨';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => '긴급 PIN 제거됨';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => '생체 인증 활성화됨';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => '생체 인증 비활성화됨';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNS 서버 추가됨';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNS 서버 제거됨';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNS 서버 초기화됨';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => '글꼴 축소';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => '글꼴 확대';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'DNS 서버 제거';
 
   @override
   String get settingsLogsEmpty => '로그 항목이 없습니다';

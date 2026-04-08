@@ -452,7 +452,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get serverFormTitleAdd => 'Ajouter un serveur';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Serveur enregistré';
 
   @override
   String get serverFormUpdateButton => 'Mettre à jour le serveur';
@@ -798,19 +798,19 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'Clé SSH enregistrée';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'Clé SSH supprimée';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Tag enregistré';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Tag supprimé';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Dossier supprimé';
 
   @override
   String get sshKeyTileUnlinkFirst => 'Dissociez d\'abord de tous les serveurs';
@@ -1223,49 +1223,50 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsLogsSaved => 'Journaux enregistrés avec succès';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Paramètre mis à jour';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Thème modifié';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Langue modifiée';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN défini';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN supprimé';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'Code de contrainte défini';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'Code de contrainte supprimé';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Déverrouillage biométrique activé';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled =>
+      'Déverrouillage biométrique désactivé';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'Serveur DNS ajouté';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'Serveur DNS supprimé';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'Serveurs DNS réinitialisés';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Réduire la taille';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Augmenter la taille';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Supprimer le serveur DNS';
 
   @override
   String get settingsLogsEmpty => 'Aucune entrée de journal disponible';

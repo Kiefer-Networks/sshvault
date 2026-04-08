@@ -452,7 +452,7 @@ class AppLocalizationsFi extends AppLocalizations {
   String get serverFormTitleAdd => 'Lisää palvelin';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Palvelin tallennettu';
 
   @override
   String get serverFormUpdateButton => 'Päivitä palvelin';
@@ -796,19 +796,19 @@ class AppLocalizationsFi extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH-avain tallennettu';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH-avain poistettu';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Tunniste tallennettu';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Tunniste poistettu';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Kansio poistettu';
 
   @override
   String get sshKeyTileUnlinkFirst =>
@@ -1222,49 +1222,49 @@ class AppLocalizationsFi extends AppLocalizations {
   String get settingsLogsSaved => 'Lokit tallennettu onnistuneesti';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Asetus päivitetty';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Teema vaihdettu';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Kieli vaihdettu';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN asetettu';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN poistettu';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'Hätä-PIN asetettu';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'Hätä-PIN poistettu';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Biometrinen avaus käytössä';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'Biometrinen avaus pois käytöstä';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNS-palvelin lisätty';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNS-palvelin poistettu';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNS-palvelimet palautettu';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Pienennä fonttia';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Suurenna fonttia';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Poista DNS-palvelin';
 
   @override
   String get settingsLogsEmpty => 'Ei lokimerkintöjä saatavilla';

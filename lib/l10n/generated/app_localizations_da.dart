@@ -449,7 +449,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get serverFormTitleAdd => 'Tilføj server';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Server gemt';
 
   @override
   String get serverFormUpdateButton => 'Opdater server';
@@ -792,19 +792,19 @@ class AppLocalizationsDa extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH-nøgle gemt';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH-nøgle slettet';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Tag gemt';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Tag slettet';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Mappe slettet';
 
   @override
   String get sshKeyTileUnlinkFirst =>
@@ -1218,49 +1218,49 @@ class AppLocalizationsDa extends AppLocalizations {
   String get settingsLogsSaved => 'Logfiler gemt';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Indstilling opdateret';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Tema ændret';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Sprog ændret';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN indstillet';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN fjernet';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'Tvangskode indstillet';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'Tvangskode fjernet';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Biometrisk oplåsning aktiveret';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'Biometrisk oplåsning deaktiveret';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNS-server tilføjet';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNS-server fjernet';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNS-servere nulstillet';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Formindsk skrift';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Forstør skrift';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Fjern DNS-server';
 
   @override
   String get settingsLogsEmpty => 'Ingen logposter tilgængelige';

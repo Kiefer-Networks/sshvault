@@ -450,7 +450,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get serverFormTitleAdd => 'Добавить сервер';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Сервер сохранён';
 
   @override
   String get serverFormUpdateButton => 'Обновить сервер';
@@ -794,19 +794,19 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH-ключ сохранён';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH-ключ удалён';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Тег сохранён';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Тег удалён';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Папка удалена';
 
   @override
   String get sshKeyTileUnlinkFirst => 'Сначала отвяжите от всех серверов';
@@ -1220,49 +1220,49 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsLogsSaved => 'Логи сохранены успешно';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Настройка обновлена';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Тема изменена';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Язык изменён';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN установлен';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN удалён';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'Аварийный PIN установлен';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'Аварийный PIN удалён';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Биометрия включена';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'Биометрия отключена';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNS-сервер добавлен';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNS-сервер удалён';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNS-серверы сброшены';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Уменьшить шрифт';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Увеличить шрифт';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Удалить DNS-сервер';
 
   @override
   String get settingsLogsEmpty => 'Нет доступных записей логов';

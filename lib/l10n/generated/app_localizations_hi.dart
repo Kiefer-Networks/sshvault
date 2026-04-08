@@ -449,7 +449,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get serverFormTitleAdd => 'सर्वर जोड़ें';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'सर्वर सहेजा गया';
 
   @override
   String get serverFormUpdateButton => 'सर्वर अपडेट करें';
@@ -793,19 +793,19 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH कुंजी सहेजी गई';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH कुंजी हटाई गई';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'टैग सहेजा गया';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'टैग हटाया गया';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'फ़ोल्डर हटाया गया';
 
   @override
   String get sshKeyTileUnlinkFirst => 'पहले सभी सर्वर से अनलिंक करें';
@@ -1219,49 +1219,49 @@ class AppLocalizationsHi extends AppLocalizations {
   String get settingsLogsSaved => 'लॉग सफलतापूर्वक सहेजे गए';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'सेटिंग अपडेट की गई';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'थीम बदली गई';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'भाषा बदली गई';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN सेट किया गया';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN हटाया गया';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'ड्यूरेस PIN सेट किया गया';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'ड्यूरेस PIN हटाया गया';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'बायोमेट्रिक अनलॉक सक्रिय';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'बायोमेट्रिक अनलॉक निष्क्रिय';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNS सर्वर जोड़ा गया';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNS सर्वर हटाया गया';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNS सर्वर रीसेट किए गए';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'फ़ॉन्ट छोटा करें';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'फ़ॉन्ट बड़ा करें';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'DNS सर्वर हटाएं';
 
   @override
   String get settingsLogsEmpty => 'कोई लॉग प्रविष्टियाँ उपलब्ध नहीं';

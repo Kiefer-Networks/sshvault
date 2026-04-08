@@ -443,7 +443,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get serverFormTitleAdd => 'サーバーを追加';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'サーバーを保存しました';
 
   @override
   String get serverFormUpdateButton => 'サーバーを更新';
@@ -778,19 +778,19 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH鍵を保存しました';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH鍵を削除しました';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'タグを保存しました';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'タグを削除しました';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'フォルダーを削除しました';
 
   @override
   String get sshKeyTileUnlinkFirst => 'まずすべてのサーバーからリンクを解除してください';
@@ -1195,49 +1195,49 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsLogsSaved => 'ログを保存しました';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => '設定を更新しました';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'テーマを変更しました';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => '言語を変更しました';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PINを設定しました';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PINを削除しました';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => '緊急PINを設定しました';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => '緊急PINを削除しました';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => '生体認証を有効にしました';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => '生体認証を無効にしました';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNSサーバーを追加しました';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNSサーバーを削除しました';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNSサーバーをリセットしました';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'フォントを小さく';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'フォントを大きく';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'DNSサーバーを削除';
 
   @override
   String get settingsLogsEmpty => 'ログエントリがありません';

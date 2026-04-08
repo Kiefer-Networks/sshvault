@@ -449,7 +449,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get serverFormTitleAdd => 'Přidat server';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Server uložen';
 
   @override
   String get serverFormUpdateButton => 'Aktualizovat server';
@@ -792,19 +792,19 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH klíč uložen';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH klíč smazán';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Štítek uložen';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Štítek smazán';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Složka smazána';
 
   @override
   String get sshKeyTileUnlinkFirst => 'Nejprve odpojte od všech serverů';
@@ -1217,49 +1217,49 @@ class AppLocalizationsCs extends AppLocalizations {
   String get settingsLogsSaved => 'Protokoly úspěšně uloženy';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Nastavení aktualizováno';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Motiv změněn';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Jazyk změněn';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN nastaven';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN odstraněn';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'Nouzový PIN nastaven';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'Nouzový PIN odstraněn';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Biometrické odemknutí aktivováno';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'Biometrické odemknutí deaktivováno';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNS server přidán';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNS server odebrán';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNS servery obnoveny';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Zmenšit písmo';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Zvětšit písmo';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Odebrat DNS server';
 
   @override
   String get settingsLogsEmpty => 'Žádné záznamy protokolu k dispozici';

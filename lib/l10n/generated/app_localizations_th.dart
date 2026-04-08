@@ -447,7 +447,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get serverFormTitleAdd => 'เพิ่มเซิร์ฟเวอร์';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'บันทึกเซิร์ฟเวอร์แล้ว';
 
   @override
   String get serverFormUpdateButton => 'อัปเดตเซิร์ฟเวอร์';
@@ -789,19 +789,19 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'บันทึกคีย์ SSH แล้ว';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'ลบคีย์ SSH แล้ว';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'บันทึกแท็กแล้ว';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'ลบแท็กแล้ว';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'ลบโฟลเดอร์แล้ว';
 
   @override
   String get sshKeyTileUnlinkFirst =>
@@ -1214,49 +1214,49 @@ class AppLocalizationsTh extends AppLocalizations {
   String get settingsLogsSaved => 'บันทึกสำเร็จ';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'อัปเดตการตั้งค่าแล้ว';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'เปลี่ยนธีมแล้ว';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'เปลี่ยนภาษาแล้ว';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'ตั้ง PIN แล้ว';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'ลบ PIN แล้ว';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'ตั้งรหัสฉุกเฉินแล้ว';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'ลบรหัสฉุกเฉินแล้ว';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'เปิดการปลดล็อกด้วยไบโอเมตริก';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'ปิดการปลดล็อกด้วยไบโอเมตริก';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'เพิ่มเซิร์ฟเวอร์ DNS แล้ว';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'ลบเซิร์ฟเวอร์ DNS แล้ว';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'รีเซ็ตเซิร์ฟเวอร์ DNS แล้ว';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'ลดขนาดตัวอักษร';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'เพิ่มขนาดตัวอักษร';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'ลบเซิร์ฟเวอร์ DNS';
 
   @override
   String get settingsLogsEmpty => 'ไม่มีรายการบันทึก';
