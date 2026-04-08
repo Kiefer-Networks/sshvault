@@ -147,7 +147,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           .forgotPassword(_emailController.text.trim());
       if (mounted) {
         ref.read(_forgotPasswordProvider.notifier).setSent(true);
-        AdaptiveNotification.show(context, message: AppLocalizations.of(context)!.authResetEmailSent);
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.authResetEmailSent,
+        );
       }
     } catch (e) {
       if (mounted) {

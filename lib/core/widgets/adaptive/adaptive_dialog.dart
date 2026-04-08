@@ -134,9 +134,7 @@ Future<T?> showAdaptiveFormDialog<T>(
           child: content,
         ),
         actions: materialActions
-            .map(
-              (w) => CupertinoDialogAction(child: w),
-            )
+            .map((w) => CupertinoDialogAction(child: w))
             .toList(),
       ),
     );

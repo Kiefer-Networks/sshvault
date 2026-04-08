@@ -34,51 +34,55 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   button: true,
                   label: l10n.settingsAutoLock,
                   child: SettingsTile(
-                  icon: Icons.lock_clock_outlined,
-                  iconColor: AppColors.iconRed,
-                  title: l10n.settingsAutoLock,
-                  subtitleText: settings.autoLockMinutes == 0
-                      ? l10n.settingsAutoLockDisabled
-                      : l10n.settingsAutoLockMinutes(settings.autoLockMinutes),
-                  onTap: () async {
-                    final v = await showSettingsSelectionDialog<int>(
-                      context: context,
-                      title: l10n.settingsAutoLock,
-                      currentValue: settings.autoLockMinutes,
-                      options: [
-                        SelectionOption(
-                          value: 0,
-                          label: l10n.settingsAutoLockOff,
-                        ),
-                        SelectionOption(
-                          value: 1,
-                          label: l10n.settingsAutoLock1Min,
-                        ),
-                        SelectionOption(
-                          value: 5,
-                          label: l10n.settingsAutoLock5Min,
-                        ),
-                        SelectionOption(
-                          value: 15,
-                          label: l10n.settingsAutoLock15Min,
-                        ),
-                        SelectionOption(
-                          value: 30,
-                          label: l10n.settingsAutoLock30Min,
-                        ),
-                      ],
-                    );
-                    if (v != null) {
-                      ref.read(settingsProvider.notifier).setAutoLockMinutes(v);
-                      if (context.mounted) {
-                        AdaptiveNotification.show(
-                          context,
-                          message: l10n.settingsUpdated,
-                        );
+                    icon: Icons.lock_clock_outlined,
+                    iconColor: AppColors.iconRed,
+                    title: l10n.settingsAutoLock,
+                    subtitleText: settings.autoLockMinutes == 0
+                        ? l10n.settingsAutoLockDisabled
+                        : l10n.settingsAutoLockMinutes(
+                            settings.autoLockMinutes,
+                          ),
+                    onTap: () async {
+                      final v = await showSettingsSelectionDialog<int>(
+                        context: context,
+                        title: l10n.settingsAutoLock,
+                        currentValue: settings.autoLockMinutes,
+                        options: [
+                          SelectionOption(
+                            value: 0,
+                            label: l10n.settingsAutoLockOff,
+                          ),
+                          SelectionOption(
+                            value: 1,
+                            label: l10n.settingsAutoLock1Min,
+                          ),
+                          SelectionOption(
+                            value: 5,
+                            label: l10n.settingsAutoLock5Min,
+                          ),
+                          SelectionOption(
+                            value: 15,
+                            label: l10n.settingsAutoLock15Min,
+                          ),
+                          SelectionOption(
+                            value: 30,
+                            label: l10n.settingsAutoLock30Min,
+                          ),
+                        ],
+                      );
+                      if (v != null) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setAutoLockMinutes(v);
+                        if (context.mounted) {
+                          AdaptiveNotification.show(
+                            context,
+                            message: l10n.settingsUpdated,
+                          );
+                        }
                       }
-                    }
-                  },
-                ),
+                    },
+                  ),
                 ),
                 _BiometricTile(settings: settings),
                 _PinTile(settings: settings),
@@ -265,7 +269,8 @@ class SecuritySettingsScreen extends ConsumerWidget {
             SettingsGroupCard(
               children: [
                 Semantics(
-                  label: '${l10n.settingsFailedAttempts}: ${settings.failedPinAttempts}',
+                  label:
+                      '${l10n.settingsFailedAttempts}: ${settings.failedPinAttempts}',
                   child: SettingsTile(
                     icon: Icons.warning_amber_outlined,
                     iconColor: AppColors.iconGrey,

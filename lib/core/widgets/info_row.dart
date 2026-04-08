@@ -31,57 +31,62 @@ class InfoRow extends StatelessWidget {
       label: '$label: $value',
       excludeSemantics: true,
       child: Padding(
-      padding: EdgeInsets.only(bottom: Spacing.sm),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 18,
-            color: theme.colorScheme.onSurface.withAlpha(AppConstants.alpha102),
-          ),
-          Spacing.horizontalSm,
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
+        padding: EdgeInsets.only(bottom: Spacing.sm),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 18,
               color: theme.colorScheme.onSurface.withAlpha(
-                AppConstants.alpha128,
+                AppConstants.alpha102,
               ),
             ),
-          ),
-          Spacing.horizontalMd,
-          Expanded(
-            child: Text(
-              value,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: AppConstants.monospaceFontFamily,
-                color: valueColor,
-              ),
-              textAlign: TextAlign.end,
-            ),
-          ),
-          if (onTap != null) ...[
-            Spacing.horizontalXxs,
-            Tooltip(
-              message: label,
-              child: IconButton(
-                onPressed: onTap,
-                icon: Icon(
-                  Icons.copy,
-                  size: 16,
-                  color: theme.colorScheme.onSurface.withAlpha(
-                    AppConstants.alpha102,
-                  ),
+            Spacing.horizontalSm,
+            Text(
+              label,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(
+                  AppConstants.alpha128,
                 ),
-                visualDensity: VisualDensity.compact,
-                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                padding: EdgeInsets.zero,
               ),
             ),
+            Spacing.horizontalMd,
+            Expanded(
+              child: Text(
+                value,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontFamily: AppConstants.monospaceFontFamily,
+                  color: valueColor,
+                ),
+                textAlign: TextAlign.end,
+              ),
+            ),
+            if (onTap != null) ...[
+              Spacing.horizontalXxs,
+              Tooltip(
+                message: label,
+                child: IconButton(
+                  onPressed: onTap,
+                  icon: Icon(
+                    Icons.copy,
+                    size: 16,
+                    color: theme.colorScheme.onSurface.withAlpha(
+                      AppConstants.alpha102,
+                    ),
+                  ),
+                  visualDensity: VisualDensity.compact,
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+            ],
+            if (trailing != null) ...[Spacing.horizontalXxs, trailing!],
           ],
-          if (trailing != null) ...[Spacing.horizontalXxs, trailing!],
-        ],
+        ),
       ),
-    ),
     );
   }
 }

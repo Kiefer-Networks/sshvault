@@ -82,38 +82,38 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                     liveRegion: true,
                     label: l10n.syncServerUnreachable,
                     child: Padding(
-                    padding: const EdgeInsets.only(bottom: Spacing.lg),
-                    child: MaterialBanner(
-                      leading: Icon(
-                        Icons.cloud_off,
-                        color: theme.colorScheme.error,
-                      ),
-                      content: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.syncServerUnreachable,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              color: theme.colorScheme.error,
+                      padding: const EdgeInsets.only(bottom: Spacing.lg),
+                      child: MaterialBanner(
+                        leading: Icon(
+                          Icons.cloud_off,
+                          color: theme.colorScheme.error,
+                        ),
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.syncServerUnreachable,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: theme.colorScheme.error,
+                              ),
                             ),
-                          ),
-                          Spacing.verticalXxs,
-                          Text(
-                            l10n.syncServerUnreachableHint,
-                            style: theme.textTheme.bodySmall,
+                            Spacing.verticalXxs,
+                            Text(
+                              l10n.syncServerUnreachableHint,
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                        backgroundColor: theme.colorScheme.errorContainer
+                            .withAlpha(77),
+                        actions: [
+                          TextButton(
+                            onPressed: () =>
+                                ref.invalidate(serverReachableProvider),
+                            child: Text(l10n.serverConfigTest),
                           ),
                         ],
                       ),
-                      backgroundColor: theme.colorScheme.errorContainer
-                          .withAlpha(77),
-                      actions: [
-                        TextButton(
-                          onPressed: () =>
-                              ref.invalidate(serverReachableProvider),
-                          child: Text(l10n.serverConfigTest),
-                        ),
-                      ],
-                    ),
                     ),
                   );
                 }

@@ -55,7 +55,10 @@ class SessionTabBar extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 180),
-                  margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 2,
+                    vertical: 4,
+                  ),
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -147,32 +150,32 @@ class _CloseButton extends StatelessWidget {
       label: l10n.close,
       button: true,
       child: InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () async {
-        if (session.status == SshConnectionStatus.connected) {
-          final l10n = AppLocalizations.of(context)!;
-          final confirmed = await ConfirmDialog.show(
-            context,
-            title: l10n.terminalCloseTitle,
-            message: l10n.terminalCloseMessage(session.title),
-            confirmLabel: l10n.close,
-          );
-          if (confirmed == true) onClose();
-        } else {
-          onClose();
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(Spacing.xxxs),
-        child: Icon(
-          Icons.close,
-          size: 14,
-          color: Theme.of(
-            context,
-          ).colorScheme.onSurface.withAlpha(AppConstants.alpha128),
+        borderRadius: BorderRadius.circular(12),
+        onTap: () async {
+          if (session.status == SshConnectionStatus.connected) {
+            final l10n = AppLocalizations.of(context)!;
+            final confirmed = await ConfirmDialog.show(
+              context,
+              title: l10n.terminalCloseTitle,
+              message: l10n.terminalCloseMessage(session.title),
+              confirmLabel: l10n.close,
+            );
+            if (confirmed == true) onClose();
+          } else {
+            onClose();
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(Spacing.xxxs),
+          child: Icon(
+            Icons.close,
+            size: 14,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withAlpha(AppConstants.alpha128),
+          ),
         ),
       ),
-    ),
     );
   }
 }

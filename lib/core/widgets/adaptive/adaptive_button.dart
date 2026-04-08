@@ -83,7 +83,10 @@ class AdaptiveButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             color != null
-                ? IconTheme(data: IconThemeData(color: color), child: icon)
+                ? IconTheme(
+                    data: IconThemeData(color: color),
+                    child: icon,
+                  )
                 : icon,
             const SizedBox(width: 8),
             color != null

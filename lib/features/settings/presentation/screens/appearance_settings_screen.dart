@@ -33,174 +33,176 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                 Semantics(
                   label: l10n.settingsTheme,
                   child: SettingsTile(
-                  icon: Icons.palette_outlined,
-                  iconColor: Theme.of(context).colorScheme.primary,
-                  title: l10n.settingsTheme,
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: Spacing.sm),
-                    child: AdaptiveSegmentedControl<AppThemeMode>(
-                      selected: settings.themeMode,
-                      segments: {
-                        AppThemeMode.system: l10n.settingsThemeSystem,
-                        AppThemeMode.light: l10n.settingsThemeLight,
-                        AppThemeMode.dark: l10n.settingsThemeDark,
-                      },
-                      onChanged: (mode) {
-                        ref.read(settingsProvider.notifier).setThemeMode(mode);
-                        AdaptiveNotification.show(
-                          context,
-                          message: l10n.settingsThemeChanged,
-                        );
-                      },
+                    icon: Icons.palette_outlined,
+                    iconColor: Theme.of(context).colorScheme.primary,
+                    title: l10n.settingsTheme,
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: Spacing.sm),
+                      child: AdaptiveSegmentedControl<AppThemeMode>(
+                        selected: settings.themeMode,
+                        segments: {
+                          AppThemeMode.system: l10n.settingsThemeSystem,
+                          AppThemeMode.light: l10n.settingsThemeLight,
+                          AppThemeMode.dark: l10n.settingsThemeDark,
+                        },
+                        onChanged: (mode) {
+                          ref
+                              .read(settingsProvider.notifier)
+                              .setThemeMode(mode);
+                          AdaptiveNotification.show(
+                            context,
+                            message: l10n.settingsThemeChanged,
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
                 ),
                 Semantics(
                   button: true,
                   label: l10n.settingsLanguage,
                   child: SettingsTile(
-                  icon: Icons.language,
-                  iconColor: Theme.of(context).colorScheme.tertiary,
-                  title: l10n.settingsLanguage,
-                  subtitleText: _localeLabel(l10n, settings.locale),
-                  onTap: () async {
-                    final v = await showSettingsSelectionDialog<String>(
-                      context: context,
-                      title: l10n.settingsLanguage,
-                      currentValue: settings.locale.isEmpty
-                          ? ''
-                          : settings.locale,
-                      options: [
-                        SelectionOption(
-                          value: '',
-                          label: l10n.settingsLanguageSystem,
-                        ),
-                        SelectionOption(
-                          value: 'en',
-                          label: l10n.settingsLanguageEn,
-                        ),
-                        SelectionOption(
-                          value: 'ar',
-                          label: l10n.settingsLanguageAr,
-                        ),
-                        SelectionOption(
-                          value: 'cs',
-                          label: l10n.settingsLanguageCs,
-                        ),
-                        SelectionOption(
-                          value: 'da',
-                          label: l10n.settingsLanguageDa,
-                        ),
-                        SelectionOption(
-                          value: 'de',
-                          label: l10n.settingsLanguageDe,
-                        ),
-                        SelectionOption(
-                          value: 'el',
-                          label: l10n.settingsLanguageEl,
-                        ),
-                        SelectionOption(
-                          value: 'es',
-                          label: l10n.settingsLanguageEs,
-                        ),
-                        SelectionOption(
-                          value: 'fi',
-                          label: l10n.settingsLanguageFi,
-                        ),
-                        SelectionOption(
-                          value: 'fr',
-                          label: l10n.settingsLanguageFr,
-                        ),
-                        SelectionOption(
-                          value: 'he',
-                          label: l10n.settingsLanguageHe,
-                        ),
-                        SelectionOption(
-                          value: 'hi',
-                          label: l10n.settingsLanguageHi,
-                        ),
-                        SelectionOption(
-                          value: 'hu',
-                          label: l10n.settingsLanguageHu,
-                        ),
-                        SelectionOption(
-                          value: 'id',
-                          label: l10n.settingsLanguageId,
-                        ),
-                        SelectionOption(
-                          value: 'it',
-                          label: l10n.settingsLanguageIt,
-                        ),
-                        SelectionOption(
-                          value: 'ja',
-                          label: l10n.settingsLanguageJa,
-                        ),
-                        SelectionOption(
-                          value: 'ko',
-                          label: l10n.settingsLanguageKo,
-                        ),
-                        SelectionOption(
-                          value: 'nb',
-                          label: l10n.settingsLanguageNb,
-                        ),
-                        SelectionOption(
-                          value: 'nl',
-                          label: l10n.settingsLanguageNl,
-                        ),
-                        SelectionOption(
-                          value: 'pl',
-                          label: l10n.settingsLanguagePl,
-                        ),
-                        SelectionOption(
-                          value: 'pt',
-                          label: l10n.settingsLanguagePt,
-                        ),
-                        SelectionOption(
-                          value: 'ro',
-                          label: l10n.settingsLanguageRo,
-                        ),
-                        SelectionOption(
-                          value: 'ru',
-                          label: l10n.settingsLanguageRu,
-                        ),
-                        SelectionOption(
-                          value: 'sv',
-                          label: l10n.settingsLanguageSv,
-                        ),
-                        SelectionOption(
-                          value: 'th',
-                          label: l10n.settingsLanguageTh,
-                        ),
-                        SelectionOption(
-                          value: 'tr',
-                          label: l10n.settingsLanguageTr,
-                        ),
-                        SelectionOption(
-                          value: 'uk',
-                          label: l10n.settingsLanguageUk,
-                        ),
-                        SelectionOption(
-                          value: 'vi',
-                          label: l10n.settingsLanguageVi,
-                        ),
-                        SelectionOption(
-                          value: 'zh',
-                          label: l10n.settingsLanguageZh,
-                        ),
-                      ],
-                    );
-                    if (v != null) {
-                      ref.read(settingsProvider.notifier).setLocale(v);
-                      if (context.mounted) {
-                        AdaptiveNotification.show(
-                          context,
-                          message: l10n.settingsLanguageChanged,
-                        );
+                    icon: Icons.language,
+                    iconColor: Theme.of(context).colorScheme.tertiary,
+                    title: l10n.settingsLanguage,
+                    subtitleText: _localeLabel(l10n, settings.locale),
+                    onTap: () async {
+                      final v = await showSettingsSelectionDialog<String>(
+                        context: context,
+                        title: l10n.settingsLanguage,
+                        currentValue: settings.locale.isEmpty
+                            ? ''
+                            : settings.locale,
+                        options: [
+                          SelectionOption(
+                            value: '',
+                            label: l10n.settingsLanguageSystem,
+                          ),
+                          SelectionOption(
+                            value: 'en',
+                            label: l10n.settingsLanguageEn,
+                          ),
+                          SelectionOption(
+                            value: 'ar',
+                            label: l10n.settingsLanguageAr,
+                          ),
+                          SelectionOption(
+                            value: 'cs',
+                            label: l10n.settingsLanguageCs,
+                          ),
+                          SelectionOption(
+                            value: 'da',
+                            label: l10n.settingsLanguageDa,
+                          ),
+                          SelectionOption(
+                            value: 'de',
+                            label: l10n.settingsLanguageDe,
+                          ),
+                          SelectionOption(
+                            value: 'el',
+                            label: l10n.settingsLanguageEl,
+                          ),
+                          SelectionOption(
+                            value: 'es',
+                            label: l10n.settingsLanguageEs,
+                          ),
+                          SelectionOption(
+                            value: 'fi',
+                            label: l10n.settingsLanguageFi,
+                          ),
+                          SelectionOption(
+                            value: 'fr',
+                            label: l10n.settingsLanguageFr,
+                          ),
+                          SelectionOption(
+                            value: 'he',
+                            label: l10n.settingsLanguageHe,
+                          ),
+                          SelectionOption(
+                            value: 'hi',
+                            label: l10n.settingsLanguageHi,
+                          ),
+                          SelectionOption(
+                            value: 'hu',
+                            label: l10n.settingsLanguageHu,
+                          ),
+                          SelectionOption(
+                            value: 'id',
+                            label: l10n.settingsLanguageId,
+                          ),
+                          SelectionOption(
+                            value: 'it',
+                            label: l10n.settingsLanguageIt,
+                          ),
+                          SelectionOption(
+                            value: 'ja',
+                            label: l10n.settingsLanguageJa,
+                          ),
+                          SelectionOption(
+                            value: 'ko',
+                            label: l10n.settingsLanguageKo,
+                          ),
+                          SelectionOption(
+                            value: 'nb',
+                            label: l10n.settingsLanguageNb,
+                          ),
+                          SelectionOption(
+                            value: 'nl',
+                            label: l10n.settingsLanguageNl,
+                          ),
+                          SelectionOption(
+                            value: 'pl',
+                            label: l10n.settingsLanguagePl,
+                          ),
+                          SelectionOption(
+                            value: 'pt',
+                            label: l10n.settingsLanguagePt,
+                          ),
+                          SelectionOption(
+                            value: 'ro',
+                            label: l10n.settingsLanguageRo,
+                          ),
+                          SelectionOption(
+                            value: 'ru',
+                            label: l10n.settingsLanguageRu,
+                          ),
+                          SelectionOption(
+                            value: 'sv',
+                            label: l10n.settingsLanguageSv,
+                          ),
+                          SelectionOption(
+                            value: 'th',
+                            label: l10n.settingsLanguageTh,
+                          ),
+                          SelectionOption(
+                            value: 'tr',
+                            label: l10n.settingsLanguageTr,
+                          ),
+                          SelectionOption(
+                            value: 'uk',
+                            label: l10n.settingsLanguageUk,
+                          ),
+                          SelectionOption(
+                            value: 'vi',
+                            label: l10n.settingsLanguageVi,
+                          ),
+                          SelectionOption(
+                            value: 'zh',
+                            label: l10n.settingsLanguageZh,
+                          ),
+                        ],
+                      );
+                      if (v != null) {
+                        ref.read(settingsProvider.notifier).setLocale(v);
+                        if (context.mounted) {
+                          AdaptiveNotification.show(
+                            context,
+                            message: l10n.settingsLanguageChanged,
+                          );
+                        }
                       }
-                    }
-                  },
-                ),
+                    },
+                  ),
                 ),
               ],
             ),

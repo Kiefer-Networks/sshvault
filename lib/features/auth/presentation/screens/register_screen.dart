@@ -216,8 +216,9 @@ class _PasswordStrengthIndicator extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: strength,
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest,
                 color: color,
                 minHeight: 6,
               ),
@@ -227,9 +228,9 @@ class _PasswordStrengthIndicator extends StatelessWidget {
           Text(
             label[0].toUpperCase() + label.substring(1),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

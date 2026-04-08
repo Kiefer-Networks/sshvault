@@ -59,46 +59,46 @@ class NetworkSettingsScreen extends ConsumerWidget {
                     Semantics(
                       label: url,
                       child: ListTile(
-                      leading: Icon(
-                        Icons.dns_outlined,
-                        color: theme.colorScheme.primary,
-                      ),
-                      title: Text(
-                        url,
-                        style: theme.textTheme.bodyMedium,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: _defaultServers.contains(url)
-                          ? Text(
-                              l10n.settingsDnsDefaultBadge,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.primary,
-                              ),
-                            )
-                          : null,
-                      trailing: Tooltip(
-                        message: l10n.settingsDnsRemoveServerTooltip,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            size: 20,
-                            color: theme.colorScheme.onSurfaceVariant,
+                        leading: Icon(
+                          Icons.dns_outlined,
+                          color: theme.colorScheme.primary,
+                        ),
+                        title: Text(
+                          url,
+                          style: theme.textTheme.bodyMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: _defaultServers.contains(url)
+                            ? Text(
+                                l10n.settingsDnsDefaultBadge,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              )
+                            : null,
+                        trailing: Tooltip(
+                          message: l10n.settingsDnsRemoveServerTooltip,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              size: 20,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            onPressed: () {
+                              final newList = servers
+                                  .where((s) => s != url)
+                                  .toList();
+                              ref
+                                  .read(settingsProvider.notifier)
+                                  .setDnsServers(newList.join(','));
+                              AdaptiveNotification.show(
+                                context,
+                                message: l10n.settingsDnsServerRemoved,
+                              );
+                            },
                           ),
-                          onPressed: () {
-                            final newList = servers
-                                .where((s) => s != url)
-                                .toList();
-                            ref
-                                .read(settingsProvider.notifier)
-                                .setDnsServers(newList.join(','));
-                            AdaptiveNotification.show(
-                              context,
-                              message: l10n.settingsDnsServerRemoved,
-                            );
-                          },
                         ),
                       ),
-                    ),
                     ),
                   ListTile(
                     leading: Icon(Icons.add, color: theme.colorScheme.primary),

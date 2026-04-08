@@ -63,8 +63,8 @@ class AdaptiveScaffold extends StatelessWidget {
           leading: leading,
           trailing: actions != null && actions!.isNotEmpty
               ? actions!.length == 1
-                  ? actions!.first
-                  : Row(mainAxisSize: MainAxisSize.min, children: actions!)
+                    ? actions!.first
+                    : Row(mainAxisSize: MainAxisSize.min, children: actions!)
               : null,
           automaticallyImplyLeading: automaticallyImplyLeading,
         ),
@@ -74,11 +74,7 @@ class AdaptiveScaffold extends StatelessWidget {
             children: [
               body,
               if (floatingActionButton != null)
-                Positioned(
-                  right: 16,
-                  bottom: 16,
-                  child: floatingActionButton!,
-                ),
+                Positioned(right: 16, bottom: 16, child: floatingActionButton!),
             ],
           ),
         ),

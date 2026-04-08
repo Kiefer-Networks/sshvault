@@ -98,10 +98,7 @@ class TagListScreen extends ConsumerWidget {
     if (confirmed == true) {
       await ref.read(tagListProvider.notifier).deleteTag(tag.id);
       if (context.mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: l10n.tagDeletedSuccess,
-        );
+        AdaptiveNotification.show(context, message: l10n.tagDeletedSuccess);
       }
     }
   }
