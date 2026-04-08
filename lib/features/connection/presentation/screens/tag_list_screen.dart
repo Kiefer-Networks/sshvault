@@ -29,10 +29,14 @@ class TagListScreen extends ConsumerWidget {
         title: l10n.tagListTitle,
         actions: null,
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addTagFab',
-        onPressed: () => _showTagForm(context, ref),
-        child: const Icon(Icons.add),
+      floatingActionButton: Tooltip(
+        message: l10n.tagAddButton,
+        child: FloatingActionButton(
+          heroTag: 'addTagFab',
+          tooltip: l10n.tagAddButton,
+          onPressed: () => _showTagForm(context, ref),
+          child: const Icon(Icons.add),
+        ),
       ),
       body: tagsAsync.when(
         data: (tags) {
@@ -55,10 +59,13 @@ class TagListScreen extends ConsumerWidget {
             separatorBuilder: (_, _) => Spacing.verticalXxs,
             itemBuilder: (context, index) {
               final tag = tags[index];
-              return _TagTile(
-                tag: tag,
-                onEdit: () => _showTagForm(context, ref, tag: tag),
-                onDelete: () => _deleteTag(context, ref, tag),
+              return Semantics(
+                label: tag.name,
+                child: _TagTile(
+                  tag: tag,
+                  onEdit: () => _showTagForm(context, ref, tag: tag),
+                  onDelete: () => _deleteTag(context, ref, tag),
+                ),
               );
             },
           );
@@ -90,6 +97,12 @@ class TagListScreen extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(tagListProvider.notifier).deleteTag(tag.id);
+      if (context.mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.tagDeletedSuccess,
+        );
+      }
     }
   }
 }

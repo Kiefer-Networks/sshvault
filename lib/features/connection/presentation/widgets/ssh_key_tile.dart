@@ -102,17 +102,20 @@ class SshKeyTile extends ConsumerWidget {
           children: [
             if (sshKey.fingerprint.isNotEmpty) ...[
               SizedBox(height: Spacing.xxxs),
-              Text(
-                sshKey.fingerprint,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: AppConstants.monospaceFontFamily,
-                  fontSize: 11,
-                  color: theme.colorScheme.onSurface.withAlpha(
-                    AppConstants.alpha153,
+              Semantics(
+                label: '${sshKey.name} fingerprint: ${sshKey.fingerprint}',
+                child: Text(
+                  sshKey.fingerprint,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontFamily: AppConstants.monospaceFontFamily,
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurface.withAlpha(
+                      AppConstants.alpha153,
+                    ),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
             if (serverNames.isNotEmpty)

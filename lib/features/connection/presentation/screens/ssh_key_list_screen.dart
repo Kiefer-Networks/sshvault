@@ -28,10 +28,14 @@ class SshKeyListScreen extends ConsumerWidget {
         title: l10n.sshKeyListTitle,
         actions: null,
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addSshKeyFab',
-        onPressed: () => _addKey(context, ref),
-        child: const Icon(Icons.add),
+      floatingActionButton: Tooltip(
+        message: l10n.sshKeyAddButton,
+        child: FloatingActionButton(
+          heroTag: 'addSshKeyFab',
+          tooltip: l10n.sshKeyAddButton,
+          onPressed: () => _addKey(context, ref),
+          child: const Icon(Icons.add),
+        ),
       ),
       body: keysAsync.when(
         data: (keys) {
@@ -54,10 +58,13 @@ class SshKeyListScreen extends ConsumerWidget {
             separatorBuilder: (_, _) => Spacing.verticalXxs,
             itemBuilder: (context, index) {
               final key = keys[index];
-              return SshKeyTile(
-                sshKey: key,
-                onEdit: () => _editKey(context, ref, key),
-                onDelete: () => _deleteKey(context, ref, key),
+              return Semantics(
+                label: '${key.name}, ${key.keyType.displayName}',
+                child: SshKeyTile(
+                  sshKey: key,
+                  onEdit: () => _editKey(context, ref, key),
+                  onDelete: () => _deleteKey(context, ref, key),
+                ),
               );
             },
           );
@@ -121,6 +128,12 @@ class SshKeyListScreen extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         await ref.read(sshKeyListProvider.notifier).deleteSshKey(key.id);
+        if (context.mounted) {
+          AdaptiveNotification.show(
+            context,
+            message: l10n.sshKeyDeletedSuccess,
+          );
+        }
       } catch (e) {
         if (context.mounted) {
           AdaptiveNotification.show(

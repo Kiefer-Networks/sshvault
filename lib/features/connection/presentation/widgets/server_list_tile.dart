@@ -143,6 +143,9 @@ class ServerListTile extends ConsumerWidget {
                         ),
                   size: 20,
                 ),
+                tooltip: server.isFavorite
+                    ? l10n.removeFromFavorites
+                    : l10n.addToFavorites,
                 onPressed: onFavoriteToggle,
                 visualDensity: VisualDensity.compact,
                 padding: EdgeInsets.zero,

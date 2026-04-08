@@ -44,10 +44,13 @@ class FolderBrowserScreen extends ConsumerWidget {
         title: l10n.folderListTitle,
         actions: null,
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addFolderFab',
-        onPressed: () => _showFolderForm(context, ref),
-        child: const Icon(Icons.add),
+      floatingActionButton: Tooltip(
+        message: l10n.folderAddButton,
+        child: FloatingActionButton(
+          heroTag: 'addFolderFab',
+          onPressed: () => _showFolderForm(context, ref),
+          child: const Icon(Icons.add),
+        ),
       ),
       body: foldersAsync.when(
         data: (folders) {
@@ -91,11 +94,14 @@ class FolderBrowserScreen extends ConsumerWidget {
     final widgets = <Widget>[];
     for (final folder in folders) {
       widgets.add(
-        _FolderTile(
-          folder: folder,
-          depth: depth,
-          onEdit: () => _showFolderForm(context, ref, folder: folder),
-          onDelete: () => _deleteFolder(context, ref, folder),
+        Semantics(
+          label: folder.name,
+          child: _FolderTile(
+            folder: folder,
+            depth: depth,
+            onEdit: () => _showFolderForm(context, ref, folder: folder),
+            onDelete: () => _deleteFolder(context, ref, folder),
+          ),
         ),
       );
       if (folder.children.isNotEmpty) {
@@ -128,6 +134,12 @@ class FolderBrowserScreen extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(folderListProvider.notifier).deleteFolder(folder.id);
+      if (context.mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.folderDeletedSuccess,
+        );
+      }
     }
   }
 }

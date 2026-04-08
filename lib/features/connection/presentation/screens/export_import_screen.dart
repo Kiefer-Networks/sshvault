@@ -110,27 +110,33 @@ class ExportImportScreen extends ConsumerWidget {
           if (exportState.isLoading)
             const Center(child: CircularProgressIndicator.adaptive()),
           if (exportState.hasError)
-            Card(
-              color: theme.colorScheme.error.withAlpha(AppConstants.alpha26),
-              child: Padding(
-                padding: Spacing.paddingAllMd,
-                child: Text(
-                  l10n.error(errorMessage(exportState.error!)),
-                  style: TextStyle(color: theme.colorScheme.error),
+            Semantics(
+              liveRegion: true,
+              child: Card(
+                color: theme.colorScheme.error.withAlpha(AppConstants.alpha26),
+                child: Padding(
+                  padding: Spacing.paddingAllMd,
+                  child: Text(
+                    l10n.error(errorMessage(exportState.error!)),
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
                 ),
               ),
             ),
           if (exportState.hasValue && exportState.value != null)
-            Card(
-              color: theme.colorScheme.tertiaryContainer,
-              child: Padding(
-                padding: Spacing.paddingAllMd,
-                child: Text(
-                  exportState.value == importSuccessfulKey
-                      ? l10n.importSuccessful
-                      : exportState.value!,
-                  style: TextStyle(
-                    color: theme.colorScheme.onTertiaryContainer,
+            Semantics(
+              liveRegion: true,
+              child: Card(
+                color: theme.colorScheme.tertiaryContainer,
+                child: Padding(
+                  padding: Spacing.paddingAllMd,
+                  child: Text(
+                    exportState.value == importSuccessfulKey
+                        ? l10n.importSuccessful
+                        : exportState.value!,
+                    style: TextStyle(
+                      color: theme.colorScheme.onTertiaryContainer,
+                    ),
                   ),
                 ),
               ),
