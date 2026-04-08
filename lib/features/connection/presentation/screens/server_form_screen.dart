@@ -189,9 +189,12 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
     return AdaptiveScaffold.withAppBar(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
+        leading: Tooltip(
+          message: l10n.close,
+          child: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         title: Text(
           widget.isEditing ? l10n.serverFormTitleEdit : l10n.serverFormTitleAdd,
@@ -209,20 +212,24 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                 ),
               ],
             ),
-          TextButton(
-            onPressed: formState.saving ? null : _save,
-            child: formState.saving
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(l10n.save),
+          Tooltip(
+            message: l10n.save,
+            child: TextButton(
+              onPressed: formState.saving ? null : _save,
+              child: formState.saving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(l10n.save),
+            ),
           ),
         ],
       ),
       body: Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
@@ -529,6 +536,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       }
 
       if (mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.serverSaved,
+        );
         context.pop();
       }
     } catch (e) {

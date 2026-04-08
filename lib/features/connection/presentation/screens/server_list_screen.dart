@@ -344,10 +344,18 @@ class ServerListScreen extends ConsumerWidget {
         title: l10n.serverListTitle,
         actions: [const ViewModeToggle(), Spacing.horizontalSm],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addServerFab',
-        onPressed: () => _onAddServer(context, ref),
-        child: const Icon(Icons.add),
+      floatingActionButton: Semantics(
+        label: l10n.serverAddButton,
+        button: true,
+        child: Tooltip(
+          message: l10n.serverAddButton,
+          child: FloatingActionButton(
+            heroTag: 'addServerFab',
+            tooltip: l10n.serverAddButton,
+            onPressed: () => _onAddServer(context, ref),
+            child: const Icon(Icons.add),
+          ),
+        ),
       ),
       body: Column(
         children: [

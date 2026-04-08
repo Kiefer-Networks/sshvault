@@ -61,16 +61,21 @@ class ServerGridCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   if (onFavoriteToggle != null)
-                    GestureDetector(
-                      onTap: onFavoriteToggle,
-                      child: Icon(
-                        server.isFavorite ? Icons.star : Icons.star_border,
-                        size: 18,
-                        color: server.isFavorite
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.onSurface.withAlpha(
-                                AppConstants.alpha102,
-                              ),
+                    Tooltip(
+                      message: server.isFavorite
+                          ? l10n.removeFromFavorites
+                          : l10n.addToFavorites,
+                      child: GestureDetector(
+                        onTap: onFavoriteToggle,
+                        child: Icon(
+                          server.isFavorite ? Icons.star : Icons.star_border,
+                          size: 18,
+                          color: server.isFavorite
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.onSurface.withAlpha(
+                                  AppConstants.alpha102,
+                                ),
+                        ),
                       ),
                     ),
                   Spacing.horizontalXxs,

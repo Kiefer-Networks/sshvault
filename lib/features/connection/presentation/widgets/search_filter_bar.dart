@@ -48,6 +48,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                     if (filter.searchQuery.isNotEmpty)
                       IconButton(
                         icon: const Icon(Icons.clear, size: 20),
+                        tooltip: l10n.filterClearAll,
                         onPressed: () {
                           _searchController.clear();
                           ref.read(serverFilterProvider.notifier).state = filter
@@ -72,6 +73,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
                         ? theme.colorScheme.primary
                         : null,
                   ),
+                  tooltip: l10n.filterTitle,
                   onPressed: () => _showFilterSheet(filter),
                 ),
               ),

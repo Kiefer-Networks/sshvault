@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -125,7 +126,13 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     if (confirmed == true && mounted) {
       try {
         await ref.read(sshKeyListProvider.notifier).deleteSshKey(key.id);
-        if (mounted) Navigator.pop(context, true);
+        if (mounted) {
+          AdaptiveNotification.show(
+            context,
+            message: l10n.sshKeyDeletedSuccess,
+          );
+          Navigator.pop(context, true);
+        }
       } catch (e) {
         if (mounted) _showError(_errorMessage(e));
       }
@@ -192,7 +199,13 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           .read(sshKeyListProvider.notifier)
           .createSshKey(entity, privateKey: keyPair.privateKey);
 
-      if (mounted) Navigator.pop(context, true);
+      if (mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.sshKeySavedSuccess,
+        );
+        Navigator.pop(context, true);
+      }
     } catch (e) {
       if (mounted) {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
@@ -258,7 +271,13 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
             passphrase: passphrase.isEmpty ? null : passphrase,
           );
 
-      if (mounted) Navigator.pop(context, true);
+      if (mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.sshKeySavedSuccess,
+        );
+        Navigator.pop(context, true);
+      }
     } catch (e) {
       if (mounted) {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
@@ -290,7 +309,13 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         comment: _commentController.text.trim(),
       );
       await ref.read(sshKeyListProvider.notifier).updateSshKey(updated);
-      if (mounted) Navigator.pop(context, true);
+      if (mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: AppLocalizations.of(context)!.sshKeySavedSuccess,
+        );
+        Navigator.pop(context, true);
+      }
     } catch (e) {
       if (mounted) {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
@@ -311,6 +336,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
+          tooltip: l10n.close,
           onPressed: formState.saving ? null : () => Navigator.pop(context),
         ),
         title: Text(
@@ -634,11 +660,14 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           Spacing.verticalLg,
           Text(l10n.sshKeyFingerprint, style: theme.textTheme.labelLarge),
           Spacing.verticalXxs,
-          SelectableText(
-            key.fingerprint,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontFamily: AppConstants.monospaceFontFamily,
-              color: theme.colorScheme.onSurfaceVariant,
+          Semantics(
+            label: '${l10n.sshKeyFingerprint}: ${key.fingerprint}',
+            child: SelectableText(
+              key.fingerprint,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontFamily: AppConstants.monospaceFontFamily,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ],
@@ -693,6 +722,7 @@ class _DeleteKeyButton extends ConsumerWidget {
     if (!canDelete) return const SizedBox.shrink();
     return IconButton(
       icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+      tooltip: AppLocalizations.of(context)!.delete,
       onPressed: onDelete,
     );
   }
