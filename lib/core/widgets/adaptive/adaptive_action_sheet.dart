@@ -1,7 +1,12 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 
-/// A single action for a bottom sheet.
+bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
+
+/// A single action for an action sheet.
 class AdaptiveAction {
   final String label;
   final IconData? icon;
@@ -18,13 +23,72 @@ class AdaptiveAction {
   });
 }
 
-/// Shows a modal bottom sheet with action items.
+/// Shows a platform-adaptive action sheet.
+///
+/// Uses [CupertinoActionSheet] on iOS/macOS and a modal bottom sheet
+/// with [ListTile] items on other platforms.
 Future<void> showAdaptiveActionSheet(
   BuildContext context, {
   String? title,
   String? message,
   required List<AdaptiveAction> actions,
   String? cancelLabel,
+}) {
+  if (_isApplePlatform) {
+    return _showCupertinoSheet(
+      context,
+      title: title,
+      message: message,
+      actions: actions,
+      cancelLabel: cancelLabel,
+    );
+  }
+  return _showMaterialSheet(
+    context,
+    title: title,
+    message: message,
+    actions: actions,
+  );
+}
+
+Future<void> _showCupertinoSheet(
+  BuildContext context, {
+  String? title,
+  String? message,
+  required List<AdaptiveAction> actions,
+  String? cancelLabel,
+}) {
+  return showCupertinoModalPopup(
+    context: context,
+    builder: (ctx) => CupertinoActionSheet(
+      title: title != null ? Text(title) : null,
+      message: message != null ? Text(message) : null,
+      actions: actions
+          .map(
+            (a) => CupertinoActionSheetAction(
+              isDefaultAction: a.isDefault,
+              isDestructiveAction: a.isDestructive,
+              onPressed: () {
+                Navigator.pop(ctx);
+                a.onPressed();
+              },
+              child: Text(a.label),
+            ),
+          )
+          .toList(),
+      cancelButton: CupertinoActionSheetAction(
+        onPressed: () => Navigator.pop(ctx),
+        child: Text(cancelLabel ?? 'Cancel'),
+      ),
+    ),
+  );
+}
+
+Future<void> _showMaterialSheet(
+  BuildContext context, {
+  String? title,
+  String? message,
+  required List<AdaptiveAction> actions,
 }) {
   return showModalBottomSheet(
     context: context,

@@ -1,7 +1,15 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 
-/// Shows a confirmation dialog as a modal bottom sheet (Android 16 style).
+bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
+
+/// Shows a confirmation dialog.
+///
+/// Uses [CupertinoAlertDialog] on iOS/macOS and a modal bottom sheet
+/// (Android 16 style) on other platforms.
 Future<bool?> showAdaptiveConfirmDialog(
   BuildContext context, {
   required String title,
@@ -11,6 +19,30 @@ Future<bool?> showAdaptiveConfirmDialog(
   Color? confirmColor,
   bool isDestructive = false,
 }) {
+  if (_isApplePlatform) {
+    return showCupertinoDialog<bool>(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Text(message),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(cancelLabel),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: isDestructive,
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(confirmLabel),
+          ),
+        ],
+      ),
+    );
+  }
+
   return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
@@ -74,7 +106,10 @@ Future<bool?> showAdaptiveConfirmDialog(
   );
 }
 
-/// Shows a form dialog as a modal bottom sheet.
+/// Shows a form dialog.
+///
+/// Uses [CupertinoAlertDialog] on iOS/macOS and a modal bottom sheet
+/// on other platforms.
 Future<T?> showAdaptiveFormDialog<T>(
   BuildContext context, {
   required String title,
@@ -82,6 +117,31 @@ Future<T?> showAdaptiveFormDialog<T>(
   required List<Widget> materialActions,
   Widget? icon,
 }) {
+  if (_isApplePlatform) {
+    return showCupertinoDialog<T>(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) ...[icon, const SizedBox(width: 8)],
+            Flexible(child: Text(title)),
+          ],
+        ),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: content,
+        ),
+        actions: materialActions
+            .map(
+              (w) => CupertinoDialogAction(child: w),
+            )
+            .toList(),
+      ),
+    );
+  }
+
   return showModalBottomSheet<T>(
     context: context,
     isScrollControlled: true,

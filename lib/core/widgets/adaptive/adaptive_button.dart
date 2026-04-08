@@ -1,6 +1,12 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// A button using Material [FilledButton] / [TextButton].
+bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
+
+/// A button that renders [CupertinoButton] on iOS/macOS and
+/// Material [FilledButton] / [TextButton] elsewhere.
 class AdaptiveButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget child;
@@ -40,6 +46,16 @@ class AdaptiveButton extends StatelessWidget {
     Color? color,
     ButtonStyle? style,
   }) {
+    if (_isApplePlatform) {
+      return CupertinoButton.filled(
+        onPressed: onPressed,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [icon, const SizedBox(width: 8), label],
+        ),
+      );
+    }
     return FilledButton.icon(
       onPressed: onPressed,
       icon: icon,
@@ -59,6 +75,27 @@ class AdaptiveButton extends StatelessWidget {
     required Widget label,
     Color? color,
   }) {
+    if (_isApplePlatform) {
+      return CupertinoButton(
+        onPressed: onPressed,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            color != null
+                ? IconTheme(data: IconThemeData(color: color), child: icon)
+                : icon,
+            const SizedBox(width: 8),
+            color != null
+                ? DefaultTextStyle.merge(
+                    style: TextStyle(color: color),
+                    child: label,
+                  )
+                : label,
+          ],
+        ),
+      );
+    }
     return TextButton.icon(
       onPressed: onPressed,
       icon: icon,
@@ -71,6 +108,31 @@ class AdaptiveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_isApplePlatform) {
+      return _buildCupertino();
+    }
+    return _buildMaterial();
+  }
+
+  Widget _buildCupertino() {
+    switch (_style) {
+      case _AdaptiveButtonStyle.filled:
+        return CupertinoButton.filled(
+          onPressed: onPressed,
+          padding: padding,
+          child: child,
+        );
+      case _AdaptiveButtonStyle.text:
+        return CupertinoButton(
+          onPressed: onPressed,
+          padding: padding,
+          color: color,
+          child: child,
+        );
+    }
+  }
+
+  Widget _buildMaterial() {
     switch (_style) {
       case _AdaptiveButtonStyle.filled:
         return FilledButton(
