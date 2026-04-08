@@ -107,6 +107,7 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
             constraints: const BoxConstraints(maxWidth: 400),
             child: Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -159,15 +160,20 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                     decoration: InputDecoration(
                       labelText: l10n.syncPasswordLabel,
                       prefixIcon: const Icon(Icons.key_outlined),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          formState.obscure
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                      suffixIcon: Tooltip(
+                        message: formState.obscure
+                            ? 'Show password'
+                            : 'Hide password',
+                        child: IconButton(
+                          icon: Icon(
+                            formState.obscure
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                          onPressed: () => ref
+                              .read(_syncPasswordFormProvider.notifier)
+                              .toggleObscure(),
                         ),
-                        onPressed: () => ref
-                            .read(_syncPasswordFormProvider.notifier)
-                            .toggleObscure(),
                       ),
                     ),
                     validator: (v) {

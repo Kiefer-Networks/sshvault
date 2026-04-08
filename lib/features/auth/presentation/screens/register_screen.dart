@@ -7,6 +7,7 @@ import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
+import 'package:sshvault/core/utils/validators.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 final _obscurePasswordProvider = StateProvider.autoDispose<bool>((_) => true);
@@ -57,6 +58,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             constraints: const BoxConstraints(maxWidth: 400),
             child: Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,22 +94,28 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           controller: _passwordController,
                           obscureText: obscurePassword,
                           autofillHints: const [AutofillHints.newPassword],
+                          onChanged: (_) => setState(() {}),
                           decoration: InputDecoration(
                             labelText: l10n.authPasswordLabel,
                             prefixIcon: const Icon(Icons.lock_outlined),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                obscurePassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
+                            suffixIcon: Tooltip(
+                              message: obscurePassword
+                                  ? 'Show password'
+                                  : 'Hide password',
+                              child: IconButton(
+                                icon: Icon(
+                                  obscurePassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                ),
+                                onPressed: () =>
+                                    ref
+                                            .read(
+                                              _obscurePasswordProvider.notifier,
+                                            )
+                                            .state =
+                                        !obscurePassword,
                               ),
-                              onPressed: () =>
-                                  ref
-                                          .read(
-                                            _obscurePasswordProvider.notifier,
-                                          )
-                                          .state =
-                                      !obscurePassword,
                             ),
                           ),
                           validator: (v) {
@@ -117,6 +125,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             return null;
                           },
                         ),
+                        // Password strength indicator
+                        if (_passwordController.text.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: Spacing.sm,
+                              bottom: Spacing.xs,
+                            ),
+                            child: _PasswordStrengthIndicator(
+                              password: _passwordController.text,
+                            ),
+                          ),
                         Spacing.verticalLg,
                         TextFormField(
                           controller: _confirmController,
@@ -173,5 +192,47 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     await ref
         .read(authProvider.notifier)
         .register(_emailController.text.trim(), _passwordController.text);
+  }
+}
+
+class _PasswordStrengthIndicator extends StatelessWidget {
+  final String password;
+
+  const _PasswordStrengthIndicator({required this.password});
+
+  @override
+  Widget build(BuildContext context) {
+    final strength = Validators.passwordStrength(password);
+    final label = Validators.passwordStrengthLabel(strength);
+    final color = Validators.passwordStrengthColor(strength);
+
+    return Semantics(
+      label: 'Password strength: $label',
+      value: '${(strength * 100).round()} percent',
+      child: Row(
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: strength,
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                color: color,
+                minHeight: 6,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label[0].toUpperCase() + label.substring(1),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ],
+      ),
+    );
   }
 }

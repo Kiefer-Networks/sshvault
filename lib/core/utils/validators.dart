@@ -1,3 +1,5 @@
+import 'dart:ui' show Color;
+
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 abstract final class Validators {
@@ -160,5 +162,40 @@ abstract final class Validators {
   static String? validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) return '$fieldName is required';
     return null;
+  }
+
+  // ── Password strength helpers ──────────────────────────────────
+
+  /// Returns a password strength score from 0.0 to 1.0.
+  static double passwordStrength(String password) {
+    if (password.isEmpty) return 0.0;
+    double score = 0.0;
+
+    // Length contribution (up to 0.3)
+    score += (password.length / 20).clamp(0.0, 0.3);
+
+    // Character variety (up to 0.7)
+    if (password.contains(RegExp(r'[a-z]'))) score += 0.15;
+    if (password.contains(RegExp(r'[A-Z]'))) score += 0.15;
+    if (password.contains(RegExp(r'[0-9]'))) score += 0.2;
+    if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) score += 0.2;
+
+    return score.clamp(0.0, 1.0);
+  }
+
+  /// Returns a strength label: 'weak', 'fair', 'good', 'strong'.
+  static String passwordStrengthLabel(double strength) {
+    if (strength < 0.3) return 'weak';
+    if (strength < 0.5) return 'fair';
+    if (strength < 0.75) return 'good';
+    return 'strong';
+  }
+
+  /// Returns a color for the given strength score.
+  static Color passwordStrengthColor(double strength) {
+    if (strength < 0.3) return const Color(0xFFE53935);
+    if (strength < 0.5) return const Color(0xFFFF9800);
+    if (strength < 0.75) return const Color(0xFFFDD835);
+    return const Color(0xFF43A047);
   }
 }
