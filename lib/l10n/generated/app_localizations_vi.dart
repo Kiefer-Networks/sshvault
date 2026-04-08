@@ -448,6 +448,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get serverFormTitleAdd => 'Them may chu';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => 'Cap nhat may chu';
 
   @override
@@ -787,6 +790,21 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst => 'Huy lien ket voi tat ca may chu truoc';
 
   @override
@@ -1007,6 +1025,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get snippetFormContentRequired => 'Noi dung la bat buoc';
 
   @override
+  String get snippetFormSaved => 'Snippet da duoc luu';
+
+  @override
   String get snippetFormUpdateButton => 'Cap nhat doan ma';
 
   @override
@@ -1193,6 +1214,51 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => 'Da luu nhat ky thanh cong';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => 'Khong co muc nhat ky nao';
@@ -1462,17 +1528,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get serverSetupContinue => 'Tiếp tục';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => 'Chưa cấu hình máy chủ';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync =>
+      'Thiết lập đồng bộ để sao lưu dữ liệu của bạn';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => 'Đổi máy chủ';
 
   @override
   String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+      'Đổi máy chủ sẽ đăng xuất bạn. Tiếp tục?';
 
   @override
   String get auditLogTitle => 'Nhat ky hoat dong';

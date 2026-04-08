@@ -443,6 +443,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get serverFormTitleAdd => 'サーバーを追加';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => 'サーバーを更新';
 
   @override
@@ -775,6 +778,21 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst => 'まずすべてのサーバーからリンクを解除してください';
 
   @override
@@ -991,6 +1009,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get snippetFormContentRequired => '内容は必須です';
 
   @override
+  String get snippetFormSaved => 'スニペットを保存しました';
+
+  @override
   String get snippetFormUpdateButton => 'スニペットを更新';
 
   @override
@@ -1172,6 +1193,51 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => 'ログを保存しました';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => 'ログエントリがありません';
@@ -1433,17 +1499,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get serverSetupContinue => '続行';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => 'サーバーが設定されていません';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync => 'データをバックアップするために同期を設定してください';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => 'サーバーを変更';
 
   @override
-  String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+  String get settingsChangeServerConfirm => 'サーバーを変更するとログアウトされます。続行しますか？';
 
   @override
   String get auditLogTitle => 'アクティビティログ';

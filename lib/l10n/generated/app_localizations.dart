@@ -978,6 +978,12 @@ abstract class AppLocalizations {
   /// **'Add Server'**
   String get serverFormTitleAdd;
 
+  /// No description provided for @serverSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Server saved successfully'**
+  String get serverSaved;
+
   /// No description provided for @serverFormUpdateButton.
   ///
   /// In en, this message translates to:
@@ -1590,6 +1596,36 @@ abstract class AppLocalizations {
   /// **'Used by {count} server(s)'**
   String sshKeyTileLinkedServers(int count);
 
+  /// No description provided for @sshKeySavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'SSH key saved'**
+  String get sshKeySavedSuccess;
+
+  /// No description provided for @sshKeyDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'SSH key deleted'**
+  String get sshKeyDeletedSuccess;
+
+  /// No description provided for @tagSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag saved'**
+  String get tagSavedSuccess;
+
+  /// No description provided for @tagDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag deleted'**
+  String get tagDeletedSuccess;
+
+  /// No description provided for @folderDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder deleted'**
+  String get folderDeletedSuccess;
+
   /// No description provided for @sshKeyTileUnlinkFirst.
   ///
   /// In en, this message translates to:
@@ -1992,6 +2028,12 @@ abstract class AppLocalizations {
   /// **'Content is required'**
   String get snippetFormContentRequired;
 
+  /// No description provided for @snippetFormSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Snippet saved'**
+  String get snippetFormSaved;
+
   /// No description provided for @snippetFormUpdateButton.
   ///
   /// In en, this message translates to:
@@ -2345,6 +2387,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logs saved successfully'**
   String get settingsLogsSaved;
+
+  /// No description provided for @settingsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting updated'**
+  String get settingsUpdated;
+
+  /// No description provided for @settingsThemeChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme changed'**
+  String get settingsThemeChanged;
+
+  /// No description provided for @settingsLanguageChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed'**
+  String get settingsLanguageChanged;
+
+  /// No description provided for @settingsPinSetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN set successfully'**
+  String get settingsPinSetSuccess;
+
+  /// No description provided for @settingsPinRemovedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN removed'**
+  String get settingsPinRemovedSuccess;
+
+  /// No description provided for @settingsDuressPinSetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Duress PIN set'**
+  String get settingsDuressPinSetSuccess;
+
+  /// No description provided for @settingsDuressPinRemovedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Duress PIN removed'**
+  String get settingsDuressPinRemovedSuccess;
+
+  /// No description provided for @settingsBiometricEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock enabled'**
+  String get settingsBiometricEnabled;
+
+  /// No description provided for @settingsBiometricDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock disabled'**
+  String get settingsBiometricDisabled;
+
+  /// No description provided for @settingsDnsServerAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS server added'**
+  String get settingsDnsServerAdded;
+
+  /// No description provided for @settingsDnsServerRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS server removed'**
+  String get settingsDnsServerRemoved;
+
+  /// No description provided for @settingsDnsResetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS servers reset to defaults'**
+  String get settingsDnsResetSuccess;
+
+  /// No description provided for @settingsFontSizeDecreaseTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease font size'**
+  String get settingsFontSizeDecreaseTooltip;
+
+  /// No description provided for @settingsFontSizeIncreaseTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase font size'**
+  String get settingsFontSizeIncreaseTooltip;
+
+  /// No description provided for @settingsDnsRemoveServerTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove server'**
+  String get settingsDnsRemoveServerTooltip;
 
   /// No description provided for @settingsLogsEmpty.
   ///

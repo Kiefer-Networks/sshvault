@@ -441,6 +441,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get serverFormTitleAdd => '添加服务器';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => '更新服务器';
 
   @override
@@ -773,6 +776,21 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst => '请先从所有服务器取消关联';
 
   @override
@@ -988,6 +1006,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get snippetFormContentRequired => '内容为必填项';
 
   @override
+  String get snippetFormSaved => '代码片段已保存';
+
+  @override
   String get snippetFormUpdateButton => '更新代码片段';
 
   @override
@@ -1169,6 +1190,51 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => '日志已保存';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => '无日志条目';
@@ -1425,17 +1491,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get serverSetupContinue => '继续';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => '未配置服务器';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync => '设置同步以备份您的数据';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => '更换服务器';
 
   @override
-  String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+  String get settingsChangeServerConfirm => '更换服务器将注销您的账户。是否继续？';
 
   @override
   String get auditLogTitle => '活动日志';

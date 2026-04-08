@@ -451,6 +451,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get serverFormTitleAdd => 'Додати сервер';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => 'Оновити сервер';
 
   @override
@@ -792,6 +795,21 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst => 'Спочатку від\'єднайте від усіх серверів';
 
   @override
@@ -1012,6 +1030,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get snippetFormContentRequired => 'Вміст обов\'язковий';
 
   @override
+  String get snippetFormSaved => 'Сніпет збережено';
+
+  @override
   String get snippetFormUpdateButton => 'Оновити сніпет';
 
   @override
@@ -1197,6 +1218,51 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => 'Логи збережено успішно';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => 'Немає доступних записів логів';
@@ -1466,17 +1532,18 @@ class AppLocalizationsUk extends AppLocalizations {
   String get serverSetupContinue => 'Продовжити';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => 'Сервер не налаштовано';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync =>
+      'Налаштуйте синхронізацію для резервного копіювання даних';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => 'Змінити сервер';
 
   @override
   String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+      'Зміна сервера призведе до виходу з облікового запису. Продовжити?';
 
   @override
   String get auditLogTitle => 'Журнал дій';

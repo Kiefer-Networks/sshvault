@@ -452,6 +452,9 @@ class AppLocalizationsFi extends AppLocalizations {
   String get serverFormTitleAdd => 'Lisää palvelin';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => 'Päivitä palvelin';
 
   @override
@@ -793,6 +796,21 @@ class AppLocalizationsFi extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst =>
       'Poista linkitys kaikilta palvelimilta ensin';
 
@@ -1013,6 +1031,9 @@ class AppLocalizationsFi extends AppLocalizations {
   String get snippetFormContentRequired => 'Sisältö on pakollinen';
 
   @override
+  String get snippetFormSaved => 'Snippet tallennettu';
+
+  @override
   String get snippetFormUpdateButton => 'Päivitä koodinpätkä';
 
   @override
@@ -1199,6 +1220,51 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => 'Lokit tallennettu onnistuneesti';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => 'Ei lokimerkintöjä saatavilla';
@@ -1468,17 +1534,18 @@ class AppLocalizationsFi extends AppLocalizations {
   String get serverSetupContinue => 'Jatka';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => 'Palvelinta ei ole määritetty';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync =>
+      'Määritä synkronointi tietojesi varmuuskopiointiin';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => 'Vaihda palvelin';
 
   @override
   String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+      'Palvelimen vaihtaminen kirjaa sinut ulos. Jatketaanko?';
 
   @override
   String get auditLogTitle => 'Toimintoloki';

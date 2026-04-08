@@ -444,6 +444,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get serverFormTitleAdd => '서버 추가';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => '서버 업데이트';
 
   @override
@@ -777,6 +780,21 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst => '먼저 모든 서버에서 연결을 해제하세요';
 
   @override
@@ -993,6 +1011,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get snippetFormContentRequired => '내용은 필수입니다';
 
   @override
+  String get snippetFormSaved => '스니펫이 저장되었습니다';
+
+  @override
   String get snippetFormUpdateButton => '스니펫 업데이트';
 
   @override
@@ -1174,6 +1195,51 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => '로그가 저장되었습니다';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => '로그 항목이 없습니다';
@@ -1437,17 +1503,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get serverSetupContinue => '계속';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => '서버가 구성되지 않았습니다';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync => '데이터를 백업하려면 동기화를 설정하세요';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => '서버 변경';
 
   @override
-  String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+  String get settingsChangeServerConfirm => '서버를 변경하면 로그아웃됩니다. 계속하시겠습니까?';
 
   @override
   String get auditLogTitle => '활동 로그';
