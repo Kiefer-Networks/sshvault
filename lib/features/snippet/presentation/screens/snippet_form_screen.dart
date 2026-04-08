@@ -134,6 +134,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
+          tooltip: l10n.close,
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -156,6 +157,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
       ),
       body: Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
@@ -340,6 +342,10 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
       }
 
       if (mounted) {
+        AdaptiveNotification.show(
+          context,
+          message: l10n.snippetFormSaved,
+        );
         context.pop();
       }
     } catch (e) {

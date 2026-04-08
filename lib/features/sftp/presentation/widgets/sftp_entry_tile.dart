@@ -151,12 +151,22 @@ class SftpEntryTile extends ConsumerWidget {
       ),
     );
 
-    return GestureDetector(
-      onSecondaryTapDown: (details) =>
-          _showContextMenu(context, ref, details.globalPosition),
-      onLongPressStart: (details) =>
-          _showContextMenu(context, ref, details.globalPosition),
-      child: tile,
+    final typeLabel = switch (entry.type) {
+      SftpEntryType.directory => l10n.sftpOpen,
+      SftpEntryType.link => 'Symlink',
+      SftpEntryType.file => entry.name,
+    };
+
+    return Semantics(
+      label: '${entry.name}, $typeLabel',
+      selected: isSelected,
+      child: GestureDetector(
+        onSecondaryTapDown: (details) =>
+            _showContextMenu(context, ref, details.globalPosition),
+        onLongPressStart: (details) =>
+            _showContextMenu(context, ref, details.globalPosition),
+        child: tile,
+      ),
     );
   }
 

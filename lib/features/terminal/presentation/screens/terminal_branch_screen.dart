@@ -131,6 +131,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
             ),
           IconButton(
             icon: const Icon(Icons.more_vert),
+            tooltip: l10n.terminalCloseAll,
             onPressed: () {
               showAdaptiveActionSheet(
                 context,

@@ -271,6 +271,7 @@ class _SelectionToolbarContent extends ConsumerWidget {
       children: [
         IconButton(
           icon: const Icon(Icons.close, size: 20),
+          tooltip: l10n.cancel,
           onPressed: () =>
               ref.read(sftpPaneProvider(side).notifier).clearSelection(),
         ),
