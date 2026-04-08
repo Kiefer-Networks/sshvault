@@ -450,7 +450,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get serverFormTitleAdd => 'Adaugare server';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Server salvat';
 
   @override
   String get serverFormUpdateButton => 'Actualizare server';
@@ -795,19 +795,19 @@ class AppLocalizationsRo extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'Cheie SSH salvată';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'Cheie SSH ștearsă';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Etichetă salvată';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Etichetă ștearsă';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Dosar șters';
 
   @override
   String get sshKeyTileUnlinkFirst => 'Dezlegati mai intai de toate serverele';
@@ -1222,49 +1222,49 @@ class AppLocalizationsRo extends AppLocalizations {
   String get settingsLogsSaved => 'Jurnale salvate cu succes';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Setare actualizată';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Tema schimbată';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Limba schimbată';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN setat';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN eliminat';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'PIN de constrângere setat';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'PIN de constrângere eliminat';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Deblocare biometrică activată';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'Deblocare biometrică dezactivată';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'Server DNS adăugat';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'Server DNS eliminat';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'Servere DNS resetate';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Micșorează fontul';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Mărește fontul';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Elimină server DNS';
 
   @override
   String get settingsLogsEmpty => 'Nicio intrare in jurnal disponibila';

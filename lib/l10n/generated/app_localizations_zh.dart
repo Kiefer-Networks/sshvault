@@ -441,7 +441,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get serverFormTitleAdd => '添加服务器';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => '服务器已保存';
 
   @override
   String get serverFormUpdateButton => '更新服务器';
@@ -776,19 +776,19 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH密钥已保存';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH密钥已删除';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => '标签已保存';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => '标签已删除';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => '文件夹已删除';
 
   @override
   String get sshKeyTileUnlinkFirst => '请先从所有服务器取消关联';
@@ -1192,49 +1192,49 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsLogsSaved => '日志已保存';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => '设置已更新';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => '主题已更改';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => '语言已更改';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN已设置';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN已移除';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => '胁迫PIN已设置';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => '胁迫PIN已移除';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => '已启用生物识别解锁';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => '已禁用生物识别解锁';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNS服务器已添加';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNS服务器已移除';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNS服务器已重置';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => '缩小字体';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => '放大字体';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => '移除DNS服务器';
 
   @override
   String get settingsLogsEmpty => '无日志条目';

@@ -448,7 +448,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get serverFormTitleAdd => 'הוספת שרת';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'השרת נשמר';
 
   @override
   String get serverFormUpdateButton => 'עדכון שרת';
@@ -785,19 +785,19 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'מפתח SSH נשמר';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'מפתח SSH נמחק';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'התגית נשמרה';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'התגית נמחקה';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'התיקייה נמחקה';
 
   @override
   String get sshKeyTileUnlinkFirst => 'נתק תחילה מכל השרתים';
@@ -1205,49 +1205,49 @@ class AppLocalizationsHe extends AppLocalizations {
   String get settingsLogsSaved => 'היומנים נשמרו בהצלחה';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'ההגדרה עודכנה';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'הערכת נושא שונתה';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'השפה שונתה';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'הקוד הוגדר';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'הקוד הוסר';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'קוד כפייה הוגדר';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'קוד כפייה הוסר';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'זיהוי ביומטרי מופעל';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'זיהוי ביומטרי מושבת';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'שרת DNS נוסף';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'שרת DNS הוסר';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'שרתי DNS אופסו';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'הקטן גופן';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'הגדל גופן';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'הסר שרת DNS';
 
   @override
   String get settingsLogsEmpty => 'אין רשומות יומן זמינות';

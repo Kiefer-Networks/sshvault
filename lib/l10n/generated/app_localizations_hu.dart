@@ -452,7 +452,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get serverFormTitleAdd => 'Kiszolgáló hozzáadása';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Szerver mentve';
 
   @override
   String get serverFormUpdateButton => 'Kiszolgáló frissítése';
@@ -796,19 +796,19 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'SSH-kulcs mentve';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'SSH-kulcs törölve';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Címke mentve';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Címke törölve';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Mappa törölve';
 
   @override
   String get sshKeyTileUnlinkFirst =>
@@ -1223,49 +1223,49 @@ class AppLocalizationsHu extends AppLocalizations {
   String get settingsLogsSaved => 'Naplók sikeresen mentve';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Beállítás frissítve';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Téma megváltoztatva';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Nyelv megváltoztatva';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN beállítva';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN eltávolítva';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'Kényszerkód beállítva';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'Kényszerkód eltávolítva';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Biometrikus feloldás engedélyezve';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'Biometrikus feloldás letiltva';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'DNS-szerver hozzáadva';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'DNS-szerver eltávolítva';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'DNS-szerverek visszaállítva';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Betűméret csökkentése';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Betűméret növelése';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'DNS-szerver eltávolítása';
 
   @override
   String get settingsLogsEmpty => 'Nincsenek elérhető naplóbejegyzések';

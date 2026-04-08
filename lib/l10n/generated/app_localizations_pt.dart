@@ -451,7 +451,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get serverFormTitleAdd => 'Adicionar servidor';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Servidor guardado';
 
   @override
   String get serverFormUpdateButton => 'Atualizar servidor';
@@ -796,19 +796,19 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'Chave SSH guardada';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'Chave SSH eliminada';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Tag guardada';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Tag eliminada';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Pasta eliminada';
 
   @override
   String get sshKeyTileUnlinkFirst =>
@@ -1221,49 +1221,49 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsLogsSaved => 'Logs salvos com sucesso';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Configuração atualizada';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Tema alterado';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Idioma alterado';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'PIN definido';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'PIN removido';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'PIN de emergência definido';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'PIN de emergência removido';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Desbloqueio biométrico ativado';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'Desbloqueio biométrico desativado';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'Servidor DNS adicionado';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'Servidor DNS removido';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'Servidores DNS redefinidos';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Diminuir fonte';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Aumentar fonte';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Remover servidor DNS';
 
   @override
   String get settingsLogsEmpty => 'Nenhuma entrada de log disponível';

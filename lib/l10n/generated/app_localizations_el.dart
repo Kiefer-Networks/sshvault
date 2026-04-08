@@ -450,7 +450,7 @@ class AppLocalizationsEl extends AppLocalizations {
   String get serverFormTitleAdd => 'Προσθήκη διακομιστή';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Ο διακομιστής αποθηκεύτηκε';
 
   @override
   String get serverFormUpdateButton => 'Ενημέρωση διακομιστή';
@@ -797,19 +797,19 @@ class AppLocalizationsEl extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'Το κλειδί SSH αποθηκεύτηκε';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'Το κλειδί SSH διαγράφηκε';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Η ετικέτα αποθηκεύτηκε';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Η ετικέτα διαγράφηκε';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Ο φάκελος διαγράφηκε';
 
   @override
   String get sshKeyTileUnlinkFirst =>
@@ -1225,49 +1225,51 @@ class AppLocalizationsEl extends AppLocalizations {
   String get settingsLogsSaved => 'Τα αρχεία καταγραφής αποθηκεύτηκαν επιτυχώς';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Η ρύθμιση ενημερώθηκε';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Το θέμα άλλαξε';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Η γλώσσα άλλαξε';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'Το PIN ορίστηκε';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'Το PIN αφαιρέθηκε';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'Το PIN εξαναγκασμού ορίστηκε';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess =>
+      'Το PIN εξαναγκασμού αφαιρέθηκε';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Βιομετρικό ξεκλείδωμα ενεργοποιήθηκε';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled =>
+      'Βιομετρικό ξεκλείδωμα απενεργοποιήθηκε';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'Προστέθηκε διακομιστής DNS';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'Αφαιρέθηκε διακομιστής DNS';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'Επαναφορά διακομιστών DNS';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Μείωση γραμματοσειράς';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Αύξηση γραμματοσειράς';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Αφαίρεση διακομιστή DNS';
 
   @override
   String get settingsLogsEmpty => 'Δεν υπάρχουν διαθέσιμες εγγραφές καταγραφής';

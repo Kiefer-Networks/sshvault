@@ -448,7 +448,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get serverFormTitleAdd => 'Them may chu';
 
   @override
-  String get serverSaved => 'Server saved successfully';
+  String get serverSaved => 'Đã lưu máy chủ';
 
   @override
   String get serverFormUpdateButton => 'Cap nhat may chu';
@@ -790,19 +790,19 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get sshKeySavedSuccess => 'SSH key saved';
+  String get sshKeySavedSuccess => 'Đã lưu khóa SSH';
 
   @override
-  String get sshKeyDeletedSuccess => 'SSH key deleted';
+  String get sshKeyDeletedSuccess => 'Đã xóa khóa SSH';
 
   @override
-  String get tagSavedSuccess => 'Tag saved';
+  String get tagSavedSuccess => 'Đã lưu thẻ';
 
   @override
-  String get tagDeletedSuccess => 'Tag deleted';
+  String get tagDeletedSuccess => 'Đã xóa thẻ';
 
   @override
-  String get folderDeletedSuccess => 'Folder deleted';
+  String get folderDeletedSuccess => 'Đã xóa thư mục';
 
   @override
   String get sshKeyTileUnlinkFirst => 'Huy lien ket voi tat ca may chu truoc';
@@ -1216,49 +1216,49 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsLogsSaved => 'Da luu nhat ky thanh cong';
 
   @override
-  String get settingsUpdated => 'Setting updated';
+  String get settingsUpdated => 'Đã cập nhật cài đặt';
 
   @override
-  String get settingsThemeChanged => 'Theme changed';
+  String get settingsThemeChanged => 'Đã đổi giao diện';
 
   @override
-  String get settingsLanguageChanged => 'Language changed';
+  String get settingsLanguageChanged => 'Đã đổi ngôn ngữ';
 
   @override
-  String get settingsPinSetSuccess => 'PIN set successfully';
+  String get settingsPinSetSuccess => 'Đã đặt PIN';
 
   @override
-  String get settingsPinRemovedSuccess => 'PIN removed';
+  String get settingsPinRemovedSuccess => 'Đã xóa PIN';
 
   @override
-  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+  String get settingsDuressPinSetSuccess => 'Đã đặt PIN cưỡng ép';
 
   @override
-  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+  String get settingsDuressPinRemovedSuccess => 'Đã xóa PIN cưỡng ép';
 
   @override
-  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+  String get settingsBiometricEnabled => 'Đã bật mở khóa sinh trắc học';
 
   @override
-  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+  String get settingsBiometricDisabled => 'Đã tắt mở khóa sinh trắc học';
 
   @override
-  String get settingsDnsServerAdded => 'DNS server added';
+  String get settingsDnsServerAdded => 'Đã thêm máy chủ DNS';
 
   @override
-  String get settingsDnsServerRemoved => 'DNS server removed';
+  String get settingsDnsServerRemoved => 'Đã xóa máy chủ DNS';
 
   @override
-  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+  String get settingsDnsResetSuccess => 'Đã đặt lại máy chủ DNS';
 
   @override
-  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+  String get settingsFontSizeDecreaseTooltip => 'Thu nhỏ chữ';
 
   @override
-  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+  String get settingsFontSizeIncreaseTooltip => 'Phóng to chữ';
 
   @override
-  String get settingsDnsRemoveServerTooltip => 'Remove server';
+  String get settingsDnsRemoveServerTooltip => 'Xóa máy chủ DNS';
 
   @override
   String get settingsLogsEmpty => 'Khong co muc nhat ky nao';
