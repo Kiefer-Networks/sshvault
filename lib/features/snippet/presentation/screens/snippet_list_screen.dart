@@ -42,6 +42,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'addSnippetFab',
+        tooltip: l10n.snippetAddButton,
         onPressed: () => context.push('/snippet/new'),
         child: const Icon(Icons.add),
       ),
@@ -63,6 +64,7 @@ class _SnippetListScreenState extends ConsumerState<SnippetListScreen> {
                 if (_searchController.text.isNotEmpty)
                   IconButton(
                     icon: const Icon(Icons.clear, size: 20),
+                    tooltip: l10n.close,
                     onPressed: () {
                       _searchController.clear();
                       ref.read(snippetFilterProvider.notifier).state = filter

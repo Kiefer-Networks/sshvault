@@ -161,6 +161,15 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
             ref.read(sftpPaneProvider(PaneSide.right).notifier).refresh();
           }
 
+          // Show success notification for completed transfers
+          if (context.mounted) {
+            final fileName = p.basename(item.destinationPath);
+            AdaptiveNotification.show(
+              context,
+              message: l10n.sftpDownloadComplete(fileName),
+            );
+          }
+
           // On narrow screens, show save/share options for completed downloads
           if (item.direction == TransferDirection.download && context.mounted) {
             final screenWidth = MediaQuery.of(context).size.width;

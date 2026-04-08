@@ -36,54 +36,59 @@ class SessionTabBar extends ConsumerWidget {
           final session = sessions[index];
           final isActive = index == activeIndex;
 
-          return Material(
-            color: isActive
-                ? theme.colorScheme.primaryContainer.withAlpha(
-                    AppConstants.alpha153,
-                  )
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () {
-                ref.read(activeSessionIndexProvider.notifier).state = index;
-              },
+          return Semantics(
+            label: session.title,
+            selected: isActive,
+            button: true,
+            child: Material(
+              color: isActive
+                  ? theme.colorScheme.primaryContainer.withAlpha(
+                      AppConstants.alpha153,
+                    )
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 180),
-                margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _StatusDot(status: session.status),
-                    Spacing.horizontalXs,
-                    Flexible(
-                      child: Text(
-                        session.title,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          fontWeight: isActive
-                              ? FontWeight.w600
-                              : FontWeight.normal,
-                          color: isActive
-                              ? theme.colorScheme.onPrimaryContainer
-                              : theme.colorScheme.onSurface.withAlpha(
-                                  AppConstants.alpha179,
-                                ),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () {
+                  ref.read(activeSessionIndexProvider.notifier).state = index;
+                },
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 180),
+                  margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _StatusDot(status: session.status),
+                      Spacing.horizontalXs,
+                      Flexible(
+                        child: Text(
+                          session.title,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            fontWeight: isActive
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: isActive
+                                ? theme.colorScheme.onPrimaryContainer
+                                : theme.colorScheme.onSurface.withAlpha(
+                                    AppConstants.alpha179,
+                                  ),
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Spacing.horizontalXxs,
-                    _CloseButton(
-                      session: session,
-                      onClose: () {
-                        ref
-                            .read(sessionManagerProvider.notifier)
-                            .closeSession(session.id);
-                      },
-                    ),
-                  ],
+                      Spacing.horizontalXxs,
+                      _CloseButton(
+                        session: session,
+                        onClose: () {
+                          ref
+                              .read(sessionManagerProvider.notifier)
+                              .closeSession(session.id);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -110,10 +115,21 @@ class _StatusDot extends StatelessWidget {
       SshConnectionStatus.disconnected => colorScheme.error,
     };
 
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+    final label = switch (status) {
+      SshConnectionStatus.connected => 'Connected',
+      SshConnectionStatus.connecting => 'Connecting',
+      SshConnectionStatus.authenticating => 'Authenticating',
+      SshConnectionStatus.disconnected => 'Disconnected',
+      SshConnectionStatus.error => 'Error',
+    };
+
+    return Semantics(
+      label: label,
+      child: Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      ),
     );
   }
 }
@@ -126,7 +142,11 @@ class _CloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final l10n = AppLocalizations.of(context)!;
+    return Semantics(
+      label: l10n.close,
+      button: true,
+      child: InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () async {
         if (session.status == SshConnectionStatus.connected) {
@@ -152,6 +172,7 @@ class _CloseButton extends StatelessWidget {
           ).colorScheme.onSurface.withAlpha(AppConstants.alpha128),
         ),
       ),
+    ),
     );
   }
 }

@@ -31,10 +31,12 @@ class SnippetDetailScreen extends ConsumerWidget {
       actions: [
         IconButton(
           icon: const Icon(Icons.edit),
+          tooltip: l10n.edit,
           onPressed: () => context.push('/snippet/$snippetId/edit'),
         ),
         IconButton(
           icon: Icon(Icons.delete, color: theme.colorScheme.error),
+          tooltip: l10n.delete,
           onPressed: () async {
             final confirmed = await ConfirmDialog.show(
               context,
@@ -126,17 +128,22 @@ class SnippetDetailScreen extends ConsumerWidget {
                                   icon: const Icon(Icons.tune, size: 18),
                                   label: Text(l10n.snippetDetailFillVariables),
                                 ),
-                              IconButton(
-                                icon: const Icon(Icons.copy, size: 20),
-                                onPressed: () {
-                                  Clipboard.setData(
-                                    ClipboardData(text: snippet.content),
-                                  );
-                                  AdaptiveNotification.show(
-                                    context,
-                                    message: l10n.copiedToClipboard,
-                                  );
-                                },
+                              Semantics(
+                                label: l10n.copiedToClipboard,
+                                button: true,
+                                child: IconButton(
+                                  icon: const Icon(Icons.copy, size: 20),
+                                  tooltip: l10n.copiedToClipboard,
+                                  onPressed: () {
+                                    Clipboard.setData(
+                                      ClipboardData(text: snippet.content),
+                                    );
+                                    AdaptiveNotification.show(
+                                      context,
+                                      message: l10n.copiedToClipboard,
+                                    );
+                                  },
+                                ),
                               ),
                             ],
                           ),
