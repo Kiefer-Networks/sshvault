@@ -29,7 +29,8 @@ class SshSettingsScreen extends ConsumerWidget {
               children: [
                 Semantics(
                   button: true,
-                  label: '${l10n.settingsDefaultPort}: ${settings.defaultSshPort}',
+                  label:
+                      '${l10n.settingsDefaultPort}: ${settings.defaultSshPort}',
                   child: SettingsTile(
                     icon: Icons.numbers,
                     iconColor: AppColors.iconOrange,
@@ -219,10 +220,7 @@ class SshSettingsScreen extends ConsumerWidget {
         if (port != null && port > 0 && port <= 65535) {
           ref.read(settingsProvider.notifier).setDefaultSshPort(port);
           if (context.mounted) {
-            AdaptiveNotification.show(
-              context,
-              message: l10n.settingsUpdated,
-            );
+            AdaptiveNotification.show(context, message: l10n.settingsUpdated);
           }
         }
       }
@@ -266,10 +264,7 @@ class SshSettingsScreen extends ConsumerWidget {
       if (result != null && result.trim().isNotEmpty) {
         ref.read(settingsProvider.notifier).setDefaultUsername(result.trim());
         if (context.mounted) {
-          AdaptiveNotification.show(
-            context,
-            message: l10n.settingsUpdated,
-          );
+          AdaptiveNotification.show(context, message: l10n.settingsUpdated);
         }
       }
     } finally {
@@ -314,10 +309,7 @@ class SshSettingsScreen extends ConsumerWidget {
         if (secs != null && secs > 0 && secs <= 300) {
           ref.read(settingsProvider.notifier).setConnectionTimeout(secs);
           if (context.mounted) {
-            AdaptiveNotification.show(
-              context,
-              message: l10n.settingsUpdated,
-            );
+            AdaptiveNotification.show(context, message: l10n.settingsUpdated);
           }
         }
       }
@@ -363,10 +355,7 @@ class SshSettingsScreen extends ConsumerWidget {
         if (secs != null && secs >= 0 && secs <= 300) {
           ref.read(settingsProvider.notifier).setKeepaliveInterval(secs);
           if (context.mounted) {
-            AdaptiveNotification.show(
-              context,
-              message: l10n.settingsUpdated,
-            );
+            AdaptiveNotification.show(context, message: l10n.settingsUpdated);
           }
         }
       }

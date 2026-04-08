@@ -89,9 +89,9 @@ class AuditLogScreen extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Tooltip(
-                              message:
-                                  MaterialLocalizations.of(context)
-                                      .previousPageTooltip,
+                              message: MaterialLocalizations.of(
+                                context,
+                              ).previousPageTooltip,
                               child: IconButton(
                                 icon: const Icon(Icons.chevron_left),
                                 onPressed: offset > 0
@@ -109,9 +109,9 @@ class AuditLogScreen extends ConsumerWidget {
                               style: theme.textTheme.bodySmall,
                             ),
                             Tooltip(
-                              message:
-                                  MaterialLocalizations.of(context)
-                                      .nextPageTooltip,
+                              message: MaterialLocalizations.of(
+                                context,
+                              ).nextPageTooltip,
                               child: IconButton(
                                 icon: const Icon(Icons.chevron_right),
                                 onPressed: offset + result.limit < result.total

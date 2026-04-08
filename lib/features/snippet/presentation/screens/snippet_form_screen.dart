@@ -342,10 +342,7 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
       }
 
       if (mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: l10n.snippetFormSaved,
-        );
+        AdaptiveNotification.show(context, message: l10n.snippetFormSaved);
         context.pop();
       }
     } catch (e) {

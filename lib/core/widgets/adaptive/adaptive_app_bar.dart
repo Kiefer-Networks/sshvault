@@ -33,8 +33,7 @@ PreferredSizeWidget buildAdaptiveAppBar(
   );
 }
 
-class _CupertinoAppBar extends StatelessWidget
-    implements PreferredSizeWidget {
+class _CupertinoAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Widget? leading;
   final List<Widget>? trailing;

@@ -72,9 +72,8 @@ class ServerGridCard extends StatelessWidget {
                           size: 18,
                           color: server.isFavorite
                               ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.onSurface.withAlpha(
-                                  AppConstants.alpha102,
-                                ),
+                              : Theme.of(context).colorScheme.onSurface
+                                    .withAlpha(AppConstants.alpha102),
                         ),
                       ),
                     ),

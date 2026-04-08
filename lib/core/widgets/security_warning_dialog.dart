@@ -75,118 +75,114 @@ class SecurityWarningDialog extends StatelessWidget {
 
     return Semantics(
       liveRegion: true,
-      label: isCritical
-          ? l10n.disconnect
-          : title,
+      label: isCritical ? l10n.disconnect : title,
       child: Scaffold(
-      backgroundColor: isCritical
-          ? colorScheme.errorContainer
-          : colorScheme.tertiaryContainer,
-      body: SafeArea(
-        child: Padding(
-          padding: Spacing.paddingAllXxl,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isCritical ? Icons.gpp_bad : Icons.warning_amber,
-                size: 80,
-                color: isCritical
-                    ? colorScheme.onErrorContainer
-                    : colorScheme.onTertiaryContainer,
-                semanticLabel: isCritical
-                    ? l10n.disconnect
-                    : title,
-              ),
-              Spacing.verticalXxl,
-              Text(
-                title,
-                style: theme.textTheme.headlineMedium?.copyWith(
+        backgroundColor: isCritical
+            ? colorScheme.errorContainer
+            : colorScheme.tertiaryContainer,
+        body: SafeArea(
+          child: Padding(
+            padding: Spacing.paddingAllXxl,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isCritical ? Icons.gpp_bad : Icons.warning_amber,
+                  size: 80,
                   color: isCritical
                       ? colorScheme.onErrorContainer
                       : colorScheme.onTertiaryContainer,
-                  fontWeight: FontWeight.bold,
+                  semanticLabel: isCritical ? l10n.disconnect : title,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              Spacing.verticalLg,
-              Text(
-                message,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: isCritical
-                      ? colorScheme.onErrorContainer
-                      : colorScheme.onTertiaryContainer,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              if (details != null) ...[
-                Spacing.verticalLg,
-                Container(
-                  padding: Spacing.paddingAllMd,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface.withAlpha(80),
-                    borderRadius: BorderRadius.circular(8),
+                Spacing.verticalXxl,
+                Text(
+                  title,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: isCritical
+                        ? colorScheme.onErrorContainer
+                        : colorScheme.onTertiaryContainer,
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: Text(
-                    details!,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontFamily: 'monospace',
-                      color: isCritical
-                          ? colorScheme.onErrorContainer
-                          : colorScheme.onTertiaryContainer,
+                  textAlign: TextAlign.center,
+                ),
+                Spacing.verticalLg,
+                Text(
+                  message,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: isCritical
+                        ? colorScheme.onErrorContainer
+                        : colorScheme.onTertiaryContainer,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                if (details != null) ...[
+                  Spacing.verticalLg,
+                  Container(
+                    padding: Spacing.paddingAllMd,
+                    decoration: BoxDecoration(
+                      color: colorScheme.surface.withAlpha(80),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      details!,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontFamily: 'monospace',
+                        color: isCritical
+                            ? colorScheme.onErrorContainer
+                            : colorScheme.onTertiaryContainer,
+                      ),
                     ),
                   ),
-                ),
-              ],
-              Spacing.verticalXxxl,
-              Tooltip(
-                message: l10n.disconnect,
-                child: FilledButton.icon(
-                  onPressed: onDisconnect,
-                  icon: const Icon(Icons.power_settings_new),
-                  label: Text(l10n.disconnect),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: colorScheme.error,
-                    foregroundColor: colorScheme.onError,
-                    minimumSize: const Size(double.infinity, 48),
-                  ),
-                ),
-              ),
-              if (onReport != null) ...[
-                Spacing.verticalMd,
+                ],
+                Spacing.verticalXxxl,
                 Tooltip(
-                  message: l10n.reportAndDisconnect,
-                  child: OutlinedButton.icon(
-                    onPressed: onReport,
-                    icon: const Icon(Icons.flag),
-                    label: Text(l10n.reportAndDisconnect),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: isCritical
-                          ? colorScheme.onErrorContainer
-                          : colorScheme.onTertiaryContainer,
+                  message: l10n.disconnect,
+                  child: FilledButton.icon(
+                    onPressed: onDisconnect,
+                    icon: const Icon(Icons.power_settings_new),
+                    label: Text(l10n.disconnect),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: colorScheme.error,
+                      foregroundColor: colorScheme.onError,
                       minimumSize: const Size(double.infinity, 48),
                     ),
                   ),
                 ),
-              ],
-              // Only show "Continue" for non-critical warnings
-              if (!isCritical && onContinue != null) ...[
-                Spacing.verticalMd,
-                TextButton(
-                  onPressed: onContinue,
-                  child: Text(
-                    l10n.continueAnyway,
-                    style: TextStyle(
-                      color: colorScheme.onTertiaryContainer.withAlpha(180),
+                if (onReport != null) ...[
+                  Spacing.verticalMd,
+                  Tooltip(
+                    message: l10n.reportAndDisconnect,
+                    child: OutlinedButton.icon(
+                      onPressed: onReport,
+                      icon: const Icon(Icons.flag),
+                      label: Text(l10n.reportAndDisconnect),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: isCritical
+                            ? colorScheme.onErrorContainer
+                            : colorScheme.onTertiaryContainer,
+                        minimumSize: const Size(double.infinity, 48),
+                      ),
                     ),
                   ),
-                ),
+                ],
+                // Only show "Continue" for non-critical warnings
+                if (!isCritical && onContinue != null) ...[
+                  Spacing.verticalMd,
+                  TextButton(
+                    onPressed: onContinue,
+                    child: Text(
+                      l10n.continueAnyway,
+                      style: TextStyle(
+                        color: colorScheme.onTertiaryContainer.withAlpha(180),
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
-    ),
     );
   }
 }

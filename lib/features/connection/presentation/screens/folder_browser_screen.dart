@@ -135,10 +135,7 @@ class FolderBrowserScreen extends ConsumerWidget {
     if (confirmed == true) {
       await ref.read(folderListProvider.notifier).deleteFolder(folder.id);
       if (context.mounted) {
-        AdaptiveNotification.show(
-          context,
-          message: l10n.folderDeletedSuccess,
-        );
+        AdaptiveNotification.show(context, message: l10n.folderDeletedSuccess);
       }
     }
   }
