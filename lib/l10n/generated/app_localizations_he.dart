@@ -448,6 +448,9 @@ class AppLocalizationsHe extends AppLocalizations {
   String get serverFormTitleAdd => 'הוספת שרת';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => 'עדכון שרת';
 
   @override
@@ -782,6 +785,21 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst => 'נתק תחילה מכל השרתים';
 
   @override
@@ -1000,6 +1018,9 @@ class AppLocalizationsHe extends AppLocalizations {
   String get snippetFormContentRequired => 'תוכן הוא שדה חובה';
 
   @override
+  String get snippetFormSaved => 'הקטע נשמר';
+
+  @override
   String get snippetFormUpdateButton => 'עדכון קטע קוד';
 
   @override
@@ -1182,6 +1203,51 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => 'היומנים נשמרו בהצלחה';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => 'אין רשומות יומן זמינות';
@@ -1449,17 +1515,16 @@ class AppLocalizationsHe extends AppLocalizations {
   String get serverSetupContinue => 'המשך';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => 'לא הוגדר שרת';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync => 'הגדר סנכרון לגיבוי הנתונים שלך';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => 'שינוי שרת';
 
   @override
-  String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+  String get settingsChangeServerConfirm => 'שינוי השרת ינתק אותך. להמשיך?';
 
   @override
   String get auditLogTitle => 'יומן פעילות';

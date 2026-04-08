@@ -450,6 +450,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get serverFormTitleAdd => 'Dodaj serwer';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => 'Aktualizuj serwer';
 
   @override
@@ -792,6 +795,21 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst => 'Najpierw odłącz od wszystkich serwerów';
 
   @override
@@ -1012,6 +1030,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get snippetFormContentRequired => 'Zawartość jest wymagana';
 
   @override
+  String get snippetFormSaved => 'Snippet zapisany';
+
+  @override
   String get snippetFormUpdateButton => 'Aktualizuj snippet';
 
   @override
@@ -1198,6 +1219,51 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => 'Logi zapisane pomyślnie';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => 'Brak dostępnych wpisów logów';
@@ -1467,17 +1533,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get serverSetupContinue => 'Kontynuuj';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => 'Nie skonfigurowano serwera';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync =>
+      'Skonfiguruj synchronizację, aby utworzyć kopię zapasową danych';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => 'Zmień serwer';
 
   @override
   String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+      'Zmiana serwera spowoduje wylogowanie. Kontynuować?';
 
   @override
   String get auditLogTitle => 'Dziennik aktywności';

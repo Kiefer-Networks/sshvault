@@ -355,6 +355,7 @@
   "snippetFormNoFolder": "Kein Ordner",
   "snippetFormNameRequired": "Name ist erforderlich",
   "snippetFormContentRequired": "Inhalt ist erforderlich",
+  "snippetFormSaved": "Snippet gespeichert",
   "snippetFormUpdateButton": "Snippet aktualisieren",
   "snippetFormCreateButton": "Snippet erstellen",
 

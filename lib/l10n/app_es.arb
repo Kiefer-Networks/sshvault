@@ -320,6 +320,7 @@
   "snippetFormNoFolder": "Sin carpeta",
   "snippetFormNameRequired": "El nombre es obligatorio",
   "snippetFormContentRequired": "El contenido es obligatorio",
+  "snippetFormSaved": "Snippet guardado",
   "snippetFormUpdateButton": "Actualizar snippet",
   "snippetFormCreateButton": "Crear snippet",
   "snippetDetailTitle": "Detalles del snippet",

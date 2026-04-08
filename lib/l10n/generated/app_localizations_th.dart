@@ -447,6 +447,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get serverFormTitleAdd => 'เพิ่มเซิร์ฟเวอร์';
 
   @override
+  String get serverSaved => 'Server saved successfully';
+
+  @override
   String get serverFormUpdateButton => 'อัปเดตเซิร์ฟเวอร์';
 
   @override
@@ -786,6 +789,21 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
+  String get sshKeySavedSuccess => 'SSH key saved';
+
+  @override
+  String get sshKeyDeletedSuccess => 'SSH key deleted';
+
+  @override
+  String get tagSavedSuccess => 'Tag saved';
+
+  @override
+  String get tagDeletedSuccess => 'Tag deleted';
+
+  @override
+  String get folderDeletedSuccess => 'Folder deleted';
+
+  @override
   String get sshKeyTileUnlinkFirst =>
       'ยกเลิกการเชื่อมโยงจากเซิร์ฟเวอร์ทั้งหมดก่อน';
 
@@ -1006,6 +1024,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get snippetFormContentRequired => 'จำเป็นต้องระบุเนื้อหา';
 
   @override
+  String get snippetFormSaved => 'บันทึกสนิปเพ็ตแล้ว';
+
+  @override
   String get snippetFormUpdateButton => 'อัปเดตสนิปเพ็ต';
 
   @override
@@ -1191,6 +1212,51 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get settingsLogsSaved => 'บันทึกสำเร็จ';
+
+  @override
+  String get settingsUpdated => 'Setting updated';
+
+  @override
+  String get settingsThemeChanged => 'Theme changed';
+
+  @override
+  String get settingsLanguageChanged => 'Language changed';
+
+  @override
+  String get settingsPinSetSuccess => 'PIN set successfully';
+
+  @override
+  String get settingsPinRemovedSuccess => 'PIN removed';
+
+  @override
+  String get settingsDuressPinSetSuccess => 'Duress PIN set';
+
+  @override
+  String get settingsDuressPinRemovedSuccess => 'Duress PIN removed';
+
+  @override
+  String get settingsBiometricEnabled => 'Biometric unlock enabled';
+
+  @override
+  String get settingsBiometricDisabled => 'Biometric unlock disabled';
+
+  @override
+  String get settingsDnsServerAdded => 'DNS server added';
+
+  @override
+  String get settingsDnsServerRemoved => 'DNS server removed';
+
+  @override
+  String get settingsDnsResetSuccess => 'DNS servers reset to defaults';
+
+  @override
+  String get settingsFontSizeDecreaseTooltip => 'Decrease font size';
+
+  @override
+  String get settingsFontSizeIncreaseTooltip => 'Increase font size';
+
+  @override
+  String get settingsDnsRemoveServerTooltip => 'Remove server';
 
   @override
   String get settingsLogsEmpty => 'ไม่มีรายการบันทึก';
@@ -1458,17 +1524,17 @@ class AppLocalizationsTh extends AppLocalizations {
   String get serverSetupContinue => 'ดำเนินการต่อ';
 
   @override
-  String get settingsServerNotConfigured => 'No server configured';
+  String get settingsServerNotConfigured => 'ยังไม่ได้กำหนดค่าเซิร์ฟเวอร์';
 
   @override
-  String get settingsSetupSync => 'Set up sync to back up your data';
+  String get settingsSetupSync => 'ตั้งค่าการซิงค์เพื่อสำรองข้อมูลของคุณ';
 
   @override
-  String get settingsChangeServer => 'Change Server';
+  String get settingsChangeServer => 'เปลี่ยนเซิร์ฟเวอร์';
 
   @override
   String get settingsChangeServerConfirm =>
-      'Changing the server will log you out. Continue?';
+      'การเปลี่ยนเซิร์ฟเวอร์จะทำให้คุณออกจากระบบ ดำเนินการต่อหรือไม่?';
 
   @override
   String get auditLogTitle => 'บันทึกกิจกรรม';
