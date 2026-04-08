@@ -1,6 +1,12 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// A segmented control using Material [SegmentedButton].
+bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
+
+/// A segmented control that uses [CupertinoSlidingSegmentedControl]
+/// on iOS/macOS and Material [SegmentedButton] elsewhere.
 class AdaptiveSegmentedControl<T extends Object> extends StatelessWidget {
   final T selected;
   final Map<T, String> segments;
@@ -15,6 +21,24 @@ class AdaptiveSegmentedControl<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_isApplePlatform) {
+      return CupertinoSlidingSegmentedControl<T>(
+        groupValue: selected,
+        children: segments.map(
+          (key, label) => MapEntry(
+            key,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(label),
+            ),
+          ),
+        ),
+        onValueChanged: (value) {
+          if (value != null) onChanged(value);
+        },
+      );
+    }
+
     return SegmentedButton<T>(
       segments: segments.entries
           .map((e) => ButtonSegment<T>(value: e.key, label: Text(e.value)))

@@ -1,6 +1,12 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// A switch list tile using Material [SwitchListTile].
+bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
+
+/// A switch list tile that uses [CupertinoSwitch] on Apple platforms
+/// and Material [SwitchListTile] elsewhere.
 class AdaptiveSwitchTile extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -19,6 +25,18 @@ class AdaptiveSwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_isApplePlatform) {
+      return ListTile(
+        leading: secondary,
+        title: Text(title),
+        subtitle: subtitle != null ? Text(subtitle!) : null,
+        trailing: CupertinoSwitch(
+          value: value,
+          onChanged: onChanged,
+        ),
+      );
+    }
+
     return SwitchListTile(
       title: Text(title),
       subtitle: subtitle != null ? Text(subtitle!) : null,
