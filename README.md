@@ -13,7 +13,7 @@
   <a href="https://github.com/Kiefer-Networks/sshvault/releases"><img src="https://img.shields.io/github/v/release/Kiefer-Networks/sshvault?style=flat-square" alt="Release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/Kiefer-Networks/sshvault?style=flat-square" alt="License"></a>
   <a href="https://kiefer-networks.de"><img src="https://img.shields.io/badge/by-Kiefer%20Networks-blue?style=flat-square" alt="Kiefer Networks"></a>
-  <a href="https://de.liberapay.com/beli3ver"><img src="https://img.shields.io/badge/donate-Liberapay-yellow?style=flat-square" alt="Donate"></a>
+  <a href="https://de.liberapay.com/beli3ver"><img src="https://img.shields.io/liberapay/receives/beli3ver.svg?logo=liberapay" alt="Donate"></a>
 </p>
 
 ---
