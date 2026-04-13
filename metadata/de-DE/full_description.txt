@@ -2,14 +2,17 @@ SSHVault ist ein plattformübergreifender SSH- und SFTP-Client mit Zero-Knowledg
 
 Funktionen:
 - SSH-Terminal mit xterm-Emulation und 256 Farben
-- SFTP-Dateibrowser mit Lesezeichen und integriertem Editor
-- Host-Key-Verifizierung (Trust On First Use)
-- Multi-Session und geteiltes Terminal
+- Geteilte Ansicht, Tabs und mehrere gleichzeitige Sitzungen
+- SFTP-Dateibrowser mit Lesezeichen, integriertem Editor und Archiv-Entpackung
+- Host-Key-Verifizierung (Trust On First Use) mit Known-Hosts-Verwaltung
+- SSH-Key-Verwaltung (Ed25519, RSA, ECDSA Generierung und Import)
+- SSH-Config-Import aus ~/.ssh/config
+- Jump-Host-Unterstützung (ProxyJump für Multi-Hop-Verbindungen)
 - Snippet-Manager für gespeicherte Befehle
 - Post-Connect-Befehle für Automatisierung
-- SSH-Config-Import aus ~/.ssh/config
+- Server-Organisation mit Ordnern, Tags, Farbcodes und Suche
 - Proxy-Unterstützung (SOCKS5 und HTTP)
-- Biometrische und PIN-Sperre
+- Biometrische Sperre mit PIN-Fallback und Notfall-PIN
 - Selbstgehosteter Sync-Server (Docker)
 - Ende-zu-Ende-verschlüsselter Sync über unbegrenzte Geräte
 - Export und Import aller Daten
@@ -25,4 +28,8 @@ Sicherheit:
 - Kein Tracking, keine Analyse, keine Telemetrie
 - Vollständig quelloffenes Backend (AGPL-3.0)
 
+Der selbstgehostete Sync-Server ist quelloffen: https://github.com/Kiefer-Networks/sshvault-api
+
 SSHVault ist komplett kostenlos ohne In-App-Käufe, ohne Abonnements und ohne Funktionseinschränkungen. Das Selbsthosten des Sync-Servers ist kostenlos und erfordert nur Docker und PostgreSQL.
+
+Wenn dir SSHVault gefällt, unterstütze die Entwicklung über Liberapay: https://de.liberapay.com/beli3ver
