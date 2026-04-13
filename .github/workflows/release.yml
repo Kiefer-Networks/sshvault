@@ -93,7 +93,10 @@ jobs:
           # Remove leading whitespace from heredoc
           sed -i 's/^[[:space:]]*//' android/key.properties
 
-      - name: Build APK
+      - name: Build per-ABI APKs
+        run: flutter build apk --release --split-per-abi
+
+      - name: Build universal APK
         run: flutter build apk --release
 
       - name: Build AAB
@@ -109,7 +112,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-*.apk
 
       - uses: actions/upload-artifact@v4
         with:
@@ -281,9 +284,15 @@ jobs:
         run: |
           mkdir -p release-assets
 
-          # Android APK + AAB
+          # Android per-ABI APKs + universal APK + AAB
+          cp artifacts/android-apk/app-arm64-v8a-release.apk \
+             "release-assets/SSHVault-${VERSION}-android-arm64-v8a.apk" 2>/dev/null || true
+          cp artifacts/android-apk/app-armeabi-v7a-release.apk \
+             "release-assets/SSHVault-${VERSION}-android-armeabi-v7a.apk" 2>/dev/null || true
+          cp artifacts/android-apk/app-x86_64-release.apk \
+             "release-assets/SSHVault-${VERSION}-android-x86_64.apk" 2>/dev/null || true
           cp artifacts/android-apk/app-release.apk \
-             "release-assets/SSHVault-${VERSION}-android.apk" 2>/dev/null || true
+             "release-assets/SSHVault-${VERSION}-android-universal.apk" 2>/dev/null || true
           cp artifacts/android-aab/SSHVault-*.aab \
              "release-assets/SSHVault-${VERSION}.aab" 2>/dev/null || true
 
@@ -318,7 +327,10 @@ jobs:
 
           | Platform | File |
           |----------|------|
-          | Android (signed APK) | \`SSHVault-${VERSION}-android.apk\` |
+          | Android (arm64) | \`SSHVault-${VERSION}-android-arm64-v8a.apk\` |
+          | Android (armv7) | \`SSHVault-${VERSION}-android-armeabi-v7a.apk\` |
+          | Android (x86_64) | \`SSHVault-${VERSION}-android-x86_64.apk\` |
+          | Android (universal) | \`SSHVault-${VERSION}-android-universal.apk\` |
           | Android (AAB for Play Store) | \`SSHVault-${VERSION}.aab\` |
           | Linux (Flatpak) | \`SSHVault-${VERSION}.flatpak\` |
           | macOS (DMG) | \`SSHVault-${VERSION}-macos.dmg\` |
