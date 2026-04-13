@@ -20,6 +20,20 @@
 
 SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts all data client-side before syncing. The server never sees your plaintext credentials, keys, or session data.
 
+## Screenshots
+
+<p align="center">
+  <img src="metadata/en-US/images/phoneScreenshots/1.png" alt="Host List" width="180">
+  <img src="metadata/en-US/images/phoneScreenshots/2.png" alt="Navigation" width="180">
+  <img src="metadata/en-US/images/phoneScreenshots/3.png" alt="Add Server" width="180">
+  <img src="metadata/en-US/images/phoneScreenshots/4.png" alt="SSH Keys" width="180">
+</p>
+<p align="center">
+  <img src="metadata/en-US/images/phoneScreenshots/5.png" alt="SSH Terminal" width="180">
+  <img src="metadata/en-US/images/phoneScreenshots/6.png" alt="SFTP File Manager" width="180">
+  <img src="metadata/en-US/images/phoneScreenshots/7.png" alt="Settings" width="180">
+</p>
+
 ## Features
 
 | Feature | Description |
