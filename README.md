@@ -113,33 +113,54 @@ Weak algorithms (DH-group1, CBC ciphers, HMAC-MD5/SHA1, ssh-rsa) are excluded fr
 
 Clean Architecture with feature-based folder structure. Structured logging only.
 
-## Building
+## Building from Source
 
 ### Prerequisites
 
-- Flutter SDK 3.11+
+- Flutter SDK 3.11+ ([install guide](https://docs.flutter.dev/get-started/install))
+- Android SDK with `minSdk 33` (Android 13+)
+- Java 17+ (for Android builds)
 - For Linux: `sudo dnf install libsecret-devel` (Fedora) or `sudo apt install libsecret-1-dev` (Debian/Ubuntu)
 
-### Build
+### Clone
+
+```bash
+git clone https://github.com/Kiefer-Networks/sshvault.git
+cd sshvault
+```
+
+### Install dependencies and generate code
 
 ```bash
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 flutter gen-l10n
-flutter run
 ```
 
-### Release builds
+### Build Android APK
 
 ```bash
-flutter build appbundle --release   # Android
+flutter build apk --release
+```
+
+The APK will be at `build/app/outputs/flutter-apk/app-release.apk`.
+
+### Build Android App Bundle (AAB)
+
+```bash
+flutter build appbundle --release
+```
+
+### Other platforms
+
+```bash
 flutter build ipa --release         # iOS
 flutter build linux --release       # Linux
 flutter build macos --release       # macOS
 flutter build windows --release     # Windows
 ```
 
-### Tests
+### Run tests
 
 ```bash
 flutter test
