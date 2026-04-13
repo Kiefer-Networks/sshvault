@@ -2,14 +2,17 @@ SSHVault is a cross-platform SSH and SFTP client with zero-knowledge encrypted c
 
 Features:
 - SSH terminal with xterm emulation and 256 colors
-- SFTP file browser with bookmarks and inline editor
-- Host key verification (Trust On First Use)
-- Multi-session and split terminal support
+- Split view, tabs, and multiple simultaneous sessions
+- SFTP file browser with bookmarks, inline editor, and archive extraction
+- Host key verification (Trust On First Use) with known hosts management
+- SSH key management (Ed25519, RSA, ECDSA generation and import)
+- SSH config import from ~/.ssh/config
+- Jump host support (ProxyJump for multi-hop connections)
 - Snippet manager for saved commands
 - Post-connect commands for automation
-- SSH config import from ~/.ssh/config
+- Server organization with folders, tags, color codes, and search
 - Proxy support (SOCKS5 and HTTP)
-- Biometric and PIN lock
+- Biometric lock with PIN fallback and duress PIN
 - Self-hosted sync server (Docker)
 - End-to-end encrypted sync across unlimited devices
 - Export and import of all data
@@ -25,4 +28,8 @@ Security:
 - No tracking, no analytics, no telemetry
 - Fully open-source backend (AGPL-3.0)
 
+The self-hosted sync server is open source: https://github.com/Kiefer-Networks/sshvault-api
+
 SSHVault is completely free with no in-app purchases, no subscriptions, and no feature restrictions. Self-hosting the sync server is free and requires only Docker and PostgreSQL.
+
+If you find SSHVault useful, consider supporting development via Liberapay: https://de.liberapay.com/beli3ver
