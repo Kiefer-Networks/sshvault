@@ -140,10 +140,14 @@ flutter gen-l10n
 ### Build Android APK
 
 ```bash
+# Per-ABI builds (~30 MB each, recommended)
+flutter build apk --release --split-per-abi
+
+# Universal build (~80 MB, all architectures)
 flutter build apk --release
 ```
 
-The APK will be at `build/app/outputs/flutter-apk/app-release.apk`.
+Per-ABI APKs will be at `build/app/outputs/flutter-apk/app-{arm64-v8a,armeabi-v7a,x86_64}-release.apk`.
 
 ### Build Android App Bundle (AAB)
 
