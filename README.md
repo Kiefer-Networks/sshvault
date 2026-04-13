@@ -11,9 +11,15 @@
 
 <p align="center">
   <a href="https://github.com/Kiefer-Networks/sshvault/releases"><img src="https://img.shields.io/github/v/release/Kiefer-Networks/sshvault?style=flat-square" alt="Release"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/Kiefer-Networks/sshvault?style=flat-square" alt="License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue?style=flat-square" alt="License: AGPL-3.0"></a>
+  <a href="https://github.com/Kiefer-Networks/sshvault/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Kiefer-Networks/sshvault/ci.yml?style=flat-square&label=CI" alt="CI"></a>
+  <a href="https://github.com/Kiefer-Networks/sshvault/issues"><img src="https://img.shields.io/github/issues/Kiefer-Networks/sshvault?style=flat-square" alt="Issues"></a>
+  <a href="https://github.com/Kiefer-Networks/sshvault/stargazers"><img src="https://img.shields.io/github/stars/Kiefer-Networks/sshvault?style=flat-square" alt="Stars"></a>
+</p>
+
+<p align="center">
   <a href="https://kiefer-networks.de"><img src="https://img.shields.io/badge/by-Kiefer%20Networks-blue?style=flat-square" alt="Kiefer Networks"></a>
-  <a href="https://de.liberapay.com/beli3ver"><img src="https://img.shields.io/liberapay/receives/beli3ver.svg?logo=liberapay" alt="Donate"></a>
+  <a href="https://de.liberapay.com/beli3ver"><img src="https://img.shields.io/badge/donate-Liberapay-F6C915?style=flat-square&logo=liberapay" alt="Donate via Liberapay"></a>
 </p>
 
 ---
@@ -38,18 +44,23 @@ SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts al
 
 | Feature | Description |
 |---------|-------------|
-| **SSH Terminal** | Split view, tabs, multiple simultaneous sessions |
-| **SFTP File Manager** | Browse, transfer, rename, archive extraction, bookmarks |
+| **SSH Terminal** | Split view, tabs, multiple simultaneous sessions, xterm-256color emulation |
+| **SFTP File Manager** | Browse, transfer, rename, chmod, symlinks, archive extraction, bookmarks |
 | **Zero-Knowledge Encryption** | AES-256-GCM with Argon2id key derivation |
 | **Host Key Verification** | Trust On First Use (TOFU) with known hosts management |
 | **SSH Key Management** | Ed25519, RSA, ECDSA key generation and import |
 | **SSH Config Import** | Import hosts and keys from `~/.ssh/config` on desktop |
 | **Jump Hosts** | ProxyJump support for multi-hop connections |
+| **Proxy Support** | SOCKS5 and HTTP CONNECT, global or per-server configuration |
 | **Code Snippets** | Save and organize frequently used commands |
-| **Server Organization** | Folders, tags, color codes, search and filtering |
+| **Server Organization** | Folders, tags, color codes, icons, search and filtering |
 | **Post-Connect Commands** | Auto-run commands after connection |
 | **Biometric Lock** | Fingerprint/Face ID with PIN fallback and duress PIN |
 | **Cross-Device Sync** | End-to-end encrypted via self-hosted backend |
+| **Keep-Alive & Timeouts** | Configurable keep-alive interval and connection timeout |
+| **SSH Compression** | Optional compression toggle for slow connections |
+| **Export & Import** | Full backup and restore of all data |
+| **No Tracking** | No analytics, no telemetry, no ads, no in-app purchases |
 
 ## Platforms
 
@@ -78,7 +89,7 @@ Weak algorithms (DH-group1, CBC ciphers, HMAC-MD5/SHA1, ssh-rsa) are excluded fr
 
 ## Architecture
 
-- **Client:** Flutter 3.41+ / Dart 3.11+
+- **Client:** Flutter 3.11+ / Dart 3.11+
 - **Backend:** [sshvault-server](https://github.com/Kiefer-Networks/sshvault-api) — Go 1.26+, PostgreSQL 16+, chi router
 - **State Management:** Riverpod (no setState)
 - **Local Database:** Drift (SQLite) + Platform Secure Storage
@@ -92,7 +103,7 @@ Clean Architecture with feature-based folder structure. Structured logging only.
 
 ### Prerequisites
 
-- Flutter SDK 3.41+
+- Flutter SDK 3.11+
 - For Linux: `sudo dnf install libsecret-devel` (Fedora) or `sudo apt install libsecret-1-dev` (Debian/Ubuntu)
 
 ### Build
@@ -128,7 +139,11 @@ See [sshvault-server](https://github.com/Kiefer-Networks/sshvault-api) for setup
 
 ## Localization
 
-Available in English, German, and Spanish. Translation files are in `lib/l10n/`.
+Available in 28 languages:
+
+Arabic, Chinese, Czech, Danish, Dutch, English, Finnish, French, German, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian, Polish, Portuguese, Romanian, Russian, Spanish, Swedish, Thai, Turkish, Ukrainian, Vietnamese
+
+Translation files are in `lib/l10n/`.
 
 ## Donate
 

@@ -16,7 +16,7 @@ Features:
 - Self-hosted sync server (Docker)
 - End-to-end encrypted sync across unlimited devices
 - Export and import of all data
-- 27 languages supported
+- 28 languages supported
 - Material 3 design on all platforms
 
 Security:
