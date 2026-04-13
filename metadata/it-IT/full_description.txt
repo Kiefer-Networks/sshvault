@@ -1,0 +1,35 @@
+SSHVault è un client SSH e SFTP multipiattaforma con sincronizzazione cloud crittografata zero-knowledge. Tutte le credenziali, le chiavi SSH e le configurazioni del server vengono crittografate lato client con AES-256-GCM prima di lasciare il dispositivo. Il server non vede mai dati in chiaro.
+
+Funzionalità:
+- Terminale SSH con emulazione xterm e 256 colori
+- Vista divisa, schede e sessioni simultanee multiple
+- Browser di file SFTP con segnalibri, editor integrato ed estrazione archivi
+- Verifica della chiave host (Trust On First Use) con gestione degli host conosciuti
+- Gestione chiavi SSH (generazione e importazione Ed25519, RSA, ECDSA)
+- Importazione configurazione SSH da ~/.ssh/config
+- Supporto Jump Host (ProxyJump per connessioni multi-hop)
+- Gestore di snippet per comandi salvati
+- Comandi post-connessione per l'automazione
+- Organizzazione server con cartelle, tag, codici colore e ricerca
+- Supporto proxy (SOCKS5 e HTTP)
+- Blocco biometrico con PIN di riserva e PIN di emergenza
+- Server di sincronizzazione self-hosted (Docker)
+- Sincronizzazione crittografata end-to-end su dispositivi illimitati
+- Esportazione e importazione di tutti i dati
+- 28 lingue supportate
+- Design Material 3 su tutte le piattaforme
+
+Sicurezza:
+- Architettura zero-knowledge: il server non può leggere i tuoi dati
+- Crittografia AES-256-GCM con derivazione chiave Argon2id
+- Nonce basati su contatore per prevenire il riutilizzo
+- DNS-over-HTTPS con verifica incrociata multi-resolver
+- Attestazione del server tramite pinning chiave Ed25519 TOFU
+- Nessun tracciamento, nessuna analisi, nessuna telemetria
+- Backend completamente open source (AGPL-3.0)
+
+Il server di sincronizzazione self-hosted è open source: https://github.com/Kiefer-Networks/sshvault-api
+
+SSHVault è completamente gratuito senza acquisti in-app, senza abbonamenti e senza restrizioni di funzionalità. L'hosting autonomo del server di sincronizzazione è gratuito e richiede solo Docker e PostgreSQL.
+
+Se trovi utile SSHVault, considera di supportare lo sviluppo tramite Liberapay: https://de.liberapay.com/beli3ver

@@ -1,0 +1,4 @@
+- Design-System-Abstands-Tokens für einheitliches UI-Layout eingeführt
+- Terminal-Theme passt sich jetzt an Hell/Dunkel-Modus an mit neuer Auto-Option
+- Neues Standard-Hell Terminal-Farbschema hinzugefügt
+- Responsive Typografie skaliert Schriftgrößen auf größeren Bildschirmen

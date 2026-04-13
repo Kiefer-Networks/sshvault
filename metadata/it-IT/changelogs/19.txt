@@ -1,0 +1,4 @@
+- Metadati F-Droid migliorati con elenco completo delle funzionalità e informazioni sulle donazioni
+- Screenshot aggiunti ai metadati F-Droid e al README
+- Istruzioni di installazione per Play Store, F-Droid e Obtainium aggiunte
+- Numero di lingue aggiornato da 27 a 28

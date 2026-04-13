@@ -1,0 +1,35 @@
+SSHVault es un cliente SSH y SFTP multiplataforma con sincronización en la nube cifrada de conocimiento cero. Todas las credenciales, claves SSH y configuraciones de servidor se cifran en el dispositivo con AES-256-GCM antes de salir de tu dispositivo. El servidor nunca ve datos en texto plano.
+
+Funciones:
+- Terminal SSH con emulación xterm y 256 colores
+- Vista dividida, pestañas y múltiples sesiones simultáneas
+- Navegador de archivos SFTP con marcadores, editor integrado y extracción de archivos
+- Verificación de clave de host (Trust On First Use) con gestión de hosts conocidos
+- Gestión de claves SSH (generación e importación de Ed25519, RSA, ECDSA)
+- Importación de configuración SSH desde ~/.ssh/config
+- Soporte de Jump Host (ProxyJump para conexiones multi-salto)
+- Gestor de snippets para comandos guardados
+- Comandos post-conexión para automatización
+- Organización de servidores con carpetas, etiquetas, códigos de color y búsqueda
+- Soporte de proxy (SOCKS5 y HTTP)
+- Bloqueo biométrico con PIN de respaldo y PIN de emergencia
+- Servidor de sincronización autoalojado (Docker)
+- Sincronización cifrada de extremo a extremo en dispositivos ilimitados
+- Exportación e importación de todos los datos
+- 28 idiomas soportados
+- Diseño Material 3 en todas las plataformas
+
+Seguridad:
+- Arquitectura de conocimiento cero: el servidor no puede leer tus datos
+- Cifrado AES-256-GCM con derivación de clave Argon2id
+- Nonces basados en contador para prevenir reutilización
+- DNS-over-HTTPS con verificación cruzada multi-resolver
+- Atestación del servidor mediante pinning de clave Ed25519 TOFU
+- Sin rastreo, sin analíticas, sin telemetría
+- Backend completamente de código abierto (AGPL-3.0)
+
+El servidor de sincronización autoalojado es de código abierto: https://github.com/Kiefer-Networks/sshvault-api
+
+SSHVault es completamente gratuito sin compras dentro de la app, sin suscripciones y sin restricciones de funciones. El autoalojamiento del servidor de sincronización es gratuito y solo requiere Docker y PostgreSQL.
+
+Si SSHVault te resulta útil, considera apoyar el desarrollo a través de Liberapay: https://de.liberapay.com/beli3ver

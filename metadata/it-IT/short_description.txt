@@ -1,0 +1,1 @@
+Client SSH crittografato zero-knowledge con sincronizzazione self-hosted
