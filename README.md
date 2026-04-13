@@ -19,7 +19,7 @@
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=de.kiefer_networks.sshvault"><img src="https://img.shields.io/badge/Google%20Play-414141?style=flat-square&logo=google-play&logoColor=white" alt="Google Play"></a>
-  <a href="#"><img src="https://img.shields.io/badge/F--Droid-coming%20soon-lightgrey?style=flat-square&logo=f-droid" alt="F-Droid: coming soon"></a>
+  <a href="https://fdroid.kiefer-networks.de/fdroid/repo/"><img src="https://img.shields.io/badge/F--Droid-repo-1976D2?style=flat-square&logo=f-droid" alt="F-Droid Repo"></a>
   <a href="https://kiefer-networks.de"><img src="https://img.shields.io/badge/by-Kiefer%20Networks-blue?style=flat-square" alt="Kiefer Networks"></a>
   <a href="https://de.liberapay.com/beli3ver"><img src="https://img.shields.io/badge/donate-Liberapay-F6C915?style=flat-square&logo=liberapay" alt="Donate via Liberapay"></a>
 </p>
@@ -74,6 +74,14 @@ SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts al
 | Linux | Supported (Flatpak) |
 | Windows | Supported |
 
+## Install via F-Droid Repo
+
+Add the Kiefer Networks F-Droid repository to your F-Droid client:
+
+```
+https://fdroid.kiefer-networks.de/fdroid/repo/
+```
+
 ## Install via Obtainium
 
 You can install SSHVault directly from GitHub releases using [Obtainium](https://github.com/ImranR98/Obtainium):
@@ -83,7 +91,7 @@ You can install SSHVault directly from GitHub releases using [Obtainium](https:/
    ```
    https://github.com/Kiefer-Networks/sshvault
    ```
-3. Set **Release asset filter** to `app-release.apk`
+3. Set **Release asset filter** to `arm64-v8a` (or your architecture)
 4. Tap **Add** — Obtainium will track new releases and notify you of updates
 
 ## Security
