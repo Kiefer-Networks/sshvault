@@ -1,0 +1,38 @@
+version: 2
+
+updates:
+  # Flutter/Dart dependencies (pub)
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(deps):"
+    groups:
+      # Group all minor and patch updates into a single PR
+      non-breaking:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "chore(ci):"
+    groups:
+      actions-non-breaking:
+        update-types:
+          - "minor"
+          - "patch"
