@@ -16,7 +16,7 @@ Funktionen:
 - Selbstgehosteter Sync-Server (Docker)
 - Ende-zu-Ende-verschlüsselter Sync über unbegrenzte Geräte
 - Export und Import aller Daten
-- 27 Sprachen unterstützt
+- 28 Sprachen unterstützt
 - Material 3 Design auf allen Plattformen
 
 Sicherheit:
