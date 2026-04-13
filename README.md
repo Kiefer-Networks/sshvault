@@ -18,6 +18,8 @@
 </p>
 
 <p align="center">
+  <a href="https://play.google.com/store/apps/details?id=de.kiefer_networks.sshvault"><img src="https://img.shields.io/badge/Google%20Play-414141?style=flat-square&logo=google-play&logoColor=white" alt="Google Play"></a>
+  <a href="#"><img src="https://img.shields.io/badge/F--Droid-coming%20soon-lightgrey?style=flat-square&logo=f-droid" alt="F-Droid: coming soon"></a>
   <a href="https://kiefer-networks.de"><img src="https://img.shields.io/badge/by-Kiefer%20Networks-blue?style=flat-square" alt="Kiefer Networks"></a>
   <a href="https://de.liberapay.com/beli3ver"><img src="https://img.shields.io/badge/donate-Liberapay-F6C915?style=flat-square&logo=liberapay" alt="Donate via Liberapay"></a>
 </p>
@@ -71,6 +73,18 @@ SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts al
 | macOS | Supported |
 | Linux | Supported (Flatpak) |
 | Windows | Supported |
+
+## Install via Obtainium
+
+You can install SSHVault directly from GitHub releases using [Obtainium](https://github.com/ImranR98/Obtainium):
+
+1. Open Obtainium and tap **Add App**
+2. Enter the source URL:
+   ```
+   https://github.com/Kiefer-Networks/sshvault
+   ```
+3. Set **Release asset filter** to `app-release.apk`
+4. Tap **Add** — Obtainium will track new releases and notify you of updates
 
 ## Security
 
