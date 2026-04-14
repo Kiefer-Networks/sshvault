@@ -54,7 +54,7 @@ class TagListScreen extends ConsumerWidget {
           }
 
           return ListView.separated(
-            padding: EdgeInsets.only(bottom: Spacing.fabClearance),
+            padding: const EdgeInsets.only(bottom: Spacing.fabClearance),
             itemCount: tags.length,
             separatorBuilder: (_, _) => Spacing.verticalXxs,
             itemBuilder: (context, index) {

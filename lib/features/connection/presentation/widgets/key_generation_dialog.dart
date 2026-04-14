@@ -82,7 +82,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
     return Container(
       width: 32,
       height: 4,
-      margin: EdgeInsets.symmetric(vertical: Spacing.md),
+      margin: const EdgeInsets.symmetric(vertical: Spacing.md),
       decoration: BoxDecoration(
         color: theme.colorScheme.onSurfaceVariant.withAlpha(102),
         borderRadius: BorderRadius.circular(2),
@@ -213,7 +213,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
 
                   if (genState.selectedType.allowedBitLengths.isEmpty)
                     Padding(
-                      padding: EdgeInsets.only(bottom: Spacing.lg),
+                      padding: const EdgeInsets.only(bottom: Spacing.lg),
                       child: Row(
                         children: [
                           Icon(
@@ -276,7 +276,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
           ),
           Spacing.verticalLg,
           Padding(
-            padding: EdgeInsets.fromLTRB(
+            padding: const EdgeInsets.fromLTRB(
               Spacing.xxl,
               0,
               Spacing.xxl,
@@ -391,7 +391,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
           ),
           Spacing.verticalLg,
           Padding(
-            padding: EdgeInsets.fromLTRB(
+            padding: const EdgeInsets.fromLTRB(
               Spacing.xxl,
               0,
               Spacing.xxl,

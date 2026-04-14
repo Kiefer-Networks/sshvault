@@ -71,7 +71,7 @@ Future<bool?> showAdaptiveConfirmDialog(
             ),
             Spacing.verticalXxl,
             Padding(
-              padding: EdgeInsets.fromLTRB(
+              padding: const EdgeInsets.fromLTRB(
                 Spacing.xxl,
                 0,
                 Spacing.xxl,
@@ -166,7 +166,7 @@ Future<T?> showAdaptiveFormDialog<T>(
             ),
             Spacing.verticalLg,
             Padding(
-              padding: EdgeInsets.fromLTRB(
+              padding: const EdgeInsets.fromLTRB(
                 Spacing.xxl,
                 0,
                 Spacing.xxl,

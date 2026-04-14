@@ -133,7 +133,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           '';
       chips.add(
         Padding(
-          padding: EdgeInsets.only(right: Spacing.sm),
+          padding: const EdgeInsets.only(right: Spacing.sm),
           child: InputChip(
             label: Text('${l10n.filterFolder}: $folderName'),
             onDeleted: () {
@@ -152,7 +152,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
           tagsAsync.value?.where((t) => t.id == tagId).firstOrNull?.name ?? '';
       chips.add(
         Padding(
-          padding: EdgeInsets.only(right: Spacing.sm),
+          padding: const EdgeInsets.only(right: Spacing.sm),
           child: InputChip(
             label: Text(tagName),
             onDeleted: () {
@@ -169,7 +169,7 @@ class _SearchFilterBarState extends ConsumerState<SearchFilterBar> {
     if (filter.isActive != null) {
       chips.add(
         Padding(
-          padding: EdgeInsets.only(right: Spacing.sm),
+          padding: const EdgeInsets.only(right: Spacing.sm),
           child: InputChip(
             label: Text(
               filter.isActive! ? l10n.filterActive : l10n.filterInactive,

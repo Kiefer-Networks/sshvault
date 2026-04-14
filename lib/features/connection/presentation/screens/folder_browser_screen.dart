@@ -69,7 +69,7 @@ class FolderBrowserScreen extends ConsumerWidget {
 
           final widgets = _buildFolderList(context, ref, folders);
           return ListView.separated(
-            padding: EdgeInsets.only(bottom: Spacing.fabClearance),
+            padding: const EdgeInsets.only(bottom: Spacing.fabClearance),
             itemCount: widgets.length,
             separatorBuilder: (_, _) => Spacing.verticalXxs,
             itemBuilder: (_, index) => widgets[index],
@@ -275,7 +275,7 @@ class _FolderTile extends ConsumerWidget {
                             label: Text(l10n.folderConnectAll),
                             style: OutlinedButton.styleFrom(
                               visualDensity: VisualDensity.compact,
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: Spacing.md,
                               ),
                             ),
