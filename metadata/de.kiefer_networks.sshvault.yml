@@ -1,0 +1,57 @@
+Categories:
+  - Security
+  - Internet
+
+License: AGPL-3.0-only
+WebSite: https://kiefer-networks.de
+SourceCode: https://github.com/Kiefer-Networks/sshvault
+IssueTracker: https://github.com/Kiefer-Networks/sshvault/issues
+Changelog: https://github.com/Kiefer-Networks/sshvault/releases
+Donate: https://de.liberapay.com/beli3ver
+
+AutoName: SSHVault
+Summary: Zero-knowledge encrypted SSH client with self-hosted sync.
+Description: |
+    SSHVault is a cross-platform SSH terminal and SFTP file manager that
+    encrypts all data client-side before syncing. The server never sees your
+    plaintext credentials, keys, or session data.
+
+    Features:
+    - SSH terminal with xterm-256color emulation, split view, tabs, and multiple sessions
+    - SFTP file browser with bookmarks, inline editor, chmod, symlinks, and archive extraction
+    - Host key verification (Trust On First Use) with known hosts management
+    - SSH key management with Ed25519, RSA, ECDSA generation and import
+    - SSH config import from ~/.ssh/config
+    - Jump host support (ProxyJump for multi-hop connections)
+    - Proxy support (SOCKS5 and HTTP CONNECT), global or per-server
+    - Snippet manager for saved commands
+    - Post-connect commands for automation
+    - Server organization with folders, tags, color codes, icons, and search
+    - Biometric lock with PIN fallback and duress PIN
+    - End-to-end encrypted sync across unlimited devices via self-hosted Docker server
+    - Configurable keep-alive interval and connection timeout
+    - Optional SSH compression
+    - Full export and import of all data
+    - 28 languages supported
+    - Material 3 design on all platforms
+    - No tracking, no analytics, no telemetry
+
+RepoType: git
+Repo: https://github.com/Kiefer-Networks/sshvault
+
+Builds:
+  - versionName: "1.6.0"
+    versionCode: 19
+    commit: HEAD
+    subdir: .
+    output: build/app/outputs/flutter-apk/app-release.apk
+    build:
+      - flutter pub get
+      - dart run build_runner build --delete-conflicting-outputs
+      - flutter gen-l10n
+      - flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: "1.6.0"
+CurrentVersionCode: 19
