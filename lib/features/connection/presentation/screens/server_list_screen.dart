@@ -400,7 +400,7 @@ class ServerListScreen extends ConsumerWidget {
         }
 
         return ListView.builder(
-          padding: EdgeInsets.only(bottom: Spacing.fabClearance),
+          padding: const EdgeInsets.only(bottom: Spacing.fabClearance),
           itemCount: groups.fold<int>(0, (sum, g) {
             final expanded =
                 g.folder == null ||
@@ -541,7 +541,7 @@ class ServerListScreen extends ConsumerWidget {
   Widget _buildList(BuildContext context, WidgetRef ref, List servers) {
     return ListView.separated(
       key: const ValueKey('list'),
-      padding: EdgeInsets.only(bottom: Spacing.fabClearance),
+      padding: const EdgeInsets.only(bottom: Spacing.fabClearance),
       itemCount: servers.length,
       separatorBuilder: (_, _) => Spacing.verticalXxs,
       itemBuilder: (context, index) {
@@ -595,7 +595,7 @@ class ServerListScreen extends ConsumerWidget {
   Widget _buildGrid(BuildContext context, WidgetRef ref, List servers) {
     return GridView.builder(
       key: const ValueKey('grid'),
-      padding: EdgeInsets.fromLTRB(
+      padding: const EdgeInsets.fromLTRB(
         Spacing.lg,
         0,
         Spacing.lg,
@@ -796,7 +796,7 @@ class _DashboardHeader extends ConsumerWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.only(top: Spacing.sm),
+      padding: const EdgeInsets.only(top: Spacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -911,7 +911,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: Spacing.lg,
         vertical: Spacing.xxs,
       ),

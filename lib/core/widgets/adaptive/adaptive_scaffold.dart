@@ -70,12 +70,16 @@ class AdaptiveScaffold extends StatelessWidget {
         ),
         backgroundColor: backgroundColor,
         child: SafeArea(
-          child: Stack(
-            children: [
-              body,
-              if (floatingActionButton != null)
-                Positioned(right: 16, bottom: 16, child: floatingActionButton!),
-            ],
+          child: Material(
+            type: MaterialType.transparency,
+            child: Stack(
+              children: [
+                body,
+                if (floatingActionButton != null)
+                  Positioned(
+                      right: 16, bottom: 16, child: floatingActionButton!),
+              ],
+            ),
           ),
         ),
       );

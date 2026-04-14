@@ -413,7 +413,7 @@ class _DistroSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Padding(
-      padding: EdgeInsets.only(top: Spacing.lg),
+      padding: const EdgeInsets.only(top: Spacing.lg),
       child: SectionCard(
         padding: Spacing.paddingAllLg,
         child: Column(

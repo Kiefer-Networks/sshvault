@@ -104,7 +104,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
         children: [
           // Handle
           Padding(
-            padding: EdgeInsets.symmetric(vertical: Spacing.md),
+            padding: const EdgeInsets.symmetric(vertical: Spacing.md),
             child: Container(
               width: 32,
               height: 4,
@@ -240,7 +240,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
 
           // Apply button
           Padding(
-            padding: EdgeInsets.fromLTRB(
+            padding: const EdgeInsets.fromLTRB(
               Spacing.lg,
               Spacing.sm,
               Spacing.lg,

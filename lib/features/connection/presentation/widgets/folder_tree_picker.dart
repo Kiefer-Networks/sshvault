@@ -68,7 +68,7 @@ class _FolderTreePickerDialog extends ConsumerWidget {
             }
             return Column(mainAxisSize: MainAxisSize.min, children: nodes);
           },
-          loading: () => Padding(
+          loading: () => const Padding(
             padding: Spacing.paddingAllXxl,
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),

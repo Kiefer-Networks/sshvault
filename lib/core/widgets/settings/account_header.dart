@@ -55,7 +55,7 @@ class AccountHeader extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (isAuthenticated) ...[
-                      SizedBox(height: Spacing.xxxs),
+                      const SizedBox(height: Spacing.xxxs),
                       Row(
                         children: [
                           if (isVerified) ...[

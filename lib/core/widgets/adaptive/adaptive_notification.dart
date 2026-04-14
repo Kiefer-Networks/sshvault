@@ -4,15 +4,44 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
 
 /// Shows a platform-adaptive notification.
 ///
-/// Uses a Cupertino-style overlay toast on iOS/macOS and a Material
-/// [SnackBar] on other platforms.
+/// Uses native macOS notifications on macOS, a Cupertino-style overlay toast
+/// on iOS, and a Material [SnackBar] on other platforms.
 class AdaptiveNotification {
   AdaptiveNotification._();
+
+  static final _plugin = FlutterLocalNotificationsPlugin();
+  static bool _macInitialized = false;
+  static int _notificationId = 1000;
+
+  static Future<void> _ensureMacInitialized() async {
+    if (_macInitialized) return;
+    _macInitialized = true;
+
+    const macSettings = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+      defaultPresentAlert: true,
+      defaultPresentBadge: false,
+      defaultPresentSound: false,
+    );
+
+    await _plugin.initialize(
+      settings: const InitializationSettings(macOS: macSettings),
+    );
+
+    await _plugin
+        .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin
+        >()
+        ?.requestPermissions(alert: true);
+  }
 
   static void show(
     BuildContext context, {
@@ -21,6 +50,11 @@ class AdaptiveNotification {
     String? actionLabel,
     VoidCallback? onAction,
   }) {
+    if (Platform.isMacOS) {
+      _showMacOSNotification(message);
+      return;
+    }
+
     if (_isApplePlatform) {
       _showCupertinoOverlay(
         context,
@@ -40,6 +74,24 @@ class AdaptiveNotification {
             ? SnackBarAction(label: actionLabel, onPressed: onAction ?? () {})
             : null,
       ),
+    );
+  }
+
+  static Future<void> _showMacOSNotification(String message) async {
+    await _ensureMacInitialized();
+
+    const macDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: false,
+      presentSound: false,
+    );
+
+    final id = _notificationId++;
+    await _plugin.show(
+      id: id,
+      title: 'SSHVault',
+      body: message,
+      notificationDetails: const NotificationDetails(macOS: macDetails),
     );
   }
 
@@ -176,7 +228,7 @@ class _CupertinoNotificationOverlayState
                     if (widget.actionLabel != null)
                       CupertinoButton(
                         padding: const EdgeInsets.only(left: 12),
-                        minSize: 0,
+                        minimumSize: Size.zero,
                         onPressed: () {
                           widget.onAction?.call();
                           _dismiss();

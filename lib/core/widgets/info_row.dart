@@ -31,7 +31,7 @@ class InfoRow extends StatelessWidget {
       label: '$label: $value',
       excludeSemantics: true,
       child: Padding(
-        padding: EdgeInsets.only(bottom: Spacing.sm),
+        padding: const EdgeInsets.only(bottom: Spacing.sm),
         child: Row(
           children: [
             Icon(

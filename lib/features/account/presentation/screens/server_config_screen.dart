@@ -182,16 +182,18 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
   }
 
   Future<void> _testConnection() async {
-    final url = _urlController.text.trim();
+    var url = _urlController.text.trim();
     if (url.isEmpty) return;
 
-    if (!url.startsWith('https://')) {
-      final l10n = AppLocalizations.of(context)!;
-      ref.read(_connectionTestProvider.notifier).state = _ConnectionTestState(
-        result: l10n.connectionTestFailed('HTTPS required'),
-        success: false,
-      );
-      return;
+    // Auto-prepend https:// if no scheme is present
+    if (!url.startsWith('https://') && !url.startsWith('http://')) {
+      url = 'https://$url';
+      _urlController.text = url;
+      _urlController.selection = TextSelection.collapsed(offset: url.length);
+    } else if (url.startsWith('http://')) {
+      url = url.replaceFirst('http://', 'https://');
+      _urlController.text = url;
+      _urlController.selection = TextSelection.collapsed(offset: url.length);
     }
 
     final l10n = AppLocalizations.of(context)!;

@@ -79,7 +79,7 @@ class PinNumPad extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: rows.map((row) {
         return Padding(
-          padding: EdgeInsets.symmetric(vertical: Spacing.xs),
+          padding: const EdgeInsets.symmetric(vertical: Spacing.xs),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: row.map((key) {
@@ -144,7 +144,7 @@ class _NumPadButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Spacing.md),
+      padding: const EdgeInsets.symmetric(horizontal: Spacing.md),
       child: SizedBox(
         width: 72,
         height: 72,

@@ -304,7 +304,7 @@ class AppShellState extends ConsumerState<AppShell> {
 // Desktop Keyboard Shortcuts
 // ---------------------------------------------------------------------------
 
-class _DesktopShortcuts extends StatelessWidget {
+class _DesktopShortcuts extends StatefulWidget {
   final WidgetRef ref;
   final StatefulNavigationShell navigationShell;
   final Widget child;
@@ -315,8 +315,35 @@ class _DesktopShortcuts extends StatelessWidget {
     required this.child,
   });
 
+  @override
+  State<_DesktopShortcuts> createState() => _DesktopShortcutsState();
+}
+
+class _DesktopShortcutsState extends State<_DesktopShortcuts> {
+  static const _menuChannel = MethodChannel(
+    'de.kiefer_networks.sshvault/menu',
+  );
+
   /// Use Meta on macOS, Control everywhere else.
   static final bool _useMeta = Platform.isMacOS;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuChannel.setMethodCallHandler(_handleMenuCall);
+  }
+
+  @override
+  void dispose() {
+    _menuChannel.setMethodCallHandler(null);
+    super.dispose();
+  }
+
+  Future<void> _handleMenuCall(MethodCall call) async {
+    if (call.method == 'openSettings' && mounted) {
+      GoRouter.of(context).push('/settings');
+    }
+  }
 
   SingleActivator _shortcut(LogicalKeyboardKey key, {bool shift = false}) {
     return SingleActivator(
@@ -331,46 +358,53 @@ class _DesktopShortcuts extends StatelessWidget {
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: {
+        // Cmd/Ctrl+, → open Settings
+        _shortcut(LogicalKeyboardKey.comma): () {
+          GoRouter.of(context).push('/settings');
+        },
+
         // Ctrl/Cmd+T → navigate to Hosts (to start new connection)
         _shortcut(LogicalKeyboardKey.keyT): () {
-          navigationShell.goBranch(0, initialLocation: true);
+          widget.navigationShell.goBranch(0, initialLocation: true);
         },
 
         // Ctrl/Cmd+W → close active terminal tab
         _shortcut(LogicalKeyboardKey.keyW): () {
-          final sessions = ref.read(sessionManagerProvider);
+          final sessions = widget.ref.read(sessionManagerProvider);
           if (sessions.isEmpty) return;
-          final active = ref.read(activeSessionProvider);
+          final active = widget.ref.read(activeSessionProvider);
           if (active != null) {
-            ref.read(sessionManagerProvider.notifier).closeSession(active.id);
+            widget.ref
+                .read(sessionManagerProvider.notifier)
+                .closeSession(active.id);
           }
         },
 
         // Ctrl/Cmd+Plus → increase font size
         _shortcut(LogicalKeyboardKey.equal): () {
-          ref.read(terminalFontSizeProvider.notifier).increase();
+          widget.ref.read(terminalFontSizeProvider.notifier).increase();
         },
 
         // Ctrl/Cmd+Minus → decrease font size
         _shortcut(LogicalKeyboardKey.minus): () {
-          ref.read(terminalFontSizeProvider.notifier).decrease();
+          widget.ref.read(terminalFontSizeProvider.notifier).decrease();
         },
 
         // Ctrl/Cmd+1-9 → switch terminal tab
         for (var i = 0; i < 9; i++)
           _shortcut(LogicalKeyboardKey(0x31 + i)): () {
-            final sessions = ref.read(sessionManagerProvider);
+            final sessions = widget.ref.read(sessionManagerProvider);
             if (i < sessions.length) {
-              ref.read(activeSessionIndexProvider.notifier).state = i;
-              // Navigate to terminal branch if not already there
+              widget.ref.read(activeSessionIndexProvider.notifier).state = i;
               final sessionCount = sessions.length;
               if (sessionCount > 0) {
-                navigationShell.goBranch(AppConstants.terminalBranchIndex);
+                widget.navigationShell
+                    .goBranch(AppConstants.terminalBranchIndex);
               }
             }
           },
       },
-      child: Focus(autofocus: true, child: child),
+      child: Focus(autofocus: true, child: widget.child),
     );
   }
 }
@@ -482,7 +516,7 @@ class _DesktopScaffold extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: Spacing.lg),
+                  padding: const EdgeInsets.only(bottom: Spacing.lg),
                   child: _SettingsRailButton(),
                 ),
               ),
@@ -491,7 +525,7 @@ class _DesktopScaffold extends StatelessWidget {
               for (var i = 0; i < items.length; i++)
                 NavigationRailDestination(
                   padding: breaks.contains(i)
-                      ? EdgeInsets.only(top: Spacing.md)
+                      ? const EdgeInsets.only(top: Spacing.md)
                       : EdgeInsets.zero,
                   icon: showTerminal && i == items.length - 1
                       ? Badge(
@@ -544,9 +578,9 @@ class _SyncStatusIcon extends ConsumerWidget {
     final Color color;
     final String? tooltip;
     if (isSyncing) {
-      return Padding(
+      return const Padding(
         padding: EdgeInsets.only(left: Spacing.sm),
-        child: const SizedBox(
+        child: SizedBox(
           width: 16,
           height: 16,
           child: CircularProgressIndicator(strokeWidth: 2),
@@ -571,7 +605,7 @@ class _SyncStatusIcon extends ConsumerWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.only(left: Spacing.sm),
+      padding: const EdgeInsets.only(left: Spacing.sm),
       child: Tooltip(
         message: tooltip ?? '',
         child: Icon(icon, size: 20, color: color),
@@ -635,7 +669,7 @@ class _AppDrawer extends StatelessWidget {
       children: [
         // Branding header
         Padding(
-          padding: EdgeInsets.fromLTRB(
+          padding: const EdgeInsets.fromLTRB(
             Spacing.xxxl,
             Spacing.xxl,
             Spacing.xxxl,
@@ -655,27 +689,27 @@ class _AppDrawer extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.fromLTRB(
             Spacing.xxxl,
             Spacing.sm,
             Spacing.xxxl,
             Spacing.sm,
           ),
-          child: const Divider(),
+          child: Divider(),
         ),
 
         // Nav destinations with section dividers
         for (var i = 0; i < items.length; i++) ...[
           if (breaks.contains(i))
-            Padding(
+            const Padding(
               padding: EdgeInsets.fromLTRB(
                 Spacing.xxxl,
                 Spacing.xxs,
                 Spacing.xxxl,
                 Spacing.xxs,
               ),
-              child: const Divider(),
+              child: Divider(),
             ),
           NavigationDrawerDestination(
             icon: showTerminal && i == items.length - 1
@@ -723,17 +757,17 @@ class _DrawerSettingsSection extends ConsumerWidget {
 
     return Column(
       children: [
-        Padding(
+        const Padding(
           padding: EdgeInsets.fromLTRB(
             Spacing.xxxl,
             Spacing.lg,
             Spacing.xxxl,
             Spacing.sm,
           ),
-          child: const Divider(),
+          child: Divider(),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: Spacing.md,
             vertical: Spacing.xxxs,
           ),

@@ -53,7 +53,7 @@ class SshKeyListScreen extends ConsumerWidget {
           }
 
           return ListView.separated(
-            padding: EdgeInsets.only(bottom: Spacing.fabClearance),
+            padding: const EdgeInsets.only(bottom: Spacing.fabClearance),
             itemCount: keys.length,
             separatorBuilder: (_, _) => Spacing.verticalXxs,
             itemBuilder: (context, index) {

@@ -80,7 +80,7 @@ class SshKeyTile extends ConsumerWidget {
             Expanded(child: Text(sshKey.name, overflow: TextOverflow.ellipsis)),
             Spacing.horizontalSm,
             Container(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: Spacing.sm,
                 vertical: 2,
               ),
@@ -101,7 +101,7 @@ class SshKeyTile extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (sshKey.fingerprint.isNotEmpty) ...[
-              SizedBox(height: Spacing.xxxs),
+              const SizedBox(height: Spacing.xxxs),
               Semantics(
                 label: '${sshKey.name} fingerprint: ${sshKey.fingerprint}',
                 child: Text(
@@ -120,7 +120,7 @@ class SshKeyTile extends ConsumerWidget {
             ],
             if (serverNames.isNotEmpty)
               Padding(
-                padding: EdgeInsets.only(top: Spacing.xxxs),
+                padding: const EdgeInsets.only(top: Spacing.xxxs),
                 child: Text(
                   serverNames.map((s) => s.name).join(', '),
                   style: theme.textTheme.bodySmall?.copyWith(
