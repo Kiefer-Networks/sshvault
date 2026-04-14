@@ -9,6 +9,7 @@ IssueTracker: https://github.com/Kiefer-Networks/sshvault/issues
 Changelog: https://github.com/Kiefer-Networks/sshvault/releases
 Donate: https://de.liberapay.com/beli3ver
 
+Name: SSHVault
 AutoName: SSHVault
 Summary: Zero-knowledge encrypted SSH client with self-hosted sync.
 Description: |
