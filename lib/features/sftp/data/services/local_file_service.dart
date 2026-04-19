@@ -50,6 +50,13 @@ class LocalFileService {
 
       return Success(entries);
     } catch (e) {
+      if (Platform.isMacOS && e is FileSystemException) {
+        return Err(SftpFailure(
+          'Access denied: $path — macOS requires permission to access this folder. '
+          'Try navigating via Downloads or use the folder picker.',
+          cause: e,
+        ));
+      }
       return Err(SftpFailure('Failed to list directory: $path', cause: e));
     }
   }
@@ -140,7 +147,27 @@ class LocalFileService {
     // macOS, Linux, Windows — use home directory
     final home =
         Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
-    if (home != null && await Directory(home).exists()) return home;
+    if (home != null) {
+      final homeDir = Directory(home);
+      if (await homeDir.exists()) {
+        // Verify actual read access (macOS sandbox may block even if dir exists)
+        try {
+          await homeDir.list().first;
+          return home;
+        } on FileSystemException {
+          // Sandbox blocks access — fall through to Downloads or app directory
+        } catch (_) {
+          // Empty directory is fine — access works
+          return home;
+        }
+      }
+    }
+
+    // macOS sandbox fallback: try Downloads (always accessible with entitlement)
+    if (Platform.isMacOS) {
+      final dl = await getDownloadsDirectory();
+      if (dl != null && await Directory(dl.path).exists()) return dl.path;
+    }
 
     // Final fallback
     final appDir = await getApplicationDocumentsDirectory();

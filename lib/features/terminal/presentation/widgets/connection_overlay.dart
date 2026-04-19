@@ -49,12 +49,22 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
       final isError = widget.status == SshConnectionStatus.error;
       final l10n = AppLocalizations.of(context)!;
 
+      final title = isError ? l10n.connectionError : l10n.connectionLost;
+      final message = isError && widget.errorMessage != null
+          ? widget.errorMessage!
+          : '';
+
+      // Fire system notification so the user sees it even when the app
+      // is in the background (macOS native notification center).
+      AdaptiveNotification.show(
+        context,
+        message: message.isNotEmpty ? '$title: $message' : title,
+      );
+
       showAdaptiveConfirmDialog(
         context,
-        title: isError ? l10n.connectionError : l10n.connectionLost,
-        message: isError && widget.errorMessage != null
-            ? widget.errorMessage!
-            : '',
+        title: title,
+        message: message,
         cancelLabel: l10n.close,
         confirmLabel: isError ? l10n.retry : l10n.connectionReconnect,
       ).then((result) {
