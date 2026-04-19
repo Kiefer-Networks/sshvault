@@ -77,7 +77,10 @@ class AdaptiveScaffold extends StatelessWidget {
                 body,
                 if (floatingActionButton != null)
                   Positioned(
-                      right: 16, bottom: 16, child: floatingActionButton!),
+                    right: 16,
+                    bottom: 16,
+                    child: floatingActionButton!,
+                  ),
               ],
             ),
           ),

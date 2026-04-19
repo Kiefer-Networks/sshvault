@@ -320,9 +320,7 @@ class _DesktopShortcuts extends StatefulWidget {
 }
 
 class _DesktopShortcutsState extends State<_DesktopShortcuts> {
-  static const _menuChannel = MethodChannel(
-    'de.kiefer_networks.sshvault/menu',
-  );
+  static const _menuChannel = MethodChannel('de.kiefer_networks.sshvault/menu');
 
   /// Use Meta on macOS, Control everywhere else.
   static final bool _useMeta = Platform.isMacOS;
@@ -398,8 +396,9 @@ class _DesktopShortcutsState extends State<_DesktopShortcuts> {
               widget.ref.read(activeSessionIndexProvider.notifier).state = i;
               final sessionCount = sessions.length;
               if (sessionCount > 0) {
-                widget.navigationShell
-                    .goBranch(AppConstants.terminalBranchIndex);
+                widget.navigationShell.goBranch(
+                  AppConstants.terminalBranchIndex,
+                );
               }
             }
           },
