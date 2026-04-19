@@ -27,6 +27,13 @@ class SftpPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Fire system notification when a new error appears
+    ref.listen(sftpPaneProvider(side), (prev, next) {
+      if (next.error != null && next.error != prev?.error) {
+        AdaptiveNotification.show(context, message: next.error!);
+      }
+    });
+
     final paneState = ref.watch(sftpPaneProvider(side));
     final l10n = AppLocalizations.of(context)!;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
+import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 /// Severity level for security warnings.
@@ -47,6 +48,13 @@ class SecurityWarningDialog extends StatelessWidget {
     SecurityAction? onReport,
     SecurityAction? onContinue,
   }) {
+    // Fire system notification so the user is alerted even when the app
+    // is in the background (macOS notification center, iOS overlay, etc.).
+    AdaptiveNotification.show(
+      context,
+      message: '$title: $message',
+    );
+
     return showDialog(
       context: context,
       barrierDismissible: false,
