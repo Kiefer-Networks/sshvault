@@ -51,11 +51,13 @@ class LocalFileService {
       return Success(entries);
     } catch (e) {
       if (Platform.isMacOS && e is FileSystemException) {
-        return Err(SftpFailure(
-          'Access denied: $path — macOS requires permission to access this folder. '
-          'Try navigating via Downloads or use the folder picker.',
-          cause: e,
-        ));
+        return Err(
+          SftpFailure(
+            'Access denied: $path — macOS requires permission to access this folder. '
+            'Try navigating via Downloads or use the folder picker.',
+            cause: e,
+          ),
+        );
       }
       return Err(SftpFailure('Failed to list directory: $path', cause: e));
     }
