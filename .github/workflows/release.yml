@@ -222,24 +222,14 @@ jobs:
 
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
 
-      - name: Configure code signing (Developer ID)
-        if: env.HAS_SIGNING == 'true'
-        run: |
-          cd macos
-          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development"/CODE_SIGN_IDENTITY = "Developer ID Application"/g' Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/CODE_SIGN_IDENTITY = "-"/CODE_SIGN_IDENTITY = "Developer ID Application"/g' Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' Runner.xcodeproj/project.pbxproj
-
-      - name: Configure code signing (ad-hoc fallback)
-        if: env.HAS_SIGNING != 'true'
+      - name: Build macOS (unsigned, signed in post-build step)
         run: |
           cd macos
           sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development"/CODE_SIGN_IDENTITY = "-"/g' Runner.xcodeproj/project.pbxproj
           sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' Runner.xcodeproj/project.pbxproj
           sed -i '' 's/DEVELOPMENT_TEAM = 52MKZ6BJWB/DEVELOPMENT_TEAM = ""/g' Runner.xcodeproj/project.pbxproj
-
-      - name: Build macOS
-        run: flutter build macos --release
+          cd ..
+          flutter build macos --release
 
       - name: Sign app bundle
         if: env.HAS_SIGNING == 'true'
