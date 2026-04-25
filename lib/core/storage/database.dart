@@ -49,7 +49,15 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => AppConstants.databaseVersion;
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(name: AppConstants.databaseName);
+    return driftDatabase(
+      name: AppConstants.databaseName,
+      native: DriftNativeOptions(
+        databasePath: () async {
+          final dir = await getApplicationSupportDirectory();
+          return p.join(dir.path, '${AppConstants.databaseName}.sqlite');
+        },
+      ),
+    );
   }
 
   /// Migrate database from Documents to Application Support on iOS/macOS.
