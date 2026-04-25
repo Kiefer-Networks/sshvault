@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math' show Random, max;
 import 'dart:typed_data';
 
+import 'package:dartssh2/src/algorithm/ssh_aead_cipher.dart';
 import 'package:dartssh2/src/hostkey/hostkey_ecdsa.dart';
 import 'package:dartssh2/src/hostkey/hostkey_rsa.dart';
 import 'package:dartssh2/src/kex/kex_dh.dart';
@@ -162,10 +163,20 @@ class SSHTransport {
   BigInt? _sharedSecret;
 
   /// A [BlockCipher] to encrypt data sent to the other side.
+  /// `null` when an AEAD cipher is in use (see [_localAead]).
   BlockCipher? _encryptCipher;
 
   /// A [BlockCipher] to decrypt data sent from the other side.
+  /// `null` when an AEAD cipher is in use (see [_remoteAead]).
   BlockCipher? _decryptCipher;
+
+  /// AEAD cipher state for outbound packets (chacha20-poly1305 or aes-gcm).
+  /// Mutually exclusive with [_encryptCipher].
+  SSHAeadCipher? _localAead;
+
+  /// AEAD cipher state for inbound packets. Mutually exclusive with
+  /// [_decryptCipher].
+  SSHAeadCipher? _remoteAead;
 
   /// A [Mac] used to authenticate data sent to the other side.
   Mac? _localMac;
@@ -194,6 +205,37 @@ class SSHTransport {
 
     if (_kexInProgress && !_shouldBypassRekeyBuffer(data)) {
       _rekeyPendingPackets.add(Uint8List.fromList(data));
+      return;
+    }
+
+    // AEAD ciphers (chacha20-poly1305@openssh.com, aes*-gcm@openssh.com) own
+    // the entire encrypt+authenticate flow; bypass the classic MAC path.
+    if (_localAead != null) {
+      final aead = _localAead!;
+      final blockSize = aead.blockSize;
+      final paddingLength = blockSize - ((data.length + 1) % blockSize);
+      final adjustedPaddingLength =
+          paddingLength < 4 ? paddingLength + blockSize : paddingLength;
+      final packetLength = 1 + data.length + adjustedPaddingLength;
+
+      final packetLengthBytes = Uint8List(4);
+      packetLengthBytes.buffer.asByteData().setUint32(0, packetLength);
+
+      final body = Uint8List(packetLength);
+      body[0] = adjustedPaddingLength;
+      body.setRange(1, 1 + data.length, data);
+      final secureRandom = Random.secure();
+      for (var i = 0; i < adjustedPaddingLength; i++) {
+        body[1 + data.length + i] = secureRandom.nextInt(256);
+      }
+
+      final wire = aead.sealPacket(
+        _localPacketSN.value,
+        packetLengthBytes,
+        body,
+      );
+      socket.sink.add(wire);
+      _localPacketSN.increase();
       return;
     }
 
@@ -414,9 +456,54 @@ class SSHTransport {
   /// WITHOUT `packet length`, `padding length`, `padding` and `MAC`. Returns
   /// `null` if there is not enough data in the buffer to read the packet.
   Uint8List? _consumePacket() {
+    if (_remoteAead != null) {
+      return _consumeAeadPacket();
+    }
     return _decryptCipher == null
         ? _consumeClearTextPacket()
         : _consumeEncryptedPacket();
+  }
+
+  Uint8List? _consumeAeadPacket() {
+    final aead = _remoteAead!;
+    if (_buffer.length < 4) return null;
+
+    final lengthPrefix = _buffer.view(0, 4);
+    final int packetLength;
+    if (aead.plaintextLength) {
+      packetLength = ByteData.sublistView(lengthPrefix).getUint32(0, Endian.big);
+    } else {
+      packetLength = aead.decryptPacketLength(
+        _remotePacketSN.value,
+        Uint8List.fromList(lengthPrefix),
+      );
+    }
+
+    _verifyPacketLength(packetLength);
+
+    final total = 4 + packetLength + aead.tagSize;
+    if (_buffer.length < total) return null;
+
+    final encryptedBody = Uint8List.fromList(_buffer.view(4, packetLength));
+    final tag = Uint8List.fromList(_buffer.view(4 + packetLength, aead.tagSize));
+
+    final plaintext = aead.openPacket(
+      _remotePacketSN.value,
+      Uint8List.fromList(lengthPrefix),
+      encryptedBody,
+      tag,
+    );
+
+    _buffer.consume(total);
+
+    final paddingLength = plaintext[0];
+    if (paddingLength < 4 || paddingLength >= packetLength) {
+      throw SSHPacketError(
+        'Invalid AEAD padding length: $paddingLength (packet length $packetLength)',
+      );
+    }
+    final payloadLength = packetLength - paddingLength - 1;
+    return Uint8List.sublistView(plaintext, 1, 1 + payloadLength);
   }
 
   Uint8List? _consumeClearTextPacket() {
@@ -630,17 +717,26 @@ class SSHTransport {
     final cipherType = isClient ? _clientCipherType : _serverCipherType;
     if (cipherType == null) throw StateError('No cipher type selected');
 
-    _encryptCipher = cipherType.createCipher(
-      _deriveKey(
-        isClient ? SSHDeriveKeyType.clientKey : SSHDeriveKeyType.serverKey,
-        cipherType.keySize,
-      ),
-      _deriveKey(
-        isClient ? SSHDeriveKeyType.clientIV : SSHDeriveKeyType.serverIV,
-        cipherType.ivSize,
-      ),
-      forEncryption: true,
+    final key = _deriveKey(
+      isClient ? SSHDeriveKeyType.clientKey : SSHDeriveKeyType.serverKey,
+      cipherType.keySize,
     );
+    final iv = cipherType.ivSize == 0
+        ? Uint8List(0)
+        : _deriveKey(
+            isClient ? SSHDeriveKeyType.clientIV : SSHDeriveKeyType.serverIV,
+            cipherType.ivSize,
+          );
+
+    if (cipherType.isAead) {
+      _localAead = cipherType.createAeadCipher(key, iv);
+      _encryptCipher = null;
+      _localMac = null;
+      return;
+    }
+
+    _localAead = null;
+    _encryptCipher = cipherType.createCipher(key, iv, forEncryption: true);
 
     final macType = isClient ? _clientMacType : _serverMacType;
     if (macType == null) throw StateError('No MAC type selected');
@@ -657,17 +753,26 @@ class SSHTransport {
     final cipherType = isClient ? _serverCipherType : _clientCipherType;
     if (cipherType == null) throw StateError('No cipher type selected');
 
-    _decryptCipher = cipherType.createCipher(
-      _deriveKey(
-        isClient ? SSHDeriveKeyType.serverKey : SSHDeriveKeyType.clientKey,
-        cipherType.keySize,
-      ),
-      _deriveKey(
-        isClient ? SSHDeriveKeyType.serverIV : SSHDeriveKeyType.clientIV,
-        cipherType.ivSize,
-      ),
-      forEncryption: false,
+    final key = _deriveKey(
+      isClient ? SSHDeriveKeyType.serverKey : SSHDeriveKeyType.clientKey,
+      cipherType.keySize,
     );
+    final iv = cipherType.ivSize == 0
+        ? Uint8List(0)
+        : _deriveKey(
+            isClient ? SSHDeriveKeyType.serverIV : SSHDeriveKeyType.clientIV,
+            cipherType.ivSize,
+          );
+
+    if (cipherType.isAead) {
+      _remoteAead = cipherType.createAeadCipher(key, iv);
+      _decryptCipher = null;
+      _remoteMac = null;
+      return;
+    }
+
+    _remoteAead = null;
+    _decryptCipher = cipherType.createCipher(key, iv, forEncryption: false);
 
     final macType = isClient ? _serverMacType : _clientMacType;
     if (macType == null) throw StateError('No MAC type selected');
@@ -903,10 +1008,12 @@ class SSHTransport {
     if (_serverCipherType == null) {
       throw StateError('No matching server cipher algorithm');
     }
-    if (_clientMacType == null) {
+    // AEAD ciphers carry their own integrity check, so a missing MAC overlap
+    // is fine when both sides agreed on an AEAD cipher.
+    if (_clientMacType == null && !_clientCipherType!.isAead) {
       throw StateError('No matching client MAC algorithm');
     }
-    if (_serverMacType == null) {
+    if (_serverMacType == null && !_serverCipherType!.isAead) {
       throw StateError('No matching server MAC algorithm');
     }
 

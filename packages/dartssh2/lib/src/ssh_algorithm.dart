@@ -61,6 +61,9 @@ class SSHAlgorithms {
       SSHHostkeyType.ecdsa256,
     ],
     this.cipher = const [
+      SSHCipherType.chacha20Poly1305,
+      SSHCipherType.aes256gcm,
+      SSHCipherType.aes128gcm,
       SSHCipherType.aes256ctr,
       SSHCipherType.aes128ctr,
     ],
