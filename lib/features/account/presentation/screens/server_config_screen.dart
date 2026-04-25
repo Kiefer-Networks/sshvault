@@ -174,11 +174,12 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen> {
     );
   }
 
-  void _saveAndContinue() {
+  Future<void> _saveAndContinue() async {
     final url = _urlController.text.trim();
     if (url.isEmpty) return;
-    ref.read(settingsProvider.notifier).setServerUrl(url);
-    Navigator.of(context).pop();
+    await ref.read(settingsProvider.notifier).setServerUrl(url);
+    await ref.read(settingsProvider.future);
+    if (mounted) Navigator.of(context).pop();
   }
 
   Future<void> _testConnection() async {
