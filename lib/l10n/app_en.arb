@@ -762,6 +762,9 @@
   "tagServerCount": "{count, plural, =1{1 server} other{{count} servers}}",
   "@tagServerCount": { "placeholders": { "count": { "type": "int" } } },
 
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
+  "@tagSnippetCount": { "placeholders": { "count": { "type": "int" } } },
+
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 session revoked.} other{{count} sessions revoked.}} You have been logged out.",
   "@logoutAllDevicesSuccessCount": { "placeholders": { "count": { "type": "int" } } },
 

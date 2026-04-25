@@ -723,6 +723,9 @@
   "tagServerCount": "{count, plural, =1{1 Server} other{{count} Server}}",
   "@tagServerCount": { "placeholders": { "count": { "type": "int" } } },
 
+  "tagSnippetCount": "{count, plural, =1{1 Snippet} other{{count} Snippets}}",
+  "@tagSnippetCount": { "placeholders": { "count": { "type": "int" } } },
+
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 Sitzung widerrufen.} other{{count} Sitzungen widerrufen.}} Du wurdest abgemeldet.",
   "@logoutAllDevicesSuccessCount": { "placeholders": { "count": { "type": "int" } } },
 

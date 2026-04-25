@@ -82,3 +82,16 @@ final snippetDetailProvider = FutureProvider.family<SnippetEntity, String>((
     onFailure: (failure) => throw failure,
   );
 });
+
+/// Number of snippets currently linked to a given tag.
+final snippetCountByTagProvider = FutureProvider.family<int, String>((
+  ref,
+  tagId,
+) async {
+  final useCases = ref.watch(snippetUseCasesProvider);
+  final result = await useCases.getFilteredSnippets(tagIds: [tagId]);
+  return result.fold(
+    onSuccess: (snippets) => snippets.length,
+    onFailure: (_) => 0,
+  );
+});

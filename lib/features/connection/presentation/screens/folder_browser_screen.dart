@@ -299,6 +299,22 @@ class _FolderTile extends ConsumerWidget {
                           : l10n.folderShowHosts,
                       visualDensity: VisualDensity.compact,
                     ),
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined, size: 20),
+                    onPressed: onEdit,
+                    tooltip: l10n.edit,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.delete_outline,
+                      size: 20,
+                      color: theme.colorScheme.error,
+                    ),
+                    onPressed: onDelete,
+                    tooltip: l10n.delete,
+                    visualDensity: VisualDensity.compact,
+                  ),
                 ],
               ),
               onTap: folder.serverCount > 0

@@ -10,6 +10,7 @@ import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:sshvault/features/snippet/presentation/providers/snippet_providers.dart';
 import 'package:sshvault/features/connection/presentation/screens/tag_form_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
@@ -121,6 +122,7 @@ class _TagTile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final tagColor = Color(tag.color);
     final serverCountAsync = ref.watch(serverCountByTagProvider(tag.id));
+    final snippetCountAsync = ref.watch(snippetCountByTagProvider(tag.id));
 
     return Slidable(
       endActionPane: ActionPane(
@@ -159,15 +161,25 @@ class _TagTile extends ConsumerWidget {
             child: Icon(Icons.label, color: tagColor, size: 22),
           ),
           title: Text(tag.name),
-          subtitle: serverCountAsync.when(
-            data: (count) => Text(
-              l10n.tagServerCount(count),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            loading: () => null,
-            error: (_, _) => null,
+          subtitle: Builder(
+            builder: (_) {
+              final serverCount = serverCountAsync.valueOrNull;
+              final snippetCount = snippetCountAsync.valueOrNull;
+              final parts = <String>[];
+              if (serverCount != null) {
+                parts.add(l10n.tagServerCount(serverCount));
+              }
+              if (snippetCount != null) {
+                parts.add(l10n.tagSnippetCount(snippetCount));
+              }
+              if (parts.isEmpty) return const SizedBox.shrink();
+              return Text(
+                parts.join(' · '),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              );
+            },
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
