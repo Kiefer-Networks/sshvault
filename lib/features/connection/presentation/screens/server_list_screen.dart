@@ -168,12 +168,18 @@ class ServerListScreen extends ConsumerWidget {
       if (selected[i]) toImport.add(entries[i]);
     }
 
-    // Check if any selected entries reference identity files
+    // Check if any selected entries reference identity files. Multiple
+    // server entries may share the same identity file — collapse them so
+    // we never offer to import the same key file twice in the dialog.
     final entriesWithKeys = toImport
         .where((e) => e.identityFile != null)
         .toList();
+    final uniqueKeyPaths = <String, SshConfigEntry>{};
+    for (final e in entriesWithKeys) {
+      uniqueKeyPaths.putIfAbsent(e.identityFile!, () => e);
+    }
     var importKeys = false;
-    if (entriesWithKeys.isNotEmpty && context.mounted) {
+    if (uniqueKeyPaths.isNotEmpty && context.mounted) {
       importKeys =
           await showDialog<bool>(
             context: context,
@@ -182,12 +188,12 @@ class ServerListScreen extends ConsumerWidget {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  for (final e in entriesWithKeys)
+                  for (final e in uniqueKeyPaths.values)
                     ListTile(
                       dense: true,
                       leading: const Icon(Icons.vpn_key_outlined, size: 20),
-                      title: Text(e.name),
-                      subtitle: Text(e.identityFile!),
+                      title: Text(e.identityFile!),
+                      subtitle: Text(e.name),
                     ),
                 ],
               ),
@@ -206,13 +212,14 @@ class ServerListScreen extends ConsumerWidget {
           false;
     }
 
-    // Import SSH keys first so we can link them to servers
+    // Import SSH keys first so we can link them to servers. Pass the
+    // deduplicated key list so each unique identity file is processed once.
     var keysImported = 0;
     final keyIdByPath = <String, String>{};
     if (importKeys) {
-      final result = await _importSshKeys(ref, entriesWithKeys);
-      keysImported = result.length;
-      keyIdByPath.addAll(result);
+      final result = await _importSshKeys(ref, uniqueKeyPaths.values.toList());
+      keysImported = result.newlyImported;
+      keyIdByPath.addAll(result.idByPath);
     }
 
     var importedCount = 0;
@@ -262,17 +269,46 @@ class ServerListScreen extends ConsumerWidget {
     }
   }
 
-  /// Imports SSH keys and returns a map of identityFilePath → created key ID.
-  static Future<Map<String, String>> _importSshKeys(
+  /// Imports SSH keys, deduplicating against keys already in the vault.
+  ///
+  /// [entries] must already be deduplicated by `identityFile` so we only
+  /// touch each on-disk file once.
+  ///
+  /// Existing keys are matched by their stored private-key content; an
+  /// existing match means we reuse the existing id and do not create a
+  /// duplicate row.
+  static Future<({Map<String, String> idByPath, int newlyImported})>
+      _importSshKeys(
     WidgetRef ref,
     List<SshConfigEntry> entries,
   ) async {
     final keyNotifier = ref.read(sshKeyListProvider.notifier);
-    final home =
-        Platform.environment['HOME'] ??
+    final useCases = ref.read(sshKeyUseCasesProvider);
+    final home = Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         '';
-    final imported = <String, String>{};
+
+    // Build a content → existingKeyId index from the current vault.
+    final existingByContent = <String, String>{};
+    final existingResult = await useCases.getAllSshKeys();
+    final existingKeys = existingResult.fold(
+      onSuccess: (k) => k,
+      onFailure: (_) => <SshKeyEntity>[],
+    );
+    for (final k in existingKeys) {
+      final pkResult = await useCases.getSshKeyPrivateKey(k.id);
+      pkResult.fold(
+        onSuccess: (priv) {
+          if (priv != null && priv.isNotEmpty) {
+            existingByContent[priv.trim()] = k.id;
+          }
+        },
+        onFailure: (_) {},
+      );
+    }
+
+    final idByPath = <String, String>{};
+    var newlyImported = 0;
 
     for (final entry in entries) {
       try {
@@ -284,26 +320,34 @@ class ServerListScreen extends ConsumerWidget {
         final keyFile = File(path);
         if (!keyFile.existsSync()) continue;
 
-        final privateKey = await keyFile.readAsString();
+        final privateKey = (await keyFile.readAsString()).trim();
+        final existingId = existingByContent[privateKey];
+        if (existingId != null) {
+          // Already in vault — reuse it, do not create a duplicate.
+          idByPath[originalPath] = existingId;
+          continue;
+        }
+
         final keyType = _detectKeyType(privateKey);
         final keyName = path.split(Platform.pathSeparator).last;
-
         final created = await keyNotifier.createSshKey(
           SshKeyEntity(
             id: '',
-            name: '${entry.name} ($keyName)',
+            name: keyName,
             keyType: keyType,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
           ),
           privateKey: privateKey,
         );
-        imported[originalPath] = created.id;
+        idByPath[originalPath] = created.id;
+        existingByContent[privateKey] = created.id;
+        newlyImported++;
       } catch (_) {
         // Skip keys that fail to read or import
       }
     }
-    return imported;
+    return (idByPath: idByPath, newlyImported: newlyImported);
   }
 
   static SshKeyType _detectKeyType(String privateKey) {
