@@ -594,6 +594,7 @@
   "variablePreviewResolved": "हल किया गया पूर्वावलोकन",
   "variableInsert": "डालें",
   "tagServerCount": "{count, plural, =1{1 सर्वर} other{{count} सर्वर}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 सत्र रद्द किया गया।} other{{count} सत्र रद्द किए गए।}} आपको लॉग आउट कर दिया गया है।",
   "keyGenPassphrase": "पासफ़्रेज़",
   "keyGenPassphraseHint": "वैकल्पिक — निजी कुंजी की सुरक्षा करता है",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "डिवाइस हटाएं",
   "deviceDeleteConfirmMessage": "क्या आप वाकई \"{name}\" को हटाना चाहते हैं? डिवाइस तुरंत लॉग आउट हो जाएगा।",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "यह आपका वर्तमान डिवाइस है। आप तुरंत लॉग आउट हो जाएंगे।",
   "deviceDeleteSuccess": "डिवाइस हटाया गया",
   "deviceDeletedCurrentLogout": "वर्तमान डिवाइस हटाया गया। आप लॉग आउट हो गए हैं।",

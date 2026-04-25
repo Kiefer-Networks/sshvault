@@ -796,6 +796,14 @@
       }
     }
   },
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
+  "@tagSnippetCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 sesión revocada.} other{{count} sesiones revocadas.}} Se ha cerrado tu sesión.",
   "@logoutAllDevicesSuccessCount": {
     "placeholders": {
@@ -1022,7 +1030,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Eliminar dispositivo",
   "deviceDeleteConfirmMessage": "¿Seguro que quieres eliminar \"{name}\"? El dispositivo se cerrará sesión inmediatamente.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Este es tu dispositivo actual. Se cerrará la sesión inmediatamente.",
   "deviceDeleteSuccess": "Dispositivo eliminado",
   "deviceDeletedCurrentLogout": "Dispositivo actual eliminado. Se ha cerrado la sesión.",

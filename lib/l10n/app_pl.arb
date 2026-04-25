@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Podgląd z podstawieniem",
   "variableInsert": "Wstaw",
   "tagServerCount": "{count, plural, =1{1 serwer} other{{count} serwerów}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 sesja unieważniona.} other{{count} sesji unieważnionych.}} Zostałeś wylogowany.",
   "keyGenPassphrase": "Hasło",
   "keyGenPassphraseHint": "Opcjonalnie — chroni klucz prywatny",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Usuń urządzenie",
   "deviceDeleteConfirmMessage": "Czy na pewno chcesz usunąć \"{name}\"? Urządzenie zostanie natychmiast wylogowane.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "To jest Twoje obecne urządzenie. Zostaniesz natychmiast wylogowany.",
   "deviceDeleteSuccess": "Urządzenie usunięte",
   "deviceDeletedCurrentLogout": "Obecne urządzenie usunięte. Zostałeś wylogowany.",

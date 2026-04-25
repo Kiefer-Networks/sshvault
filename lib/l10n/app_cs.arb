@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Rozpoznaný náhled",
   "variableInsert": "Vložit",
   "tagServerCount": "{count, plural, =1{1 server} other{{count} serverů}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 relace zrušena.} other{{count} relací zrušeno.}} Byli jste odhlášeni.",
   "keyGenPassphrase": "Heslo",
   "keyGenPassphraseHint": "Volitelné — chrání soukromý klíč",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Odebrat zařízení",
   "deviceDeleteConfirmMessage": "Opravdu chcete odebrat \"{name}\"? Zařízení bude okamžitě odhlášeno.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Toto je vaše aktuální zařízení. Budete okamžitě odhlášeni.",
   "deviceDeleteSuccess": "Zařízení odebráno",
   "deviceDeletedCurrentLogout": "Aktuální zařízení odebráno. Byli jste odhlášeni.",

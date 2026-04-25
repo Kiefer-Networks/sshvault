@@ -594,6 +594,7 @@
   "variablePreviewResolved": "解決済みプレビュー",
   "variableInsert": "挿入",
   "tagServerCount": "{count, plural, =1{1台のサーバー} other{{count}台のサーバー}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1件のセッションを取り消しました。} other{{count}件のセッションを取り消しました。}}ログアウトしました。",
   "keyGenPassphrase": "パスフレーズ",
   "keyGenPassphraseHint": "任意 — 秘密鍵を保護します",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "デバイスを削除",
   "deviceDeleteConfirmMessage": "\"{name}\"を削除してもよろしいですか？デバイスは直ちにログアウトされます。",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "これは現在のデバイスです。直ちにログアウトされます。",
   "deviceDeleteSuccess": "デバイスを削除しました",
   "deviceDeletedCurrentLogout": "現在のデバイスを削除しました。ログアウトされました。",

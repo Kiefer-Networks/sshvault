@@ -594,6 +594,7 @@
   "variablePreviewResolved": "已解析预览",
   "variableInsert": "插入",
   "tagServerCount": "{count, plural, =1{1 台服务器} other{{count} 台服务器}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{已撤销 1 个会话。} other{已撤销 {count} 个会话。}}您已注销。",
   "keyGenPassphrase": "口令",
   "keyGenPassphraseHint": "可选 — 保护私钥",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "移除设备",
   "deviceDeleteConfirmMessage": "确定要移除\"{name}\"吗？该设备将立即注销。",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "这是您当前的设备。您将立即注销。",
   "deviceDeleteSuccess": "设备已移除",
   "deviceDeletedCurrentLogout": "当前设备已移除。您已注销。",

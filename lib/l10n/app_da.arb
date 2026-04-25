@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Løst forhåndsvisning",
   "variableInsert": "Indsæt",
   "tagServerCount": "{count, plural, =1{1 server} other{{count} servere}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 session tilbagekaldt.} other{{count} sessioner tilbagekaldt.}} Du er blevet logget ud.",
   "keyGenPassphrase": "Adgangssætning",
   "keyGenPassphraseHint": "Valgfrit — beskytter den private nøgle",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Fjern enhed",
   "deviceDeleteConfirmMessage": "Er du sikker på, at du vil fjerne \"{name}\"? Enheden logges ud med det samme.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Dette er din nuværende enhed. Du logges ud med det samme.",
   "deviceDeleteSuccess": "Enhed fjernet",
   "deviceDeletedCurrentLogout": "Nuværende enhed fjernet. Du er logget ud.",

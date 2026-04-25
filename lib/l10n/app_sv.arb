@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Löst förhandsgranskning",
   "variableInsert": "Infoga",
   "tagServerCount": "{count, plural, =1{1 server} other{{count} servrar}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 session återkallad.} other{{count} sessioner återkallade.}} Du har loggats ut.",
   "keyGenPassphrase": "Lösenordsfras",
   "keyGenPassphraseHint": "Valfritt — skyddar den privata nyckeln",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Ta bort enhet",
   "deviceDeleteConfirmMessage": "Är du säker på att du vill ta bort \"{name}\"? Enheten loggas ut omedelbart.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Detta är din nuvarande enhet. Du loggas ut omedelbart.",
   "deviceDeleteSuccess": "Enhet borttagen",
   "deviceDeletedCurrentLogout": "Nuvarande enhet borttagen. Du har loggats ut.",

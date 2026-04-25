@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Попередній перегляд з підстановкою",
   "variableInsert": "Вставити",
   "tagServerCount": "{count, plural, =1{1 сервер} other{{count} серверів}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 сеанс відкликано.} other{{count} сеансів відкликано.}} Ви вийшли з облікового запису.",
   "keyGenPassphrase": "Парольна фраза",
   "keyGenPassphraseHint": "Необов'язково — захищає закритий ключ",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Видалити пристрій",
   "deviceDeleteConfirmMessage": "Ви впевнені, що хочете видалити \"{name}\"? Пристрій буде негайно відключено.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Це ваш поточний пристрій. Вас буде негайно відключено.",
   "deviceDeleteSuccess": "Пристрій видалено",
   "deviceDeletedCurrentLogout": "Поточний пристрій видалено. Вас було відключено.",

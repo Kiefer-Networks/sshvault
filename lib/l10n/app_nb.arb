@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Løst forhåndsvisning",
   "variableInsert": "Sett inn",
   "tagServerCount": "{count, plural, =1{1 server} other{{count} servere}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 økt tilbakekalt.} other{{count} økter tilbakekalt.}} Du har blitt logget ut.",
   "keyGenPassphrase": "Passordsetning",
   "keyGenPassphraseHint": "Valgfritt — beskytter den private nøkkelen",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Fjern enhet",
   "deviceDeleteConfirmMessage": "Er du sikker på at du vil fjerne \"{name}\"? Enheten logges ut umiddelbart.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Dette er din nåværende enhet. Du logges ut umiddelbart.",
   "deviceDeleteSuccess": "Enhet fjernet",
   "deviceDeletedCurrentLogout": "Nåværende enhet fjernet. Du er logget ut.",

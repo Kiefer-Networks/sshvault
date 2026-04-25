@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Ratkaistu esikatselu",
   "variableInsert": "Lisää",
   "tagServerCount": "{count, plural, =1{1 palvelin} other{{count} palvelinta}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 istunto peruutettu.} other{{count} istuntoa peruutettu.}} Sinut on kirjattu ulos.",
   "keyGenPassphrase": "Tunnuslause",
   "keyGenPassphraseHint": "Valinnainen — suojaa yksityisen avaimen",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Poista laite",
   "deviceDeleteConfirmMessage": "Haluatko varmasti poistaa laitteen \"{name}\"? Laite kirjataan ulos välittömästi.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Tämä on nykyinen laitteesi. Sinut kirjataan ulos välittömästi.",
   "deviceDeleteSuccess": "Laite poistettu",
   "deviceDeletedCurrentLogout": "Nykyinen laite poistettu. Sinut on kirjattu ulos.",

@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Xem truoc da giai quyet",
   "variableInsert": "Chen",
   "tagServerCount": "{count, plural, =1{1 may chu} other{{count} may chu}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{Da thu hoi 1 phien.} other{Da thu hoi {count} phien.}} Ban da bi dang xuat.",
   "keyGenPassphrase": "Cum tu mat khau",
   "keyGenPassphraseHint": "Tuy chon — bao ve khoa rieng tu",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Xóa thiết bị",
   "deviceDeleteConfirmMessage": "Bạn có chắc muốn xóa \"{name}\"? Thiết bị sẽ bị đăng xuất ngay lập tức.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Đây là thiết bị hiện tại của bạn. Bạn sẽ bị đăng xuất ngay lập tức.",
   "deviceDeleteSuccess": "Đã xóa thiết bị",
   "deviceDeletedCurrentLogout": "Đã xóa thiết bị hiện tại. Bạn đã được đăng xuất.",

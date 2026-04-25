@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Aperçu résolu",
   "variableInsert": "Insérer",
   "tagServerCount": "{count, plural, =1{1 serveur} other{{count} serveurs}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 session révoquée.} other{{count} sessions révoquées.}} Vous avez été déconnecté.",
   "keyGenPassphrase": "Phrase de passe",
   "keyGenPassphraseHint": "Optionnel — protège la clé privée",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Supprimer l'appareil",
   "deviceDeleteConfirmMessage": "Voulez-vous vraiment supprimer \"{name}\" ? L'appareil sera déconnecté immédiatement.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Ceci est votre appareil actuel. Vous serez déconnecté immédiatement.",
   "deviceDeleteSuccess": "Appareil supprimé",
   "deviceDeletedCurrentLogout": "Appareil actuel supprimé. Vous avez été déconnecté.",

@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Επιλυμένη προεπισκόπηση",
   "variableInsert": "Εισαγωγή",
   "tagServerCount": "{count, plural, =1{1 διακομιστής} other{{count} διακομιστές}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 συνεδρία ανακλήθηκε.} other{{count} συνεδρίες ανακλήθηκαν.}} Αποσυνδεθήκατε.",
   "keyGenPassphrase": "Φράση πρόσβασης",
   "keyGenPassphraseHint": "Προαιρετικό — προστατεύει το ιδιωτικό κλειδί",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Αφαίρεση συσκευής",
   "deviceDeleteConfirmMessage": "Είστε σίγουροι ότι θέλετε να αφαιρέσετε \"{name}\"; Η συσκευή θα αποσυνδεθεί αμέσως.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Αυτή είναι η τρέχουσα συσκευή σας. Θα αποσυνδεθείτε αμέσως.",
   "deviceDeleteSuccess": "Η συσκευή αφαιρέθηκε",
   "deviceDeletedCurrentLogout": "Η τρέχουσα συσκευή αφαιρέθηκε. Αποσυνδεθήκατε.",

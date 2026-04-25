@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Opgelost voorbeeld",
   "variableInsert": "Invoegen",
   "tagServerCount": "{count, plural, =1{1 server} other{{count} servers}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 sessie ingetrokken.} other{{count} sessies ingetrokken.}} U bent uitgelogd.",
   "keyGenPassphrase": "Wachtwoordzin",
   "keyGenPassphraseHint": "Optioneel — beschermt de privésleutel",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Apparaat verwijderen",
   "deviceDeleteConfirmMessage": "Weet je zeker dat je \"{name}\" wilt verwijderen? Het apparaat wordt onmiddellijk uitgelogd.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Dit is je huidige apparaat. Je wordt onmiddellijk uitgelogd.",
   "deviceDeleteSuccess": "Apparaat verwijderd",
   "deviceDeletedCurrentLogout": "Huidig apparaat verwijderd. Je bent uitgelogd.",

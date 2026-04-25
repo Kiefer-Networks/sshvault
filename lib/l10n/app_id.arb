@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Pratinjau Resolved",
   "variableInsert": "Sisipkan",
   "tagServerCount": "{count, plural, =1{1 server} other{{count} server}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 sesi dicabut.} other{{count} sesi dicabut.}} Anda telah keluar.",
   "keyGenPassphrase": "Frasa Sandi",
   "keyGenPassphraseHint": "Opsional — melindungi kunci privat",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Hapus Perangkat",
   "deviceDeleteConfirmMessage": "Yakin ingin menghapus \"{name}\"? Perangkat akan segera keluar.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Ini adalah perangkat Anda saat ini. Anda akan segera keluar.",
   "deviceDeleteSuccess": "Perangkat dihapus",
   "deviceDeletedCurrentLogout": "Perangkat saat ini dihapus. Anda telah keluar.",

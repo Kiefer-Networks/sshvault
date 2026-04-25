@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Предпросмотр с подстановкой",
   "variableInsert": "Вставить",
   "tagServerCount": "{count, plural, =1{1 сервер} other{{count} серверов}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 сеанс отозван.} other{{count} сеансов отозвано.}} Вы вышли из аккаунта.",
   "keyGenPassphrase": "Парольная фраза",
   "keyGenPassphraseHint": "Необязательно — защищает закрытый ключ",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Удалить устройство",
   "deviceDeleteConfirmMessage": "Вы уверены, что хотите удалить \"{name}\"? Устройство будет немедленно отключено.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Это ваше текущее устройство. Вы будете немедленно отключены.",
   "deviceDeleteSuccess": "Устройство удалено",
   "deviceDeletedCurrentLogout": "Текущее устройство удалено. Вы были отключены.",

@@ -594,6 +594,7 @@
   "variablePreviewResolved": "Çözümlenmiş Önizleme",
   "variableInsert": "Ekle",
   "tagServerCount": "{count, plural, =1{1 sunucu} other{{count} sunucu}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 oturum iptal edildi.} other{{count} oturum iptal edildi.}} Çıkış yapıldı.",
   "keyGenPassphrase": "Parola",
   "keyGenPassphraseHint": "İsteğe bağlı — özel anahtarı korur",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "Cihazı Kaldır",
   "deviceDeleteConfirmMessage": "\"{name}\" cihazını kaldırmak istediğinizden emin misiniz? Cihaz hemen çıkış yapacak.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Bu mevcut cihazınız. Hemen çıkış yapılacak.",
   "deviceDeleteSuccess": "Cihaz kaldırıldı",
   "deviceDeletedCurrentLogout": "Mevcut cihaz kaldırıldı. Çıkış yapıldı.",

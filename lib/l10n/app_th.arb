@@ -594,6 +594,7 @@
   "variablePreviewResolved": "ตัวอย่างที่แก้ไขแล้ว",
   "variableInsert": "แทรก",
   "tagServerCount": "{count, plural, =1{1 เซิร์ฟเวอร์} other{{count} เซิร์ฟเวอร์}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{เพิกถอน 1 เซสชัน} other{เพิกถอน {count} เซสชัน}} คุณถูกออกจากระบบแล้ว",
   "keyGenPassphrase": "วลีรหัสผ่าน",
   "keyGenPassphraseHint": "ไม่บังคับ — ปกป้องคีย์ส่วนตัว",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "ลบอุปกรณ์",
   "deviceDeleteConfirmMessage": "คุณแน่ใจหรือไม่ว่าต้องการลบ \"{name}\"? อุปกรณ์จะถูกออกจากระบบทันที",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "นี่คืออุปกรณ์ปัจจุบันของคุณ คุณจะถูกออกจากระบบทันที",
   "deviceDeleteSuccess": "ลบอุปกรณ์แล้ว",
   "deviceDeletedCurrentLogout": "ลบอุปกรณ์ปัจจุบันแล้ว คุณออกจากระบบแล้ว",

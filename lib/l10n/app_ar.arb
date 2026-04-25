@@ -594,6 +594,7 @@
   "variablePreviewResolved": "معاينة محلولة",
   "variableInsert": "إدراج",
   "tagServerCount": "{count, plural, =1{خادم واحد} other{{count} خوادم}}",
+  "tagSnippetCount": "{count, plural, =1{1 snippet} other{{count} snippets}}",
   "logoutAllDevicesSuccessCount": "{count, plural, =1{تم إلغاء جلسة واحدة.} other{تم إلغاء {count} جلسات.}} تم تسجيل خروجك.",
   "keyGenPassphrase": "عبارة المرور",
   "keyGenPassphraseHint": "اختياري — يحمي المفتاح الخاص",
@@ -735,7 +736,13 @@
   "settingsLanguageHe": "עברית",
   "deviceDeleteConfirmTitle": "إزالة الجهاز",
   "deviceDeleteConfirmMessage": "هل أنت متأكد من إزالة \"{name}\"؟ سيتم تسجيل خروج الجهاز فوراً.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "هذا هو جهازك الحالي. سيتم تسجيل خروجك فوراً.",
   "deviceDeleteSuccess": "تم إزالة الجهاز",
   "deviceDeletedCurrentLogout": "تم إزالة الجهاز الحالي. تم تسجيل خروجك.",
