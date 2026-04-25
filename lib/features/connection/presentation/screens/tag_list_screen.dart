@@ -163,8 +163,10 @@ class _TagTile extends ConsumerWidget {
           title: Text(tag.name),
           subtitle: Builder(
             builder: (_) {
-              final serverCount = serverCountAsync.valueOrNull;
-              final snippetCount = snippetCountAsync.valueOrNull;
+              final serverCount = serverCountAsync.whenOrNull(data: (c) => c);
+              final snippetCount = snippetCountAsync.whenOrNull(
+                data: (c) => c,
+              );
               final parts = <String>[];
               if (serverCount != null) {
                 parts.add(l10n.tagServerCount(serverCount));
