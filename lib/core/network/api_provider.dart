@@ -4,15 +4,9 @@ import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/network/auth_interceptor.dart';
 import 'package:sshvault/core/network/pow_interceptor.dart';
 import 'package:sshvault/core/services/logging_service.dart';
-import 'package:sshvault/core/storage/database_provider.dart';
 import 'package:sshvault/core/storage/secure_storage_provider.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
-import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
-import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
-import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
-import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:sshvault/features/snippet/presentation/providers/snippet_providers.dart';
 
 export 'package:sshvault/core/storage/secure_storage_provider.dart';
 
@@ -47,27 +41,20 @@ final apiClientProvider = Provider<ApiClient>((ref) {
       storage,
       refreshDio,
       onAuthExpired: ({bool sessionRevoked = false}) async {
+        // Never auto-wipe local data on a remote 401. Local servers, keys,
+        // folders, tags and snippets are the user's data; losing them
+        // because the API rejected a refresh token (server hiccup, long
+        // offline, rotated session, etc.) is destructive and surprising.
+        //
+        // Tokens were already cleared by AuthInterceptor._handleAuthExpired,
+        // so the user is logged out and will be prompted to re-authenticate.
+        // The sync password and DEK are kept so re-login does not require
+        // re-entering the encryption passphrase.
         if (sessionRevoked) {
           LoggingService.instance.warning(
             'ApiProvider',
-            'Session revoked remotely — wiping all local data',
+            'Session revoked remotely — local data preserved, re-login required',
           );
-          await storage.clearAllData();
-          try {
-            final db = ref.read(databaseProvider);
-            await db.deleteAllData();
-          } catch (e) {
-            LoggingService.instance.error(
-              'ApiProvider',
-              'Failed to clear database: $e',
-            );
-          }
-          ref.invalidate(serverListProvider);
-          ref.invalidate(sshKeyListProvider);
-          ref.invalidate(folderListProvider);
-          ref.invalidate(tagListProvider);
-          ref.invalidate(snippetListProvider);
-          ref.invalidate(settingsProvider);
         }
         ref.invalidate(authProvider);
       },
