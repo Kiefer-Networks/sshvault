@@ -278,13 +278,11 @@ class ServerListScreen extends ConsumerWidget {
   /// existing match means we reuse the existing id and do not create a
   /// duplicate row.
   static Future<({Map<String, String> idByPath, int newlyImported})>
-      _importSshKeys(
-    WidgetRef ref,
-    List<SshConfigEntry> entries,
-  ) async {
+  _importSshKeys(WidgetRef ref, List<SshConfigEntry> entries) async {
     final keyNotifier = ref.read(sshKeyListProvider.notifier);
     final useCases = ref.read(sshKeyUseCasesProvider);
-    final home = Platform.environment['HOME'] ??
+    final home =
+        Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         '';
 
