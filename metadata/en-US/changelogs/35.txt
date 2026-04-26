@@ -1,0 +1,9 @@
+- Post-quantum SSH key exchange: mlkem768x25519-sha256 and sntrup761x25519-sha512@openssh.com (OpenSSH 9.9+ compatible) via the Open Quantum Safe liboqs library
+- Sync no longer resurrects deleted servers, folders, snippets, tags, or SSH keys: tombstones plus per-entity last-write-wins for renames and reorders
+- New connect dialog explains exactly which algorithm class (KEX, host key, cipher, MAC) failed when no overlap exists with the server, instead of a generic "authentication aborted"
+- System notifications on Linux and Windows; macOS already used the native notification center
+- Server list redesign: gradient folder headers with animated chevron, fixed grid view toggle, search moved into a dedicated FAB, active filter chips kept inline
+- 60+ new icons across finance, communication, storage, hardware, security and platform brands
+- Folder browser and snippet tiles fix layout shift on long names and a Connect-all button that crowded the row
+- Folder and tag count badges refresh immediately when a server or snippet is added — no app restart needed
+- Linux GTK header bar always shows minimize, maximize and close window controls regardless of theme

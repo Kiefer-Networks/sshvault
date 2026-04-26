@@ -1,0 +1,9 @@
+- Scambio chiavi SSH post-quantistico: mlkem768x25519-sha256 e sntrup761x25519-sha512@openssh.com (compatibile OpenSSH 9.9+) tramite la libreria Open Quantum Safe liboqs
+- La sincronizzazione non resuscita più server, cartelle, snippet, tag o chiavi SSH cancellati: tombstone più last-write-wins per entità per rinominazioni e riordini
+- La finestra di connessione indica esattamente quale classe di algoritmo (KEX, host key, cifratura, MAC) non ha intersezione con il server, anziché il generico "authentication aborted"
+- Notifiche di sistema su Linux e Windows; macOS usa già il centro notifiche nativo
+- Ridisegno della lista server: intestazioni di cartella con sfumatura e chevron animato, toggle griglia corretto, ricerca spostata in un FAB dedicato, chip dei filtri attivi in linea
+- 60+ nuove icone: finanza, comunicazione, archiviazione, hardware, sicurezza e brand di piattaforme
+- Esploratore cartelle e tile snippet: nomi lunghi e pulsante "Connetti tutto" non spostano più il layout
+- I conteggi su cartelle e tag si aggiornano subito all'aggiunta di un server o snippet — nessun riavvio
+- La barra GTK su Linux mostra sempre riduci, ingrandisci e chiudi, indipendentemente dal tema

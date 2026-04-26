@@ -1,0 +1,9 @@
+- Post-Quantum-SSH-Schlüsselaustausch: mlkem768x25519-sha256 und sntrup761x25519-sha512@openssh.com (kompatibel mit OpenSSH 9.9+) über die Open-Quantum-Safe-Bibliothek liboqs
+- Sync wiederbelebt keine gelöschten Server, Ordner, Snippets, Tags oder SSH-Schlüssel mehr: Tombstones plus per-Entity Last-Write-Wins für Umbenennungen und Sortierungen
+- Verbindungsdialog zeigt jetzt genau, welche Algorithmus-Klasse (KEX, Host-Key, Cipher, MAC) keinen gemeinsamen Nenner mit dem Server hat — statt allgemeinem "Authentication aborted"
+- System-Benachrichtigungen auf Linux und Windows; macOS nutzt das native Notification Center bereits
+- Serverliste neu: Ordner-Header mit Verlauf und animiertem Chevron, Grid-Ansicht-Toggle korrigiert, Suche in eigenen FAB ausgelagert, aktive Filter-Chips bleiben inline
+- 60+ neue Icons aus Finanzen, Kommunikation, Storage, Hardware, Security und Plattform-Brands
+- Ordner-Browser und Snippet-Kacheln: lange Namen und der "Alle verbinden"-Button verschieben das Layout nicht mehr
+- Ordner- und Tag-Zähler aktualisieren sofort beim Hinzufügen eines Servers oder Snippets — kein Neustart nötig
+- Linux GTK Header Bar zeigt jetzt immer Minimieren, Maximieren und Schließen, unabhängig vom Theme

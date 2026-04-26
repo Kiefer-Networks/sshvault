@@ -1,0 +1,9 @@
+- Intercambio de claves SSH post-cuántico: mlkem768x25519-sha256 y sntrup761x25519-sha512@openssh.com (compatible con OpenSSH 9.9+) mediante la biblioteca Open Quantum Safe liboqs
+- La sincronización ya no resucita servidores, carpetas, fragmentos, etiquetas ni claves SSH eliminados: tombstones y last-write-wins por entidad para renombrados y reordenaciones
+- El diálogo de conexión indica exactamente qué clase de algoritmo (KEX, host key, cifrado, MAC) no coincide con el servidor, en lugar del genérico "authentication aborted"
+- Notificaciones del sistema en Linux y Windows; macOS ya usaba el centro de notificaciones nativo
+- Rediseño de la lista de servidores: cabeceras de carpeta con degradado y chevron animado, conmutador de cuadrícula corregido, búsqueda movida a un FAB dedicado, chips de filtros activos en línea
+- 60+ iconos nuevos: finanzas, comunicación, almacenamiento, hardware, seguridad y marcas de plataformas
+- Explorador de carpetas y mosaicos de fragmentos: nombres largos y el botón "Conectar todo" ya no descolocan el diseño
+- Las insignias de conteo de carpetas y etiquetas se actualizan al instante al añadir un servidor o fragmento — sin reiniciar la app
+- La barra GTK de Linux muestra siempre minimizar, maximizar y cerrar, independientemente del tema

@@ -1,0 +1,9 @@
+- Échange de clés SSH post-quantique : mlkem768x25519-sha256 et sntrup761x25519-sha512@openssh.com (compatible OpenSSH 9.9+) via la bibliothèque Open Quantum Safe liboqs
+- La synchronisation ne ressuscite plus les serveurs, dossiers, snippets, étiquettes ou clés SSH supprimés : tombstones plus last-write-wins par entité pour les renommages et réordonnances
+- Le dialogue de connexion indique précisément quelle classe d'algorithme (KEX, clé hôte, chiffrement, MAC) n'a aucun recouvrement avec le serveur, au lieu d'un "authentication aborted" générique
+- Notifications système sous Linux et Windows ; macOS utilisait déjà le centre de notifications natif
+- Refonte de la liste des serveurs : entêtes de dossier avec dégradé et chevron animé, bascule grille corrigée, recherche déplacée vers un FAB dédié, puces de filtres actifs en ligne
+- 60+ nouvelles icônes : finance, communication, stockage, matériel, sécurité et marques de plateformes
+- Navigateur de dossiers et tuiles de snippets : les noms longs et le bouton "Tout connecter" ne décalent plus la mise en page
+- Les badges de comptage des dossiers et étiquettes se rafraîchissent immédiatement à l'ajout d'un serveur ou snippet — pas besoin de redémarrer
+- La barre GTK Linux affiche toujours réduire, agrandir et fermer, quel que soit le thème
