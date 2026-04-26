@@ -47,6 +47,11 @@ static void my_application_activate(GApplication* application) {
     gtk_widget_show(GTK_WIDGET(header_bar));
     gtk_header_bar_set_title(header_bar, "SSHVault");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);
+    // Force min / max / close buttons regardless of the GTK
+    // gtk-decoration-layout setting so users always get the expected window
+    // controls on Linux desktops (some themes default to close-only).
+    gtk_header_bar_set_decoration_layout(header_bar,
+                                         "icon:minimize,maximize,close");
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
   } else {
     gtk_window_set_title(window, "SSHVault");

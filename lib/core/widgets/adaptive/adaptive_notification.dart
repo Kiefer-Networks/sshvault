@@ -7,21 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
+bool get _supportsSystemNotification =>
+    Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
 /// Shows a platform-adaptive notification.
 ///
-/// Uses native macOS notifications on macOS, a Cupertino-style overlay toast
-/// on iOS, and a Material [SnackBar] on other platforms.
+/// Uses native system notifications on macOS, Linux, and Windows; a
+/// Cupertino-style overlay toast on iOS; and a Material [SnackBar] on Android.
 class AdaptiveNotification {
   AdaptiveNotification._();
 
   static final _plugin = FlutterLocalNotificationsPlugin();
-  static bool _macInitialized = false;
+  static bool _systemInitialized = false;
   static int _notificationId = 1000;
 
-  static Future<void> _ensureMacInitialized() async {
-    if (_macInitialized) return;
-    _macInitialized = true;
+  static Future<void> _ensureSystemInitialized() async {
+    if (_systemInitialized) return;
+    _systemInitialized = true;
 
     const macSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -32,15 +34,31 @@ class AdaptiveNotification {
       defaultPresentSound: false,
     );
 
-    await _plugin.initialize(
-      settings: const InitializationSettings(macOS: macSettings),
+    const linuxSettings = LinuxInitializationSettings(
+      defaultActionName: 'Open',
     );
 
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-          MacOSFlutterLocalNotificationsPlugin
-        >()
-        ?.requestPermissions(alert: true);
+    const windowsSettings = WindowsInitializationSettings(
+      appName: 'SSHVault',
+      appUserModelId: 'KieferNetworks.SSHVault',
+      guid: 'e7d9f3c4-1a2b-4c5d-9e6f-7a8b9c0d1e2f',
+    );
+
+    await _plugin.initialize(
+      settings: const InitializationSettings(
+        macOS: macSettings,
+        linux: linuxSettings,
+        windows: windowsSettings,
+      ),
+    );
+
+    if (Platform.isMacOS) {
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true);
+    }
   }
 
   static void show(
@@ -50,8 +68,8 @@ class AdaptiveNotification {
     String? actionLabel,
     VoidCallback? onAction,
   }) {
-    if (Platform.isMacOS) {
-      _showMacOSNotification(message);
+    if (_supportsSystemNotification) {
+      _showSystemNotification(message);
       return;
     }
 
@@ -77,13 +95,17 @@ class AdaptiveNotification {
     );
   }
 
-  static Future<void> _showMacOSNotification(String message) async {
-    await _ensureMacInitialized();
+  static Future<void> _showSystemNotification(String message) async {
+    await _ensureSystemInitialized();
 
-    const macDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: false,
-      presentSound: false,
+    const details = NotificationDetails(
+      macOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: false,
+        presentSound: false,
+      ),
+      linux: LinuxNotificationDetails(),
+      windows: WindowsNotificationDetails(),
     );
 
     final id = _notificationId++;
@@ -91,7 +113,7 @@ class AdaptiveNotification {
       id: id,
       title: 'SSHVault',
       body: message,
-      notificationDetails: const NotificationDetails(macOS: macDetails),
+      notificationDetails: details,
     );
   }
 
