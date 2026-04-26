@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.9.2" date="2026-04-26">
+      <description>
+        <p>Connect dialog now explains which SSH algorithm class (KEX, cipher, MAC, host key) the server requires when none overlap with the client. README documents supported algorithms.</p>
+      </description>
+    </release>
     <release version="1.9.1" date="2026-04-26">
       <description>
         <p>Fixes a widget test regression by routing native desktop notifications through defaultTargetPlatform; ships regenerated localization bindings.</p>
