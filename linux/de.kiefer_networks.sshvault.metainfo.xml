@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.10.4" date="2026-04-26">
+      <description>
+        <p>Android now uses the OS notification shade instead of in-app SnackBar overlays so messages no longer cover the UI. List padding above the FAB cluster bumped to 144 dp so the floating add/search buttons no longer sit on top of the last server tile's edit / info actions.</p>
+      </description>
+    </release>
     <release version="1.10.3" date="2026-04-26">
       <description>
         <p>Fixes hybrid post-quantum SSH KEX wire format and shared-secret derivation against OpenSSH 9.9+ servers — mlkem768x25519 client public-key blob now sends the KEM half before the X25519 half, server reply parsing matches, and the resulting shared secret is HASH(kem_ss || x25519_ss) (SHA-256 for ML-KEM, SHA-512 for sntrup761) before being string-encoded into the exchange hash. 1.10.2 negotiated the algorithm but failed at the first encrypted packet.</p>

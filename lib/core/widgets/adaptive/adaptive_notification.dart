@@ -11,9 +11,15 @@ bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
 // Use the framework target platform rather than dart:io's Platform so
 // flutter_test (which defaults to TargetPlatform.android) keeps the
 // in-app fallback path instead of touching the native plugin.
+//
+// Android joins the system-notification path so users see notifications
+// through the OS shade (matching iOS, macOS, Linux, Windows). The
+// previous in-app SnackBar overlapped UI surfaces; Android users
+// expressly asked for system notifications.
 bool get _supportsSystemNotification {
   final p = defaultTargetPlatform;
-  return p == TargetPlatform.macOS ||
+  return p == TargetPlatform.android ||
+      p == TargetPlatform.macOS ||
       p == TargetPlatform.linux ||
       p == TargetPlatform.windows;
 }
@@ -77,6 +83,15 @@ class AdaptiveNotification {
           >()
           ?.requestPermissions(alert: true);
     }
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      // Android 13+ (API 33+) requires runtime POST_NOTIFICATIONS.
+      // The manifest declaration alone is not sufficient.
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.requestNotificationsPermission();
+    }
   }
 
   static void show(
@@ -117,6 +132,15 @@ class AdaptiveNotification {
     await _ensureSystemInitialized();
 
     const details = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'sshvault_default',
+        'SSHVault',
+        channelDescription: 'Background events from SSHVault',
+        importance: Importance.defaultImportance,
+        priority: Priority.defaultPriority,
+        playSound: false,
+        onlyAlertOnce: true,
+      ),
       macOS: DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: false,

@@ -1,0 +1,2 @@
+- Android usa la barra de notificaciones del sistema en lugar de un SnackBar dentro de la app — los mensajes ya no tapan la interfaz. Se solicita el permiso POST_NOTIFICATIONS al primer inicio.
+- El relleno inferior de la lista de servidores aumenta de 80 a 144 dp para que los botones flotantes de búsqueda y añadir no se solapen con los iconos de editar/info de la última fila.

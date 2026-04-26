@@ -1,0 +1,2 @@
+- Android utilise désormais la barre de notifications système au lieu d'un SnackBar in-app — les messages ne masquent plus l'interface. La permission POST_NOTIFICATIONS est demandée au premier lancement.
+- Le rembourrage en bas de la liste des serveurs passe de 80 à 144 dp pour que les boutons flottants Recherche et Ajouter ne recouvrent plus les icônes Édition/Info de la dernière tuile.

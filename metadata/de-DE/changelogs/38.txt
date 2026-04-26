@@ -1,0 +1,2 @@
+- Android nutzt jetzt die System-Benachrichtigungsleiste statt In-App-SnackBar — Meldungen verdecken die Oberfläche nicht mehr. POST_NOTIFICATIONS-Berechtigung wird beim ersten Start angefragt.
+- Server-Listen-Padding unterm FAB von 80 auf 144 dp erhöht, damit Such- und Plus-Button nicht mehr über Edit-/Info-Icons der untersten Kachel liegen.

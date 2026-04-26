@@ -1,0 +1,2 @@
+- Android usa ora la barra notifiche di sistema invece di una SnackBar in-app — i messaggi non coprono più l'interfaccia. Il permesso POST_NOTIFICATIONS viene richiesto al primo avvio.
+- Il padding inferiore della lista server passa da 80 a 144 dp così i pulsanti flottanti Cerca e Aggiungi non si sovrappongono più alle icone Modifica/Info dell'ultima tile.

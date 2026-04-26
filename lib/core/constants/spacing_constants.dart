@@ -16,7 +16,11 @@ abstract final class Spacing {
   static const double xxl = 24;
   static const double xxxl = 28;
   static const double xxxxl = 32;
-  static const double fabClearance = 80;
+  // Bottom padding for scrollable lists so the floating action button
+  // cluster (search + add on the server list = 2 stacked FABs) does
+  // not sit on top of the last tile's trailing action buttons. ~144
+  // covers two 56px FABs + 16px gap + 16px safe area.
+  static const double fabClearance = 144;
 
   // --- common EdgeInsets ---
   static const EdgeInsets paddingAllLg = EdgeInsets.all(lg);

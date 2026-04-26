@@ -1,0 +1,2 @@
+- Android now uses the OS notification shade instead of an in-app SnackBar overlay, so connect messages no longer cover the UI. POST_NOTIFICATIONS permission is requested on first run.
+- Server list scroll padding above the FAB bumped from 80 to 144 dp so the floating Search and Add buttons no longer sit on top of the last server tile's edit / info icons.
