@@ -3972,6 +3972,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 server} other{{count} servers}}'**
   String tagServerCount(int count);
 
+  /// No description provided for @tagSnippetCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 snippet} other{{count} snippets}}'**
+  String tagSnippetCount(int count);
+
   /// No description provided for @logoutAllDevicesSuccessCount.
   ///
   /// In en, this message translates to:

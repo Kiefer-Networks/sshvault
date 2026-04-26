@@ -2092,6 +2092,17 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String tagSnippetCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count snippets',
+      one: '1 snippet',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String logoutAllDevicesSuccessCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
