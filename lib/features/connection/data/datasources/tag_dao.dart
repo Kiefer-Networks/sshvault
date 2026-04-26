@@ -19,9 +19,9 @@ class TagDao extends DatabaseAccessor<AppDatabase> with _$TagDaoMixin {
   Future<List<Tag>> getDeletedTags() =>
       (select(tags)..where((t) => t.deletedAt.isNotNull())).get();
 
-  Future<Tag?> getTagById(String id) => (select(tags)..where(
-    (t) => t.id.equals(id) & t.deletedAt.isNull(),
-  )).getSingleOrNull();
+  Future<Tag?> getTagById(String id) => (select(
+    tags,
+  )..where((t) => t.id.equals(id) & t.deletedAt.isNull())).getSingleOrNull();
 
   Future<Tag?> getTagByIdIncludingDeleted(String id) =>
       (select(tags)..where((t) => t.id.equals(id))).getSingleOrNull();
@@ -46,7 +46,11 @@ class TagDao extends DatabaseAccessor<AppDatabase> with _$TagDaoMixin {
     return (delete(tags)..where((t) => t.id.equals(id))).go();
   }
 
-  Future<int> pruneTombstones(DateTime olderThan) => (delete(tags)..where(
-    (t) => t.deletedAt.isNotNull() & t.deletedAt.isSmallerThanValue(olderThan),
-  )).go();
+  Future<int> pruneTombstones(DateTime olderThan) =>
+      (delete(tags)..where(
+            (t) =>
+                t.deletedAt.isNotNull() &
+                t.deletedAt.isSmallerThanValue(olderThan),
+          ))
+          .go();
 }

@@ -335,10 +335,12 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     if (strategy == ImportConflictStrategy.skip) return false;
     if (strategy == ImportConflictStrategy.rename) return true;
 
-    final localClock = localDeletedAt != null && localDeletedAt.isAfter(localUpdatedAt)
+    final localClock =
+        localDeletedAt != null && localDeletedAt.isAfter(localUpdatedAt)
         ? localDeletedAt
         : localUpdatedAt;
-    final remoteClock = remoteDeletedAt != null && remoteDeletedAt.isAfter(remoteUpdatedAt)
+    final remoteClock =
+        remoteDeletedAt != null && remoteDeletedAt.isAfter(remoteUpdatedAt)
         ? remoteDeletedAt
         : remoteUpdatedAt;
     return remoteClock.isAfter(localClock);

@@ -25,18 +25,16 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
   Future<List<Snippet>> getDeletedSnippets() =>
       (select(snippets)..where((s) => s.deletedAt.isNotNull())).get();
 
-  Future<Snippet?> getSnippetById(String id) => (select(snippets)..where(
-    (s) => s.id.equals(id) & s.deletedAt.isNull(),
-  )).getSingleOrNull();
+  Future<Snippet?> getSnippetById(String id) => (select(
+    snippets,
+  )..where((s) => s.id.equals(id) & s.deletedAt.isNull())).getSingleOrNull();
 
   Future<Snippet?> getSnippetByIdIncludingDeleted(String id) =>
       (select(snippets)..where((s) => s.id.equals(id))).getSingleOrNull();
 
   Future<List<Snippet>> getSnippetsByGroupId(String groupId) =>
       (select(snippets)
-            ..where(
-              (s) => s.groupId.equals(groupId) & s.deletedAt.isNull(),
-            )
+            ..where((s) => s.groupId.equals(groupId) & s.deletedAt.isNull())
             ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
           .get();
 
@@ -109,9 +107,11 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
 
   Future<int> pruneTombstones(DateTime olderThan) async {
     return (delete(snippets)..where(
-      (s) =>
-          s.deletedAt.isNotNull() & s.deletedAt.isSmallerThanValue(olderThan),
-    )).go();
+          (s) =>
+              s.deletedAt.isNotNull() &
+              s.deletedAt.isSmallerThanValue(olderThan),
+        ))
+        .go();
   }
 
   Future<List<Tag>> getTagsForSnippet(String snippetId) async {

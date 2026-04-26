@@ -17,32 +17,27 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
       (select(servers)..where((s) => s.deletedAt.isNull())).get();
 
   /// Includes tombstones — used by the sync layer to push deletions.
-  Future<List<Server>> getAllServersIncludingDeleted() =>
-      select(servers).get();
+  Future<List<Server>> getAllServersIncludingDeleted() => select(servers).get();
 
   Future<List<Server>> getDeletedServers() =>
       (select(servers)..where((s) => s.deletedAt.isNotNull())).get();
 
-  Future<Server?> getServerById(String id) => (select(servers)..where(
-    (s) => s.id.equals(id) & s.deletedAt.isNull(),
-  )).getSingleOrNull();
+  Future<Server?> getServerById(String id) => (select(
+    servers,
+  )..where((s) => s.id.equals(id) & s.deletedAt.isNull())).getSingleOrNull();
 
   /// Returns the row even if soft-deleted. The sync layer needs to see
   /// tombstones to apply LWW correctly.
   Future<Server?> getServerByIdIncludingDeleted(String id) =>
       (select(servers)..where((s) => s.id.equals(id))).getSingleOrNull();
 
-  Future<List<Server>> getServersByGroupId(String groupId) =>
-      (select(servers)..where(
-            (s) => s.groupId.equals(groupId) & s.deletedAt.isNull(),
-          ))
-          .get();
+  Future<List<Server>> getServersByGroupId(String groupId) => (select(
+    servers,
+  )..where((s) => s.groupId.equals(groupId) & s.deletedAt.isNull())).get();
 
-  Future<List<Server>> getServersBySshKeyId(String sshKeyId) =>
-      (select(servers)..where(
-            (s) => s.sshKeyId.equals(sshKeyId) & s.deletedAt.isNull(),
-          ))
-          .get();
+  Future<List<Server>> getServersBySshKeyId(String sshKeyId) => (select(
+    servers,
+  )..where((s) => s.sshKeyId.equals(sshKeyId) & s.deletedAt.isNull())).get();
 
   Future<List<Server>> searchServers(String query) {
     final escaped = _escapeLike(query);
@@ -128,9 +123,13 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
       (delete(servers)..where((s) => s.id.equals(id))).go();
 
   /// Purges tombstones older than [olderThan]. Returns purged row count.
-  Future<int> pruneTombstones(DateTime olderThan) => (delete(servers)..where(
-    (s) => s.deletedAt.isNotNull() & s.deletedAt.isSmallerThanValue(olderThan),
-  )).go();
+  Future<int> pruneTombstones(DateTime olderThan) =>
+      (delete(servers)..where(
+            (s) =>
+                s.deletedAt.isNotNull() &
+                s.deletedAt.isSmallerThanValue(olderThan),
+          ))
+          .go();
 
   Future<void> setServerTags(String serverId, List<String> tagIds) async {
     await (delete(
@@ -164,17 +163,13 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
 
   Future<List<Server>> getFavoriteServers() =>
       (select(servers)
-            ..where(
-              (s) => s.isFavorite.equals(true) & s.deletedAt.isNull(),
-            )
+            ..where((s) => s.isFavorite.equals(true) & s.deletedAt.isNull())
             ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
           .get();
 
   Future<List<Server>> getRecentServers({int limit = 5}) =>
       (select(servers)
-            ..where(
-              (s) => s.lastConnectedAt.isNotNull() & s.deletedAt.isNull(),
-            )
+            ..where((s) => s.lastConnectedAt.isNotNull() & s.deletedAt.isNull())
             ..orderBy([(s) => OrderingTerm.desc(s.lastConnectedAt)])
             ..limit(limit))
           .get();

@@ -379,8 +379,7 @@ class ServerListScreen extends ConsumerWidget {
     // Folder grouping only makes sense for the list layout. When the user
     // picks the grid view we always show a flat grid so the toggle has a
     // visible effect even without an active filter.
-    final useGrouped =
-        viewMode == ViewMode.list && !_hasActiveFilter(filter);
+    final useGrouped = viewMode == ViewMode.list && !_hasActiveFilter(filter);
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -825,10 +824,7 @@ class _FolderSectionHeader extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               child: Row(
                 children: [
                   Container(

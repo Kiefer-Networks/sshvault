@@ -11,15 +11,14 @@ class SshKeyDao extends DatabaseAccessor<AppDatabase> with _$SshKeyDaoMixin {
   Future<List<SshKey>> getAllSshKeys() =>
       (select(sshKeys)..where((k) => k.deletedAt.isNull())).get();
 
-  Future<List<SshKey>> getAllSshKeysIncludingDeleted() =>
-      select(sshKeys).get();
+  Future<List<SshKey>> getAllSshKeysIncludingDeleted() => select(sshKeys).get();
 
   Future<List<SshKey>> getDeletedSshKeys() =>
       (select(sshKeys)..where((k) => k.deletedAt.isNotNull())).get();
 
-  Future<SshKey?> getSshKeyById(String id) => (select(sshKeys)..where(
-    (k) => k.id.equals(id) & k.deletedAt.isNull(),
-  )).getSingleOrNull();
+  Future<SshKey?> getSshKeyById(String id) => (select(
+    sshKeys,
+  )..where((k) => k.id.equals(id) & k.deletedAt.isNull())).getSingleOrNull();
 
   Future<SshKey?> getSshKeyByIdIncludingDeleted(String id) =>
       (select(sshKeys)..where((k) => k.id.equals(id))).getSingleOrNull();
@@ -28,8 +27,7 @@ class SshKeyDao extends DatabaseAccessor<AppDatabase> with _$SshKeyDaoMixin {
     final rows =
         await (select(sshKeys)
               ..where(
-                (k) =>
-                    k.fingerprint.equals(fingerprint) & k.deletedAt.isNull(),
+                (k) => k.fingerprint.equals(fingerprint) & k.deletedAt.isNull(),
               )
               ..limit(1))
             .get();
@@ -62,15 +60,17 @@ class SshKeyDao extends DatabaseAccessor<AppDatabase> with _$SshKeyDaoMixin {
   Future<int> hardDeleteSshKeyById(String id) =>
       (delete(sshKeys)..where((k) => k.id.equals(id))).go();
 
-  Future<int> pruneTombstones(DateTime olderThan) => (delete(sshKeys)..where(
-    (k) => k.deletedAt.isNotNull() & k.deletedAt.isSmallerThanValue(olderThan),
-  )).go();
-
-  Future<List<Server>> getServersUsingSshKey(String sshKeyId) =>
-      (select(servers)..where(
-            (s) => s.sshKeyId.equals(sshKeyId) & s.deletedAt.isNull(),
+  Future<int> pruneTombstones(DateTime olderThan) =>
+      (delete(sshKeys)..where(
+            (k) =>
+                k.deletedAt.isNotNull() &
+                k.deletedAt.isSmallerThanValue(olderThan),
           ))
-          .get();
+          .go();
+
+  Future<List<Server>> getServersUsingSshKey(String sshKeyId) => (select(
+    servers,
+  )..where((s) => s.sshKeyId.equals(sshKeyId) & s.deletedAt.isNull())).get();
 
   Future<int> countServersUsingSshKey(String sshKeyId) async {
     final count = countAll();

@@ -174,8 +174,8 @@ class SshService {
       _log.error(
         _tag,
         'Algorithm negotiation failed (${e.layer}) for ${server.hostname}:${server.port}. '
-            'Server offered: ${e.remote.join(', ')}. '
-            'Client supports: ${e.supported.join(', ')}.',
+        'Server offered: ${e.remote.join(', ')}. '
+        'Client supports: ${e.supported.join(', ')}.',
       );
       return Err(
         SshConnectionFailure(
