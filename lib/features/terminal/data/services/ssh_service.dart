@@ -170,6 +170,22 @@ class SshService {
         stderrSubscription: stderrSub,
         jumpHostClient: jumpHostClient,
       ));
+    } on SSHAlgorithmNegotiationError catch (e) {
+      _log.error(
+        _tag,
+        'Algorithm negotiation failed (${e.layer}) for ${server.hostname}:${server.port}. '
+            'Server offered: ${e.remote.join(', ')}. '
+            'Client supports: ${e.supported.join(', ')}.',
+      );
+      return Err(
+        SshConnectionFailure(
+          'SSHVault and the server share no common ${e.layer} algorithm. '
+          'The server requires ${e.remote.join(', ')}, '
+          'but this client only supports ${e.supported.join(', ')}. '
+          'Adjust the server configuration or wait for client support to land.',
+          cause: e,
+        ),
+      );
     } on SSHAuthFailError catch (e) {
       _log.error(
         _tag,

@@ -997,24 +997,48 @@ class SSHTransport {
     );
 
     if (_kexType == null) {
-      throw StateError('No matching key exchange algorithm');
+      throw SSHAlgorithmNegotiationError(
+        layer: 'key exchange',
+        supported: algorithms.kex.toNameList(),
+        remote: message.kexAlgorithms,
+      );
     }
     if (_hostkeyType == null) {
-      throw StateError('No matching host key algorithm');
+      throw SSHAlgorithmNegotiationError(
+        layer: 'host key',
+        supported: algorithms.hostkey.toNameList(),
+        remote: message.serverHostKeyAlgorithms,
+      );
     }
     if (_clientCipherType == null) {
-      throw StateError('No matching client cipher algorithm');
+      throw SSHAlgorithmNegotiationError(
+        layer: 'cipher (client to server)',
+        supported: algorithms.cipher.toNameList(),
+        remote: message.encryptionClientToServer,
+      );
     }
     if (_serverCipherType == null) {
-      throw StateError('No matching server cipher algorithm');
+      throw SSHAlgorithmNegotiationError(
+        layer: 'cipher (server to client)',
+        supported: algorithms.cipher.toNameList(),
+        remote: message.encryptionServerToClient,
+      );
     }
     // AEAD ciphers carry their own integrity check, so a missing MAC overlap
     // is fine when both sides agreed on an AEAD cipher.
     if (_clientMacType == null && !_clientCipherType!.isAead) {
-      throw StateError('No matching client MAC algorithm');
+      throw SSHAlgorithmNegotiationError(
+        layer: 'MAC (client to server)',
+        supported: algorithms.mac.toNameList(),
+        remote: message.macClientToServer,
+      );
     }
     if (_serverMacType == null && !_serverCipherType!.isAead) {
-      throw StateError('No matching server MAC algorithm');
+      throw SSHAlgorithmNegotiationError(
+        layer: 'MAC (server to client)',
+        supported: algorithms.mac.toNameList(),
+        remote: message.macServerToClient,
+      );
     }
 
     printDebug?.call('SSHTransport._kexType: $_kexType');

@@ -109,6 +109,22 @@ You can install SSHVault directly from GitHub releases using [Obtainium](https:/
 
 Weak algorithms (DH-group1, CBC ciphers, HMAC-MD5/SHA1, ssh-rsa) are excluded from default negotiation.
 
+### Supported SSH algorithms
+
+The bundled hardened `dartssh2` fork advertises only modern algorithms.
+Connections to servers that require something not on this list will fail
+during the SSH transport handshake (the connect dialog reports which
+class — KEX, cipher, MAC, host key — was rejected).
+
+| Layer | Supported (in negotiation order) |
+|-------|----------------------------------|
+| Key exchange | `curve25519-sha256@libssh.org`, `ecdh-sha2-nistp521`, `ecdh-sha2-nistp384`, `ecdh-sha2-nistp256`, `diffie-hellman-group-exchange-sha256`, `diffie-hellman-group14-sha256` |
+| Host key | `ssh-ed25519`, `rsa-sha2-512`, `rsa-sha2-256`, `ecdsa-sha2-nistp521`, `ecdsa-sha2-nistp384`, `ecdsa-sha2-nistp256` |
+| Cipher | `chacha20-poly1305@openssh.com`, `aes256-gcm@openssh.com`, `aes128-gcm@openssh.com`, `aes256-ctr`, `aes128-ctr` |
+| MAC | `hmac-sha2-256-etm@openssh.com`, `hmac-sha2-512-etm@openssh.com`, `hmac-sha2-256`, `hmac-sha2-512`, `hmac-sha2-256-96`, `hmac-sha2-512-96` (ignored when an AEAD cipher is selected) |
+
+> **Post-quantum KEX (`mlkem768x25519-sha256`, `sntrup761x25519-sha512@openssh.com`) is not yet supported** and is on the roadmap. A server hardened to PQ-only key exchange cannot be reached from this client until ML-KEM-768 / Streamlined NTRU Prime support lands in a future release.
+
 ## Architecture
 
 - **Client:** Flutter 3.11+ / Dart 3.11+
