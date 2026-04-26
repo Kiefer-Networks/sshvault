@@ -216,8 +216,7 @@ class SSHChaCha20Poly1305Cipher extends SSHAeadCipher {
     final nonce = _seqNonce(seq);
     final polyKey = _poly1305Key(nonce);
 
-    final tagInput =
-        Uint8List(packetLengthBytes.length + encryptedBody.length);
+    final tagInput = Uint8List(packetLengthBytes.length + encryptedBody.length);
     tagInput.setRange(0, packetLengthBytes.length, packetLengthBytes);
     tagInput.setRange(
       packetLengthBytes.length,
@@ -269,15 +268,16 @@ class SSHAesGcmCipher extends SSHAeadCipher {
   @override
   void init(Uint8List key, Uint8List iv) {
     if (key.length != keySize) {
-      throw ArgumentError.value(key, 'key', 'aes-gcm key must be $keySize bytes');
+      throw ArgumentError.value(
+          key, 'key', 'aes-gcm key must be $keySize bytes');
     }
     if (iv.length != 12) {
       throw ArgumentError.value(iv, 'iv', 'aes-gcm needs 12-byte IV');
     }
     _key = Uint8List.fromList(key);
     _fixedIv = Uint8List.fromList(iv.sublist(0, 4));
-    final initialCounter = ByteData.sublistView(iv, 4, 12)
-        .getUint64(0, Endian.big);
+    final initialCounter =
+        ByteData.sublistView(iv, 4, 12).getUint64(0, Endian.big);
     _counter = BigInt.from(initialCounter).toUnsigned(64);
   }
 

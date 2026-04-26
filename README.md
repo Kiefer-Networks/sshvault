@@ -118,12 +118,12 @@ class — KEX, cipher, MAC, host key — was rejected).
 
 | Layer | Supported (in negotiation order) |
 |-------|----------------------------------|
-| Key exchange | `curve25519-sha256@libssh.org`, `ecdh-sha2-nistp521`, `ecdh-sha2-nistp384`, `ecdh-sha2-nistp256`, `diffie-hellman-group-exchange-sha256`, `diffie-hellman-group14-sha256` |
+| Key exchange | `mlkem768x25519-sha256`, `sntrup761x25519-sha512@openssh.com`, `curve25519-sha256@libssh.org`, `ecdh-sha2-nistp521`, `ecdh-sha2-nistp384`, `ecdh-sha2-nistp256`, `diffie-hellman-group-exchange-sha256`, `diffie-hellman-group14-sha256` |
 | Host key | `ssh-ed25519`, `rsa-sha2-512`, `rsa-sha2-256`, `ecdsa-sha2-nistp521`, `ecdsa-sha2-nistp384`, `ecdsa-sha2-nistp256` |
 | Cipher | `chacha20-poly1305@openssh.com`, `aes256-gcm@openssh.com`, `aes128-gcm@openssh.com`, `aes256-ctr`, `aes128-ctr` |
 | MAC | `hmac-sha2-256-etm@openssh.com`, `hmac-sha2-512-etm@openssh.com`, `hmac-sha2-256`, `hmac-sha2-512`, `hmac-sha2-256-96`, `hmac-sha2-512-96` (ignored when an AEAD cipher is selected) |
 
-> **Post-quantum KEX (`mlkem768x25519-sha256`, `sntrup761x25519-sha512@openssh.com`) is not yet supported** and is on the roadmap. A server hardened to PQ-only key exchange cannot be reached from this client until ML-KEM-768 / Streamlined NTRU Prime support lands in a future release.
+The two hybrid post-quantum KEX algorithms (`mlkem768x25519-sha256`, `sntrup761x25519-sha512@openssh.com`) match the OpenSSH 9.9+ default order and are advertised first. The KEMs come from the [Open Quantum Safe](https://github.com/open-quantum-safe/liboqs) `liboqs` library bundled per platform via Dart FFI; on builds where `liboqs` is not present (e.g. Flutter web) the names are stripped from the advertised list at runtime and the client falls back to classical KEX without any error.
 
 ## Architecture
 

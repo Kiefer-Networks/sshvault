@@ -44,6 +44,28 @@ modules:
         url: https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.4.tar.xz
         sha256: 163d08d783be6d4ab9a979ceb5a4fecbc1d9660d3c34168c581301cd53912b20
 
+  - name: liboqs
+    # Open Quantum Safe — provides ML-KEM-768 (FIPS 203) and sntrup761
+    # for the hybrid post-quantum SSH key exchanges advertised in
+    # OpenSSH 9.9+. Built from source so the resulting .so is bundled
+    # inside the Flatpak runtime alongside SSHVault.
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DOQS_BUILD_ONLY_LIB=ON
+      - -DOQS_DIST_BUILD=ON
+      - -DBUILD_SHARED_LIBS=ON
+      - -DOQS_USE_OPENSSL=OFF
+      - --libdir=lib
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+      - /lib/cmake
+    sources:
+      - type: archive
+        url: https://github.com/open-quantum-safe/liboqs/archive/refs/tags/0.10.1.tar.gz
+        sha256: c33cc3fb3a3f06be08e1e54076d7b0a32fc8c4720ed4e07845d8e6e21ac9a785
+
   - name: sshvault
     buildsystem: simple
     build-commands:

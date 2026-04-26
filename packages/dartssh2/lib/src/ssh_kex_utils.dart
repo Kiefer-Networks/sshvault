@@ -40,8 +40,15 @@ abstract class SSHKexUtils {
     required Uint8List hostKey,
     required Uint8List clientPublicKey,
     required Uint8List serverPublicKey,
-    required BigInt sharedSecret,
+    BigInt? sharedSecret,
+    Uint8List? sharedSecretBytes,
   }) {
+    assert(
+      (sharedSecret == null) ^ (sharedSecretBytes == null),
+      'Exactly one of sharedSecret (mpint) or sharedSecretBytes (raw) '
+      'must be provided.',
+    );
+
     final writer = SSHMessageWriter();
     writer.writeUtf8(clientVersion);
     writer.writeUtf8(serverVersion);
@@ -59,7 +66,14 @@ abstract class SSHKexUtils {
 
     writer.writeString(clientPublicKey);
     writer.writeString(serverPublicKey);
-    writer.writeMpint(sharedSecret);
+    if (sharedSecretBytes != null) {
+      // Hybrid PQ KEX: shared secret encoded as a string (uint32 length
+      // prefix + raw bytes), per OpenSSH PROTOCOL.mlkem768x25519 and
+      // PROTOCOL.sntrup761x25519. Differs from classical KEX's mpint.
+      writer.writeString(sharedSecretBytes);
+    } else {
+      writer.writeMpint(sharedSecret!);
+    }
 
     final message = writer.takeBytes();
     digest.update(message, 0, message.length);
@@ -71,17 +85,26 @@ abstract class SSHKexUtils {
   /// Derive various keys from the exchange hash.
   static Uint8List deriveKey({
     required Digest digest,
-    required BigInt sharedSecret,
+    BigInt? sharedSecret,
+    Uint8List? sharedSecretBytes,
     required Uint8List exchangeHash,
     required SSHDeriveKeyType keyType,
     required Uint8List sessionId,
     required int keySize,
   }) {
+    assert(
+      (sharedSecret == null) ^ (sharedSecretBytes == null),
+      'Exactly one of sharedSecret or sharedSecretBytes must be provided.',
+    );
     final result = BytesBuilder(copy: false);
 
     while (result.length < keySize) {
       final writer = SSHMessageWriter();
-      writer.writeMpint(sharedSecret);
+      if (sharedSecretBytes != null) {
+        writer.writeString(sharedSecretBytes);
+      } else {
+        writer.writeMpint(sharedSecret!);
+      }
       writer.writeBytes(exchangeHash);
       if (result.isEmpty) {
         writer.writeUint8(keyType.magicChar);
@@ -91,7 +114,6 @@ abstract class SSHKexUtils {
       }
 
       final dataToHash = writer.takeBytes();
-      // final digester = SHA256Digest();
       digest.update(dataToHash, 0, dataToHash.length);
       final hash = Uint8List(digest.digestSize);
       digest.doFinal(hash, 0);

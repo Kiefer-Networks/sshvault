@@ -4,6 +4,7 @@ import 'dart:math' show Random, max;
 import 'dart:typed_data';
 
 import 'package:dartssh2/src/algorithm/ssh_aead_cipher.dart';
+import 'package:dartssh2/src/kex/kex_hybrid_pq.dart' as hybrid_pq;
 import 'package:dartssh2/src/hostkey/hostkey_ecdsa.dart';
 import 'package:dartssh2/src/hostkey/hostkey_rsa.dart';
 import 'package:dartssh2/src/kex/kex_dh.dart';
@@ -99,6 +100,10 @@ class SSHTransport {
     this.onPacket,
     this.disableHostkeyVerification = false,
   }) {
+    // Lazily register the hybrid PQ KEX factories so the transport's
+    // KEX-type switch can construct them without leaking `dart:ffi`
+    // through the rest of the library.
+    hybrid_pq.registerHybridKexFactories();
     _initSocket();
     _startHandshake();
   }
@@ -159,8 +164,16 @@ class SSHTransport {
   var _hostkeyVerified = false;
 
   /// Shared secret derived from the key exchange process. Kept to derive the
-  /// cipher IV, cipher key and MAC key.
+  /// cipher IV, cipher key and MAC key. `null` when a hybrid PQ KEX was
+  /// negotiated — in that case [_sharedSecretBytes] holds the raw secret.
   BigInt? _sharedSecret;
+
+  /// Raw shared-secret bytes for hybrid PQ KEX (`mlkem768x25519-sha256`,
+  /// `sntrup761x25519-sha512@openssh.com`). Mutually exclusive with
+  /// [_sharedSecret] — those KEXs encode the secret into the exchange
+  /// hash and key-derivation buffer as an SSH `string` instead of an
+  /// `mpint`.
+  Uint8List? _sharedSecretBytes;
 
   /// A [BlockCipher] to encrypt data sent to the other side.
   /// `null` when an AEAD cipher is in use (see [_localAead]).
@@ -471,7 +484,8 @@ class SSHTransport {
     final lengthPrefix = _buffer.view(0, 4);
     final int packetLength;
     if (aead.plaintextLength) {
-      packetLength = ByteData.sublistView(lengthPrefix).getUint32(0, Endian.big);
+      packetLength =
+          ByteData.sublistView(lengthPrefix).getUint32(0, Endian.big);
     } else {
       packetLength = aead.decryptPacketLength(
         _remotePacketSN.value,
@@ -485,7 +499,8 @@ class SSHTransport {
     if (_buffer.length < total) return null;
 
     final encryptedBody = Uint8List.fromList(_buffer.view(4, packetLength));
-    final tag = Uint8List.fromList(_buffer.view(4 + packetLength, aead.tagSize));
+    final tag =
+        Uint8List.fromList(_buffer.view(4 + packetLength, aead.tagSize));
 
     final plaintext = aead.openPacket(
       _remotePacketSN.value,
@@ -787,7 +802,8 @@ class SSHTransport {
   Uint8List _deriveKey(SSHDeriveKeyType keyType, int keySize) {
     return SSHKexUtils.deriveKey(
       digest: _kexType!.createDigest(),
-      sharedSecret: _sharedSecret!,
+      sharedSecret: _sharedSecretBytes == null ? _sharedSecret : null,
+      sharedSecretBytes: _sharedSecretBytes,
       exchangeHash: _exchangeHash!,
       keyType: keyType,
       sessionId: _sessionId!,
@@ -857,8 +873,7 @@ class SSHTransport {
     _sentKexInit = true;
 
     final message = SSH_Message_KexInit(
-      kexAlgorithms: algorithms.kex.toNameList(),
-      // kexAlgorithms: ['curve25519-sha256'],
+      kexAlgorithms: hybrid_pq.filterAvailableKex(algorithms.kex.toNameList()),
       serverHostKeyAlgorithms: algorithms.hostkey.toNameList(),
       encryptionClientToServer: algorithms.cipher.toNameList(),
       encryptionServerToClient: algorithms.cipher.toNameList(),
@@ -886,6 +901,8 @@ class SSHTransport {
 
     if (kex is SSHKexDH) {
       message = SSH_Message_KexDH_Init(e: kex.e);
+    } else if (kex is SSHKexHybrid) {
+      message = SSH_Message_KexECDH_Init(kex.publicKey);
     } else if (kex is SSHKexECDH) {
       message = SSH_Message_KexECDH_Init(kex.publicKey);
     } else {
@@ -1072,6 +1089,12 @@ class SSHTransport {
       case SSHKexType.dhGexSha256:
         if (isClient) _sendKexDHGexRequest();
         return;
+      case SSHKexType.mlkem768x25519Sha256:
+        _kex = createMlkem768X25519();
+        break;
+      case SSHKexType.sntrup761x25519Sha512:
+        _kex = createSntrup761X25519();
+        break;
       default:
         throw UnimplementedError('$_kexType');
     }
@@ -1107,7 +1130,8 @@ class SSHTransport {
     late Uint8List hostSignature;
     late Uint8List serverKexKey;
     late Uint8List clientKexKey;
-    late BigInt sharedSecret;
+    BigInt? sharedSecret;
+    Uint8List? sharedSecretBytes;
 
     if (kex is SSHKexDH) {
       final message = kexType.isGroupExchange
@@ -1119,6 +1143,17 @@ class SSHTransport {
       serverKexKey = encodeBigInt(message.f);
       clientKexKey = encodeBigInt(kex.e);
       sharedSecret = kex.computeSecret(message.f);
+    } else if (kex is SSHKexHybrid) {
+      // Hybrid PQ KEX reuses SSH_MSG_KEX_ECDH_REPLY framing — server
+      // sends its concatenated public-key/ciphertext blob in the same
+      // field the classical ECDH reply would carry.
+      final message = SSH_Message_KexECDH_Reply.decode(payload);
+      printTrace?.call('<- $socket: $message');
+      hostkey = message.hostPublicKey;
+      hostSignature = message.signature;
+      serverKexKey = message.ecdhPublicKey;
+      clientKexKey = kex.publicKey;
+      sharedSecretBytes = kex.computeSecretBytes(message.ecdhPublicKey);
     } else if (kex is SSHKexECDH) {
       final message = SSH_Message_KexECDH_Reply.decode(payload);
       printTrace?.call('<- $socket: $message');
@@ -1142,6 +1177,7 @@ class SSHTransport {
       clientPublicKey: clientKexKey,
       serverPublicKey: serverKexKey,
       sharedSecret: sharedSecret,
+      sharedSecretBytes: sharedSecretBytes,
     );
 
     if (!disableHostkeyVerification) {
@@ -1156,6 +1192,7 @@ class SSHTransport {
     _exchangeHash = exchangeHash;
     _sessionId ??= exchangeHash;
     _sharedSecret = sharedSecret;
+    _sharedSecretBytes = sharedSecretBytes;
 
     final fingerprint = SHA256Digest().process(hostkey);
 

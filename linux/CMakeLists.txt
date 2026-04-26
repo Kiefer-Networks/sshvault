@@ -54,6 +54,28 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
 
+# Optional: discover liboqs via pkg-config so the post-quantum SSH KEX
+# (mlkem768x25519, sntrup761x25519) is usable on systems where the host
+# already provides liboqs (Flatpak builds the module from source instead).
+# When present, copy its .so into the bundle's lib/ next to the runner
+# so dart:ffi's DynamicLibrary.open('liboqs.so') resolves at runtime.
+pkg_check_modules(LIBOQS liboqs)
+if(LIBOQS_FOUND)
+  message(STATUS "Found liboqs ${LIBOQS_VERSION} — bundling for PQ KEX")
+  foreach(lib_dir ${LIBOQS_LIBRARY_DIRS})
+    file(GLOB liboqs_so "${lib_dir}/liboqs.so*")
+    foreach(found ${liboqs_so})
+      install(FILES "${found}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
+        COMPONENT Runtime)
+    endforeach()
+  endforeach()
+else()
+  message(STATUS "liboqs not found via pkg-config — post-quantum KEX "
+                 "will be unavailable on this build (Flatpak builds bundle "
+                 "their own copy via the manifest module)")
+endif()
+
 # Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 

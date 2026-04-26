@@ -68,6 +68,52 @@ jobs:
 
       - run: flutter pub get
 
+      # Build liboqs for each Android ABI so the post-quantum SSH KEX
+      # advertised by OpenSSH 9.9+ servers can be negotiated. The
+      # resulting .so files land under android/app/src/main/jniLibs/<abi>/
+      # where Gradle picks them up automatically.
+      - name: Cache liboqs (Android)
+        id: cache-liboqs-android
+        uses: actions/cache@v4
+        with:
+          path: android/app/src/main/jniLibs
+          key: liboqs-0.10.1-android-multiabi-r27
+
+      - name: Set up Android NDK
+        if: steps.cache-liboqs-android.outputs.cache-hit != 'true'
+        id: setup-ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r27c
+
+      - name: Build liboqs (Android NDK)
+        if: steps.cache-liboqs-android.outputs.cache-hit != 'true'
+        env:
+          ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
+          LIBOQS_VERSION: '0.10.1'
+        run: |
+          set -euo pipefail
+          curl -L "https://github.com/open-quantum-safe/liboqs/archive/refs/tags/${LIBOQS_VERSION}.tar.gz" -o liboqs.tar.gz
+          tar xf liboqs.tar.gz
+          cd "liboqs-${LIBOQS_VERSION}"
+          for pair in arm64-v8a:aarch64-linux-android armeabi-v7a:armv7a-linux-androideabi x86_64:x86_64-linux-android; do
+            android_abi="${pair%%:*}"
+            triple="${pair##*:}"
+            rm -rf build
+            cmake -S . -B build -G Ninja \
+              -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" \
+              -DANDROID_ABI="${android_abi}" \
+              -DANDROID_PLATFORM=android-26 \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DOQS_BUILD_ONLY_LIB=ON \
+              -DOQS_DIST_BUILD=ON \
+              -DBUILD_SHARED_LIBS=ON \
+              -DOQS_USE_OPENSSL=OFF
+            cmake --build build --parallel
+            mkdir -p "../android/app/src/main/jniLibs/${android_abi}"
+            cp build/lib/liboqs.so "../android/app/src/main/jniLibs/${android_abi}/liboqs.so"
+          done
+
       # Signing — expects base64-encoded keystore in secrets
       - name: Decode keystore
         if: env.KEYSTORE_BASE64 != ''
@@ -196,6 +242,36 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Cache liboqs (macOS)
+        id: cache-liboqs-macos
+        uses: actions/cache@v4
+        with:
+          path: third_party/liboqs-prebuilt-macos
+          key: liboqs-0.10.1-macos-arm64
+
+      - name: Build liboqs (macOS arm64)
+        if: steps.cache-liboqs-macos.outputs.cache-hit != 'true'
+        env:
+          LIBOQS_VERSION: '0.10.1'
+        run: |
+          set -euo pipefail
+          curl -L "https://github.com/open-quantum-safe/liboqs/archive/refs/tags/${LIBOQS_VERSION}.tar.gz" -o liboqs.tar.gz
+          tar xf liboqs.tar.gz
+          cd "liboqs-${LIBOQS_VERSION}"
+          cmake -S . -B build \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DOQS_BUILD_ONLY_LIB=ON \
+            -DOQS_DIST_BUILD=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DOQS_USE_OPENSSL=OFF
+          cmake --build build --parallel
+          mkdir -p "$GITHUB_WORKSPACE/third_party/liboqs-prebuilt-macos"
+          cp build/lib/liboqs.dylib "$GITHUB_WORKSPACE/third_party/liboqs-prebuilt-macos/liboqs.dylib"
+          install_name_tool -id "@executable_path/../Frameworks/liboqs.dylib" \
+            "$GITHUB_WORKSPACE/third_party/liboqs-prebuilt-macos/liboqs.dylib"
+
       - name: Import signing certificate
         if: env.HAS_SIGNING == 'true'
         env:
@@ -230,6 +306,17 @@ jobs:
           sed -i '' 's/DEVELOPMENT_TEAM = 52MKZ6BJWB/DEVELOPMENT_TEAM = ""/g' Runner.xcodeproj/project.pbxproj
           cd ..
           flutter build macos --release
+
+      - name: Bundle liboqs into app
+        run: |
+          set -euo pipefail
+          APP_PATH=$(find build/macos -name "sshvault.app" -type d | head -1)
+          if [ -z "$APP_PATH" ]; then
+            APP_PATH=$(find build/macos -name "*.app" -type d | head -1)
+          fi
+          mkdir -p "$APP_PATH/Contents/Frameworks"
+          cp "$GITHUB_WORKSPACE/third_party/liboqs-prebuilt-macos/liboqs.dylib" \
+             "$APP_PATH/Contents/Frameworks/liboqs.dylib"
 
       - name: Sign app bundle
         if: env.HAS_SIGNING == 'true'
@@ -325,6 +412,8 @@ jobs:
     name: Windows (EXE)
     needs: preflight
     runs-on: windows-latest
+    env:
+      LIBOQS_VERSION: '0.10.1'
     steps:
       - uses: actions/checkout@v4
 
@@ -333,9 +422,38 @@ jobs:
           channel: ${{ env.FLUTTER_VERSION }}
           cache: true
 
+      - name: Cache liboqs
+        id: cache-liboqs
+        uses: actions/cache@v4
+        with:
+          path: third_party/liboqs-prebuilt
+          key: liboqs-0.10.1-windows-x64-msvc
+
+      - name: Build liboqs (post-quantum KEX)
+        if: steps.cache-liboqs.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = $env:LIBOQS_VERSION
+          Invoke-WebRequest -Uri "https://github.com/open-quantum-safe/liboqs/archive/refs/tags/$version.tar.gz" -OutFile liboqs.tar.gz
+          tar -xzf liboqs.tar.gz
+          Push-Location "liboqs-$version"
+          cmake -S . -B build -A x64 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DOQS_BUILD_ONLY_LIB=ON `
+            -DOQS_DIST_BUILD=ON `
+            -DBUILD_SHARED_LIBS=ON `
+            -DOQS_USE_OPENSSL=OFF
+          cmake --build build --config Release --parallel
+          New-Item -ItemType Directory -Force -Path "../third_party/liboqs-prebuilt" | Out-Null
+          Copy-Item -Force build/bin/Release/oqs.dll "../third_party/liboqs-prebuilt/liboqs.dll"
+          Pop-Location
+
       - run: flutter pub get
 
       - name: Build Windows
+        env:
+          LIBOQS_PREBUILT_DIR: ${{ github.workspace }}\third_party\liboqs-prebuilt
         run: flutter build windows --release
 
       - name: Create EXE installer

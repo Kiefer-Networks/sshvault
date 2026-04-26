@@ -45,6 +45,12 @@ class SSHAlgorithms {
 
   const SSHAlgorithms({
     this.kex = const [
+      // Hybrid post-quantum KEX (matches OpenSSH 9.9+ default order).
+      // Each one falls back to the classical entries below if the
+      // server does not advertise it or the local liboqs build does
+      // not include the KEM.
+      SSHKexType.mlkem768x25519Sha256,
+      SSHKexType.sntrup761x25519Sha512,
       SSHKexType.x25519,
       SSHKexType.nistp521,
       SSHKexType.nistp384,

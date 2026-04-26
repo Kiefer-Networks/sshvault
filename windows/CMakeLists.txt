@@ -49,6 +49,24 @@ endfunction()
 set(FLUTTER_MANAGED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/flutter")
 add_subdirectory(${FLUTTER_MANAGED_DIR})
 
+# Optional liboqs (Open Quantum Safe) — copy a prebuilt liboqs.dll into
+# the runner output directory so the runtime FFI loader picks it up.
+# CI populates LIBOQS_PREBUILT_DIR with the result of building liboqs
+# against MSVC; local builds without liboqs simply skip this step and
+# the post-quantum SSH KEX names are filtered out at runtime.
+if(DEFINED ENV{LIBOQS_PREBUILT_DIR})
+  set(LIBOQS_PREBUILT_DIR "$ENV{LIBOQS_PREBUILT_DIR}")
+endif()
+if(LIBOQS_PREBUILT_DIR AND EXISTS "${LIBOQS_PREBUILT_DIR}/liboqs.dll")
+  message(STATUS "Bundling liboqs from ${LIBOQS_PREBUILT_DIR}")
+  install(FILES "${LIBOQS_PREBUILT_DIR}/liboqs.dll"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+    COMPONENT Runtime)
+else()
+  message(STATUS "LIBOQS_PREBUILT_DIR not set or liboqs.dll missing — "
+                 "post-quantum KEX disabled in this build")
+endif()
+
 # Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 

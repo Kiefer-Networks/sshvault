@@ -141,8 +141,7 @@ class SSHAlgorithmNegotiationError with SSHMessageError implements SSHError {
   });
 
   @override
-  String get message =>
-      'No matching $layer algorithm. '
+  String get message => 'No matching $layer algorithm. '
       'Server offers: ${remote.join(', ')}. '
       'Client supports: ${supported.join(', ')}.';
 }
