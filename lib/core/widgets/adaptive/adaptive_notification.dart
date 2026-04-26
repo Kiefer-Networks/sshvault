@@ -160,7 +160,8 @@ class AdaptiveNotification {
     required String actionLabel,
     required VoidCallback onAction,
   }) async {
-    if (!Platform.isAndroid || defaultTargetPlatform != TargetPlatform.android) {
+    if (!Platform.isAndroid ||
+        defaultTargetPlatform != TargetPlatform.android) {
       // Non-Android: just fire a non-actionable notification. Reconnect
       // for desktop/iOS is already handled via the in-app dialog.
       await _showSystemNotification('$title: $message');
