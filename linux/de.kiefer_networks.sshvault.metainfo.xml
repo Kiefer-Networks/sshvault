@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.10.6" date="2026-04-26">
+      <description>
+        <p>Android: liboqs.so is now built with 16 KB ELF page alignment so Google Play accepts the upload on Android 15+ devices. Other native libs (libflutter, libapp, libsqlite3) were already aligned.</p>
+      </description>
+    </release>
     <release version="1.10.5" date="2026-04-26">
       <description>
         <p>Drops READ_MEDIA_IMAGES / READ_MEDIA_VIDEO permission inherited from image_picker so Google Play accepts the upload (the app uses the Photo Picker, which needs no permission). Android disconnects now appear as a system-shade notification with an inline Reconnect action button; the prior in-app slide-up dialog is gone.</p>

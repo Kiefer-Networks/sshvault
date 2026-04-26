@@ -1,0 +1,1 @@
+- Android: liboqs.so (Post-Quantum-KEX-Bibliothek) wird jetzt mit 16-KB-ELF-Page-Alignment gebaut (-Wl,-z,max-page-size=16384), damit Google Play den Upload auf Android-15+-Geräten akzeptiert. Die anderen Nativ-Libs (libflutter, libapp, libsqlite3) waren bereits aligned.

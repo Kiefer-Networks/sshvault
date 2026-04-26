@@ -100,6 +100,10 @@ jobs:
             android_abi="${pair%%:*}"
             triple="${pair##*:}"
             rm -rf build
+            # 16 KB ELF page alignment is mandatory for Android 15+
+            # (Google Play rejects native libs that segment-align to
+            # 4 KB only). max-page-size=16384 + common-page-size=16384
+            # apply both to .so layout and runtime mapping.
             cmake -S . -B build -G Ninja \
               -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" \
               -DANDROID_ABI="${android_abi}" \
@@ -109,7 +113,8 @@ jobs:
               -DOQS_DIST_BUILD=ON \
               -DBUILD_SHARED_LIBS=ON \
               -DOQS_USE_OPENSSL=OFF \
-              -DOQS_MINIMAL_BUILD="KEM_ml_kem_768;KEM_sntrup_sntrup761"
+              -DOQS_MINIMAL_BUILD="KEM_ml_kem_768;KEM_sntrup_sntrup761" \
+              -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-z,max-page-size=16384,-z,common-page-size=16384"
             cmake --build build --parallel
             mkdir -p "../android/app/src/main/jniLibs/${android_abi}"
             cp build/lib/liboqs.so "../android/app/src/main/jniLibs/${android_abi}/liboqs.so"
