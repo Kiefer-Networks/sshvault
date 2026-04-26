@@ -45,6 +45,7 @@ abstract final class ServerMapper {
       permissions: row.permissions,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
+      deletedAt: row.deletedAt,
     );
   }
 
@@ -80,6 +81,7 @@ abstract final class ServerMapper {
       permissions: Value(entity.permissions),
       createdAt: Value(entity.createdAt),
       updatedAt: Value(entity.updatedAt),
+      deletedAt: Value(entity.deletedAt),
     );
   }
 }

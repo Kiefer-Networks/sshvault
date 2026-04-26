@@ -128,6 +128,17 @@ class $SshKeysTable extends SshKeys with TableInfo<$SshKeysTable, SshKey> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -141,6 +152,7 @@ class $SshKeysTable extends SshKeys with TableInfo<$SshKeysTable, SshKey> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -233,6 +245,12 @@ class $SshKeysTable extends SshKeys with TableInfo<$SshKeysTable, SshKey> {
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -286,6 +304,10 @@ class $SshKeysTable extends SshKeys with TableInfo<$SshKeysTable, SshKey> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -307,6 +329,7 @@ class SshKey extends DataClass implements Insertable<SshKey> {
   final String? permissions;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? deletedAt;
   const SshKey({
     required this.id,
     required this.name,
@@ -319,6 +342,7 @@ class SshKey extends DataClass implements Insertable<SshKey> {
     this.permissions,
     required this.createdAt,
     required this.updatedAt,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -340,6 +364,9 @@ class SshKey extends DataClass implements Insertable<SshKey> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -362,6 +389,9 @@ class SshKey extends DataClass implements Insertable<SshKey> {
           : Value(permissions),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -382,6 +412,7 @@ class SshKey extends DataClass implements Insertable<SshKey> {
       permissions: serializer.fromJson<String?>(json['permissions']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -399,6 +430,7 @@ class SshKey extends DataClass implements Insertable<SshKey> {
       'permissions': serializer.toJson<String?>(permissions),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -414,6 +446,7 @@ class SshKey extends DataClass implements Insertable<SshKey> {
     Value<String?> permissions = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => SshKey(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -426,6 +459,7 @@ class SshKey extends DataClass implements Insertable<SshKey> {
     permissions: permissions.present ? permissions.value : this.permissions,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   SshKey copyWithCompanion(SshKeysCompanion data) {
     return SshKey(
@@ -446,6 +480,7 @@ class SshKey extends DataClass implements Insertable<SshKey> {
           : this.permissions,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -462,7 +497,8 @@ class SshKey extends DataClass implements Insertable<SshKey> {
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -480,6 +516,7 @@ class SshKey extends DataClass implements Insertable<SshKey> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -495,7 +532,8 @@ class SshKey extends DataClass implements Insertable<SshKey> {
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
 }
 
 class SshKeysCompanion extends UpdateCompanion<SshKey> {
@@ -510,6 +548,7 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
   final Value<String?> permissions;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const SshKeysCompanion({
     this.id = const Value.absent(),
@@ -523,6 +562,7 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
     this.permissions = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SshKeysCompanion.insert({
@@ -537,6 +577,7 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
     this.permissions = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -555,6 +596,7 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
     Expression<String>? permissions,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -569,6 +611,7 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
       if (permissions != null) 'permissions': permissions,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -585,6 +628,7 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
     Value<String?>? permissions,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return SshKeysCompanion(
@@ -599,6 +643,7 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
       permissions: permissions ?? this.permissions,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -639,6 +684,9 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -659,6 +707,7 @@ class SshKeysCompanion extends UpdateCompanion<SshKey> {
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -791,6 +840,17 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -804,6 +864,7 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -891,6 +952,12 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -944,6 +1011,10 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -965,6 +1036,7 @@ class Group extends DataClass implements Insertable<Group> {
   final String? permissions;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? deletedAt;
   const Group({
     required this.id,
     required this.name,
@@ -977,6 +1049,7 @@ class Group extends DataClass implements Insertable<Group> {
     this.permissions,
     required this.createdAt,
     required this.updatedAt,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1000,6 +1073,9 @@ class Group extends DataClass implements Insertable<Group> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -1024,6 +1100,9 @@ class Group extends DataClass implements Insertable<Group> {
           : Value(permissions),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -1044,6 +1123,7 @@ class Group extends DataClass implements Insertable<Group> {
       permissions: serializer.fromJson<String?>(json['permissions']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -1061,6 +1141,7 @@ class Group extends DataClass implements Insertable<Group> {
       'permissions': serializer.toJson<String?>(permissions),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -1076,6 +1157,7 @@ class Group extends DataClass implements Insertable<Group> {
     Value<String?> permissions = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => Group(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -1088,6 +1170,7 @@ class Group extends DataClass implements Insertable<Group> {
     permissions: permissions.present ? permissions.value : this.permissions,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Group copyWithCompanion(GroupsCompanion data) {
     return Group(
@@ -1106,6 +1189,7 @@ class Group extends DataClass implements Insertable<Group> {
           : this.permissions,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -1122,7 +1206,8 @@ class Group extends DataClass implements Insertable<Group> {
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -1140,6 +1225,7 @@ class Group extends DataClass implements Insertable<Group> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -1155,7 +1241,8 @@ class Group extends DataClass implements Insertable<Group> {
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
 }
 
 class GroupsCompanion extends UpdateCompanion<Group> {
@@ -1170,6 +1257,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   final Value<String?> permissions;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const GroupsCompanion({
     this.id = const Value.absent(),
@@ -1183,6 +1271,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     this.permissions = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GroupsCompanion.insert({
@@ -1197,6 +1286,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     this.permissions = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -1214,6 +1304,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     Expression<String>? permissions,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1228,6 +1319,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       if (permissions != null) 'permissions': permissions,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1244,6 +1336,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     Value<String?>? permissions,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return GroupsCompanion(
@@ -1258,6 +1351,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       permissions: permissions ?? this.permissions,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1298,6 +1392,9 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1318,6 +1415,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1682,6 +1780,17 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1714,6 +1823,7 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1937,6 +2047,12 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -2066,6 +2182,10 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -2106,6 +2226,7 @@ class Server extends DataClass implements Insertable<Server> {
   final String? permissions;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? deletedAt;
   const Server({
     required this.id,
     required this.name,
@@ -2137,6 +2258,7 @@ class Server extends DataClass implements Insertable<Server> {
     this.permissions,
     required this.createdAt,
     required this.updatedAt,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2191,6 +2313,9 @@ class Server extends DataClass implements Insertable<Server> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -2246,6 +2371,9 @@ class Server extends DataClass implements Insertable<Server> {
           : Value(permissions),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -2287,6 +2415,7 @@ class Server extends DataClass implements Insertable<Server> {
       permissions: serializer.fromJson<String?>(json['permissions']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -2323,6 +2452,7 @@ class Server extends DataClass implements Insertable<Server> {
       'permissions': serializer.toJson<String?>(permissions),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -2357,6 +2487,7 @@ class Server extends DataClass implements Insertable<Server> {
     Value<String?> permissions = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => Server(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -2392,6 +2523,7 @@ class Server extends DataClass implements Insertable<Server> {
     permissions: permissions.present ? permissions.value : this.permissions,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Server copyWithCompanion(ServersCompanion data) {
     return Server(
@@ -2447,6 +2579,7 @@ class Server extends DataClass implements Insertable<Server> {
           : this.permissions,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -2482,7 +2615,8 @@ class Server extends DataClass implements Insertable<Server> {
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -2519,6 +2653,7 @@ class Server extends DataClass implements Insertable<Server> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -2553,7 +2688,8 @@ class Server extends DataClass implements Insertable<Server> {
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
 }
 
 class ServersCompanion extends UpdateCompanion<Server> {
@@ -2587,6 +2723,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
   final Value<String?> permissions;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const ServersCompanion({
     this.id = const Value.absent(),
@@ -2619,6 +2756,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.permissions = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ServersCompanion.insert({
@@ -2652,6 +2790,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.permissions = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -2690,6 +2829,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Expression<String>? permissions,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2724,6 +2864,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
       if (permissions != null) 'permissions': permissions,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2759,6 +2900,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Value<String?>? permissions,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return ServersCompanion(
@@ -2792,6 +2934,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
       permissions: permissions ?? this.permissions,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2891,6 +3034,9 @@ class ServersCompanion extends UpdateCompanion<Server> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2930,6 +3076,7 @@ class ServersCompanion extends UpdateCompanion<Server> {
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3024,6 +3171,17 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3034,6 +3192,7 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3103,6 +3262,12 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -3144,6 +3309,10 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -3162,6 +3331,7 @@ class Tag extends DataClass implements Insertable<Tag> {
   final String? permissions;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? deletedAt;
   const Tag({
     required this.id,
     required this.name,
@@ -3171,6 +3341,7 @@ class Tag extends DataClass implements Insertable<Tag> {
     this.permissions,
     required this.createdAt,
     required this.updatedAt,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3189,6 +3360,9 @@ class Tag extends DataClass implements Insertable<Tag> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -3208,6 +3382,9 @@ class Tag extends DataClass implements Insertable<Tag> {
           : Value(permissions),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -3225,6 +3402,7 @@ class Tag extends DataClass implements Insertable<Tag> {
       permissions: serializer.fromJson<String?>(json['permissions']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -3239,6 +3417,7 @@ class Tag extends DataClass implements Insertable<Tag> {
       'permissions': serializer.toJson<String?>(permissions),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -3251,6 +3430,7 @@ class Tag extends DataClass implements Insertable<Tag> {
     Value<String?> permissions = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => Tag(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -3260,6 +3440,7 @@ class Tag extends DataClass implements Insertable<Tag> {
     permissions: permissions.present ? permissions.value : this.permissions,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Tag copyWithCompanion(TagsCompanion data) {
     return Tag(
@@ -3275,6 +3456,7 @@ class Tag extends DataClass implements Insertable<Tag> {
           : this.permissions,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -3288,7 +3470,8 @@ class Tag extends DataClass implements Insertable<Tag> {
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -3303,6 +3486,7 @@ class Tag extends DataClass implements Insertable<Tag> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -3315,7 +3499,8 @@ class Tag extends DataClass implements Insertable<Tag> {
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
 }
 
 class TagsCompanion extends UpdateCompanion<Tag> {
@@ -3327,6 +3512,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
   final Value<String?> permissions;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const TagsCompanion({
     this.id = const Value.absent(),
@@ -3337,6 +3523,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
     this.permissions = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TagsCompanion.insert({
@@ -3348,6 +3535,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
     this.permissions = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -3362,6 +3550,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
     Expression<String>? permissions,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3373,6 +3562,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
       if (permissions != null) 'permissions': permissions,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3386,6 +3576,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
     Value<String?>? permissions,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return TagsCompanion(
@@ -3397,6 +3588,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
       permissions: permissions ?? this.permissions,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3428,6 +3620,9 @@ class TagsCompanion extends UpdateCompanion<Tag> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3445,6 +3640,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3808,6 +4004,17 @@ class $SnippetsTable extends Snippets with TableInfo<$SnippetsTable, Snippet> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3822,6 +4029,7 @@ class $SnippetsTable extends Snippets with TableInfo<$SnippetsTable, Snippet> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3920,6 +4128,12 @@ class $SnippetsTable extends Snippets with TableInfo<$SnippetsTable, Snippet> {
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -3977,6 +4191,10 @@ class $SnippetsTable extends Snippets with TableInfo<$SnippetsTable, Snippet> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -3999,6 +4217,7 @@ class Snippet extends DataClass implements Insertable<Snippet> {
   final String? permissions;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? deletedAt;
   const Snippet({
     required this.id,
     required this.name,
@@ -4012,6 +4231,7 @@ class Snippet extends DataClass implements Insertable<Snippet> {
     this.permissions,
     required this.createdAt,
     required this.updatedAt,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4036,6 +4256,9 @@ class Snippet extends DataClass implements Insertable<Snippet> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -4061,6 +4284,9 @@ class Snippet extends DataClass implements Insertable<Snippet> {
           : Value(permissions),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -4082,6 +4308,7 @@ class Snippet extends DataClass implements Insertable<Snippet> {
       permissions: serializer.fromJson<String?>(json['permissions']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -4100,6 +4327,7 @@ class Snippet extends DataClass implements Insertable<Snippet> {
       'permissions': serializer.toJson<String?>(permissions),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -4116,6 +4344,7 @@ class Snippet extends DataClass implements Insertable<Snippet> {
     Value<String?> permissions = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => Snippet(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -4129,6 +4358,7 @@ class Snippet extends DataClass implements Insertable<Snippet> {
     permissions: permissions.present ? permissions.value : this.permissions,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Snippet copyWithCompanion(SnippetsCompanion data) {
     return Snippet(
@@ -4150,6 +4380,7 @@ class Snippet extends DataClass implements Insertable<Snippet> {
           : this.permissions,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -4167,7 +4398,8 @@ class Snippet extends DataClass implements Insertable<Snippet> {
           ..write('sharedWith: $sharedWith, ')
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -4186,6 +4418,7 @@ class Snippet extends DataClass implements Insertable<Snippet> {
     permissions,
     createdAt,
     updatedAt,
+    deletedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -4202,7 +4435,8 @@ class Snippet extends DataClass implements Insertable<Snippet> {
           other.sharedWith == this.sharedWith &&
           other.permissions == this.permissions &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
 }
 
 class SnippetsCompanion extends UpdateCompanion<Snippet> {
@@ -4218,6 +4452,7 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
   final Value<String?> permissions;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const SnippetsCompanion({
     this.id = const Value.absent(),
@@ -4232,6 +4467,7 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
     this.permissions = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SnippetsCompanion.insert({
@@ -4247,6 +4483,7 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
     this.permissions = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -4266,6 +4503,7 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
     Expression<String>? permissions,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4281,6 +4519,7 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
       if (permissions != null) 'permissions': permissions,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4298,6 +4537,7 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
     Value<String?>? permissions,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return SnippetsCompanion(
@@ -4313,6 +4553,7 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
       permissions: permissions ?? this.permissions,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4356,6 +4597,9 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4377,6 +4621,7 @@ class SnippetsCompanion extends UpdateCompanion<Snippet> {
           ..write('permissions: $permissions, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -6221,6 +6466,7 @@ typedef $$SshKeysTableCreateCompanionBuilder =
       Value<String?> permissions,
       required DateTime createdAt,
       required DateTime updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$SshKeysTableUpdateCompanionBuilder =
@@ -6236,6 +6482,7 @@ typedef $$SshKeysTableUpdateCompanionBuilder =
       Value<String?> permissions,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -6324,6 +6571,11 @@ class $$SshKeysTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6416,6 +6668,11 @@ class $$SshKeysTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SshKeysTableAnnotationComposer
@@ -6465,6 +6722,9 @@ class $$SshKeysTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
   Expression<T> serversRefs<T extends Object>(
     Expression<T> Function($$ServersTableAnnotationComposer a) f,
@@ -6531,6 +6791,7 @@ class $$SshKeysTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SshKeysCompanion(
                 id: id,
@@ -6544,6 +6805,7 @@ class $$SshKeysTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -6559,6 +6821,7 @@ class $$SshKeysTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SshKeysCompanion.insert(
                 id: id,
@@ -6572,6 +6835,7 @@ class $$SshKeysTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -6635,6 +6899,7 @@ typedef $$GroupsTableCreateCompanionBuilder =
       Value<String?> permissions,
       required DateTime createdAt,
       required DateTime updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$GroupsTableUpdateCompanionBuilder =
@@ -6650,6 +6915,7 @@ typedef $$GroupsTableUpdateCompanionBuilder =
       Value<String?> permissions,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -6770,6 +7036,11 @@ class $$GroupsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6906,6 +7177,11 @@ class $$GroupsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$GroupsTableOrderingComposer get parentId {
     final $$GroupsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -6972,6 +7248,9 @@ class $$GroupsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
   $$GroupsTableAnnotationComposer get parentId {
     final $$GroupsTableAnnotationComposer composer = $composerBuilder(
@@ -7090,6 +7369,7 @@ class $$GroupsTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GroupsCompanion(
                 id: id,
@@ -7103,6 +7383,7 @@ class $$GroupsTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -7118,6 +7399,7 @@ class $$GroupsTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GroupsCompanion.insert(
                 id: id,
@@ -7131,6 +7413,7 @@ class $$GroupsTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -7273,6 +7556,7 @@ typedef $$ServersTableCreateCompanionBuilder =
       Value<String?> permissions,
       required DateTime createdAt,
       required DateTime updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$ServersTableUpdateCompanionBuilder =
@@ -7307,6 +7591,7 @@ typedef $$ServersTableUpdateCompanionBuilder =
       Value<String?> permissions,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -7532,6 +7817,11 @@ class $$ServersTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7781,6 +8071,11 @@ class $$ServersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$GroupsTableOrderingComposer get groupId {
     final $$GroupsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -7943,6 +8238,9 @@ class $$ServersTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
   $$GroupsTableAnnotationComposer get groupId {
     final $$GroupsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -8103,6 +8401,7 @@ class $$ServersTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ServersCompanion(
                 id: id,
@@ -8135,6 +8434,7 @@ class $$ServersTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -8169,6 +8469,7 @@ class $$ServersTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ServersCompanion.insert(
                 id: id,
@@ -8201,6 +8502,7 @@ class $$ServersTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -8350,6 +8652,7 @@ typedef $$TagsTableCreateCompanionBuilder =
       Value<String?> permissions,
       required DateTime createdAt,
       required DateTime updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$TagsTableUpdateCompanionBuilder =
@@ -8362,6 +8665,7 @@ typedef $$TagsTableUpdateCompanionBuilder =
       Value<String?> permissions,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -8451,6 +8755,11 @@ class $$TagsTableFilterComposer extends Composer<_$AppDatabase, $TagsTable> {
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8552,6 +8861,11 @@ class $$TagsTableOrderingComposer extends Composer<_$AppDatabase, $TagsTable> {
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TagsTableAnnotationComposer
@@ -8590,6 +8904,9 @@ class $$TagsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
   Expression<T> serverTagsRefs<T extends Object>(
     Expression<T> Function($$ServerTagsTableAnnotationComposer a) f,
@@ -8678,6 +8995,7 @@ class $$TagsTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TagsCompanion(
                 id: id,
@@ -8688,6 +9006,7 @@ class $$TagsTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -8700,6 +9019,7 @@ class $$TagsTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TagsCompanion.insert(
                 id: id,
@@ -8710,6 +9030,7 @@ class $$TagsTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -9144,6 +9465,7 @@ typedef $$SnippetsTableCreateCompanionBuilder =
       Value<String?> permissions,
       required DateTime createdAt,
       required DateTime updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$SnippetsTableUpdateCompanionBuilder =
@@ -9160,6 +9482,7 @@ typedef $$SnippetsTableUpdateCompanionBuilder =
       Value<String?> permissions,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -9288,6 +9611,11 @@ class $$SnippetsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9429,6 +9757,11 @@ class $$SnippetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$GroupsTableOrderingComposer get groupId {
     final $$GroupsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -9500,6 +9833,9 @@ class $$SnippetsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
   $$GroupsTableAnnotationComposer get groupId {
     final $$GroupsTableAnnotationComposer composer = $composerBuilder(
@@ -9619,6 +9955,7 @@ class $$SnippetsTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SnippetsCompanion(
                 id: id,
@@ -9633,6 +9970,7 @@ class $$SnippetsTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -9649,6 +9987,7 @@ class $$SnippetsTableTableManager
                 Value<String?> permissions = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SnippetsCompanion.insert(
                 id: id,
@@ -9663,6 +10002,7 @@ class $$SnippetsTableTableManager
                 permissions: permissions,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

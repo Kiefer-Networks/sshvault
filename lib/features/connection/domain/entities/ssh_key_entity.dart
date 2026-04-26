@@ -19,6 +19,7 @@ abstract class SshKeyEntity with _$SshKeyEntity {
     String? permissions,
     required DateTime createdAt,
     required DateTime updatedAt,
+    DateTime? deletedAt,
   }) = _SshKeyEntity;
 
   factory SshKeyEntity.fromJson(Map<String, dynamic> json) =>

@@ -13,25 +13,46 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
       .replaceAll('%', '\\%')
       .replaceAll('_', '\\_');
 
-  Future<List<Server>> getAllServers() => select(servers).get();
+  Future<List<Server>> getAllServers() =>
+      (select(servers)..where((s) => s.deletedAt.isNull())).get();
 
-  Future<Server?> getServerById(String id) =>
+  /// Includes tombstones — used by the sync layer to push deletions.
+  Future<List<Server>> getAllServersIncludingDeleted() =>
+      select(servers).get();
+
+  Future<List<Server>> getDeletedServers() =>
+      (select(servers)..where((s) => s.deletedAt.isNotNull())).get();
+
+  Future<Server?> getServerById(String id) => (select(servers)..where(
+    (s) => s.id.equals(id) & s.deletedAt.isNull(),
+  )).getSingleOrNull();
+
+  /// Returns the row even if soft-deleted. The sync layer needs to see
+  /// tombstones to apply LWW correctly.
+  Future<Server?> getServerByIdIncludingDeleted(String id) =>
       (select(servers)..where((s) => s.id.equals(id))).getSingleOrNull();
 
   Future<List<Server>> getServersByGroupId(String groupId) =>
-      (select(servers)..where((s) => s.groupId.equals(groupId))).get();
+      (select(servers)..where(
+            (s) => s.groupId.equals(groupId) & s.deletedAt.isNull(),
+          ))
+          .get();
 
   Future<List<Server>> getServersBySshKeyId(String sshKeyId) =>
-      (select(servers)..where((s) => s.sshKeyId.equals(sshKeyId))).get();
+      (select(servers)..where(
+            (s) => s.sshKeyId.equals(sshKeyId) & s.deletedAt.isNull(),
+          ))
+          .get();
 
   Future<List<Server>> searchServers(String query) {
     final escaped = _escapeLike(query);
     return (select(servers)..where(
           (s) =>
-              s.name.like('%$escaped%') |
-              s.hostname.like('%$escaped%') |
-              s.username.like('%$escaped%') |
-              s.notes.like('%$escaped%'),
+              s.deletedAt.isNull() &
+              (s.name.like('%$escaped%') |
+                  s.hostname.like('%$escaped%') |
+                  s.username.like('%$escaped%') |
+                  s.notes.like('%$escaped%')),
         ))
         .get();
   }
@@ -43,7 +64,7 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
     List<String>? tagIds,
     bool? isActive,
   }) async {
-    var query = select(servers);
+    var query = select(servers)..where((s) => s.deletedAt.isNull());
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
       final escaped = _escapeLike(searchQuery);
@@ -89,8 +110,27 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
   Future<bool> updateServer(ServersCompanion server) =>
       update(servers).replace(server);
 
-  Future<int> deleteServerById(String id) =>
+  /// Soft-delete: marks the server as deleted so the deletion can be
+  /// replicated through sync. Use [hardDeleteServerById] to actually
+  /// remove the row (e.g. tombstone pruning, local-only purge).
+  Future<int> deleteServerById(String id) {
+    final now = DateTime.now();
+    return (update(servers)..where((s) => s.id.equals(id))).write(
+      ServersCompanion(
+        deletedAt: Value(now),
+        updatedAt: Value(now),
+        isActive: const Value(false),
+      ),
+    );
+  }
+
+  Future<int> hardDeleteServerById(String id) =>
       (delete(servers)..where((s) => s.id.equals(id))).go();
+
+  /// Purges tombstones older than [olderThan]. Returns purged row count.
+  Future<int> pruneTombstones(DateTime olderThan) => (delete(servers)..where(
+    (s) => s.deletedAt.isNotNull() & s.deletedAt.isSmallerThanValue(olderThan),
+  )).go();
 
   Future<void> setServerTags(String serverId, List<String> tagIds) async {
     await (delete(
@@ -124,13 +164,17 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
 
   Future<List<Server>> getFavoriteServers() =>
       (select(servers)
-            ..where((s) => s.isFavorite.equals(true))
+            ..where(
+              (s) => s.isFavorite.equals(true) & s.deletedAt.isNull(),
+            )
             ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
           .get();
 
   Future<List<Server>> getRecentServers({int limit = 5}) =>
       (select(servers)
-            ..where((s) => s.lastConnectedAt.isNotNull())
+            ..where(
+              (s) => s.lastConnectedAt.isNotNull() & s.deletedAt.isNull(),
+            )
             ..orderBy([(s) => OrderingTerm.desc(s.lastConnectedAt)])
             ..limit(limit))
           .get();

@@ -14,14 +14,29 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
       .replaceAll('_', '\\_');
 
   Future<List<Snippet>> getAllSnippets() =>
-      (select(snippets)..orderBy([(s) => OrderingTerm.asc(s.sortOrder)])).get();
+      (select(snippets)
+            ..where((s) => s.deletedAt.isNull())
+            ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
+          .get();
 
-  Future<Snippet?> getSnippetById(String id) =>
+  Future<List<Snippet>> getAllSnippetsIncludingDeleted() =>
+      select(snippets).get();
+
+  Future<List<Snippet>> getDeletedSnippets() =>
+      (select(snippets)..where((s) => s.deletedAt.isNotNull())).get();
+
+  Future<Snippet?> getSnippetById(String id) => (select(snippets)..where(
+    (s) => s.id.equals(id) & s.deletedAt.isNull(),
+  )).getSingleOrNull();
+
+  Future<Snippet?> getSnippetByIdIncludingDeleted(String id) =>
       (select(snippets)..where((s) => s.id.equals(id))).getSingleOrNull();
 
   Future<List<Snippet>> getSnippetsByGroupId(String groupId) =>
       (select(snippets)
-            ..where((s) => s.groupId.equals(groupId))
+            ..where(
+              (s) => s.groupId.equals(groupId) & s.deletedAt.isNull(),
+            )
             ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
           .get();
 
@@ -31,7 +46,7 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
     List<String>? tagIds,
     String? language,
   }) async {
-    var query = select(snippets);
+    var query = select(snippets)..where((s) => s.deletedAt.isNull());
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
       final escaped = _escapeLike(searchQuery);
@@ -78,7 +93,25 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
     await (delete(
       snippetVariables,
     )..where((sv) => sv.snippetId.equals(id))).go();
+    final now = DateTime.now();
+    return (update(snippets)..where((s) => s.id.equals(id))).write(
+      SnippetsCompanion(deletedAt: Value(now), updatedAt: Value(now)),
+    );
+  }
+
+  Future<int> hardDeleteSnippetById(String id) async {
+    await (delete(snippetTags)..where((st) => st.snippetId.equals(id))).go();
+    await (delete(
+      snippetVariables,
+    )..where((sv) => sv.snippetId.equals(id))).go();
     return (delete(snippets)..where((s) => s.id.equals(id))).go();
+  }
+
+  Future<int> pruneTombstones(DateTime olderThan) async {
+    return (delete(snippets)..where(
+      (s) =>
+          s.deletedAt.isNotNull() & s.deletedAt.isSmallerThanValue(olderThan),
+    )).go();
   }
 
   Future<List<Tag>> getTagsForSnippet(String snippetId) async {

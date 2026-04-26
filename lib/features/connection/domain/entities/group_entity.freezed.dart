@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GroupEntity {
 
- String get id; String get name; int get color; String get iconName; String? get parentId; int get sortOrder; List<GroupEntity> get children; int get serverCount; String? get ownerId; String? get sharedWith; String? get permissions; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get name; int get color; String get iconName; String? get parentId; int get sortOrder; List<GroupEntity> get children; int get serverCount; String? get ownerId; String? get sharedWith; String? get permissions; DateTime get createdAt; DateTime get updatedAt; DateTime? get deletedAt;
 /// Create a copy of GroupEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $GroupEntityCopyWith<GroupEntity> get copyWith => _$GroupEntityCopyWithImpl<Grou
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other.children, children)&&(identical(other.serverCount, serverCount) || other.serverCount == serverCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other.children, children)&&(identical(other.serverCount, serverCount) || other.serverCount == serverCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,color,iconName,parentId,sortOrder,const DeepCollectionEquality().hash(children),serverCount,ownerId,sharedWith,permissions,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,color,iconName,parentId,sortOrder,const DeepCollectionEquality().hash(children),serverCount,ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
 
 @override
 String toString() {
-  return 'GroupEntity(id: $id, name: $name, color: $color, iconName: $iconName, parentId: $parentId, sortOrder: $sortOrder, children: $children, serverCount: $serverCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'GroupEntity(id: $id, name: $name, color: $color, iconName: $iconName, parentId: $parentId, sortOrder: $sortOrder, children: $children, serverCount: $serverCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $GroupEntityCopyWith<$Res>  {
   factory $GroupEntityCopyWith(GroupEntity value, $Res Function(GroupEntity) _then) = _$GroupEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, int color, String iconName, String? parentId, int sortOrder, List<GroupEntity> children, int serverCount, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt
+ String id, String name, int color, String iconName, String? parentId, int sortOrder, List<GroupEntity> children, int serverCount, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$GroupEntityCopyWithImpl<$Res>
 
 /// Create a copy of GroupEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? color = null,Object? iconName = null,Object? parentId = freezed,Object? sortOrder = null,Object? children = null,Object? serverCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? color = null,Object? iconName = null,Object? parentId = freezed,Object? sortOrder = null,Object? children = null,Object? serverCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -80,7 +80,8 @@ as String?,sharedWith: freezed == sharedWith ? _self.sharedWith : sharedWith // 
 as String?,permissions: freezed == permissions ? _self.permissions : permissions // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -165,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  int color,  String iconName,  String? parentId,  int sortOrder,  List<GroupEntity> children,  int serverCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  int color,  String iconName,  String? parentId,  int sortOrder,  List<GroupEntity> children,  int serverCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GroupEntity() when $default != null:
-return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_that.sortOrder,_that.children,_that.serverCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_that.sortOrder,_that.children,_that.serverCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return orElse();
 
 }
@@ -186,10 +187,10 @@ return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  int color,  String iconName,  String? parentId,  int sortOrder,  List<GroupEntity> children,  int serverCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  int color,  String iconName,  String? parentId,  int sortOrder,  List<GroupEntity> children,  int serverCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)  $default,) {final _that = this;
 switch (_that) {
 case _GroupEntity():
-return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_that.sortOrder,_that.children,_that.serverCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_that.sortOrder,_that.children,_that.serverCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +207,10 @@ return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  int color,  String iconName,  String? parentId,  int sortOrder,  List<GroupEntity> children,  int serverCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  int color,  String iconName,  String? parentId,  int sortOrder,  List<GroupEntity> children,  int serverCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _GroupEntity() when $default != null:
-return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_that.sortOrder,_that.children,_that.serverCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_that.sortOrder,_that.children,_that.serverCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return null;
 
 }
@@ -221,7 +222,7 @@ return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_t
 @JsonSerializable()
 
 class _GroupEntity implements GroupEntity {
-  const _GroupEntity({required this.id, required this.name, this.color = 0xFF6C63FF, this.iconName = 'server', this.parentId, this.sortOrder = 0, final  List<GroupEntity> children = const [], this.serverCount = 0, this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt}): _children = children;
+  const _GroupEntity({required this.id, required this.name, this.color = 0xFF6C63FF, this.iconName = 'server', this.parentId, this.sortOrder = 0, final  List<GroupEntity> children = const [], this.serverCount = 0, this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt, this.deletedAt}): _children = children;
   factory _GroupEntity.fromJson(Map<String, dynamic> json) => _$GroupEntityFromJson(json);
 
 @override final  String id;
@@ -243,6 +244,7 @@ class _GroupEntity implements GroupEntity {
 @override final  String? permissions;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
+@override final  DateTime? deletedAt;
 
 /// Create a copy of GroupEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -257,16 +259,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other._children, _children)&&(identical(other.serverCount, serverCount) || other.serverCount == serverCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other._children, _children)&&(identical(other.serverCount, serverCount) || other.serverCount == serverCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,color,iconName,parentId,sortOrder,const DeepCollectionEquality().hash(_children),serverCount,ownerId,sharedWith,permissions,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,color,iconName,parentId,sortOrder,const DeepCollectionEquality().hash(_children),serverCount,ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
 
 @override
 String toString() {
-  return 'GroupEntity(id: $id, name: $name, color: $color, iconName: $iconName, parentId: $parentId, sortOrder: $sortOrder, children: $children, serverCount: $serverCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'GroupEntity(id: $id, name: $name, color: $color, iconName: $iconName, parentId: $parentId, sortOrder: $sortOrder, children: $children, serverCount: $serverCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -277,7 +279,7 @@ abstract mixin class _$GroupEntityCopyWith<$Res> implements $GroupEntityCopyWith
   factory _$GroupEntityCopyWith(_GroupEntity value, $Res Function(_GroupEntity) _then) = __$GroupEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, int color, String iconName, String? parentId, int sortOrder, List<GroupEntity> children, int serverCount, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt
+ String id, String name, int color, String iconName, String? parentId, int sortOrder, List<GroupEntity> children, int serverCount, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt
 });
 
 
@@ -294,7 +296,7 @@ class __$GroupEntityCopyWithImpl<$Res>
 
 /// Create a copy of GroupEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? color = null,Object? iconName = null,Object? parentId = freezed,Object? sortOrder = null,Object? children = null,Object? serverCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? color = null,Object? iconName = null,Object? parentId = freezed,Object? sortOrder = null,Object? children = null,Object? serverCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
   return _then(_GroupEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -309,7 +311,8 @@ as String?,sharedWith: freezed == sharedWith ? _self.sharedWith : sharedWith // 
 as String?,permissions: freezed == permissions ? _self.permissions : permissions // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

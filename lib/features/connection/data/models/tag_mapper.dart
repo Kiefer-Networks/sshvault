@@ -13,6 +13,7 @@ abstract final class TagMapper {
       permissions: row.permissions,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
+      deletedAt: row.deletedAt,
     );
   }
 
@@ -26,6 +27,7 @@ abstract final class TagMapper {
       permissions: Value(entity.permissions),
       createdAt: Value(entity.createdAt),
       updatedAt: Value(entity.updatedAt),
+      deletedAt: Value(entity.deletedAt),
     );
   }
 }

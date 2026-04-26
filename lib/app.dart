@@ -14,6 +14,7 @@ import 'package:sshvault/features/auth/presentation/providers/auth_providers.dar
 import 'package:sshvault/features/settings/domain/entities/app_settings_entity.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
+import 'package:sshvault/core/storage/database_provider.dart';
 
 class SSHVaultApp extends ConsumerStatefulWidget {
   const SSHVaultApp({super.key});
@@ -35,7 +36,27 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       _watchHeartbeatExpiry();
       _watchAttestationResult();
       _initHeartbeat();
+      _pruneOldTombstones();
     });
+  }
+
+  /// Garbage-collect tombstones (`deletedAt < now - 90d`) so the database
+  /// doesn't grow indefinitely on a long-running install. Sync runs hourly
+  /// or so in practice, so a 90 day window gives offline peers ample time
+  /// to receive the deletion before it disappears.
+  Future<void> _pruneOldTombstones() async {
+    final db = ref.read(databaseProvider);
+    final cutoff = DateTime.now().subtract(const Duration(days: 90));
+    try {
+      await db.serverDao.pruneTombstones(cutoff);
+      await db.groupDao.pruneTombstones(cutoff);
+      await db.tagDao.pruneTombstones(cutoff);
+      await db.sshKeyDao.pruneTombstones(cutoff);
+      await db.snippetDao.pruneTombstones(cutoff);
+    } catch (e) {
+      // Ignore prune errors — they just mean tombstones survive longer than
+      // intended, which is correct from a sync perspective.
+    }
   }
 
   void _applyScreenProtection() {

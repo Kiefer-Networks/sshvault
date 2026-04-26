@@ -21,6 +21,7 @@ abstract class SnippetEntity with _$SnippetEntity {
     String? permissions,
     required DateTime createdAt,
     required DateTime updatedAt,
+    DateTime? deletedAt,
   }) = _SnippetEntity;
 
   factory SnippetEntity.fromJson(Map<String, dynamic> json) =>

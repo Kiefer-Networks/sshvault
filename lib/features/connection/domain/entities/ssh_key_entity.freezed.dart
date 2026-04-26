@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SshKeyEntity {
 
- String get id; String get name; SshKeyType get keyType; String get fingerprint; String get publicKey; String get comment; int get linkedServerCount; String? get ownerId; String? get sharedWith; String? get permissions; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get name; SshKeyType get keyType; String get fingerprint; String get publicKey; String get comment; int get linkedServerCount; String? get ownerId; String? get sharedWith; String? get permissions; DateTime get createdAt; DateTime get updatedAt; DateTime? get deletedAt;
 /// Create a copy of SshKeyEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SshKeyEntityCopyWith<SshKeyEntity> get copyWith => _$SshKeyEntityCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SshKeyEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.keyType, keyType) || other.keyType == keyType)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.publicKey, publicKey) || other.publicKey == publicKey)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.linkedServerCount, linkedServerCount) || other.linkedServerCount == linkedServerCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SshKeyEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.keyType, keyType) || other.keyType == keyType)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.publicKey, publicKey) || other.publicKey == publicKey)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.linkedServerCount, linkedServerCount) || other.linkedServerCount == linkedServerCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,keyType,fingerprint,publicKey,comment,linkedServerCount,ownerId,sharedWith,permissions,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,keyType,fingerprint,publicKey,comment,linkedServerCount,ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
 
 @override
 String toString() {
-  return 'SshKeyEntity(id: $id, name: $name, keyType: $keyType, fingerprint: $fingerprint, publicKey: $publicKey, comment: $comment, linkedServerCount: $linkedServerCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'SshKeyEntity(id: $id, name: $name, keyType: $keyType, fingerprint: $fingerprint, publicKey: $publicKey, comment: $comment, linkedServerCount: $linkedServerCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SshKeyEntityCopyWith<$Res>  {
   factory $SshKeyEntityCopyWith(SshKeyEntity value, $Res Function(SshKeyEntity) _then) = _$SshKeyEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, SshKeyType keyType, String fingerprint, String publicKey, String comment, int linkedServerCount, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt
+ String id, String name, SshKeyType keyType, String fingerprint, String publicKey, String comment, int linkedServerCount, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$SshKeyEntityCopyWithImpl<$Res>
 
 /// Create a copy of SshKeyEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? keyType = null,Object? fingerprint = null,Object? publicKey = null,Object? comment = null,Object? linkedServerCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? keyType = null,Object? fingerprint = null,Object? publicKey = null,Object? comment = null,Object? linkedServerCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -79,7 +79,8 @@ as String?,sharedWith: freezed == sharedWith ? _self.sharedWith : sharedWith // 
 as String?,permissions: freezed == permissions ? _self.permissions : permissions // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -164,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  SshKeyType keyType,  String fingerprint,  String publicKey,  String comment,  int linkedServerCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  SshKeyType keyType,  String fingerprint,  String publicKey,  String comment,  int linkedServerCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SshKeyEntity() when $default != null:
-return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.publicKey,_that.comment,_that.linkedServerCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.publicKey,_that.comment,_that.linkedServerCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return orElse();
 
 }
@@ -185,10 +186,10 @@ return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.public
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  SshKeyType keyType,  String fingerprint,  String publicKey,  String comment,  int linkedServerCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  SshKeyType keyType,  String fingerprint,  String publicKey,  String comment,  int linkedServerCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)  $default,) {final _that = this;
 switch (_that) {
 case _SshKeyEntity():
-return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.publicKey,_that.comment,_that.linkedServerCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.publicKey,_that.comment,_that.linkedServerCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -205,10 +206,10 @@ return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.public
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  SshKeyType keyType,  String fingerprint,  String publicKey,  String comment,  int linkedServerCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  SshKeyType keyType,  String fingerprint,  String publicKey,  String comment,  int linkedServerCount,  String? ownerId,  String? sharedWith,  String? permissions,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _SshKeyEntity() when $default != null:
-return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.publicKey,_that.comment,_that.linkedServerCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.publicKey,_that.comment,_that.linkedServerCount,_that.ownerId,_that.sharedWith,_that.permissions,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return null;
 
 }
@@ -220,7 +221,7 @@ return $default(_that.id,_that.name,_that.keyType,_that.fingerprint,_that.public
 @JsonSerializable()
 
 class _SshKeyEntity implements SshKeyEntity {
-  const _SshKeyEntity({required this.id, required this.name, required this.keyType, this.fingerprint = '', this.publicKey = '', this.comment = '', this.linkedServerCount = 0, this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt});
+  const _SshKeyEntity({required this.id, required this.name, required this.keyType, this.fingerprint = '', this.publicKey = '', this.comment = '', this.linkedServerCount = 0, this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt, this.deletedAt});
   factory _SshKeyEntity.fromJson(Map<String, dynamic> json) => _$SshKeyEntityFromJson(json);
 
 @override final  String id;
@@ -235,6 +236,7 @@ class _SshKeyEntity implements SshKeyEntity {
 @override final  String? permissions;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
+@override final  DateTime? deletedAt;
 
 /// Create a copy of SshKeyEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -249,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SshKeyEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.keyType, keyType) || other.keyType == keyType)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.publicKey, publicKey) || other.publicKey == publicKey)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.linkedServerCount, linkedServerCount) || other.linkedServerCount == linkedServerCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SshKeyEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.keyType, keyType) || other.keyType == keyType)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.publicKey, publicKey) || other.publicKey == publicKey)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.linkedServerCount, linkedServerCount) || other.linkedServerCount == linkedServerCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,keyType,fingerprint,publicKey,comment,linkedServerCount,ownerId,sharedWith,permissions,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,keyType,fingerprint,publicKey,comment,linkedServerCount,ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
 
 @override
 String toString() {
-  return 'SshKeyEntity(id: $id, name: $name, keyType: $keyType, fingerprint: $fingerprint, publicKey: $publicKey, comment: $comment, linkedServerCount: $linkedServerCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'SshKeyEntity(id: $id, name: $name, keyType: $keyType, fingerprint: $fingerprint, publicKey: $publicKey, comment: $comment, linkedServerCount: $linkedServerCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -269,7 +271,7 @@ abstract mixin class _$SshKeyEntityCopyWith<$Res> implements $SshKeyEntityCopyWi
   factory _$SshKeyEntityCopyWith(_SshKeyEntity value, $Res Function(_SshKeyEntity) _then) = __$SshKeyEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, SshKeyType keyType, String fingerprint, String publicKey, String comment, int linkedServerCount, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt
+ String id, String name, SshKeyType keyType, String fingerprint, String publicKey, String comment, int linkedServerCount, String? ownerId, String? sharedWith, String? permissions, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt
 });
 
 
@@ -286,7 +288,7 @@ class __$SshKeyEntityCopyWithImpl<$Res>
 
 /// Create a copy of SshKeyEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? keyType = null,Object? fingerprint = null,Object? publicKey = null,Object? comment = null,Object? linkedServerCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? keyType = null,Object? fingerprint = null,Object? publicKey = null,Object? comment = null,Object? linkedServerCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
   return _then(_SshKeyEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -300,7 +302,8 @@ as String?,sharedWith: freezed == sharedWith ? _self.sharedWith : sharedWith // 
 as String?,permissions: freezed == permissions ? _self.permissions : permissions // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

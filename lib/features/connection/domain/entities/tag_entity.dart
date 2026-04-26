@@ -14,6 +14,7 @@ abstract class TagEntity with _$TagEntity {
     String? permissions,
     required DateTime createdAt,
     required DateTime updatedAt,
+    DateTime? deletedAt,
   }) = _TagEntity;
 
   factory TagEntity.fromJson(Map<String, dynamic> json) =>

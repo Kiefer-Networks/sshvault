@@ -19,6 +19,7 @@ abstract class GroupEntity with _$GroupEntity {
     String? permissions,
     required DateTime createdAt,
     required DateTime updatedAt,
+    DateTime? deletedAt,
   }) = _GroupEntity;
 
   factory GroupEntity.fromJson(Map<String, dynamic> json) =>

@@ -4,7 +4,7 @@ abstract final class AppConstants {
 
   // Database
   static const String databaseName = 'sshvault.db';
-  static const int databaseVersion = 10;
+  static const int databaseVersion = 11;
 
   // SSH Defaults
   static const int defaultSshPort = 22;

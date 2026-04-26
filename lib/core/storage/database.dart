@@ -129,6 +129,15 @@ class AppDatabase extends _$AppDatabase {
         if (from < 10) {
           await m.createTable(sftpBookmarks);
         }
+        if (from < 11) {
+          // Tombstones — sync needs deletes to propagate, so each
+          // soft-deletable entity gains a nullable deletedAt timestamp.
+          await m.addColumn(sshKeys, sshKeys.deletedAt);
+          await m.addColumn(servers, servers.deletedAt);
+          await m.addColumn(groups, groups.deletedAt);
+          await m.addColumn(tags, tags.deletedAt);
+          await m.addColumn(snippets, snippets.deletedAt);
+        }
       },
     );
   }

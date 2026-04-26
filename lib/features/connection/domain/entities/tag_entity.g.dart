@@ -15,6 +15,9 @@ _TagEntity _$TagEntityFromJson(Map<String, dynamic> json) => _TagEntity(
   permissions: json['permissions'] as String?,
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
+  deletedAt: json['deletedAt'] == null
+      ? null
+      : DateTime.parse(json['deletedAt'] as String),
 );
 
 Map<String, dynamic> _$TagEntityToJson(_TagEntity instance) =>
@@ -27,4 +30,5 @@ Map<String, dynamic> _$TagEntityToJson(_TagEntity instance) =>
       'permissions': instance.permissions,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
+      'deletedAt': instance.deletedAt?.toIso8601String(),
     };

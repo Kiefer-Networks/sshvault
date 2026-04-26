@@ -78,10 +78,12 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   Future<Map<String, dynamic>> buildExportData({
     bool includeCredentials = false,
   }) async {
-    final servers = await _serverDao.getAllServers();
-    final groups = await _groupDao.getAllGroups();
-    final tags = await _tagDao.getAllTags();
-    final sshKeys = await _sshKeyDao.getAllSshKeys();
+    // Include tombstones so peers can replicate deletions instead of
+    // silently re-adding rows on the next sync round-trip.
+    final servers = await _serverDao.getAllServersIncludingDeleted();
+    final groups = await _groupDao.getAllGroupsIncludingDeleted();
+    final tags = await _tagDao.getAllTagsIncludingDeleted();
+    final sshKeys = await _sshKeyDao.getAllSshKeysIncludingDeleted();
 
     final serverList = <Map<String, dynamic>>[];
     for (final server in servers) {
@@ -120,8 +122,8 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       sshKeyList.add(json);
     }
 
-    // Export snippets
-    final snippets = await _snippetDao.getAllSnippets();
+    // Export snippets including tombstones for delete propagation.
+    final snippets = await _snippetDao.getAllSnippetsIncludingDeleted();
     final snippetList = <Map<String, dynamic>>[];
     for (final snippet in snippets) {
       final tagRows = await _snippetDao.getTagsForSnippet(snippet.id);
@@ -314,6 +316,34 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     }
   }
 
+  /// Per-entity last-write-wins gate for sync imports.
+  ///
+  /// Returns true when the remote row should overwrite the local row.
+  /// Tombstones are treated as full updates: a remote `deletedAt`
+  /// newer than the local clock wins; a remote live row newer than a
+  /// local tombstone resurrects the row. Strategies other than
+  /// [ImportConflictStrategy.mergeServerWins] / `overwrite` keep their
+  /// existing semantics (skip → never overwrite, rename → caller
+  /// branches before reaching here).
+  bool _shouldApplyRemote({
+    required ImportConflictStrategy strategy,
+    required DateTime localUpdatedAt,
+    required DateTime? localDeletedAt,
+    required DateTime remoteUpdatedAt,
+    required DateTime? remoteDeletedAt,
+  }) {
+    if (strategy == ImportConflictStrategy.skip) return false;
+    if (strategy == ImportConflictStrategy.rename) return true;
+
+    final localClock = localDeletedAt != null && localDeletedAt.isAfter(localUpdatedAt)
+        ? localDeletedAt
+        : localUpdatedAt;
+    final remoteClock = remoteDeletedAt != null && remoteDeletedAt.isAfter(remoteUpdatedAt)
+        ? remoteDeletedAt
+        : remoteUpdatedAt;
+    return remoteClock.isAfter(localClock);
+  }
+
   Future<Result<ImportResult>> _importData(
     Map<String, dynamic> data,
     ImportConflictStrategy strategy, {
@@ -331,25 +361,34 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       try {
         final map = Map<String, dynamic>.from(groupJson as Map);
         final id = map['id'] as String;
-        final existing = await _groupDao.getGroupById(id);
+        final existing = await _groupDao.getGroupByIdIncludingDeleted(id);
+        final entity = GroupEntity.fromJson(map);
 
         if (existing != null) {
+          if (!_shouldApplyRemote(
+            strategy: strategy,
+            localUpdatedAt: existing.updatedAt,
+            localDeletedAt: existing.deletedAt,
+            remoteUpdatedAt: entity.updatedAt,
+            remoteDeletedAt: entity.deletedAt,
+          )) {
+            skipped++;
+            continue;
+          }
           switch (strategy) {
             case ImportConflictStrategy.skip:
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
             case ImportConflictStrategy.mergeServerWins:
-              final entity = GroupEntity.fromJson(map);
               await _groupDao.updateGroup(GroupMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
               map['id'] = _uuid.v4();
               map['name'] = '${map['name']} (Imported)';
-              final entity = GroupEntity.fromJson(map);
-              await _groupDao.insertGroup(GroupMapper.toCompanion(entity));
+              final renamed = GroupEntity.fromJson(map);
+              await _groupDao.insertGroup(GroupMapper.toCompanion(renamed));
           }
         } else {
-          final entity = GroupEntity.fromJson(map);
           await _groupDao.insertGroup(GroupMapper.toCompanion(entity));
         }
         groupsImported++;
@@ -364,25 +403,34 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       try {
         final map = Map<String, dynamic>.from(tagJson as Map);
         final id = map['id'] as String;
-        final existing = await _tagDao.getTagById(id);
+        final existing = await _tagDao.getTagByIdIncludingDeleted(id);
+        final entity = TagEntity.fromJson(map);
 
         if (existing != null) {
+          if (!_shouldApplyRemote(
+            strategy: strategy,
+            localUpdatedAt: existing.updatedAt,
+            localDeletedAt: existing.deletedAt,
+            remoteUpdatedAt: entity.updatedAt,
+            remoteDeletedAt: entity.deletedAt,
+          )) {
+            skipped++;
+            continue;
+          }
           switch (strategy) {
             case ImportConflictStrategy.skip:
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
             case ImportConflictStrategy.mergeServerWins:
-              final entity = TagEntity.fromJson(map);
               await _tagDao.updateTag(TagMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
               map['id'] = _uuid.v4();
               map['name'] = '${map['name']} (Imported)';
-              final entity = TagEntity.fromJson(map);
-              await _tagDao.insertTag(TagMapper.toCompanion(entity));
+              final renamed = TagEntity.fromJson(map);
+              await _tagDao.insertTag(TagMapper.toCompanion(renamed));
           }
         } else {
-          final entity = TagEntity.fromJson(map);
           await _tagDao.insertTag(TagMapper.toCompanion(entity));
         }
         tagsImported++;
@@ -398,32 +446,41 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       try {
         final map = Map<String, dynamic>.from(sshKeyJson as Map);
         final id = map['id'] as String;
-        final existing = await _sshKeyDao.getSshKeyById(id);
+        final existing = await _sshKeyDao.getSshKeyByIdIncludingDeleted(id);
 
         // Extract secrets before creating entity
         final privateKey = map.remove('privateKey') as String?;
         final passphrase = map.remove('passphrase') as String?;
 
         String sshKeyId = id;
+        final entity = SshKeyEntity.fromJson(map);
 
         if (existing != null) {
+          if (!_shouldApplyRemote(
+            strategy: strategy,
+            localUpdatedAt: existing.updatedAt,
+            localDeletedAt: existing.deletedAt,
+            remoteUpdatedAt: entity.updatedAt,
+            remoteDeletedAt: entity.deletedAt,
+          )) {
+            skipped++;
+            continue;
+          }
           switch (strategy) {
             case ImportConflictStrategy.skip:
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
             case ImportConflictStrategy.mergeServerWins:
-              final entity = SshKeyEntity.fromJson(map);
               await _sshKeyDao.updateSshKey(SshKeyMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
               sshKeyId = _uuid.v4();
               map['id'] = sshKeyId;
               map['name'] = '${map['name']} (Imported)';
-              final entity = SshKeyEntity.fromJson(map);
-              await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(entity));
+              final renamed = SshKeyEntity.fromJson(map);
+              await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(renamed));
           }
         } else {
-          final entity = SshKeyEntity.fromJson(map);
           await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(entity));
         }
 
@@ -449,28 +506,37 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       try {
         final map = Map<String, dynamic>.from(serverJson as Map);
         final id = map['id'] as String;
-        final existing = await _serverDao.getServerById(id);
+        final existing = await _serverDao.getServerByIdIncludingDeleted(id);
 
         String serverId = id;
+        final entity = ServerEntity.fromJson(map);
 
         if (existing != null) {
+          if (!_shouldApplyRemote(
+            strategy: strategy,
+            localUpdatedAt: existing.updatedAt,
+            localDeletedAt: existing.deletedAt,
+            remoteUpdatedAt: entity.updatedAt,
+            remoteDeletedAt: entity.deletedAt,
+          )) {
+            skipped++;
+            continue;
+          }
           switch (strategy) {
             case ImportConflictStrategy.skip:
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
             case ImportConflictStrategy.mergeServerWins:
-              final entity = ServerEntity.fromJson(map);
               await _serverDao.updateServer(ServerMapper.toCompanion(entity));
             case ImportConflictStrategy.rename:
               serverId = _uuid.v4();
               map['id'] = serverId;
               map['name'] = '${map['name']} (Imported)';
-              final entity = ServerEntity.fromJson(map);
-              await _serverDao.insertServer(ServerMapper.toCompanion(entity));
+              final renamed = ServerEntity.fromJson(map);
+              await _serverDao.insertServer(ServerMapper.toCompanion(renamed));
           }
         } else {
-          final entity = ServerEntity.fromJson(map);
           await _serverDao.insertServer(ServerMapper.toCompanion(entity));
         }
 
@@ -522,7 +588,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       try {
         final map = Map<String, dynamic>.from(snippetJson as Map);
         final id = map['id'] as String;
-        final existing = await _snippetDao.getSnippetById(id);
+        final existing = await _snippetDao.getSnippetByIdIncludingDeleted(id);
 
         // Extract tag IDs and variables before creating entity
         final snippetTagIds =
@@ -534,15 +600,25 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
             [];
 
         String snippetId = id;
+        final entity = SnippetEntity.fromJson(map);
 
         if (existing != null) {
+          if (!_shouldApplyRemote(
+            strategy: strategy,
+            localUpdatedAt: existing.updatedAt,
+            localDeletedAt: existing.deletedAt,
+            remoteUpdatedAt: entity.updatedAt,
+            remoteDeletedAt: entity.deletedAt,
+          )) {
+            skipped++;
+            continue;
+          }
           switch (strategy) {
             case ImportConflictStrategy.skip:
               skipped++;
               continue;
             case ImportConflictStrategy.overwrite:
             case ImportConflictStrategy.mergeServerWins:
-              final entity = SnippetEntity.fromJson(map);
               await _snippetDao.updateSnippet(
                 SnippetMapper.toCompanion(entity),
               );
@@ -550,13 +626,12 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
               snippetId = _uuid.v4();
               map['id'] = snippetId;
               map['name'] = '${map['name']} (Imported)';
-              final entity = SnippetEntity.fromJson(map);
+              final renamed = SnippetEntity.fromJson(map);
               await _snippetDao.insertSnippet(
-                SnippetMapper.toCompanion(entity),
+                SnippetMapper.toCompanion(renamed),
               );
           }
         } else {
-          final entity = SnippetEntity.fromJson(map);
           await _snippetDao.insertSnippet(SnippetMapper.toCompanion(entity));
         }
 

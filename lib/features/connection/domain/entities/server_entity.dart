@@ -45,6 +45,7 @@ abstract class ServerEntity with _$ServerEntity {
     String? permissions,
     required DateTime createdAt,
     required DateTime updatedAt,
+    DateTime? deletedAt,
   }) = _ServerEntity;
 
   factory ServerEntity.fromJson(Map<String, dynamic> json) =>
