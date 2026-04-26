@@ -376,7 +376,11 @@ class ServerListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(serverFilterProvider);
     final viewMode = ref.watch(viewModeProvider);
-    final useGrouped = !_hasActiveFilter(filter);
+    // Folder grouping only makes sense for the list layout. When the user
+    // picks the grid view we always show a flat grid so the toggle has a
+    // visible effect even without an active filter.
+    final useGrouped =
+        viewMode == ViewMode.list && !_hasActiveFilter(filter);
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -386,23 +390,36 @@ class ServerListScreen extends ConsumerWidget {
         title: l10n.serverListTitle,
         actions: [const ViewModeToggle(), Spacing.horizontalSm],
       ),
-      floatingActionButton: Semantics(
-        label: l10n.serverAddButton,
-        button: true,
-        child: Tooltip(
-          message: l10n.serverAddButton,
-          child: FloatingActionButton(
-            heroTag: 'addServerFab',
-            tooltip: l10n.serverAddButton,
-            onPressed: () => _onAddServer(context, ref),
-            child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton.small(
+            heroTag: 'searchServerFab',
+            tooltip: l10n.searchServers,
+            onPressed: () => showServerSearchSheet(context),
+            child: const Icon(Icons.search),
           ),
-        ),
+          Spacing.verticalSm,
+          Semantics(
+            label: l10n.serverAddButton,
+            button: true,
+            child: Tooltip(
+              message: l10n.serverAddButton,
+              child: FloatingActionButton(
+                heroTag: 'addServerFab',
+                tooltip: l10n.serverAddButton,
+                onPressed: () => _onAddServer(context, ref),
+                child: const Icon(Icons.add),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
           const _DashboardHeader(),
-          const SearchFilterBar(),
+          const ActiveFilterChips(),
           Spacing.verticalSm,
           Expanded(
             child: useGrouped
@@ -775,44 +792,118 @@ class _FolderSectionHeader extends StatelessWidget {
         ? theme.colorScheme.onSurfaceVariant
         : Color(folder.color);
     final name = isUncategorized ? l10n.serverListNoFolder : folder.name;
+    final serverCount = group.servers.length;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Padding(
-      padding: EdgeInsets.only(left: group.depth * Spacing.xxl),
-      child: ListTile(
-        onTap: onToggle,
-        tileColor: theme.colorScheme.surfaceContainerHighest,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        leading: Icon(
-          isUncategorized
-              ? Icons.folder_off_outlined
-              : IconConstants.getIcon(folder.iconName),
-          color: folderColor,
-          size: 20,
-        ),
-        title: Text(
-          name,
-          style: theme.textTheme.titleSmall?.copyWith(
-            color: theme.colorScheme.onSurface,
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Badge(
-              label: Text('${group.servers.length}'),
-              backgroundColor: folderColor.withAlpha(AppConstants.alpha30),
-              textColor: folderColor,
-            ),
-            if (onToggle != null) ...[
-              Spacing.horizontalXxs,
-              Icon(
-                expanded ? Icons.expand_less : Icons.expand_more,
-                size: 20,
-                color: theme.colorScheme.onSurfaceVariant,
+      padding: EdgeInsets.only(
+        left: group.depth * Spacing.xxl + Spacing.lg,
+        right: Spacing.lg,
+        top: Spacing.xs,
+        bottom: Spacing.xs,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onToggle,
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  folderColor.withAlpha(isDark ? 60 : 40),
+                  folderColor.withAlpha(isDark ? 20 : 12),
+                ],
               ),
-            ],
-          ],
+              border: Border.all(
+                color: folderColor.withAlpha(isDark ? 80 : 50),
+                width: 1,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: folderColor.withAlpha(isDark ? 70 : 45),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      isUncategorized
+                          ? Icons.folder_off_outlined
+                          : IconConstants.getIcon(folder.iconName),
+                      color: folderColor,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          l10n.folderServerCount(serverCount),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: folderColor.withAlpha(isDark ? 90 : 60),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      '$serverCount',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: folderColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  if (onToggle != null) ...[
+                    const SizedBox(width: 8),
+                    AnimatedRotation(
+                      turns: expanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.expand_more,
+                        size: 22,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
