@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.9.0" date="2026-04-26">
+      <description>
+        <p>Sync now propagates deletes via tombstones and uses per-entity last-write-wins for renames and reorders, fixing data resurrecting between devices.</p>
+      </description>
+    </release>
     <release version="1.8.0" date="2026-04-26">
       <description>
         <p>System notifications on Linux and Windows; redesigned folder section headers; grid view honors mode toggle; search moved to FAB; expanded icon library; min/max/close window controls on Linux.</p>
