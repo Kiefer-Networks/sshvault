@@ -32,6 +32,12 @@ class AdaptiveNotification {
   static bool _systemInitialized = false;
   static int _notificationId = 1000;
 
+  /// Map of notification id → callback fired when the user taps the
+  /// notification's action button. Used by [showWithAction] to route a
+  /// `Reconnect` tap on the OS shade back to the calling widget.
+  static final Map<int, VoidCallback> _actionCallbacks = {};
+  static const String _retryActionId = 'retry';
+
   static Future<void> _ensureSystemInitialized() async {
     if (_systemInitialized) return;
     _systemInitialized = true;
@@ -71,6 +77,7 @@ class AdaptiveNotification {
         linux: linuxSettings,
         windows: windowsSettings,
       ),
+      onDidReceiveNotificationResponse: _onNotificationResponse,
     );
 
     // Permission requests need a real OS — gating on dart:io's Platform
@@ -126,6 +133,68 @@ class AdaptiveNotification {
             ? SnackBarAction(label: actionLabel, onPressed: onAction ?? () {})
             : null,
       ),
+    );
+  }
+
+  /// Routes notification action taps (e.g. the Android `Reconnect`
+  /// button) back to the registered widget callback.
+  static void _onNotificationResponse(NotificationResponse response) {
+    final id = response.id;
+    if (id == null) return;
+    if (response.actionId == _retryActionId) {
+      _actionCallbacks.remove(id)?.call();
+    } else {
+      // User tapped the notification body — drop the registered callback
+      // since the user already saw the message.
+      _actionCallbacks.remove(id);
+    }
+  }
+
+  /// Shows a system notification with a single action button (e.g.
+  /// `Reconnect`). Currently wired for Android only — other platforms
+  /// fall back to the plain [show] path. [onAction] is invoked when
+  /// the user taps the action button on the OS notification shade.
+  static Future<void> showWithAction({
+    required String title,
+    required String message,
+    required String actionLabel,
+    required VoidCallback onAction,
+  }) async {
+    if (!Platform.isAndroid || defaultTargetPlatform != TargetPlatform.android) {
+      // Non-Android: just fire a non-actionable notification. Reconnect
+      // for desktop/iOS is already handled via the in-app dialog.
+      await _showSystemNotification('$title: $message');
+      return;
+    }
+    await _ensureSystemInitialized();
+    final id = _notificationId++;
+    _actionCallbacks[id] = onAction;
+    final details = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'sshvault_connection',
+        'SSHVault — connection',
+        channelDescription:
+            'SSH connection status, including disconnects and reconnect prompts',
+        importance: Importance.high,
+        priority: Priority.high,
+        playSound: false,
+        onlyAlertOnce: true,
+        category: AndroidNotificationCategory.status,
+        actions: <AndroidNotificationAction>[
+          AndroidNotificationAction(
+            _retryActionId,
+            actionLabel,
+            cancelNotification: true,
+            showsUserInterface: true,
+          ),
+        ],
+      ),
+    );
+    await _plugin.show(
+      id: id,
+      title: title,
+      body: message,
+      notificationDetails: details,
     );
   }
 

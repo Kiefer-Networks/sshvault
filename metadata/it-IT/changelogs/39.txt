@@ -1,0 +1,2 @@
+- Android: rimossi i permessi READ_MEDIA_IMAGES / READ_MEDIA_VIDEO ereditati da image_picker / file_picker — Google Play ora accetta l'upload. L'app usa il Photo Picker di Android 13+ per gli avatar e lo Storage Access Framework per le importazioni; nessuno richiede permessi.
+- Le disconnessioni su Android appaiono ora come notifica nella barra di sistema con un pulsante "Riconnetti" integrato. La finestra slide-up in-app è stata rimossa, il terminale resta visibile e l'avviso di disconnessione vive nel pannello notifiche.

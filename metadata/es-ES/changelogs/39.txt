@@ -1,0 +1,2 @@
+- Android: se eliminan los permisos READ_MEDIA_IMAGES / READ_MEDIA_VIDEO heredados de image_picker / file_picker — Google Play ya acepta la subida. La app usa el Photo Picker de Android 13+ para avatares y el Storage Access Framework para importaciones; ninguno requiere permiso.
+- Las desconexiones en Android aparecen ahora como una notificación de la barra del sistema con un botón "Reconectar" integrado. Se elimina el diálogo desplegable in-app, el terminal queda visible y el aviso de desconexión vive en la bandeja de notificaciones.

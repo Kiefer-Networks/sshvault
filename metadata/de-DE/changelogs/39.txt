@@ -1,0 +1,2 @@
+- Android: READ_MEDIA_IMAGES- / READ_MEDIA_VIDEO-Berechtigung, die image_picker / file_picker mitziehen, wird entfernt — Google Play akzeptiert den Upload jetzt. App nutzt Android-13+ Photo-Picker für Avatare und Storage-Access-Framework für Key-/Snippet-Imports; beide brauchen keine Berechtigung.
+- Android-Disconnects erscheinen jetzt als System-Shade-Benachrichtigung mit eingebautem "Wieder verbinden"-Button. Der bisherige In-App-Slide-up-Dialog ist weg, das Terminal bleibt sichtbar, der Disconnect lebt in der Benachrichtigungsleiste.

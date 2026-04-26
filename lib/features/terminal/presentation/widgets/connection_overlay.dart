@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
@@ -53,9 +55,25 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
       final message = isError && widget.errorMessage != null
           ? widget.errorMessage!
           : '';
+      final actionLabel = isError ? l10n.retry : l10n.connectionReconnect;
 
-      // Fire system notification so the user sees it even when the app
-      // is in the background (macOS native notification center).
+      // Android: surface the disconnect through the OS notification
+      // shade with a Reconnect action button instead of an in-app
+      // modal dialog. The dialog overlays the terminal output and
+      // forces a tap-through; the system notification keeps the
+      // terminal visible and lets the user reconnect from anywhere.
+      if (Platform.isAndroid) {
+        final retry = widget.onRetry;
+        AdaptiveNotification.showWithAction(
+          title: title,
+          message: message.isEmpty ? l10n.connectionLost : message,
+          actionLabel: actionLabel,
+          onAction: retry ?? () {},
+        );
+        return;
+      }
+
+      // Other platforms still get the plain notification + dialog.
       AdaptiveNotification.show(
         context,
         message: message.isNotEmpty ? '$title: $message' : title,
@@ -66,7 +84,7 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
         title: title,
         message: message,
         cancelLabel: l10n.close,
-        confirmLabel: isError ? l10n.retry : l10n.connectionReconnect,
+        confirmLabel: actionLabel,
       ).then((result) {
         if (!mounted) return;
         if (result == true) {

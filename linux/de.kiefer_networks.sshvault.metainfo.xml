@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.10.5" date="2026-04-26">
+      <description>
+        <p>Drops READ_MEDIA_IMAGES / READ_MEDIA_VIDEO permission inherited from image_picker so Google Play accepts the upload (the app uses the Photo Picker, which needs no permission). Android disconnects now appear as a system-shade notification with an inline Reconnect action button; the prior in-app slide-up dialog is gone.</p>
+      </description>
+    </release>
     <release version="1.10.4" date="2026-04-26">
       <description>
         <p>Android now uses the OS notification shade instead of in-app SnackBar overlays so messages no longer cover the UI. List padding above the FAB cluster bumped to 144 dp so the floating add/search buttons no longer sit on top of the last server tile's edit / info actions.</p>
