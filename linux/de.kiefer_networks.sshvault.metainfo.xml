@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.10.1" date="2026-04-26">
+      <description>
+        <p>Fixes liboqs Flatpak SHA256 mismatch and reduces the per-platform liboqs build to just ML-KEM-768 and sntrup761 so the macOS, Windows, Android and Flatpak release jobs finish without exhausting the runner's process table.</p>
+      </description>
+    </release>
     <release version="1.10.0" date="2026-04-26">
       <description>
         <p>Adds hybrid post-quantum SSH key exchange (mlkem768x25519-sha256, sntrup761x25519-sha512@openssh.com) via the Open Quantum Safe liboqs library. Connects to OpenSSH 9.9+ servers configured for PQ-only KEX without breaking classical fallback.</p>

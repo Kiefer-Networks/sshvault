@@ -108,7 +108,8 @@ jobs:
               -DOQS_BUILD_ONLY_LIB=ON \
               -DOQS_DIST_BUILD=ON \
               -DBUILD_SHARED_LIBS=ON \
-              -DOQS_USE_OPENSSL=OFF
+              -DOQS_USE_OPENSSL=OFF \
+              -DOQS_MINIMAL_BUILD="KEM_ml_kem_768;KEM_sntrup_sntrup761"
             cmake --build build --parallel
             mkdir -p "../android/app/src/main/jniLibs/${android_abi}"
             cp build/lib/liboqs.so "../android/app/src/main/jniLibs/${android_abi}/liboqs.so"
@@ -265,8 +266,9 @@ jobs:
             -DOQS_BUILD_ONLY_LIB=ON \
             -DOQS_DIST_BUILD=ON \
             -DBUILD_SHARED_LIBS=ON \
-            -DOQS_USE_OPENSSL=OFF
-          cmake --build build --parallel
+            -DOQS_USE_OPENSSL=OFF \
+            -DOQS_MINIMAL_BUILD="KEM_ml_kem_768;KEM_sntrup_sntrup761"
+          cmake --build build --parallel 4
           mkdir -p "$GITHUB_WORKSPACE/third_party/liboqs-prebuilt-macos"
           cp build/lib/liboqs.dylib "$GITHUB_WORKSPACE/third_party/liboqs-prebuilt-macos/liboqs.dylib"
           install_name_tool -id "@executable_path/../Frameworks/liboqs.dylib" \
@@ -443,7 +445,8 @@ jobs:
             -DOQS_BUILD_ONLY_LIB=ON `
             -DOQS_DIST_BUILD=ON `
             -DBUILD_SHARED_LIBS=ON `
-            -DOQS_USE_OPENSSL=OFF
+            -DOQS_USE_OPENSSL=OFF `
+            "-DOQS_MINIMAL_BUILD=KEM_ml_kem_768;KEM_sntrup_sntrup761"
           cmake --build build --config Release --parallel
           New-Item -ItemType Directory -Force -Path "../third_party/liboqs-prebuilt" | Out-Null
           Copy-Item -Force build/bin/Release/oqs.dll "../third_party/liboqs-prebuilt/liboqs.dll"

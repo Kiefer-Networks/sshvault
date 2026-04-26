@@ -48,7 +48,10 @@ modules:
     # Open Quantum Safe — provides ML-KEM-768 (FIPS 203) and sntrup761
     # for the hybrid post-quantum SSH key exchanges advertised in
     # OpenSSH 9.9+. Built from source so the resulting .so is bundled
-    # inside the Flatpak runtime alongside SSHVault.
+    # inside the Flatpak runtime alongside SSHVault. OQS_MINIMAL_BUILD
+    # restricts the compile to just the two KEMs we need so the build
+    # finishes in seconds instead of pulling in BIKE / Classic McEliece /
+    # all of Dilithium / Falcon / FrodoKEM (we use none of them).
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
@@ -56,6 +59,7 @@ modules:
       - -DOQS_DIST_BUILD=ON
       - -DBUILD_SHARED_LIBS=ON
       - -DOQS_USE_OPENSSL=OFF
+      - -DOQS_MINIMAL_BUILD=KEM_ml_kem_768;KEM_sntrup_sntrup761
       - --libdir=lib
     cleanup:
       - /include
@@ -64,7 +68,7 @@ modules:
     sources:
       - type: archive
         url: https://github.com/open-quantum-safe/liboqs/archive/refs/tags/0.10.1.tar.gz
-        sha256: c33cc3fb3a3f06be08e1e54076d7b0a32fc8c4720ed4e07845d8e6e21ac9a785
+        sha256: 00ca8aba65cd8c8eac00ddf978f4cac9dd23bb039f357448b60b7e3eed8f02da
 
   - name: sshvault
     buildsystem: simple
