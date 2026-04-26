@@ -8,20 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
-// Use the framework target platform rather than dart:io's Platform so
-// flutter_test (which defaults to TargetPlatform.android) keeps the
-// in-app fallback path instead of touching the native plugin.
-//
-// Android joins the system-notification path so users see notifications
-// through the OS shade (matching iOS, macOS, Linux, Windows). The
-// previous in-app SnackBar overlapped UI surfaces; Android users
-// expressly asked for system notifications.
+// Both checks must agree before we touch the native plugin: dart:io's
+// Platform pins us to a real OS (so flutter_test on a Linux runner
+// reporting defaultTargetPlatform == android does not dispatch a
+// native call), and defaultTargetPlatform pins the *target* (so the
+// path is also disabled when the host is unexpected).
 bool get _supportsSystemNotification {
   final p = defaultTargetPlatform;
-  return p == TargetPlatform.android ||
-      p == TargetPlatform.macOS ||
-      p == TargetPlatform.linux ||
-      p == TargetPlatform.windows;
+  return (p == TargetPlatform.android && Platform.isAndroid) ||
+      (p == TargetPlatform.macOS && Platform.isMacOS) ||
+      (p == TargetPlatform.linux && Platform.isLinux) ||
+      (p == TargetPlatform.windows && Platform.isWindows);
 }
 
 /// Shows a platform-adaptive notification.
@@ -76,16 +73,20 @@ class AdaptiveNotification {
       ),
     );
 
-    if (defaultTargetPlatform == TargetPlatform.macOS) {
+    // Permission requests need a real OS — gating on dart:io's Platform
+    // (rather than defaultTargetPlatform) keeps flutter_test happy: tests
+    // run on Linux hosts that report defaultTargetPlatform == android by
+    // default but cannot dispatch native notification calls.
+    if (Platform.isMacOS) {
       await _plugin
           .resolvePlatformSpecificImplementation<
             MacOSFlutterLocalNotificationsPlugin
           >()
           ?.requestPermissions(alert: true);
     }
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      // Android 13+ (API 33+) requires runtime POST_NOTIFICATIONS.
-      // The manifest declaration alone is not sufficient.
+    if (Platform.isAndroid) {
+      // Android 13+ (API 33+) requires runtime POST_NOTIFICATIONS. The
+      // manifest declaration alone is not sufficient.
       await _plugin
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
