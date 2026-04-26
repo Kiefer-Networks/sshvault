@@ -252,33 +252,41 @@ class _FolderTile extends ConsumerWidget {
                   size: 22,
                 ),
               ),
-              title: Text(folder.name),
+              title: Text(
+                folder.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               subtitle: Text(
                 l10n.folderServerCount(folder.serverCount),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
+              // Trailing controls collapse to icon-only buttons so a long
+              // folder name has room to ellipsize cleanly. The previous
+              // labelled "Connect all" OutlinedButton would push the
+              // title and chevron off-screen on narrow layouts.
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (folder.serverCount > 0)
                     connectingAll
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : OutlinedButton.icon(
-                            onPressed: () => _connectAllServers(context, ref),
-                            icon: const Icon(Icons.play_arrow, size: 18),
-                            label: Text(l10n.folderConnectAll),
-                            style: OutlinedButton.styleFrom(
-                              visualDensity: VisualDensity.compact,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: Spacing.md,
-                              ),
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             ),
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.play_arrow),
+                            tooltip: l10n.folderConnectAll,
+                            visualDensity: VisualDensity.compact,
+                            onPressed: () => _connectAllServers(context, ref),
                           ),
                   if (folder.serverCount > 0)
                     IconButton(

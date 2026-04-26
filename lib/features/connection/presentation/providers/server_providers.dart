@@ -6,6 +6,7 @@ import 'package:sshvault/features/connection/domain/entities/server_credentials.
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/domain/entities/server_filter.dart';
 import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
 
@@ -41,6 +42,11 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>>
     ref.invalidate(favoriteServersProvider);
     ref.invalidate(recentServersProvider);
     ref.invalidate(sshKeyListProvider);
+    // Folder + tag count badges read from these providers; without
+    // explicit invalidation the sidebar / dashboard tiles keep stale
+    // counts until app restart.
+    ref.invalidate(folderListProvider);
+    ref.invalidate(tagListProvider);
     if (serverId != null) {
       ref.invalidate(serverDetailProvider(serverId));
       ref.invalidate(serverCredentialsProvider(serverId));

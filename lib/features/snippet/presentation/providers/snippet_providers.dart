@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/utils/auto_sync_mixin.dart';
+import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
 import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
 import 'package:sshvault/features/snippet/domain/entities/snippet_filter.dart';
 
@@ -40,6 +42,10 @@ class SnippetListNotifier extends AsyncNotifier<List<SnippetEntity>>
     result.fold(
       onSuccess: (_) {
         ref.invalidateSelf();
+        // Folder and tag count badges read from these providers — invalidate
+        // so counts refresh immediately instead of waiting for an app restart.
+        ref.invalidate(folderListProvider);
+        ref.invalidate(tagListProvider);
         triggerAutoSync();
       },
       onFailure: (failure) => throw failure,
@@ -52,6 +58,10 @@ class SnippetListNotifier extends AsyncNotifier<List<SnippetEntity>>
     result.fold(
       onSuccess: (_) {
         ref.invalidateSelf();
+        // Folder and tag count badges read from these providers — invalidate
+        // so counts refresh immediately instead of waiting for an app restart.
+        ref.invalidate(folderListProvider);
+        ref.invalidate(tagListProvider);
         triggerAutoSync();
       },
       onFailure: (failure) => throw failure,
@@ -64,6 +74,10 @@ class SnippetListNotifier extends AsyncNotifier<List<SnippetEntity>>
     result.fold(
       onSuccess: (_) {
         ref.invalidateSelf();
+        // Folder and tag count badges read from these providers — invalidate
+        // so counts refresh immediately instead of waiting for an app restart.
+        ref.invalidate(folderListProvider);
+        ref.invalidate(tagListProvider);
         triggerAutoSync();
       },
       onFailure: (failure) => throw failure,

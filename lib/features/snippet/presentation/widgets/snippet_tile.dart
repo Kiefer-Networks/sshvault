@@ -57,43 +57,49 @@ class SnippetTile extends StatelessWidget {
           color: theme.colorScheme.primary,
           size: 44,
         ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(snippet.name, overflow: TextOverflow.ellipsis),
-            ),
-            Spacing.horizontalSm,
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.secondaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                snippet.language,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.onSecondaryContainer,
-                ),
-              ),
-            ),
-          ],
-        ),
+        title: Text(snippet.name, maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (snippet.description.isNotEmpty) ...[
-              const SizedBox(height: Spacing.xxxs),
-              Text(
-                snippet.description,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withAlpha(
-                    AppConstants.alpha153,
+            // Language pill + optional description on one line below the
+            // title — keeps the name unconstrained so long names ellipsize
+            // cleanly without competing with the badge for width.
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    snippet.language,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSecondaryContainer,
+                    ),
                   ),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ] else if (snippet.content.isNotEmpty) ...[
+                if (snippet.description.isNotEmpty) ...[
+                  Spacing.horizontalSm,
+                  Expanded(
+                    child: Text(
+                      snippet.description,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withAlpha(
+                          AppConstants.alpha153,
+                        ),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            if (snippet.description.isEmpty && snippet.content.isNotEmpty) ...[
               const SizedBox(height: Spacing.xxxs),
               Text(
                 snippet.content.length > 80
@@ -105,7 +111,7 @@ class SnippetTile extends StatelessWidget {
                     AppConstants.alpha153,
                   ),
                 ),
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
