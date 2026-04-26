@@ -3,12 +3,20 @@ import 'dart:io' show Platform;
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
-bool get _supportsSystemNotification =>
-    Platform.isMacOS || Platform.isLinux || Platform.isWindows;
+// Use the framework target platform rather than dart:io's Platform so
+// flutter_test (which defaults to TargetPlatform.android) keeps the
+// in-app fallback path instead of touching the native plugin.
+bool get _supportsSystemNotification {
+  final p = defaultTargetPlatform;
+  return p == TargetPlatform.macOS ||
+      p == TargetPlatform.linux ||
+      p == TargetPlatform.windows;
+}
 
 /// Shows a platform-adaptive notification.
 ///
@@ -44,15 +52,25 @@ class AdaptiveNotification {
       guid: 'e7d9f3c4-1a2b-4c5d-9e6f-7a8b9c0d1e2f',
     );
 
+    // The plugin's initialize() throws if it picks up Android (incl. test
+    // hosts that report defaultTargetPlatform == android) without an
+    // explicit settings entry, so include a no-op default. Notifications
+    // only flow through this code path on the desktop platforms above —
+    // Android falls through to the in-app SnackBar branch.
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
+
     await _plugin.initialize(
       settings: const InitializationSettings(
+        android: androidSettings,
         macOS: macSettings,
         linux: linuxSettings,
         windows: windowsSettings,
       ),
     );
 
-    if (Platform.isMacOS) {
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
       await _plugin
           .resolvePlatformSpecificImplementation<
             MacOSFlutterLocalNotificationsPlugin
