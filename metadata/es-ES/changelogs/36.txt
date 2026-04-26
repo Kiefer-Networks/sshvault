@@ -1,0 +1,1 @@
+- Interno: corrección de la canalización de compilación — el módulo Flatpak de liboqs ahora usa CMAKE_INSTALL_LIBDIR (cmake-ninja rechazaba el flag --libdir estilo meson). Sin cambios visibles respecto a 1.10.1.

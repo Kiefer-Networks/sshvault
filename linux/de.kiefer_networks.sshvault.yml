@@ -60,7 +60,7 @@ modules:
       - -DBUILD_SHARED_LIBS=ON
       - -DOQS_USE_OPENSSL=OFF
       - -DOQS_MINIMAL_BUILD=KEM_ml_kem_768;KEM_sntrup_sntrup761
-      - --libdir=lib
+      - -DCMAKE_INSTALL_LIBDIR=lib
     cleanup:
       - /include
       - /lib/pkgconfig

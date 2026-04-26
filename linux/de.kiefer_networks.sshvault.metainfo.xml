@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.10.2" date="2026-04-26">
+      <description>
+        <p>CI fix: Flatpak liboqs module now uses CMAKE_INSTALL_LIBDIR instead of the meson-style --libdir flag (cmake-ninja rejected the latter).</p>
+      </description>
+    </release>
     <release version="1.10.1" date="2026-04-26">
       <description>
         <p>Fixes liboqs Flatpak SHA256 mismatch and reduces the per-platform liboqs build to just ML-KEM-768 and sntrup761 so the macOS, Windows, Android and Flatpak release jobs finish without exhausting the runner's process table.</p>

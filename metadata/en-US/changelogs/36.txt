@@ -1,0 +1,1 @@
+- Internal: build-pipeline fix — Flatpak liboqs module now uses CMAKE_INSTALL_LIBDIR (cmake-ninja rejected the previous meson-style --libdir flag). No user-visible behavior change versus 1.10.1.
