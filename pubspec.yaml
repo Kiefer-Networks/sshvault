@@ -1,7 +1,7 @@
 name: sshvault
 description: "Secure, self-hosted SSH client with zero-knowledge sync"
 publish_to: 'none'
-version: 1.10.2+36
+version: 1.10.3+37
 
 environment:
   sdk: ^3.11.0

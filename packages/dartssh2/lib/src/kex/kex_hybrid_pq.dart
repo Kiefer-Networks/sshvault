@@ -1,12 +1,17 @@
 /// Hybrid post-quantum key exchange implementations for SSH.
 ///
-/// These wire two independent KEMs together:
-///   - X25519 ECDH (TweetNaCl, classical)
-///   - ML-KEM-768 or sntrup761 (liboqs via FFI, post-quantum)
+/// Wires two independent KEMs together per OpenSSH `kexmlkem768x25519.c`
+/// and `kexsntrup761x25519.c`:
 ///
-/// On the wire the public-key blob is `x25519_pub || kem_pub` and the
-/// shared-secret bytes fed into the SSH exchange hash are
-/// `x25519_ss || kem_ss` (raw concatenation, **not** mpint encoding).
+/// - Client public-key blob (sent in SSH_MSG_KEX_ECDH_INIT):
+///   `kem_pub || x25519_pub` — KEM first, X25519 second.
+/// - Server reply blob (sent in SSH_MSG_KEX_ECDH_REPLY):
+///   `kem_ciphertext || server_x25519_pub` — same ordering.
+/// - Shared secret K passed into the SSH exchange hash and key
+///   derivation is `HASH(kem_ss || x25519_ss)`. The hash is then
+///   encoded as an SSH `string` (uint32 length + bytes), **not** as
+///   an mpint. SHA-256 for `mlkem768x25519-sha256`, SHA-512 for
+///   `sntrup761x25519-sha512@openssh.com`.
 library;
 
 import 'dart:typed_data';
@@ -16,9 +21,26 @@ import 'package:dartssh2/src/kex/oqs_ffi.dart';
 import 'package:dartssh2/src/ssh_kex.dart';
 import 'package:dartssh2/src/utils/list.dart';
 import 'package:pinenacl/tweetnacl.dart';
+import 'package:pointycastle/digests/sha256.dart';
+import 'package:pointycastle/digests/sha512.dart';
+import 'package:pointycastle/api.dart' show Digest;
 
 const int _x25519KeyLength = 32;
 const int _x25519SharedLength = 32;
+
+/// Hash `kem_ss || x25519_ss` with [digest] and return the digest output.
+/// Matches `ssh_digest_buffer(kex->hash_alg, buf, hash, ...)` in
+/// OpenSSH's `kexmlkem768x25519.c` / `kexsntrup761x25519.c`.
+Uint8List _hashSecrets(Digest digest, Uint8List kemSs, Uint8List x25519Ss) {
+  final concat = Uint8List(kemSs.length + x25519Ss.length);
+  concat.setRange(0, kemSs.length, kemSs);
+  concat.setRange(kemSs.length, concat.length, x25519Ss);
+  digest.reset();
+  digest.update(concat, 0, concat.length);
+  final out = Uint8List(digest.digestSize);
+  digest.doFinal(out, 0);
+  return out;
+}
 
 /// Hybrid X25519 + ML-KEM-768 KEX (`mlkem768x25519-sha256`).
 class SSHKexMlkem768X25519 implements SSHKexHybrid {
@@ -67,41 +89,42 @@ class SSHKexMlkem768X25519 implements SSHKexHybrid {
 
   @override
   Uint8List get publicKey {
-    final blob = Uint8List(_x25519Public.length + _kemPublic.length);
-    blob.setRange(0, _x25519Public.length, _x25519Public);
-    blob.setRange(_x25519Public.length, blob.length, _kemPublic);
+    // Wire format per OpenSSH kexmlkem768x25519.c::keypair():
+    //   kem_pub (1184 bytes) || x25519_pub (32 bytes)
+    final blob = Uint8List(_kemPublic.length + _x25519Public.length);
+    blob.setRange(0, _kemPublic.length, _kemPublic);
+    blob.setRange(_kemPublic.length, blob.length, _x25519Public);
     return blob;
   }
 
   @override
   Uint8List computeSecretBytes(Uint8List remotePublicKey) {
-    // Server response layout (RFC draft-josefsson-ntruprime-ssh):
-    //   server_x25519_pub (32 bytes) || kem_ciphertext (kem.ciphertextLength)
+    // Server reply layout per OpenSSH kexmlkem768x25519.c::dec():
+    //   kem_ciphertext (1088 bytes) || server_x25519_pub (32 bytes)
     final kemCiphertextLength = _kem.ciphertextLength;
-    final expected = _x25519KeyLength + kemCiphertextLength;
+    final expected = kemCiphertextLength + _x25519KeyLength;
     if (remotePublicKey.length != expected) {
       throw ArgumentError(
         'mlkem768x25519: remote blob is ${remotePublicKey.length} bytes, '
-        'expected $expected (32-byte X25519 || $kemCiphertextLength-byte ML-KEM ciphertext)',
+        'expected $expected ($kemCiphertextLength-byte ML-KEM ciphertext || 32-byte X25519)',
       );
     }
-    final remoteX25519 = Uint8List.sublistView(
-      remotePublicKey,
-      0,
-      _x25519KeyLength,
-    );
     final kemCiphertext = Uint8List.sublistView(
       remotePublicKey,
-      _x25519KeyLength,
-      _x25519KeyLength + kemCiphertextLength,
+      0,
+      kemCiphertextLength,
+    );
+    final remoteX25519 = Uint8List.sublistView(
+      remotePublicKey,
+      kemCiphertextLength,
+      kemCiphertextLength + _x25519KeyLength,
     );
     final x25519Shared = Uint8List(_x25519SharedLength);
     TweetNaCl.crypto_scalarmult(x25519Shared, _x25519Private, remoteX25519);
     final kemShared = _kem.decapsulate(kemCiphertext, _kemSecret);
-    final out = Uint8List(x25519Shared.length + kemShared.length);
-    out.setRange(0, x25519Shared.length, x25519Shared);
-    out.setRange(x25519Shared.length, out.length, kemShared);
-    return out;
+    // K = SHA256(kem_ss || x25519_ss) — exact match for OpenSSH's
+    // ssh_digest_buffer(SSH_DIGEST_SHA256, buf, hash, ...).
+    return _hashSecrets(SHA256Digest(), kemShared, x25519Shared);
   }
 }
 
@@ -155,6 +178,8 @@ class SSHKexSntrup761X25519 implements SSHKexHybrid {
 
   @override
   Uint8List computeSecretBytes(Uint8List remotePublicKey) {
+    // Server reply per OpenSSH kexsntrup761x25519.c::dec():
+    //   kem_ciphertext || server_x25519_pub.
     final kemCiphertextLength = _kem.ciphertextLength;
     final expected = kemCiphertextLength + _x25519KeyLength;
     if (remotePublicKey.length != expected) {
@@ -176,10 +201,8 @@ class SSHKexSntrup761X25519 implements SSHKexHybrid {
     final x25519Shared = Uint8List(_x25519SharedLength);
     TweetNaCl.crypto_scalarmult(x25519Shared, _x25519Private, remoteX25519);
     final kemShared = _kem.decapsulate(kemCiphertext, _kemSecret);
-    final out = Uint8List(kemShared.length + x25519Shared.length);
-    out.setRange(0, kemShared.length, kemShared);
-    out.setRange(kemShared.length, out.length, x25519Shared);
-    return out;
+    // K = SHA512(kem_ss || x25519_ss).
+    return _hashSecrets(SHA512Digest(), kemShared, x25519Shared);
   }
 }
 
