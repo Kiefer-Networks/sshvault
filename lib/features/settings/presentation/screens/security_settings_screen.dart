@@ -1,8 +1,13 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/services/biometric_provider.dart';
 import 'package:sshvault/core/services/screen_protection_service.dart';
+import 'package:sshvault/core/storage/keyring_service.dart';
+import 'package:sshvault/core/storage/secure_storage_provider.dart'
+    show keyringServiceProvider;
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/pin_dialog.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
@@ -263,6 +268,69 @@ class SecuritySettingsScreen extends ConsumerWidget {
               ],
             ),
 
+            // ssh-agent integration (Linux + macOS). The feature degrades
+            // gracefully on platforms without an agent — the underlying
+            // SshAgentClient.isAvailable() returns false and the
+            // per-key/per-host buttons remain hidden at the call sites.
+            Spacing.verticalLg,
+            const SectionHeader(title: 'ssh-agent integration'),
+            SettingsGroupCard(
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.alt_route,
+                  iconColor: AppColors.iconBlue,
+                  title: 'Forward agent by default',
+                  subtitleText:
+                      'Expose \$SSH_AUTH_SOCK to remote shells when '
+                      'opening new SSH sessions.',
+                  value: settings.sshAgentForwardByDefault,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setSshAgentForwardByDefault(v);
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.settingsUpdated,
+                    );
+                  },
+                ),
+                SettingsTile(
+                  icon: Icons.timer_outlined,
+                  iconColor: AppColors.iconCyan,
+                  title: 'Default key lifetime',
+                  subtitleText: settings.sshAgentDefaultLifetimeSecs == 0
+                      ? 'No expiry (kept until removed)'
+                      : '${settings.sshAgentDefaultLifetimeSecs ~/ 60} min',
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<int>(
+                      context: context,
+                      title: 'Default key lifetime',
+                      currentValue: settings.sshAgentDefaultLifetimeSecs,
+                      options: const [
+                        SelectionOption(value: 0, label: 'No expiry'),
+                        SelectionOption(value: 900, label: '15 min'),
+                        SelectionOption(value: 1800, label: '30 min'),
+                        SelectionOption(value: 3600, label: '1 hour'),
+                        SelectionOption(value: 14400, label: '4 hours'),
+                        SelectionOption(value: 28800, label: '8 hours'),
+                      ],
+                    );
+                    if (v != null) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setSshAgentDefaultLifetimeSecs(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
+
             // Status section
             Spacing.verticalLg,
             SectionHeader(title: l10n.settingsSectionStatus),
@@ -278,6 +346,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
                     subtitleText: settings.failedPinAttempts.toString(),
                   ),
                 ),
+                const _MasterKeyStorageTile(),
               ],
             ),
             Spacing.verticalLg,
@@ -498,5 +567,92 @@ class _DuressPinTile extends ConsumerWidget {
         );
       }
     }
+  }
+}
+
+/// Read-only indicator showing where the vault master key currently lives,
+/// plus a Linux-only "Re-store key in system keyring" button that triggers
+/// the libsecret migration manually. Strings are intentionally inline
+/// rather than localized: the master-key storage backend is a desktop
+/// power-user concern and does not yet have l10n entries across all 28
+/// supported locales.
+class _MasterKeyStorageTile extends ConsumerStatefulWidget {
+  const _MasterKeyStorageTile();
+
+  @override
+  ConsumerState<_MasterKeyStorageTile> createState() =>
+      _MasterKeyStorageTileState();
+}
+
+class _MasterKeyStorageTileState extends ConsumerState<_MasterKeyStorageTile> {
+  Future<MasterKeyBackend?>? _backendFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  void _refresh() {
+    final keyring = ref.read(keyringServiceProvider);
+    setState(() => _backendFuture = keyring.currentBackend());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<MasterKeyBackend?>(
+      future: _backendFuture,
+      builder: (context, snapshot) {
+        final backend = snapshot.data;
+        final subtitle = switch (backend) {
+          MasterKeyBackend.systemKeyring => 'System Keyring',
+          MasterKeyBackend.encryptedFile => 'Encrypted file (fallback)',
+          null =>
+            snapshot.connectionState == ConnectionState.waiting
+                ? '...'
+                : 'Not yet stored',
+        };
+
+        final showReStoreButton =
+            Platform.isLinux && backend == MasterKeyBackend.encryptedFile;
+
+        return SettingsTile(
+          icon: Icons.key,
+          iconColor: AppColors.iconAmber,
+          title: 'Master key stored in',
+          subtitleText: subtitle,
+          trailing: showReStoreButton
+              ? TextButton(
+                  onPressed: _runManualMigration,
+                  child: const Text('Re-store in keyring'),
+                )
+              : null,
+        );
+      },
+    );
+  }
+
+  Future<void> _runManualMigration() async {
+    final keyring = ref.read(keyringServiceProvider);
+    final migrated = await keyring.migrateLegacyFileIfNeeded();
+    if (!mounted) return;
+
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    messenger?.showSnackBar(
+      SnackBar(
+        content: Text(
+          migrated
+              ? 'Master key moved into the system keyring.'
+              : 'Could not reach the system keyring. Master key still on disk.',
+        ),
+      ),
+    );
+
+    if (migrated) {
+      await ref
+          .read(settingsProvider.notifier)
+          .setKeyringMigrationCompleted(true);
+    }
+    _refresh();
   }
 }

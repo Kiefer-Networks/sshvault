@@ -52,15 +52,45 @@ final _sshKeyFormStateProvider =
 class SshKeyFormDialog extends ConsumerStatefulWidget {
   final SshKeyEntity? existingKey;
 
-  const SshKeyFormDialog({super.key, this.existingKey});
+  /// When provided, pre-fills the import tab's private-key field. Used by the
+  /// Linux drag-and-drop file import flow.
+  final String? prefillPrivateKey;
+
+  /// When provided, pre-fills the import tab's name/comment fields with the
+  /// public-key contents. Used by the Linux drag-and-drop file import flow
+  /// when only the `.pub` half is dropped.
+  final String? prefillPublicKey;
+
+  /// Optional default name for new keys. Typically derived from the dropped
+  /// file's basename (e.g. `id_ed25519`).
+  final String? prefillName;
+
+  const SshKeyFormDialog({
+    super.key,
+    this.existingKey,
+    this.prefillPrivateKey,
+    this.prefillPublicKey,
+    this.prefillName,
+  });
 
   bool get isEditing => existingKey != null;
 
-  static Future<bool?> show(BuildContext context, {SshKeyEntity? existingKey}) {
+  static Future<bool?> show(
+    BuildContext context, {
+    SshKeyEntity? existingKey,
+    String? prefillPrivateKey,
+    String? prefillPublicKey,
+    String? prefillName,
+  }) {
     return Navigator.of(context).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => SshKeyFormDialog(existingKey: existingKey),
+        builder: (_) => SshKeyFormDialog(
+          existingKey: existingKey,
+          prefillPrivateKey: prefillPrivateKey,
+          prefillPublicKey: prefillPublicKey,
+          prefillName: prefillName,
+        ),
       ),
     );
   }
@@ -87,6 +117,27 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     if (widget.isEditing) {
       _nameController.text = widget.existingKey!.name;
       _commentController.text = widget.existingKey!.comment;
+    } else {
+      // Drag-and-drop prefill: jump to the import tab and seed the form so the
+      // user only has to confirm. Using `addPostFrameCallback` because the
+      // TabController must be attached before we change its index.
+      if (widget.prefillName != null && widget.prefillName!.isNotEmpty) {
+        _nameController.text = widget.prefillName!;
+      }
+      if (widget.prefillPrivateKey != null) {
+        _privateKeyController.text = widget.prefillPrivateKey!;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _tabController.animateTo(1);
+        });
+      } else if (widget.prefillPublicKey != null) {
+        // Public-half drops can't be imported as private keys; we still pre-fill
+        // the comment so the user has the original metadata at hand and steer
+        // them to the import tab.
+        _commentController.text = widget.prefillPublicKey!.trim();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _tabController.animateTo(1);
+        });
+      }
     }
   }
 

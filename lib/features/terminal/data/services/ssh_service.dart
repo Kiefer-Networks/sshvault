@@ -40,10 +40,18 @@ class SshService {
     ProxyCredentials? proxyCredentials,
     SSHHostkeyVerifyHandler? onVerifyHostKey,
     SSHHostkeyVerifyHandler? onVerifyJumpHostKey,
+    // ssh-agent forwarding: when true the caller would like the remote
+    // shell to see $SSH_AUTH_SOCK. The current dartssh2 fork does not
+    // implement the auth-agent-req channel request, so this is recorded for
+    // future wiring (likely a custom channel request once dartssh2 grows
+    // the capability). Tracking it explicitly lets the UI surface the
+    // requested-but-not-supported state honestly.
+    bool forwardAgent = false,
   }) async {
     _log.info(
       _tag,
-      'Connecting to ${server.hostname}:${server.port} as ${server.username}',
+      'Connecting to ${server.hostname}:${server.port} as ${server.username}'
+      '${forwardAgent ? ' (agent forwarding requested)' : ''}',
     );
     try {
       SSHClient? jumpHostClient;

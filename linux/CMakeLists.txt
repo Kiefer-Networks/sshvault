@@ -148,3 +148,29 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
   install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
     COMPONENT Runtime)
 endif()
+
+# === KRunner integration (KDE Plasma) ===
+# Ships the SSHVault KRunner DBus runner so Plasma users can quick-connect
+# to hosts via the launcher. Only relevant for system-wide installs of
+# SSHVault — Flatpak builds can't publish files into the host's
+# ~/.local/share/krunner anyway, so the manifest excludes these targets.
+#
+# Layout (matches kio/krunner conventions):
+#   share/krunner/dbusplugins/  : plugin descriptor (.desktop)
+#   share/dbus-1/services/      : bus-activation service file
+#   share/sshvault/krunner/     : the Python runner script itself
+set(SSHVAULT_KRUNNER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/krunner")
+if(EXISTS "${SSHVAULT_KRUNNER_DIR}/de.kiefer_networks.sshvault-runner.py")
+  install(PROGRAMS
+    "${SSHVAULT_KRUNNER_DIR}/de.kiefer_networks.sshvault-runner.py"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sshvault/krunner"
+    COMPONENT Runtime)
+  install(FILES
+    "${SSHVAULT_KRUNNER_DIR}/de.kiefer_networks.sshvault-runner.desktop"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/share/krunner/dbusplugins"
+    COMPONENT Runtime)
+  install(FILES
+    "${SSHVAULT_KRUNNER_DIR}/de.kiefer_networks.SshvaultKRunner.service"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/share/dbus-1/services"
+    COMPONENT Runtime)
+endif()

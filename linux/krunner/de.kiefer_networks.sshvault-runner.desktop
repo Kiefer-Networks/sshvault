@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=SSHVault
+Comment=Quick-connect to SSHVault hosts
+Type=Service
+ServiceTypes=Plasma/Runner
+X-KDE-PluginInfo-Author=Kiefer Networks
+X-KDE-PluginInfo-Email=malte.kiefer@aleph-alpha.com
+X-KDE-PluginInfo-License=Apache-2.0
+X-KDE-PluginInfo-Name=de.kiefer_networks.sshvault
+X-KDE-PluginInfo-Version=1.0
+X-Plasma-API=DBus
+X-Plasma-DBusRunner-Service=de.kiefer_networks.SshvaultKRunner
+X-Plasma-DBusRunner-Path=/SshvaultKRunner
+X-Plasma-Runner-Trigger-Words=ssh
+Icon=de.kiefer_networks.sshvault

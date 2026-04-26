@@ -498,25 +498,27 @@ void main() {
       expect(result.value, 'sync-pass');
     });
 
-    test('getSyncPassword returns null without deleting when no password stored',
-        () async {
-      when(
-        () => mockStorage.read(key: AppConstants.syncPasswordLastUsedKey),
-      ).thenAnswer((_) async => null);
-      when(
-        () => mockStorage.read(key: AppConstants.syncPasswordKey),
-      ).thenAnswer((_) async => null);
+    test(
+      'getSyncPassword returns null without deleting when no password stored',
+      () async {
+        when(
+          () => mockStorage.read(key: AppConstants.syncPasswordLastUsedKey),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockStorage.read(key: AppConstants.syncPasswordKey),
+        ).thenAnswer((_) async => null);
 
-      final result = await sut.getSyncPassword();
-      expect(result.isSuccess, isTrue);
-      expect(result.value, isNull);
-      verifyNever(
-        () => mockStorage.write(
-          key: AppConstants.syncPasswordLastUsedKey,
-          value: any(named: 'value'),
-        ),
-      );
-    });
+        final result = await sut.getSyncPassword();
+        expect(result.isSuccess, isTrue);
+        expect(result.value, isNull);
+        verifyNever(
+          () => mockStorage.write(
+            key: AppConstants.syncPasswordLastUsedKey,
+            value: any(named: 'value'),
+          ),
+        );
+      },
+    );
 
     test('deleteSyncPassword removes password and timestamp', () async {
       when(
@@ -557,42 +559,45 @@ void main() {
   });
 
   group('SecureStorageService — clearAuthTokens', () {
-    test('deletes all auth-related keys, preserves sync password by default',
-        () async {
-      when(
-        () => mockStorage.delete(key: any(named: 'key')),
-      ).thenAnswer((_) async {});
+    test(
+      'deletes all auth-related keys, preserves sync password by default',
+      () async {
+        when(
+          () => mockStorage.delete(key: any(named: 'key')),
+        ).thenAnswer((_) async {});
 
-      final result = await sut.clearAuthTokens();
-      expect(result.isSuccess, isTrue);
+        final result = await sut.clearAuthTokens();
+        expect(result.isSuccess, isTrue);
 
-      verify(
-        () => mockStorage.delete(key: AppConstants.accessTokenKey),
-      ).called(1);
-      verify(
-        () => mockStorage.delete(key: AppConstants.refreshTokenKey),
-      ).called(1);
-      verify(
-        () => mockStorage.delete(key: AppConstants.tokenExpiryKey),
-      ).called(1);
-      verify(
-        () => mockStorage.delete(key: AppConstants.userEmailKey),
-      ).called(1);
-      verifyNever(() => mockStorage.delete(key: AppConstants.syncPasswordKey));
-      verifyNever(
-        () => mockStorage.delete(key: AppConstants.syncPasswordLastUsedKey),
-      );
-      verifyNever(() => mockStorage.delete(key: AppConstants.dekStorageKey));
-      verifyNever(() => mockStorage.delete(key: AppConstants.deviceIdKey));
-    });
+        verify(
+          () => mockStorage.delete(key: AppConstants.accessTokenKey),
+        ).called(1);
+        verify(
+          () => mockStorage.delete(key: AppConstants.refreshTokenKey),
+        ).called(1);
+        verify(
+          () => mockStorage.delete(key: AppConstants.tokenExpiryKey),
+        ).called(1);
+        verify(
+          () => mockStorage.delete(key: AppConstants.userEmailKey),
+        ).called(1);
+        verifyNever(
+          () => mockStorage.delete(key: AppConstants.syncPasswordKey),
+        );
+        verifyNever(
+          () => mockStorage.delete(key: AppConstants.syncPasswordLastUsedKey),
+        );
+        verifyNever(() => mockStorage.delete(key: AppConstants.dekStorageKey));
+        verifyNever(() => mockStorage.delete(key: AppConstants.deviceIdKey));
+      },
+    );
 
     test('deletes sync password when forgetPasswordOnLogout is true', () async {
       when(
         () => mockStorage.delete(key: any(named: 'key')),
       ).thenAnswer((_) async {});
 
-      final result =
-          await sut.clearAuthTokens(forgetPasswordOnLogout: true);
+      final result = await sut.clearAuthTokens(forgetPasswordOnLogout: true);
       expect(result.isSuccess, isTrue);
 
       verify(

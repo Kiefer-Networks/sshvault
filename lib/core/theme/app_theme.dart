@@ -2,11 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 
 abstract final class AppTheme {
-  static const _seedColor = Color(0xFF1A1A2E);
+  /// Built-in brand seed used when the user has not opted into following the
+  /// desktop accent (or when no desktop accent is available).
+  static const Color defaultSeedColor = Color(0xFF1A1A2E);
 
-  static ThemeData get light {
+  /// Backwards-compatible getter — uses the default seed.
+  static ThemeData get light => buildLight();
+
+  /// Backwards-compatible getter — uses the default seed.
+  static ThemeData get dark => buildDark();
+
+  /// Builds the light theme with an optional [seedColor] override.
+  ///
+  /// Pass the desktop accent color (from the XDG appearance portal) to make
+  /// the app's Material 3 color scheme follow GNOME / KDE; pass `null` to
+  /// fall back to [defaultSeedColor].
+  static ThemeData buildLight({Color? seedColor}) {
+    return _buildLight(seedColor ?? defaultSeedColor);
+  }
+
+  /// Builds the dark theme with an optional [seedColor] override.
+  static ThemeData buildDark({Color? seedColor}) {
+    return _buildDark(seedColor ?? defaultSeedColor);
+  }
+
+  static ThemeData _buildLight(Color seed) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: _seedColor,
+      seedColor: seed,
       brightness: Brightness.light,
     );
 
@@ -133,9 +155,9 @@ abstract final class AppTheme {
     );
   }
 
-  static ThemeData get dark {
+  static ThemeData _buildDark(Color seed) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: _seedColor,
+      seedColor: seed,
       brightness: Brightness.dark,
     );
 

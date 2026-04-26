@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
@@ -206,6 +208,38 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
+
+            // --- Desktop integration (Linux only) ---
+            // The XDG appearance portal exposes the user's preferred color
+            // scheme + accent color. Honoring it makes SSHVault feel native
+            // on GNOME 42+ and KDE Plasma 6+.
+            if (Platform.isLinux) ...[
+              Spacing.verticalLg,
+              const SectionHeader(title: 'Desktop integration'),
+              SettingsGroupCard(
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.color_lens_outlined,
+                    iconColor: Theme.of(context).colorScheme.primary,
+                    title: 'Follow GNOME accent color',
+                    subtitleText:
+                        'Use the desktop accent color from GNOME / KDE '
+                        'Settings as the app theme. Falls back to the '
+                        'built-in brand color when unavailable.',
+                    value: settings.followDesktopAccent,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setFollowDesktopAccent(v);
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsThemeChanged,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
 
             // Terminal
             Spacing.verticalLg,

@@ -13,7 +13,10 @@ finish-args:
   - --device=dri
   # Network access (SSH connections, sync)
   - --share=network
-  # Secret Service API (flutter_secure_storage)
+  # Secret Service API used by flutter_secure_storage / KeyringService to
+  # persist the vault master key in libsecret (GNOME Keyring / KWallet).
+  # Without this permission the keyring service falls back to an
+  # encrypted file under ~/.var/app/<app-id>/data/sshvault/master.key.enc.
   - --talk-name=org.freedesktop.secrets
   # File picker / export
   - --filesystem=home:ro
@@ -22,10 +25,70 @@ finish-args:
   - --filesystem=~/.ssh:ro
   # Notifications
   - --talk-name=org.freedesktop.Notifications
+  # XDG desktop portal — used to read the GNOME / KDE color-scheme +
+  # accent-color preference (org.freedesktop.appearance) so the UI follows
+  # the system theme live (DesktopAppearanceService).
+  - --talk-name=org.freedesktop.portal.Desktop
   # SSH agent forwarding
   - --socket=ssh-auth
 
 modules:
+  # libayatana-appindicator — required by tray_manager / system tray icon on
+  # KDE Plasma, GNOME (with AppIndicator extension), XFCE and Cinnamon.
+  # The Freedesktop 24.08 runtime does NOT ship this library, so it has to
+  # be bundled via the Flatpak. Pulled together with its small dependency
+  # chain (libdbusmenu-glib, libdbusmenu-gtk3, libayatana-indicator).
+  - name: libdbusmenu
+    buildsystem: autotools
+    config-opts:
+      - --disable-dumper
+      - --disable-static
+      - --disable-tests
+      - --disable-gtk-doc
+      - --disable-vala
+      - --with-gtk=3
+    cleanup:
+      - /include
+      - /libexec
+      - /lib/pkgconfig
+      - /share/gir-1.0
+      - /share/libdbusmenu
+      - /share/man
+    sources:
+      - type: archive
+        url: https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz
+        sha256: b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938a27240a1bfa878a
+
+  - name: libayatana-indicator
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DENABLE_TESTS=OFF
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+      - /share/gir-1.0
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/libayatana-indicator/archive/refs/tags/0.9.4.tar.gz
+        sha256: 7a36c3edf7a4d4d2bca0a356d8c5fee3da1c6f9c23a2c95717dbef0a6b0f7e76
+
+  - name: libayatana-appindicator
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DENABLE_BINDINGS_MONO=OFF
+      - -DENABLE_BINDINGS_VALA=OFF
+      - -DENABLE_TESTS=OFF
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+      - /share/gir-1.0
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/libayatana-appindicator/archive/refs/tags/0.5.92.tar.gz
+        sha256: 30f6cc99fa7e6f78ec413bb1ab2ec8fac804c3d20e05ba8ee84f1c46b1cea59b
+
   - name: libsecret
     buildsystem: meson
     config-opts:
@@ -81,6 +144,23 @@ modules:
       - install -Dm644 de.kiefer_networks.sshvault.metainfo.xml /app/share/metainfo/de.kiefer_networks.sshvault.metainfo.xml
       - install -Dm644 icons/128x128.png /app/share/icons/hicolor/128x128/apps/de.kiefer_networks.sshvault.png
       - install -Dm644 icons/256x256.png /app/share/icons/hicolor/256x256/apps/de.kiefer_networks.sshvault.png
+      # Bundle the KRunner integration sources inside the Flatpak so users
+      # can opt-in by running the install script from the host shell. We
+      # cannot register the runner with KRunner from inside the sandbox:
+      # KRunner reads plugins from ~/.local/share/krunner/dbusplugins/ on
+      # the host, and Flatpak's session-bus filtering plus the lack of
+      # host filesystem write access mean a sandboxed app cannot drop the
+      # required files into place. Users who want KRunner integration on
+      # a Flatpak install must run /app/share/sshvault/krunner/install.sh
+      # via `flatpak run --command=... ` or copy the files manually.
+      - install -Dm755 krunner/de.kiefer_networks.sshvault-runner.py /app/share/sshvault/krunner/de.kiefer_networks.sshvault-runner.py
+      - install -Dm644 krunner/de.kiefer_networks.sshvault-runner.desktop /app/share/sshvault/krunner/de.kiefer_networks.sshvault-runner.desktop
+      - install -Dm644 krunner/de.kiefer_networks.SshvaultKRunner.service /app/share/sshvault/krunner/de.kiefer_networks.SshvaultKRunner.service
+      - install -Dm755 krunner/install.sh /app/share/sshvault/krunner/install.sh
+      - install -Dm644 krunner/README.md /app/share/sshvault/krunner/README.md
     sources:
       - type: dir
         path: flatpak-dist
+      - type: dir
+        path: krunner
+        dest: krunner

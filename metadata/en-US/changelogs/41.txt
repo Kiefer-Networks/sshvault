@@ -1,0 +1,10 @@
+Linux desktop integration pass.
+
+- ssh:// and sftp:// URL scheme handlers — clicking a link in browser/PDF/mail opens SSHVault and connects (matching host or quick-connect with prefilled values).
+- System tray (AppIndicator/SNI) — favorites + active sessions menu, KDE Plasma + GNOME-Shell-with-extension + XFCE + Cinnamon. Optional --minimized boot for tray-only use.
+- DBus service de.kiefer_networks.SSHVault — single-instance enforcement plus Connect/Disconnect/ListHosts/ListSessions/OpenUrl/Activate methods and SessionStarted/SessionEnded signals so external launchers (rofi, polybar, KRunner) can drive SSHVault.
+- KRunner plugin — type "ssh prod-api-01" in KDE's launcher to quick-connect.
+- libsecret integration — the vault master key now lives in GNOME Keyring / KWallet on Linux instead of an encrypted file (fallback kept for headless systems).
+- ssh-agent integration — read keys from $SSH_AUTH_SOCK so other Linux apps (git, scp, ansible, vscode-remote-ssh) can use SSHVault keys, plus per-host agent forwarding.
+- Follow GNOME / KDE preferred-color-scheme via xdg-desktop-portal Settings — system theme switches propagate live without restart. Optional follow GNOME 47+ accent color.
+- Drag-and-drop SSH keys onto the window from Nautilus / Dolphin / Thunar — auto-detects private/public key, vault-export JSON or ssh_config and routes to the matching import flow.

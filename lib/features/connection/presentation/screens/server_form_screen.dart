@@ -124,6 +124,26 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
     if (widget.isEditing) {
       _loadServer();
+    } else {
+      // Apply ssh:// / sftp:// URL-handler prefill from query params on the
+      // next frame, once GoRouterState is available from context.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final qp = GoRouterState.of(context).uri.queryParameters;
+        final host = qp['host'];
+        final user = qp['user'];
+        final port = qp['port'];
+        if (host != null && host.isNotEmpty) {
+          _hostnameController.text = host;
+          _nameController.text = host;
+        }
+        if (user != null && user.isNotEmpty) {
+          _usernameController.text = user;
+        }
+        if (port != null && port.isNotEmpty) {
+          _portController.text = port;
+        }
+      });
     }
   }
 

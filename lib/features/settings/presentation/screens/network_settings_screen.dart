@@ -117,6 +117,36 @@ class NetworkSettingsScreen extends ConsumerWidget {
               const _ProxySettingsSection(),
               Spacing.verticalLg,
 
+              // --- Desktop integration (Linux/Windows) ---
+              // Hidden on platforms where a tray icon makes no sense
+              // (macOS uses the dock; iOS/Android have no tray concept).
+              if (Platform.isLinux || Platform.isWindows) ...[
+                Spacing.verticalLg,
+                const SectionHeader(title: 'Desktop integration'),
+                SettingsGroupCard(
+                  children: [
+                    SettingsSwitchTile(
+                      icon: Icons.dashboard_customize_outlined,
+                      iconColor: theme.colorScheme.primary,
+                      title: 'Show system tray icon',
+                      subtitleText:
+                          'Keep SSHVault accessible from the system tray '
+                          'with quick access to favorites and active sessions.',
+                      value: settings.showSystemTray,
+                      onChanged: (v) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setShowSystemTray(v);
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+
               // Reset button
               if (isCustom) ...[
                 Spacing.verticalMd,

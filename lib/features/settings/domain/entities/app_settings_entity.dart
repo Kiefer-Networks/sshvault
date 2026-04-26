@@ -40,6 +40,30 @@ class AppSettingsEntity {
   final String globalProxyHost;
   final int globalProxyPort;
   final String globalProxyUsername;
+  // Desktop integration
+  /// Show a system tray icon on Linux / Windows. Ignored on macOS / mobile.
+  final bool showSystemTray;
+  // Master-key keyring migration (Linux libsecret). Flips to true after the
+  // legacy on-disk master key has been moved into the system keyring (or
+  // confirmed absent) so the migration only runs once per install.
+  final bool keyringMigrationCompleted;
+
+  /// Follow the GNOME / KDE desktop accent color (Linux only). When `true`
+  /// and the XDG appearance portal exposes an accent color, the app theme
+  /// uses that color as its seed; otherwise it falls back to the built-in
+  /// brand color. Has no effect on non-Linux platforms.
+  final bool followDesktopAccent;
+
+  // ---------- ssh-agent integration (Linux / macOS) ----------
+
+  /// When `true`, opening an SSH session forwards the user's
+  /// `$SSH_AUTH_SOCK` so the remote shell sees the same loaded keys.
+  /// Per-host overrides may toggle this on/off (when implemented).
+  final bool sshAgentForwardByDefault;
+
+  /// Default lifetime (seconds) used when the user adds an SSHVault key to
+  /// the running agent. `0` = no expiry (kept until explicit removal).
+  final int sshAgentDefaultLifetimeSecs;
 
   const AppSettingsEntity({
     this.themeMode = AppThemeMode.system,
@@ -75,6 +99,11 @@ class AppSettingsEntity {
     this.globalProxyHost = '',
     this.globalProxyPort = 1080,
     this.globalProxyUsername = '',
+    this.showSystemTray = true,
+    this.keyringMigrationCompleted = false,
+    this.followDesktopAccent = true,
+    this.sshAgentForwardByDefault = false,
+    this.sshAgentDefaultLifetimeSecs = 3600,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -129,6 +158,11 @@ class AppSettingsEntity {
     String? globalProxyHost,
     int? globalProxyPort,
     String? globalProxyUsername,
+    bool? showSystemTray,
+    bool? keyringMigrationCompleted,
+    bool? followDesktopAccent,
+    bool? sshAgentForwardByDefault,
+    int? sshAgentDefaultLifetimeSecs,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -171,6 +205,14 @@ class AppSettingsEntity {
       globalProxyHost: globalProxyHost ?? this.globalProxyHost,
       globalProxyPort: globalProxyPort ?? this.globalProxyPort,
       globalProxyUsername: globalProxyUsername ?? this.globalProxyUsername,
+      showSystemTray: showSystemTray ?? this.showSystemTray,
+      keyringMigrationCompleted:
+          keyringMigrationCompleted ?? this.keyringMigrationCompleted,
+      followDesktopAccent: followDesktopAccent ?? this.followDesktopAccent,
+      sshAgentForwardByDefault:
+          sshAgentForwardByDefault ?? this.sshAgentForwardByDefault,
+      sshAgentDefaultLifetimeSecs:
+          sshAgentDefaultLifetimeSecs ?? this.sshAgentDefaultLifetimeSecs,
     );
   }
 

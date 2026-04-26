@@ -1,0 +1,10 @@
+Intégration au bureau Linux.
+
+- Gestionnaires d'URL ssh:// et sftp:// — un clic dans le navigateur/PDF/mail ouvre SSHVault et se connecte.
+- Tray système (AppIndicator/SNI) — favoris + sessions actives au menu ; KDE/GNOME/XFCE/Cinnamon. Option --minimized pour démarrage tray-only.
+- Service DBus de.kiefer_networks.SSHVault — instance unique + méthodes Connect/Disconnect/ListHosts/OpenUrl/Activate et signaux SessionStarted/SessionEnded pour rofi/polybar/KRunner.
+- Plugin KRunner — taper "ssh prod-api-01" dans le lanceur KDE pour se connecter directement.
+- Intégration libsecret — la clé maître du coffre vit dans GNOME Keyring / KWallet plutôt que dans un fichier chiffré.
+- Intégration ssh-agent — les clés de $SSH_AUTH_SOCK sont disponibles pour git, scp, ansible, vscode-remote-ssh ; agent-forwarding par hôte.
+- Suit le thème clair/sombre du bureau via xdg-desktop-portal sans redémarrage ; option : suivre la couleur d'accent GNOME 47+.
+- Glisser-déposer de clés SSH depuis Nautilus / Dolphin / Thunar — détecte clé privée/publique, JSON d'export ou ssh_config et ouvre le flux d'import correct.

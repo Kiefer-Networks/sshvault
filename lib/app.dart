@@ -4,6 +4,8 @@ import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/routing/app_router.dart';
 import 'package:sshvault/core/security/security_providers.dart';
+import 'package:sshvault/core/services/desktop_appearance_service.dart';
+import 'package:sshvault/core/services/file_drop_service.dart';
 import 'package:sshvault/core/services/screen_protection_service.dart';
 import 'package:sshvault/core/theme/app_theme.dart';
 import 'package:sshvault/core/widgets/lock_screen.dart';
@@ -37,6 +39,7 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       _watchAttestationResult();
       _initHeartbeat();
       _pruneOldTombstones();
+      _initDesktopAppearance();
     });
   }
 
@@ -57,6 +60,14 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       // Ignore prune errors — they just mean tombstones survive longer than
       // intended, which is correct from a sync perspective.
     }
+  }
+
+  /// Eagerly create the desktop appearance service so it connects to the XDG
+  /// portal early. The provider is a `Provider` (not auto-dispose), so the
+  /// signal subscription survives widget rebuilds. On non-Linux platforms
+  /// the service is a cheap no-op.
+  void _initDesktopAppearance() {
+    ref.read(desktopAppearanceServiceProvider);
   }
 
   void _applyScreenProtection() {
@@ -202,20 +213,38 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
   @override
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(settingsProvider);
-    final themeMode = switch (settingsAsync.value?.themeMode ??
-        AppThemeMode.system) {
+    final settings = settingsAsync.value;
+    final userMode = settings?.themeMode ?? AppThemeMode.system;
+
+    // When the user picks "system" we prefer the desktop portal's value over
+    // `MediaQuery.platformBrightness` because GTK does not always propagate
+    // GNOME 42+'s `prefers-color-scheme` to Flutter's view.
+    final desktopBrightness = ref.watch(desktopColorSchemeProvider);
+    final themeMode = switch (userMode) {
       AppThemeMode.light => ThemeMode.light,
       AppThemeMode.dark => ThemeMode.dark,
-      AppThemeMode.system => ThemeMode.system,
+      AppThemeMode.system =>
+        desktopBrightness == Brightness.dark
+            ? ThemeMode.dark
+            : desktopBrightness == Brightness.light
+            ? ThemeMode.light
+            : ThemeMode.system,
     };
-    final localeSetting = settingsAsync.value?.locale ?? '';
+
+    // Use the desktop accent as the Material 3 seed when the toggle is on
+    // and the portal exposed one. Otherwise fall back to the brand color.
+    final desktopAccent = ref.watch(desktopAccentColorProvider);
+    final followAccent = settings?.followDesktopAccent ?? true;
+    final seed = followAccent ? desktopAccent : null;
+
+    final localeSetting = settings?.locale ?? '';
     final locale = localeSetting.isEmpty ? null : Locale(localeSetting);
 
     return MaterialApp.router(
       title: 'SSHVault',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      theme: AppTheme.buildLight(seedColor: seed),
+      darkTheme: AppTheme.buildDark(seedColor: seed),
       themeMode: themeMode,
       locale: locale,
       localizationsDelegates: _localizationsDelegates,
@@ -229,7 +258,7 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
         );
         return Theme(
           data: scaledTheme,
-          child: _wrapWithLock(settingsAsync, child),
+          child: _wrapWithDropOverlay(_wrapWithLock(settingsAsync, child)),
         );
       },
     );
@@ -242,5 +271,69 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       return LockScreen(child: content);
     }
     return content;
+  }
+
+  /// Linux drag-and-drop overlay. Driven by [dragInProgressProvider], which
+  /// the C++ side flips via `dragEnter` / `dragLeave` MethodChannel calls.
+  /// On non-Linux platforms the provider is never flipped, so this Stack is
+  /// effectively a one-child passthrough.
+  Widget _wrapWithDropOverlay(Widget child) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final active = ref.watch(dragInProgressProvider);
+        return Stack(children: [child, if (active) const _DropOverlay()]);
+      },
+    );
+  }
+}
+
+/// Translucent overlay shown while a drag is hovering over the window. Sits
+/// on the topmost Stack so it covers every screen including dialogs. Pointer
+/// events are ignored so they reach the underlying widgets — GTK handles the
+/// actual drop, Flutter just paints the affordance.
+class _DropOverlay extends StatelessWidget {
+  const _DropOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withValues(alpha: 0.18),
+            border: Border.all(color: theme.colorScheme.primary, width: 3),
+          ),
+          alignment: Alignment.center,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 12,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.file_download_outlined,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Drop file here to import',
+                  style: theme.textTheme.titleMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

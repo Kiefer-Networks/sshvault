@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=de.kiefer_networks.SshvaultKRunner
+Exec=/usr/bin/python3 /usr/share/kservices5/de.kiefer_networks.sshvault-runner.py

@@ -109,6 +109,32 @@ You can install SSHVault directly from GitHub releases using [Obtainium](https:/
 
 Weak algorithms (DH-group1, CBC ciphers, HMAC-MD5/SHA1, ssh-rsa) are excluded from default negotiation.
 
+### ssh-agent integration (Linux + macOS)
+
+SSHVault talks directly to the OpenSSH agent over the unix-domain socket
+referenced by `$SSH_AUTH_SOCK`, using a pure-Dart implementation of the
+agent wire protocol (no native bindings, no shelling out to `ssh-add`).
+This unlocks two flows:
+
+- **Read from the running agent** — when adding a host, SSHVault offers
+  every key currently held by the agent so you can pick one without
+  copying private material into the vault.
+- **Write SSHVault keys to the running agent** — each key in the vault
+  has *Add to ssh-agent* / *Remove from agent* buttons, so other Linux
+  apps (git, scp, ansible, vscode-remote-ssh) can use SSHVault-managed
+  keys without ever touching the underlying private file. Lifetime is
+  configurable in *Settings → Security → ssh-agent integration* (default
+  1 h, `0` = no expiry).
+
+Agent-loaded keys are surfaced with an `agent` chip on the key list so
+you can tell at a glance which material is live in the running session.
+
+The integration is environment-aware: on platforms or sessions where
+`$SSH_AUTH_SOCK` is unset (Windows, headless CI, mobile) the feature
+gracefully degrades — the buttons remain hidden, the host-form
+"Use key from ssh-agent" option is suppressed, and SSHVault falls back
+to its own key vault as if the agent integration weren't there.
+
 ### Supported SSH algorithms
 
 The bundled hardened `dartssh2` fork advertises only modern algorithms.
@@ -187,6 +213,38 @@ flutter build linux --release       # Linux
 flutter build macos --release       # macOS
 flutter build windows --release     # Windows
 ```
+
+### Linux DBus integration
+
+SSHVault on Linux owns the well-known session-bus name
+`de.kiefer_networks.SSHVault` and exports
+`/de/kiefer_networks/SSHVault` implementing the
+`de.kiefer_networks.SSHVault` interface. This gives you:
+
+- Single-instance enforcement: a second `sshvault` invocation forwards its
+  argv (e.g. `ssh://host`) to the running instance and exits.
+- External triggers from KRunner, Rofi, Polybar etc.:
+  - `Connect(s host_id)` — open a session for a stored host id.
+  - `Disconnect(s session_id)` — close an active session.
+  - `ListHosts() -> a(ssss)` / `ListSessions() -> a(ssss)`.
+  - `OpenUrl(s url)` — handles `ssh://...` URLs.
+  - `Activate()` — raise the window.
+- Subscribable signals: `SessionStarted(host_id, session_id)`,
+  `SessionEnded(session_id)`, `Notified(message)`.
+
+Distros packaging SSHVault should install
+`linux/de.kiefer_networks.SSHVault.service` to
+`/usr/share/dbus-1/services/` so that DBus can autostart the binary on first
+method call:
+
+```ini
+[D-BUS Service]
+Name=de.kiefer_networks.SSHVault
+Exec=/usr/bin/sshvault
+```
+
+For Flatpak, the manifest needs `--talk-name=de.kiefer_networks.SSHVault` —
+this is the app's own well-known name, so it is normally granted by default.
 
 ### Run tests
 

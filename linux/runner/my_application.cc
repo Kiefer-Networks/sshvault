@@ -14,6 +14,123 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
+// ---------------------------------------------------------------------------
+// Drag-and-drop -> Flutter bridge.
+// ---------------------------------------------------------------------------
+// We register the toplevel GtkWindow as a drag-destination accepting
+// `text/uri-list`. When files are dropped (or the user simply hovers a drag
+// over the window) we forward the event to Dart through a single
+// MethodChannel. Dart classifies the file content (private/public SSH key,
+// vault export JSON, ssh_config) and routes the user to the correct import UI.
+//
+// MethodChannel name and method names are mirrored 1:1 in
+// `lib/core/services/file_drop_service.dart`. Keep them in sync.
+//
+// Channel: `de.kiefer_networks.sshvault/drop`
+//   - `dropFiles`    args: `List<String>` of absolute file paths
+//   - `dragEnter`    args: none
+//   - `dragLeave`    args: none
+
+static const char kDropChannel[] = "de.kiefer_networks.sshvault/drop";
+
+// The channel is owned by the FlView messenger; we hold one reference for
+// outbound notifications (drag-motion / drag-leave / drag-data-received).
+static FlMethodChannel* g_drop_channel = nullptr;
+
+// `drag-data-received` is the GTK signal that fires once the user actually
+// releases the mouse over the drop target. We decode the URI list here, keep
+// only `file://` URIs (skipping anything else, e.g. http, x-special/gnome),
+// and post the resulting absolute paths to Dart in one method call.
+static void on_drag_data_received(GtkWidget* /*widget*/,
+                                  GdkDragContext* context,
+                                  gint /*x*/, gint /*y*/,
+                                  GtkSelectionData* data, guint /*info*/,
+                                  guint time, gpointer /*user_data*/) {
+  if (g_drop_channel == nullptr) {
+    gtk_drag_finish(context, FALSE, FALSE, time);
+    return;
+  }
+
+  gchar** uris = gtk_selection_data_get_uris(data);
+  if (uris == nullptr) {
+    gtk_drag_finish(context, FALSE, FALSE, time);
+    return;
+  }
+
+  g_autoptr(FlValue) paths = fl_value_new_list();
+  for (gchar** p = uris; *p != nullptr; ++p) {
+    if (!g_str_has_prefix(*p, "file://")) {
+      continue;
+    }
+    g_autoptr(GError) err = nullptr;
+    g_autofree gchar* filename = g_filename_from_uri(*p, nullptr, &err);
+    if (filename == nullptr) {
+      g_warning("Drop: failed to decode URI %s: %s", *p,
+                err ? err->message : "unknown");
+      continue;
+    }
+    fl_value_append_take(paths, fl_value_new_string(filename));
+  }
+  g_strfreev(uris);
+
+  if (fl_value_get_length(paths) > 0) {
+    fl_method_channel_invoke_method(g_drop_channel, "dropFiles", paths,
+                                    nullptr, nullptr, nullptr);
+  }
+
+  gtk_drag_finish(context, TRUE, FALSE, time);
+}
+
+// `drag-motion` fires repeatedly while a drag hovers over the widget. We only
+// need the leading edge for the overlay, but invoking the channel each tick is
+// cheap and the Dart side is idempotent.
+static gboolean on_drag_motion(GtkWidget* /*widget*/,
+                               GdkDragContext* /*context*/,
+                               gint /*x*/, gint /*y*/, guint /*time*/,
+                               gpointer /*user_data*/) {
+  if (g_drop_channel != nullptr) {
+    g_autoptr(FlValue) empty = fl_value_new_null();
+    fl_method_channel_invoke_method(g_drop_channel, "dragEnter", empty,
+                                    nullptr, nullptr, nullptr);
+  }
+  return FALSE;  // let GTK do its default highlighting
+}
+
+static void on_drag_leave(GtkWidget* /*widget*/, GdkDragContext* /*context*/,
+                          guint /*time*/, gpointer /*user_data*/) {
+  if (g_drop_channel != nullptr) {
+    g_autoptr(FlValue) empty = fl_value_new_null();
+    fl_method_channel_invoke_method(g_drop_channel, "dragLeave", empty,
+                                    nullptr, nullptr, nullptr);
+  }
+}
+
+// Set up the GTK drag destination and the MethodChannel used to ferry events
+// to Dart. Called once per `activate`, after the FlView has been created and
+// added to the window so we can resolve the binary messenger.
+static void register_drag_and_drop(GtkWindow* window, FlView* view) {
+  // Accept text/uri-list (the format used by Nautilus, Dolphin, Thunar, etc.)
+  // with full default handling: highlight, motion tracking, and drop.
+  GtkTargetEntry targets[] = {
+      {const_cast<gchar*>("text/uri-list"), 0, 0},
+  };
+  gtk_drag_dest_set(GTK_WIDGET(window), GTK_DEST_DEFAULT_ALL, targets,
+                    G_N_ELEMENTS(targets), GDK_ACTION_COPY);
+
+  g_signal_connect(window, "drag-data-received",
+                   G_CALLBACK(on_drag_data_received), nullptr);
+  g_signal_connect(window, "drag-motion", G_CALLBACK(on_drag_motion), nullptr);
+  g_signal_connect(window, "drag-leave", G_CALLBACK(on_drag_leave), nullptr);
+
+  if (g_drop_channel == nullptr) {
+    FlBinaryMessenger* messenger =
+        fl_engine_get_binary_messenger(fl_view_get_engine(view));
+    g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+    g_drop_channel = fl_method_channel_new(messenger, kDropChannel,
+                                           FL_METHOD_CODEC(codec));
+  }
+}
+
 // Called when first Flutter frame received.
 static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
@@ -94,6 +211,10 @@ static void my_application_activate(GApplication* application) {
   gtk_widget_realize(GTK_WIDGET(view));
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
+
+  // Set up Linux drag-and-drop so users can drop SSH key files / vault
+  // exports / ssh_config files onto the window to trigger the import flow.
+  register_drag_and_drop(window, view);
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }

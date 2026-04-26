@@ -9,4 +9,5 @@ Type=Application
 Categories=Network;RemoteAccess;Security;
 Keywords=ssh;terminal;sftp;server;remote;encrypted;
 StartupWMClass=sshvault
-MimeType=application/x-sshvault-export;
+DBusActivatable=false
+MimeType=application/x-sshvault-export;x-scheme-handler/ssh;x-scheme-handler/sftp;

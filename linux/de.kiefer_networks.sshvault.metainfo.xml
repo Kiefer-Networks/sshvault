@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.11.0" date="2026-04-26">
+      <description>
+        <p>Linux desktop integration pass: ssh:// + sftp:// URL handlers, system tray (AppIndicator/SNI) with favorites and active sessions, DBus service de.kiefer_networks.SSHVault for single-instance + external triggers from rofi/polybar/KRunner, KRunner plugin, libsecret-backed master-key storage in GNOME Keyring / KWallet, ssh-agent integration so git/scp/ansible/vscode-remote-ssh can use SSHVault keys, follow GNOME / KDE preferred color scheme via xdg-desktop-portal, and drag-and-drop SSH keys onto the window to auto-import.</p>
+      </description>
+    </release>
     <release version="1.10.6" date="2026-04-26">
       <description>
         <p>Android: liboqs.so is now built with 16 KB ELF page alignment so Google Play accepts the upload on Android 15+ devices. Other native libs (libflutter, libapp, libsqlite3) were already aligned.</p>
@@ -111,4 +116,10 @@
     <control>pointing</control>
     <control>keyboard</control>
   </supports>
+
+  <provides>
+    <mediatype>x-scheme-handler/ssh</mediatype>
+    <mediatype>x-scheme-handler/sftp</mediatype>
+    <mediatype>application/x-sshvault-export</mediatype>
+  </provides>
 </component>

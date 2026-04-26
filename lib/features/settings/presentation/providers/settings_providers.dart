@@ -52,6 +52,12 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyGlobalProxyHost = 'global_proxy_host';
   static const _keyGlobalProxyPort = 'global_proxy_port';
   static const _keyGlobalProxyUsername = 'global_proxy_username';
+  static const _keyShowSystemTray = 'show_system_tray';
+  static const _keyKeyringMigrationCompleted = 'keyring_migration_completed';
+  static const _keyFollowDesktopAccent = 'follow_desktop_accent';
+  static const _keySshAgentForwardByDefault = 'ssh_agent_forward_by_default';
+  static const _keySshAgentDefaultLifetimeSecs =
+      'ssh_agent_default_lifetime_secs';
 
   // Secure storage keys for PIN-related secrets
   static const _secKeyPinHash = 'settings_pin_hash';
@@ -134,6 +140,26 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       _log.info(_tag, 'Migrated duress PIN hash to secure storage');
     }
 
+    // One-shot migration: move any legacy on-disk master vault key into
+    // the system keyring (libsecret on Linux). Best-effort; on failure we
+    // leave the flag false so the user can retry from Security settings.
+    if (all[_keyKeyringMigrationCompleted] != 'true') {
+      try {
+        final keyring = ref.read(keyringServiceProvider);
+        final migrated = await keyring.migrateLegacyFileIfNeeded();
+        // Always mark complete after the first attempt; the user can
+        // retry manually from settings if migrated == false because
+        // libsecret was unavailable.
+        await dao.setValue(_keyKeyringMigrationCompleted, 'true');
+        all[_keyKeyringMigrationCompleted] = 'true';
+        if (migrated) {
+          _log.info(_tag, 'Vault master key migrated to system keyring');
+        }
+      } catch (e) {
+        _log.warning(_tag, 'Keyring migration failed: $e');
+      }
+    }
+
     return _buildEntity(
       all,
       pinHash: pinHash,
@@ -199,7 +225,43 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       globalProxyHost: all[_keyGlobalProxyHost] ?? '',
       globalProxyPort: int.tryParse(all[_keyGlobalProxyPort] ?? '') ?? 1080,
       globalProxyUsername: all[_keyGlobalProxyUsername] ?? '',
+      // Default true on Linux/Windows, false elsewhere; the tray service
+      // is the only consumer and already guards on Platform.isLinux, so
+      // this flag is effectively ignored on macOS / mobile.
+      showSystemTray: all[_keyShowSystemTray] != 'false',
+      keyringMigrationCompleted: all[_keyKeyringMigrationCompleted] == 'true',
+      // Default to following the desktop accent on Linux. Non-Linux platforms
+      // ignore the flag at theme-resolution time.
+      followDesktopAccent: all[_keyFollowDesktopAccent] != 'false',
+      sshAgentForwardByDefault: all[_keySshAgentForwardByDefault] == 'true',
+      sshAgentDefaultLifetimeSecs:
+          int.tryParse(all[_keySshAgentDefaultLifetimeSecs] ?? '') ?? 3600,
     );
+  }
+
+  /// Toggles the global default for SSH agent forwarding. Per-host overrides
+  /// (when implemented) take precedence over this default.
+  Future<void> setSshAgentForwardByDefault(bool enabled) async {
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keySshAgentForwardByDefault, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Updates the default lifetime applied when adding an SSHVault key to the
+  /// running ssh-agent. Pass `0` for "no expiry".
+  Future<void> setSshAgentDefaultLifetimeSecs(int seconds) async {
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keySshAgentDefaultLifetimeSecs, seconds.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Persists the result of the master-key keyring migration so it is only
+  /// attempted once per install. Called by the security settings screen
+  /// after a successful manual or automatic migration.
+  Future<void> setKeyringMigrationCompleted(bool completed) async {
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyKeyringMigrationCompleted, completed.toString());
+    ref.invalidateSelf();
   }
 
   AppThemeMode _parseThemeMode(String? value) {
@@ -556,6 +618,23 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     _log.info(_tag, 'Global proxy username changed');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyGlobalProxyUsername, username);
+    ref.invalidateSelf();
+  }
+
+  Future<void> setShowSystemTray(bool enabled) async {
+    _log.info(_tag, 'System tray ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyShowSystemTray, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setFollowDesktopAccent(bool enabled) async {
+    _log.info(
+      _tag,
+      'Follow desktop accent ${enabled ? 'enabled' : 'disabled'}',
+    );
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyFollowDesktopAccent, enabled.toString());
     ref.invalidateSelf();
   }
 }

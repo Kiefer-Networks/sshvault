@@ -1,7 +1,7 @@
 name: sshvault
 description: "Secure, self-hosted SSH client with zero-knowledge sync"
 publish_to: 'none'
-version: 1.10.6+40
+version: 1.11.0+41
 
 environment:
   sdk: ^3.11.0
@@ -31,7 +31,12 @@ dependencies:
   # Unique IDs
   uuid: ^4.5.1
 
-  # Secure Storage
+  # Secure Storage — flutter_secure_storage 10.x already routes Linux
+  # writes through libsecret via flutter_secure_storage_linux 3.x, so no
+  # separate `libsecret_flutter` dependency is required. The Linux
+  # backend talks to GNOME Keyring / KWallet over the freedesktop Secret
+  # Service API. On headless boxes KeyringService transparently falls
+  # back to an encrypted file (see lib/core/storage/keyring_service.dart).
   flutter_secure_storage: ^10.0.0
 
   # Crypto
@@ -73,7 +78,14 @@ dependencies:
   # Proxy
   socks5_proxy: ^2.1.1
 
+  # Linux/Windows system tray + window control
+  tray_manager: ^0.5.2
+  window_manager: ^0.4.3
+
   # VPN Detection (native, no external dependency)
+
+  # Linux DBus integration (single-instance + krunner/rofi/polybar triggers)
+  dbus: ^0.7.10
 
 dev_dependencies:
   flutter_test:
