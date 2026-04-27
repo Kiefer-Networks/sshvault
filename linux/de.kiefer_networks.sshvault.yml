@@ -108,6 +108,15 @@ modules:
   # chain (libdbusmenu-glib, libdbusmenu-gtk3, libayatana-indicator).
   - name: libdbusmenu
     buildsystem: autotools
+    build-options:
+      env:
+        # Upstream's Makefile bakes in -Werror=deprecated-declarations on
+        # GLib >= 2.58 because it still uses G_PRIVATE_OFFSET / G_DEFINE_*
+        # patterns from GLib 2.36, and modern GLib emits a deprecation
+        # warning that escalates to a build error. Strip -Werror so the
+        # warnings don't kill the build.
+        CFLAGS: "-Wno-deprecated-declarations -Wno-error"
+        CXXFLAGS: "-Wno-deprecated-declarations -Wno-error"
     config-opts:
       - --disable-dumper
       - --disable-static
@@ -137,6 +146,10 @@ modules:
         commands:
           - "sed -i '/AM_CONDITIONAL(\\[HAVE_VALGRIND\\]/d' configure.ac"
           - "sed -i '/AC_SUBST(DBUSMENUTESTS_CFLAGS)/i AM_CONDITIONAL([HAVE_VALGRIND], [test \"x$have_valgrind\" = \"xyes\"])' configure.ac"
+          # Strip -Werror from per-subdir Makefile.am so modern GLib's
+          # deprecation warnings (G_PRIVATE_OFFSET → G_ADD_PRIVATE) do
+          # not escalate to build errors.
+          - "find . -name Makefile.am -exec sed -i 's/-Werror//g' {} +"
           - "rm -f configure aclocal.m4"
           - "autoreconf -fi"
 
