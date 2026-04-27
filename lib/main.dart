@@ -13,7 +13,9 @@ import 'package:sshvault/core/services/file_drop_service.dart';
 import 'package:sshvault/core/services/global_shortcut_service.dart';
 import 'package:sshvault/core/services/headless_boot_service.dart';
 import 'package:sshvault/core/services/hidpi_service.dart';
+import 'package:sshvault/core/services/ios_background_sync_service.dart';
 import 'package:sshvault/core/services/logging_service.dart';
+import 'package:sshvault/core/services/macos_spotlight_service.dart';
 import 'package:sshvault/core/services/tray_service.dart';
 import 'package:sshvault/core/services/window_state_service.dart';
 import 'package:sshvault/core/services/windows_chrome_service.dart';
@@ -267,6 +269,43 @@ void main(List<String> args) async {
   // [SessionManagerNotifier.closeAllSessions] via the method channel.
   if (Platform.isAndroid) {
     AndroidSessionService(container: container).attach();
+  }
+
+  // iOS only: install the BGTaskScheduler bridge and re-arm the
+  // background-sync request if the user has it enabled. The Swift side
+  // already registered the handler in `application(_:didFinishLaunching...)`
+  // — here we just make sure the Dart channel handler is live and that
+  // a fresh `BGAppRefreshTaskRequest` is queued (iOS clears the request
+  // as soon as the previous slot fires, so we re-submit on every cold
+  // launch). Failures are logged but never block app start.
+  if (Platform.isIOS) {
+    unawaited(() async {
+      try {
+        final svc = container.read(iosBackgroundSyncServiceProvider);
+        await svc.initialize();
+        final settings = await container.read(settingsProvider.future);
+        if (settings.backgroundSyncEnabled) {
+          final mins = settings.autoSyncIntervalMinutes;
+          // BGTaskScheduler has no hard floor like WorkManager's 15min
+          // but the OS heavily throttles tight cadences; clamp to 15min
+          // to mirror Android behaviour.
+          final clamped = mins < 15 ? 60 : mins;
+          await svc.enableBackgroundSync(interval: Duration(minutes: clamped));
+        }
+      } catch (e) {
+        log.warning('App', 'iOS background sync init failed: $e');
+      }
+    }());
+  }
+
+  // macOS / iOS: instantiate the Core Spotlight bridge so the host list is
+  // mirrored into Spotlight (Cmd-Space on macOS; home-screen Spotlight on
+  // iOS). The provider is `keepAlive` and installs its own
+  // `serverListProvider` listener; just reading it is enough to start the
+  // pipeline. Tap activations on a Spotlight result are forwarded back via
+  // the platform channel as `spotlightOpen(hostId)`.
+  if (Platform.isMacOS || Platform.isIOS) {
+    container.read(macosSpotlightServiceProvider);
   }
 
   // Linux only: install system tray icon. Best-effort — failures are

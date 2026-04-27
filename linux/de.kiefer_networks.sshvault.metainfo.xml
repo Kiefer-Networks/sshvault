@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.16.0" date="2026-04-27">
+      <description>
+        <p>iOS / iPadOS desktop integration pass: ssh:// + sftp:// URL handlers, Files-app browse, iCloud Keychain sync toggle, Siri Shortcuts / App Intents (Connect to host / Quick connect / Reopen last), Core Spotlight indexing, UIDropInteraction drag-and-drop for SSH keys, native UINotificationFeedbackGenerator haptics, BGTaskScheduler periodic background refresh, iPadOS multi-window per session via requestSceneSessionActivation, external-keyboard shortcuts ⌘N / ⌘W / ⌘T / ⌘, / ⌘F / ⌃Tab / ⌃⇧Tab, AirDrop share sheet for public keys, Live Activities for active SSH sessions on Lock Screen and Dynamic Island, WidgetKit Home Screen + Lock Screen widgets, Face ID / Touch ID pre-unlock, App Transport Security tightened to disallow arbitrary loads, keychain access group for extensions, and NSFileProtectionComplete data-protection class on the SQLCipher database file.</p>
+      </description>
+    </release>
     <release version="1.15.0" date="2026-04-27">
       <description>
         <p>Android desktop integration pass: ssh:// + sftp:// URL handlers and .pub/.pem/.ppk file associations, static + dynamic App Shortcuts, Quick Settings Tile, Foreground Service for active sessions, WakeLock power-inhibit, Android 12+ Splash Screen API, adaptive + themed launcher icon, edge-to-edge for Android 15+, Material You / Dynamic Color, home-screen widget, Picture-in-Picture for terminal, per-severity Notification Channels, Material 3 haptics, WorkManager-backed periodic background sync (opt-in), predictive-back animation, AAB language / density / ABI splits with ProGuard keep rules, auto-backup excludes the vault DB, cleartext traffic disabled by default, Android Keystore (StrongBox preferred / TEE fallback) wraps the master vault key, optional Screen-Pinning helper.</p>

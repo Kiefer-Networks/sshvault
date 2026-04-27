@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/services/secure_clipboard.dart';
+import 'package:sshvault/core/utils/platform_utils.dart';
+import 'package:sshvault/core/utils/share_sheet.dart';
 import 'package:sshvault/core/widgets/settings/circle_icon.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -193,6 +195,19 @@ class SshKeyTile extends ConsumerWidget {
                     message: l10n.sshKeyTilePublicKeyCopied,
                   );
                 },
+                visualDensity: VisualDensity.compact,
+              ),
+            // Native share-sheet hand-off (UIActivityViewController on iOS,
+            // Intent chooser on Android — both surface AirDrop / Nearby
+            // Share without us having to call the OS APIs directly). Only
+            // mobile platforms ship a system share sheet that's worth the
+            // extra button; on desktop the user can already drag the
+            // public-key text out of the edit screen.
+            if (sshKey.publicKey.isNotEmpty && isMobilePlatform)
+              IconButton(
+                icon: const Icon(Icons.ios_share),
+                tooltip: l10n.share,
+                onPressed: () => ShareSheet.sharePublicKey(sshKey),
                 visualDensity: VisualDensity.compact,
               ),
             if (onEdit != null)

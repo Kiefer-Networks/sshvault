@@ -12,9 +12,17 @@
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
+		8A1C0B0A2F00010000AAAA01 /* ConnectToHostIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1C0A0A2F00010000AAAA01 /* ConnectToHostIntent.swift */; };
+		8A1C0B0B2F00010000AAAA02 /* QuickConnectIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1C0A0B2F00010000AAAA02 /* QuickConnectIntent.swift */; };
+		8A1C0B0C2F00010000AAAA03 /* ReopenLastIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1C0A0C2F00010000AAAA03 /* ReopenLastIntent.swift */; };
+		8A2D0B0A2F26010000AAAA01 /* KeyboardShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2D0A0A2F26010000AAAA01 /* KeyboardShortcuts.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		B1D0E1A12F00010000BBBB01 /* SshvaultWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D0E0A12F00010000BBBB01 /* SshvaultWidget.swift */; };
+		B1D0E1A22F00010000BBBB02 /* QuickConnectWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D0E0A22F00010000BBBB02 /* QuickConnectWidget.swift */; };
+		B1D0E1A32F00010000BBBB03 /* LockScreenAccessoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D0E0A32F00010000BBBB03 /* LockScreenAccessoryWidget.swift */; };
+		B1D0E1B12F00010000BBBB10 /* SshvaultWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B1D0E0B12F00010000BBBB10 /* SshvaultWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +32,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 97C146ED1CF9000F007C117D;
 			remoteInfo = Runner;
+		};
+		B1D0E0C12F00010000BBBB20 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1D0E0B02F00010000BBBB00;
+			remoteInfo = SshvaultWidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -38,6 +53,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1D0E0D12F00010000BBBB30 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B1D0E1B12F00010000BBBB10 /* SshvaultWidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +75,10 @@
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		8A1C0A0A2F00010000AAAA01 /* ConnectToHostIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToHostIntent.swift; sourceTree = "<group>"; };
+		8A1C0A0B2F00010000AAAA02 /* QuickConnectIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectIntent.swift; sourceTree = "<group>"; };
+		8A1C0A0C2F00010000AAAA03 /* ReopenLastIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReopenLastIntent.swift; sourceTree = "<group>"; };
+		8A2D0A0A2F26010000AAAA01 /* KeyboardShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcuts.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
@@ -58,10 +88,23 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718009ABCDE /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		B1D0E0A12F00010000BBBB01 /* SshvaultWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SshvaultWidget.swift; sourceTree = "<group>"; };
+		B1D0E0A22F00010000BBBB02 /* QuickConnectWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectWidget.swift; sourceTree = "<group>"; };
+		B1D0E0A32F00010000BBBB03 /* LockScreenAccessoryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenAccessoryWidget.swift; sourceTree = "<group>"; };
+		B1D0E0A42F00010000BBBB04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1D0E0A52F00010000BBBB05 /* SshvaultWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SshvaultWidget.entitlements; sourceTree = "<group>"; };
+		B1D0E0B12F00010000BBBB10 /* SshvaultWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SshvaultWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		97C146EB1CF9000F007C117D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1D0E0A92F00010000BBBB09 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -95,6 +138,7 @@
 			children = (
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
+				B1D0E0A02F00010000BBBB00 /* SshvaultWidget */,
 				97C146EF1CF9000F007C117D /* Products */,
 				331C8082294A63A400263BE5 /* RunnerTests */,
 			);
@@ -105,8 +149,31 @@
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
+				B1D0E0B12F00010000BBBB10 /* SshvaultWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B1D0E0A02F00010000BBBB00 /* SshvaultWidget */ = {
+			isa = PBXGroup;
+			children = (
+				B1D0E0A12F00010000BBBB01 /* SshvaultWidget.swift */,
+				B1D0E0A22F00010000BBBB02 /* QuickConnectWidget.swift */,
+				B1D0E0A32F00010000BBBB03 /* LockScreenAccessoryWidget.swift */,
+				B1D0E0A42F00010000BBBB04 /* Info.plist */,
+				B1D0E0A52F00010000BBBB05 /* SshvaultWidget.entitlements */,
+			);
+			path = SshvaultWidget;
+			sourceTree = "<group>";
+		};
+		8A1C0D0A2F00010000AAAA10 /* AppIntents */ = {
+			isa = PBXGroup;
+			children = (
+				8A1C0A0A2F00010000AAAA01 /* ConnectToHostIntent.swift */,
+				8A1C0A0B2F00010000AAAA02 /* QuickConnectIntent.swift */,
+				8A1C0A0C2F00010000AAAA03 /* ReopenLastIntent.swift */,
+			);
+			path = AppIntents;
 			sourceTree = "<group>";
 		};
 		97C146F01CF9000F007C117D /* Runner */ = {
@@ -121,7 +188,9 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */,
+				8A2D0A0A2F26010000AAAA01 /* KeyboardShortcuts.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
+				8A1C0D0A2F00010000AAAA10 /* AppIntents */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -155,16 +224,35 @@
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
+				B1D0E0D12F00010000BBBB30 /* Embed App Extensions */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B1D0E0C02F00010000BBBB21 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B1D0E0B02F00010000BBBB00 /* SshvaultWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1D0E0E02F00010000BBBB40 /* Build configuration list for PBXNativeTarget "SshvaultWidgetExtension" */;
+			buildPhases = (
+				B1D0E0A82F00010000BBBB08 /* Sources */,
+				B1D0E0A92F00010000BBBB09 /* Frameworks */,
+				B1D0E0AA2F00010000BBBB0A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SshvaultWidgetExtension;
+			productName = SshvaultWidgetExtension;
+			productReference = B1D0E0B12F00010000BBBB10 /* SshvaultWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -184,6 +272,9 @@
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 1100;
 					};
+					B1D0E0B02F00010000BBBB00 = {
+						CreatedOnToolsVersion = 15.0;
+					};
 				};
 			};
 			buildConfigurationList = 97C146E91CF9000F007C117D /* Build configuration list for PBXProject "Runner" */;
@@ -201,6 +292,7 @@
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
+				B1D0E0B02F00010000BBBB00 /* SshvaultWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -221,6 +313,13 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1D0E0AA2F00010000BBBB0A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +375,20 @@
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */,
+				8A2D0B0A2F26010000AAAA01 /* KeyboardShortcuts.swift in Sources */,
+				8A1C0B0A2F00010000AAAA01 /* ConnectToHostIntent.swift in Sources */,
+				8A1C0B0B2F00010000AAAA02 /* QuickConnectIntent.swift in Sources */,
+				8A1C0B0C2F00010000AAAA03 /* ReopenLastIntent.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1D0E0A82F00010000BBBB08 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1D0E1A12F00010000BBBB01 /* SshvaultWidget.swift in Sources */,
+				B1D0E1A22F00010000BBBB02 /* QuickConnectWidget.swift in Sources */,
+				B1D0E1A32F00010000BBBB03 /* LockScreenAccessoryWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +399,11 @@
 			isa = PBXTargetDependency;
 			target = 97C146ED1CF9000F007C117D /* Runner */;
 			targetProxy = 331C8085294A63A400263BE5 /* PBXContainerItemProxy */;
+		};
+		B1D0E0C02F00010000BBBB21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B1D0E0B02F00010000BBBB00 /* SshvaultWidgetExtension */;
+			targetProxy = B1D0E0C12F00010000BBBB20 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -586,6 +704,109 @@
 			};
 			name = Release;
 		};
+		B1D0E0E12F00010000BBBB41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SshvaultWidget/SshvaultWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SshvaultWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "SSHVault Widget";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.kiefer-networks.sshvault.SshvaultWidget;
+				PRODUCT_NAME = SshvaultWidgetExtension;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B1D0E0E22F00010000BBBB42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SshvaultWidget/SshvaultWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SshvaultWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "SSHVault Widget";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.kiefer-networks.sshvault.SshvaultWidget;
+				PRODUCT_NAME = SshvaultWidgetExtension;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B1D0E0E32F00010000BBBB43 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SshvaultWidget/SshvaultWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SshvaultWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "SSHVault Widget";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.kiefer-networks.sshvault.SshvaultWidget;
+				PRODUCT_NAME = SshvaultWidgetExtension;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -615,6 +836,16 @@
 				97C147061CF9000F007C117D /* Debug */,
 				97C147071CF9000F007C117D /* Release */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1D0E0E02F00010000BBBB40 /* Build configuration list for PBXNativeTarget "SshvaultWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1D0E0E12F00010000BBBB41 /* Debug */,
+				B1D0E0E22F00010000BBBB42 /* Release */,
+				B1D0E0E32F00010000BBBB43 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

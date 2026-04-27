@@ -1,0 +1,21 @@
+iOS / iPadOS-Desktop-Integration.
+
+- ssh:// + sftp:// URL-Schemes via CFBundleURLTypes; Cold-Launch-URLs werden gebuffert.
+- Files-App-Browse via UIFileSharingEnabled + UISupportsDocumentBrowser.
+- Universal-Links-Entitlement (applinks:sshvault.app) vorbereitet.
+- iCloud-Keychain-Sync-Toggle für Vault-Master-Key (kSecAttrSynchronizable).
+- Siri Shortcuts / App Intents — Connect to host, Quick connect, Reopen last — "Hey Siri" wacht App auf.
+- Core-Spotlight-Indexing — Cmd+Space findet Hosts auf iPadOS.
+- UIDropInteraction Drag-and-Drop für SSH-Keys.
+- Native Apple-Haptics — UINotificationFeedbackGenerator (.success/.warning/.error).
+- BGTaskScheduler periodischer Background-Refresh, opt-in.
+- iPadOS Multi-Window — pro-Session via requestSceneSessionActivation; Stage Manager / Slide Over / Split View.
+- Externe Keyboard-Shortcuts — ⌘N / ⌘W / ⌘T / ⌘, / ⌘F / ⌃Tab / ⌃⇧Tab.
+- AirDrop-Share-Sheet für Public-Keys + Vault-Exports.
+- Live Activities (iOS 16.1+) — aktive Sessions auf Lock-Screen und Dynamic Island.
+- WidgetKit Home-Screen-Widget (small/medium/large) + Lock-Screen-Accessories.
+- Face ID / Touch ID Pre-Unlock vereint mit macOS-Biometric-Gate.
+- App Transport Security verschärft — arbitraryLoads off, nur Loopback-Exception.
+- Keychain-Access-Group für Sharing des Master-Keys mit iOS-Extensions.
+- Default-Data-Protection-Class NSFileProtectionComplete für SQLCipher-DB.
+- iPad-Input-Modes dokumentiert.

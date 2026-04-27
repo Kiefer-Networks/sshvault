@@ -1,7 +1,11 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
+import 'package:sshvault/core/services/ios_window_service.dart';
 import 'package:sshvault/core/services/vpn_detector_service.dart';
 import 'package:sshvault/core/widgets/settings/circle_icon.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -33,6 +37,13 @@ class ServerListTile extends ConsumerWidget {
     this.onFavoriteToggle,
   });
 
+  /// `true` when the running platform is iPadOS (iOS + iPad-sized layout).
+  /// On iPhone or any non-iOS host the multi-window action stays hidden.
+  static bool _showMultiWindowAction(BuildContext context) {
+    if (kIsWeb || !Platform.isIOS) return false;
+    return MediaQuery.of(context).size.width > 600;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -46,10 +57,24 @@ class ServerListTile extends ConsumerWidget {
     final session = sessions.where((s) => s.serverId == server.id).firstOrNull;
     final connectionStatus = session?.status;
 
+    final showOpenInWindow = _showMultiWindowAction(context);
+
     return Slidable(
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
         children: [
+          if (showOpenInWindow)
+            SlidableAction(
+              onPressed: (_) =>
+                  IosWindowService.instance.openSessionWindow(server.id),
+              backgroundColor: theme.colorScheme.secondaryContainer,
+              foregroundColor: theme.colorScheme.onSecondaryContainer,
+              icon: Icons.open_in_new,
+              // Hard-coded English label: this action only appears on iPad
+              // and adding a new entry to ~28 ARB files is out of scope.
+              label: 'New window',
+              borderRadius: BorderRadius.circular(12),
+            ),
           SlidableAction(
             onPressed: (_) => onEdit(),
             backgroundColor: theme.colorScheme.primary,

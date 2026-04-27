@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/services/hidpi_service.dart';
+import 'package:sshvault/core/services/ios_widget_service.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/settings/domain/entities/app_settings_entity.dart';
@@ -401,6 +402,55 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .setMacosToastActionsEnabled(v);
+                    },
+                  ),
+                ],
+              ),
+            ],
+
+            // iOS 16.1+ Live Activity toggle. The native bridge gates the
+            // actual ActivityKit call on `iOS 16.1` availability, but we
+            // surface the toggle on every iOS device so users see why
+            // their Dynamic Island stays empty on iOS 16.0 and earlier.
+            if (Platform.isIOS) ...[
+              Spacing.verticalLg,
+              const SectionHeader(title: 'Lock Screen'),
+              SettingsGroupCard(
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.dynamic_feed_outlined,
+                    iconColor: Theme.of(context).colorScheme.primary,
+                    title: 'Show active sessions on Lock Screen',
+                    subtitleText:
+                        'Display the count and host names of active SSH '
+                        'sessions in the Dynamic Island and on the Lock '
+                        'Screen. Requires iOS 16.1 or later.',
+                    value: settings.iosLiveActivitySessions,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setIosLiveActivitySessions(v);
+                    },
+                  ),
+                  // Toggle for the Home Screen + Lock Screen widgets shipped
+                  // by `ios/SshvaultWidget/`. Default-on; flipping to false
+                  // pushes an empty payload over the App Group bridge so the
+                  // widget renders its placeholder. The Home Screen tiles
+                  // require iOS 14+; the Lock Screen complications require
+                  // iOS 16+ (the widget bundle availability-gates the latter
+                  // on the Swift side).
+                  SettingsSwitchTile(
+                    icon: Icons.widgets_outlined,
+                    iconColor: Theme.of(context).colorScheme.secondary,
+                    title: 'Show widgets',
+                    subtitleText:
+                        'Publish favorite + last-connected hosts to the '
+                        'iOS Home Screen and Lock Screen widgets. '
+                        'Home Screen widget requires iOS 14+; '
+                        'Lock Screen complication requires iOS 16+.',
+                    value: ref.watch(iosWidgetsEnabledProvider),
+                    onChanged: (v) {
+                      ref.read(iosWidgetsEnabledProvider.notifier).state = v;
                     },
                   ),
                 ],

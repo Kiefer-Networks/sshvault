@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/routing/app_router.dart';
+import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/core/security/security_providers.dart';
 import 'package:sshvault/core/services/desktop_appearance_service.dart';
 import 'package:sshvault/core/services/file_drop_service.dart';
 import 'package:sshvault/core/services/global_shortcut_service.dart';
 import 'package:sshvault/core/services/headless_boot_service.dart';
+import 'package:sshvault/core/services/ios_keyboard_service.dart';
+import 'package:sshvault/core/services/ios_live_activity_service.dart';
+import 'package:sshvault/core/services/ios_window_service.dart';
 import 'package:sshvault/core/services/power_inhibitor_service.dart';
 import 'package:sshvault/core/services/screen_protection_service.dart';
 import 'package:sshvault/core/services/windows_chrome_service.dart';
@@ -55,6 +60,32 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       _listenForQuickConnectShortcut();
       _wireHeadlessBoot();
       _wireWindowsChrome();
+      _wireIosMultiWindow();
+      _initIosLiveActivity();
+    });
+  }
+
+  /// iOS only: pin the Live Activity service so it begins listening to
+  /// `sessionManagerProvider` and the user's "Show active sessions on
+  /// Lock Screen" toggle. The provider is a `Provider` (not auto-dispose),
+  /// so reading it once is enough — internal listeners survive widget
+  /// rebuilds. The service short-circuits on non-iOS hosts.
+  void _initIosLiveActivity() {
+    if (!Platform.isIOS) return;
+    ref.read(iosLiveActivityServiceProvider);
+  }
+
+  /// iPadOS only: hook the multi-window bridge so any scene that gets
+  /// spawned for a specific session id (via `IosWindowService.openSessionWindow`
+  /// or restored from `stateRestorationActivity`) actually opens that
+  /// session and routes the new window to the terminal branch.
+  void _wireIosMultiWindow() {
+    if (!IosWindowService.isIosPlatform) return;
+    IosWindowService.instance.setSessionOpener((hostId) async {
+      await ref.read(sessionManagerProvider.notifier).openSession(hostId);
+      ref
+          .read(shellNavigationProvider)
+          ?.goBranch(AppConstants.terminalBranchIndex);
     });
   }
 
@@ -438,7 +469,9 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
           data: scaledTheme,
           child: EdgeToEdgeSystemUi(
             brightness: brightness,
-            child: _wrapWithDropOverlay(_wrapWithLock(settingsAsync, child)),
+            child: IosKeyboardShortcuts(
+              child: _wrapWithDropOverlay(_wrapWithLock(settingsAsync, child)),
+            ),
           ),
         );
       },

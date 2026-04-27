@@ -1,0 +1,17 @@
+Intégration iOS / iPadOS.
+
+- Schémas ssh:// + sftp:// via CFBundleURLTypes.
+- Navigation Files, sync iCloud Keychain optionnelle.
+- Siri Shortcuts / App Intents pour se connecter.
+- Indexation Core Spotlight des hôtes.
+- Drag-and-drop UIDropInteraction de clés SSH.
+- Haptics natifs Apple (UINotificationFeedbackGenerator).
+- BGTaskScheduler refresh périodique opt-in.
+- Multi-fenêtres iPadOS — Stage Manager / Split View.
+- Raccourcis ⌘N/⌘W/⌘T/⌘,/⌘F/⌃Tab/⌃⇧Tab.
+- Partage AirDrop des clés publiques.
+- Live Activities iOS 16.1+ sur Lock Screen et Dynamic Island.
+- Widgets WidgetKit Home Screen + Lock Screen.
+- Face ID / Touch ID pre-unlock.
+- ATS durci, keychain access group.
+- Protection de données NSFileProtectionComplete.

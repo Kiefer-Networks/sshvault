@@ -1,0 +1,21 @@
+iOS / iPadOS desktop integration pass.
+
+- ssh:// + sftp:// URL schemes registered via CFBundleURLTypes; cold-launch URLs buffered until Flutter is ready and replayed.
+- Files-app browse via UIFileSharingEnabled + UISupportsDocumentBrowser.
+- Universal Links entitlement (applinks:sshvault.app) prepared for future host fingerprint deep-links.
+- iCloud Keychain sync toggle for the master vault key (kSecAttrSynchronizable).
+- Siri Shortcuts / App Intents — Connect to host, Quick connect, Reopen last session — wake the app via "Hey Siri".
+- Core Spotlight indexing — Cmd+Space iPadOS finds saved hosts; tap routes through to the connect flow.
+- UIDropInteraction drag-and-drop for SSH keys from Files / iCloud Drive / external apps.
+- Native Apple haptics — UINotificationFeedbackGenerator (.success / .warning / .error) on connect / disconnect / errors.
+- BGTaskScheduler periodic background refresh, opt-in (mirrors Android WorkManager).
+- iPadOS multi-window — open per-session window via requestSceneSessionActivation; survives Stage Manager / Slide Over / Split View.
+- External keyboard shortcuts — ⌘N / ⌘W / ⌘T / ⌘, / ⌘F / ⌃Tab / ⌃⇧Tab via UIKeyCommand + Flutter Shortcuts.
+- AirDrop share sheet for public keys + vault exports via UIActivityViewController.
+- Live Activities (iOS 16.1+) — active SSH sessions on Lock Screen and Dynamic Island.
+- WidgetKit Home Screen widget (small / medium / large) + Lock Screen accessoryCircular / accessoryRectangular / accessoryInline.
+- Face ID / Touch ID pre-unlock unified with macOS biometric gate.
+- App Transport Security tightened — arbitrary loads off, only loopback exception for hot-reload.
+- Keychain access group for sharing the master vault key with iOS extensions.
+- Default data-protection class NSFileProtectionComplete on the SQLCipher database file.
+- iPad input modes documented — touch, Magic Keyboard, trackpad, Apple Pencil (touch fallback), external Bluetooth keyboard.

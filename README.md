@@ -74,6 +74,37 @@ SSHVault is a cross-platform SSH terminal and SFTP file manager that encrypts al
 | Linux | Supported (Flatpak) |
 | Windows | Supported |
 
+## iPad input modes
+
+SSHVault is fully usable on iPad with every supported input device. Flutter
+treats stylus events as touch by default, and the iPad-specific desktop-class
+integrations (pointer + keyboard) are wired up natively.
+
+| Input | Support |
+|-------|---------|
+| Touch | Full support — taps, drags, swipe-to-reveal row actions, pinch in the terminal |
+| Magic Keyboard | Full support — every ⌘ shortcut and the on-screen-keyboard toolbar (item 12) |
+| Trackpad | Full support — hover, scroll, right-click, and contextual cursors via `UIPointerInteraction` (item 11) |
+| Apple Pencil | Works as a touch input — every tap target accepts stylus events. No Pencil-only features (low value for an SSH client) |
+| External Bluetooth keyboard | Full support — all ⌘ shortcuts, arrow-key navigation, and terminal modifier passthrough |
+
+### Multi-window on iPadOS
+
+SSHVault opts into iPadOS multi-scene support, so every SSH session can live
+in its own window:
+
+| Mode | How to use |
+|------|------------|
+| Stage Manager | Swipe a server row to reveal **New window** — a fresh SSHVault window opens, pre-routed to that session |
+| Split View | Drag the SSHVault icon from the Dock onto the side of another app — iPadOS will host two SSHVault scenes side-by-side, each with its own terminal |
+| Slide Over | Same gesture as Split View, but drop on top of the running app — iPadOS mounts SSHVault as a slide-over panel with one SSH session active |
+
+`UIApplicationSupportsMultipleScenes=true` is declared in `Info.plist`, so
+Slide Over and Split View are available system-wide without any per-session
+opt-in. The **New window** action only appears on iPad-sized layouts
+(`width > 600`); it is hidden on iPhone, where iOS rejects
+`requestSceneSessionActivation`.
+
 ## Install via F-Droid Repo
 
 Add the Kiefer Networks F-Droid repository to your F-Droid client:
@@ -317,6 +348,118 @@ To remove the credential out-of-band — for example, when migrating a
 machine — open *Credential Manager → Windows Credentials* and delete
 the entry under `de.kiefer_networks.SSHVault.MasterKey`. SSHVault will
 prompt for the master passphrase again on the next launch.
+
+### iOS Keychain access group + App Transport Security
+
+On iOS / iPadOS the master vault key is stored in the system Keychain as a
+generic-password item under a **shared access group**, declared in
+[`ios/Runner/Runner.entitlements`](ios/Runner/Runner.entitlements):
+
+```xml
+<key>keychain-access-groups</key>
+<array>
+  <string>$(AppIdentifierPrefix)de.kiefer_networks.SSHVault</string>
+</array>
+```
+
+The `$(AppIdentifierPrefix)` token is replaced at sign time by the Team
+ID prefix from your provisioning profile. The host app and any
+companion extension targets (Live Activity, WidgetKit complications,
+Quick Look previews) embed the same group string in their own
+entitlements so they can dereference the master key directly via
+`SecItemCopyMatching` without copying it across process boundaries.
+
+| Detail | Value |
+|--------|-------|
+| Service | `de.kiefer_networks.SSHVault` |
+| Access group | `$(AppIdentifierPrefix)de.kiefer_networks.SSHVault` |
+| Class | `kSecClassGenericPassword` |
+| Accessibility | `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` (device-only) or `kSecAttrAccessibleWhenUnlocked` (when iCloud Keychain syncing is on) |
+
+**Apple Developer portal step.** Before signing a build that uses this
+entitlement, the keychain access group must be registered against the
+App ID:
+
+1. Sign in to <https://developer.apple.com/account/resources/identifiers/list>.
+2. Select the SSHVault App ID (`de.kiefer-networks.sshvault`).
+3. Under **Capabilities → Keychain Sharing**, enable the capability and
+   add `de.kiefer_networks.SSHVault` to the keychain group list.
+4. Regenerate the provisioning profiles for every target (host app +
+   extensions) so they pick up the new entitlement, then download them
+   in Xcode (*Settings → Accounts → Download Manual Profiles*).
+
+Without this portal step, code-signing succeeds but `SecItemAdd`
+returns `errSecMissingEntitlement` (`-34018`) at runtime.
+
+**App Transport Security.** SSH and SFTP traffic does **not** flow
+through ATS — that policy only governs `URLSession` / `CFNetwork`
+HTTPS. The vault-sync HTTPS endpoint (when the optional self-hosted
+backend is configured) is the only network surface ATS sees, and it
+uses TLS 1.2+ with default ATS settings — `NSAllowsArbitraryLoads` is
+`false` in [`ios/Runner/Info.plist`](ios/Runner/Info.plist). The single
+exception domain is `localhost`, which keeps `flutter run` debug
+hot-reload working over plain HTTP without weakening any production
+traffic.
+
+### iOS Home Screen + Lock Screen widgets
+
+SSHVault ships a WidgetKit extension target,
+[`ios/SshvaultWidget/`](ios/SshvaultWidget), that exposes two widgets:
+
+- **QuickConnectWidget** (Home Screen, iOS 14+). Three sizes:
+  `systemSmall` (1 host), `systemMedium` (2×2 grid), `systemLarge`
+  (4×2 grid). Each tile is a `Link(URL("sshvault://host/<id>"))` — tapping
+  it routes through `AppDelegate` and opens the host inside the app.
+- **LockScreenAccessoryWidget** (Lock Screen, iOS 16+). Three families:
+  `.accessoryCircular` (single terminal glyph that deep-links to the
+  most recent host), `.accessoryRectangular` (host name + small icon),
+  and `.accessoryInline` (`"Last connected: <name>"` text rendered in
+  the lock-screen status area above the clock).
+
+Both widgets read their data from a shared **App Group**,
+`group.de.kiefer_networks.sshvault`, which is declared in **both**
+entitlement files:
+
+```xml
+<!-- ios/Runner/Runner.entitlements
+     ios/SshvaultWidget/SshvaultWidget.entitlements -->
+<key>com.apple.security.application-groups</key>
+<array>
+  <string>group.de.kiefer_networks.sshvault</string>
+</array>
+```
+
+The Flutter side
+([`lib/core/services/ios_widget_service.dart`](lib/core/services/ios_widget_service.dart))
+listens to `favoriteServersProvider` + `recentServersProvider`. When
+either changes, it pushes a JSON payload over the
+`de.kiefer_networks.sshvault/ios_widget` method channel; the native
+side (`AppDelegate.swift`) writes that JSON into the shared App Group
+`UserDefaults` (key `qc_widget_payload`) and calls
+`WidgetCenter.shared.reloadAllTimelines()` so every active widget
+instance refreshes.
+
+A user-facing **Show widgets** toggle
+([`iosWidgetsEnabledProvider`](lib/core/services/ios_widget_service.dart))
+defaults to `true` — flipping it to `false` pushes an empty payload so
+the widget renders its placeholder. The toggle is a no-op on every
+non-iOS platform.
+
+**Apple Developer portal step.** Before signing a build that uses this
+entitlement, the App Group must be registered against both App IDs:
+
+1. Sign in to <https://developer.apple.com/account/resources/identifiers/list>.
+2. Select the SSHVault App ID (`de.kiefer-networks.sshvault`) and the
+   widget extension App ID (`de.kiefer-networks.sshvault.SshvaultWidget`).
+3. Under **Capabilities → App Groups**, enable the capability on both
+   and add `group.de.kiefer_networks.sshvault` to each.
+4. Regenerate the provisioning profiles for both targets so they pick
+   up the new entitlement, then download them in Xcode (*Settings →
+   Accounts → Download Manual Profiles*).
+
+Without this portal step, code-signing succeeds but
+`UserDefaults(suiteName:)` returns `nil` at runtime and the widget
+silently shows the placeholder.
 
 ### Windows native toast notifications
 

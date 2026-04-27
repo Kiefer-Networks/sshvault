@@ -217,6 +217,28 @@ class AboutScreen extends ConsumerWidget {
             Spacing.verticalLg,
           ],
 
+          // iPadOS keyboard shortcuts info — shown only when running on
+          // iPad. The bindings are static (Dart-level Shortcuts widget,
+          // wired in `IosKeyboardShortcuts`); this tile is purely
+          // informational so users know which combos work with an attached
+          // Magic Keyboard or other Bluetooth keyboard.
+          if (Platform.isIOS) ...[
+            const SectionHeader(title: 'Keyboard'),
+            const SettingsGroupCard(
+              children: [
+                SettingsTile(
+                  icon: Icons.keyboard_outlined,
+                  iconColor: AppColors.iconBlue,
+                  title: 'Keyboard shortcuts available',
+                  subtitleText:
+                      'Cmd-N new host  ·  Cmd-W close tab  ·  Cmd-T new tab  ·  '
+                      'Cmd-, settings  ·  Cmd-F search  ·  Ctrl-Tab switch tab',
+                ),
+              ],
+            ),
+            Spacing.verticalLg,
+          ],
+
           // Developer
           SectionHeader(title: l10n.sectionDeveloper),
           SettingsGroupCard(

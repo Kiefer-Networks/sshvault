@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/services/android_background_sync_service.dart';
+import 'package:sshvault/core/services/ios_background_sync_service.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/utils/date_formatter.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
@@ -221,10 +222,11 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                       );
                     },
                   ),
-                // Android-only: opt-in WorkManager background sync that
-                // runs even with the app closed. Hidden on other
-                // platforms because the underlying service no-ops there.
-                if (Platform.isAndroid)
+                // Mobile-only: opt-in background sync that runs even
+                // with the app closed. Android uses WorkManager, iOS
+                // uses BGTaskScheduler — both no-op on other platforms,
+                // so the toggle is hidden on desktop / web.
+                if (Platform.isAndroid || Platform.isIOS)
                   SettingsSwitchTile(
                     icon: Icons.cloud_queue,
                     iconColor: AppColors.iconBlue,
@@ -235,21 +237,33 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                       await ref
                           .read(settingsProvider.notifier)
                           .setBackgroundSyncEnabled(v);
-                      final svc = ref.read(
-                        androidBackgroundSyncServiceProvider,
-                      );
-                      if (v) {
-                        final intervalMins =
-                            settings?.autoSyncIntervalMinutes ?? 60;
-                        // WorkManager enforces a 15-minute floor — clamp
-                        // up so we never pass a duration the OS would
-                        // silently round.
-                        final mins = intervalMins < 15 ? 60 : intervalMins;
-                        await svc.enableBackgroundSync(
-                          interval: Duration(minutes: mins),
+                      final intervalMins =
+                          settings?.autoSyncIntervalMinutes ?? 60;
+                      // WorkManager floors at 15min and BGTaskScheduler
+                      // throttles tight cadences — clamp on both so we
+                      // never pass a duration either OS would silently
+                      // ignore.
+                      final mins = intervalMins < 15 ? 60 : intervalMins;
+                      if (Platform.isAndroid) {
+                        final svc = ref.read(
+                          androidBackgroundSyncServiceProvider,
                         );
+                        if (v) {
+                          await svc.enableBackgroundSync(
+                            interval: Duration(minutes: mins),
+                          );
+                        } else {
+                          await svc.disable();
+                        }
                       } else {
-                        await svc.disable();
+                        final svc = ref.read(iosBackgroundSyncServiceProvider);
+                        if (v) {
+                          await svc.enableBackgroundSync(
+                            interval: Duration(minutes: mins),
+                          );
+                        } else {
+                          await svc.disable();
+                        }
                       }
                     },
                   ),

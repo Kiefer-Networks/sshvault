@@ -107,6 +107,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   // floating window without opting in. The native side reads the same
   // value from SharedPreferences via `AndroidPipService.setPipEnabled`.
   static const _keyPictureInPictureEnabled = 'picture_in_picture_enabled';
+  // iOS 16.1+ Live Activity (Dynamic Island + Lock Screen). Default-on;
+  // honored by `IosLiveActivityService`. Round-trips harmlessly on
+  // non-iOS platforms — the service short-circuits there.
+  static const _keyIosLiveActivitySessions = 'ios_live_activity_sessions';
 
   // Secure storage keys for PIN-related secrets
   static const _secKeyPinHash = 'settings_pin_hash';
@@ -328,6 +332,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       // anything other than the literal 'false' string preserves that on
       // first install.
       pictureInPictureEnabled: all[_keyPictureInPictureEnabled] != 'false',
+      // Default-on iOS Live Activity toggle. Mirrors the same "missing
+      // row == enabled" semantics so existing installs see the activity
+      // automatically on first launch under iOS 16.1+.
+      iosLiveActivitySessions: all[_keyIosLiveActivitySessions] != 'false',
     );
   }
 
@@ -455,6 +463,18 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     _log.info(_tag, 'Picture-in-Picture ${enabled ? 'enabled' : 'disabled'}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyPictureInPictureEnabled, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggles the iOS-only Live Activity. The native bridge
+  /// (`LiveActivityBridge.swift`) honors the flag via `IosLiveActivityService`
+  /// — flipping it off retracts any in-flight Dynamic Island /
+  /// lock-screen card immediately. No-op on non-iOS platforms; the flag
+  /// still round-trips through the entity for export portability.
+  Future<void> setIosLiveActivitySessions(bool enabled) async {
+    _log.info(_tag, 'iOS Live Activity ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyIosLiveActivitySessions, enabled.toString());
     ref.invalidateSelf();
   }
 

@@ -181,6 +181,17 @@ class AppSettingsEntity {
   /// the entity but [AndroidPipService] short-circuits on iOS / desktop.
   final bool pictureInPictureEnabled;
 
+  // ---------- iOS-only: Live Activities (Dynamic Island + Lock Screen) ----------
+
+  /// When `true` (default), SSHVault posts a Live Activity showing the
+  /// number of active SSH sessions to the Dynamic Island and the lock
+  /// screen on iOS 16.1+. The native bridge (`LiveActivityBridge.swift`)
+  /// silently no-ops on older iOS or when the user has disabled Live
+  /// Activities for SSHVault in Settings → Face ID & Passcode. The flag
+  /// round-trips harmlessly on non-iOS platforms — `IosLiveActivityService`
+  /// short-circuits on Android / desktop.
+  final bool iosLiveActivitySessions;
+
   const AppSettingsEntity({
     this.themeMode = AppThemeMode.system,
     this.defaultSshPort = 22,
@@ -238,6 +249,7 @@ class AppSettingsEntity {
     this.windowsMicaBackdrop = true,
     this.windowsRoundCorners = true,
     this.pictureInPictureEnabled = true,
+    this.iosLiveActivitySessions = true,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -315,6 +327,7 @@ class AppSettingsEntity {
     bool? windowsMicaBackdrop,
     bool? windowsRoundCorners,
     bool? pictureInPictureEnabled,
+    bool? iosLiveActivitySessions,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -390,6 +403,8 @@ class AppSettingsEntity {
       windowsRoundCorners: windowsRoundCorners ?? this.windowsRoundCorners,
       pictureInPictureEnabled:
           pictureInPictureEnabled ?? this.pictureInPictureEnabled,
+      iosLiveActivitySessions:
+          iosLiveActivitySessions ?? this.iosLiveActivitySessions,
     );
   }
 
