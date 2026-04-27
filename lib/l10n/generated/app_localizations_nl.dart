@@ -1433,6 +1433,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get syncVaultVersion => 'Kluisversie';
 
   @override
+  String get syncBackgroundSync => 'Synchroniseren op achtergrond';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodieke vault-sync via WorkManager ook bij gesloten app.';
+
+  @override
   String get syncTitle => 'Synchronisatie';
 
   @override

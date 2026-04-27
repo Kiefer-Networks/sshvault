@@ -322,6 +322,41 @@ class AppearanceSettingsScreen extends ConsumerWidget {
               ),
             ],
 
+            // --- System integration (Android) ---
+            // Material You / Dynamic Color: on Android 12+ the platform
+            // exposes a wallpaper-derived CorePalette which we feed into
+            // the Material 3 ColorScheme as the seed. Pre-12 devices and
+            // non-Android targets ignore this flag (the dynamicColor
+            // provider returns null there, so the theme keeps the brand
+            // seed regardless of the toggle's value).
+            if (Platform.isAndroid) ...[
+              Spacing.verticalLg,
+              const SectionHeader(title: 'System integration'),
+              SettingsGroupCard(
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.color_lens_outlined,
+                    iconColor: Theme.of(context).colorScheme.primary,
+                    title: 'Material You',
+                    subtitleText:
+                        'Use the Android 12+ wallpaper-derived accent '
+                        'color as the app theme. Falls back to the '
+                        'built-in brand color on Android 11 and earlier.',
+                    value: settings.followDynamicColor,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setFollowDynamicColor(v);
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsThemeChanged,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+
             // --- Notifications (Windows / macOS) ---
             // Native toasts on both platforms support inline action
             // buttons that persist in the Action Center / Notification

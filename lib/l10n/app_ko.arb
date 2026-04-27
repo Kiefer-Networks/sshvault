@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "SSH 구성 가져오기",
   "fileChooserImportSettings": "설정 가져오기",
   "fileChooserPickKeyFile": "SSH 키 파일 선택",
-  "fileChooserUploadFiles": "파일 업로드"
+  "fileChooserUploadFiles": "파일 업로드",
+  "syncBackgroundSync": "백그라운드 동기화",
+  "syncBackgroundSyncDescription": "앱이 닫혀 있어도 WorkManager로 주기적으로 동기화."
 }

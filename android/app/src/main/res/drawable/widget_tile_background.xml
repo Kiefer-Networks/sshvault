@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Per-tile background. Slightly lighter than the widget container so each tile
+  reads as a discrete tap target. `?android:attr/selectableItemBackground` is
+  not supported in RemoteViews, so we approximate with a solid pressed-state
+  ripple-friendly shape.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#26FFFFFF" />
+    <corners android:radius="12dp" />
+</shape>

@@ -2788,6 +2788,12 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Sync'**
+  /// No description provided for @syncBackgroundSync.
+  String get syncBackgroundSync;
+
+  /// No description provided for @syncBackgroundSyncDescription.
+  String get syncBackgroundSyncDescription;
+
   String get syncTitle;
 
   /// No description provided for @settingsSectionNetwork.

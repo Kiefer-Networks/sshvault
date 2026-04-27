@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Εισαγωγή SSH config",
   "fileChooserImportSettings": "Εισαγωγή ρυθμίσεων",
   "fileChooserPickKeyFile": "Επιλογή κλειδιού SSH",
-  "fileChooserUploadFiles": "Μεταφόρτωση αρχείων"
+  "fileChooserUploadFiles": "Μεταφόρτωση αρχείων",
+  "syncBackgroundSync": "Συγχρονισμός στο παρασκήνιο",
+  "syncBackgroundSyncDescription": "Περιοδικός συγχρονισμός θησαυροφυλακίου μέσω WorkManager ακόμη και όταν η εφαρμογή είναι κλειστή."
 }

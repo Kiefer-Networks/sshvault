@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Network Security Config.
+
+    Production posture: cleartext traffic is forbidden everywhere. SSHVault
+    only speaks SSH (port 22 / user-defined) and HTTPS (sync server). HTTP
+    must never be allowed to slip through, regardless of what a transitive
+    plugin tries to do.
+
+    Debug-only loopback exception: `flutter run --hot-reload` proxies the
+    Dart VM service over plain HTTP on `127.0.0.1` / `localhost`. Without the
+    exception below, hot-reload fails with `CLEARTEXT communication … not
+    permitted`. Scope is narrow (debug-overrides + loopback only) so it has
+    no effect on the release build.
+-->
 <network-security-config>
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
     </base-config>
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+    <!-- Loopback exception kept for `flutter run` (Dart VM service /
+         hot-reload). Applies in all build types but only for 127.0.0.1 /
+         localhost, so it does NOT widen the production attack surface. -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
 </network-security-config>

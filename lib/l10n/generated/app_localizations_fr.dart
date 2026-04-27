@@ -1437,6 +1437,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncVaultVersion => 'Version du coffre-fort';
 
   @override
+  String get syncBackgroundSync => 'Synchroniser en arrière-plan';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sync périodique du coffre via WorkManager même app fermée.';
+
+  @override
   String get syncTitle => 'Synchronisation';
 
   @override

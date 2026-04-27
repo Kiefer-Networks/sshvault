@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:sshvault/core/services/android_keystore_helper.dart';
 import 'package:sshvault/core/services/macos_keychain.dart' show MacosKeychain;
 import 'package:sshvault/core/services/windows_credential_manager.dart';
 
@@ -14,6 +15,14 @@ import 'package:sshvault/core/services/windows_credential_manager.dart';
 /// Kept stable across versions so the same secret is round-tripped between
 /// libsecret entries and the file-based fallback.
 const String kVaultMasterKeyId = 'sv_vault_master_key';
+
+/// Storage slot for the AES-GCM-wrapped master key on Android. The
+/// wrapping key itself never leaves the AndroidKeyStore (StrongBox / TEE);
+/// only the wrapped blob is parked in `EncryptedSharedPreferences` so the
+/// app can reload it on next launch. Distinct from [kVaultMasterKeyId] so
+/// the legacy fss entry can coexist with the new wrapped slot during the
+/// one-shot migration.
+const String kAndroidVaultWrappedKeyId = 'sv_vault_master_key_wrapped';
 
 /// Filename used for the file-based fallback (Linux without a running
 /// Secret Service / headless servers / Flatpak without
@@ -76,6 +85,20 @@ enum MasterKeyBackend {
   /// Preferred backend on macOS; chosen instead of [systemKeyring] when
   /// `Platform.isMacOS`.
   macosKeychain,
+
+  /// Android — explicit AES-256-GCM master key in the AndroidKeyStore
+  /// (TEE-backed). The wrapped vault key is persisted via
+  /// `flutter_secure_storage` but the wrapping key never leaves the
+  /// keystore. Reported when `KeyInfo.securityLevel` says
+  /// `TRUSTED_ENVIRONMENT` or the device is too old to expose the
+  /// granular API but the key is hardware-backed.
+  androidKeystore,
+
+  /// Android — same as [androidKeystore] but the key lives on a discrete
+  /// secure element (StrongBox). Surfaced as a more specific variant so
+  /// the security settings tile can show "Hardware Security (StrongBox)"
+  /// to the user.
+  androidStrongBox,
 }
 
 /// Minimal contract for the `org.freedesktop.portal.Secret` portal call,
@@ -147,16 +170,20 @@ class KeyringService {
     SecretPortalClient? portalClient,
     WindowsCredentialManager? windowsCredentialManager,
     MacosKeychain? macosKeychain,
+    AndroidKeystoreHelper? androidKeystore,
     bool? isWindowsOverride,
     bool? isMacOsOverride,
+    bool? isAndroidOverride,
     MasterKeyBiometricGate? biometricGate,
   }) : _storage = storage ?? _defaultStorage(),
        _supportDirOverride = supportDirOverride,
        _portalClient = portalClient ?? _LiveSecretPortalClient(),
        _wincred = windowsCredentialManager ?? WindowsCredentialManager(),
        _macosKeychain = macosKeychain ?? MacosKeychain(),
+       _androidKeystore = androidKeystore ?? AndroidKeystoreHelper(),
        _isWindows = isWindowsOverride ?? Platform.isWindows,
        _isMacOs = isMacOsOverride ?? Platform.isMacOS,
+       _isAndroid = isAndroidOverride ?? Platform.isAndroid,
        _biometricGate = biometricGate ?? const _DisabledBiometricGate();
 
   final FlutterSecureStorage _storage;
@@ -164,8 +191,10 @@ class KeyringService {
   final SecretPortalClient _portalClient;
   final WindowsCredentialManager _wincred;
   final MacosKeychain _macosKeychain;
+  final AndroidKeystoreHelper _androidKeystore;
   final bool _isWindows;
   final bool _isMacOs;
+  final bool _isAndroid;
   final MasterKeyBiometricGate _biometricGate;
 
   /// True when this service is running on Windows (or has been told it is
@@ -180,6 +209,19 @@ class KeyringService {
   /// `Security.framework`) over `flutter_secure_storage`.
   @visibleForTesting
   bool get isMacOsBackendActive => _isMacOs && _macosKeychain.isSupported;
+
+  /// True when this service is running on Android (or has been told it is
+  /// via the test-only `isAndroidOverride` flag). When true the read/write
+  /// paths wrap the master key with an explicit AndroidKeyStore-managed
+  /// AES-256-GCM key instead of relying on
+  /// `flutter_secure_storage`'s implicit `EncryptedSharedPreferences` key.
+  @visibleForTesting
+  bool get isAndroidBackendActive => _isAndroid && _androidKeystore.isSupported;
+
+  /// Exposes the underlying Android helper so the settings UI can drive
+  /// `securityLevel(...)` and the explicit "Re-create with hardware"
+  /// flow without leaking the channel through every consumer.
+  AndroidKeystoreHelper get androidKeystore => _androidKeystore;
 
   /// Tracks whether we've already shown a fallback warning this process,
   /// used by the settings banner so we don't spam the user.
@@ -212,6 +254,29 @@ class KeyringService {
   ///     when the legacy file fallback also exists.
   ///  3. The on-disk file fallback under the app support dir.
   Future<String?> readVaultKey() async {
+    // On Android prefer the explicit hardware-backed slot (StrongBox /
+    // TEE wrapped AES-GCM blob) before any other source. If we find a
+    // legacy `flutter_secure_storage` entry we migrate it into the
+    // wrapped slot so subsequent reads stay on the hardware path.
+    if (isAndroidBackendActive) {
+      try {
+        final wrapped = await _readAndroidWrapped();
+        if (wrapped != null) return wrapped;
+      } catch (e) {
+        debugPrint('[KeyringService] Android keystore read failed: $e');
+      }
+      try {
+        final fssValue = await _storage.read(key: kVaultMasterKeyId);
+        if (fssValue != null) {
+          await _migrateFssToAndroidKeystore(fssValue);
+          return fssValue;
+        }
+      } catch (e) {
+        debugPrint('[KeyringService] fss read (Android migration) failed: $e');
+      }
+      return null;
+    }
+
     // On Windows the Credential Vault is the canonical store. We try it
     // first and migrate any value still living in `flutter_secure_storage`
     // (i.e. older installs) so the next read goes straight to Wincred.
@@ -599,7 +664,47 @@ class KeyringService {
     }
     return sb.toString();
   }
+
+  /// Reads the master vault key wrapped under the Android Keystore alias.
+  /// Returns the plaintext UTF-8 string, or null if no wrapped blob exists
+  /// (or if the keystore alias is missing — first run).
+  Future<String?> _readAndroidWrapped() async {
+    final wrappedHex = await _storage.read(key: _kAndroidWrappedKeyId);
+    if (wrappedHex == null || wrappedHex.isEmpty) return null;
+    final ciphertext = Uint8List.fromList(_hexToBytes(wrappedHex));
+    final plaintext = await _androidKeystore.decrypt(ciphertext);
+    return _utf8FromBytes(plaintext);
+  }
+
+  /// One-shot migration: read an existing flutter_secure_storage value,
+  /// wrap it under the Android Keystore alias, store the wrapped blob,
+  /// then delete the unwrapped fss entry.
+  Future<void> _migrateFssToAndroidKeystore(String value) async {
+    if (!await _androidKeystore.exists()) {
+      await _androidKeystore.createMasterKey();
+    }
+    final wrapped = await _androidKeystore.encrypt(
+      Uint8List.fromList(_utf8ToBytes(value)),
+    );
+    await _storage.write(
+      key: _kAndroidWrappedKeyId,
+      value: _bytesToHex(wrapped),
+    );
+    await _storage.delete(key: kVaultMasterKeyId);
+  }
+
+  static List<int> _hexToBytes(String hex) {
+    final bytes = <int>[];
+    for (var i = 0; i + 1 < hex.length; i += 2) {
+      bytes.add(int.parse(hex.substring(i, i + 2), radix: 16));
+    }
+    return bytes;
+  }
 }
+
+/// SharedPreferences key under flutter_secure_storage holding the
+/// hex-encoded ciphertext wrapped under the Android Keystore alias.
+const String _kAndroidWrappedKeyId = 'sv_vault_master_aks_wrapped';
 
 /// Production [SecretPortalClient]. Talks to
 /// `org.freedesktop.portal.Secret.RetrieveSecret` over the session bus

@@ -315,4 +315,158 @@ void main() {
       expect(calls, hasLength(1));
     });
   });
+
+  // --------------------------------------------------------------------
+  // Android backend
+  // --------------------------------------------------------------------
+  //
+  // The service routes acquireSleepLock through the WakeLockHelper
+  // platform channel when running on Android. Each handle owns its own
+  // PowerManager.WakeLock, keyed by the opaque string returned from the
+  // native `acquire(reason)` call. Releasing the handle hands that key
+  // back to `release(key)` which calls `WakeLock.release()`.
+  //
+  // The tests are platform-gated on `Platform.isAndroid` because the
+  // service short-circuits everywhere else; they run only on the Android
+  // CI runner (matching how the other backends are gated).
+  group('PowerInhibitorService Android backend', () {
+    test('acquireSleepLock forwards the reason and stores the key', () async {
+      if (!Platform.isAndroid) return;
+
+      final acquireCalls = <String>[];
+      final releaseCalls = <String>[];
+      var nextKey = 0;
+
+      Future<String> fakeAcquire(String reason) async {
+        acquireCalls.add(reason);
+        nextKey++;
+        return 'wl-$nextKey';
+      }
+
+      Future<void> fakeRelease(String key) async {
+        releaseCalls.add(key);
+      }
+
+      final svc = PowerInhibitorService(
+        androidAcquire: fakeAcquire,
+        androidRelease: fakeRelease,
+      );
+
+      final handle = await svc.acquireSleepLock('Active SSH session');
+
+      expect(handle, isNotNull);
+      expect(svc.heldLockCount, 1);
+      expect(acquireCalls, ['Active SSH session']);
+      expect(handle!.androidWakeLockKey, 'wl-1');
+
+      handle.release();
+      // Release is fire-and-forget; let the microtask queue drain.
+      await Future<void>.delayed(Duration.zero);
+
+      expect(svc.heldLockCount, 0);
+      expect(releaseCalls, ['wl-1']);
+    });
+
+    test(
+      'multiple acquires produce independent handles with distinct keys',
+      () async {
+        if (!Platform.isAndroid) return;
+
+        final acquireCalls = <String>[];
+        final releaseCalls = <String>[];
+        var nextKey = 0;
+
+        Future<String> fakeAcquire(String reason) async {
+          acquireCalls.add(reason);
+          nextKey++;
+          return 'wl-$nextKey';
+        }
+
+        Future<void> fakeRelease(String key) async {
+          releaseCalls.add(key);
+        }
+
+        final svc = PowerInhibitorService(
+          androidAcquire: fakeAcquire,
+          androidRelease: fakeRelease,
+        );
+
+        final h1 = await svc.acquireSleepLock('first');
+        final h2 = await svc.acquireSleepLock('second');
+
+        expect(h1, isNotNull);
+        expect(h2, isNotNull);
+        expect(svc.heldLockCount, 2);
+        expect(acquireCalls, ['first', 'second']);
+        expect(h1!.androidWakeLockKey, 'wl-1');
+        expect(h2!.androidWakeLockKey, 'wl-2');
+
+        h1.release();
+        await Future<void>.delayed(Duration.zero);
+        expect(svc.heldLockCount, 1);
+        expect(releaseCalls, ['wl-1']);
+
+        h2.release();
+        await Future<void>.delayed(Duration.zero);
+        expect(svc.heldLockCount, 0);
+        expect(releaseCalls, ['wl-1', 'wl-2']);
+      },
+    );
+
+    test('releaseAll releases every wake lock on the native side', () async {
+      if (!Platform.isAndroid) return;
+
+      final releaseCalls = <String>[];
+      var nextKey = 0;
+
+      Future<String> fakeAcquire(String reason) async {
+        nextKey++;
+        return 'wl-$nextKey';
+      }
+
+      Future<void> fakeRelease(String key) async {
+        releaseCalls.add(key);
+      }
+
+      final svc = PowerInhibitorService(
+        androidAcquire: fakeAcquire,
+        androidRelease: fakeRelease,
+      );
+
+      await svc.acquireSleepLock('first');
+      await svc.acquireSleepLock('second');
+      await svc.acquireSleepLock('third');
+      expect(svc.heldLockCount, 3);
+
+      svc.releaseAll();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(svc.heldLockCount, 0);
+      // Every acquired key should have been handed back.
+      expect(releaseCalls.toSet(), {'wl-1', 'wl-2', 'wl-3'});
+    });
+
+    test(
+      'native acquire failure is swallowed and yields a null handle',
+      () async {
+        if (!Platform.isAndroid) return;
+
+        Future<String> failingAcquire(String reason) {
+          return Future.error(StateError('wake_lock channel unavailable'));
+        }
+
+        Future<void> fakeRelease(String key) async {}
+
+        final svc = PowerInhibitorService(
+          androidAcquire: failingAcquire,
+          androidRelease: fakeRelease,
+        );
+
+        final handle = await svc.acquireSleepLock('Active SSH session');
+
+        expect(handle, isNull);
+        expect(svc.heldLockCount, 0);
+      },
+    );
+  });
 }

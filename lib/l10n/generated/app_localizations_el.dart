@@ -1437,6 +1437,13 @@ class AppLocalizationsEl extends AppLocalizations {
   String get syncVaultVersion => 'Έκδοση Vault';
 
   @override
+  String get syncBackgroundSync => 'Συγχρονισμός στο παρασκήνιο';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Περιοδικός συγχρονισμός θησαυροφυλακίου μέσω WorkManager ακόμη και όταν η εφαρμογή είναι κλειστή.';
+
+  @override
   String get syncTitle => 'Συγχρονισμός';
 
   @override

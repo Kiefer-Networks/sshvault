@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Auto-Backup rules (legacy, Android 6 - 11 / API 23 - 30).
+
+    SSHVault stores SSH private keys, passphrases, and host metadata that must
+    NEVER leave the device via Google's Auto-Backup-to-Drive flow. We keep
+    `android:allowBackup="false"` on the application tag, but Android still
+    consults this file as a defense-in-depth fallback (e.g. on OEM forks that
+    re-enable backup, or via adb backup) — every relevant domain is excluded.
+
+    Domains:
+      database   — Drift / sqlite stores (`sshvault.db` + WAL/journal)
+      sharedpref — Flutter SharedPreferences mirror used by feature flags
+      file       — app-specific files dir (encrypted exports, logs, cache)
+      external   — external-files dir (avatar imports, attachments)
+      root       — everything else under getDataDir()
+-->
+<full-backup-content>
+    <exclude domain="database" path="sshvault.db"/>
+    <exclude domain="database" path="sshvault.db-journal"/>
+    <exclude domain="database" path="sshvault.db-wal"/>
+    <exclude domain="database" path="sshvault.db-shm"/>
+    <exclude domain="sharedpref" path="FlutterSharedPreferences.xml"/>
+    <exclude domain="file" path="."/>
+    <exclude domain="external" path="."/>
+    <exclude domain="root" path="."/>
+</full-backup-content>

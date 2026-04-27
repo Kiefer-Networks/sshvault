@@ -1432,6 +1432,13 @@ class AppLocalizationsFi extends AppLocalizations {
   String get syncVaultVersion => 'Holvin versio';
 
   @override
+  String get syncBackgroundSync => 'Synkronoi taustalla';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Kassakaapin säännöllinen synkronointi WorkManagerilla myös sovelluksen ollessa suljettuna.';
+
+  @override
   String get syncTitle => 'Synkronointi';
 
   @override

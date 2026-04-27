@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "นำเข้าการกำหนดค่า SSH",
   "fileChooserImportSettings": "นำเข้าการตั้งค่า",
   "fileChooserPickKeyFile": "เลือกไฟล์คีย์ SSH",
-  "fileChooserUploadFiles": "อัปโหลดไฟล์"
+  "fileChooserUploadFiles": "อัปโหลดไฟล์",
+  "syncBackgroundSync": "ซิงค์ในเบื้องหลัง",
+  "syncBackgroundSyncDescription": "ซิงค์วอลต์เป็นระยะผ่าน WorkManager แม้แอปจะปิดอยู่"
 }

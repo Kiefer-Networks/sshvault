@@ -1391,6 +1391,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncVaultVersion => '保险库版本';
 
   @override
+  String get syncBackgroundSync => '后台同步';
+
+  @override
+  String get syncBackgroundSyncDescription => '即使应用关闭也通过 WorkManager 定期同步保险库。';
+
+  @override
   String get syncTitle => '同步';
 
   @override

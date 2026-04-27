@@ -1424,6 +1424,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get syncVaultVersion => 'Valvversion';
 
   @override
+  String get syncBackgroundSync => 'Synkronisera i bakgrunden';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodisk valv-sync via WorkManager även när appen är stängd.';
+
+  @override
   String get syncTitle => 'Synkronisering';
 
   @override

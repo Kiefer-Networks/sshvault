@@ -1427,6 +1427,13 @@ class AppLocalizationsCs extends AppLocalizations {
   String get syncVaultVersion => 'Verze trezoru';
 
   @override
+  String get syncBackgroundSync => 'Synchronizovat na pozadí';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodická synchronizace trezoru pomocí WorkManager i při zavřené aplikaci.';
+
+  @override
   String get syncTitle => 'Synchronizace';
 
   @override

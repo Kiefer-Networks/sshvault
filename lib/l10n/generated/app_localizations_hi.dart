@@ -1429,6 +1429,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get syncVaultVersion => 'वॉल्ट संस्करण';
 
   @override
+  String get syncBackgroundSync => 'पृष्ठभूमि में सिंक करें';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'ऐप बंद होने पर भी WorkManager के माध्यम से नियमित वॉल्ट सिंक चलाएं।';
+
+  @override
   String get syncTitle => 'सिंक';
 
   @override

@@ -147,7 +147,7 @@ abstract final class AppTheme {
         builders: {
           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
           TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
           TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
         },
@@ -283,7 +283,7 @@ abstract final class AppTheme {
         builders: {
           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
           TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
           TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
         },

@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "استيراد إعدادات SSH",
   "fileChooserImportSettings": "استيراد الإعدادات",
   "fileChooserPickKeyFile": "اختر مفتاح SSH",
-  "fileChooserUploadFiles": "رفع ملفات"
+  "fileChooserUploadFiles": "رفع ملفات",
+  "syncBackgroundSync": "مزامنة في الخلفية",
+  "syncBackgroundSyncDescription": "مزامنة دورية للخزنة عبر WorkManager حتى عند إغلاق التطبيق."
 }

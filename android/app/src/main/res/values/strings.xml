@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    String resources for SSHVault Android. Currently scoped to the static
+    App Shortcuts surfaced via long-press on the launcher icon — adding
+    user-facing strings here keeps them translatable without touching
+    Flutter/ARB files.
+-->
+<resources>
+    <string name="shortcut_quick_connect_short">Quick connect</string>
+    <string name="shortcut_quick_connect_long">Search hosts</string>
+
+    <string name="shortcut_new_host_short">Add host</string>
+    <string name="shortcut_new_host_long">Add a new SSH host</string>
+
+    <string name="shortcut_last_session_short">Reopen last</string>
+    <string name="shortcut_last_session_long">Reopen last session</string>
+</resources>

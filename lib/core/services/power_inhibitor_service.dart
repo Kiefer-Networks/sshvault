@@ -44,8 +44,21 @@
 // `release(id)`. Each [InhibitorLockHandle] holds the returned id and
 // hands it back to the channel on release.
 //
-// On mobile every public method is a cheap no-op so callers don't need
-// to platform-gate.
+// Android backend (PowerManager.WakeLock via MethodChannel):
+//
+//   PowerManager.newWakeLock(PARTIAL_WAKE_LOCK, "SSHVault::<reason>")
+//     .apply { acquire(60*60*1000L /* 1h timeout */) }
+//
+// The native bridge in
+// `android/app/src/main/kotlin/.../WakeLockHelper.kt` exposes
+// `acquire(reason)` (returns an opaque String key) and `release(key)`.
+// Each [InhibitorLockHandle] holds the returned key and hands it back
+// to the channel on release. The 1-hour timeout in the native helper is
+// a safety valve only — explicit release on the last SSH disconnect is
+// the primary path.
+//
+// On iOS every public method is a cheap no-op so callers don't need to
+// platform-gate.
 
 import 'dart:async';
 import 'dart:io';
@@ -82,6 +95,11 @@ const String kPowerInhibitorMode = 'block';
 const String kMacosPowerInhibitChannel =
     'de.kiefer_networks.sshvault/power_inhibit';
 
+/// MethodChannel name shared with
+/// `android/app/src/main/kotlin/de/kiefer_networks/sshvault/WakeLockHelper.kt`.
+/// Must stay in sync with the native side.
+const String kAndroidWakeLockChannel = 'de.kiefer_networks.sshvault/wake_lock';
+
 /// Function shape that performs the actual `Inhibit` call against the
 /// system bus. Tests inject a fake here so the service can be exercised
 /// without a real bus.
@@ -106,6 +124,13 @@ typedef WindowsExecutionStateInvoker = int Function(int esFlags);
 typedef MacosAcquireInvoker = Future<int> Function(String reason);
 typedef MacosReleaseInvoker = Future<void> Function(int id);
 
+/// Function shape for the Android WakeLock bridge. `acquire` returns
+/// the opaque key minted by `WakeLockHelper`; `release` is fire-and-
+/// forget. Tests inject fakes; production wiring goes through the
+/// platform MethodChannel registered in `MainActivity`.
+typedef AndroidAcquireInvoker = Future<String> Function(String reason);
+typedef AndroidReleaseInvoker = Future<void> Function(String key);
+
 /// Closeable handle for a single inhibitor lock.
 ///
 /// On Linux, holding the handle keeps an underlying logind fd open. On
@@ -117,7 +142,8 @@ class InhibitorLockHandle {
   /// login1's `Inhibit` call.
   InhibitorLockHandle._linux(ResourceHandle handle, this._onRelease)
     : _handle = handle,
-      _macosAssertionId = null;
+      _macosAssertionId = null,
+      _androidWakeLockKey = null;
 
   /// Windows flavour: a refcount slot only. The actual system state is
   /// owned by [PowerInhibitorService] and maintained via the service's
@@ -125,24 +151,39 @@ class InhibitorLockHandle {
   /// `ES_CONTINUOUS`-only call that clears the inhibit.
   InhibitorLockHandle._windows(this._onRelease)
     : _handle = null,
-      _macosAssertionId = null;
+      _macosAssertionId = null,
+      _androidWakeLockKey = null;
 
   /// macOS flavour: holds the IOPMAssertionID returned by the native
   /// bridge. Releasing invokes `release(id)` on the channel.
   InhibitorLockHandle._macos(int assertionId, this._onRelease)
     : _handle = null,
-      _macosAssertionId = assertionId;
+      _macosAssertionId = assertionId,
+      _androidWakeLockKey = null;
+
+  /// Android flavour: holds the opaque key returned by the native
+  /// `WakeLockHelper`. Releasing invokes `release(key)` on the channel,
+  /// which calls `PowerManager.WakeLock.release()` on the matching lock.
+  InhibitorLockHandle._android(String wakeLockKey, this._onRelease)
+    : _handle = null,
+      _macosAssertionId = null,
+      _androidWakeLockKey = wakeLockKey;
 
   final ResourceHandle? _handle;
   final int? _macosAssertionId;
+  final String? _androidWakeLockKey;
   final void Function(InhibitorLockHandle handle)? _onRelease;
   bool _released = false;
 
   bool get isReleased => _released;
 
   /// macOS-only: the IOPMAssertion id this handle owns, or `null` for
-  /// Linux/Windows handles.
+  /// Linux/Windows/Android handles.
   int? get macosAssertionId => _macosAssertionId;
+
+  /// Android-only: the WakeLock key this handle owns, or `null` for
+  /// Linux/Windows/macOS handles.
+  String? get androidWakeLockKey => _androidWakeLockKey;
 
   /// Releases this lock. On Linux this closes the underlying file
   /// descriptor (login1 observes the close and drops the inhibit). On
@@ -206,11 +247,15 @@ class PowerInhibitorService {
     WindowsExecutionStateInvoker? windowsInvoker,
     MacosAcquireInvoker? macosAcquire,
     MacosReleaseInvoker? macosRelease,
+    AndroidAcquireInvoker? androidAcquire,
+    AndroidReleaseInvoker? androidRelease,
     LoggingService? logger,
   }) : _invoker = invoker,
        _windowsInvoker = windowsInvoker,
        _macosAcquire = macosAcquire,
        _macosRelease = macosRelease,
+       _androidAcquire = androidAcquire,
+       _androidRelease = androidRelease,
        _log = logger ?? LoggingService.instance;
 
   static const _tag = 'PowerInhibitor';
@@ -221,10 +266,18 @@ class PowerInhibitorService {
     kMacosPowerInhibitChannel,
   );
 
+  /// Channel used for the default Android bridge. Tests override the
+  /// invokers above and never touch this.
+  static const MethodChannel _androidChannel = MethodChannel(
+    kAndroidWakeLockChannel,
+  );
+
   final InhibitInvoker? _invoker;
   final WindowsExecutionStateInvoker? _windowsInvoker;
   final MacosAcquireInvoker? _macosAcquire;
   final MacosReleaseInvoker? _macosRelease;
+  final AndroidAcquireInvoker? _androidAcquire;
+  final AndroidReleaseInvoker? _androidRelease;
   final LoggingService _log;
 
   /// All currently-held locks. Kept so [releaseAll] can clean up at
@@ -237,7 +290,7 @@ class PowerInhibitorService {
   /// Acquires a single sleep/idle inhibitor lock with the given [reason].
   ///
   /// Returns `null` on:
-  ///   * unsupported platforms (macOS / mobile),
+  ///   * unsupported platforms (iOS / web),
   ///   * if the underlying OS call fails (logind unreachable, kernel32
   ///     lookup failed, etc).
   ///
@@ -252,6 +305,9 @@ class PowerInhibitorService {
     }
     if (Platform.isMacOS) {
       return _acquireMacos(reason);
+    }
+    if (Platform.isAndroid) {
+      return _acquireAndroid(reason);
     }
     return null;
   }
@@ -335,6 +391,33 @@ class PowerInhibitorService {
     }
   }
 
+  /// Acquires an Android `PARTIAL_WAKE_LOCK` via the platform channel.
+  ///
+  /// On success the returned [InhibitorLockHandle] holds the opaque key
+  /// minted by the native bridge; releasing the handle invokes
+  /// `release(key)` over the channel, which calls
+  /// `PowerManager.WakeLock.release()` on the matching wake lock.
+  ///
+  /// Android wake locks are independent — every handle is its own
+  /// `PowerManager.WakeLock` object — so unlike Windows we don't need a
+  /// service-level counter.
+  Future<InhibitorLockHandle?> _acquireAndroid(String reason) async {
+    try {
+      final acquire = _androidAcquire ?? _defaultAndroidAcquire;
+      final wakeLockKey = await acquire(reason);
+      final lock = InhibitorLockHandle._android(wakeLockKey, _onLockReleased);
+      _heldLocks.add(lock);
+      _log.info(
+        _tag,
+        'Acquired sleep inhibitor (WakeLock): $reason (key=$wakeLockKey)',
+      );
+      return lock;
+    } catch (e, st) {
+      _log.warning(_tag, 'Failed to acquire sleep inhibitor: $e\n$st');
+      return null;
+    }
+  }
+
   /// Releases every lock currently held by this service. Safe to call
   /// repeatedly; locks already released are skipped.
   void releaseAll() {
@@ -371,6 +454,20 @@ class PowerInhibitorService {
         _log.warning(
           _tag,
           'Failed to release IOPM assertion $assertionId: $e\n$st',
+        );
+      });
+    }
+    // Android: each handle owns its own WakeLock keyed by an opaque
+    // string. Hand it back to the native helper so it can release the
+    // PARTIAL_WAKE_LOCK. Fire-and-forget — failures are logged.
+    final wakeLockKey = handle.androidWakeLockKey;
+    if (Platform.isAndroid && wakeLockKey != null) {
+      final release = _androidRelease ?? _defaultAndroidRelease;
+      // ignore: discarded_futures
+      release(wakeLockKey).catchError((Object e, StackTrace st) {
+        _log.warning(
+          _tag,
+          'Failed to release Android wake lock $wakeLockKey: $e\n$st',
         );
       });
     }
@@ -430,6 +527,28 @@ class PowerInhibitorService {
       'id': id,
     });
   }
+
+  /// Default Android acquire bridge — invokes `acquire(reason)` on the
+  /// platform channel registered by `WakeLockHelper.kt` and returns the
+  /// opaque key as a `String`. Throws on channel/native failure.
+  static Future<String> _defaultAndroidAcquire(String reason) async {
+    final result = await _androidChannel.invokeMethod<String>(
+      'acquire',
+      <String, Object?>{'reason': reason},
+    );
+    if (result == null) {
+      throw StateError('Android wake_lock acquire returned null');
+    }
+    return result;
+  }
+
+  /// Default Android release bridge — fire-and-forget call to
+  /// `release(key)` on the platform channel.
+  static Future<void> _defaultAndroidRelease(String key) async {
+    await _androidChannel.invokeMethod<void>('release', <String, Object?>{
+      'key': key,
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -457,17 +576,23 @@ final powerInhibitorServiceProvider = Provider<PowerInhibitorService>((ref) {
 /// user disables it, any held lock is released and no new locks are
 /// acquired until they re-enable it.
 ///
-/// On unsupported platforms (mobile) this provider is initialised but
-/// the underlying [PowerInhibitorService.acquireSleepLock] is a no-op,
-/// so the watcher is effectively dormant. On Linux it talks to logind;
-/// on Windows it talks to `kernel32!SetThreadExecutionState`; on macOS
-/// it talks to `IOPMAssertionCreateWithName` via the native bridge.
+/// On unsupported platforms (iOS / web) this provider is initialised
+/// but the underlying [PowerInhibitorService.acquireSleepLock] is a
+/// no-op, so the watcher is effectively dormant. On Linux it talks to
+/// logind; on Windows it talks to `kernel32!SetThreadExecutionState`;
+/// on macOS it talks to `IOPMAssertionCreateWithName`; on Android it
+/// acquires a `PowerManager.PARTIAL_WAKE_LOCK` via the native bridge.
 final sshSessionPowerInhibitorProvider = Provider<void>((ref) {
   // Always-on listener; no listeners required to exist for the
   // subscription, so the provider must be `keepAlive` (non-autoDispose).
   ref.keepAlive();
 
-  if (!Platform.isLinux && !Platform.isWindows && !Platform.isMacOS) return;
+  if (!Platform.isLinux &&
+      !Platform.isWindows &&
+      !Platform.isMacOS &&
+      !Platform.isAndroid) {
+    return;
+  }
 
   final svc = ref.watch(powerInhibitorServiceProvider);
   InhibitorLockHandle? heldLock;

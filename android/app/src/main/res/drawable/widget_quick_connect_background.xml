@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Background for the QuickConnectWidget container. RemoteViews supports a very
+  narrow drawable subset; <shape> with a solid color and a corner radius is the
+  safe baseline that renders identically on every launcher (Pixel, OneUI, MIUI).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#1A1A1E" />
+    <corners android:radius="16dp" />
+</shape>

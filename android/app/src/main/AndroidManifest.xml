@@ -4,11 +4,22 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- Keep CPU awake while SSH sessions are active so background TCP
+         traffic and keepalives keep flowing with the screen off. Used by
+         WakeLockHelper.kt via PARTIAL_WAKE_LOCK. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <!-- Biometric -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
 
     <!-- Notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- Foreground service for keeping SSH sessions alive in the background.
+         FOREGROUND_SERVICE_DATA_SYNC is required on Android 14+ to start a
+         service of type `dataSync`. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
 
     <!-- Haptic feedback -->
     <uses-permission android:name="android.permission.VIBRATE"/>
@@ -35,6 +46,10 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="false"
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
@@ -45,7 +60,8 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
-            android:resizeableActivity="true">
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
@@ -58,12 +74,106 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- App Shortcuts: each static/dynamic shortcut emits a VIEW
+                 intent on a `sshvault://` URI. Routing happens on the Dart
+                 side once the activity is resumed. -->
+            <intent-filter android:label="@string/shortcut_quick_connect_short">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="sshvault" android:host="quick-connect"/>
+            </intent-filter>
+            <intent-filter android:label="@string/shortcut_new_host_short">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="sshvault" android:host="new-host"/>
+            </intent-filter>
+            <intent-filter android:label="@string/shortcut_last_session_short">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="sshvault" android:host="reopen-last"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="sshvault" android:host="host"/>
+            </intent-filter>
+
+            <!-- ssh:// + sftp:// URL handlers -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="ssh"/>
+                <data android:scheme="sftp"/>
+            </intent-filter>
+
+            <!-- .pub / .pem / .ppk / vault-export file open -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="application/x-pem-file"/>
+                <data android:mimeType="application/x-x509-ca-cert"/>
+                <data android:mimeType="application/x-sshvault-export"/>
+                <data android:scheme="content"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*\\.pub"/>
+                <data android:pathPattern=".*\\.pem"/>
+                <data android:pathPattern=".*\\.ppk"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"/>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Home-Screen Widget: 4x1 grid of favorite SSH host quick-connect
+             tiles. Populated by Dart via the
+             `de.kiefer_networks.sshvault/widget` MethodChannel; refresh is
+             pull-driven (updatePeriodMillis="0") through the
+             WIDGET_REFRESH custom broadcast. -->
+        <receiver
+            android:name=".QuickConnectWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="de.kiefer_networks.sshvault.WIDGET_REFRESH"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_quick_connect_info"/>
+        </receiver>
+
+        <!-- Foreground service that owns the sticky "SSH session active"
+             notification. Driven by AndroidSessionService on the Dart side
+             through the `de.kiefer_networks.sshvault/session_service`
+             method channel. Not exported — only the app can start/stop. -->
+        <service
+            android:name=".SessionForegroundService"
+            android:foregroundServiceType="dataSync"
+            android:exported="false"/>
+
+        <!-- Quick Settings Tile: pull down the status shade -> tap "SSHVault"
+             to reconnect to the last host (or open the app if none). -->
+        <service
+            android:name=".QuickConnectTileService"
+            android:icon="@drawable/ic_qs_tile_connect"
+            android:label="SSHVault"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+            <meta-data android:name="android.service.quicksettings.ACTIVE_TILE" android:value="true"/>
+        </service>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

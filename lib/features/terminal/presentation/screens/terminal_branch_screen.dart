@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xterm/xterm.dart';
 
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
+import 'package:sshvault/core/services/android_pip_service.dart';
 import 'package:sshvault/core/services/hidpi_service.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
@@ -94,6 +95,28 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
     }
 
     final l10n = AppLocalizations.of(context)!;
+    final isInPip = ref.watch(pipModeProvider);
+
+    // While the activity is floating in Picture-in-Picture mode, drop all
+    // chrome (tab bar, app bar, keyboard toolbar) and let the active
+    // terminal fill the entire window. The PiP frame is small (~16:9 by
+    // default) so anything beyond raw output gets in the way.
+    if (isInPip && activeSession != null) {
+      // Pure-Material scaffold here on purpose: AdaptiveScaffold always
+      // builds an app bar, but PiP windows have to be chrome-less or the
+      // floating frame becomes useless at the system's default size.
+      return Scaffold(
+        backgroundColor: terminalTheme.background,
+        body: TerminalView(
+          activeSession.terminal,
+          theme: terminalTheme,
+          textStyle: TerminalStyle(fontSize: fontSize),
+          autofocus: false,
+          keyboardAppearance: Brightness.dark,
+          deleteDetection: true,
+        ),
+      );
+    }
 
     // Empty state — no sessions
     if (sessions.isEmpty) {
@@ -131,6 +154,15 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
                   ? l10n.terminalSplit
                   : l10n.terminalUnsplit,
               onPressed: () => _toggleSplit(sessions),
+            ),
+          // Picture-in-Picture: only surfaced on Android. The button is a
+          // no-op everywhere else (the service short-circuits) but we hide
+          // it entirely to keep the toolbar uncluttered.
+          if (AndroidPipService.isSupported && activeSession != null)
+            IconButton(
+              icon: const Icon(Icons.picture_in_picture_alt_outlined),
+              tooltip: 'Picture-in-Picture',
+              onPressed: () => ref.read(androidPipServiceProvider).enterPip(),
             ),
           if (activeSession != null)
             IconButton(

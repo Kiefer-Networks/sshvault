@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Importa config SSH",
   "fileChooserImportSettings": "Importa impostazioni",
   "fileChooserPickKeyFile": "Scegli file chiave SSH",
-  "fileChooserUploadFiles": "Carica file"
+  "fileChooserUploadFiles": "Carica file",
+  "syncBackgroundSync": "Sincronizza in background",
+  "syncBackgroundSyncDescription": "Sync periodico del vault tramite WorkManager anche con app chiusa."
 }

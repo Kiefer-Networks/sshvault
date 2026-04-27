@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "SSH設定をインポート",
   "fileChooserImportSettings": "設定をインポート",
   "fileChooserPickKeyFile": "SSH鍵ファイルを選択",
-  "fileChooserUploadFiles": "ファイルをアップロード"
+  "fileChooserUploadFiles": "ファイルをアップロード",
+  "syncBackgroundSync": "バックグラウンドで同期",
+  "syncBackgroundSyncDescription": "アプリが閉じていても WorkManager で定期的に同期。"
 }

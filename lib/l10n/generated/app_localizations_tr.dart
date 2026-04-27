@@ -1430,6 +1430,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get syncVaultVersion => 'Kasa Sürümü';
 
   @override
+  String get syncBackgroundSync => 'Arka planda senkronize et';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Uygulama kapalıyken bile WorkManager ile periyodik kasa senkronizasyonu.';
+
+  @override
   String get syncTitle => 'Senkronizasyon';
 
   @override

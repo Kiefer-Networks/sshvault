@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "SSH-config importeren",
   "fileChooserImportSettings": "Instellingen importeren",
   "fileChooserPickKeyFile": "SSH-sleutelbestand kiezen",
-  "fileChooserUploadFiles": "Bestanden uploaden"
+  "fileChooserUploadFiles": "Bestanden uploaden",
+  "syncBackgroundSync": "Synchroniseren op achtergrond",
+  "syncBackgroundSyncDescription": "Periodieke vault-sync via WorkManager ook bij gesloten app."
 }

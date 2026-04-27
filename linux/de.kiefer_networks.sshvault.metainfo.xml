@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.15.0" date="2026-04-27">
+      <description>
+        <p>Android desktop integration pass: ssh:// + sftp:// URL handlers and .pub/.pem/.ppk file associations, static + dynamic App Shortcuts, Quick Settings Tile, Foreground Service for active sessions, WakeLock power-inhibit, Android 12+ Splash Screen API, adaptive + themed launcher icon, edge-to-edge for Android 15+, Material You / Dynamic Color, home-screen widget, Picture-in-Picture for terminal, per-severity Notification Channels, Material 3 haptics, WorkManager-backed periodic background sync (opt-in), predictive-back animation, AAB language / density / ABI splits with ProGuard keep rules, auto-backup excludes the vault DB, cleartext traffic disabled by default, Android Keystore (StrongBox preferred / TEE fallback) wraps the master vault key, optional Screen-Pinning helper.</p>
+      </description>
+    </release>
     <release version="1.14.0" date="2026-04-27">
       <description>
         <p>macOS desktop integration pass (partial): ssh:// + sftp:// URL scheme handlers, native NSMenu with Apple-standard shortcuts, NSAppearance live-follow, macOS Services menu provider, NSDraggingDestination drag-and-drop SSH key import, NSVisualEffectView vibrancy backdrop with transparent titlebar and full-size content view, native NSWindow tabs, unified compact toolbar with restoration identifier, native UNUserNotificationCenter toasts via local_notifier with Reconnect / Disconnect / Show action buttons, Quick Look extension scaffold for .pub / .pem / .ppk previews, Apple Privacy Manifest (PrivacyInfo.xcprivacy) + privacy-usage descriptions in Info.plist. Items still queued: Keychain backend, 1Password / Secretive ssh-agent detection, SMAppService login item, IOPMAssertion power inhibit, NSStatusItem menu-bar icon, Touch ID pre-unlock, Core Spotlight indexing.</p>

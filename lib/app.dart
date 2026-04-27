@@ -12,8 +12,10 @@ import 'package:sshvault/core/services/power_inhibitor_service.dart';
 import 'package:sshvault/core/services/screen_protection_service.dart';
 import 'package:sshvault/core/services/windows_chrome_service.dart';
 import 'package:sshvault/core/theme/app_theme.dart';
+import 'package:sshvault/core/theme/dynamic_color_provider.dart';
 import 'package:sshvault/core/widgets/lock_screen.dart';
 import 'package:sshvault/core/widgets/security_warning_dialog.dart';
+import 'package:sshvault/core/widgets/system_ui_overlay.dart';
 import 'package:sshvault/core/network/api_provider.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
@@ -384,7 +386,26 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
     // and the portal exposed one. Otherwise fall back to the brand color.
     final desktopAccent = ref.watch(desktopAccentColorProvider);
     final followAccent = settings?.followDesktopAccent ?? true;
-    final seed = followAccent ? desktopAccent : null;
+    Color? seed = followAccent ? desktopAccent : null;
+
+    // Material You override on Android 12+. The dynamic color provider
+    // is an `AsyncValue<CorePalette?>`; we only consume a successful
+    // payload (`AsyncData` with non-null palette) to avoid flicker
+    // during the very first frame while the platform channel resolves.
+    // The user-facing toggle gates this — flipping it off falls back to
+    // the brand seed without restarting the app.
+    final followDynamic = settings?.followDynamicColor ?? true;
+    if (Platform.isAndroid && followDynamic) {
+      final dynamicPalette = ref.watch(dynamicColorProvider);
+      final corePalette = dynamicPalette.value;
+      if (corePalette != null) {
+        // CorePalette.primary is a TonalPalette; tone 40 is the canonical
+        // "key color" used by Material 3 as the primary anchor and is the
+        // value the framework's own `ColorScheme.fromSeed` derivation
+        // expects.
+        seed = Color(corePalette.primary.get(40));
+      }
+    }
 
     final localeSetting = settings?.locale ?? '';
     final locale = localeSetting.isEmpty ? null : Locale(localeSetting);
@@ -405,9 +426,20 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
         final scaledTheme = baseTheme.copyWith(
           textTheme: responsiveTextTheme(baseTheme.textTheme, screenWidth),
         );
+        // Drive Android system bar styling from the *resolved* theme
+        // brightness (after themeMode + platform brightness collapse).
+        // EdgeToEdgeSystemUi is a no-op on non-mobile platforms.
+        final brightness = scaledTheme.brightness;
+        // Imperatively re-apply too: AnnotatedRegion only kicks in once a
+        // route is built, but we want the very first frame post-runApp to
+        // already have transparent bars + correct icon contrast.
+        EdgeToEdgeSystemUi.apply(brightness);
         return Theme(
           data: scaledTheme,
-          child: _wrapWithDropOverlay(_wrapWithLock(settingsAsync, child)),
+          child: EdgeToEdgeSystemUi(
+            brightness: brightness,
+            child: _wrapWithDropOverlay(_wrapWithLock(settingsAsync, child)),
+          ),
         );
       },
     );

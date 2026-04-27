@@ -1,0 +1,22 @@
+Android desktop integration pass.
+
+- ssh:// + sftp:// URL handlers + .pub/.pem/.ppk file associations via IntentFilter; AndroidIntentService routes incoming URIs through the existing SshUrlHandler / FileDropService classifier.
+- Static + dynamic App Shortcuts (long-press app icon) — Quick connect, New host, Reopen last + top-3 favorite hosts.
+- Quick Settings Tile in the status shade — last-host label, single-tap reopen-last via TileService.
+- Foreground Service for active SSH sessions (foregroundServiceType=dataSync) with sticky notification + Disconnect-all action.
+- WakeLock-based power inhibit during sessions.
+- Android 12+ Splash Screen API — animated app icon + smooth transition replacing the static LaunchTheme.
+- Adaptive + Themed launcher icon (Android 13+ Themed-Icon-Mode), brand-orange background, monochrome variant for system-wallpaper tinting.
+- Edge-to-edge for Android 15+ — transparent system bars, SafeArea-aware shell, AnnotatedRegion live brightness binding.
+- Material You / Dynamic Color via dynamic_color package; Android 12+ wallpaper-derived accent feeds the M3 seed when followDynamicColor is on.
+- Home-screen Widget (RemoteViews) showing top 4 favorite hosts as quick-connect tiles.
+- Picture-in-Picture for the terminal — onUserLeaveHint enters PiP automatically when a session is active.
+- Per-severity Notification Channels: ssh_sessions (LOW), fingerprint_warnings (HIGH), sync_errors (DEFAULT), key_rotation_reminders (LOW).
+- Material 3 Haptic Feedback (CONFIRM / REJECT / GESTURE_END) on key actions.
+- WorkManager-backed periodic background sync, opt-in.
+- Predictive-back animation (Android 14+) wired via PageTransitionsTheme.
+- AAB language / density / ABI splits + ProGuard keep rules for sshj / BouncyCastle / SQLCipher / liboqs.
+- Auto-Backup excludes the encrypted vault DB; data_extraction_rules.xml blocks cloud + device-transfer.
+- Cleartext traffic disabled by default (loopback exception only); usesCleartextTraffic=false.
+- Android Keystore (StrongBox preferred, TEE fallback) wraps the master vault key — security level surfaced in the Security settings tile.
+- Optional Screen-Pinning helper deeplinks to Settings → Security → Screen Pinning for shared-device handoff.

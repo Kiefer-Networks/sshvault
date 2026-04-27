@@ -160,8 +160,9 @@ class FileDropService {
     }
   }
 
-  /// Public for tests. Reads, classifies, and dispatches a list of file paths.
-  @visibleForTesting
+  /// Public entry point. Reads, classifies, and dispatches a list of file
+  /// paths. Used both by the platform drop channel handler and the
+  /// Android intent service when the user opens a key file via VIEW intent.
   Future<void> handleDroppedPaths(List<String> paths) async {
     if (paths.isEmpty) return;
 

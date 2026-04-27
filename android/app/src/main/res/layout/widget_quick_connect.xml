@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  QuickConnectWidget — 4×1 horizontal grid of host tiles.
+
+  Layout shape:
+    LinearLayout (horizontal, dark rounded card)
+      └── 4× LinearLayout column (vertical, each tile)
+             ├── ImageView  (host icon)
+             └── TextView   (host name)
+
+  RemoteViews caveats observed:
+    - We use `layout_weight` on each tile column so they distribute evenly even
+      when the launcher resizes the widget; `dp`-based widths get clipped on
+      narrow devices (e.g. compact 4-column grids).
+    - No nested clickable Views — every tile click target is the column root,
+      wired in code via `setOnClickPendingIntent`.
+    - Slots without data are flipped to `View.INVISIBLE` (not `GONE`) so the
+      remaining tiles keep their slot width and the row stays balanced.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/widget_quick_connect_background"
+    android:padding="8dp"
+    android:baselineAligned="false">
+
+    <LinearLayout
+        android:id="@+id/widget_tile_0"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_margin="2dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="6dp"
+        android:background="@drawable/widget_tile_background">
+        <ImageView
+            android:id="@+id/widget_tile_icon_0"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_widget_host"
+            android:contentDescription="@null" />
+        <TextView
+            android:id="@+id/widget_tile_label_0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_tile_1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_margin="2dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="6dp"
+        android:background="@drawable/widget_tile_background">
+        <ImageView
+            android:id="@+id/widget_tile_icon_1"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_widget_host"
+            android:contentDescription="@null" />
+        <TextView
+            android:id="@+id/widget_tile_label_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_tile_2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_margin="2dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="6dp"
+        android:background="@drawable/widget_tile_background">
+        <ImageView
+            android:id="@+id/widget_tile_icon_2"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_widget_host"
+            android:contentDescription="@null" />
+        <TextView
+            android:id="@+id/widget_tile_label_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_tile_3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_margin="2dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="6dp"
+        android:background="@drawable/widget_tile_background">
+        <ImageView
+            android:id="@+id/widget_tile_icon_3"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_widget_host"
+            android:contentDescription="@null" />
+        <TextView
+            android:id="@+id/widget_tile_label_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1" />
+    </LinearLayout>
+</LinearLayout>

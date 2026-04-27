@@ -1,0 +1,24 @@
+<!--
+  Quick Settings tile icon for SSHVault.
+
+  Per the Android tile guidelines the asset MUST be a 24x24dp white-only vector
+  drawable; the system tints it for the user's chosen status-shade theme. The
+  glyph combines a terminal frame with a lightning bolt to evoke "instant SSH".
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+
+    <!-- Terminal window outline -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M3,5C3,3.895 3.895,3 5,3H19C20.105,3 21,3.895 21,5V19C21,20.105 20.105,21 19,21H5C3.895,21 3,20.105 3,19V5ZM5,5V19H19V5H5Z" />
+
+    <!-- Lightning bolt overlay -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M13.5,7L8.5,13.5H11.5L10.5,17L15.5,10.5H12.5L13.5,7Z" />
+</vector>

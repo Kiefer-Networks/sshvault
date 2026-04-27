@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Importă config SSH",
   "fileChooserImportSettings": "Importă setări",
   "fileChooserPickKeyFile": "Alege cheie SSH",
-  "fileChooserUploadFiles": "Încarcă fișiere"
+  "fileChooserUploadFiles": "Încarcă fișiere",
+  "syncBackgroundSync": "Sincronizare în fundal",
+  "syncBackgroundSyncDescription": "Sincronizare periodică a seifului via WorkManager chiar și cu aplicația închisă."
 }

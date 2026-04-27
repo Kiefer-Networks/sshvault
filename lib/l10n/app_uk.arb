@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Імпорт SSH-конфігу",
   "fileChooserImportSettings": "Імпорт налаштувань",
   "fileChooserPickKeyFile": "Вибрати SSH-ключ",
-  "fileChooserUploadFiles": "Завантажити файли"
+  "fileChooserUploadFiles": "Завантажити файли",
+  "syncBackgroundSync": "Синхронізація у фоні",
+  "syncBackgroundSyncDescription": "Періодична синхронізація сховища через WorkManager навіть при закритому застосунку."
 }

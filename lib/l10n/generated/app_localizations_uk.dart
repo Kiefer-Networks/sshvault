@@ -1430,6 +1430,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get syncVaultVersion => 'Версія сховища';
 
   @override
+  String get syncBackgroundSync => 'Синхронізація у фоні';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Періодична синхронізація сховища через WorkManager навіть при закритому застосунку.';
+
+  @override
   String get syncTitle => 'Синхронізація';
 
   @override

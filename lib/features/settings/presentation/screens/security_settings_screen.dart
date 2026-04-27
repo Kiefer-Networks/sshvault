@@ -356,12 +356,14 @@ class SecuritySettingsScreen extends ConsumerWidget {
               ],
             ),
 
-            // Power management — Linux + Windows only. Hidden on macOS
-            // / mobile because PowerInhibitorService is a no-op there.
+            // Power management — Linux, Windows, and Android. Hidden on
+            // iOS / web because PowerInhibitorService is a no-op there.
             // Strings are inline (not localized) to match the ssh-agent
             // block above and avoid touching all 28 .arb files for a
             // single toggle.
-            if (Platform.isLinux || Platform.isWindows) ...[
+            if (Platform.isLinux ||
+                Platform.isWindows ||
+                Platform.isAndroid) ...[
               Spacing.verticalLg,
               const SectionHeader(title: 'Power management'),
               SettingsGroupCard(
@@ -374,10 +376,14 @@ class SecuritySettingsScreen extends ConsumerWidget {
                         ? 'Hold a systemd-logind sleep inhibitor while at '
                               'least one SSH session is connected so the '
                               'system does not auto-suspend mid-session.'
-                        : 'Use SetThreadExecutionState to keep Windows '
+                        : Platform.isWindows
+                        ? 'Use SetThreadExecutionState to keep Windows '
                               'awake while at least one SSH session is '
                               'connected so the system does not '
-                              'auto-suspend mid-session.',
+                              'auto-suspend mid-session.'
+                        : 'Hold a PARTIAL_WAKE_LOCK while at least one SSH '
+                              'session is connected so the CPU does not '
+                              'sleep mid-session when the screen turns off.',
                     value: settings.preventSuspendDuringSshSessions,
                     onChanged: (v) {
                       ref
@@ -673,6 +679,8 @@ class _MasterKeyStorageTileState extends ConsumerState<_MasterKeyStorageTile> {
           MasterKeyBackend.windowsCredentialManager =>
             'Windows Credential Manager',
           MasterKeyBackend.macosKeychain => 'macOS Keychain',
+          MasterKeyBackend.androidKeystore => 'Android Keystore',
+          MasterKeyBackend.androidStrongBox => 'Android StrongBox',
           null =>
             snapshot.connectionState == ConnectionState.waiting
                 ? '...'

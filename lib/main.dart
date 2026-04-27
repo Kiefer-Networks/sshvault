@@ -7,6 +7,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:sshvault/app.dart';
 import 'package:sshvault/core/cli/cli_parser.dart';
 import 'package:sshvault/core/routing/app_router.dart';
+import 'package:sshvault/core/services/android_session_service.dart';
 import 'package:sshvault/core/services/dbus_service.dart';
 import 'package:sshvault/core/services/file_drop_service.dart';
 import 'package:sshvault/core/services/global_shortcut_service.dart';
@@ -258,6 +259,15 @@ void main(List<String> args) async {
       }
     }
   });
+
+  // Android only: keep SSH sessions alive in the background by promoting
+  // them into a foreground service backed by a sticky LOW-importance
+  // notification. The service mirrors the live `sessionManagerProvider`
+  // count and exposes a "Disconnect all" action that routes back into
+  // [SessionManagerNotifier.closeAllSessions] via the method channel.
+  if (Platform.isAndroid) {
+    AndroidSessionService(container: container).attach();
+  }
 
   // Linux only: install system tray icon. Best-effort — failures are
   // logged but never block app start (e.g. headless test runner, missing

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Data Extraction Rules (Android 12+ / API 31+).
+
+    Replaces `android:fullBackupContent` semantics with two distinct flows:
+      <cloud-backup>    — Google Drive / Auto-Backup
+      <device-transfer> — direct device-to-device migration (Pixel setup, etc.)
+
+    SSHVault opts out of BOTH paths: secrets stay on the original device. The
+    user re-imports keys/snippets via the in-app sync flow (encrypted server
+    backup) instead. Each block excludes the same set as backup_rules.xml.
+
+    `disableIfNoEncryptionCapabilities="true"` on cloud-backup is a belt-and-
+    suspenders measure: if the user's Google account cannot end-to-end encrypt
+    the backup, skip it entirely.
+-->
+<data-extraction-rules>
+    <cloud-backup disableIfNoEncryptionCapabilities="true">
+        <exclude domain="database" path="sshvault.db"/>
+        <exclude domain="database" path="sshvault.db-journal"/>
+        <exclude domain="database" path="sshvault.db-wal"/>
+        <exclude domain="database" path="sshvault.db-shm"/>
+        <exclude domain="sharedpref" path="FlutterSharedPreferences.xml"/>
+        <exclude domain="file" path="."/>
+        <exclude domain="external" path="."/>
+        <exclude domain="root" path="."/>
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="database" path="sshvault.db"/>
+        <exclude domain="database" path="sshvault.db-journal"/>
+        <exclude domain="database" path="sshvault.db-wal"/>
+        <exclude domain="database" path="sshvault.db-shm"/>
+        <exclude domain="sharedpref" path="FlutterSharedPreferences.xml"/>
+        <exclude domain="file" path="."/>
+        <exclude domain="external" path="."/>
+        <exclude domain="root" path="."/>
+    </device-transfer>
+</data-extraction-rules>

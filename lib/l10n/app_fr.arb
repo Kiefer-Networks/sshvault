@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Importer la config SSH",
   "fileChooserImportSettings": "Importer les paramètres",
   "fileChooserPickKeyFile": "Choisir un fichier de clé SSH",
-  "fileChooserUploadFiles": "Téléverser des fichiers"
+  "fileChooserUploadFiles": "Téléverser des fichiers",
+  "syncBackgroundSync": "Synchroniser en arrière-plan",
+  "syncBackgroundSyncDescription": "Sync périodique du coffre via WorkManager même app fermée."
 }

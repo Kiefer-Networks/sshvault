@@ -1,0 +1,22 @@
+Android-Desktop-Integration.
+
+- ssh:// + sftp:// URL-Handler + Datei-Assoziationen für .pub/.pem/.ppk via IntentFilter.
+- Statische + dynamische App-Shortcuts (Long-Press App-Icon) — Quick connect, Neuer Host, Letzte wiederherstellen + Top-3-Favoriten.
+- Quick-Settings-Tile im Status-Shade.
+- Foreground-Service für aktive SSH-Sessions (foregroundServiceType=dataSync) mit Disconnect-all Action.
+- WakeLock-Power-Inhibit während Sessions.
+- Android-12+ Splash-Screen-API mit animiertem App-Icon.
+- Adaptive + Themed Launcher-Icon (Android-13+ Themed-Icon-Mode), Brand-Orange, monochrome Variante.
+- Edge-to-Edge für Android-15+ — transparente System-Bars, SafeArea-aware Shell.
+- Material You / Dynamic Color (Android-12+) — Wallpaper-Akzent füllt den M3-Seed.
+- Home-Screen-Widget mit Top-4-Favoriten als Quick-Connect-Tiles.
+- Picture-in-Picture für Terminal — onUserLeaveHint geht automatisch in PiP wenn Session aktiv.
+- Severity-Notification-Channels: ssh_sessions / fingerprint_warnings / sync_errors / key_rotation_reminders.
+- Material-3-Haptics (CONFIRM/REJECT/GESTURE_END) auf Key-Actions.
+- WorkManager-basierter periodischer Background-Sync, opt-in.
+- Predictive-Back-Animation (Android-14+).
+- AAB-Splits + ProGuard-Keep-Rules für sshj/BouncyCastle/SQLCipher/liboqs.
+- Auto-Backup-Excludes für Vault-DB; data_extraction_rules blockt Cloud + Device-Transfer.
+- Cleartext-Traffic per default disabled (nur Loopback-Exception).
+- Android-Keystore (StrongBox preferred, TEE-Fallback) verpackt Master-Vault-Key — Security-Level in Settings sichtbar.
+- Screen-Pinning-Helper-Deeplink zu Settings → Sicherheit → Bildschirm anpinnen.

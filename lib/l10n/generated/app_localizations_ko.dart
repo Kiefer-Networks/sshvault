@@ -1401,6 +1401,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get syncVaultVersion => '볼트 버전';
 
   @override
+  String get syncBackgroundSync => '백그라운드 동기화';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      '앱이 닫혀 있어도 WorkManager로 주기적으로 동기화.';
+
+  @override
   String get syncTitle => '동기화';
 
   @override

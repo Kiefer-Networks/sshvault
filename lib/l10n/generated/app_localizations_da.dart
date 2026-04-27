@@ -1428,6 +1428,13 @@ class AppLocalizationsDa extends AppLocalizations {
   String get syncVaultVersion => 'Boksversion';
 
   @override
+  String get syncBackgroundSync => 'Synkroniser i baggrunden';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodisk vault-sync via WorkManager selv når appen er lukket.';
+
+  @override
   String get syncTitle => 'Synkronisering';
 
   @override

@@ -1433,6 +1433,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get syncVaultVersion => 'Széf verzió';
 
   @override
+  String get syncBackgroundSync => 'Háttérben szinkronizál';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'A trezor időszakos szinkronizálása WorkManager segítségével, akár zárt alkalmazás mellett is.';
+
+  @override
   String get syncTitle => 'Szinkronizálás';
 
   @override

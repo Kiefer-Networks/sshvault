@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Importuj config SSH",
   "fileChooserImportSettings": "Importuj ustawienia",
   "fileChooserPickKeyFile": "Wybierz klucz SSH",
-  "fileChooserUploadFiles": "Prześlij pliki"
+  "fileChooserUploadFiles": "Prześlij pliki",
+  "syncBackgroundSync": "Synchronizuj w tle",
+  "syncBackgroundSyncDescription": "Okresowa synchronizacja sejfu przez WorkManager nawet przy zamkniętej aplikacji."
 }

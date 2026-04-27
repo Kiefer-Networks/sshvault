@@ -1422,6 +1422,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get syncVaultVersion => 'เวอร์ชันตู้นิรภัย';
 
   @override
+  String get syncBackgroundSync => 'ซิงค์ในเบื้องหลัง';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'ซิงค์วอลต์เป็นระยะผ่าน WorkManager แม้แอปจะปิดอยู่';
+
+  @override
   String get syncTitle => 'ซิงค์';
 
   @override

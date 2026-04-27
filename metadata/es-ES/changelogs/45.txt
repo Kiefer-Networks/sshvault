@@ -1,0 +1,22 @@
+Integración Android.
+
+- Manejadores ssh:// y sftp:// + asociaciones .pub/.pem/.ppk vía IntentFilter.
+- App Shortcuts estáticos + dinámicos (long-press del icono).
+- Quick Settings Tile.
+- Foreground Service para sesiones (foregroundServiceType=dataSync) con acción Disconnect-all.
+- WakeLock power-inhibit.
+- Splash Screen API (Android 12+).
+- Icono adaptativo + temático (Android 13+).
+- Edge-to-Edge (Android 15+).
+- Material You / Dynamic Color (Android 12+).
+- Widget de pantalla de inicio con favoritos.
+- Picture-in-Picture para terminal.
+- Canales de notificación por severidad.
+- Haptics Material 3.
+- WorkManager periodic sync (opt-in).
+- Predictive Back (Android 14+).
+- Splits AAB + ProGuard.
+- Auto-Backup excluye datos del vault.
+- Cleartext traffic deshabilitado por defecto.
+- Android Keystore (StrongBox preferido).
+- Helper de Screen Pinning.

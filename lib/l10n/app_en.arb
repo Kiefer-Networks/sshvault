@@ -512,6 +512,8 @@
   "syncSettingsTitle": "Sync Settings",
   "syncAutoSync": "Auto-Sync",
   "syncAutoSyncDescription": "Automatically sync when the app starts",
+  "syncBackgroundSync": "Sync in background",
+  "syncBackgroundSyncDescription": "Run periodic sync even when the app is closed (Android only — uses extra battery)",
   "syncNow": "Sync Now",
   "syncSyncing": "Syncing...",
   "syncSuccess": "Sync completed",

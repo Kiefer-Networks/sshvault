@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "SSH-konfig importálása",
   "fileChooserImportSettings": "Beállítások importálása",
   "fileChooserPickKeyFile": "SSH-kulcs kiválasztása",
-  "fileChooserUploadFiles": "Fájlok feltöltése"
+  "fileChooserUploadFiles": "Fájlok feltöltése",
+  "syncBackgroundSync": "Háttérben szinkronizál",
+  "syncBackgroundSyncDescription": "A trezor időszakos szinkronizálása WorkManager segítségével, akár zárt alkalmazás mellett is."
 }

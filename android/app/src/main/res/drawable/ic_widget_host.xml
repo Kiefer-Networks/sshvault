@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Generic host glyph used as the tile icon when the launcher has no per-host
+  artwork available. White so it tints cleanly against the dark widget canvas.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M4,5C4,3.895 4.895,3 6,3H18C19.105,3 20,3.895 20,5V11C20,12.105 19.105,13 18,13H6C4.895,13 4,12.105 4,11V5ZM6,5V11H18V5H6ZM4,17C4,15.895 4.895,15 6,15H18C19.105,15 20,15.895 20,17V19C20,20.105 19.105,21 18,21H6C4.895,21 4,20.105 4,19V17ZM6,17V19H18V17H6ZM8,7H10V9H8V7ZM12,7H16V9H12V7Z" />
+</vector>

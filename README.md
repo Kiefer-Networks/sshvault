@@ -229,6 +229,44 @@ Per-ABI APKs will be at `build/app/outputs/flutter-apk/app-{arm64-v8a,armeabi-v7
 flutter build appbundle --release
 ```
 
+The release AAB is written to:
+
+```
+build/app/outputs/bundle/release/app-release.aab
+```
+
+The bundle is configured (in `android/app/build.gradle.kts`) to enable
+per-language, per-density, and per-ABI splits. When uploaded to the Play
+Store, end-users receive a tailored install of roughly **10–15 MB per
+ABI** (compared with the ~80 MB universal APK), because each device
+downloads only its own native code, screen-density resources, and
+locale.
+
+To validate the splits locally with
+[`bundletool`](https://developer.android.com/tools/bundletool):
+
+```bash
+# 1. Generate the universal+split APK set from the AAB
+bundletool build-apks \
+  --bundle=build/app/outputs/bundle/release/app-release.aab \
+  --output=build/app/outputs/bundle/release/app-release.apks \
+  --mode=default
+
+# 2. Inspect what splits were produced
+bundletool dump manifest --bundle build/app/outputs/bundle/release/app-release.aab
+unzip -l build/app/outputs/bundle/release/app-release.apks
+
+# 3. Install the device-specific subset on a connected device
+bundletool install-apks \
+  --apks=build/app/outputs/bundle/release/app-release.apks
+```
+
+R8/ProGuard rules for the bundled native libraries (Drift, SQLCipher,
+BouncyCastle, liboqs FFI, `flutter_local_notifications`) live in
+`android/app/proguard-rules.pro` and are applied automatically because
+`isMinifyEnabled = true` and `isShrinkResources = true` are set on the
+release build type.
+
 ### Other platforms
 
 ```bash

@@ -20,6 +20,13 @@ class AppSettingsEntity {
   final bool selfHosted;
   final bool autoSync;
   final int autoSyncIntervalMinutes;
+
+  /// Android-only: when `true`, schedule a WorkManager periodic worker
+  /// that runs the sync pipeline even with the app closed. Default-off
+  /// (opt-in) so we don't burn battery on devices the user hasn't
+  /// configured for sync. The `AndroidBackgroundSyncService` enforces
+  /// the platform gate; on iOS / desktop the flag round-trips harmlessly.
+  final bool backgroundSyncEnabled;
   final int localVaultVersion;
   final bool preventScreenshots;
   final String dnsServers;
@@ -76,6 +83,13 @@ class AppSettingsEntity {
   /// uses that color as its seed; otherwise it falls back to the built-in
   /// brand color. Has no effect on non-Linux platforms.
   final bool followDesktopAccent;
+
+  /// Follow the Android 12+ Material You / wallpaper-derived accent color.
+  /// When `true` and the platform exposes a [CorePalette] via the
+  /// `dynamic_color` plugin, the app theme uses the palette's primary
+  /// color as its Material 3 seed; otherwise it falls back to the
+  /// built-in brand color. Has no effect on non-Android platforms.
+  final bool followDynamicColor;
 
   // ---------- ssh-agent integration (Linux / macOS) ----------
 
@@ -158,6 +172,15 @@ class AppSettingsEntity {
   /// costs nothing there.
   final bool windowsRoundCorners;
 
+  // ---------- Android-only: Picture-in-Picture ----------
+
+  /// When `true` (default), pressing Home with at least one active SSH
+  /// session floats SSHVault into an Android Picture-in-Picture window so
+  /// the terminal stays visible while the user works in another app.
+  /// Ignored on non-Android platforms — the flag still round-trips through
+  /// the entity but [AndroidPipService] short-circuits on iOS / desktop.
+  final bool pictureInPictureEnabled;
+
   const AppSettingsEntity({
     this.themeMode = AppThemeMode.system,
     this.defaultSshPort = 22,
@@ -175,6 +198,7 @@ class AppSettingsEntity {
     this.selfHosted = false,
     this.autoSync = true,
     this.autoSyncIntervalMinutes = 5,
+    this.backgroundSyncEnabled = false,
     this.localVaultVersion = 0,
     this.preventScreenshots = false,
     this.dnsServers = '',
@@ -199,6 +223,7 @@ class AppSettingsEntity {
     this.keyringMigrationCompleted = false,
     this.windowsProtocolRegistered = false,
     this.followDesktopAccent = true,
+    this.followDynamicColor = true,
     this.sshAgentForwardByDefault = false,
     this.sshAgentDefaultLifetimeSecs = 3600,
     this.preventSuspendDuringSshSessions = true,
@@ -212,6 +237,7 @@ class AppSettingsEntity {
     this.macosToastActionsEnabled = true,
     this.windowsMicaBackdrop = true,
     this.windowsRoundCorners = true,
+    this.pictureInPictureEnabled = true,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -249,6 +275,7 @@ class AppSettingsEntity {
     bool? selfHosted,
     bool? autoSync,
     int? autoSyncIntervalMinutes,
+    bool? backgroundSyncEnabled,
     int? localVaultVersion,
     bool? preventScreenshots,
     String? dnsServers,
@@ -273,6 +300,7 @@ class AppSettingsEntity {
     bool? keyringMigrationCompleted,
     bool? windowsProtocolRegistered,
     bool? followDesktopAccent,
+    bool? followDynamicColor,
     bool? sshAgentForwardByDefault,
     int? sshAgentDefaultLifetimeSecs,
     bool? preventSuspendDuringSshSessions,
@@ -286,6 +314,7 @@ class AppSettingsEntity {
     bool? macosToastActionsEnabled,
     bool? windowsMicaBackdrop,
     bool? windowsRoundCorners,
+    bool? pictureInPictureEnabled,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -307,6 +336,8 @@ class AppSettingsEntity {
       autoSync: autoSync ?? this.autoSync,
       autoSyncIntervalMinutes:
           autoSyncIntervalMinutes ?? this.autoSyncIntervalMinutes,
+      backgroundSyncEnabled:
+          backgroundSyncEnabled ?? this.backgroundSyncEnabled,
       localVaultVersion: localVaultVersion ?? this.localVaultVersion,
       preventScreenshots: preventScreenshots ?? this.preventScreenshots,
       dnsServers: dnsServers ?? this.dnsServers,
@@ -337,6 +368,7 @@ class AppSettingsEntity {
       windowsProtocolRegistered:
           windowsProtocolRegistered ?? this.windowsProtocolRegistered,
       followDesktopAccent: followDesktopAccent ?? this.followDesktopAccent,
+      followDynamicColor: followDynamicColor ?? this.followDynamicColor,
       sshAgentForwardByDefault:
           sshAgentForwardByDefault ?? this.sshAgentForwardByDefault,
       sshAgentDefaultLifetimeSecs:
@@ -356,6 +388,8 @@ class AppSettingsEntity {
           macosToastActionsEnabled ?? this.macosToastActionsEnabled,
       windowsMicaBackdrop: windowsMicaBackdrop ?? this.windowsMicaBackdrop,
       windowsRoundCorners: windowsRoundCorners ?? this.windowsRoundCorners,
+      pictureInPictureEnabled:
+          pictureInPictureEnabled ?? this.pictureInPictureEnabled,
     );
   }
 

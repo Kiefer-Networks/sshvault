@@ -1429,6 +1429,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get syncVaultVersion => 'Versi Vault';
 
   @override
+  String get syncBackgroundSync => 'Sinkronisasi latar belakang';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sinkronisasi vault berkala via WorkManager bahkan saat aplikasi tertutup.';
+
+  @override
   String get syncTitle => 'Sinkronisasi';
 
   @override

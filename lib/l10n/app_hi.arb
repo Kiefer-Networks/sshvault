@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "SSH कॉन्फ़िग आयात करें",
   "fileChooserImportSettings": "सेटिंग्स आयात करें",
   "fileChooserPickKeyFile": "SSH कुंजी चुनें",
-  "fileChooserUploadFiles": "फ़ाइलें अपलोड करें"
+  "fileChooserUploadFiles": "फ़ाइलें अपलोड करें",
+  "syncBackgroundSync": "पृष्ठभूमि में सिंक करें",
+  "syncBackgroundSyncDescription": "ऐप बंद होने पर भी WorkManager के माध्यम से नियमित वॉल्ट सिंक चलाएं।"
 }

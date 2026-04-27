@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Tuo SSH-asetukset",
   "fileChooserImportSettings": "Tuo asetukset",
   "fileChooserPickKeyFile": "Valitse SSH-avain",
-  "fileChooserUploadFiles": "Lataa tiedostoja"
+  "fileChooserUploadFiles": "Lataa tiedostoja",
+  "syncBackgroundSync": "Synkronoi taustalla",
+  "syncBackgroundSyncDescription": "Kassakaapin säännöllinen synkronointi WorkManagerilla myös sovelluksen ollessa suljettuna."
 }

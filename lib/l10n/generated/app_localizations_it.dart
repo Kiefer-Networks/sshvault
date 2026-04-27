@@ -1434,6 +1434,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get syncVaultVersion => 'Versione del vault';
 
   @override
+  String get syncBackgroundSync => 'Sincronizza in background';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sync periodico del vault tramite WorkManager anche con app chiusa.';
+
+  @override
   String get syncTitle => 'Sincronizzazione';
 
   @override

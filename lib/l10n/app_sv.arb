@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Importera SSH-konfig",
   "fileChooserImportSettings": "Importera inställningar",
   "fileChooserPickKeyFile": "Välj SSH-nyckel",
-  "fileChooserUploadFiles": "Ladda upp filer"
+  "fileChooserUploadFiles": "Ladda upp filer",
+  "syncBackgroundSync": "Synkronisera i bakgrunden",
+  "syncBackgroundSyncDescription": "Periodisk valv-sync via WorkManager även när appen är stängd."
 }

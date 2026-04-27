@@ -1426,6 +1426,13 @@ class AppLocalizationsNb extends AppLocalizations {
   String get syncVaultVersion => 'Hvelvversjon';
 
   @override
+  String get syncBackgroundSync => 'Synkroniser i bakgrunnen';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodisk hvelvsynk via WorkManager selv når appen er lukket.';
+
+  @override
   String get syncTitle => 'Synkronisering';
 
   @override

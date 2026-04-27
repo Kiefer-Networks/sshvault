@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Shield body, centered in 66dp safe zone (x: 21..87, y: 21..87) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,24 L78,32 L78,54 C78,68 68,79 54,84 C40,79 30,68 30,54 L30,32 Z"/>
+
+    <!-- Inner cutout to give the shield a clean border -->
+    <path
+        android:fillColor="#E57000"
+        android:pathData="M54,30 L73,36.4 L73,54 C73,65.5 65,74.5 54,78.7 C43,74.5 35,65.5 35,54 L35,36.4 Z"/>
+
+    <!-- Keyhole bow (circle) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,46 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0 Z M54,46 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0 Z"
+        android:fillType="evenOdd"/>
+
+    <!-- Key shaft -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M51.5,52 L56.5,52 L56.5,70 L54,72 L51.5,70 Z"/>
+
+    <!-- Key teeth -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M56.5,60 L61,60 L61,63 L56.5,63 Z M56.5,65 L60,65 L60,68 L56.5,68 Z"/>
+</vector>

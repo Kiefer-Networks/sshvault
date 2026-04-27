@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "SSH yapılandırmasını içe aktar",
   "fileChooserImportSettings": "Ayarları içe aktar",
   "fileChooserPickKeyFile": "SSH anahtar dosyası seç",
-  "fileChooserUploadFiles": "Dosyaları yükle"
+  "fileChooserUploadFiles": "Dosyaları yükle",
+  "syncBackgroundSync": "Arka planda senkronize et",
+  "syncBackgroundSyncDescription": "Uygulama kapalıyken bile WorkManager ile periyodik kasa senkronizasyonu."
 }

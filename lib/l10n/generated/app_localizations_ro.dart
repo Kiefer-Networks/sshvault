@@ -1433,6 +1433,13 @@ class AppLocalizationsRo extends AppLocalizations {
   String get syncVaultVersion => 'Versiune seif';
 
   @override
+  String get syncBackgroundSync => 'Sincronizare în fundal';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sincronizare periodică a seifului via WorkManager chiar și cu aplicația închisă.';
+
+  @override
   String get syncTitle => 'Sincronizare';
 
   @override

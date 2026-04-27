@@ -1430,6 +1430,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get syncVaultVersion => 'Версия хранилища';
 
   @override
+  String get syncBackgroundSync => 'Синхронизация в фоне';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Периодическая синхронизация хранилища через WorkManager при закрытом приложении.';
+
+  @override
   String get syncTitle => 'Синхронизация';
 
   @override

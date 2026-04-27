@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Importer SSH-config",
   "fileChooserImportSettings": "Importer indstillinger",
   "fileChooserPickKeyFile": "Vælg SSH-nøgle",
-  "fileChooserUploadFiles": "Upload filer"
+  "fileChooserUploadFiles": "Upload filer",
+  "syncBackgroundSync": "Synkroniser i baggrunden",
+  "syncBackgroundSyncDescription": "Periodisk vault-sync via WorkManager selv når appen er lukket."
 }

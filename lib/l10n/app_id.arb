@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Impor konfigurasi SSH",
   "fileChooserImportSettings": "Impor pengaturan",
   "fileChooserPickKeyFile": "Pilih file kunci SSH",
-  "fileChooserUploadFiles": "Unggah file"
+  "fileChooserUploadFiles": "Unggah file",
+  "syncBackgroundSync": "Sinkronisasi latar belakang",
+  "syncBackgroundSyncDescription": "Sinkronisasi vault berkala via WorkManager bahkan saat aplikasi tertutup."
 }

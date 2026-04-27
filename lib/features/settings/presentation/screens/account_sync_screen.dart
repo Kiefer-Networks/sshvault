@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
+import 'package:sshvault/core/services/android_background_sync_service.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/utils/date_formatter.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
@@ -217,6 +219,38 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
                         subtitleText: l10n.autoSyncIntervalValue(interval),
                         onTap: () => _showIntervalPicker(l10n, interval),
                       );
+                    },
+                  ),
+                // Android-only: opt-in WorkManager background sync that
+                // runs even with the app closed. Hidden on other
+                // platforms because the underlying service no-ops there.
+                if (Platform.isAndroid)
+                  SettingsSwitchTile(
+                    icon: Icons.cloud_queue,
+                    iconColor: AppColors.iconBlue,
+                    title: l10n.syncBackgroundSync,
+                    subtitleText: l10n.syncBackgroundSyncDescription,
+                    value: settings?.backgroundSyncEnabled ?? false,
+                    onChanged: (v) async {
+                      await ref
+                          .read(settingsProvider.notifier)
+                          .setBackgroundSyncEnabled(v);
+                      final svc = ref.read(
+                        androidBackgroundSyncServiceProvider,
+                      );
+                      if (v) {
+                        final intervalMins =
+                            settings?.autoSyncIntervalMinutes ?? 60;
+                        // WorkManager enforces a 15-minute floor — clamp
+                        // up so we never pass a duration the OS would
+                        // silently round.
+                        final mins = intervalMins < 15 ? 60 : intervalMins;
+                        await svc.enableBackgroundSync(
+                          interval: Duration(minutes: mins),
+                        );
+                      } else {
+                        await svc.disable();
+                      }
                     },
                   ),
                 SettingsTile(

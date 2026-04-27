@@ -1398,6 +1398,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncVaultVersion => 'ボールトバージョン';
 
   @override
+  String get syncBackgroundSync => 'バックグラウンドで同期';
+
+  @override
+  String get syncBackgroundSyncDescription => 'アプリが閉じていても WorkManager で定期的に同期。';
+
+  @override
   String get syncTitle => '同期';
 
   @override

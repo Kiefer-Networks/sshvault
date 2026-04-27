@@ -1426,6 +1426,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get syncVaultVersion => 'Phien ban kho';
 
   @override
+  String get syncBackgroundSync => 'Đồng bộ nền';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Đồng bộ vault định kỳ qua WorkManager ngay cả khi đóng ứng dụng.';
+
+  @override
   String get syncTitle => 'Dong bo';
 
   @override

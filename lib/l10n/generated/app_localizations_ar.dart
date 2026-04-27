@@ -1418,6 +1418,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncVaultVersion => 'إصدار الخزنة';
 
   @override
+  String get syncBackgroundSync => 'مزامنة في الخلفية';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'مزامنة دورية للخزنة عبر WorkManager حتى عند إغلاق التطبيق.';
+
+  @override
   String get syncTitle => 'المزامنة';
 
   @override

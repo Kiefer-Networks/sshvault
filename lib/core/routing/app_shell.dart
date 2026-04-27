@@ -481,7 +481,18 @@ class _MobileScaffold extends StatelessWidget {
         onDestinationSelected: onDestinationSelected,
         sessionCount: sessionCount,
       ),
-      body: child,
+      // Edge-to-edge: the mobile shell hosts branch screens that may not
+      // declare their own AppBar / SafeArea. Wrap the body so content
+      // never collides with the (now transparent) status / nav bars on
+      // Android 15+ (SDK 35). Branch screens that *do* have their own
+      // AppBar still see the full inset via MediaQuery.viewPadding.
+      body: SafeArea(
+        top: true,
+        bottom: true,
+        left: false,
+        right: false,
+        child: child,
+      ),
     );
   }
 }

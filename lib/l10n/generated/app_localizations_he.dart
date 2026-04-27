@@ -1413,6 +1413,13 @@ class AppLocalizationsHe extends AppLocalizations {
   String get syncVaultVersion => 'גרסת כספת';
 
   @override
+  String get syncBackgroundSync => 'סנכרון ברקע';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'סנכרון תקופתי של הכספת באמצעות WorkManager גם כשהאפליקציה סגורה.';
+
+  @override
   String get syncTitle => 'סנכרון';
 
   @override

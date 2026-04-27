@@ -1431,6 +1431,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get syncVaultVersion => 'Wersja sejfu';
 
   @override
+  String get syncBackgroundSync => 'Synchronizuj w tle';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Okresowa synchronizacja sejfu przez WorkManager nawet przy zamkniętej aplikacji.';
+
+  @override
   String get syncTitle => 'Synchronizacja';
 
   @override

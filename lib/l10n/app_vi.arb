@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "Nhập cấu hình SSH",
   "fileChooserImportSettings": "Nhập cài đặt",
   "fileChooserPickKeyFile": "Chọn tệp khoá SSH",
-  "fileChooserUploadFiles": "Tải lên tệp"
+  "fileChooserUploadFiles": "Tải lên tệp",
+  "syncBackgroundSync": "Đồng bộ nền",
+  "syncBackgroundSyncDescription": "Đồng bộ vault định kỳ qua WorkManager ngay cả khi đóng ứng dụng."
 }

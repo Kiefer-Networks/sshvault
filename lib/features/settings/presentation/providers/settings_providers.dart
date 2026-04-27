@@ -38,6 +38,9 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keySelfHosted = 'self_hosted';
   static const _keyAutoSync = 'auto_sync';
   static const _keyAutoSyncInterval = 'auto_sync_interval';
+  // Android-only opt-in toggle that drives `AndroidBackgroundSyncService`.
+  // Default-off; surfaced under Settings → Sync as "Sync in background".
+  static const _keyBackgroundSyncEnabled = 'background_sync_enabled';
   static const _keyLocalVaultVersion = 'local_vault_version';
   static const _keyPreventScreenshots = 'prevent_screenshots';
   static const _keyDnsServers = 'dns_servers';
@@ -69,6 +72,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   // detection that picks up the Inno installer's keys.
   static const _keyWindowsProtocolRegistered = 'windows_protocol_registered';
   static const _keyFollowDesktopAccent = 'follow_desktop_accent';
+  // Android 12+ Material You / wallpaper-derived accent. Default-on; the
+  // plugin no-ops on non-Android so the flag round-trips harmlessly on
+  // desktop / iOS exports.
+  static const _keyFollowDynamicColor = 'follow_dynamic_color';
   static const _keySshAgentForwardByDefault = 'ssh_agent_forward_by_default';
   static const _keySshAgentDefaultLifetimeSecs =
       'ssh_agent_default_lifetime_secs';
@@ -95,6 +102,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   // first frame is already styled — keep these names in sync.
   static const _keyWindowsMicaBackdrop = 'windows_mica_backdrop';
   static const _keyWindowsRoundCorners = 'windows_round_corners';
+  // Android-only: Picture-in-Picture auto-entry on Home press. Default-on
+  // so a user with a long-running SSH session retains the terminal in a
+  // floating window without opting in. The native side reads the same
+  // value from SharedPreferences via `AndroidPipService.setPipEnabled`.
+  static const _keyPictureInPictureEnabled = 'picture_in_picture_enabled';
 
   // Secure storage keys for PIN-related secrets
   static const _secKeyPinHash = 'settings_pin_hash';
@@ -241,6 +253,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       autoSync: all[_keyAutoSync] != 'false',
       autoSyncIntervalMinutes:
           int.tryParse(all[_keyAutoSyncInterval] ?? '') ?? 5,
+      // Default-off: opt-in toggle so we don't burn battery without
+      // explicit user consent. Honored only on Android by the
+      // background-sync service; harmless elsewhere.
+      backgroundSyncEnabled: all[_keyBackgroundSyncEnabled] == 'true',
       localVaultVersion: int.tryParse(all[_keyLocalVaultVersion] ?? '') ?? 0,
       preventScreenshots: all[_keyPreventScreenshots] == 'true',
       dnsServers: all[_keyDnsServers] ?? '',
@@ -276,6 +292,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       // Default to following the desktop accent on Linux. Non-Linux platforms
       // ignore the flag at theme-resolution time.
       followDesktopAccent: all[_keyFollowDesktopAccent] != 'false',
+      // Default true on Android, harmless elsewhere (the dynamic color
+      // provider returns null on non-Android, so the flag has no effect
+      // at theme-resolution time).
+      followDynamicColor: all[_keyFollowDynamicColor] != 'false',
       sshAgentForwardByDefault: all[_keySshAgentForwardByDefault] == 'true',
       sshAgentDefaultLifetimeSecs:
           int.tryParse(all[_keySshAgentDefaultLifetimeSecs] ?? '') ?? 3600,
@@ -304,6 +324,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       // Mica → Acrylic and the rounded-corner attribute is a no-op.
       windowsMicaBackdrop: all[_keyWindowsMicaBackdrop] != 'false',
       windowsRoundCorners: all[_keyWindowsRoundCorners] != 'false',
+      // Default-on: a missing row should behave like "enabled". Reading
+      // anything other than the literal 'false' string preserves that on
+      // first install.
+      pictureInPictureEnabled: all[_keyPictureInPictureEnabled] != 'false',
     );
   }
 
@@ -419,6 +443,18 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     );
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyWindowsRoundCorners, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggles the Android-only "auto-enter Picture-in-Picture on Home"
+  /// behavior. The native side reads the same value from SharedPreferences
+  /// during `onUserLeaveHint`, so we keep both copies in sync via
+  /// [AndroidPipService.setPipEnabled]. Ignored on non-Android platforms;
+  /// the underlying service is a no-op there.
+  Future<void> setPictureInPictureEnabled(bool enabled) async {
+    _log.info(_tag, 'Picture-in-Picture ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyPictureInPictureEnabled, enabled.toString());
     ref.invalidateSelf();
   }
 
@@ -647,6 +683,17 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     ref.invalidateSelf();
   }
 
+  /// Persists the Android background-sync opt-in flag. The actual
+  /// WorkManager registration / cancellation is handled by the settings
+  /// screen via `AndroidBackgroundSyncService` so this notifier doesn't
+  /// pull a platform-specific dependency into pure-domain code.
+  Future<void> setBackgroundSyncEnabled(bool enabled) async {
+    _log.info(_tag, 'Background sync ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyBackgroundSyncEnabled, enabled.toString());
+    ref.invalidateSelf();
+  }
+
   Future<void> setLocalVaultVersion(int version) async {
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyLocalVaultVersion, version.toString());
@@ -838,6 +885,17 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     );
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyFollowDesktopAccent, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggles Material You / Android 12+ dynamic color theming. The
+  /// theme builder reads the wallpaper-derived `CorePalette` only when
+  /// this flag is true; flipping it off falls back to the brand seed
+  /// without restarting the app.
+  Future<void> setFollowDynamicColor(bool enabled) async {
+    _log.info(_tag, 'Follow dynamic color ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyFollowDynamicColor, enabled.toString());
     ref.invalidateSelf();
   }
 

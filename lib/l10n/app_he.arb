@@ -775,5 +775,7 @@
   "fileChooserImportSshConfig": "ייבא הגדרות SSH",
   "fileChooserImportSettings": "ייבא הגדרות",
   "fileChooserPickKeyFile": "בחר קובץ מפתח SSH",
-  "fileChooserUploadFiles": "העלה קבצים"
+  "fileChooserUploadFiles": "העלה קבצים",
+  "syncBackgroundSync": "סנכרון ברקע",
+  "syncBackgroundSyncDescription": "סנכרון תקופתי של הכספת באמצעות WorkManager גם כשהאפליקציה סגורה."
 }

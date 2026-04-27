@@ -32,7 +32,11 @@ android {
     defaultConfig {
         applicationId = "de.kiefer_networks.sshvault"
         minSdk = 33
-        targetSdk = flutter.targetSdkVersion
+        // Floor at 35 so edge-to-edge enforcement (Android 15) is the
+        // contract we test against. `flutter.targetSdkVersion` already
+        // returns 35+ on current Flutter SDKs, but we pin defensively in
+        // case a build environment ships an older flutter Gradle plugin.
+        targetSdk = maxOf(flutter.targetSdkVersion, 35)
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -70,6 +74,16 @@ android {
         }
     }
 
+    // Android App Bundle (AAB) configuration: enable per-language,
+    // per-density, and per-ABI splits so Play Store delivers minimal
+    // installs (~10–15 MB per ABI) instead of a single fat universal
+    // APK (~80 MB).
+    bundle {
+        language { enableSplit = true }
+        density { enableSplit = true }
+        abi { enableSplit = true }
+    }
+
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
@@ -79,6 +93,12 @@ android {
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    // WorkManager — backs the periodic background sync worker registered
+    // by `AndroidBackgroundSyncService`. The Dart payload runs in the
+    // Flutter background isolate spawned by the `workmanager` plugin, but
+    // the underlying worker / scheduling APIs come from this dep.
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
 }
 
 flutter {
