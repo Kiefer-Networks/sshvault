@@ -123,6 +123,7 @@ modules:
       - --disable-tests
       - --disable-gtk-doc
       - --disable-vala
+      - --disable-introspection
       - --with-gtk=3
     cleanup:
       - /include
