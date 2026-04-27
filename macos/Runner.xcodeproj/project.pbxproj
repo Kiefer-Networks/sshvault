@@ -28,6 +28,9 @@
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		7A1F0001A1B2C3D40010E001 /* UNUserNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1F0000A1B2C3D40010E001 /* UNUserNotifications.swift */; };
+		7A1F0011A1B2C3D40010E011 /* PowerInhibitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1F0010A1B2C3D40010E010 /* PowerInhibitor.swift */; };
+		7A1F0013A1B2C3D40010E013 /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1F0012A1B2C3D40010E012 /* SpotlightIndexer.swift */; };
+		7A1F0015A1B2C3D40010E015 /* LoginItemHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1F0014A1B2C3D40010E014 /* LoginItemHelper.swift */; };
 		7A1F0003A1B2C3D40010E003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7A1F0002A1B2C3D40010E002 /* PrivacyInfo.xcprivacy */; };
 		7AQL0001B0C0D0E000100001 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AQL0000B0C0D0E000100001 /* PreviewProvider.swift */; };
 		7AQL0010B0C0D0E000100010 /* QuickLookExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7AQL0020B0C0D0E000100020 /* QuickLookExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -93,6 +96,9 @@
 		33CC10F72044A3C60003C045 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Runner/Info.plist; sourceTree = "<group>"; };
 		33CC11122044BFA00003C045 /* MainFlutterWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFlutterWindow.swift; sourceTree = "<group>"; };
 		7A1F0000A1B2C3D40010E001 /* UNUserNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UNUserNotifications.swift; sourceTree = "<group>"; };
+		7A1F0010A1B2C3D40010E010 /* PowerInhibitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerInhibitor.swift; sourceTree = "<group>"; };
+		7A1F0012A1B2C3D40010E012 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
+		7A1F0014A1B2C3D40010E014 /* LoginItemHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemHelper.swift; sourceTree = "<group>"; };
 		7A1F0002A1B2C3D40010E002 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Runner/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		33CEB47222A05771004F2AC0 /* Flutter-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Debug.xcconfig"; sourceTree = "<group>"; };
 		33CEB47422A05771004F2AC0 /* Flutter-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Release.xcconfig"; sourceTree = "<group>"; };
@@ -213,6 +219,9 @@
 				33CC10F02044A3C60003C045 /* AppDelegate.swift */,
 				33CC11122044BFA00003C045 /* MainFlutterWindow.swift */,
 				7A1F0000A1B2C3D40010E001 /* UNUserNotifications.swift */,
+				7A1F0010A1B2C3D40010E010 /* PowerInhibitor.swift */,
+				7A1F0012A1B2C3D40010E012 /* SpotlightIndexer.swift */,
+				7A1F0014A1B2C3D40010E014 /* LoginItemHelper.swift */,
 				33E51913231747F40026EE4D /* DebugProfile.entitlements */,
 				33E51914231749380026EE4D /* Release.entitlements */,
 				33CC11242044D66E0003C045 /* Resources */,
@@ -428,6 +437,9 @@
 				33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */,
 				33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */,
 				7A1F0001A1B2C3D40010E001 /* UNUserNotifications.swift in Sources */,
+				7A1F0011A1B2C3D40010E011 /* PowerInhibitor.swift in Sources */,
+				7A1F0013A1B2C3D40010E013 /* SpotlightIndexer.swift in Sources */,
+				7A1F0015A1B2C3D40010E015 /* LoginItemHelper.swift in Sources */,
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -241,17 +241,14 @@ class AppDelegate: FlutterAppDelegate {
 
   /// Returns `self` for any compatible send type so the Services menu enables
   /// our entry whenever the user has an NSString selection on the pasteboard.
-  override func validRequestor(
+  @objc func validRequestor(
     forSendType sendType: NSPasteboard.PasteboardType?,
     returnType: NSPasteboard.PasteboardType?
   ) -> Any? {
     if let st = sendType, st == .string || st.rawValue == "NSStringPboardType" {
       return self
     }
-    return super.validRequestor(
-      forSendType: sendType,
-      returnType: returnType
-    )
+    return nil
   }
 
   /// Selector wired through `Info.plist` (`NSMessage = connectWithSSHVault`).
