@@ -42,17 +42,6 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
         handler(reply, nil)
     }
 
-    // For older entry-point compatibility.
-    func providePreview(for request: QLFilePreviewRequest) async throws -> QLPreviewReply {
-        try await withCheckedThrowingContinuation { cont in
-            providePreview(for: request) { reply, error in
-                if let error = error { cont.resume(throwing: error) }
-                else if let reply = reply { cont.resume(returning: reply) }
-                else { cont.resume(throwing: NSError(domain: "SSHVault.QL", code: -1)) }
-            }
-        }
-    }
-
     // MARK: - HTML rendering
 
     private static func previewHTML(for info: KeyInspector.KeyInfo) -> String {

@@ -24,7 +24,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(_FakeConstraints());
-    registerFallbackValue(ExistingWorkPolicy.replace);
+    registerFallbackValue(ExistingPeriodicWorkPolicy.update);
     registerFallbackValue(BackoffPolicy.exponential);
     registerFallbackValue(Duration.zero);
   });
@@ -93,7 +93,7 @@ void main() {
               NetworkType.connected,
             ),
           ),
-          existingWorkPolicy: ExistingWorkPolicy.replace,
+          existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
           backoffPolicy: BackoffPolicy.exponential,
           backoffPolicyDelay: any(named: 'backoffPolicyDelay'),
         ),

@@ -61,7 +61,7 @@ dependencies:
   # engine and dispatches into a top-level `callbackDispatcher`, so the
   # auto-sync keeps running with the app closed. iOS / desktop targets
   # don't ship a worker — `AndroidBackgroundSyncService` no-ops there.
-  workmanager: ^0.5.2
+  workmanager: ^0.9.0+3
 
   # Device Info
   device_info_plus: ^12.3.0

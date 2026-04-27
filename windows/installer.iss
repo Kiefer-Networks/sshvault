@@ -187,7 +187,7 @@ end;
 procedure RunDefenderAdd();
 var
   ResultCode: Integer;
-  InstallPath, PsCmd, TmpOut, OutText: string;
+  InstallPath, PsCmd, TmpOut, OutText, SuccessStr: string;
   OutAnsi: AnsiString;
   Success: Boolean;
 begin
@@ -208,8 +208,12 @@ begin
   else
     OutText := '<no output captured>';
 
+  if Success then
+    SuccessStr := 'True'
+  else
+    SuccessStr := 'False';
   AppendUninsLog('install: powershell exit=' + IntToStr(ResultCode) + ' success=' +
-                 BoolToStr(Success, True) + ' output=' + OutText);
+                 SuccessStr + ' output=' + OutText);
 
   if (not Success) or (ResultCode <> 0) then
   begin
@@ -238,7 +242,7 @@ end;
 procedure RunDefenderRemove();
 var
   ResultCode: Integer;
-  InstallPath, PsCmd, TmpOut, OutText: string;
+  InstallPath, PsCmd, TmpOut, OutText, SuccessStr: string;
   OutAnsi: AnsiString;
   Success: Boolean;
 begin
@@ -258,8 +262,12 @@ begin
   else
     OutText := '<no output captured>';
 
+  if Success then
+    SuccessStr := 'True'
+  else
+    SuccessStr := 'False';
   AppendUninsLog('uninstall: powershell exit=' + IntToStr(ResultCode) + ' success=' +
-                 BoolToStr(Success, True) + ' output=' + OutText);
+                 SuccessStr + ' output=' + OutText);
 
   if (not Success) or (ResultCode <> 0) then
   begin

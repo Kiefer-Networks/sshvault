@@ -193,6 +193,7 @@ jobs:
             clang cmake ninja-build pkg-config \
             libgtk-3-dev liblzma-dev libstdc++-12-dev \
             libsecret-1-dev libjsoncpp-dev \
+            libnotify-dev libayatana-appindicator3-dev \
             flatpak flatpak-builder
 
       - name: Set up Flatpak
