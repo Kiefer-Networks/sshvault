@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "Clé SSH supprimée",
   "sshKeySavedSuccess": "Clé SSH enregistrée",
   "tagDeletedSuccess": "Tag supprimé",
-  "tagSavedSuccess": "Tag enregistré"
+  "tagSavedSuccess": "Tag enregistré",
+  "fileChooserOpenFile": "Ouvrir un fichier",
+  "fileChooserSaveFile": "Enregistrer le fichier",
+  "fileChooserOpenDirectory": "Choisir un dossier",
+  "fileChooserImportArchive": "Importer une sauvegarde",
+  "fileChooserImportSshConfig": "Importer la config SSH",
+  "fileChooserImportSettings": "Importer les paramètres",
+  "fileChooserPickKeyFile": "Choisir un fichier de clé SSH",
+  "fileChooserUploadFiles": "Téléverser des fichiers"
 }

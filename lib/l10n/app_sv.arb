@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH-nyckel borttagen",
   "sshKeySavedSuccess": "SSH-nyckel sparad",
   "tagDeletedSuccess": "Tagg borttagen",
-  "tagSavedSuccess": "Tagg sparad"
+  "tagSavedSuccess": "Tagg sparad",
+  "fileChooserOpenFile": "Öppna fil",
+  "fileChooserSaveFile": "Spara fil",
+  "fileChooserOpenDirectory": "Välj mapp",
+  "fileChooserImportArchive": "Importera säkerhetskopia",
+  "fileChooserImportSshConfig": "Importera SSH-konfig",
+  "fileChooserImportSettings": "Importera inställningar",
+  "fileChooserPickKeyFile": "Välj SSH-nyckel",
+  "fileChooserUploadFiles": "Ladda upp filer"
 }

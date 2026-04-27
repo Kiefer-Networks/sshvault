@@ -64,6 +64,13 @@ class AppSettingsEntity {
   // confirmed absent) so the migration only runs once per install.
   final bool keyringMigrationCompleted;
 
+  /// Windows-only: flips to `true` after the runtime registrar has written
+  /// the ssh:// / sftp:// URL handlers + .pub/.pem/.ppk file associations
+  /// to HKCU (or detected that the Inno installer already did). Used to
+  /// suppress the first-run "Register SSHVault as default ssh:// handler?"
+  /// dialog. Ignored on non-Windows platforms.
+  final bool windowsProtocolRegistered;
+
   /// Follow the GNOME / KDE desktop accent color (Linux only). When `true`
   /// and the XDG appearance portal exposes an accent color, the app theme
   /// uses that color as its seed; otherwise it falls back to the built-in
@@ -123,6 +130,26 @@ class AppSettingsEntity {
   /// reports a stale or wrong scale to the embedded FlView.
   final double forcedPixelRatio;
 
+  // ---------- Windows-only: native toast notifications ----------
+
+  /// When `true` (default), session toasts on Windows render with action
+  /// buttons ("Disconnect", "Show") instead of body-only. Power users who
+  /// find the buttons cluttered in the Action Center can flip this off in
+  /// Settings → Notifications. Ignored on non-Windows platforms.
+  final bool windowsToastActionsEnabled;
+
+  // ---------- Windows 11 chrome (Mica / rounded corners) ----------
+
+  /// Use Windows 11 Mica backdrop (Acrylic on Win10). Default `true`.
+  /// Ignored on non-Windows platforms — the chrome service is gated by
+  /// `Platform.isWindows` so the flag round-trips harmlessly.
+  final bool windowsMicaBackdrop;
+
+  /// Apply rounded window corners on Windows 11. Default `true`. Win10
+  /// silently ignores the DWM call (E_INVALIDARG), so leaving this on
+  /// costs nothing there.
+  final bool windowsRoundCorners;
+
   const AppSettingsEntity({
     this.themeMode = AppThemeMode.system,
     this.defaultSshPort = 22,
@@ -162,6 +189,7 @@ class AppSettingsEntity {
     this.closeToTray = false,
     this.resumeOnLogin = false,
     this.keyringMigrationCompleted = false,
+    this.windowsProtocolRegistered = false,
     this.followDesktopAccent = true,
     this.sshAgentForwardByDefault = false,
     this.sshAgentDefaultLifetimeSecs = 3600,
@@ -172,6 +200,9 @@ class AppSettingsEntity {
     this.windowY = -1,
     this.windowMaximized = false,
     this.forcedPixelRatio = 0,
+    this.windowsToastActionsEnabled = true,
+    this.windowsMicaBackdrop = true,
+    this.windowsRoundCorners = true,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -231,6 +262,7 @@ class AppSettingsEntity {
     bool? closeToTray,
     bool? resumeOnLogin,
     bool? keyringMigrationCompleted,
+    bool? windowsProtocolRegistered,
     bool? followDesktopAccent,
     bool? sshAgentForwardByDefault,
     int? sshAgentDefaultLifetimeSecs,
@@ -241,6 +273,9 @@ class AppSettingsEntity {
     double? windowY,
     bool? windowMaximized,
     double? forcedPixelRatio,
+    bool? windowsToastActionsEnabled,
+    bool? windowsMicaBackdrop,
+    bool? windowsRoundCorners,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -289,6 +324,8 @@ class AppSettingsEntity {
       resumeOnLogin: resumeOnLogin ?? this.resumeOnLogin,
       keyringMigrationCompleted:
           keyringMigrationCompleted ?? this.keyringMigrationCompleted,
+      windowsProtocolRegistered:
+          windowsProtocolRegistered ?? this.windowsProtocolRegistered,
       followDesktopAccent: followDesktopAccent ?? this.followDesktopAccent,
       sshAgentForwardByDefault:
           sshAgentForwardByDefault ?? this.sshAgentForwardByDefault,
@@ -303,6 +340,10 @@ class AppSettingsEntity {
       windowY: windowY ?? this.windowY,
       windowMaximized: windowMaximized ?? this.windowMaximized,
       forcedPixelRatio: forcedPixelRatio ?? this.forcedPixelRatio,
+      windowsToastActionsEnabled:
+          windowsToastActionsEnabled ?? this.windowsToastActionsEnabled,
+      windowsMicaBackdrop: windowsMicaBackdrop ?? this.windowsMicaBackdrop,
+      windowsRoundCorners: windowsRoundCorners ?? this.windowsRoundCorners,
     );
   }
 

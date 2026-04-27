@@ -4,8 +4,10 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
+  flutter_acrylic
   flutter_secure_storage_windows
   local_auth_windows
+  local_notifier
   screen_retriever_windows
   share_plus
   sqlite3_flutter_libs

@@ -1,7 +1,7 @@
 name: sshvault
 description: "Secure, self-hosted SSH client with zero-knowledge sync"
 publish_to: 'none'
-version: 1.12.0+42
+version: 1.13.0+43
 
 environment:
   sdk: ^3.11.0
@@ -82,6 +82,18 @@ dependencies:
   tray_manager: ^0.5.2
   window_manager: ^0.4.3
 
+  # Windows 11 Mica / Acrylic backdrop. Linux/macOS implementations exist
+  # but we only activate on Windows (see WindowsChromeService — guarded by
+  # Platform.isWindows). The DWM-direct calls (dark title bar, rounded
+  # corners) live in lib/core/ffi/win32_dwm.dart.
+  flutter_acrylic: ^1.1.4
+
+  # Native Windows toast notifications (Windows.UI.Notifications) — backs
+  # `WindowsNotificationService`. On Linux/macOS we keep falling through
+  # to `flutter_local_notifications`, so this dependency is only used by
+  # the Windows runner.
+  local_notifier: ^0.1.6
+
   # VPN Detection (native, no external dependency)
 
   # Linux DBus integration (single-instance + krunner/rofi/polybar triggers)
@@ -89,6 +101,14 @@ dependencies:
 
   # CLI argv parsing (sshvault --version / --help / --import-config / ...)
   args: ^2.5.0
+
+  # Windows native interop — Pageant (PuTTY ssh-agent) compatibility plus
+  # the OpenSSH-for-Windows named-pipe agent live behind Win32 APIs that
+  # we reach through dart:ffi. `ffi` brings the Utf16/Utf8 conversion
+  # helpers; `win32` provides typed bindings for FindWindowW,
+  # CreateFileMappingW, MapViewOfFile, SendMessageW, CreateFileW etc.
+  ffi: ^2.1.0
+  win32: ^5.5.0
 
 dev_dependencies:
   flutter_test:

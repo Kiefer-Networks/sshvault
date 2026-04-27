@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.13.0" date="2026-04-27">
+      <description>
+        <p>Windows desktop integration pass: ssh:// + sftp:// URL handlers and .pub/.pem/.ppk file associations, named-mutex single instance with WM_COPYDATA argv forwarding, Windows Credential Manager (Wincred / DPAPI) backend for the master vault key with Windows Hello pre-unlock, Pageant + OpenSSH-for-Windows agent compatibility, WM_DROPFILES drag-and-drop key import, native Windows toast notifications via local_notifier with action buttons and Action-Center persistence, HKCU\...\Run\SSHVault auto-start, SetThreadExecutionState power-inhibit during sessions, Windows 11 Mica backdrop with Acrylic fallback plus dark-mode title bar and rounded corners via DWM, Jump List (taskbar right-click) with recent + favorite hosts and Quick-connect / Reopen-last-session tasks, ITaskbarList3 thumbnail toolbar mini-buttons and SFTP transfer progress, console window hidden in Release (subsystem WINDOWS) with Per-Monitor V2 DPI awareness and GDI scaling, PuTTY .ppk import (v2 + v3, encrypted + unencrypted), MiniDumpWriteDump crash-dump handler writing redacted .dmp files to %LOCALAPPDATA%\SSHVault\crashes\, and an opt-in Windows Defender folder-exclusion prompt during install.</p>
+      </description>
+    </release>
     <release version="1.12.0" date="2026-04-27">
       <description>
         <p>Linux desktop integration deepens: power-management inhibit during active SSH sessions (login1.Inhibit), per-monitor window-state persistence, XDG-autostart toggle, polished tray-only boot with close-to-tray and resume-on-login, Wayland clipboard persistence via wl-copy --foreground, HiDPI per-monitor scaling with manual override, full xdg-desktop-portal migration for file pickers / secrets / links, AppArmor profile for native distros, comprehensive command-line argv (HOSTNAME, user@host:port, --import-config / --import-keys / --export-vault / --version / --help / --quit) with bash + zsh completion, native GTK / Plasma file-chooser routing, DBus activation with Quick-connect / Reopen-last-session .desktop Actions and org.freedesktop.Application interface, and a configurable global keyboard shortcut (default Super+Shift+S) via xdg-desktop-portal GlobalShortcuts.</p>

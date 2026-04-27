@@ -12,6 +12,8 @@ import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/pin_dialog.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
+import 'package:sshvault/core/ssh/windows_ssh_agent.dart';
+import 'package:sshvault/features/connection/presentation/providers/ssh_agent_provider.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -268,14 +270,37 @@ class SecuritySettingsScreen extends ConsumerWidget {
               ],
             ),
 
-            // ssh-agent integration (Linux + macOS). The feature degrades
-            // gracefully on platforms without an agent — the underlying
-            // SshAgentClient.isAvailable() returns false and the
-            // per-key/per-host buttons remain hidden at the call sites.
+            // ssh-agent integration. The feature degrades gracefully on
+            // platforms without an agent — the underlying SshAgent.isAvailable()
+            // returns false and the per-key/per-host buttons remain hidden at
+            // the call sites. On Windows, the SshAgent picks between the
+            // OpenSSH-for-Windows named pipe and PuTTY's Pageant
+            // automatically; we surface which backend was detected as a
+            // read-only chip so users can see why a specific key list shows up.
             Spacing.verticalLg,
             const SectionHeader(title: 'ssh-agent integration'),
             SettingsGroupCard(
               children: [
+                if (Platform.isWindows)
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final detection = ref.watch(
+                        windowsSshAgentBackendProvider,
+                      );
+                      return SettingsTile(
+                        icon: Icons.memory,
+                        iconColor: AppColors.iconDeepPurple,
+                        title: 'Detected agent',
+                        subtitleText: detection.when(
+                          data: (b) => b.label,
+                          loading: () => 'Detecting…',
+                          error: (_, _) => 'Detection failed',
+                        ),
+                        onTap: () =>
+                            ref.invalidate(windowsSshAgentBackendProvider),
+                      );
+                    },
+                  ),
                 SettingsSwitchTile(
                   icon: Icons.alt_route,
                   iconColor: AppColors.iconBlue,
@@ -331,11 +356,12 @@ class SecuritySettingsScreen extends ConsumerWidget {
               ],
             ),
 
-            // Power management — Linux only. Hidden on macOS / Windows /
-            // mobile because PowerInhibitorService is a no-op there. Strings
-            // are inline (not localized) to match the ssh-agent block above
-            // and avoid touching all 28 .arb files for a single toggle.
-            if (Platform.isLinux) ...[
+            // Power management — Linux + Windows only. Hidden on macOS
+            // / mobile because PowerInhibitorService is a no-op there.
+            // Strings are inline (not localized) to match the ssh-agent
+            // block above and avoid touching all 28 .arb files for a
+            // single toggle.
+            if (Platform.isLinux || Platform.isWindows) ...[
               Spacing.verticalLg,
               const SectionHeader(title: 'Power management'),
               SettingsGroupCard(
@@ -344,10 +370,14 @@ class SecuritySettingsScreen extends ConsumerWidget {
                     icon: Icons.bedtime_off_outlined,
                     iconColor: AppColors.iconBlue,
                     title: 'Prevent suspend during SSH sessions',
-                    subtitleText:
-                        'Hold a systemd-logind sleep inhibitor while at '
-                        'least one SSH session is connected so the system '
-                        'does not auto-suspend mid-session.',
+                    subtitleText: Platform.isLinux
+                        ? 'Hold a systemd-logind sleep inhibitor while at '
+                              'least one SSH session is connected so the '
+                              'system does not auto-suspend mid-session.'
+                        : 'Use SetThreadExecutionState to keep Windows '
+                              'awake while at least one SSH session is '
+                              'connected so the system does not '
+                              'auto-suspend mid-session.',
                     value: settings.preventSuspendDuringSshSessions,
                     onChanged: (v) {
                       ref
@@ -640,6 +670,8 @@ class _MasterKeyStorageTileState extends ConsumerState<_MasterKeyStorageTile> {
           MasterKeyBackend.systemKeyring => 'System Keyring',
           MasterKeyBackend.portalSecret => 'XDG Portal (Secret)',
           MasterKeyBackend.encryptedFile => 'Encrypted file (fallback)',
+          MasterKeyBackend.windowsCredentialManager =>
+            'Windows Credential Manager',
           null =>
             snapshot.connectionState == ConnectionState.waiting
                 ? '...'

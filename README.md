@@ -151,6 +151,30 @@ class — KEX, cipher, MAC, host key — was rejected).
 
 The two hybrid post-quantum KEX algorithms (`mlkem768x25519-sha256`, `sntrup761x25519-sha512@openssh.com`) match the OpenSSH 9.9+ default order and are advertised first. The KEMs come from the [Open Quantum Safe](https://github.com/open-quantum-safe/liboqs) `liboqs` library bundled per platform via Dart FFI; on builds where `liboqs` is not present (e.g. Flutter web) the names are stripped from the advertised list at runtime and the client falls back to classical KEX without any error.
 
+### PuTTY .ppk import
+
+SSHVault imports PuTTY private keys (`.ppk`) directly — no `puttygen`
+conversion required.
+
+- **Detected formats:** PPK v2 (`PuTTY-User-Key-File-2:`) and PPK v3
+  (`PuTTY-User-Key-File-3:`).
+- **Encryption:** unencrypted keys load instantly; encrypted keys are
+  decrypted with AES-256-CBC after the KDF derives the AES key —
+  PPK v2 uses PuTTY's SHA-1 KDF and PPK v3 uses Argon2id with the
+  parameters embedded in the file. Both MAC variants (HMAC-SHA1 for v2,
+  HMAC-SHA-256 for v3) are verified before the key is accepted; a wrong
+  passphrase or tampered file is rejected with a `PpkParseException`.
+- **Supported algorithms:** RSA, Ed25519, and ECDSA P-256 / P-384 / P-521.
+- **How it lands in the vault:** the parser re-serializes the key into
+  the standard OpenSSH private-key format (`-----BEGIN OPENSSH PRIVATE
+  KEY-----`) so downstream code (`dartssh2`, `ssh-agent` forwarding,
+  exports) treats it identically to a key generated inside SSHVault.
+- **Importing:** open *Add SSH key → Import*, paste the `.ppk` text or
+  use *Import from file*; for encrypted keys provide the passphrase.
+  On Windows, double-clicking a `.ppk` opens SSHVault directly because
+  the installer registers the file association under
+  `HKCU\Software\Classes\.ppk`.
+
 ## Architecture
 
 - **Client:** Flutter 3.11+ / Dart 3.11+
@@ -213,6 +237,84 @@ flutter build linux --release       # Linux
 flutter build macos --release       # macOS
 flutter build windows --release     # Windows
 ```
+
+### Windows Credential Manager (master vault key)
+
+On Windows the master vault key is persisted to the **Windows Credential
+Vault** (`advapi32.dll!CredWriteW`) under the target name
+`de.kiefer_networks.SSHVault.MasterKey`. Each entry is encrypted with
+DPAPI under the user's logon credential, follows them across machines
+when roaming profiles are enabled, and is auditable from
+`control.exe /name Microsoft.CredentialManager` (or
+`cmdkey /list:de.kiefer_networks.SSHVault.MasterKey`).
+
+| Detail | Value |
+|--------|-------|
+| Target name | `de.kiefer_networks.SSHVault.MasterKey` |
+| Type | `CRED_TYPE_GENERIC` |
+| Persist | `CRED_PERSIST_LOCAL_MACHINE` (survives logoff, dropped on OS reinstall) |
+| Backed by | DPAPI under the user's logon credential |
+
+Older installs that pre-date this change persisted the key through
+`flutter_secure_storage`'s default Windows backend (also DPAPI, but
+stored in the app's data directory rather than as a first-class
+credential). On the first launch after upgrading, SSHVault transparently
+copies that value into the Credential Vault and removes the legacy
+entry.
+
+#### Windows Hello pre-unlock
+
+When **Settings → Security → Biometric unlock** is on, every read of
+the master key is gated by
+`Windows.Security.Credentials.UI.UserConsentVerifier.RequestVerificationAsync`
+via the [`local_auth`](https://pub.dev/packages/local_auth) package
+(supported on Windows 10 1809+). This means a user who walks away from
+their machine cannot have the vault re-opened without a fresh
+fingerprint / face / PIN prompt, even if the OS session is still
+active. The toggle is a no-op on machines without a Windows Hello
+provisioning (for example, a desktop without a compatible camera or
+fingerprint reader and no PIN).
+
+To remove the credential out-of-band — for example, when migrating a
+machine — open *Credential Manager → Windows Credentials* and delete
+the entry under `de.kiefer_networks.SSHVault.MasterKey`. SSHVault will
+prompt for the master passphrase again on the next launch.
+
+### Windows native toast notifications
+
+While at least one SSH session is active, SSHVault surfaces a rolling
+notification through the native
+`Windows.UI.Notifications.ToastNotificationManager` API (via the
+[`local_notifier`](https://pub.dev/packages/local_notifier) package). This
+replaces the legacy balloon-style fallback that
+`flutter_local_notifications` uses on Win32 so the toast looks and behaves
+like every other Windows 11 notification:
+
+- It renders with the SSHVault icon + display name resolved from the
+  registered AppUserModelID `de.kiefer_networks.SSHVault`.
+- It persists in **Action Center** after dismissal — you can re-open it,
+  click an action button, or clear it like any first-party Windows toast.
+- Two action buttons are attached when the toggle is on:
+  **Disconnect** closes the most recently surfaced session and
+  **Show** brings the SSHVault window to the foreground and routes to
+  the terminal branch.
+- Successive updates use *replace-by-id* semantics, so connecting to a
+  new host updates the existing entry rather than stacking duplicates.
+
+The AUMID is registered in two places that **must stay in sync**:
+
+1. The Inno Setup installer writes the descriptor under
+   `HKCU\Software\Classes\AppUserModelId\de.kiefer_networks.SSHVault`
+   (DisplayName, IconUri, IconBackgroundColor).
+2. `lib/main.dart` calls `windowManager.setAppUserModelId(...)` early
+   during boot so toasts produced by a portable / zip-installed copy
+   still resolve correctly.
+
+To silence Windows toasts entirely, open
+**Settings → Appearance → Notifications** and turn off
+**Show action buttons** (default on). The toggle is Windows-only — Linux
+and macOS continue to use `flutter_local_notifications` and are not
+affected.
 
 ### Linux clipboard persistence on Wayland
 

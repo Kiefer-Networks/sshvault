@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "Đã xóa khóa SSH",
   "sshKeySavedSuccess": "Đã lưu khóa SSH",
   "tagDeletedSuccess": "Đã xóa thẻ",
-  "tagSavedSuccess": "Đã lưu thẻ"
+  "tagSavedSuccess": "Đã lưu thẻ",
+  "fileChooserOpenFile": "Mở tệp",
+  "fileChooserSaveFile": "Lưu tệp",
+  "fileChooserOpenDirectory": "Chọn thư mục",
+  "fileChooserImportArchive": "Nhập sao lưu",
+  "fileChooserImportSshConfig": "Nhập cấu hình SSH",
+  "fileChooserImportSettings": "Nhập cài đặt",
+  "fileChooserPickKeyFile": "Chọn tệp khoá SSH",
+  "fileChooserUploadFiles": "Tải lên tệp"
 }

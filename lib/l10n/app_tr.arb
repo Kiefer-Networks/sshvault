@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH anahtarı silindi",
   "sshKeySavedSuccess": "SSH anahtarı kaydedildi",
   "tagDeletedSuccess": "Etiket silindi",
-  "tagSavedSuccess": "Etiket kaydedildi"
+  "tagSavedSuccess": "Etiket kaydedildi",
+  "fileChooserOpenFile": "Dosya aç",
+  "fileChooserSaveFile": "Dosyayı kaydet",
+  "fileChooserOpenDirectory": "Klasör seç",
+  "fileChooserImportArchive": "Yedeği içe aktar",
+  "fileChooserImportSshConfig": "SSH yapılandırmasını içe aktar",
+  "fileChooserImportSettings": "Ayarları içe aktar",
+  "fileChooserPickKeyFile": "SSH anahtar dosyası seç",
+  "fileChooserUploadFiles": "Dosyaları yükle"
 }

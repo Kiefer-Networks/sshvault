@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH-nøgle slettet",
   "sshKeySavedSuccess": "SSH-nøgle gemt",
   "tagDeletedSuccess": "Tag slettet",
-  "tagSavedSuccess": "Tag gemt"
+  "tagSavedSuccess": "Tag gemt",
+  "fileChooserOpenFile": "Åbn fil",
+  "fileChooserSaveFile": "Gem fil",
+  "fileChooserOpenDirectory": "Vælg mappe",
+  "fileChooserImportArchive": "Importer sikkerhedskopi",
+  "fileChooserImportSshConfig": "Importer SSH-config",
+  "fileChooserImportSettings": "Importer indstillinger",
+  "fileChooserPickKeyFile": "Vælg SSH-nøgle",
+  "fileChooserUploadFiles": "Upload filer"
 }

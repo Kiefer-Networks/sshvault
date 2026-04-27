@@ -10,6 +10,7 @@ import 'package:sshvault/core/services/global_shortcut_service.dart';
 import 'package:sshvault/core/services/headless_boot_service.dart';
 import 'package:sshvault/core/services/power_inhibitor_service.dart';
 import 'package:sshvault/core/services/screen_protection_service.dart';
+import 'package:sshvault/core/services/windows_chrome_service.dart';
 import 'package:sshvault/core/theme/app_theme.dart';
 import 'package:sshvault/core/widgets/lock_screen.dart';
 import 'package:sshvault/core/widgets/security_warning_dialog.dart';
@@ -51,7 +52,35 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       _initSshSessionPowerInhibitor();
       _listenForQuickConnectShortcut();
       _wireHeadlessBoot();
+      _wireWindowsChrome();
     });
+  }
+
+  /// Windows only: re-apply Mica / dark title bar / rounded corners whenever
+  /// the user changes the theme or toggles the Appearance switches. The
+  /// `applyChrome` call is idempotent and cheap (a couple of FFI writes), so
+  /// firing it on every settings emission is safe.
+  void _wireWindowsChrome() {
+    if (!Platform.isWindows) return;
+    ref.listenManual(settingsProvider, (_, next) {
+      final s = next.value;
+      if (s == null) return;
+      final brightness = MediaQuery.maybeOf(context)?.platformBrightness;
+      final isDark = switch (s.themeMode) {
+        AppThemeMode.light => false,
+        AppThemeMode.dark => true,
+        AppThemeMode.system => brightness == Brightness.dark,
+      };
+      WindowsChromeService.instance.applyChrome(
+        WindowsChromeOptions(
+          backdrop: s.windowsMicaBackdrop
+              ? WindowsBackdrop.mica
+              : WindowsBackdrop.none,
+          roundedCorners: s.windowsRoundCorners,
+          darkTheme: isDark,
+        ),
+      );
+    }, fireImmediately: true);
   }
 
   /// Connects HeadlessBootService to the live providers:

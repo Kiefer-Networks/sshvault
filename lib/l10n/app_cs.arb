@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH klíč smazán",
   "sshKeySavedSuccess": "SSH klíč uložen",
   "tagDeletedSuccess": "Štítek smazán",
-  "tagSavedSuccess": "Štítek uložen"
+  "tagSavedSuccess": "Štítek uložen",
+  "fileChooserOpenFile": "Otevřít soubor",
+  "fileChooserSaveFile": "Uložit soubor",
+  "fileChooserOpenDirectory": "Vybrat složku",
+  "fileChooserImportArchive": "Importovat zálohu",
+  "fileChooserImportSshConfig": "Importovat SSH config",
+  "fileChooserImportSettings": "Importovat nastavení",
+  "fileChooserPickKeyFile": "Vybrat klíč SSH",
+  "fileChooserUploadFiles": "Nahrát soubory"
 }

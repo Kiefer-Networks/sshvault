@@ -1,0 +1,17 @@
+Windows-Desktop-Integration.
+
+- ssh:// + sftp:// URL-Handler + File-Associations (.pub / .pem / .ppk) via Inno-Setup-Registry und Runtime-Fallback beim ersten Start.
+- Single-Instance-Enforcement per Named-Mutex; zweite Instanz reicht ihr argv via WM_COPYDATA an den bestehenden Window weiter.
+- Windows Credential Manager als Master-Vault-Key-Backend (Wincred / DPAPI), Windows Hello vor dem Lesen wenn Biometrie aktiv.
+- Pageant- und OpenSSH-for-Windows-Agent-Kompatibilität — git, scp, ansible, vscode-remote-ssh teilen sich jetzt Schlüssel mit SSHVault.
+- WM_DROPFILES Drag-and-Drop für SSH-Keys / Vault-Exports; auch Datei-auf-EXE-Icon-Drop importiert.
+- Native Windows Toast Notifications via `local_notifier` mit Action-Buttons (Reconnect / Disconnect / Show) und Action-Center-Persistenz.
+- Auto-Start via HKCU\...\Run\SSHVault Registry-Wert, in den Einstellungen umschaltbar.
+- Power-Inhibit während aktiver Sessions (SetThreadExecutionState ES_SYSTEM_REQUIRED|ES_AWAYMODE_REQUIRED|ES_CONTINUOUS).
+- Windows 11 Mica-Backdrop (Acrylic-Fallback auf Windows 10) + Dark-Mode-Titlebar + abgerundete Window-Corners via DWM-API.
+- Jump-List (Taskbar-Rechtsklick) zeigt Recent + Favoriten plus Quick-Connect / Letzte-Session-wiederherstellen.
+- Thumbnail-Toolbar-Mini-Buttons in der Taskbar-Window-Preview plus Taskbar-Progress während SFTP-Transfers.
+- Console-Window im Release-Build versteckt (Subsystem WINDOWS); Per-Monitor-V2 DPI-Awareness + GDI-Scaling im Manifest deklariert.
+- PuTTY .ppk Key-Import (v2 + v3, verschlüsselt + unverschlüsselt, RSA / Ed25519 / ECDSA P-256/384/521).
+- Crash-Dump-Handler (MiniDumpWriteDump) schreibt redacted .dmp-Files nach %LOCALAPPDATA%\SSHVault\crashes\.
+- Optionaler Windows-Defender-Folder-Exclusion-Prompt während Installation (User-Opt-In).

@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH鍵を削除しました",
   "sshKeySavedSuccess": "SSH鍵を保存しました",
   "tagDeletedSuccess": "タグを削除しました",
-  "tagSavedSuccess": "タグを保存しました"
+  "tagSavedSuccess": "タグを保存しました",
+  "fileChooserOpenFile": "ファイルを開く",
+  "fileChooserSaveFile": "ファイルを保存",
+  "fileChooserOpenDirectory": "フォルダを選択",
+  "fileChooserImportArchive": "バックアップをインポート",
+  "fileChooserImportSshConfig": "SSH設定をインポート",
+  "fileChooserImportSettings": "設定をインポート",
+  "fileChooserPickKeyFile": "SSH鍵ファイルを選択",
+  "fileChooserUploadFiles": "ファイルをアップロード"
 }

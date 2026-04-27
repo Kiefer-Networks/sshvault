@@ -1,16 +1,26 @@
 // Tests for PowerInhibitorService.
 //
-// We do NOT touch the real system bus — login1 is unavailable on most CI
-// runners and any successful Inhibit() would actually keep the host awake
-// for the duration of the test. Instead we inject a fake [InhibitInvoker]
-// that records the arguments and hands back a [ResourceHandle] backed by a
-// real temp file's [RandomAccessFile]. That gives the test a fd it can
-// observe being closed when the service releases the lock.
+// We do NOT touch the real system bus / kernel32 — login1 is unavailable
+// on most CI runners and any successful Inhibit() / SetThreadExecutionState
+// would actually keep the host awake for the duration of the test.
+//
+// Linux backend: we inject a fake [InhibitInvoker] that records the
+// arguments and hands back a [ResourceHandle] backed by a real temp file's
+// [RandomAccessFile]. That gives the test a fd it can observe being closed
+// when the service releases the lock.
+//
+// Windows backend: we inject a fake [WindowsExecutionStateInvoker] that
+// records each `SetThreadExecutionState` call and returns a non-zero
+// "previous state" value so the service treats the call as successful.
+// The Win32 tests are platform-gated on `Platform.isWindows` because the
+// service short-circuits everywhere else; they run only on a real Windows
+// CI runner (matching how the Linux tests are gated).
 
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:sshvault/core/ffi/win32_power.dart' as win32;
 import 'package:sshvault/core/services/power_inhibitor_service.dart';
 
 /// Records each Inhibit invocation and produces a fresh ResourceHandle
@@ -133,9 +143,9 @@ void main() {
     });
 
     test(
-      'non-Linux platforms short-circuit to null without invoking the bus',
+      'unsupported platforms short-circuit to null without invoking the bus',
       () async {
-        if (Platform.isLinux) return;
+        if (Platform.isLinux || Platform.isWindows) return;
 
         final invoker = _RecordingInvoker();
         final svc = PowerInhibitorService(invoker: invoker.call);
@@ -169,5 +179,140 @@ void main() {
         expect(svc.heldLockCount, 0);
       },
     );
+  });
+
+  // --------------------------------------------------------------------
+  // Windows backend
+  // --------------------------------------------------------------------
+  //
+  // The service routes acquireSleepLock through SetThreadExecutionState
+  // when running on Windows. The Win32 API is NOT refcounted, so the
+  // service must:
+  //   * call once with the full ES_SYSTEM_REQUIRED|ES_AWAYMODE_REQUIRED|
+  //     ES_CONTINUOUS mask on the first acquire,
+  //   * leave the second/third/etc. acquires as cheap refcount bumps
+  //     (no further system calls),
+  //   * call once with ES_CONTINUOUS alone when the last lock is
+  //     released (clearing the inhibit so the system may suspend again).
+  //
+  // The recording fake below mirrors the Win32 signature exactly and
+  // returns the "previous state" value (non-zero on success).
+  group('PowerInhibitorService Windows backend', () {
+    test('acquireSleepLock issues exactly one '
+        'ES_SYSTEM_REQUIRED|ES_AWAYMODE_REQUIRED|ES_CONTINUOUS call', () async {
+      if (!Platform.isWindows) return;
+
+      final calls = <int>[];
+      int fakeInvoker(int flags) {
+        calls.add(flags);
+        // Return a non-zero "previous state" so the service treats it
+        // as a successful call.
+        return win32.esContinuous;
+      }
+
+      final svc = PowerInhibitorService(windowsInvoker: fakeInvoker);
+
+      final handle = await svc.acquireSleepLock('Active SSH session');
+
+      expect(handle, isNotNull);
+      expect(svc.heldLockCount, 1);
+      expect(calls, hasLength(1));
+      expect(
+        calls.single,
+        win32.esSystemRequired | win32.esAwaymodeRequired | win32.esContinuous,
+      );
+
+      // Releasing should issue the clear-call (ES_CONTINUOUS alone).
+      handle!.release();
+      expect(svc.heldLockCount, 0);
+      expect(calls, hasLength(2));
+      expect(calls.last, win32.esContinuous);
+    });
+
+    test(
+      'second acquire reuses the existing inhibit (no extra Win32 call)',
+      () async {
+        if (!Platform.isWindows) return;
+
+        final calls = <int>[];
+        int fakeInvoker(int flags) {
+          calls.add(flags);
+          return win32.esContinuous;
+        }
+
+        final svc = PowerInhibitorService(windowsInvoker: fakeInvoker);
+
+        final h1 = await svc.acquireSleepLock('first');
+        final h2 = await svc.acquireSleepLock('second');
+
+        expect(h1, isNotNull);
+        expect(h2, isNotNull);
+        expect(svc.heldLockCount, 2);
+        // Only ONE acquire-call must reach Win32: the API is not
+        // refcounted, so a second `SetThreadExecutionState` would be
+        // a redundant no-op at best.
+        expect(calls, hasLength(1));
+
+        // Releasing the first lock must NOT clear the inhibit while the
+        // second is still held.
+        h1!.release();
+        expect(svc.heldLockCount, 1);
+        expect(calls, hasLength(1));
+
+        // Releasing the second lock must clear the inhibit.
+        h2!.release();
+        expect(svc.heldLockCount, 0);
+        expect(calls, hasLength(2));
+        expect(calls.last, win32.esContinuous);
+      },
+    );
+
+    test(
+      'releaseAll clears the Win32 inhibit even with multiple locks held',
+      () async {
+        if (!Platform.isWindows) return;
+
+        final calls = <int>[];
+        int fakeInvoker(int flags) {
+          calls.add(flags);
+          return win32.esContinuous;
+        }
+
+        final svc = PowerInhibitorService(windowsInvoker: fakeInvoker);
+
+        await svc.acquireSleepLock('first');
+        await svc.acquireSleepLock('second');
+        await svc.acquireSleepLock('third');
+        expect(svc.heldLockCount, 3);
+        expect(calls, hasLength(1)); // only the initial acquire
+
+        svc.releaseAll();
+
+        expect(svc.heldLockCount, 0);
+        // Exactly one clear-call regardless of how many handles were
+        // held — the OS state was set once and is cleared once.
+        final clearCalls = calls.where((f) => f == win32.esContinuous);
+        expect(clearCalls, hasLength(1));
+      },
+    );
+
+    test('SetThreadExecutionState returning 0 yields a null handle', () async {
+      if (!Platform.isWindows) return;
+
+      final calls = <int>[];
+      int failingInvoker(int flags) {
+        calls.add(flags);
+        // Per MSDN, a return of 0 means the call failed.
+        return 0;
+      }
+
+      final svc = PowerInhibitorService(windowsInvoker: failingInvoker);
+
+      final handle = await svc.acquireSleepLock('Active SSH session');
+
+      expect(handle, isNull);
+      expect(svc.heldLockCount, 0);
+      expect(calls, hasLength(1));
+    });
   });
 }

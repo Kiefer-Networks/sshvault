@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "Το κλειδί SSH διαγράφηκε",
   "sshKeySavedSuccess": "Το κλειδί SSH αποθηκεύτηκε",
   "tagDeletedSuccess": "Η ετικέτα διαγράφηκε",
-  "tagSavedSuccess": "Η ετικέτα αποθηκεύτηκε"
+  "tagSavedSuccess": "Η ετικέτα αποθηκεύτηκε",
+  "fileChooserOpenFile": "Άνοιγμα αρχείου",
+  "fileChooserSaveFile": "Αποθήκευση αρχείου",
+  "fileChooserOpenDirectory": "Επιλογή φακέλου",
+  "fileChooserImportArchive": "Εισαγωγή αντιγράφου",
+  "fileChooserImportSshConfig": "Εισαγωγή SSH config",
+  "fileChooserImportSettings": "Εισαγωγή ρυθμίσεων",
+  "fileChooserPickKeyFile": "Επιλογή κλειδιού SSH",
+  "fileChooserUploadFiles": "Μεταφόρτωση αρχείων"
 }

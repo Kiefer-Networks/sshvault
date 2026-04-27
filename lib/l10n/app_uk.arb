@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH-ключ видалено",
   "sshKeySavedSuccess": "SSH-ключ збережено",
   "tagDeletedSuccess": "Тег видалено",
-  "tagSavedSuccess": "Тег збережено"
+  "tagSavedSuccess": "Тег збережено",
+  "fileChooserOpenFile": "Відкрити файл",
+  "fileChooserSaveFile": "Зберегти файл",
+  "fileChooserOpenDirectory": "Вибрати папку",
+  "fileChooserImportArchive": "Імпорт резервної копії",
+  "fileChooserImportSshConfig": "Імпорт SSH-конфігу",
+  "fileChooserImportSettings": "Імпорт налаштувань",
+  "fileChooserPickKeyFile": "Вибрати SSH-ключ",
+  "fileChooserUploadFiles": "Завантажити файли"
 }

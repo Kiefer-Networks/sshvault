@@ -63,6 +63,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   // Replayed on minimized boot when [resumeOnLogin] is true.
   static const _keyLastActiveHosts = 'last_active_hosts';
   static const _keyKeyringMigrationCompleted = 'keyring_migration_completed';
+  // Windows-only: tracks whether the ssh:// / sftp:// URL handlers and
+  // .pub / .pem / .ppk file associations have been written to HKCU. Set by
+  // the runtime registrar (portable / zip builds) or by the first-run
+  // detection that picks up the Inno installer's keys.
+  static const _keyWindowsProtocolRegistered = 'windows_protocol_registered';
   static const _keyFollowDesktopAccent = 'follow_desktop_accent';
   static const _keySshAgentForwardByDefault = 'ssh_agent_forward_by_default';
   static const _keySshAgentDefaultLifetimeSecs =
@@ -78,6 +83,14 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyWindowY = 'window_y';
   static const _keyWindowMaximized = 'window_maximized';
   static const _keyForcedPixelRatio = 'forced_pixel_ratio';
+  // Windows-only: render session toasts with action buttons (Disconnect /
+  // Show). Default-on; users can disable in Settings → Notifications.
+  static const _keyWindowsToastActionsEnabled = 'windows_toast_actions_enabled';
+  // Windows 11 chrome (Mica + rounded corners). The matching DAO keys are
+  // also read directly from `main.dart` (pre-runApp boot path) so the very
+  // first frame is already styled — keep these names in sync.
+  static const _keyWindowsMicaBackdrop = 'windows_mica_backdrop';
+  static const _keyWindowsRoundCorners = 'windows_round_corners';
 
   // Secure storage keys for PIN-related secrets
   static const _secKeyPinHash = 'settings_pin_hash';
@@ -255,6 +268,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       closeToTray: all[_keyCloseToTray] == 'true',
       resumeOnLogin: all[_keyResumeOnLogin] == 'true',
       keyringMigrationCompleted: all[_keyKeyringMigrationCompleted] == 'true',
+      windowsProtocolRegistered: all[_keyWindowsProtocolRegistered] == 'true',
       // Default to following the desktop accent on Linux. Non-Linux platforms
       // ignore the flag at theme-resolution time.
       followDesktopAccent: all[_keyFollowDesktopAccent] != 'false',
@@ -262,8 +276,8 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       sshAgentDefaultLifetimeSecs:
           int.tryParse(all[_keySshAgentDefaultLifetimeSecs] ?? '') ?? 3600,
       // Default true — most desktop users prefer their long-running SSH
-      // session over an aggressive auto-suspend policy. Linux only; the
-      // PowerInhibitorService no-ops on other platforms.
+      // session over an aggressive auto-suspend policy. Linux + Windows
+      // only; the PowerInhibitorService no-ops on other platforms.
       preventSuspendDuringSshSessions:
           all[_keyPreventSuspendDuringSshSessions] != 'false',
       // Window geometry — written by WindowStateService on resize / move /
@@ -276,6 +290,15 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       windowMaximized: all[_keyWindowMaximized] == 'true',
       // HiDPI override. `0.0` is the sentinel meaning "auto / OS-supplied".
       forcedPixelRatio: double.tryParse(all[_keyForcedPixelRatio] ?? '') ?? 0.0,
+      // Default-on: most users want the action buttons. Reading anything
+      // other than the literal 'false' string keeps the existing fields
+      // (which were always missing on a fresh install) at the default.
+      windowsToastActionsEnabled:
+          all[_keyWindowsToastActionsEnabled] != 'false',
+      // Windows 11 chrome — both default-on. Win10 silently degrades:
+      // Mica → Acrylic and the rounded-corner attribute is a no-op.
+      windowsMicaBackdrop: all[_keyWindowsMicaBackdrop] != 'false',
+      windowsRoundCorners: all[_keyWindowsRoundCorners] != 'false',
     );
   }
 
@@ -341,6 +364,59 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   Future<void> setKeyringMigrationCompleted(bool completed) async {
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyKeyringMigrationCompleted, completed.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggles the "Show action buttons" toggle for native Windows toast
+  /// notifications. Default-on. Honored by `TerminalNotificationService`
+  /// when it builds the next session toast — already-displayed toasts in
+  /// the Action Center keep their previous shape until they're refreshed.
+  Future<void> setWindowsToastActionsEnabled(bool enabled) async {
+    _log.info(
+      _tag,
+      'Windows toast actions ${enabled ? 'enabled' : 'disabled'}',
+    );
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyWindowsToastActionsEnabled, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggles the Windows 11 Mica backdrop (Acrylic on Win10). The chrome
+  /// service re-applies on the next settings emission via the listener in
+  /// `SSHVaultApp._wireWindowsChrome`.
+  Future<void> setWindowsMicaBackdrop(bool enabled) async {
+    _log.info(
+      _tag,
+      'Windows Mica backdrop ${enabled ? 'enabled' : 'disabled'}',
+    );
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyWindowsMicaBackdrop, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggles the Win11 rounded-corner DWM attribute. Win10 silently ignores
+  /// the call so the toggle is harmless there.
+  Future<void> setWindowsRoundCorners(bool enabled) async {
+    _log.info(
+      _tag,
+      'Windows rounded corners ${enabled ? 'enabled' : 'disabled'}',
+    );
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyWindowsRoundCorners, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Persists the Windows protocol-registration flag. Called once on first
+  /// run after the runtime registrar writes the HKCU keys (or detects that
+  /// the Inno installer already did) and again whenever the user re-runs
+  /// the action from the settings screen.
+  Future<void> setWindowsProtocolRegistered(bool registered) async {
+    _log.info(
+      _tag,
+      'Windows protocol handler ${registered ? 'registered' : 'cleared'}',
+    );
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyWindowsProtocolRegistered, registered.toString());
     ref.invalidateSelf();
   }
 
@@ -708,21 +784,23 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     ref.invalidateSelf();
   }
 
-  /// Toggles XDG autostart on Linux. Writes / removes the `.desktop`
-  /// file under `~/.config/autostart/` and persists the flag so the UI
-  /// stays in sync after a restart.
+  /// Toggles autostart on Linux (XDG `.desktop` under `~/.config/autostart/`)
+  /// and Windows (`HKCU\...\Run\SSHVault` registry value), then persists
+  /// the flag so the UI stays in sync after a restart.
   ///
-  /// On non-Linux platforms this only persists the flag (no-op for the
+  /// On other platforms this only persists the flag (no-op for the
   /// service) so the toggle is harmless if the entity gets exported and
   /// re-imported across machines.
   Future<void> setAutoStartEnabled(bool enabled) async {
     _log.info(_tag, 'Auto-start ${enabled ? 'enabled' : 'disabled'}');
     final dao = ref.read(databaseProvider).appSettingsDao;
-    if (Platform.isLinux) {
+    if (Platform.isLinux || Platform.isWindows) {
       try {
         const svc = AutostartService();
         if (enabled) {
-          await svc.enable();
+          // `minimized: true` matches the Linux Exec= line and the
+          // Windows Run-key value `"...\sshvault.exe" --minimized`.
+          await svc.enable(minimized: true);
         } else {
           await svc.disable();
         }

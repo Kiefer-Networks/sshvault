@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "Cheie SSH ștearsă",
   "sshKeySavedSuccess": "Cheie SSH salvată",
   "tagDeletedSuccess": "Etichetă ștearsă",
-  "tagSavedSuccess": "Etichetă salvată"
+  "tagSavedSuccess": "Etichetă salvată",
+  "fileChooserOpenFile": "Deschide fișier",
+  "fileChooserSaveFile": "Salvează fișier",
+  "fileChooserOpenDirectory": "Alege folder",
+  "fileChooserImportArchive": "Importă rezervă",
+  "fileChooserImportSshConfig": "Importă config SSH",
+  "fileChooserImportSettings": "Importă setări",
+  "fileChooserPickKeyFile": "Alege cheie SSH",
+  "fileChooserUploadFiles": "Încarcă fișiere"
 }

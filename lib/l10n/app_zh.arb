@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH密钥已删除",
   "sshKeySavedSuccess": "SSH密钥已保存",
   "tagDeletedSuccess": "标签已删除",
-  "tagSavedSuccess": "标签已保存"
+  "tagSavedSuccess": "标签已保存",
+  "fileChooserOpenFile": "打开文件",
+  "fileChooserSaveFile": "保存文件",
+  "fileChooserOpenDirectory": "选择文件夹",
+  "fileChooserImportArchive": "导入备份",
+  "fileChooserImportSshConfig": "导入 SSH 配置",
+  "fileChooserImportSettings": "导入设置",
+  "fileChooserPickKeyFile": "选择 SSH 密钥",
+  "fileChooserUploadFiles": "上传文件"
 }

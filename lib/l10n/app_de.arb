@@ -1,8 +1,6 @@
 {
   "@@locale": "de",
-
   "appName": "SSHVault",
-
   "navHosts": "Hosts",
   "navSnippets": "Snippets",
   "navFolders": "Ordner",
@@ -14,13 +12,17 @@
   "navManagement": "Verwaltung",
   "navSettings": "Einstellungen",
   "navAbout": "Über",
-
   "lockScreenTitle": "SSHVault ist gesperrt",
   "lockScreenUnlock": "Entsperren",
   "lockScreenEnterPin": "PIN eingeben",
   "lockScreenLockedOut": "Zu viele Fehlversuche. Versuche es in {minutes} Min. erneut.",
-  "@lockScreenLockedOut": { "placeholders": { "minutes": { "type": "int" } } },
-
+  "@lockScreenLockedOut": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "pinDialogSetTitle": "PIN festlegen",
   "pinDialogSetSubtitle": "Gib eine 6-stellige PIN ein, um SSHVault zu schützen",
   "pinDialogLabel": "PIN",
@@ -30,10 +32,8 @@
   "pinDialogErrorMismatch": "PINs stimmen nicht überein",
   "pinDialogVerifyTitle": "PIN eingeben",
   "pinDialogWrongPin": "Falsche PIN. {attempts} Versuche verbleibend.",
-
   "securityBannerMessage": "Deine SSH-Zugangsdaten sind nicht geschützt. Richte eine PIN oder biometrische Sperre in den Einstellungen ein.",
   "securityBannerDismiss": "Ausblenden",
-
   "settingsTitle": "Einstellungen",
   "settingsSectionAppearance": "Darstellung",
   "settingsSectionTerminal": "Terminal",
@@ -112,7 +112,6 @@
   "settingsLanguageId": "Bahasa Indonesia",
   "settingsLanguageEl": "Ελληνικά",
   "settingsLanguageHe": "עברית",
-
   "cancel": "Abbrechen",
   "save": "Speichern",
   "delete": "Löschen",
@@ -124,23 +123,26 @@
   "edit": "Bearbeiten",
   "loading": "...",
   "error": "Fehler: {message}",
-
   "serverListTitle": "Hosts",
   "serverListEmpty": "Noch keine Server",
   "serverListEmptySubtitle": "Füge deinen ersten SSH-Server hinzu.",
   "serverAddButton": "Server hinzufügen",
-  "sshConfigImportTitle": "SSH-Konfiguration importieren",
+  "sshConfigImportTitle": "SSH-Config importieren",
   "sshConfigImportMessage": "{count} Host(s) in ~/.ssh/config gefunden. Importieren?",
   "@sshConfigImportMessage": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
-  "sshConfigImportButton": "Importieren",
+  "sshConfigImportButton": "Ausgewählte importieren",
   "sshConfigImportSuccess": "{count} Server importiert",
   "@sshConfigImportSuccess": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "sshConfigNotFound": "Keine SSH-Konfigurationsdatei gefunden",
@@ -151,7 +153,9 @@
   "sshConfigKeysImported": "{count} SSH-Schlüssel importiert",
   "@sshConfigKeysImported": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "serverDuplicated": "Server dupliziert",
@@ -163,7 +167,6 @@
   "serverDuplicate": "Duplizieren",
   "serverActive": "Aktiv",
   "serverNoFolder": "Kein Ordner",
-
   "serverFormTitleEdit": "Server bearbeiten",
   "serverFormTitleAdd": "Server hinzufügen",
   "serverFormUpdateButton": "Server aktualisieren",
@@ -171,7 +174,6 @@
   "serverFormPublicKeyExtracted": "Öffentlicher Schlüssel erfolgreich extrahiert",
   "serverFormPublicKeyError": "Öffentlicher Schlüssel konnte nicht extrahiert werden: {message}",
   "serverFormKeyGenerated": "{type}-Schlüsselpaar generiert",
-
   "serverDetailTitle": "Server-Details",
   "serverDetailDeleteMessage": "Diese Aktion kann nicht rückgängig gemacht werden.",
   "serverDetailConnection": "Verbindung",
@@ -186,7 +188,6 @@
   "serverDetailUpdated": "Aktualisiert",
   "serverDetailDistro": "System",
   "copiedToClipboard": "In die Zwischenablage kopiert",
-
   "serverFormNameLabel": "Servername",
   "serverFormHostnameLabel": "Hostname / IP",
   "serverFormPortLabel": "Port",
@@ -203,14 +204,12 @@
   "serverFormPublicKeyHint": "Wird automatisch aus dem privaten Schlüssel generiert",
   "serverFormPassphraseLabel": "Schlüssel-Passphrase (optional)",
   "serverFormNotesLabel": "Notizen (optional)",
-
   "searchServers": "Server suchen...",
   "filterAllFolders": "Alle Ordner",
   "filterAll": "Alle",
   "filterActive": "Aktiv",
   "filterInactive": "Inaktiv",
   "filterClear": "Zurücksetzen",
-
   "folderListTitle": "Ordner",
   "folderListEmpty": "Noch keine Ordner",
   "folderListEmptySubtitle": "Erstelle Ordner, um deine Server zu organisieren.",
@@ -218,28 +217,30 @@
   "folderDeleteTitle": "Ordner löschen",
   "folderDeleteMessage": "\"{name}\" löschen? Server werden unsortiert.",
   "folderServerCount": "{count, plural, =1{1 Server} other{{count} Server}}",
-  "@folderServerCount": { "placeholders": { "count": { "type": "int" } } },
+  "@folderServerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "folderCollapse": "Einklappen",
   "folderShowHosts": "Hosts anzeigen",
   "folderConnectAll": "Alle verbinden",
-
   "folderFormTitleEdit": "Ordner bearbeiten",
   "folderFormTitleNew": "Neuer Ordner",
   "folderFormNameLabel": "Ordnername",
   "folderFormParentLabel": "Übergeordneter Ordner",
   "folderFormParentNone": "Ohne (Root)",
-
   "tagListTitle": "Tags",
   "tagListEmpty": "Noch keine Tags",
   "tagListEmptySubtitle": "Erstelle Tags, um deine Server zu kennzeichnen und zu filtern.",
   "tagAddButton": "Tag hinzufügen",
   "tagDeleteTitle": "Tag löschen",
   "tagDeleteMessage": "\"{name}\" löschen? Es wird von allen Servern entfernt.",
-
   "tagFormTitleEdit": "Tag bearbeiten",
   "tagFormTitleNew": "Neuer Tag",
   "tagFormNameLabel": "Tag-Name",
-
   "sshKeyListTitle": "SSH-Schlüssel",
   "sshKeyListEmpty": "Noch keine SSH-Schlüssel",
   "sshKeyListEmptySubtitle": "Generiere oder importiere SSH-Schlüssel zur zentralen Verwaltung",
@@ -248,7 +249,6 @@
   "sshKeyDeleteTitle": "SSH-Schlüssel löschen",
   "sshKeyDeleteMessage": "\"{name}\" löschen? Dies kann nicht rückgängig gemacht werden.",
   "sshKeyAddButton": "SSH-Schlüssel hinzufügen",
-
   "sshKeyFormTitleEdit": "SSH-Schlüssel bearbeiten",
   "sshKeyFormTitleAdd": "SSH-Schlüssel hinzufügen",
   "sshKeyFormTabGenerate": "Generieren",
@@ -271,17 +271,14 @@
   "sshKeyFormInvalidFormat": "Ungültiges Schlüsselformat — PEM-Format erwartet (-----BEGIN ...)",
   "sshKeyFormFileError": "Datei konnte nicht gelesen werden: {message}",
   "sshKeyFormSaving": "Speichert...",
-
   "sshKeySelectorLabel": "SSH-Schlüssel",
   "sshKeySelectorNone": "Kein verwalteter Schlüssel",
   "sshKeySelectorManage": "Schlüssel verwalten...",
   "sshKeySelectorError": "SSH-Schlüssel konnten nicht geladen werden",
-
   "sshKeyTileCopyPublicKey": "Öffentlichen Schlüssel kopieren",
   "sshKeyTilePublicKeyCopied": "Öffentlicher Schlüssel kopiert",
   "sshKeyTileLinkedServers": "Verwendet von {count} Server(n)",
   "sshKeyTileUnlinkFirst": "Zuerst von allen Servern trennen",
-
   "exportImportTitle": "Export / Import",
   "exportSectionTitle": "Export",
   "exportJsonButton": "Als JSON exportieren (ohne Zugangsdaten)",
@@ -295,22 +292,18 @@
   "importPasswordTitle": "Passwort eingeben",
   "importPasswordLabel": "Export-Passwort",
   "importPasswordDecrypt": "Entschlüsseln",
-
   "exportPasswordTitle": "Export-Passwort festlegen",
   "exportPasswordDescription": "Dieses Passwort wird verwendet, um deine Exportdatei einschließlich der Zugangsdaten zu verschlüsseln.",
   "exportPasswordLabel": "Passwort",
   "exportPasswordConfirmLabel": "Passwort bestätigen",
   "exportPasswordMismatch": "Passwörter stimmen nicht überein",
   "exportPasswordButton": "Verschlüsseln & Exportieren",
-
   "importConflictTitle": "Konflikte behandeln",
   "importConflictDescription": "Wie sollen vorhandene Einträge beim Import behandelt werden?",
   "importConflictSkip": "Vorhandene überspringen",
   "importConflictRename": "Neue umbenennen",
   "importConflictOverwrite": "Überschreiben",
-
   "confirmDeleteLabel": "Löschen",
-
   "keyGenTitle": "SSH-Schlüsselpaar generieren",
   "keyGenKeyType": "Schlüsseltyp",
   "keyGenKeySize": "Schlüsselgröße",
@@ -327,13 +320,11 @@
   "keyGenUseThisKey": "Diesen Schlüssel verwenden",
   "keyGenCopyTooltip": "In die Zwischenablage kopieren",
   "keyGenCopied": "{label} kopiert",
-
   "colorPickerLabel": "Farbe",
   "iconPickerLabel": "Symbol",
   "tagSelectorLabel": "Tags",
   "tagSelectorEmpty": "Noch keine Tags",
   "tagSelectorError": "Tags konnten nicht geladen werden",
-
   "snippetListTitle": "Snippets",
   "snippetSearchHint": "Snippets suchen...",
   "snippetListEmpty": "Noch keine Snippets",
@@ -341,7 +332,6 @@
   "snippetAddButton": "Snippet hinzufügen",
   "snippetDeleteTitle": "Snippet löschen",
   "snippetDeleteMessage": "\"{name}\" löschen? Dies kann nicht rückgängig gemacht werden.",
-
   "snippetFormTitleEdit": "Snippet bearbeiten",
   "snippetFormTitleNew": "Neues Snippet",
   "snippetFormNameLabel": "Name",
@@ -358,7 +348,6 @@
   "snippetFormSaved": "Snippet gespeichert",
   "snippetFormUpdateButton": "Snippet aktualisieren",
   "snippetFormCreateButton": "Snippet erstellen",
-
   "snippetDetailTitle": "Snippet-Details",
   "snippetDetailDeleteTitle": "Snippet löschen",
   "snippetDetailDeleteMessage": "Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -370,7 +359,6 @@
   "snippetDetailInfo": "Info",
   "snippetDetailCreated": "Erstellt",
   "snippetDetailUpdated": "Aktualisiert",
-
   "variableEditorTitle": "Vorlagen-Variablen",
   "variableEditorAdd": "Hinzufügen",
   "variableEditorEmpty": "Keine Variablen. Verwende geschweifte Klammern im Inhalt, um sie zu referenzieren.",
@@ -378,11 +366,9 @@
   "variableEditorNameHint": "z.B. hostname",
   "variableEditorDefaultLabel": "Standard",
   "variableEditorDefaultHint": "optional",
-
   "variableFillTitle": "Variablen ausfüllen",
   "variableFillHint": "Wert für {name} eingeben",
   "variableFillPreview": "Vorschau",
-
   "terminalTitle": "Terminal",
   "terminalEmpty": "Keine aktiven Sitzungen",
   "terminalEmptySubtitle": "Verbinde dich mit einem Host, um eine Terminal-Sitzung zu öffnen.",
@@ -390,21 +376,17 @@
   "terminalCloseAll": "Alle Sitzungen schließen",
   "terminalCloseTitle": "Sitzung schließen",
   "terminalCloseMessage": "Die aktive Verbindung zu \"{title}\" trennen?",
-
   "connectionAuthenticating": "Authentifizierung...",
   "connectionConnecting": "Verbindung zu {name}...",
   "connectionError": "Verbindungsfehler",
   "connectionLost": "Verbindung verloren",
   "connectionReconnect": "Erneut verbinden",
-
   "snippetQuickPanelTitle": "Snippet einfügen",
   "snippetQuickPanelSearch": "Snippets suchen...",
   "snippetQuickPanelEmpty": "Keine Snippets verfügbar",
   "snippetQuickPanelNoMatch": "Keine passenden Snippets",
   "snippetQuickPanelInsertTooltip": "Snippet einfügen",
-
   "terminalThemePickerTitle": "Terminal-Design",
-
   "validatorHostnameRequired": "Hostname ist erforderlich",
   "validatorHostnameInvalid": "Ungültiger Hostname oder IP-Adresse",
   "validatorPortRequired": "Port ist erforderlich",
@@ -416,18 +398,14 @@
   "validatorSshKeyInvalid": "Ungültiges SSH-Schlüsselformat",
   "validatorPasswordRequired": "Passwort ist erforderlich",
   "validatorPasswordLength": "Passwort muss mindestens 8 Zeichen lang sein",
-
   "authMethodPassword": "Passwort",
   "authMethodKey": "SSH-Schlüssel",
   "authMethodBoth": "Passwort + Schlüssel",
-
   "serverCopySuffix": "(Kopie)",
-
   "settingsDownloadLogs": "Protokolle herunterladen",
   "settingsSendLogs": "Protokolle an Support senden",
   "settingsLogsSaved": "Protokolle erfolgreich gespeichert",
   "settingsLogsEmpty": "Keine Protokolleinträge vorhanden",
-
   "authLogin": "Anmelden",
   "authRegister": "Registrieren",
   "authForgotPassword": "Passwort vergessen?",
@@ -444,7 +422,6 @@
   "authResetDescription": "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.",
   "authSendResetLink": "Rücksetz-Link senden",
   "authBackToLogin": "Zurück zur Anmeldung",
-
   "syncPasswordTitle": "Sync-Passwort",
   "syncPasswordTitleCreate": "Sync-Passwort festlegen",
   "syncPasswordTitleEnter": "Sync-Passwort eingeben",
@@ -453,24 +430,20 @@
   "syncPasswordWarning": "Wenn du dieses Passwort vergisst, können deine synchronisierten Daten nicht wiederhergestellt werden. Es gibt keine Rücksetz-Option.",
   "syncPasswordLabel": "Sync-Passwort",
   "syncPasswordWrong": "Falsches Passwort. Bitte erneut versuchen.",
-
   "firstSyncTitle": "Vorhandene Daten gefunden",
   "firstSyncMessage": "Dieses Gerät hat vorhandene Daten und der Server hat einen Vault. Wie sollen wir fortfahren?",
   "firstSyncMerge": "Zusammenführen (Server hat Priorität)",
   "firstSyncOverwriteLocal": "Lokale Daten überschreiben",
   "firstSyncKeepLocal": "Lokal behalten & hochladen",
   "firstSyncDeleteLocal": "Lokal löschen & herunterladen",
-
   "changeEncryptionPassword": "Verschlüsselungspasswort ändern",
   "changeEncryptionWarning": "Du wirst auf allen anderen Geräten abgemeldet.",
   "changeEncryptionOldPassword": "Aktuelles Passwort",
   "changeEncryptionNewPassword": "Neues Passwort",
   "changeEncryptionSuccess": "Passwort erfolgreich geändert.",
-
   "logoutAllDevices": "Von allen Geräten abmelden",
   "logoutAllDevicesConfirm": "Dies widerruft alle aktiven Sitzungen. Du musst dich auf allen Geräten erneut anmelden.",
   "logoutAllDevicesSuccess": "Alle Geräte abgemeldet.",
-
   "syncSettingsTitle": "Sync-Einstellungen",
   "syncAutoSync": "Auto-Sync",
   "syncAutoSyncDescription": "Automatisch synchronisieren beim App-Start",
@@ -490,14 +463,12 @@
   "settingsDnsHint": "Gib benutzerdefinierte DoH-Server-URLs ein, getrennt durch Kommas. Mindestens 2 Server werden für die Kreuzprüfung benötigt.",
   "settingsDnsLabel": "DoH-Server-URLs",
   "settingsDnsReset": "Auf Standard zurücksetzen",
-
   "settingsSectionSync": "Synchronisierung",
   "settingsSyncAccount": "Konto",
   "settingsSyncNotLoggedIn": "Nicht angemeldet",
   "settingsSyncStatus": "Sync",
   "settingsSyncServerUrl": "Server-URL",
   "settingsSyncDefaultServer": "Standard (sshvault.app)",
-
   "accountTitle": "Konto",
   "accountNotLoggedIn": "Nicht angemeldet",
   "accountVerified": "Verifiziert",
@@ -511,7 +482,6 @@
   "accountDeleteAccount": "Konto löschen",
   "accountDeleteWarning": "Dies löscht dein Konto und alle synchronisierten Daten unwiderruflich.",
   "accountLogout": "Abmelden",
-
   "serverConfigTitle": "Server-Konfiguration",
   "serverConfigUrlLabel": "Server-URL",
   "serverConfigTest": "Verbindung testen",
@@ -523,11 +493,9 @@
   "settingsSetupSync": "Sync einrichten, um deine Daten zu sichern",
   "settingsChangeServer": "Server wechseln",
   "settingsChangeServerConfirm": "Ein Serverwechsel meldet dich ab. Fortfahren?",
-
   "auditLogTitle": "Aktivitätsprotokoll",
   "auditLogAll": "Alle",
   "auditLogEmpty": "Keine Aktivitätsprotokolle gefunden",
-
   "navSftp": "SFTP",
   "sftpTitle": "Dateimanager",
   "sftpLocalDevice": "Lokales Gerät",
@@ -564,7 +532,16 @@
   "sftpFileLinkTarget": "Linkziel",
   "sftpTransfers": "Übertragungen",
   "sftpTransferProgress": "{current} von {total}",
-  "@sftpTransferProgress": { "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } } },
+  "@sftpTransferProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sftpTransferQueued": "Wartend",
   "sftpTransferActive": "Übertrage...",
   "sftpTransferPaused": "Pausiert",
@@ -576,18 +553,57 @@
   "sftpCancelTransfer": "Abbrechen",
   "sftpClearCompleted": "Abgeschlossene entfernen",
   "sftpTransferCount": "{active} von {total} Übertragungen",
-  "@sftpTransferCount": { "placeholders": { "active": { "type": "int" }, "total": { "type": "int" } } },
+  "@sftpTransferCount": {
+    "placeholders": {
+      "active": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sftpTransferCountActive": "{count, plural, =1{1 aktiv} other{{count} aktiv}}",
-  "@sftpTransferCountActive": { "placeholders": { "count": { "type": "int" } } },
+  "@sftpTransferCountActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sftpTransferCountCompleted": "{count, plural, =1{1 abgeschlossen} other{{count} abgeschlossen}}",
-  "@sftpTransferCountCompleted": { "placeholders": { "count": { "type": "int" } } },
+  "@sftpTransferCountCompleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sftpTransferCountFailed": "{count, plural, =1{1 fehlgeschlagen} other{{count} fehlgeschlagen}}",
-  "@sftpTransferCountFailed": { "placeholders": { "count": { "type": "int" } } },
+  "@sftpTransferCountFailed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sftpCopyToOtherPane": "In anderen Bereich kopieren",
   "sftpConfirmDelete": "{count} Elemente löschen?",
-  "@sftpConfirmDelete": { "placeholders": { "count": { "type": "int" } } },
+  "@sftpConfirmDelete": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sftpConfirmDeleteSingle": "\"{name}\" löschen?",
-  "@sftpConfirmDeleteSingle": { "placeholders": { "name": { "type": "String" } } },
+  "@sftpConfirmDeleteSingle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sftpDeleteSuccess": "Erfolgreich gelöscht",
   "sftpRenameTitle": "Umbenennen",
   "sftpRenameLabel": "Neuer Name",
@@ -600,45 +616,94 @@
   "sftpSelectAll": "Alle auswählen",
   "sftpDeselectAll": "Auswahl aufheben",
   "sftpItemsSelected": "{count} ausgewählt",
-  "@sftpItemsSelected": { "placeholders": { "count": { "type": "int" } } },
+  "@sftpItemsSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sftpRefresh": "Aktualisieren",
   "sftpConnectionError": "Verbindung fehlgeschlagen: {message}",
-  "@sftpConnectionError": { "placeholders": { "message": { "type": "String" } } },
+  "@sftpConnectionError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "sftpPermissionDenied": "Zugriff verweigert",
   "sftpOperationFailed": "Vorgang fehlgeschlagen: {message}",
-  "@sftpOperationFailed": { "placeholders": { "message": { "type": "String" } } },
-
+  "@sftpOperationFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "sftpOverwriteTitle": "Datei existiert bereits",
   "sftpOverwriteMessage": "\"{fileName}\" existiert bereits. Überschreiben?",
-  "@sftpOverwriteMessage": { "placeholders": { "fileName": { "type": "String" } } },
+  "@sftpOverwriteMessage": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
   "sftpOverwrite": "Überschreiben",
   "sftpTransferStarted": "Transfer gestartet: {fileName}",
-  "@sftpTransferStarted": { "placeholders": { "fileName": { "type": "String" } } },
+  "@sftpTransferStarted": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
   "sftpNoPaneSelected": "Wähle zuerst ein Ziel im anderen Bereich",
   "sftpDirectoryTransferNotSupported": "Ordner-Transfer kommt bald",
   "sftpSelect": "Auswählen",
   "sftpOpen": "Öffnen",
-
   "sftpExtractArchive": "Hier entpacken",
   "sftpExtractSuccess": "Archiv entpackt",
   "sftpExtractFailed": "Entpacken fehlgeschlagen: {message}",
-  "@sftpExtractFailed": { "placeholders": { "message": { "type": "String" } } },
+  "@sftpExtractFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "sftpExtractUnsupported": "Nicht unterstütztes Archivformat",
   "sftpExtracting": "Entpacke...",
-
   "sftpUploadStarted": "{count, plural, =1{Upload gestartet} other{{count} Uploads gestartet}}",
-  "@sftpUploadStarted": { "placeholders": { "count": { "type": "int" } } },
+  "@sftpUploadStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sftpDownloadStarted": "{count, plural, =1{Download gestartet} other{{count} Downloads gestartet}}",
-  "@sftpDownloadStarted": { "placeholders": { "count": { "type": "int" } } },
+  "@sftpDownloadStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sftpDownloadComplete": "\"{fileName}\" heruntergeladen",
-  "@sftpDownloadComplete": { "placeholders": { "fileName": { "type": "String" } } },
+  "@sftpDownloadComplete": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
   "sftpSavedToDownloads": "Gespeichert in Downloads/SSHVault",
   "sftpSaveToFiles": "In Dateien sichern",
   "sftpFileSaved": "Datei gespeichert",
-
   "notificationTerminalTitle": "{count, plural, =1{SSH-Sitzung aktiv} other{{count} SSH-Sitzungen aktiv}}",
   "notificationTerminalTap": "Tippen zum Terminal wechseln",
-
   "settingsAccountAndSync": "Konto & Sync",
   "settingsAccountSubtitleAuth": "Angemeldet",
   "settingsAccountSubtitleUnauth": "Nicht angemeldet",
@@ -650,43 +715,63 @@
   "settingsAboutSubtitle": "Version, Lizenzen",
   "settingsSearchHint": "Einstellungen durchsuchen...",
   "settingsSearchNoResults": "Keine Einstellungen gefunden",
-
   "aboutDeveloper": "Entwickelt von Kiefer Networks",
   "aboutDonate": "Spenden",
   "aboutOpenSourceLicenses": "Open-Source-Lizenzen",
   "aboutWebsite": "Webseite",
   "aboutVersion": "Version",
   "aboutBuild": "Build",
-
   "settingsDohDescription": "DNS-over-HTTPS verschlüsselt DNS-Anfragen und verhindert DNS-Spoofing. SSHVault prüft Hostnamen gegen mehrere Provider, um Angriffe zu erkennen.",
   "settingsDnsAddServer": "DNS-Server hinzufügen",
   "settingsDnsServerUrl": "Server-URL",
   "settingsDnsDefaultBadge": "Standard",
   "settingsDnsResetDefaults": "Auf Standards zurücksetzen",
   "settingsDnsInvalidUrl": "Bitte eine gültige HTTPS-URL eingeben",
-
   "settingsDefaultAuthMethod": "Authentifizierungsmethode",
   "settingsAuthPassword": "Passwort",
   "settingsAuthKey": "SSH-Schlüssel",
   "settingsConnectionTimeout": "Verbindungs-Timeout",
   "settingsConnectionTimeoutValue": "{seconds}s",
-  "@settingsConnectionTimeoutValue": { "placeholders": { "seconds": { "type": "int" } } },
+  "@settingsConnectionTimeoutValue": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "settingsKeepaliveInterval": "Keep-Alive-Intervall",
   "settingsKeepaliveIntervalValue": "{seconds}s",
-  "@settingsKeepaliveIntervalValue": { "placeholders": { "seconds": { "type": "int" } } },
+  "@settingsKeepaliveIntervalValue": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "settingsCompression": "Kompression",
   "settingsCompressionDescription": "zlib-Kompression für SSH-Verbindungen aktivieren",
   "settingsTerminalType": "Terminal-Typ",
   "settingsSectionConnection": "Verbindung",
-
   "settingsClipboardAutoClear": "Zwischenablage automatisch löschen",
   "settingsClipboardAutoClearOff": "Aus",
   "settingsClipboardAutoClearValue": "{seconds}s",
-  "@settingsClipboardAutoClearValue": { "placeholders": { "seconds": { "type": "int" } } },
+  "@settingsClipboardAutoClearValue": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "settingsSessionTimeout": "Sitzungs-Timeout",
   "settingsSessionTimeoutOff": "Aus",
   "settingsSessionTimeoutValue": "{minutes} Min.",
-  "@settingsSessionTimeoutValue": { "placeholders": { "minutes": { "type": "int" } } },
+  "@settingsSessionTimeoutValue": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "settingsDuressPin": "Notfall-PIN",
   "settingsDuressPinDescription": "Ein separater PIN, der bei Eingabe alle Daten löscht",
   "settingsDuressPinSet": "Notfall-PIN ist gesetzt",
@@ -695,78 +780,103 @@
   "settingsKeyRotationReminder": "Schlüsselrotations-Erinnerung",
   "settingsKeyRotationOff": "Aus",
   "settingsKeyRotationValue": "{days} Tage",
-  "@settingsKeyRotationValue": { "placeholders": { "days": { "type": "int" } } },
+  "@settingsKeyRotationValue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "settingsFailedAttempts": "Fehlgeschlagene PIN-Versuche",
   "settingsSectionAppLock": "App-Sperre",
   "settingsSectionPrivacy": "Datenschutz",
   "settingsSectionReminders": "Erinnerungen",
   "settingsSectionStatus": "Status",
-
   "settingsExportBackupSubtitle": "Export, Import & Backup",
   "settingsExportJson": "Als JSON exportieren",
   "settingsExportEncrypted": "Verschlüsselt exportieren",
   "settingsImportFile": "Aus Datei importieren",
   "settingsSectionImport": "Import",
-
   "filterTitle": "Server filtern",
   "filterApply": "Filter anwenden",
   "filterClearAll": "Alle zurücksetzen",
   "filterActiveCount": "{count, plural, =1{1 Filter aktiv} other{{count} Filter aktiv}}",
-  "@filterActiveCount": { "placeholders": { "count": { "type": "int" } } },
+  "@filterActiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "filterFolder": "Ordner",
   "filterTags": "Tags",
   "filterStatus": "Status",
-
   "variablePreviewResolved": "Aufgelöste Vorschau",
   "variableInsert": "Einfügen",
-
   "tagServerCount": "{count, plural, =1{1 Server} other{{count} Server}}",
-  "@tagServerCount": { "placeholders": { "count": { "type": "int" } } },
-
+  "@tagServerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "tagSnippetCount": "{count, plural, =1{1 Snippet} other{{count} Snippets}}",
-  "@tagSnippetCount": { "placeholders": { "count": { "type": "int" } } },
-
+  "@tagSnippetCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "logoutAllDevicesSuccessCount": "{count, plural, =1{1 Sitzung widerrufen.} other{{count} Sitzungen widerrufen.}} Du wurdest abgemeldet.",
-  "@logoutAllDevicesSuccessCount": { "placeholders": { "count": { "type": "int" } } },
-
+  "@logoutAllDevicesSuccessCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "keyGenPassphrase": "Passphrase",
   "keyGenPassphraseHint": "Optional — schützt den privaten Schlüssel",
-
   "settingsDnsDefaultQuad9Mullvad": "Standard (Quad9 + Mullvad)",
-
   "sshKeyDuplicate": "Ein Schlüssel mit demselben Fingerabdruck existiert bereits: \"{name}\". Jeder SSH-Schlüssel muss einzigartig sein.",
-  "@sshKeyDuplicate": { "placeholders": { "name": { "type": "String" } } },
+  "@sshKeyDuplicate": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sshKeyFingerprint": "Fingerabdruck",
   "sshKeyPublicKey": "Öffentlicher Schlüssel",
-
   "jumpHost": "Sprunghost",
   "jumpHostNone": "Keiner",
   "jumpHostLabel": "Über Sprunghost verbinden",
   "jumpHostSelfError": "Ein Server kann nicht sein eigener Sprunghost sein",
   "jumpHostConnecting": "Verbinde mit Sprunghost…",
   "jumpHostCircularError": "Zirkuläre Sprunghost-Kette erkannt",
-
   "logoutDialogTitle": "Abmelden",
   "logoutDialogMessage": "Möchtest du alle lokalen Daten löschen? Server, SSH-Keys, Snippets und Einstellungen werden von diesem Gerät entfernt.",
   "logoutOnly": "Nur abmelden",
   "logoutAndDelete": "Abmelden & Daten löschen",
-
   "changeAvatar": "Avatar ändern",
   "removeAvatar": "Avatar entfernen",
   "avatarUploadFailed": "Avatar-Upload fehlgeschlagen",
   "avatarTooLarge": "Bild ist zu groß",
-
   "deviceLastSeen": "Zuletzt gesehen",
   "deviceIpAddress": "IP",
-
   "serverUrlLockedWhileLoggedIn": "Server-URL kann nicht geändert werden, solange du angemeldet bist. Melde dich zuerst ab.",
-
   "serverListNoFolder": "Unsortiert",
-
   "autoSyncInterval": "Sync-Intervall",
   "autoSyncIntervalValue": "{minutes} Min.",
-  "@autoSyncIntervalValue": { "placeholders": { "minutes": { "type": "int" } } },
-
+  "@autoSyncIntervalValue": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "proxySettings": "Proxy-Einstellungen",
   "proxyType": "Proxy-Typ",
   "proxyNone": "Kein Proxy",
@@ -783,7 +893,6 @@
   "proxyTestSuccess": "Proxy erreichbar",
   "proxyTestFailed": "Proxy nicht erreichbar",
   "proxyDefaultProxy": "Standard-Proxy",
-
   "vpnRequired": "VPN erforderlich",
   "vpnRequiredTooltip": "Warnung anzeigen, wenn ohne aktives VPN verbunden wird",
   "vpnActive": "VPN aktiv",
@@ -791,30 +900,44 @@
   "vpnWarningTitle": "VPN nicht aktiv",
   "vpnWarningMessage": "Dieser Server erfordert eine VPN-Verbindung, aber es ist kein VPN aktiv. Trotzdem verbinden?",
   "vpnConnectAnyway": "Trotzdem verbinden",
-
   "postConnectCommands": "Post-Connect Befehle",
   "postConnectCommandsHint": "cd /var/log\ntail -f syslog",
   "postConnectCommandsSubtitle": "Befehle, die nach dem Verbindungsaufbau automatisch ausgeführt werden (einer pro Zeile)",
-
   "dashboardFavorites": "Favoriten",
   "dashboardRecent": "Zuletzt verbunden",
   "dashboardActiveSessions": "Aktive Sitzungen",
   "addToFavorites": "Zu Favoriten hinzufügen",
   "removeFromFavorites": "Aus Favoriten entfernen",
   "noRecentConnections": "Keine kürzlichen Verbindungen",
-
   "terminalSplit": "Geteilte Ansicht",
   "terminalUnsplit": "Teilung schließen",
   "terminalSelectSession": "Sitzung für geteilte Ansicht auswählen",
-
   "knownHostsTitle": "Bekannte Hosts",
   "knownHostsSubtitle": "Vertrauenswürdige Server-Fingerprints verwalten",
   "hostKeyNewTitle": "Neuer Host",
   "hostKeyNewMessage": "Erste Verbindung zu {hostname}:{port}. Überprüfe den Fingerprint vor der Verbindung.",
-  "@hostKeyNewMessage": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+  "@hostKeyNewMessage": {
+    "placeholders": {
+      "hostname": {
+        "type": "String"
+      },
+      "port": {
+        "type": "int"
+      }
+    }
+  },
   "hostKeyChangedTitle": "Host-Key geändert!",
   "hostKeyChangedMessage": "Der Host-Key für {hostname}:{port} hat sich geändert. Dies könnte auf eine Sicherheitsbedrohung hinweisen.",
-  "@hostKeyChangedMessage": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
+  "@hostKeyChangedMessage": {
+    "placeholders": {
+      "hostname": {
+        "type": "String"
+      },
+      "port": {
+        "type": "int"
+      }
+    }
+  },
   "hostKeyFingerprint": "Fingerprint",
   "hostKeyType": "Key-Typ",
   "hostKeyTrustConnect": "Vertrauen & Verbinden",
@@ -827,63 +950,93 @@
   "hostKeyEmptySubtitle": "Host-Fingerprints werden hier nach deiner ersten Verbindung gespeichert",
   "hostKeyFirstSeen": "Erstmals gesehen",
   "hostKeyLastSeen": "Zuletzt gesehen",
-
-  "sshConfigImportTitle": "SSH-Config importieren",
   "sshConfigImportPickFile": "SSH-Config-Datei auswählen",
   "sshConfigImportOrPaste": "Oder Config-Inhalt einfügen",
   "sshConfigImportParsed": "{count} Hosts gefunden",
-  "@sshConfigImportParsed": { "placeholders": { "count": { "type": "int" } } },
-  "sshConfigImportButton": "Ausgewählte importieren",
-  "sshConfigImportSuccess": "{count} Server importiert",
-  "@sshConfigImportSuccess": { "placeholders": { "count": { "type": "int" } } },
+  "@sshConfigImportParsed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sshConfigImportDuplicate": "Existiert bereits",
   "sshConfigImportNoHosts": "Keine Hosts in der Config gefunden",
-
   "sftpBookmarkAdd": "Lesezeichen hinzufügen",
   "sftpBookmarkLabel": "Bezeichnung",
-
   "disconnect": "Trennen",
   "reportAndDisconnect": "Melden & Trennen",
   "continueAnyway": "Trotzdem fortfahren",
   "insertSnippet": "Snippet einfügen",
   "seconds": "Sekunden",
-
   "heartbeatLostMessage": "Der Server konnte nach mehreren Versuchen nicht erreicht werden. Zu deiner Sicherheit wurde die Sitzung beendet.",
   "attestationFailedTitle": "Server-Verifizierung fehlgeschlagen",
   "attestationFailedMessage": "Der Server konnte nicht als legitimes SSHVault-Backend verifiziert werden. Dies kann auf einen Man-in-the-Middle-Angriff oder einen falsch konfigurierten Server hindeuten.",
   "attestationKeyChangedTitle": "Serverschlüssel geändert",
   "attestationKeyChangedMessage": "Der Attestierungsschlüssel des Servers hat sich seit der ersten Verbindung geändert. Dies kann auf einen Man-in-the-Middle-Angriff hindeuten. Fahre NICHT fort, es sei denn, der Serveradministrator hat eine Schlüsselrotation bestätigt.",
-
   "sectionLinks": "Links",
   "sectionDeveloper": "Entwickler",
-
   "sectionDnsOverHttps": "DNS-over-HTTPS",
-
   "pageNotFound": "Seite nicht gefunden",
-
   "connectionTestSuccess": "Verbindung erfolgreich",
   "connectionTestFailed": "Verbindung fehlgeschlagen: {message}",
-  "@connectionTestFailed": { "placeholders": { "message": { "type": "String" } } },
+  "@connectionTestFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "serverVerificationFailed": "Server-Verifizierung fehlgeschlagen",
   "importSuccessful": "Import erfolgreich",
-
   "hintExampleServerUrl": "https://your-server.example.com",
   "hintExampleDohUrl": "https://dns.example.com/dns-query",
   "hintExampleProxyHost": "192.168.1.1",
   "hintExampleProxyPort": "1080",
   "hintExampleTimeoutSeconds": "30",
   "hintExampleKeepaliveSeconds": "15",
-
   "jumpHostEntryLabel": "{name} ({hostname})",
-  "@jumpHostEntryLabel": { "placeholders": { "name": { "type": "String" }, "hostname": { "type": "String" } } },
+  "@jumpHostEntryLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "hostname": {
+        "type": "String"
+      }
+    }
+  },
   "sshKeyEntryLabel": "{name} ({keyType})",
-  "@sshKeyEntryLabel": { "placeholders": { "name": { "type": "String" }, "keyType": { "type": "String" } } },
+  "@sshKeyEntryLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "keyType": {
+        "type": "String"
+      }
+    }
+  },
   "hostPortLabel": "{hostname}:{port}",
-  "@hostPortLabel": { "placeholders": { "hostname": { "type": "String" }, "port": { "type": "int" } } },
-
+  "@hostPortLabel": {
+    "placeholders": {
+      "hostname": {
+        "type": "String"
+      },
+      "port": {
+        "type": "int"
+      }
+    }
+  },
   "deviceDeleteConfirmTitle": "Gerät entfernen",
   "deviceDeleteConfirmMessage": "Möchtest du \"{name}\" wirklich entfernen? Das Gerät wird sofort abgemeldet.",
-  "@deviceDeleteConfirmMessage": { "placeholders": { "name": { "type": "String" } } },
+  "@deviceDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deviceDeleteCurrentConfirmMessage": "Dies ist dein aktuelles Gerät. Du wirst sofort abgemeldet.",
   "deviceDeleteSuccess": "Gerät entfernt",
   "deviceDeletedCurrentLogout": "Aktuelles Gerät entfernt. Du wurdest abgemeldet.",
@@ -908,5 +1061,13 @@
   "sshKeyDeletedSuccess": "SSH-Schlüssel gelöscht",
   "sshKeySavedSuccess": "SSH-Schlüssel gespeichert",
   "tagDeletedSuccess": "Tag gelöscht",
-  "tagSavedSuccess": "Tag gespeichert"
+  "tagSavedSuccess": "Tag gespeichert",
+  "fileChooserOpenFile": "Datei öffnen",
+  "fileChooserSaveFile": "Datei speichern",
+  "fileChooserOpenDirectory": "Ordner wählen",
+  "fileChooserImportArchive": "Backup importieren",
+  "fileChooserImportSshConfig": "SSH-Config importieren",
+  "fileChooserImportSettings": "Einstellungen importieren",
+  "fileChooserPickKeyFile": "SSH-Key-Datei wählen",
+  "fileChooserUploadFiles": "Dateien hochladen"
 }

@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH-avain poistettu",
   "sshKeySavedSuccess": "SSH-avain tallennettu",
   "tagDeletedSuccess": "Tunniste poistettu",
-  "tagSavedSuccess": "Tunniste tallennettu"
+  "tagSavedSuccess": "Tunniste tallennettu",
+  "fileChooserOpenFile": "Avaa tiedosto",
+  "fileChooserSaveFile": "Tallenna tiedosto",
+  "fileChooserOpenDirectory": "Valitse kansio",
+  "fileChooserImportArchive": "Tuo varmuuskopio",
+  "fileChooserImportSshConfig": "Tuo SSH-asetukset",
+  "fileChooserImportSettings": "Tuo asetukset",
+  "fileChooserPickKeyFile": "Valitse SSH-avain",
+  "fileChooserUploadFiles": "Lataa tiedostoja"
 }

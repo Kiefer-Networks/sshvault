@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "ลบคีย์ SSH แล้ว",
   "sshKeySavedSuccess": "บันทึกคีย์ SSH แล้ว",
   "tagDeletedSuccess": "ลบแท็กแล้ว",
-  "tagSavedSuccess": "บันทึกแท็กแล้ว"
+  "tagSavedSuccess": "บันทึกแท็กแล้ว",
+  "fileChooserOpenFile": "เปิดไฟล์",
+  "fileChooserSaveFile": "บันทึกไฟล์",
+  "fileChooserOpenDirectory": "เลือกโฟลเดอร์",
+  "fileChooserImportArchive": "นำเข้าข้อมูลสำรอง",
+  "fileChooserImportSshConfig": "นำเข้าการกำหนดค่า SSH",
+  "fileChooserImportSettings": "นำเข้าการตั้งค่า",
+  "fileChooserPickKeyFile": "เลือกไฟล์คีย์ SSH",
+  "fileChooserUploadFiles": "อัปโหลดไฟล์"
 }

@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH-kulcs törölve",
   "sshKeySavedSuccess": "SSH-kulcs mentve",
   "tagDeletedSuccess": "Címke törölve",
-  "tagSavedSuccess": "Címke mentve"
+  "tagSavedSuccess": "Címke mentve",
+  "fileChooserOpenFile": "Fájl megnyitása",
+  "fileChooserSaveFile": "Fájl mentése",
+  "fileChooserOpenDirectory": "Mappa kiválasztása",
+  "fileChooserImportArchive": "Biztonsági mentés importálása",
+  "fileChooserImportSshConfig": "SSH-konfig importálása",
+  "fileChooserImportSettings": "Beállítások importálása",
+  "fileChooserPickKeyFile": "SSH-kulcs kiválasztása",
+  "fileChooserUploadFiles": "Fájlok feltöltése"
 }

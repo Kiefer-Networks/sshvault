@@ -150,6 +150,90 @@ void main() {
       expect(r.remoteCommand, isEmpty);
     });
 
+    group('importFiles dispatch (drop-on-EXE-icon)', () {
+      test('two .pub/.pem positionals → importFiles', () {
+        final r = CliParser.parse(const ['key1.pub', 'key2.pem']);
+        expect(r.kind, CliInvocationKind.importFiles);
+        expect(r.importFilePaths, ['key1.pub', 'key2.pem']);
+        expect(r.hostNameMatch, isNull);
+        expect(r.quickConnect, isNull);
+      });
+
+      test(
+        'single .pub → importFiles (overrides bare-hostname classification)',
+        () {
+          final r = CliParser.parse(const ['id_ed25519.pub']);
+          expect(r.kind, CliInvocationKind.importFiles);
+          expect(r.importFilePaths, ['id_ed25519.pub']);
+        },
+      );
+
+      test('single .ppk (PuTTY key) → importFiles', () {
+        final r = CliParser.parse(const ['mykey.ppk']);
+        expect(r.kind, CliInvocationKind.importFiles);
+        expect(r.importFilePaths, ['mykey.ppk']);
+      });
+
+      test('vault export .json → importFiles', () {
+        final r = CliParser.parse(const ['vault-backup.json']);
+        expect(r.kind, CliInvocationKind.importFiles);
+        expect(r.importFilePaths, ['vault-backup.json']);
+      });
+
+      test('mixed .pub + .json → importFiles', () {
+        final r = CliParser.parse(const ['k.pub', 'export.json']);
+        expect(r.kind, CliInvocationKind.importFiles);
+        expect(r.importFilePaths, ['k.pub', 'export.json']);
+      });
+
+      test('case-insensitive extensions', () {
+        final r = CliParser.parse(const ['KEY.PUB', 'Other.Pem']);
+        expect(r.kind, CliInvocationKind.importFiles);
+        expect(r.importFilePaths, ['KEY.PUB', 'Other.Pem']);
+      });
+
+      test('Windows-style absolute paths preserved verbatim', () {
+        final r = CliParser.parse(const [
+          r'C:\Users\me\.ssh\id_rsa.pub',
+          r'C:\backup\vault.json',
+        ]);
+        expect(r.kind, CliInvocationKind.importFiles);
+        expect(r.importFilePaths, [
+          r'C:\Users\me\.ssh\id_rsa.pub',
+          r'C:\backup\vault.json',
+        ]);
+      });
+
+      test('one .pub + one bare hostname → not all importable, error', () {
+        final r = CliParser.parse(const ['key.pub', 'prod-db-01']);
+        expect(r.kind, CliInvocationKind.error);
+        expect(r.errorMessage, contains('At most one positional'));
+      });
+
+      test('importFiles importFilePaths is unmodifiable', () {
+        final r = CliParser.parse(const ['a.pub']);
+        expect(() => r.importFilePaths.add('x'), throwsUnsupportedError);
+      });
+
+      test('--quit + .pub paths → quit wins (exclusive flag)', () {
+        final r = CliParser.parse(const ['--quit', 'k.pub']);
+        expect(r.kind, CliInvocationKind.error);
+      });
+
+      test(
+        '.pub with -- remote command → host-connect path (not importFiles)',
+        () {
+          // A `--` after a single positional means the user wants to connect to
+          // a host literally named `key.pub` and run a remote command. Unusual
+          // but well-defined; importFiles must yield to remoteCmd.isNotEmpty.
+          final r = CliParser.parse(const ['key.pub', '--', 'echo']);
+          expect(r.kind, CliInvocationKind.gui);
+          expect(r.hostNameMatch, 'key.pub');
+          expect(r.remoteCommand, ['echo']);
+        },
+      );
+    });
+
     test('--import-config + positional HOSTNAME is allowed', () {
       final r = CliParser.parse(const [
         '--import-config',

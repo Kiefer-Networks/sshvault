@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "מפתח SSH נמחק",
   "sshKeySavedSuccess": "מפתח SSH נשמר",
   "tagDeletedSuccess": "התגית נמחקה",
-  "tagSavedSuccess": "התגית נשמרה"
+  "tagSavedSuccess": "התגית נשמרה",
+  "fileChooserOpenFile": "פתח קובץ",
+  "fileChooserSaveFile": "שמור קובץ",
+  "fileChooserOpenDirectory": "בחר תיקייה",
+  "fileChooserImportArchive": "ייבא גיבוי",
+  "fileChooserImportSshConfig": "ייבא הגדרות SSH",
+  "fileChooserImportSettings": "ייבא הגדרות",
+  "fileChooserPickKeyFile": "בחר קובץ מפתח SSH",
+  "fileChooserUploadFiles": "העלה קבצים"
 }

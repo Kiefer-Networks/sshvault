@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:sshvault/core/error/result.dart';
+import 'package:sshvault/core/services/windows_taskbar_service.dart';
 import 'package:sshvault/features/sftp/data/services/archive_service.dart';
 import 'package:sshvault/features/sftp/data/services/local_file_service.dart';
 import 'package:sshvault/features/sftp/presentation/services/sftp_connection_manager.dart';
@@ -802,5 +803,44 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
       for (final item in state)
         if (item.id == id) updater(item) else item,
     ];
+    _publishTaskbarProgress();
+  }
+
+  /// Forwards the aggregate transfer progress to the Windows taskbar so the
+  /// user sees it on the app icon. No-op on every other platform.
+  void _publishTaskbarProgress() {
+    final active = state
+        .where(
+          (i) =>
+              i.status == TransferStatus.active ||
+              i.status == TransferStatus.queued,
+        )
+        .toList();
+    final hasFailed = state.any((i) => i.status == TransferStatus.failed);
+
+    if (active.isEmpty) {
+      // Surface the most recent terminal state: error if anything failed,
+      // otherwise clear the bar entirely.
+      if (hasFailed) {
+        WindowsTaskbarService.instance.setSftpTransferProgress(
+          1.0,
+          failed: true,
+        );
+      } else {
+        WindowsTaskbarService.instance.clearSftpTransferProgress();
+      }
+      return;
+    }
+
+    var totalBytes = 0;
+    var transferredBytes = 0;
+    for (final item in active) {
+      totalBytes += item.totalBytes;
+      transferredBytes += item.transferredBytes;
+    }
+    final fraction = totalBytes <= 0
+        ? 0.0
+        : (transferredBytes / totalBytes).clamp(0.0, 1.0).toDouble();
+    WindowsTaskbarService.instance.setSftpTransferProgress(fraction);
   }
 }

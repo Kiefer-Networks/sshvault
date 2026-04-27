@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "Kunci SSH dihapus",
   "sshKeySavedSuccess": "Kunci SSH disimpan",
   "tagDeletedSuccess": "Tag dihapus",
-  "tagSavedSuccess": "Tag disimpan"
+  "tagSavedSuccess": "Tag disimpan",
+  "fileChooserOpenFile": "Buka file",
+  "fileChooserSaveFile": "Simpan file",
+  "fileChooserOpenDirectory": "Pilih folder",
+  "fileChooserImportArchive": "Impor cadangan",
+  "fileChooserImportSshConfig": "Impor konfigurasi SSH",
+  "fileChooserImportSettings": "Impor pengaturan",
+  "fileChooserPickKeyFile": "Pilih file kunci SSH",
+  "fileChooserUploadFiles": "Unggah file"
 }

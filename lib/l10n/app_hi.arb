@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH कुंजी हटाई गई",
   "sshKeySavedSuccess": "SSH कुंजी सहेजी गई",
   "tagDeletedSuccess": "टैग हटाया गया",
-  "tagSavedSuccess": "टैग सहेजा गया"
+  "tagSavedSuccess": "टैग सहेजा गया",
+  "fileChooserOpenFile": "फ़ाइल खोलें",
+  "fileChooserSaveFile": "फ़ाइल सहेजें",
+  "fileChooserOpenDirectory": "फ़ोल्डर चुनें",
+  "fileChooserImportArchive": "बैकअप आयात करें",
+  "fileChooserImportSshConfig": "SSH कॉन्फ़िग आयात करें",
+  "fileChooserImportSettings": "सेटिंग्स आयात करें",
+  "fileChooserPickKeyFile": "SSH कुंजी चुनें",
+  "fileChooserUploadFiles": "फ़ाइलें अपलोड करें"
 }

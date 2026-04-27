@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/security/doh_resolver_service.dart';
 import 'package:sshvault/core/services/global_shortcut_service.dart';
+import 'package:sshvault/core/services/windows_protocol_registrar.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
@@ -144,8 +145,10 @@ class NetworkSettingsScreen extends ConsumerWidget {
                         );
                       },
                     ),
-                    // Auto-start: Linux-only XDG autostart entry.
-                    if (Platform.isLinux)
+                    // Auto-start: Linux XDG `.desktop` entry, or Windows
+                    // HKCU Run-key value. Same toggle, same label — the
+                    // service dispatches by platform.
+                    if (Platform.isLinux || Platform.isWindows)
                       SwitchListTile(
                         secondary: Icon(
                           Icons.power_settings_new,
@@ -224,6 +227,14 @@ class NetworkSettingsScreen extends ConsumerWidget {
                 if (Platform.isLinux) ...[
                   Spacing.verticalMd,
                   const _GlobalShortcutSection(),
+                ],
+                // Windows-only: surface the ssh:// / sftp:// + .pub/.pem/.ppk
+                // handler state. Read-only status row plus a "Re-register"
+                // action so the user can self-heal a broken / mismatched
+                // registry (e.g. portable build moved between drives).
+                if (Platform.isWindows) ...[
+                  Spacing.verticalMd,
+                  const _WindowsProtocolRegistrationSection(),
                 ],
               ],
 
@@ -614,5 +625,128 @@ class _GlobalShortcutSection extends ConsumerWidget {
               : '${p[0].toUpperCase()}${p.substring(1).toLowerCase()}',
         )
         .join('+');
+  }
+}
+
+/// Windows-only: shows whether SSHVault is registered as the system handler
+/// for ssh:// / sftp:// URLs and .pub / .pem / .ppk files, with a button to
+/// (re-)write the HKCU keys. Always renders as a no-op on other platforms;
+/// the parent screen guards on [Platform.isWindows] before mounting this
+/// widget anyway.
+class _WindowsProtocolRegistrationSection extends ConsumerStatefulWidget {
+  const _WindowsProtocolRegistrationSection();
+
+  @override
+  ConsumerState<_WindowsProtocolRegistrationSection> createState() =>
+      _WindowsProtocolRegistrationSectionState();
+}
+
+class _WindowsProtocolRegistrationSectionState
+    extends ConsumerState<_WindowsProtocolRegistrationSection> {
+  static const _registrar = WindowsProtocolRegistrar();
+  bool? _isRegistered;
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
+    try {
+      final registered = await _registrar.isRegistered();
+      if (!mounted) return;
+      setState(() => _isRegistered = registered);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isRegistered = false);
+    }
+  }
+
+  Future<void> _reregister() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await _registrar.register();
+      await ref
+          .read(settingsProvider.notifier)
+          .setWindowsProtocolRegistered(true);
+      await _refresh();
+      if (!mounted) return;
+      AdaptiveNotification.show(
+        context,
+        message: 'SSHVault re-registered as ssh:// handler.',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      AdaptiveNotification.show(context, message: 'Re-registration failed: $e');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final registered = _isRegistered;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(title: 'URL handlers & file associations'),
+        SettingsGroupCard(
+          children: [
+            ListTile(
+              leading: Icon(
+                registered == true
+                    ? Icons.check_circle_outline
+                    : Icons.error_outline,
+                color: registered == true
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.error,
+              ),
+              title: const Text('Registered as ssh:// handler'),
+              subtitle: Text(
+                registered == null
+                    ? 'Checking registry…'
+                    : registered
+                    ? 'ssh://, sftp:// and .pub/.pem/.ppk files open '
+                          'with SSHVault.'
+                    : 'Not currently registered. Click "Re-register" '
+                          'to write the HKCU keys.',
+              ),
+              trailing: registered == null
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                    )
+                  : Icon(
+                      registered
+                          ? Icons.lock_outline
+                          : Icons.lock_open_outlined,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+            ),
+            ListTile(
+              leading: Icon(Icons.refresh, color: theme.colorScheme.primary),
+              title: const Text('Re-register'),
+              subtitle: const Text(
+                'Rewrite the HKCU keys for ssh://, sftp:// and the SSH key '
+                'file types. Useful after moving a portable build.',
+              ),
+              onTap: _busy ? null : _reregister,
+              trailing: _busy
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

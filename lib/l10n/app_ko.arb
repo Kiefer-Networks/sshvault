@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH 키 삭제됨",
   "sshKeySavedSuccess": "SSH 키 저장됨",
   "tagDeletedSuccess": "태그 삭제됨",
-  "tagSavedSuccess": "태그 저장됨"
+  "tagSavedSuccess": "태그 저장됨",
+  "fileChooserOpenFile": "파일 열기",
+  "fileChooserSaveFile": "파일 저장",
+  "fileChooserOpenDirectory": "폴더 선택",
+  "fileChooserImportArchive": "백업 가져오기",
+  "fileChooserImportSshConfig": "SSH 구성 가져오기",
+  "fileChooserImportSettings": "설정 가져오기",
+  "fileChooserPickKeyFile": "SSH 키 파일 선택",
+  "fileChooserUploadFiles": "파일 업로드"
 }

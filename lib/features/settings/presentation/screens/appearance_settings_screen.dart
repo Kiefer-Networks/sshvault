@@ -210,6 +210,45 @@ class AppearanceSettingsScreen extends ConsumerWidget {
               ],
             ),
 
+            // --- Windows 11 chrome (Mica + rounded corners) ---
+            // Both default-on. Win10 silently degrades: Mica falls back to
+            // Acrylic and the rounded-corner DWM attribute is a no-op.
+            if (Platform.isWindows) ...[
+              Spacing.verticalLg,
+              const SectionHeader(title: 'Windows chrome'),
+              SettingsGroupCard(
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.blur_on,
+                    iconColor: Theme.of(context).colorScheme.primary,
+                    title: 'Use Mica backdrop',
+                    subtitleText:
+                        'Translucent Windows 11 Mica wallpaper effect. '
+                        'Falls back to Acrylic on Windows 10.',
+                    value: settings.windowsMicaBackdrop,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setWindowsMicaBackdrop(v);
+                    },
+                  ),
+                  SettingsSwitchTile(
+                    icon: Icons.rounded_corner,
+                    iconColor: Theme.of(context).colorScheme.secondary,
+                    title: 'Round window corners',
+                    subtitleText:
+                        'Apply Windows 11 rounded corners to the main window.',
+                    value: settings.windowsRoundCorners,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setWindowsRoundCorners(v);
+                    },
+                  ),
+                ],
+              ),
+            ],
+
             // --- Desktop integration (Linux only) ---
             // The XDG appearance portal exposes the user's preferred color
             // scheme + accent color. Honoring it makes SSHVault feel native
@@ -277,6 +316,34 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                           );
                         }
                       }
+                    },
+                  ),
+                ],
+              ),
+            ],
+
+            // --- Notifications (Windows only) ---
+            // Native Windows toasts (Windows.UI.Notifications) support
+            // inline action buttons that persist in the Action Center.
+            // Linux + macOS keep using `flutter_local_notifications`, so
+            // this toggle is hidden everywhere else.
+            if (Platform.isWindows) ...[
+              Spacing.verticalLg,
+              const SectionHeader(title: 'Notifications'),
+              SettingsGroupCard(
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.notifications_active_outlined,
+                    iconColor: Theme.of(context).colorScheme.primary,
+                    title: 'Show action buttons',
+                    subtitleText:
+                        'Add Disconnect / Show buttons to Windows toast '
+                        'notifications. Buttons persist in Action Center.',
+                    value: settings.windowsToastActionsEnabled,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setWindowsToastActionsEnabled(v);
                     },
                   ),
                 ],

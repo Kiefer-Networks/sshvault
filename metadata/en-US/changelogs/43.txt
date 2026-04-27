@@ -1,0 +1,17 @@
+Windows desktop integration pass.
+
+- ssh:// + sftp:// URL handlers + file associations (.pub / .pem / .ppk) registered via Inno Setup with first-run runtime fallback.
+- Single-instance enforcement via named mutex; second invocation forwards argv to the existing window through WM_COPYDATA.
+- Windows Credential Manager backend for the master vault key (Wincred / DPAPI), with Windows-Hello pre-unlock when biometrics are enabled.
+- Pageant + OpenSSH-for-Windows agent compatibility — git, scp, ansible, vscode-remote-ssh now share keys with SSHVault.
+- WM_DROPFILES drag-and-drop import for SSH keys / vault exports; dropping files on the EXE icon also imports.
+- Native Windows toast notifications via `local_notifier` with action buttons (Reconnect / Disconnect / Show) and Action-Center persistence.
+- Auto-start via HKCU\...\Run\SSHVault registry value, toggleable from Settings.
+- Power-management inhibit during active sessions (SetThreadExecutionState ES_SYSTEM_REQUIRED|ES_AWAYMODE_REQUIRED|ES_CONTINUOUS).
+- Windows 11 Mica backdrop (Acrylic fallback on Windows 10) + dark-mode title bar + rounded window corners via DWM API.
+- Jump List (taskbar right-click) shows recent + favorite hosts with Quick-connect / Reopen-last-session tasks.
+- Thumbnail toolbar mini-buttons in the taskbar window-preview, plus taskbar progress during SFTP transfers.
+- Console window hidden in Release builds (subsystem WINDOWS); per-monitor V2 DPI awareness + GDI scaling declared in the manifest.
+- PuTTY .ppk key import (v2 + v3, encrypted + unencrypted, RSA / Ed25519 / ECDSA P-256/384/521).
+- Crash-dump handler (`MiniDumpWriteDump`) writes redacted .dmp files to %LOCALAPPDATA%\SSHVault\crashes\ on unhandled exceptions.
+- Optional Windows Defender folder-exclusion prompt during install (user opt-in).

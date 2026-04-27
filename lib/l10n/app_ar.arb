@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "تم حذف مفتاح SSH",
   "sshKeySavedSuccess": "تم حفظ مفتاح SSH",
   "tagDeletedSuccess": "تم حذف الوسم",
-  "tagSavedSuccess": "تم حفظ الوسم"
+  "tagSavedSuccess": "تم حفظ الوسم",
+  "fileChooserOpenFile": "فتح ملف",
+  "fileChooserSaveFile": "حفظ الملف",
+  "fileChooserOpenDirectory": "اختر مجلدًا",
+  "fileChooserImportArchive": "استيراد نسخة احتياطية",
+  "fileChooserImportSshConfig": "استيراد إعدادات SSH",
+  "fileChooserImportSettings": "استيراد الإعدادات",
+  "fileChooserPickKeyFile": "اختر مفتاح SSH",
+  "fileChooserUploadFiles": "رفع ملفات"
 }

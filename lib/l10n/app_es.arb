@@ -1061,5 +1061,13 @@
   "sshKeyDeletedSuccess": "Clave SSH eliminada",
   "sshKeySavedSuccess": "Clave SSH guardada",
   "tagDeletedSuccess": "Etiqueta eliminada",
-  "tagSavedSuccess": "Etiqueta guardada"
+  "tagSavedSuccess": "Etiqueta guardada",
+  "fileChooserOpenFile": "Abrir archivo",
+  "fileChooserSaveFile": "Guardar archivo",
+  "fileChooserOpenDirectory": "Elegir carpeta",
+  "fileChooserImportArchive": "Importar copia de seguridad",
+  "fileChooserImportSshConfig": "Importar config SSH",
+  "fileChooserImportSettings": "Importar ajustes",
+  "fileChooserPickKeyFile": "Elegir archivo de clave SSH",
+  "fileChooserUploadFiles": "Subir archivos"
 }

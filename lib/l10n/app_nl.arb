@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH-sleutel verwijderd",
   "sshKeySavedSuccess": "SSH-sleutel opgeslagen",
   "tagDeletedSuccess": "Tag verwijderd",
-  "tagSavedSuccess": "Tag opgeslagen"
+  "tagSavedSuccess": "Tag opgeslagen",
+  "fileChooserOpenFile": "Bestand openen",
+  "fileChooserSaveFile": "Bestand opslaan",
+  "fileChooserOpenDirectory": "Map kiezen",
+  "fileChooserImportArchive": "Back-up importeren",
+  "fileChooserImportSshConfig": "SSH-config importeren",
+  "fileChooserImportSettings": "Instellingen importeren",
+  "fileChooserPickKeyFile": "SSH-sleutelbestand kiezen",
+  "fileChooserUploadFiles": "Bestanden uploaden"
 }

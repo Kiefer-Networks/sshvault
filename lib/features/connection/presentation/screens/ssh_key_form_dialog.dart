@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/crypto/crypto_provider.dart';
 import 'package:sshvault/core/crypto/ssh_key_type.dart';
+import 'package:sshvault/core/ssh/ppk_parser.dart';
 import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
 import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -294,7 +295,32 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
 
     try {
       SshKeyType keyType = SshKeyType.ed25519;
-      if (privateKey.contains('RSA PRIVATE KEY') ||
+      String effectivePrivateKey = privateKey;
+      String effectiveComment = _commentController.text.trim();
+      String? effectivePassphrase = _passphraseController.text.trim().isEmpty
+          ? null
+          : _passphraseController.text.trim();
+
+      if (PpkParser.looksLikePpk(privateKey)) {
+        // PuTTY .ppk import: parse + convert to OpenSSH so the rest of
+        // SSHVault stores/uses the key identically to a native key. The
+        // stored private key is unencrypted OpenSSH; the original
+        // passphrase only protected transport (the file at rest), and
+        // SSHVault's vault layer re-encrypts on save.
+        final parsed = await PpkParser.parse(
+          privateKey,
+          passphrase: effectivePassphrase,
+        );
+        keyType = parsed.type;
+        effectivePrivateKey = parsed.openSshPrivateKey;
+        if (effectiveComment.isEmpty &&
+            parsed.comment != null &&
+            parsed.comment!.isNotEmpty) {
+          effectiveComment = parsed.comment!;
+        }
+        // The OpenSSH private key produced by PpkParser is unencrypted.
+        effectivePassphrase = null;
+      } else if (privateKey.contains('RSA PRIVATE KEY') ||
           (privateKey.contains('BEGIN PRIVATE KEY') &&
               !privateKey.contains('EC PRIVATE KEY') &&
               !privateKey.contains('OPENSSH PRIVATE KEY'))) {
@@ -308,18 +334,17 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         id: '',
         name: name,
         keyType: keyType,
-        comment: _commentController.text.trim(),
+        comment: effectiveComment,
         createdAt: now,
         updatedAt: now,
       );
 
-      final passphrase = _passphraseController.text.trim();
       await ref
           .read(sshKeyListProvider.notifier)
           .createSshKey(
             entity,
-            privateKey: privateKey,
-            passphrase: passphrase.isEmpty ? null : passphrase,
+            privateKey: effectivePrivateKey,
+            passphrase: effectivePassphrase,
           );
 
       if (mounted) {
@@ -564,7 +589,9 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         return;
       }
 
-      if (!content.contains('-----BEGIN')) {
+      // Accept either standard PEM-wrapped keys or PuTTY's line-based .ppk
+      // format. .ppk files start with `PuTTY-User-Key-File-2:` or `-3:`.
+      if (!content.contains('-----BEGIN') && !PpkParser.looksLikePpk(content)) {
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
             .read(_sshKeyFormStateProvider)
             .copyWith(
@@ -578,14 +605,27 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
         _nameController.text = file.name.replaceAll(RegExp(r'\.[^.]+$'), '');
       }
 
-      final keyService = ref.read(sshKeyServiceProvider);
-      final infoResult = await keyService.extractKeyInfo(content.trim());
-      if (infoResult.isSuccess) {
-        final info = infoResult.value;
-        if (info.comment != null &&
-            info.comment!.isNotEmpty &&
-            _commentController.text.trim().isEmpty) {
-          _commentController.text = info.comment!;
+      if (PpkParser.looksLikePpk(content)) {
+        // For .ppk we can read the comment line directly (without needing
+        // the passphrase) — extracting the actual public key requires
+        // decryption, which we defer to the save step.
+        final commentLine = content
+            .split('\n')
+            .map((l) => l.trim())
+            .firstWhere((l) => l.startsWith('Comment:'), orElse: () => '');
+        if (commentLine.isNotEmpty && _commentController.text.trim().isEmpty) {
+          _commentController.text = commentLine.substring(8).trim();
+        }
+      } else {
+        final keyService = ref.read(sshKeyServiceProvider);
+        final infoResult = await keyService.extractKeyInfo(content.trim());
+        if (infoResult.isSuccess) {
+          final info = infoResult.value;
+          if (info.comment != null &&
+              info.comment!.isNotEmpty &&
+              _commentController.text.trim().isEmpty) {
+            _commentController.text = info.comment!;
+          }
         }
       }
 

@@ -1,0 +1,17 @@
+Integración con escritorio Windows.
+
+- Manejadores ssh:// + sftp:// y asociaciones de archivo (.pub / .pem / .ppk) vía Inno Setup + fallback en tiempo de ejecución.
+- Instancia única vía named mutex; la segunda invocación reenvía argv a la ventana existente con WM_COPYDATA.
+- Windows Credential Manager como backend de la clave maestra del vault (Wincred/DPAPI), Windows Hello previo cuando biometría está activa.
+- Compatibilidad con agentes Pageant y OpenSSH-for-Windows.
+- WM_DROPFILES drag-and-drop para claves SSH / exports; arrastrar al icono EXE también importa.
+- Toasts nativos de Windows vía `local_notifier` con botones de acción y persistencia en Action Center.
+- Auto-inicio vía registro HKCU\...\Run\SSHVault, conmutable.
+- Power-inhibit durante sesiones activas (SetThreadExecutionState).
+- Windows 11 Mica (Acrylic en Win10) + barra de título oscura + esquinas redondeadas vía DWM.
+- Jump List con recientes/favoritos + Quick-connect / Reopen-last-session.
+- Mini-botones thumbnail en la vista previa de taskbar + progreso de taskbar durante SFTP.
+- Consola oculta en Release (subsistema WINDOWS); DPI Per-Monitor V2 + GDI scaling en el manifest.
+- Importación de claves PuTTY .ppk (v2 + v3).
+- MiniDumpWriteDump escribe .dmp redactados en %LOCALAPPDATA%\SSHVault\crashes\.
+- Exclusión opcional de Defender durante instalación (opt-in).

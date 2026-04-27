@@ -767,5 +767,13 @@
   "sshKeyDeletedSuccess": "SSH-nøkkel slettet",
   "sshKeySavedSuccess": "SSH-nøkkel lagret",
   "tagDeletedSuccess": "Tagg slettet",
-  "tagSavedSuccess": "Tagg lagret"
+  "tagSavedSuccess": "Tagg lagret",
+  "fileChooserOpenFile": "Åpne fil",
+  "fileChooserSaveFile": "Lagre fil",
+  "fileChooserOpenDirectory": "Velg mappe",
+  "fileChooserImportArchive": "Importer sikkerhetskopi",
+  "fileChooserImportSshConfig": "Importer SSH-konfig",
+  "fileChooserImportSettings": "Importer innstillinger",
+  "fileChooserPickKeyFile": "Velg SSH-nøkkel",
+  "fileChooserUploadFiles": "Last opp filer"
 }
