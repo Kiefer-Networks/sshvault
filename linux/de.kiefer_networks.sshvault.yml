@@ -259,6 +259,7 @@ modules:
       - mkdir -p /app/bin
       - ln -s /app/sshvault /app/bin/sshvault
       - install -Dm644 de.kiefer_networks.sshvault.desktop /app/share/applications/de.kiefer_networks.sshvault.desktop
+      - install -Dm644 de.kiefer_networks.sshvault.service /app/share/dbus-1/services/de.kiefer_networks.sshvault.service
       - install -Dm644 de.kiefer_networks.sshvault.metainfo.xml /app/share/metainfo/de.kiefer_networks.sshvault.metainfo.xml
       - install -Dm644 icons/128x128.png /app/share/icons/hicolor/128x128/apps/de.kiefer_networks.sshvault.png
       - install -Dm644 icons/256x256.png /app/share/icons/hicolor/256x256/apps/de.kiefer_networks.sshvault.png

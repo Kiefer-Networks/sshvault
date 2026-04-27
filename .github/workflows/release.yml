@@ -211,6 +211,7 @@ jobs:
           mkdir -p linux/flatpak-dist/bundle
           cp -r build/linux/x64/release/bundle/* linux/flatpak-dist/bundle/
           cp linux/de.kiefer_networks.sshvault.desktop linux/flatpak-dist/
+          cp linux/de.kiefer_networks.sshvault.service linux/flatpak-dist/
           cp linux/de.kiefer_networks.sshvault.metainfo.xml linux/flatpak-dist/
           mkdir -p linux/flatpak-dist/icons
           cp linux/icons/*.png linux/flatpak-dist/icons/
