@@ -89,6 +89,18 @@ finish-args:
   - --system-talk-name=org.freedesktop.login1
 
 modules:
+  # intltool — libdbusmenu's autotools configure refuses to run without
+  # >= 0.35.0; the Freedesktop SDK ships an older version, so we bundle
+  # the canonical 0.51.0 release as a build-only dependency.
+  - name: intltool
+    buildsystem: autotools
+    cleanup:
+      - "*"
+    sources:
+      - type: archive
+        url: https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz
+        sha256: 67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd
+
   # libayatana-appindicator — required by tray_manager / system tray icon on
   # KDE Plasma, GNOME (with AppIndicator extension), XFCE and Cinnamon.
   # The Freedesktop 24.08 runtime does NOT ship this library, so it has to
