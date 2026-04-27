@@ -159,6 +159,8 @@ modules:
     config-opts:
       - -DCMAKE_INSTALL_LIBDIR=lib
       - -DENABLE_TESTS=OFF
+      - -DENABLE_VALA=OFF
+      - -DENABLE_INTROSPECTION=OFF
     cleanup:
       - /include
       - /lib/pkgconfig
