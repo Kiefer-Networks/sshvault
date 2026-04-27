@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=de.kiefer_networks.sshvault
+Exec=/app/bin/sshvault --gapplication-service

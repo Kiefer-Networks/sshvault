@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=de.kiefer_networks.SSHVault
-Exec=/usr/bin/sshvault
