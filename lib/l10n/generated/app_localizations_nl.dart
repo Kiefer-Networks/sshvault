@@ -1886,6 +1886,30 @@ class AppLocalizationsNl extends AppLocalizations {
   String get sftpFileSaved => 'Bestand opgeslagen';
 
   @override
+  String get fileChooserOpenFile => 'Open file';
+
+  @override
+  String get fileChooserSaveFile => 'Save file';
+
+  @override
+  String get fileChooserOpenDirectory => 'Choose folder';
+
+  @override
+  String get fileChooserImportArchive => 'Import backup';
+
+  @override
+  String get fileChooserImportSshConfig => 'Import SSH config';
+
+  @override
+  String get fileChooserImportSettings => 'Import settings';
+
+  @override
+  String get fileChooserPickKeyFile => 'Pick SSH key file';
+
+  @override
+  String get fileChooserUploadFiles => 'Upload files';
+
+  @override
   String notificationTerminalTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

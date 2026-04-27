@@ -214,6 +214,38 @@ flutter build macos --release       # macOS
 flutter build windows --release     # Windows
 ```
 
+### Linux clipboard persistence on Wayland
+
+Under a Wayland compositor the clipboard offer is owned by the process that
+put the data there: as soon as the owning process exits, the offer is gone.
+That breaks the very common pattern "open SSHVault → copy a private key /
+password → close SSHVault → paste into a terminal".
+
+To work around this, SSHVault detects Wayland sessions
+(`WAYLAND_DISPLAY` set on Linux) and shells out to `wl-copy`
+(from the `wl-clipboard` package) as a detached helper. The helper keeps the
+clipboard offer alive after the SSHVault window is closed, until either the
+user pastes or the 30 s auto-clear timer fires (which then runs
+`wl-copy --clear`). On X11, macOS, Windows, and mobile, the standard
+in-process clipboard is used because those platforms don't have this
+limitation.
+
+`wl-clipboard` ships in the default install of every mainstream Wayland
+distro (Fedora, Ubuntu, Debian, Arch, openSUSE) and is bundled in the
+SSHVault Flatpak runtime, so no manual setup is needed in the typical case.
+On a minimal/headless Wayland install you can opt in via your distro's
+package manager:
+
+```bash
+sudo dnf install wl-clipboard          # Fedora
+sudo apt install wl-clipboard          # Debian / Ubuntu
+sudo pacman -S wl-clipboard            # Arch
+sudo zypper install wl-clipboard       # openSUSE
+```
+
+If `wl-copy` is missing the app falls back to the in-process clipboard
+silently — copy still works, it just doesn't survive the app exiting.
+
 ### Linux DBus integration
 
 SSHVault on Linux owns the well-known session-bus name
@@ -245,6 +277,139 @@ Exec=/usr/bin/sshvault
 
 For Flatpak, the manifest needs `--talk-name=de.kiefer_networks.SSHVault` —
 this is the app's own well-known name, so it is normally granted by default.
+
+### Global keyboard shortcut (Quick connect)
+
+SSHVault registers a system-wide hotkey (`Super+Shift+S` by default) that
+opens the **Quick connect** overlay from anywhere on the desktop. The
+binding goes through `org.freedesktop.portal.Desktop →
+GlobalShortcuts`, which is supported on:
+
+- GNOME 45+ (xdg-desktop-portal-gnome 1.16+)
+- KDE Plasma 5.27+ / 6.x (xdg-desktop-portal-kde)
+
+The first time the app starts you'll see a portal dialog asking you to
+confirm or rebind the trigger. You can change it later from
+**Settings → Network → Desktop integration → Global shortcut → Re-bind**.
+
+On XFCE, LXQt and other desktops without a `GlobalShortcuts` portal
+backend, bind a hotkey in your desktop settings (XFCE: *Settings →
+Keyboard → Application Shortcuts*) to this exact `dbus-send` line:
+
+```sh
+dbus-send --session --type=method_call \
+  --dest=de.kiefer_networks.SSHVault \
+  /de/kiefer_networks/SSHVault \
+  de.kiefer_networks.SSHVault.Activate
+```
+
+The Flatpak manifest already grants
+`--talk-name=org.freedesktop.portal.Desktop`, so no extra permission is
+required.
+
+### XDG desktop portals (Flatpak)
+
+SSHVault is sandbox-clean: every host interaction that could leak
+filesystem access or punch out of the bubblewrap goes through an XDG
+desktop portal. The Flatpak manifest only needs a single
+`--talk-name=org.freedesktop.portal.Desktop` — that one bus name covers
+the whole portal surface.
+
+| Portal | Used by | Replaces |
+|--------|---------|----------|
+| `org.freedesktop.portal.FileChooser` | `file_picker` 10.x — SFTP upload/download, SSH key import, settings export, vault import/export, `~/.ssh/config` import | direct `GtkFileChooserNative` |
+| `org.freedesktop.portal.OpenURI` | `url_launcher` 6.3.x — About screen links, error-message links | `Process.start('xdg-open', …)` |
+| `org.freedesktop.portal.Settings` | `DesktopAppearanceService` — live `prefers-color-scheme` + accent color | direct GSettings reads |
+| `org.freedesktop.portal.Secret` | `KeyringService` — fallback for the vault master key when `org.freedesktop.secrets` is unreachable | direct libsecret only |
+
+Read-only access to the host's SSH client configuration and key
+material is granted via `--filesystem=xdg-config/ssh:ro` and
+`--filesystem=~/.ssh:ro` — the picker portal handles ad-hoc choices,
+but importing well-known files (`~/.ssh/config`, `~/.ssh/id_*`) is a
+direct read. The legacy `--talk-name=org.freedesktop.secrets` is kept
+for backwards-compatibility with existing installs but is no longer
+strictly required: distributors may drop it for a tighter sandbox and
+SSHVault will transparently use `org.freedesktop.portal.Secret`
+instead.
+
+### Linux AppArmor profile (native packages only)
+
+When SSHVault is installed from a native package on Debian, Ubuntu or
+OpenSUSE — i.e. **outside** the Flatpak sandbox — it ships with an AppArmor
+profile that confines what the binary can read, write and connect to.
+
+> **Flatpak users:** you do not need this profile. The Flatpak sandbox
+> (bubblewrap + XDG portals) is already strictly tighter; running both at
+> once only complicates debugging.
+
+The profile lives at `linux/apparmor/de.kiefer_networks.sshvault` and is
+copied to `/etc/apparmor.d/de.kiefer_networks.sshvault` by the package's
+post-install hook (`linux/apparmor/postinst.sh`), which then runs
+`apparmor_parser -r` to load it without requiring a reboot.
+
+**What it allows:**
+
+| Resource | Access |
+|----------|--------|
+| `~/.ssh/config`, `~/.ssh/known_hosts`, `~/.ssh/id_*`, `~/.ssh/id_*.pub` | read-only |
+| `~/.local/share/sshvault/`, `~/.config/sshvault/` | read/write |
+| `~/.config/autostart/de.kiefer_networks.sshvault.desktop` | read/write |
+| Bundled `flutter_assets/`, `libapp.so`, `libflutter_linux_gtk.so`, `libliboqs.so*` | read |
+| TCP/UDP network (IPv4 + IPv6) | outbound |
+| ssh-agent socket (`$SSH_AUTH_SOCK`), `ssh-keysign` helper | unix peer / exec |
+| DBus: own well-known name `de.kiefer_networks.SSHVault` | bind |
+| DBus: `org.freedesktop.secrets` (libsecret), `org.freedesktop.portal.*`, `org.freedesktop.login1.Manager`, `org.freedesktop.Notifications`, `org.kde.StatusNotifierWatcher` | talk |
+
+**What it explicitly denies** (even though `~` would otherwise be readable):
+
+- `~/.gnupg/`, `~/.mozilla/`
+- Browser profiles + cookies (Chrome, Chromium, Edge, Brave, Vivaldi, Firefox cache)
+- Password stores (`~/.password-store`, `*.kdbx`, KeePassXC, Bitwarden, 1Password, the legacy `~/.local/share/keyrings/`)
+- Shell history (`.bash_history`, `.zsh_history`, `.python_history`)
+- Raw block devices (`/dev/sd*`, `/dev/nvme*`) and kernel introspection (`/proc/kcore`, `/proc/kallsyms`)
+
+**Disable for debugging:**
+
+```bash
+# Temporary — log violations but do not enforce them
+sudo aa-complain /etc/apparmor.d/de.kiefer_networks.sshvault
+
+# Full disable (until you re-enable or reload)
+sudo aa-disable /etc/apparmor.d/de.kiefer_networks.sshvault
+
+# Re-enable
+sudo aa-enforce /etc/apparmor.d/de.kiefer_networks.sshvault
+
+# Watch live denials while reproducing the bug
+sudo journalctl -kf | grep -i apparmor
+```
+
+**Add custom paths** (e.g. you keep your vault on an external disk, or you
+import keys from `~/Projects/secrets/`) without editing the shipped profile
+— drop a snippet into `/etc/apparmor.d/local/de.kiefer_networks.sshvault`,
+which the main profile already `include`s if it exists. The file survives
+package upgrades.
+
+```bash
+# /etc/apparmor.d/local/de.kiefer_networks.sshvault
+owner /mnt/encrypted-disk/sshvault/** rwk,
+owner @{HOME}/Projects/secrets/**     r,
+```
+
+Then reload:
+
+```bash
+sudo apparmor_parser -r /etc/apparmor.d/de.kiefer_networks.sshvault
+```
+
+**Validate** the profile before shipping a release:
+
+```bash
+./linux/apparmor/test_profile.sh
+```
+
+This runs `apparmor_parser -Q` (parse only, no kernel load) so it works in
+CI containers that don't have an AppArmor-enabled kernel.
 
 ### Run tests
 

@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.12.0" date="2026-04-27">
+      <description>
+        <p>Linux desktop integration deepens: power-management inhibit during active SSH sessions (login1.Inhibit), per-monitor window-state persistence, XDG-autostart toggle, polished tray-only boot with close-to-tray and resume-on-login, Wayland clipboard persistence via wl-copy --foreground, HiDPI per-monitor scaling with manual override, full xdg-desktop-portal migration for file pickers / secrets / links, AppArmor profile for native distros, comprehensive command-line argv (HOSTNAME, user@host:port, --import-config / --import-keys / --export-vault / --version / --help / --quit) with bash + zsh completion, native GTK / Plasma file-chooser routing, DBus activation with Quick-connect / Reopen-last-session .desktop Actions and org.freedesktop.Application interface, and a configurable global keyboard shortcut (default Super+Shift+S) via xdg-desktop-portal GlobalShortcuts.</p>
+      </description>
+    </release>
     <release version="1.11.0" date="2026-04-26">
       <description>
         <p>Linux desktop integration pass: ssh:// + sftp:// URL handlers, system tray (AppIndicator/SNI) with favorites and active sessions, DBus service de.kiefer_networks.SSHVault for single-instance + external triggers from rofi/polybar/KRunner, KRunner plugin, libsecret-backed master-key storage in GNOME Keyring / KWallet, ssh-agent integration so git/scp/ansible/vscode-remote-ssh can use SSHVault keys, follow GNOME / KDE preferred color scheme via xdg-desktop-portal, and drag-and-drop SSH keys onto the window to auto-import.</p>

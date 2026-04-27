@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:sshvault/core/services/secure_clipboard.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -156,7 +156,7 @@ class ServerDetailScreen extends ConsumerWidget {
                         icon: Icons.dns_outlined,
                         label: l10n.serverDetailHost,
                         value: server.hostname,
-                        onTap: () => _copy(context, server.hostname),
+                        onTap: () => _copy(context, ref, server.hostname),
                       ),
                       InfoRow(
                         icon: Icons.numbers,
@@ -167,7 +167,7 @@ class ServerDetailScreen extends ConsumerWidget {
                         icon: Icons.person_outline,
                         label: l10n.serverDetailUsername,
                         value: server.username,
-                        onTap: () => _copy(context, server.username),
+                        onTap: () => _copy(context, ref, server.username),
                       ),
                       if (server.jumpHostId != null)
                         _JumpHostInfoRow(jumpHostId: server.jumpHostId!),
@@ -322,8 +322,8 @@ class ServerDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _copy(BuildContext context, String text) {
-    Clipboard.setData(ClipboardData(text: text));
+  void _copy(BuildContext context, WidgetRef ref, String text) {
+    ref.read(secureClipboardProvider).copyPlain(text);
     AdaptiveNotification.show(
       context,
       message: AppLocalizations.of(context)!.copiedToClipboard,

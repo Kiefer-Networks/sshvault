@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
-import 'package:flutter/services.dart';
+import 'package:sshvault/core/services/secure_clipboard.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:sshvault/features/snippet/domain/entities/snippet_entity.dart';
 
-class VariableFillDialog extends StatefulWidget {
+class VariableFillDialog extends ConsumerStatefulWidget {
   final SnippetEntity snippet;
   final bool returnContent;
 
@@ -29,10 +30,10 @@ class VariableFillDialog extends StatefulWidget {
   }
 
   @override
-  State<VariableFillDialog> createState() => _VariableFillDialogState();
+  ConsumerState<VariableFillDialog> createState() => _VariableFillDialogState();
 }
 
-class _VariableFillDialogState extends State<VariableFillDialog> {
+class _VariableFillDialogState extends ConsumerState<VariableFillDialog> {
   late final Map<String, TextEditingController> _controllers;
 
   @override
@@ -66,7 +67,7 @@ class _VariableFillDialogState extends State<VariableFillDialog> {
       Navigator.of(context).pop(resolved);
       return;
     }
-    Clipboard.setData(ClipboardData(text: resolved));
+    ref.read(secureClipboardProvider).copySecret(resolved);
     Navigator.of(context).pop();
     AdaptiveNotification.show(
       context,

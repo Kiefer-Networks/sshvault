@@ -674,6 +674,15 @@
   "sftpSaveToFiles": "Save to Files",
   "sftpFileSaved": "File saved",
 
+  "fileChooserOpenFile": "Open file",
+  "fileChooserSaveFile": "Save file",
+  "fileChooserOpenDirectory": "Choose folder",
+  "fileChooserImportArchive": "Import backup",
+  "fileChooserImportSshConfig": "Import SSH config",
+  "fileChooserImportSettings": "Import settings",
+  "fileChooserPickKeyFile": "Pick SSH key file",
+  "fileChooserUploadFiles": "Upload files",
+
   "notificationTerminalTitle": "{count, plural, =1{SSH session active} other{{count} SSH sessions active}}",
   "@notificationTerminalTitle": { "placeholders": { "count": { "type": "int" } } },
   "notificationTerminalTap": "Tap to open terminal",

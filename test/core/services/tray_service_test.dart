@@ -53,6 +53,16 @@ void main() {
       ]);
     });
 
+    test('shows "Hide to tray" when the window is visible', () {
+      final menu = TrayService.computeMenu(
+        favorites: const [],
+        sessions: const [],
+        windowVisible: true,
+      );
+      expect(menu.first.key, 'hide_to_tray');
+      expect(menu.first.label, 'Hide to tray');
+    });
+
     test('empty favorites submenu has a single placeholder child', () {
       final menu = TrayService.computeMenu(
         favorites: const [],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
-import 'package:flutter/services.dart';
+import 'package:sshvault/core/services/secure_clipboard.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -422,7 +422,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
   }
 }
 
-class _KeyPreviewCard extends StatelessWidget {
+class _KeyPreviewCard extends ConsumerWidget {
   final String label;
   final String value;
   final IconData icon;
@@ -438,7 +438,7 @@ class _KeyPreviewCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final displayValue = isPrivate
         ? '${value.split('\n').first}\n... (${value.split('\n').length} lines)'
         : value;
@@ -459,7 +459,12 @@ class _KeyPreviewCard extends StatelessWidget {
                   icon: const Icon(Icons.copy, size: 16),
                   tooltip: AppLocalizations.of(context)!.keyGenCopyTooltip,
                   onPressed: () {
-                    Clipboard.setData(ClipboardData(text: value));
+                    final clipboard = ref.read(secureClipboardProvider);
+                    if (isPrivate) {
+                      clipboard.copySecret(value);
+                    } else {
+                      clipboard.copyPlain(value);
+                    }
                     AdaptiveNotification.show(
                       context,
                       message: AppLocalizations.of(

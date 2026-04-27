@@ -1,3 +1,21 @@
+# ---------------------------------------------------------------------------
+# Flatpak manifest for SSHVault.
+#
+# NOTE ON APPARMOR:
+#   Flatpak users do NOT need the AppArmor profile shipped under
+#   linux/apparmor/de.kiefer_networks.sshvault. The Flatpak sandbox
+#   (bubblewrap + portal-mediated filesystem access + the finish-args below)
+#   is strictly tighter than the AppArmor policy: filesystem reads outside
+#   ~/.ssh / xdg-download go through the FileChooser portal, the network is
+#   the only IPC channel that isn't already brokered, and there is no shell
+#   exec path. Running both at once is redundant and only causes confusion
+#   when debugging permission denials.
+#
+#   The AppArmor profile is intended ONLY for users who install SSHVault
+#   from a native .deb / .rpm on Debian, Ubuntu or OpenSUSE. Distro
+#   packagers should drop it into /etc/apparmor.d/ from their post-install
+#   hook (see linux/apparmor/postinst.sh).
+# ---------------------------------------------------------------------------
 app-id: de.kiefer_networks.sshvault
 runtime: org.freedesktop.Platform
 runtime-version: '24.08'
@@ -5,32 +23,70 @@ sdk: org.freedesktop.Sdk
 command: sshvault
 
 finish-args:
-  # Display
+  # Display — required for the Flutter window to render under either
+  # X11 (via the fallback socket) or Wayland.
   - --share=ipc
   - --socket=fallback-x11
   - --socket=wayland
-  # GPU acceleration
+  # GPU acceleration — Skia wants direct rendering for hardware
+  # compositing.
   - --device=dri
-  # Network access (SSH connections, sync)
+  # Network access — required for SSH connections and the encrypted
+  # vault sync to the self-hosted backend. There is no portal
+  # equivalent for raw outbound TCP / TLS, so this stays direct.
   - --share=network
-  # Secret Service API used by flutter_secure_storage / KeyringService to
-  # persist the vault master key in libsecret (GNOME Keyring / KWallet).
-  # Without this permission the keyring service falls back to an
-  # encrypted file under ~/.var/app/<app-id>/data/sshvault/master.key.enc.
+  # Secret Service API (org.freedesktop.secrets). flutter_secure_storage
+  # persists the vault master key in libsecret (GNOME Keyring /
+  # KWallet) through this name. When the host doesn't expose it (some
+  # immutable distros, kiosk setups) KeyringService falls back to
+  # org.freedesktop.portal.Secret via the portal name below — so this
+  # line is *optional*. Distributors may remove it for an extra-strict
+  # sandbox; the app remains functional via the portal fallback. Until
+  # the portal-only path is the default we keep this for
+  # backwards-compatible behavior on existing installs.
   - --talk-name=org.freedesktop.secrets
-  # File picker / export
+  # XDG desktop portal — single sandbox-friendly entry point for:
+  #   * org.freedesktop.portal.Settings    — live system theme +
+  #     accent color (DesktopAppearanceService).
+  #   * org.freedesktop.portal.FileChooser — invoked by the
+  #     `file_picker` plugin (10.x) so the user picks files via the
+  #     host's file dialog rather than a sandbox-bound
+  #     GtkFileChooserNative. Routes file imports/exports across the
+  #     SFTP, SSH key, settings export and host-config import flows.
+  #   * org.freedesktop.portal.OpenURI     — invoked by `url_launcher`
+  #     (6.3.x) to open the About / donation / docs links without an
+  #     `xdg-open` exec.
+  #   * org.freedesktop.portal.Secret      — KeyringService fallback
+  #     when org.freedesktop.secrets is unreachable.
+  # Adding any of these directly (e.g. --talk-name=
+  # org.freedesktop.portal.OpenURI) is unnecessary; the Desktop bus
+  # name covers the whole portal surface.
+  - --talk-name=org.freedesktop.portal.Desktop
+  # File picker / export defaults. The picker itself routes through
+  # the FileChooser portal (above), so these only matter for the
+  # in-app code that pre-resolves a default save location and
+  # surfaces files the user has *already* chosen.
   - --filesystem=home:ro
   - --filesystem=xdg-download
-  # SSH config and key import
+  # SSH config and key import (read-only). xdg-config/ssh covers the
+  # XDG-compliant location (~/.config/ssh/config) used by some
+  # distributions; ~/.ssh covers the historical OpenSSH default.
+  # Both stay :ro — SSHVault never writes to the user's host SSH
+  # store.
+  - --filesystem=xdg-config/ssh:ro
   - --filesystem=~/.ssh:ro
-  # Notifications
+  # Notifications — flutter_local_notifications uses the freedesktop
+  # Notifications spec rather than the portal so we keep the direct
+  # bus name.
   - --talk-name=org.freedesktop.Notifications
-  # XDG desktop portal — used to read the GNOME / KDE color-scheme +
-  # accent-color preference (org.freedesktop.appearance) so the UI follows
-  # the system theme live (DesktopAppearanceService).
-  - --talk-name=org.freedesktop.portal.Desktop
-  # SSH agent forwarding
+  # SSH agent forwarding — gives the sandboxed app access to the
+  # host's running ssh-agent socket so the "Use key from ssh-agent"
+  # flow works.
   - --socket=ssh-auth
+  # systemd-logind — used by PowerInhibitorService to call
+  # org.freedesktop.login1.Manager.Inhibit("sleep:idle", ...) so the system
+  # does not auto-suspend while at least one SSH session is active.
+  - --system-talk-name=org.freedesktop.login1
 
 modules:
   # libayatana-appindicator — required by tray_manager / system tray icon on

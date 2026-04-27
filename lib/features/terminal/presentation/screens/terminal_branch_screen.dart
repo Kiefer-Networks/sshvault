@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xterm/xterm.dart';
 
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
+import 'package:sshvault/core/services/hidpi_service.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
@@ -70,11 +71,19 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
       ),
     );
 
-    final fontSize = fontSizeAsync.when(
+    final rawFontSize = fontSizeAsync.when(
       data: (size) => size,
       loading: () => 14.0,
       error: (_, _) => 14.0,
     );
+
+    // HiDPI nudge: on a fractional / 1.25–1.5x display, xterm.dart's bitmap
+    // glyph cache can render the configured size noticeably softer than the
+    // surrounding Material text. We bump the font slightly so that the
+    // visual weight matches what the user sees in the rest of the app.
+    // The override (settings -> "Force pixel ratio") wins over the OS value.
+    final dpr = effectiveDevicePixelRatio(context, ref);
+    final fontSize = _scaleTerminalFont(rawFontSize, dpr);
 
     // Update virtual keyboard when active session changes
     if (activeSession != null) {
@@ -255,6 +264,20 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
       session?.terminal.textInput(result);
     }
   }
+}
+
+/// Adjusts the terminal font size for the current device pixel ratio so
+/// glyphs render at consistent visual weight across 1x / fractional / 2x
+/// monitors. Below 1.25 we leave the user's chosen size alone; at >= 1.25
+/// (typical fractional-scaling territory) we add a small bump that's been
+/// tuned to match the surrounding Material text density. The cap at 1.0
+/// pixel keeps the user's coarse font-size slider as the dominant signal.
+double _scaleTerminalFont(double base, double dpr) {
+  if (dpr <= 1.0) return base;
+  if (dpr >= 2.0) return base + 1.0;
+  // Linear ramp between 1.0 and 2.0 dpr -> 0.0 to 1.0 px bump.
+  final ramp = (dpr - 1.0).clamp(0.0, 1.0);
+  return base + ramp;
 }
 
 class _TerminalPane extends StatelessWidget {

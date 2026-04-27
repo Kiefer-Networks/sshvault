@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
-import 'package:flutter/services.dart';
+import 'package:sshvault/core/services/secure_clipboard.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -135,9 +135,9 @@ class SnippetDetailScreen extends ConsumerWidget {
                                   icon: const Icon(Icons.copy, size: 20),
                                   tooltip: l10n.copiedToClipboard,
                                   onPressed: () {
-                                    Clipboard.setData(
-                                      ClipboardData(text: snippet.content),
-                                    );
+                                    ref
+                                        .read(secureClipboardProvider)
+                                        .copySecret(snippet.content);
                                     AdaptiveNotification.show(
                                       context,
                                       message: l10n.copiedToClipboard,

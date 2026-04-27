@@ -1,0 +1,14 @@
+Linux desktop integration deepens.
+
+- Power-management inhibit during active SSH sessions (login1.Inhibit "sleep:idle" "block") so the system never suspends mid-session.
+- Window state persistence — size / position / maximized restored on next launch, per-monitor.
+- XDG-autostart toggle in Settings: "Start SSHVault on login" writes ~/.config/autostart/de.kiefer_networks.sshvault.desktop with --minimized.
+- Tray-only boot polish: --minimized starts headless (no window flash), close-to-tray option turns the [×] button into a hide, optional resume-on-login reopens the last set of sessions automatically.
+- Wayland clipboard persistence — secrets survive after the app exits via wl-copy --foreground, with the existing 30-second auto-clear.
+- HiDPI per-monitor scaling — drag the window between a 1× and 2× monitor and the Flutter view re-rasterizes at the new scale; "Force pixel ratio" override available in Appearance settings.
+- xdg-desktop-portal migration — file pickers, secret storage and link opening now route through portals when running under Flatpak.
+- AppArmor profile for native-package distros — locks the binary down to its own data directories, ssh keys read-only, denies access to browser cookies / GPG / password stores.
+- Comprehensive command-line argv: sshvault HOSTNAME, sshvault user@host:port, --import-config, --import-keys, --export-vault, --version, --help, --quit, with bash + zsh completion.
+- Native GTK / Plasma file chooser routing — KDE users get the native KDE file dialog instead of the foreign GTK one.
+- DBus activation: .desktop now declares Quick connect / Reopen last session as Actions, and the binary implements org.freedesktop.Application Activate / Open / ActivateAction so launchers can drive the app without spawning extra processes.
+- Configurable global keyboard shortcut (default Super+Shift+S) via xdg-desktop-portal GlobalShortcuts — opens a quick-connect search overlay from anywhere on the desktop.

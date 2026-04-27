@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
+import 'package:sshvault/core/services/hidpi_service.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/settings/domain/entities/app_settings_entity.dart';
@@ -235,6 +236,47 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                         context,
                         message: l10n.settingsThemeChanged,
                       );
+                    },
+                  ),
+                  // HiDPI override. `0.0` is the persisted sentinel for
+                  // "auto"; other values are forced verbatim.
+                  SettingsTile(
+                    icon: Icons.aspect_ratio,
+                    iconColor: Theme.of(context).colorScheme.secondary,
+                    title: 'Force pixel ratio',
+                    subtitleText: settings.forcedPixelRatio == 0
+                        ? 'Auto (use the OS-reported scale)'
+                        : '${settings.forcedPixelRatio}x (forced)',
+                    onTap: () async {
+                      final v = await showSettingsSelectionDialog<double>(
+                        context: context,
+                        title: 'Force pixel ratio',
+                        currentValue: settings.forcedPixelRatio,
+                        options: const [
+                          SelectionOption(value: 0.0, label: 'Auto'),
+                          SelectionOption(value: 1.0, label: '1.0x'),
+                          SelectionOption(value: 1.25, label: '1.25x'),
+                          SelectionOption(value: 1.5, label: '1.5x'),
+                          SelectionOption(value: 1.75, label: '1.75x'),
+                          SelectionOption(value: 2.0, label: '2.0x'),
+                        ],
+                      );
+                      if (v != null) {
+                        await ref
+                            .read(settingsProvider.notifier)
+                            .setForcedPixelRatio(v);
+                        // Mirror the persisted value into the in-memory
+                        // provider that `effectiveDevicePixelRatio` reads.
+                        // `0.0` means "auto" -> store as null.
+                        ref.read(forcedPixelRatioProvider.notifier).state =
+                            v == 0 ? null : v;
+                        if (context.mounted) {
+                          AdaptiveNotification.show(
+                            context,
+                            message: l10n.settingsThemeChanged,
+                          );
+                        }
+                      }
                     },
                   ),
                 ],

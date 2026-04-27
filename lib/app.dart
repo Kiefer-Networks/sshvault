@@ -6,6 +6,9 @@ import 'package:sshvault/core/routing/app_router.dart';
 import 'package:sshvault/core/security/security_providers.dart';
 import 'package:sshvault/core/services/desktop_appearance_service.dart';
 import 'package:sshvault/core/services/file_drop_service.dart';
+import 'package:sshvault/core/services/global_shortcut_service.dart';
+import 'package:sshvault/core/services/headless_boot_service.dart';
+import 'package:sshvault/core/services/power_inhibitor_service.dart';
 import 'package:sshvault/core/services/screen_protection_service.dart';
 import 'package:sshvault/core/theme/app_theme.dart';
 import 'package:sshvault/core/widgets/lock_screen.dart';
@@ -15,8 +18,13 @@ import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/settings/domain/entities/app_settings_entity.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/quick_connect_sheet.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
+import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
+import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:sshvault/core/storage/database_provider.dart';
+import 'package:window_manager/window_manager.dart';
+import 'dart:io';
 
 class SSHVaultApp extends ConsumerStatefulWidget {
   const SSHVaultApp({super.key});
@@ -40,7 +48,110 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       _initHeartbeat();
       _pruneOldTombstones();
       _initDesktopAppearance();
+      _initSshSessionPowerInhibitor();
+      _listenForQuickConnectShortcut();
+      _wireHeadlessBoot();
     });
+  }
+
+  /// Connects HeadlessBootService to the live providers:
+  ///   - Mirrors `closeToTray` / `resumeOnLogin` from settings.
+  ///   - Persists active host ids whenever the session list changes so the
+  ///     next minimized boot can replay them.
+  ///   - On a minimized boot with `resumeOnLogin == true`, replays the
+  ///     persisted host ids in the background once auth succeeds.
+  void _wireHeadlessBoot() {
+    final boot = HeadlessBootService.instance;
+
+    // Push settings flags into the service whenever they change. The very
+    // first emission applies the persisted user choices.
+    ref.listenManual(settingsProvider, (_, next) {
+      final s = next.value;
+      if (s == null) return;
+      boot.applySettings(
+        closeToTraySetting: s.closeToTray,
+        resumeOnLoginSetting: s.resumeOnLogin,
+      );
+    }, fireImmediately: true);
+
+    // Wire persistence callbacks. We capture `ref.read` lazily so the
+    // callbacks always see the freshest provider state.
+    boot.wirePersistence(
+      loadLastActiveHosts: () =>
+          ref.read(settingsProvider.notifier).getLastActiveHosts(),
+      openSession: (id) =>
+          ref.read(sessionManagerProvider.notifier).openSession(id),
+    );
+
+    // Track active hosts so we can replay them on the next boot. Only the
+    // server ids of fully-connected sessions are persisted to avoid
+    // resurrecting half-finished connection attempts.
+    ref.listenManual<List<SshSessionEntity>>(sessionManagerProvider, (
+      prev,
+      next,
+    ) {
+      final connected = next
+          .where((s) => s.status == SshConnectionStatus.connected)
+          .map((s) => s.serverId)
+          .toSet()
+          .toList();
+      ref.read(settingsProvider.notifier).setLastActiveHosts(connected);
+    }, fireImmediately: false);
+
+    // After auth, replay saved sessions on minimized boot. We piggyback on
+    // the existing auth listener so we don't duplicate the lock-screen
+    // gating logic.
+    ref.listenManual(authProvider, (prev, next) async {
+      if (next.value != AuthStatus.authenticated) return;
+      if (!boot.isHeadlessBoot) return;
+      try {
+        await boot.resumeSavedSessions();
+      } catch (e) {
+        LoggingService.instance.warning(
+          'HeadlessBoot',
+          'Resume saved sessions failed: $e',
+        );
+      }
+    }, fireImmediately: false);
+  }
+
+  /// Eagerly subscribes the power inhibitor watcher so it acquires /
+  /// releases the login1 sleep lock based on session count. The provider
+  /// pins itself with `keepAlive`, so reading it once is enough — the
+  /// internal listeners survive widget rebuilds. On non-Linux platforms
+  /// the watcher returns immediately.
+  void _initSshSessionPowerInhibitor() {
+    ref.read(sshSessionPowerInhibitorProvider);
+  }
+
+  /// Linux only: surface the Quick Connect overlay every time the global
+  /// shortcut fires. The provider is a [StreamProvider] of monotonically
+  /// increasing tick counts, so we react on each new value rather than on
+  /// equality (which would suppress repeated activations).
+  void _listenForQuickConnectShortcut() {
+    if (!Platform.isLinux) return;
+    ref.listenManual<AsyncValue<int>>(quickConnectShortcutProvider, (
+      prev,
+      next,
+    ) async {
+      final tick = next.value;
+      if (tick == null) return;
+      if (prev?.value == tick) return;
+      // Raise the window first — the user pressed the hotkey from anywhere.
+      try {
+        await windowManager.show();
+        await windowManager.focus();
+        HeadlessBootService.instance.markWindowSurfaced();
+      } catch (_) {
+        // window_manager may not be ready in tests / headless boots — the
+        // sheet still renders into whatever's already on screen.
+      }
+      final ctx = rootNavigatorKey.currentContext;
+      if (ctx != null && mounted) {
+        // ignore: use_build_context_synchronously
+        await QuickConnectSheet.show(ctx);
+      }
+    }, fireImmediately: false);
   }
 
   /// Garbage-collect tombstones (`deletedAt < now - 90d`) so the database
@@ -101,6 +212,11 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
   void _watchHeartbeatExpiry() {
     ref.listenManual(heartbeatExpiredProvider, (prev, next) {
       if (next && mounted) {
+        // Suppress while booted into the tray — surfacing a modal dialog
+        // over a hidden window strands the user with no visible
+        // affordance. The flag flips off as soon as the user pops the
+        // window from the tray; the next listener tick will re-fire.
+        if (HeadlessBootService.instance.isHeadlessBoot) return;
         final ctx = rootNavigatorKey.currentContext;
         if (ctx != null) {
           final l10n = AppLocalizations.of(ctx)!;
@@ -135,6 +251,10 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       }
 
       if (!mounted || _attestationDialogShown) return;
+      // Defer the dialog while booted into the tray — there's no window
+      // to anchor it to. The notifier keeps emitting, so the next time
+      // the user surfaces the window we re-evaluate and show it.
+      if (HeadlessBootService.instance.isHeadlessBoot) return;
       _attestationDialogShown = true;
 
       final ctx = rootNavigatorKey.currentContext;

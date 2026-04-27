@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/security/doh_resolver_service.dart';
+import 'package:sshvault/core/services/global_shortcut_service.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
@@ -143,8 +144,87 @@ class NetworkSettingsScreen extends ConsumerWidget {
                         );
                       },
                     ),
+                    // Auto-start: Linux-only XDG autostart entry.
+                    if (Platform.isLinux)
+                      SwitchListTile(
+                        secondary: Icon(
+                          Icons.power_settings_new,
+                          color: theme.colorScheme.primary,
+                        ),
+                        title: const Text('Start SSHVault on login'),
+                        subtitle: const Text('Boots minimized to system tray'),
+                        value: settings.autoStartEnabled,
+                        onChanged: (v) async {
+                          await ref
+                              .read(settingsProvider.notifier)
+                              .setAutoStartEnabled(v);
+                          if (context.mounted) {
+                            AdaptiveNotification.show(
+                              context,
+                              message: l10n.settingsUpdated,
+                            );
+                          }
+                        },
+                      ),
+                    // Close-to-tray (Linux/Windows). When on, hitting the
+                    // [×] button hides the window into the tray instead of
+                    // quitting the app. Only meaningful when the tray icon
+                    // is enabled.
+                    SwitchListTile(
+                      secondary: Icon(
+                        Icons.close_fullscreen_outlined,
+                        color: theme.colorScheme.primary,
+                      ),
+                      title: const Text('Close button minimizes to tray'),
+                      subtitle: const Text(
+                        'Clicking the window close button hides SSHVault '
+                        'into the tray instead of quitting.',
+                      ),
+                      value: settings.closeToTray,
+                      onChanged: (v) async {
+                        await ref
+                            .read(settingsProvider.notifier)
+                            .setCloseToTray(v);
+                        if (context.mounted) {
+                          AdaptiveNotification.show(
+                            context,
+                            message: l10n.settingsUpdated,
+                          );
+                        }
+                      },
+                    ),
+                    // Resume-on-login is only useful when the binary is
+                    // booted minimized (autostart or `--minimized`); the
+                    // service still gates on that flag at boot time.
+                    SwitchListTile(
+                      secondary: Icon(
+                        Icons.history,
+                        color: theme.colorScheme.primary,
+                      ),
+                      title: const Text('Resume sessions on login'),
+                      subtitle: const Text(
+                        'Reopen the hosts that were active before the last '
+                        'quit when SSHVault is started minimized.',
+                      ),
+                      value: settings.resumeOnLogin,
+                      onChanged: (v) async {
+                        await ref
+                            .read(settingsProvider.notifier)
+                            .setResumeOnLogin(v);
+                        if (context.mounted) {
+                          AdaptiveNotification.show(
+                            context,
+                            message: l10n.settingsUpdated,
+                          );
+                        }
+                      },
+                    ),
                   ],
                 ),
+                if (Platform.isLinux) ...[
+                  Spacing.verticalMd,
+                  const _GlobalShortcutSection(),
+                ],
               ],
 
               // Reset button
@@ -404,5 +484,135 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
       loading: () => const SizedBox.shrink(),
       error: (_, _) => const SizedBox.shrink(),
     );
+  }
+}
+
+/// Linux-only "Global shortcut" panel. Shown alongside the system-tray /
+/// auto-start tiles. Reads [globalShortcutStatusProvider] to render either
+/// the bound state ("Super+Shift+S — Re-bind") or the dbus-send fallback
+/// instructions for desktops without the GlobalShortcuts portal.
+class _GlobalShortcutSection extends ConsumerWidget {
+  const _GlobalShortcutSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final status = ref.watch(globalShortcutStatusProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(title: 'Global shortcut'),
+        SettingsGroupCard(
+          children: [
+            SwitchListTile(
+              secondary: Icon(
+                Icons.keyboard_command_key,
+                color: theme.colorScheme.primary,
+              ),
+              title: const Text('Enable global shortcut'),
+              subtitle: Text(
+                status.bound
+                    ? 'Press ${_humanTrigger(status.trigger)} from anywhere '
+                          'to open Quick connect.'
+                    : status.portalAvailable
+                    ? 'Click "Re-bind" to confirm the trigger.'
+                    : 'Your desktop does not expose the GlobalShortcuts '
+                          'portal — see the manual binding instructions below.',
+              ),
+              value: status.bound,
+              onChanged: status.portalAvailable
+                  ? (v) async {
+                      final container = ProviderScope.containerOf(
+                        context,
+                        listen: false,
+                      );
+                      final svc = ref.read(globalShortcutServiceProvider);
+                      if (v) {
+                        await svc.register(container: container);
+                      } else {
+                        await svc.dispose();
+                        ref
+                            .read(globalShortcutStatusProvider.notifier)
+                            .state = GlobalShortcutStatus.unavailable.copyWith(
+                          portalAvailable: status.portalAvailable,
+                        );
+                      }
+                    }
+                  : null,
+            ),
+            if (status.portalAvailable)
+              ListTile(
+                leading: Icon(Icons.refresh, color: theme.colorScheme.primary),
+                title: const Text('Re-bind'),
+                subtitle: Text(
+                  status.trigger != null
+                      ? 'Current trigger: ${_humanTrigger(status.trigger)}'
+                      : 'Pick a new trigger via the desktop dialog.',
+                ),
+                onTap: () async {
+                  final container = ProviderScope.containerOf(
+                    context,
+                    listen: false,
+                  );
+                  await ref
+                      .read(globalShortcutServiceProvider)
+                      .rebind(container: container);
+                  if (context.mounted) {
+                    AdaptiveNotification.show(
+                      context,
+                      message: 'Asked the desktop to re-bind the shortcut.',
+                    );
+                  }
+                },
+              ),
+          ],
+        ),
+        if (!status.portalAvailable) ...[
+          Spacing.verticalSm,
+          SectionCard(
+            child: Padding(
+              padding: Spacing.paddingAllLg,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Manual binding (XFCE / older desktops)',
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  Spacing.verticalXs,
+                  Text(
+                    'Open Settings → Keyboard → Application Shortcuts and '
+                    'bind any key combination to:',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  Spacing.verticalSm,
+                  SelectableText(
+                    kFallbackDbusSendCommand,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// Renders the portal trigger string ("SUPER+SHIFT+s") in a slightly more
+  /// human form ("Super+Shift+S"). Pure formatting — does not validate.
+  String _humanTrigger(String? raw) {
+    if (raw == null || raw.isEmpty) return 'Super+Shift+S';
+    return raw
+        .split('+')
+        .map(
+          (p) => p.isEmpty
+              ? p
+              : '${p[0].toUpperCase()}${p.substring(1).toLowerCase()}',
+        )
+        .join('+');
   }
 }

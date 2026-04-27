@@ -43,6 +43,22 @@ class AppSettingsEntity {
   // Desktop integration
   /// Show a system tray icon on Linux / Windows. Ignored on macOS / mobile.
   final bool showSystemTray;
+
+  /// Enroll SSHVault with the desktop session's auto-start system so it
+  /// launches at login (minimized to tray). Linux only — implemented via
+  /// an XDG `.desktop` file under `~/.config/autostart/`.
+  final bool autoStartEnabled;
+
+  /// When `true`, clicking the [×] window-close button hides the window
+  /// instead of quitting (Linux / Windows only). Off by default so we don't
+  /// surprise users on first launch.
+  final bool closeToTray;
+
+  /// When the binary is started with `--minimized`, automatically reopen the
+  /// hosts that were active in the previous session. Sessions are restored
+  /// in the background — the window stays hidden until the user pops it
+  /// from the tray.
+  final bool resumeOnLogin;
   // Master-key keyring migration (Linux libsecret). Flips to true after the
   // legacy on-disk master key has been moved into the system keyring (or
   // confirmed absent) so the migration only runs once per install.
@@ -64,6 +80,48 @@ class AppSettingsEntity {
   /// Default lifetime (seconds) used when the user adds an SSHVault key to
   /// the running agent. `0` = no expiry (kept until explicit removal).
   final int sshAgentDefaultLifetimeSecs;
+
+  // ---------- Power management (Linux only) ----------
+
+  /// When `true` (default), the app holds an
+  /// `org.freedesktop.login1.Manager.Inhibit("sleep:idle", ..., "block")`
+  /// lock for as long as at least one SSH session is open, preventing the
+  /// system from auto-suspending mid-session. Ignored on non-Linux
+  /// platforms (the underlying service is a no-op there).
+  final bool preventSuspendDuringSshSessions;
+
+  // ---------- Desktop window geometry persistence (Linux/Windows/macOS) ----------
+
+  /// Last-known logical width of the main window. Restored at boot before
+  /// the window is shown to avoid a "flash" at the default size. Default
+  /// (1280) is applied by the WindowStateService when no value is saved.
+  /// Ignored on web / mobile.
+  final double windowWidth;
+
+  /// Last-known logical height of the main window. Default 800.
+  final double windowHeight;
+
+  /// Last-known X coordinate (logical px) of the top-left corner. A
+  /// negative value means "no saved position — let the OS center the
+  /// window". The clamping logic in WindowStateService rejects obviously
+  /// off-screen values too.
+  final double windowX;
+
+  /// Last-known Y coordinate (logical px) of the top-left corner.
+  final double windowY;
+
+  /// Whether the window was maximized at last close. Re-applied after
+  /// `setSize` / `setPosition` during boot.
+  final bool windowMaximized;
+
+  // ---------- HiDPI / pixel-ratio override (Linux desktops) ----------
+
+  /// User-forced device pixel ratio. `0.0` means "auto" — fall back to the
+  /// platform-provided value from `MediaQuery`. Otherwise the value is used
+  /// verbatim everywhere `effectiveDevicePixelRatio` is consulted. Useful
+  /// for users on misconfigured Wayland fractional-scaling setups where GTK
+  /// reports a stale or wrong scale to the embedded FlView.
+  final double forcedPixelRatio;
 
   const AppSettingsEntity({
     this.themeMode = AppThemeMode.system,
@@ -100,10 +158,20 @@ class AppSettingsEntity {
     this.globalProxyPort = 1080,
     this.globalProxyUsername = '',
     this.showSystemTray = true,
+    this.autoStartEnabled = false,
+    this.closeToTray = false,
+    this.resumeOnLogin = false,
     this.keyringMigrationCompleted = false,
     this.followDesktopAccent = true,
     this.sshAgentForwardByDefault = false,
     this.sshAgentDefaultLifetimeSecs = 3600,
+    this.preventSuspendDuringSshSessions = true,
+    this.windowWidth = 1280,
+    this.windowHeight = 800,
+    this.windowX = -1,
+    this.windowY = -1,
+    this.windowMaximized = false,
+    this.forcedPixelRatio = 0,
   });
 
   bool get hasPin => pinHash.isNotEmpty;
@@ -159,10 +227,20 @@ class AppSettingsEntity {
     int? globalProxyPort,
     String? globalProxyUsername,
     bool? showSystemTray,
+    bool? autoStartEnabled,
+    bool? closeToTray,
+    bool? resumeOnLogin,
     bool? keyringMigrationCompleted,
     bool? followDesktopAccent,
     bool? sshAgentForwardByDefault,
     int? sshAgentDefaultLifetimeSecs,
+    bool? preventSuspendDuringSshSessions,
+    double? windowWidth,
+    double? windowHeight,
+    double? windowX,
+    double? windowY,
+    bool? windowMaximized,
+    double? forcedPixelRatio,
   }) {
     return AppSettingsEntity(
       themeMode: themeMode ?? this.themeMode,
@@ -206,6 +284,9 @@ class AppSettingsEntity {
       globalProxyPort: globalProxyPort ?? this.globalProxyPort,
       globalProxyUsername: globalProxyUsername ?? this.globalProxyUsername,
       showSystemTray: showSystemTray ?? this.showSystemTray,
+      autoStartEnabled: autoStartEnabled ?? this.autoStartEnabled,
+      closeToTray: closeToTray ?? this.closeToTray,
+      resumeOnLogin: resumeOnLogin ?? this.resumeOnLogin,
       keyringMigrationCompleted:
           keyringMigrationCompleted ?? this.keyringMigrationCompleted,
       followDesktopAccent: followDesktopAccent ?? this.followDesktopAccent,
@@ -213,6 +294,15 @@ class AppSettingsEntity {
           sshAgentForwardByDefault ?? this.sshAgentForwardByDefault,
       sshAgentDefaultLifetimeSecs:
           sshAgentDefaultLifetimeSecs ?? this.sshAgentDefaultLifetimeSecs,
+      preventSuspendDuringSshSessions:
+          preventSuspendDuringSshSessions ??
+          this.preventSuspendDuringSshSessions,
+      windowWidth: windowWidth ?? this.windowWidth,
+      windowHeight: windowHeight ?? this.windowHeight,
+      windowX: windowX ?? this.windowX,
+      windowY: windowY ?? this.windowY,
+      windowMaximized: windowMaximized ?? this.windowMaximized,
+      forcedPixelRatio: forcedPixelRatio ?? this.forcedPixelRatio,
     );
   }
 

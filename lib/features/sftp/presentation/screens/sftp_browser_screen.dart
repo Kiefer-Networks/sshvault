@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
+import 'package:sshvault/core/utils/file_chooser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/shell_aware_app_bar.dart';
 import 'package:sshvault/features/sftp/domain/entities/sftp_pane_source.dart';
@@ -97,7 +97,7 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
       final fileName = p.basename(sourcePath);
       final fileBytes = await File(sourcePath).readAsBytes();
 
-      final savedPath = await FilePicker.platform.saveFile(
+      final savedPath = await FileChooser.saveFile(
         dialogTitle: l10n.sftpSaveToFiles,
         fileName: fileName,
         bytes: fileBytes,

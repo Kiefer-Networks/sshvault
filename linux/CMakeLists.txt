@@ -149,6 +149,26 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
     COMPONENT Runtime)
 endif()
 
+# === Shell completion ===
+# Bash and zsh completion files for the `sshvault` CLI. Bash completion is
+# loaded on demand by bash-completion via the filename match; zsh expects the
+# function name to match the file (`_sshvault`) and the directory to be in
+# `$fpath`.
+set(SSHVAULT_COMPLETION_DIR "${CMAKE_CURRENT_SOURCE_DIR}/completion")
+if(EXISTS "${SSHVAULT_COMPLETION_DIR}/sshvault.bash")
+  install(FILES
+    "${SSHVAULT_COMPLETION_DIR}/sshvault.bash"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/share/bash-completion/completions"
+    RENAME sshvault
+    COMPONENT Runtime)
+endif()
+if(EXISTS "${SSHVAULT_COMPLETION_DIR}/_sshvault")
+  install(FILES
+    "${SSHVAULT_COMPLETION_DIR}/_sshvault"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/share/zsh/site-functions"
+    COMPONENT Runtime)
+endif()
+
 # === KRunner integration (KDE Plasma) ===
 # Ships the SSHVault KRunner DBus runner so Plasma users can quick-connect
 # to hosts via the launcher. Only relevant for system-wide installs of

@@ -1,11 +1,11 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/opt/homebrew/share/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/maltekiefer/Entwicklung/SSHVault/sshvault"
+export "FLUTTER_ROOT=/tmp/flutter-writable"
+export "FLUTTER_APPLICATION_PATH=/home/pr0ph37/Entwicklung/SSHVault/sshvault"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
-export "FLUTTER_BUILD_NAME=1.5.0"
-export "FLUTTER_BUILD_NUMBER=18"
+export "FLUTTER_BUILD_NAME=1.11.0"
+export "FLUTTER_BUILD_NUMBER=41"
 export "DART_OBFUSCATION=false"
 export "TRACK_WIDGET_CREATION=true"
 export "TREE_SHAKE_ICONS=false"

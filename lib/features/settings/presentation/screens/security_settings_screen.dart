@@ -331,6 +331,38 @@ class SecuritySettingsScreen extends ConsumerWidget {
               ],
             ),
 
+            // Power management — Linux only. Hidden on macOS / Windows /
+            // mobile because PowerInhibitorService is a no-op there. Strings
+            // are inline (not localized) to match the ssh-agent block above
+            // and avoid touching all 28 .arb files for a single toggle.
+            if (Platform.isLinux) ...[
+              Spacing.verticalLg,
+              const SectionHeader(title: 'Power management'),
+              SettingsGroupCard(
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.bedtime_off_outlined,
+                    iconColor: AppColors.iconBlue,
+                    title: 'Prevent suspend during SSH sessions',
+                    subtitleText:
+                        'Hold a systemd-logind sleep inhibitor while at '
+                        'least one SSH session is connected so the system '
+                        'does not auto-suspend mid-session.',
+                    value: settings.preventSuspendDuringSshSessions,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setPreventSuspendDuringSshSessions(v);
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsUpdated,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+
             // Status section
             Spacing.verticalLg,
             SectionHeader(title: l10n.settingsSectionStatus),
@@ -606,6 +638,7 @@ class _MasterKeyStorageTileState extends ConsumerState<_MasterKeyStorageTile> {
         final backend = snapshot.data;
         final subtitle = switch (backend) {
           MasterKeyBackend.systemKeyring => 'System Keyring',
+          MasterKeyBackend.portalSecret => 'XDG Portal (Secret)',
           MasterKeyBackend.encryptedFile => 'Encrypted file (fallback)',
           null =>
             snapshot.connectionState == ConnectionState.waiting

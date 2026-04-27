@@ -1,0 +1,14 @@
+Integración profunda con escritorio Linux.
+
+- Inhibe la suspensión durante sesiones SSH (login1.Inhibit) — el sistema no se duerme a mitad de conexión.
+- Persistencia del estado de ventana (tamaño/posición/maximizada) por monitor.
+- Auto-inicio XDG opcional con --minimized.
+- Modo tray-only pulido: --minimized arranca sin parpadeo, opción cerrar a bandeja, reanudar últimas sesiones al iniciar sesión.
+- Persistencia del portapapeles en Wayland (wl-copy --foreground) con auto-borrado a 30 s.
+- Escalado HiDPI por monitor con anulación manual.
+- Migración a xdg-desktop-portal: file-picker, secretos y enlaces vía portal en Flatpak.
+- Perfil AppArmor para paquetes nativos.
+- CLI completa: HOSTNAME, user@host:port, --import-config/--import-keys/--export-vault/--version/--help/--quit, con autocompletado bash + zsh.
+- File chooser nativo GTK/KDE según escritorio.
+- DBus activation: .desktop con Acciones, app implementa org.freedesktop.Application.
+- Atajo global configurable (Super+Shift+S) via xdg-desktop-portal GlobalShortcuts.

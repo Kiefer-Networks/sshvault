@@ -1,0 +1,14 @@
+Intégration approfondie au bureau Linux.
+
+- Inhibition de la mise en veille pendant les sessions SSH (login1.Inhibit).
+- Persistance taille/position/maximisé par moniteur.
+- Auto-démarrage XDG (--minimized) en option.
+- Mode tray-only soigné : --minimized sans flash, fermeture vers tray, reprise des sessions à la connexion.
+- Persistance du presse-papiers Wayland (wl-copy --foreground) avec effacement auto 30 s.
+- HiDPI multi-moniteur avec override manuel.
+- Migration vers xdg-desktop-portal (file picker, secrets, liens) sous Flatpak.
+- Profil AppArmor pour paquets natifs.
+- CLI complète : HOSTNAME, user@host:port, --import-config/--import-keys/--export-vault/--version/--help/--quit, complétions bash + zsh.
+- File chooser natif GTK ou KDE selon l'environnement.
+- DBus activation : .desktop avec Actions, app implémente org.freedesktop.Application.
+- Raccourci global configurable (Super+Shift+S) via xdg-desktop-portal GlobalShortcuts.

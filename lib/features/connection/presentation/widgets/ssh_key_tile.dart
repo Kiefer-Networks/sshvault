@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
-import 'package:flutter/services.dart';
+import 'package:sshvault/core/services/secure_clipboard.dart';
 import 'package:sshvault/core/widgets/settings/circle_icon.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -57,7 +57,7 @@ class SshKeyTile extends ConsumerWidget {
           if (sshKey.publicKey.isNotEmpty)
             SlidableAction(
               onPressed: (_) {
-                Clipboard.setData(ClipboardData(text: sshKey.publicKey));
+                ref.read(secureClipboardProvider).copyPlain(sshKey.publicKey);
                 AdaptiveNotification.show(
                   context,
                   message: l10n.sshKeyTilePublicKeyCopied,
@@ -187,7 +187,7 @@ class SshKeyTile extends ConsumerWidget {
                 icon: const Icon(Icons.copy),
                 tooltip: l10n.sshKeyTileCopyPublicKey,
                 onPressed: () {
-                  Clipboard.setData(ClipboardData(text: sshKey.publicKey));
+                  ref.read(secureClipboardProvider).copyPlain(sshKey.publicKey);
                   AdaptiveNotification.show(
                     context,
                     message: l10n.sshKeyTilePublicKeyCopied,

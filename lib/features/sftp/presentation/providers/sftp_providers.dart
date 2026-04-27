@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/utils/file_chooser.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -456,7 +456,7 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
     return localPath;
   }
 
-  Future<int> uploadFromPicker() async {
+  Future<int> uploadFromPicker({required String dialogTitle}) async {
     final source = state.source;
     if (source is! SftpPaneSourceRemote) return 0;
 
@@ -466,19 +466,19 @@ class SftpPaneNotifier extends Notifier<SftpPaneState> {
     final savedPath = state.currentPath;
     _preserved[side] = state;
 
-    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    final results = await FileChooser.openFiles(dialogTitle: dialogTitle);
 
     // Restore pane state if it was reset during Android activity lifecycle
     if (state.source is! SftpPaneSourceRemote) {
       await restoreTo(source, savedPath);
     }
 
-    if (result == null || result.files.isEmpty) return 0;
+    if (results.isEmpty) return 0;
 
     final transferManager = ref.read(transferManagerProvider.notifier);
     int count = 0;
 
-    for (final file in result.files) {
+    for (final file in results) {
       final localPath = file.path;
       if (localPath == null) continue;
 

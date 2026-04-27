@@ -227,7 +227,7 @@ class _NormalToolbarContent extends ConsumerWidget {
 
     final count = await ref
         .read(sftpPaneProvider(side).notifier)
-        .uploadFromPicker();
+        .uploadFromPicker(dialogTitle: l10n.fileChooserUploadFiles);
 
     if (count > 0 && context.mounted) {
       AdaptiveNotification.show(

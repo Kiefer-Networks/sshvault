@@ -37,6 +37,101 @@ static const char kDropChannel[] = "de.kiefer_networks.sshvault/drop";
 // outbound notifications (drag-motion / drag-leave / drag-data-received).
 static FlMethodChannel* g_drop_channel = nullptr;
 
+// ---------------------------------------------------------------------------
+// HiDPI per-monitor scale tracking
+// ---------------------------------------------------------------------------
+// When the user drags the toplevel window between monitors with different
+// scale factors (e.g. external 1x next to laptop 2x), GTK 3 does not always
+// request a re-rasterize of the embedded FlView. We listen on:
+//
+//   - GdkScreen::monitors-changed  (monitor add/remove/reconfigure)
+//   - per-GdkMonitor notify::scale-factor (the scale itself changed)
+//
+// On either event, we re-resolve the scale of the monitor under the window,
+// poke the view with `gtk_widget_queue_resize`, and forward the new scale to
+// Dart on the channel below so HiDpiService can update its provider.
+//
+// Channel: `de.kiefer_networks.sshvault/window`
+//   - `monitorScaleChanged(double scale)` — outbound, called after a change.
+static const char kWindowChannel[] = "de.kiefer_networks.sshvault/window";
+static FlMethodChannel* g_window_channel = nullptr;
+static FlView* g_view = nullptr;
+static double g_last_known_scale = 0.0;
+
+// Resolve the scale factor of the monitor currently under [window]. Falls
+// back to the screen's primary monitor and then to 1.0 if neither is
+// available (e.g. very early in startup, or tests).
+static double resolve_window_scale(GtkWindow* window) {
+  GdkWindow* gdk_window = gtk_widget_get_window(GTK_WIDGET(window));
+  GdkDisplay* display = gtk_widget_get_display(GTK_WIDGET(window));
+  if (display == nullptr) {
+    return 1.0;
+  }
+  GdkMonitor* monitor = nullptr;
+  if (gdk_window != nullptr) {
+    monitor = gdk_display_get_monitor_at_window(display, gdk_window);
+  }
+  if (monitor == nullptr) {
+    monitor = gdk_display_get_primary_monitor(display);
+  }
+  if (monitor == nullptr) {
+    return 1.0;
+  }
+  return static_cast<double>(gdk_monitor_get_scale_factor(monitor));
+}
+
+// Single point that re-evaluates scale and notifies Dart. Idempotent — we
+// debounce by skipping calls when the resolved scale matches the last one
+// we forwarded.
+static void notify_scale_change(GtkWindow* window) {
+  if (g_view == nullptr || g_window_channel == nullptr) {
+    return;
+  }
+  double scale = resolve_window_scale(window);
+  if (scale == g_last_known_scale) {
+    return;
+  }
+  g_last_known_scale = scale;
+
+  // Force a re-layout pass on the FlView so GTK re-asks us for a new size at
+  // the new scale.
+  gtk_widget_queue_resize(GTK_WIDGET(g_view));
+
+  // NOTE: `fl_view_set_pixel_ratio` is NOT part of the upstream
+  // `flutter_linux` public API as of the Flutter SDK we build against (only
+  // `fl_view_get_engine`, `fl_view_set_background_color`, … are exposed).
+  // Pixel-ratio control on Linux flows entirely from GTK widget metrics, so
+  // we rely on the queue_resize above plus the Dart-side
+  // `WidgetsBinding.handleMetricsChanged()` to propagate the change. Leaving
+  // this comment as a breadcrumb for if/when the API lands upstream.
+
+  g_autoptr(FlValue) args = fl_value_new_float(scale);
+  fl_method_channel_invoke_method(g_window_channel, "monitorScaleChanged",
+                                  args, nullptr, nullptr, nullptr);
+}
+
+static void on_monitors_changed(GdkScreen* /*screen*/, gpointer user_data) {
+  GtkWindow* window = GTK_WINDOW(user_data);
+  notify_scale_change(window);
+}
+
+static void on_monitor_scale_factor_changed(GObject* /*monitor*/,
+                                            GParamSpec* /*pspec*/,
+                                            gpointer user_data) {
+  GtkWindow* window = GTK_WINDOW(user_data);
+  notify_scale_change(window);
+}
+
+// `configure-event` fires when the window is moved or resized. Dragging
+// between monitors goes through here too, so we use it as a cheap
+// "the relevant monitor may have changed" probe.
+static gboolean on_window_configure(GtkWidget* widget,
+                                    GdkEvent* /*event*/,
+                                    gpointer /*user_data*/) {
+  notify_scale_change(GTK_WINDOW(widget));
+  return FALSE;  // never consume — let GTK do its default work.
+}
+
 // `drag-data-received` is the GTK signal that fires once the user actually
 // releases the mouse over the drop target. We decode the URI list here, keep
 // only `file://` URIs (skipping anything else, e.g. http, x-special/gnome),
@@ -131,9 +226,56 @@ static void register_drag_and_drop(GtkWindow* window, FlView* view) {
   }
 }
 
+// Connect HiDPI signal handlers and create the outbound MethodChannel that
+// pushes monitor-scale changes to Dart. Called once per `activate`.
+static void register_hidpi_tracking(GtkWindow* window, FlView* view) {
+  if (g_window_channel == nullptr) {
+    FlBinaryMessenger* messenger =
+        fl_engine_get_binary_messenger(fl_view_get_engine(view));
+    g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+    g_window_channel = fl_method_channel_new(messenger, kWindowChannel,
+                                             FL_METHOD_CODEC(codec));
+  }
+  g_view = view;
+
+  // Per-screen monitor add/remove/reconfigure events.
+  GdkScreen* screen = gtk_window_get_screen(window);
+  if (screen != nullptr) {
+    g_signal_connect(screen, "monitors-changed",
+                     G_CALLBACK(on_monitors_changed), window);
+  }
+
+  // Per-monitor scale-factor changes. Iterate the current monitors so we
+  // catch the case where the user just changes the scale factor in
+  // settings (no monitor add/remove), and also for monitors that come and
+  // go later — `monitors-changed` will re-trigger the scan path.
+  GdkDisplay* display = gtk_widget_get_display(GTK_WIDGET(window));
+  if (display != nullptr) {
+    int n_monitors = gdk_display_get_n_monitors(display);
+    for (int i = 0; i < n_monitors; ++i) {
+      GdkMonitor* monitor = gdk_display_get_monitor(display, i);
+      if (monitor == nullptr) continue;
+      g_signal_connect(monitor, "notify::scale-factor",
+                       G_CALLBACK(on_monitor_scale_factor_changed), window);
+    }
+  }
+
+  // `configure-event` catches the window crossing a monitor boundary even
+  // when scale-factor doesn't change on either monitor (we still want Dart
+  // to learn the new value, and `notify_scale_change` is idempotent).
+  g_signal_connect(window, "configure-event",
+                   G_CALLBACK(on_window_configure), nullptr);
+}
+
 // Called when first Flutter frame received.
 static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+  // Send an initial scale so the Dart side starts with the correct value
+  // even if the user never crosses a monitor boundary in this session.
+  GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+  if (window != nullptr) {
+    notify_scale_change(window);
+  }
 }
 
 // Implements GApplication::activate.
@@ -215,6 +357,11 @@ static void my_application_activate(GApplication* application) {
   // Set up Linux drag-and-drop so users can drop SSH key files / vault
   // exports / ssh_config files onto the window to trigger the import flow.
   register_drag_and_drop(window, view);
+
+  // Hook GDK monitor signals so we can keep the embedded Flutter view
+  // re-rasterized when the window is dragged across monitors with different
+  // scale factors. See `register_hidpi_tracking` for details.
+  register_hidpi_tracking(window, view);
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }

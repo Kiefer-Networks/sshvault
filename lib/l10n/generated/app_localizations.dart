@@ -3552,6 +3552,54 @@ abstract class AppLocalizations {
   /// **'File saved'**
   String get sftpFileSaved;
 
+  /// No description provided for @fileChooserOpenFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open file'**
+  String get fileChooserOpenFile;
+
+  /// No description provided for @fileChooserSaveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Save file'**
+  String get fileChooserSaveFile;
+
+  /// No description provided for @fileChooserOpenDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folder'**
+  String get fileChooserOpenDirectory;
+
+  /// No description provided for @fileChooserImportArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Import backup'**
+  String get fileChooserImportArchive;
+
+  /// No description provided for @fileChooserImportSshConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Import SSH config'**
+  String get fileChooserImportSshConfig;
+
+  /// No description provided for @fileChooserImportSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Import settings'**
+  String get fileChooserImportSettings;
+
+  /// No description provided for @fileChooserPickKeyFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick SSH key file'**
+  String get fileChooserPickKeyFile;
+
+  /// No description provided for @fileChooserUploadFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload files'**
+  String get fileChooserUploadFiles;
+
   /// No description provided for @notificationTerminalTitle.
   ///
   /// In en, this message translates to:

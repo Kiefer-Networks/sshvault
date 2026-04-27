@@ -30,6 +30,13 @@ class ServerGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    // Cosmetic HiDPI tweak: the monospace `user@host` line below is
+    // intentionally tiny (11 logical px) and looks visually thinner than the
+    // surrounding sans-serif text on fractional / 2x displays. Bump it by a
+    // fraction of a px proportional to the device pixel ratio so it tracks
+    // the rest of the card. Ratio remains 1.0 on plain 1x screens.
+    final dpr = MediaQuery.of(context).devicePixelRatio;
+    final hostFontSize = dpr <= 1.0 ? 11.0 : 11.0 + (dpr - 1.0).clamp(0.0, 1.0);
 
     return SectionCard(
       padding: EdgeInsets.zero,
@@ -98,7 +105,7 @@ class ServerGridCard extends StatelessWidget {
                     AppConstants.alpha128,
                   ),
                   fontFamily: AppConstants.monospaceFontFamily,
-                  fontSize: 11,
+                  fontSize: hostFontSize,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'dart:io';
+
 import 'package:cryptography/cryptography.dart' as crypto;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/crypto/crypto_utils.dart';
+import 'package:sshvault/core/services/autostart_service.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/core/storage/database_provider.dart';
 import 'package:sshvault/core/storage/secure_storage_provider.dart';
@@ -53,11 +56,28 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyGlobalProxyPort = 'global_proxy_port';
   static const _keyGlobalProxyUsername = 'global_proxy_username';
   static const _keyShowSystemTray = 'show_system_tray';
+  static const _keyAutoStartEnabled = 'auto_start_enabled';
+  static const _keyCloseToTray = 'close_to_tray';
+  static const _keyResumeOnLogin = 'resume_on_login';
+  // Persisted CSV of host ids that were active when the user last quit.
+  // Replayed on minimized boot when [resumeOnLogin] is true.
+  static const _keyLastActiveHosts = 'last_active_hosts';
   static const _keyKeyringMigrationCompleted = 'keyring_migration_completed';
   static const _keyFollowDesktopAccent = 'follow_desktop_accent';
   static const _keySshAgentForwardByDefault = 'ssh_agent_forward_by_default';
   static const _keySshAgentDefaultLifetimeSecs =
       'ssh_agent_default_lifetime_secs';
+  static const _keyPreventSuspendDuringSshSessions =
+      'prevent_suspend_during_ssh_sessions';
+  // Desktop window geometry — keys MUST match WindowStateKeys in
+  // window_state_service.dart so the dedicated service writes the same
+  // rows the entity reads on next boot.
+  static const _keyWindowWidth = 'window_width';
+  static const _keyWindowHeight = 'window_height';
+  static const _keyWindowX = 'window_x';
+  static const _keyWindowY = 'window_y';
+  static const _keyWindowMaximized = 'window_maximized';
+  static const _keyForcedPixelRatio = 'forced_pixel_ratio';
 
   // Secure storage keys for PIN-related secrets
   static const _secKeyPinHash = 'settings_pin_hash';
@@ -229,6 +249,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       // is the only consumer and already guards on Platform.isLinux, so
       // this flag is effectively ignored on macOS / mobile.
       showSystemTray: all[_keyShowSystemTray] != 'false',
+      autoStartEnabled: all[_keyAutoStartEnabled] == 'true',
+      // Both default to false: the close button quits as expected unless the
+      // user opts in, and we never auto-resume sessions without consent.
+      closeToTray: all[_keyCloseToTray] == 'true',
+      resumeOnLogin: all[_keyResumeOnLogin] == 'true',
       keyringMigrationCompleted: all[_keyKeyringMigrationCompleted] == 'true',
       // Default to following the desktop accent on Linux. Non-Linux platforms
       // ignore the flag at theme-resolution time.
@@ -236,7 +261,49 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       sshAgentForwardByDefault: all[_keySshAgentForwardByDefault] == 'true',
       sshAgentDefaultLifetimeSecs:
           int.tryParse(all[_keySshAgentDefaultLifetimeSecs] ?? '') ?? 3600,
+      // Default true — most desktop users prefer their long-running SSH
+      // session over an aggressive auto-suspend policy. Linux only; the
+      // PowerInhibitorService no-ops on other platforms.
+      preventSuspendDuringSshSessions:
+          all[_keyPreventSuspendDuringSshSessions] != 'false',
+      // Window geometry — written by WindowStateService on resize / move /
+      // (un)maximize. Defaults align with WindowStateDefaults so an empty
+      // table on first launch produces a 1280x800 centered window.
+      windowWidth: double.tryParse(all[_keyWindowWidth] ?? '') ?? 1280,
+      windowHeight: double.tryParse(all[_keyWindowHeight] ?? '') ?? 800,
+      windowX: double.tryParse(all[_keyWindowX] ?? '') ?? -1,
+      windowY: double.tryParse(all[_keyWindowY] ?? '') ?? -1,
+      windowMaximized: all[_keyWindowMaximized] == 'true',
+      // HiDPI override. `0.0` is the sentinel meaning "auto / OS-supplied".
+      forcedPixelRatio: double.tryParse(all[_keyForcedPixelRatio] ?? '') ?? 0.0,
     );
+  }
+
+  /// Persists the desktop window geometry. Called by WindowStateService —
+  /// not user-facing (no settings screen consumes these values directly).
+  /// We write through the same DAO so the values survive across launches
+  /// and round-trip through [build] cleanly.
+  Future<void> setWindowGeometry({
+    double? width,
+    double? height,
+    double? x,
+    double? y,
+    bool? maximized,
+  }) async {
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    if (width != null) {
+      await dao.setValue(_keyWindowWidth, width.toStringAsFixed(0));
+    }
+    if (height != null) {
+      await dao.setValue(_keyWindowHeight, height.toStringAsFixed(0));
+    }
+    if (x != null) await dao.setValue(_keyWindowX, x.toStringAsFixed(0));
+    if (y != null) await dao.setValue(_keyWindowY, y.toStringAsFixed(0));
+    if (maximized != null) {
+      await dao.setValue(_keyWindowMaximized, maximized.toString());
+    }
+    // No invalidateSelf — geometry is not surfaced in any UI state and
+    // re-reading would just churn the settings stream.
   }
 
   /// Toggles the global default for SSH agent forwarding. Per-host overrides
@@ -252,6 +319,19 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   Future<void> setSshAgentDefaultLifetimeSecs(int seconds) async {
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keySshAgentDefaultLifetimeSecs, seconds.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggles the Linux-only suspend inhibitor. When `true` (default) the
+  /// PowerInhibitorService holds an `org.freedesktop.login1.Inhibit` lock
+  /// while at least one SSH session is connected.
+  Future<void> setPreventSuspendDuringSshSessions(bool enabled) async {
+    _log.info(
+      _tag,
+      'Prevent suspend during SSH sessions ${enabled ? 'enabled' : 'disabled'}',
+    );
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyPreventSuspendDuringSshSessions, enabled.toString());
     ref.invalidateSelf();
   }
 
@@ -628,6 +708,35 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     ref.invalidateSelf();
   }
 
+  /// Toggles XDG autostart on Linux. Writes / removes the `.desktop`
+  /// file under `~/.config/autostart/` and persists the flag so the UI
+  /// stays in sync after a restart.
+  ///
+  /// On non-Linux platforms this only persists the flag (no-op for the
+  /// service) so the toggle is harmless if the entity gets exported and
+  /// re-imported across machines.
+  Future<void> setAutoStartEnabled(bool enabled) async {
+    _log.info(_tag, 'Auto-start ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    if (Platform.isLinux) {
+      try {
+        const svc = AutostartService();
+        if (enabled) {
+          await svc.enable();
+        } else {
+          await svc.disable();
+        }
+      } catch (e) {
+        // Don't crash the toggle if the filesystem op fails — surface
+        // via logs and still persist the user's intent so they can
+        // retry. The UI may want to react to this in the future.
+        _log.warning(_tag, 'Auto-start toggle failed: $e');
+      }
+    }
+    await dao.setValue(_keyAutoStartEnabled, enabled.toString());
+    ref.invalidateSelf();
+  }
+
   Future<void> setFollowDesktopAccent(bool enabled) async {
     _log.info(
       _tag,
@@ -636,6 +745,61 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyFollowDesktopAccent, enabled.toString());
     ref.invalidateSelf();
+  }
+
+  /// Persist the user's "Force pixel ratio" override. Pass `0.0` to clear
+  /// (i.e. "auto"); valid forced values are `1.0`, `1.25`, `1.5`, `1.75`,
+  /// `2.0`. Other values are written verbatim — the picker enforces the
+  /// allowed set at the UI layer.
+  Future<void> setForcedPixelRatio(double ratio) async {
+    _log.info(
+      _tag,
+      'Forced pixel ratio set to ${ratio == 0 ? 'auto' : ratio.toString()}',
+    );
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyForcedPixelRatio, ratio.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggle "Close button minimizes to tray" (Linux / Windows only). The
+  /// flag is read by HeadlessBootService at close time, so the change takes
+  /// effect immediately without a restart.
+  Future<void> setCloseToTray(bool enabled) async {
+    _log.info(_tag, 'Close-to-tray ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyCloseToTray, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggle "Resume sessions on minimized boot". HeadlessBootService reads
+  /// this once on boot — toggling it later only affects the next launch.
+  Future<void> setResumeOnLogin(bool enabled) async {
+    _log.info(_tag, 'Resume-on-login ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyResumeOnLogin, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Persists the list of host ids that were active when the user closed
+  /// the app. HeadlessBootService replays these on the next minimized boot
+  /// when [resumeOnLogin] is true. Stored as a comma-separated list in the
+  /// existing app_settings DAO — no separate SharedPreferences dependency.
+  Future<void> setLastActiveHosts(List<String> hostIds) async {
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyLastActiveHosts, hostIds.join(','));
+  }
+
+  /// Reads back what [setLastActiveHosts] persisted. Returns an empty list
+  /// when nothing has been recorded yet.
+  Future<List<String>> getLastActiveHosts() async {
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    final raw = await dao.getValue(_keyLastActiveHosts);
+    if (raw == null || raw.isEmpty) return const [];
+    return raw
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
   }
 }
 

@@ -1,0 +1,38 @@
+#compdef sshvault
+# zsh completion for sshvault
+# Installed to /usr/share/zsh/site-functions/_sshvault
+
+_sshvault() {
+    local -a flags
+    flags=(
+        '(- *)--help[Print usage and exit]'
+        '(- *)-h[Print usage and exit]'
+        '(- *)--version[Print version and exit]'
+        '(- *)-v[Print version and exit]'
+        '(- *)--quit[Tell the running instance to exit]'
+        '--minimized[Start hidden in the system tray]'
+        '--import-config[Import OpenSSH config on launch]:config:_files'
+        '--import-keys[Import every private key in DIR]:directory:_files -/'
+        '(- *)--export-vault[Run export and exit]:path:_files'
+    )
+
+    _arguments -s -S \
+        $flags \
+        '*::positional:->positional'
+
+    case $state in
+        positional)
+            local -a hosts
+            local -a host_lines
+            host_lines=("${(f)$(sshvault --list-hosts 2>/dev/null)}")
+            for h in $host_lines; do
+                [[ -n "$h" ]] && hosts+=("$h")
+            done
+            if (( ${#hosts[@]} > 0 )); then
+                _describe -t hosts 'sshvault host' hosts
+            fi
+            ;;
+    esac
+}
+
+_sshvault "$@"

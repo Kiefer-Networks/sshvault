@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/utils/file_chooser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -541,10 +541,13 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
 
   Future<void> _pickKeyFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.any);
-      if (result == null || result.files.isEmpty) return;
+      final result = await FileChooser.openFile(
+        dialogTitle: AppLocalizations.of(context)!.fileChooserPickKeyFile,
+        filters: const [FileTypeFilter.pem, FileTypeFilter.plainText],
+      );
+      if (result == null) return;
 
-      final file = result.files.first;
+      final file = result;
 
       String content;
       if (file.bytes != null) {

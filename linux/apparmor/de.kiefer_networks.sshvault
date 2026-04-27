@@ -1,0 +1,248 @@
+# AppArmor profile for SSHVault (native Linux package)
+# ---------------------------------------------------------------------------
+# Distros: Debian, Ubuntu, OpenSUSE (anything that ships AppArmor 3.x).
+# Flatpak users do NOT need this profile — the Flatpak sandbox already
+# enforces a stricter policy via bubblewrap + portal-based filesystem
+# brokering. This profile is only relevant when SSHVault is installed
+# from a native .deb / .rpm and runs *outside* the Flatpak sandbox.
+#
+# Install path: /etc/apparmor.d/de.kiefer_networks.sshvault
+# Reload after install: apparmor_parser -r /etc/apparmor.d/de.kiefer_networks.sshvault
+#
+# To temporarily disable for debugging:
+#   sudo aa-complain /etc/apparmor.d/de.kiefer_networks.sshvault   # complain mode
+#   sudo aa-disable  /etc/apparmor.d/de.kiefer_networks.sshvault   # full disable
+# Re-enable with:
+#   sudo aa-enforce  /etc/apparmor.d/de.kiefer_networks.sshvault
+# ---------------------------------------------------------------------------
+
+abi <abi/3.0>,
+
+include <tunables/global>
+
+profile de.kiefer_networks.sshvault /usr/{bin,lib/sshvault}/sshvault flags=(attach_disconnected) {
+  include <abstractions/base>
+  include <abstractions/fonts>
+  include <abstractions/dbus-session-strict>
+  include <abstractions/dbus-accessibility>
+  include <abstractions/freedesktop.org>
+  include <abstractions/gnome>
+  include <abstractions/mesa>
+  include <abstractions/nameservice>
+  include <abstractions/openssl>
+  include <abstractions/wayland>
+  include <abstractions/X>
+
+  # ---------------------------------------------------------------
+  # Bundled binary + Flutter runtime
+  # ---------------------------------------------------------------
+  /usr/bin/sshvault                                 mr,
+  /usr/lib/sshvault/sshvault                        mr,
+  /usr/lib/sshvault/lib/libapp.so                   mr,
+  /usr/lib/sshvault/lib/libflutter_linux_gtk.so     mr,
+  /usr/lib/sshvault/lib/libliboqs.so*               mr,
+  /usr/lib/sshvault/lib/lib*.so*                    mr,
+  /usr/lib/sshvault/data/flutter_assets/**          r,
+  /usr/lib/sshvault/data/icudtl.dat                 r,
+  /usr/share/sshvault/**                            r,
+  /usr/share/applications/de.kiefer_networks.sshvault.desktop r,
+  /usr/share/icons/hicolor/**/de.kiefer_networks.sshvault.png r,
+  /usr/share/dbus-1/services/de.kiefer_networks.SSHVault.service r,
+
+  # ---------------------------------------------------------------
+  # SSH config & key material — read-only by design.
+  # SSHVault imports from these but never writes back.
+  # ---------------------------------------------------------------
+  owner @{HOME}/.ssh/                               r,
+  owner @{HOME}/.ssh/config                         r,
+  owner @{HOME}/.ssh/known_hosts                    r,
+  owner @{HOME}/.ssh/known_hosts.d/                 r,
+  owner @{HOME}/.ssh/known_hosts.d/**               r,
+  owner @{HOME}/.ssh/id_*                           r,
+  owner @{HOME}/.ssh/id_*.pub                       r,
+
+  # ---------------------------------------------------------------
+  # SSHVault's own data + config dirs (encrypted vault, settings)
+  # ---------------------------------------------------------------
+  owner @{HOME}/.local/share/sshvault/              rw,
+  owner @{HOME}/.local/share/sshvault/**            rwk,
+  owner @{HOME}/.config/sshvault/                   rw,
+  owner @{HOME}/.config/sshvault/**                 rwk,
+
+  # XDG cache (Flutter shader cache, font cache, dbus cookies)
+  owner @{HOME}/.cache/sshvault/                    rw,
+  owner @{HOME}/.cache/sshvault/**                  rwk,
+  owner @{HOME}/.cache/fontconfig/                  rw,
+  owner @{HOME}/.cache/fontconfig/**                rwk,
+  owner @{HOME}/.cache/mesa_shader_cache/**         rwk,
+
+  # ---------------------------------------------------------------
+  # Autostart toggle (Settings -> Launch on login)
+  # ---------------------------------------------------------------
+  owner @{HOME}/.config/autostart/                                              rw,
+  owner @{HOME}/.config/autostart/de.kiefer_networks.sshvault.desktop           rwk,
+
+  # ---------------------------------------------------------------
+  # Network: TCP + UDP, all directions (SSH, sync API, DoH).
+  # ---------------------------------------------------------------
+  network inet  stream,
+  network inet6 stream,
+  network inet  dgram,
+  network inet6 dgram,
+  network netlink raw,
+  network unix stream,
+  network unix dgram,
+
+  # ---------------------------------------------------------------
+  # ssh-agent / ssh-keysign — talk to the running agent socket
+  # via $SSH_AUTH_SOCK and exec keysign helpers when needed.
+  # ---------------------------------------------------------------
+  unix (connect, send, receive) type=stream peer=(addr="@/tmp/ssh-*/agent.*"),
+  unix (connect, send, receive) type=stream peer=(addr="/tmp/ssh-*/agent.*"),
+  unix (connect, send, receive) type=stream peer=(addr="/run/user/*/keyring/ssh"),
+  unix (connect, send, receive) type=stream peer=(addr="/run/user/*/gnupg/S.gpg-agent.ssh"),
+  unix (connect, send, receive) type=stream peer=(label=ssh-agent),
+  unix (connect, send, receive) type=stream peer=(label=/usr/bin/ssh-agent),
+  /usr/lib/openssh/ssh-keysign                      Pixr,
+  /usr/lib/ssh/ssh-keysign                          Pixr,
+  /usr/libexec/openssh/ssh-keysign                  Pixr,
+
+  # ---------------------------------------------------------------
+  # DBus — own well-known name + talk to the services we need
+  # ---------------------------------------------------------------
+  # 1. Own session-bus name (single-instance, KRunner triggers, etc.)
+  dbus (bind)
+       bus=session
+       name=de.kiefer_networks.SSHVault,
+  dbus (send, receive)
+       bus=session
+       path=/de/kiefer_networks/SSHVault
+       interface=de.kiefer_networks.SSHVault,
+
+  # 2. Secret Service — libsecret / GNOME Keyring / KWallet
+  dbus (send, receive)
+       bus=session
+       name=org.freedesktop.secrets,
+  dbus (send, receive)
+       bus=session
+       path=/org/freedesktop/secrets/**
+       peer=(name=org.freedesktop.secrets),
+
+  # 3. XDG Desktop Portals (FileChooser, Settings/appearance, Notifications…)
+  dbus (send, receive)
+       bus=session
+       name=org.freedesktop.portal.*,
+  dbus (send, receive)
+       bus=session
+       path=/org/freedesktop/portal/**
+       peer=(name=org.freedesktop.portal.*),
+
+  # 4. logind — inhibit suspend during long file transfers
+  dbus (send, receive)
+       bus=system
+       path=/org/freedesktop/login1
+       interface=org.freedesktop.login1.Manager
+       peer=(name=org.freedesktop.login1),
+
+  # 5. Notifications (fdo + KDE StatusNotifierWatcher / tray_manager)
+  dbus (send, receive)
+       bus=session
+       name=org.freedesktop.Notifications,
+  dbus (send, receive)
+       bus=session
+       path=/org/freedesktop/Notifications
+       peer=(name=org.freedesktop.Notifications),
+  dbus (send, receive)
+       bus=session
+       name=org.kde.StatusNotifierWatcher,
+  dbus (send, receive)
+       bus=session
+       path=/StatusNotifierWatcher
+       peer=(name=org.kde.StatusNotifierWatcher),
+  dbus (send, receive)
+       bus=session
+       path=/StatusNotifierItem,
+
+  # 6. Bus introspection (needed by every well-behaved DBus client)
+  dbus (send)
+       bus=session
+       path=/org/freedesktop/DBus
+       interface=org.freedesktop.DBus
+       member={Hello,RequestName,ReleaseName,GetNameOwner,NameHasOwner,ListNames,ListActivatableNames,AddMatch,RemoveMatch,GetConnectionUnixUser,GetId,StartServiceByName}
+       peer=(name=org.freedesktop.DBus),
+  dbus (send, receive)
+       bus=session
+       interface=org.freedesktop.DBus.{Introspectable,Properties,Peer,ObjectManager},
+
+  # ---------------------------------------------------------------
+  # File picker / export / import targets — read-only by default.
+  # Users who export a backup elsewhere can either widen this rule
+  # or rely on the Portal FileChooser path (preferred).
+  # ---------------------------------------------------------------
+  owner @{HOME}/                                    r,
+  owner @{HOME}/Downloads/                          rw,
+  owner @{HOME}/Downloads/**                        rwk,
+  owner @{HOME}/Documents/                          r,
+  owner @{HOME}/Documents/**                        r,
+  owner /tmp/                                       r,
+  owner /tmp/sshvault-*/                            rw,
+  owner /tmp/sshvault-*/**                          rwk,
+
+  # /proc & /sys bits Flutter reads at startup
+  @{PROC}/@{pid}/cmdline                            r,
+  @{PROC}/@{pid}/stat                               r,
+  @{PROC}/@{pid}/status                             r,
+  @{PROC}/sys/kernel/random/boot_id                 r,
+  @{PROC}/sys/kernel/random/uuid                    r,
+  /sys/devices/system/cpu/                          r,
+  /sys/devices/system/cpu/**                        r,
+  /sys/class/dmi/id/product_uuid                    r,
+
+  # ---------------------------------------------------------------
+  # DENY rules — explicit > implicit. These paths are sensitive and
+  # SSHVault has no business reading them. Even if a future bug or
+  # malicious dependency tried, AppArmor will block + log it.
+  # ---------------------------------------------------------------
+  deny owner @{HOME}/.gnupg/                        rwklx,
+  deny owner @{HOME}/.gnupg/**                      rwklx,
+
+  deny owner @{HOME}/.mozilla/                      rwklx,
+  deny owner @{HOME}/.mozilla/**                    rwklx,
+
+  # Browser cookies / profiles (Chromium, Chrome, Firefox, Edge, Brave)
+  deny owner @{HOME}/.config/google-chrome/**       rwklx,
+  deny owner @{HOME}/.config/chromium/**            rwklx,
+  deny owner @{HOME}/.config/microsoft-edge/**      rwklx,
+  deny owner @{HOME}/.config/BraveSoftware/**       rwklx,
+  deny owner @{HOME}/.config/vivaldi/**             rwklx,
+  deny owner @{HOME}/.cache/mozilla/**              rwklx,
+  deny owner @{HOME}/.cache/google-chrome/**        rwklx,
+  deny owner @{HOME}/.cache/chromium/**             rwklx,
+
+  # Desktop password stores (KeePassXC kdbx, pass, Bitwarden, 1Password)
+  deny owner @{HOME}/.password-store/               rwklx,
+  deny owner @{HOME}/.password-store/**             rwklx,
+  deny owner @{HOME}/.config/keepassxc/**           rwklx,
+  deny owner @{HOME}/**.kdbx                        rwklx,
+  deny owner @{HOME}/.config/Bitwarden/**           rwklx,
+  deny owner @{HOME}/.config/1Password/**           rwklx,
+  deny owner @{HOME}/.local/share/keyrings/**       rwklx,
+
+  # Shell history is a common credential leak vector
+  deny owner @{HOME}/.bash_history                  rwklx,
+  deny owner @{HOME}/.zsh_history                   rwklx,
+  deny owner @{HOME}/.python_history                rwklx,
+
+  # No raw block-device or kernel-keyring access
+  deny /dev/sd*                                     rwklx,
+  deny /dev/nvme*                                   rwklx,
+  deny @{PROC}/kcore                                rwklx,
+  deny @{PROC}/kallsyms                             rwklx,
+
+  # ---------------------------------------------------------------
+  # Local override hook — packagers / power users drop a snippet
+  # into /etc/apparmor.d/local/ to widen this profile without
+  # editing the shipped file (survives package upgrades).
+  # ---------------------------------------------------------------
+  include if exists <local/de.kiefer_networks.sshvault>
+}

@@ -1,8 +1,8 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/utils/file_chooser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
@@ -176,13 +176,14 @@ class ExportSettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _importFile(BuildContext context, WidgetRef ref) async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json', 'zip'],
+    final l10n = AppLocalizations.of(context)!;
+    final result = await FileChooser.openFile(
+      dialogTitle: l10n.fileChooserImportSettings,
+      filters: const [FileTypeFilter.json, FileTypeFilter.zip],
     );
 
-    if (result == null || result.files.isEmpty) return;
-    final filePath = result.files.first.path;
+    if (result == null) return;
+    final filePath = result.path;
     if (filePath == null || !context.mounted) return;
 
     final strategy = await ImportConflictDialog.show(context);
@@ -203,7 +204,6 @@ class ExportSettingsScreen extends ConsumerWidget {
 
     if (importResult != null && context.mounted) {
       ref.invalidate(serverListProvider);
-      final l10n = AppLocalizations.of(context)!;
       AdaptiveNotification.show(
         context,
         message: l10n.importResult(

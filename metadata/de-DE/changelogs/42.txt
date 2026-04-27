@@ -1,0 +1,14 @@
+Tiefere Linux-Desktop-Integration.
+
+- Power-Inhibit während aktiver SSH-Sessions (login1.Inhibit "sleep:idle" "block") — System schläft nicht mehr mitten in der Verbindung.
+- Window-State-Persistenz — Größe/Position/Maximiert beim nächsten Start wiederhergestellt, pro Monitor.
+- XDG-Autostart-Toggle in den Einstellungen: "SSHVault beim Login starten" schreibt ~/.config/autostart/de.kiefer_networks.sshvault.desktop mit --minimized.
+- Tray-Only-Boot Polish: --minimized startet headless (kein Fenster-Flash), Close-to-Tray macht aus [×] ein Hide, optional Resume-on-Login öffnet die letzten Sessions automatisch.
+- Wayland-Clipboard-Persistenz — Secrets überleben das App-Schließen via wl-copy --foreground, mit dem bestehenden 30-Sekunden-Autoclear.
+- HiDPI-pro-Monitor — Fenster zwischen 1×- und 2×-Monitor schieben, Flutter-View rastert neu; "Pixel-Ratio erzwingen" als Override in Appearance.
+- xdg-desktop-portal-Migration — File-Picker, Secret-Storage und Link-Öffnen laufen über Portale, wenn unter Flatpak.
+- AppArmor-Profil für native Pakete — Binary nur auf eigene Datenverzeichnisse, SSH-Keys nur lesend, Browser-Cookies/GPG/Passwortspeicher gesperrt.
+- Vollständige Kommandozeile: sshvault HOSTNAME, sshvault user@host:port, --import-config, --import-keys, --export-vault, --version, --help, --quit, plus bash- und zsh-Completion.
+- Native GTK-/Plasma-File-Chooser-Routing — KDE-Nutzer bekommen das echte KDE-Dialog statt das fremde GTK-Dialog.
+- DBus-Activation: .desktop deklariert "Schnell verbinden" / "Letzte Session wiederherstellen" als Actions, Binary implementiert org.freedesktop.Application Activate/Open/ActivateAction, damit Launcher ohne neuen Prozess steuern.
+- Konfigurierbarer globaler Tastatur-Shortcut (Default Super+Shift+S) via xdg-desktop-portal GlobalShortcuts — öffnet Quick-Connect-Suche von überall.

@@ -9,5 +9,18 @@ Type=Application
 Categories=Network;RemoteAccess;Security;
 Keywords=ssh;terminal;sftp;server;remote;encrypted;
 StartupWMClass=sshvault
-DBusActivatable=false
+DBusActivatable=true
 MimeType=application/x-sshvault-export;x-scheme-handler/ssh;x-scheme-handler/sftp;
+Actions=NewConnection;ReopenLast;Quit;
+
+[Desktop Action NewConnection]
+Name=Quick connect
+Exec=sshvault --new-host
+
+[Desktop Action ReopenLast]
+Name=Reopen last session
+Exec=sshvault --reopen-last
+
+[Desktop Action Quit]
+Name=Quit
+Exec=sshvault --quit

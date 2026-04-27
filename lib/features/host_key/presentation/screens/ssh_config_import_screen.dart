@@ -1,8 +1,8 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
+import 'package:sshvault/core/utils/file_chooser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
 import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
@@ -148,12 +148,13 @@ class _SshConfigImportScreenState extends ConsumerState<SshConfigImportScreen> {
   }
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
+    final result = await FileChooser.openFile(
+      dialogTitle: AppLocalizations.of(context)!.fileChooserImportSshConfig,
+      filters: const [FileTypeFilter.plainText],
       withData: true,
     );
-    if (result == null || result.files.isEmpty) return;
-    final bytes = result.files.first.bytes;
+    if (result == null) return;
+    final bytes = result.bytes;
     if (bytes == null) return;
     final content = String.fromCharCodes(bytes);
     _textController.text = content;
