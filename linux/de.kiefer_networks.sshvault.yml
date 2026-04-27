@@ -127,7 +127,7 @@ modules:
     sources:
       - type: archive
         url: https://github.com/AyatanaIndicators/libayatana-indicator/archive/refs/tags/0.9.4.tar.gz
-        sha256: 7a36c3edf7a4d4d2bca0a356d8c5fee3da1c6f9c23a2c95717dbef0a6b0f7e76
+        sha256: a18d3c682e29afd77db24366f8475b26bda22b0e16ff569a2ec71cd6eb4eac95
 
   - name: libayatana-appindicator
     buildsystem: cmake-ninja
@@ -143,7 +143,7 @@ modules:
     sources:
       - type: archive
         url: https://github.com/AyatanaIndicators/libayatana-appindicator/archive/refs/tags/0.5.92.tar.gz
-        sha256: 30f6cc99fa7e6f78ec413bb1ab2ec8fac804c3d20e05ba8ee84f1c46b1cea59b
+        sha256: adedcf160dae7547971d475b42062cab278d54ec075537e6958ffdbf2d996857
 
   - name: libsecret
     buildsystem: meson

@@ -101,7 +101,7 @@ class AppDelegate: FlutterAppDelegate {
     // lives next to AppDelegate (not a Pub plugin) so it has to be
     // registered manually here. Channel: `…/macos_notif`.
     if #available(macOS 10.14, *) {
-      if let registrar = registrar(forPlugin: "UNUserNotificationsPlugin") {
+      if let registrar = controller.registrar(forPlugin: "UNUserNotificationsPlugin") {
         UNUserNotificationsPlugin.register(with: registrar)
       }
     }
