@@ -126,6 +126,19 @@ modules:
       - type: archive
         url: https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz
         sha256: b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a
+      # Upstream's configure.ac wraps AM_CONDITIONAL([HAVE_VALGRIND]) inside
+      # AS_IF([test "x$enable_tests" != "xno"], [...]) — when we pass
+      # --disable-tests the conditional is never defined, but later parts
+      # of the build reference it and configure aborts. Move the
+      # AM_CONDITIONAL out of the AS_IF block, then regenerate configure
+      # via autoreconf so the change takes effect (the shipped 16.04
+      # tarball pre-bakes a configure script).
+      - type: shell
+        commands:
+          - "sed -i '/AM_CONDITIONAL(\\[HAVE_VALGRIND\\]/d' configure.ac"
+          - "sed -i '/AC_SUBST(DBUSMENUTESTS_CFLAGS)/i AM_CONDITIONAL([HAVE_VALGRIND], [test \"x$have_valgrind\" = \"xyes\"])' configure.ac"
+          - "rm -f configure aclocal.m4"
+          - "autoreconf -fi"
 
   - name: libayatana-indicator
     buildsystem: cmake-ninja
