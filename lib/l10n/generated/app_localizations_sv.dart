@@ -1395,6 +1395,13 @@ class AppLocalizationsSv extends AppLocalizations {
       'Synkronisera automatiskt när appen startar';
 
   @override
+  String get syncBackgroundSync => 'Synkronisera i bakgrunden';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodisk valv-sync via WorkManager även när appen är stängd.';
+
+  @override
   String get syncNow => 'Synkronisera nu';
 
   @override
@@ -1422,13 +1429,6 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Valvversion';
-
-  @override
-  String get syncBackgroundSync => 'Synkronisera i bakgrunden';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Periodisk valv-sync via WorkManager även när appen är stängd.';
 
   @override
   String get syncTitle => 'Synkronisering';
@@ -1884,28 +1884,28 @@ class AppLocalizationsSv extends AppLocalizations {
   String get sftpFileSaved => 'Fil sparad';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Öppna fil';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Spara fil';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Välj mapp';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Importera säkerhetskopia';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Importera SSH-konfig';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Importera inställningar';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Välj SSH-nyckel';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Ladda upp filer';
 
   @override
   String notificationTerminalTitle(int count) {

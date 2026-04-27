@@ -1364,6 +1364,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncAutoSyncDescription => '应用启动时自动同步';
 
   @override
+  String get syncBackgroundSync => '后台同步';
+
+  @override
+  String get syncBackgroundSyncDescription => '即使应用关闭也通过 WorkManager 定期同步保险库。';
+
+  @override
   String get syncNow => '立即同步';
 
   @override
@@ -1389,12 +1395,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get syncVaultVersion => '保险库版本';
-
-  @override
-  String get syncBackgroundSync => '后台同步';
-
-  @override
-  String get syncBackgroundSyncDescription => '即使应用关闭也通过 WorkManager 定期同步保险库。';
 
   @override
   String get syncTitle => '同步';
@@ -1844,28 +1844,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sftpFileSaved => '文件已保存';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => '打开文件';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => '保存文件';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => '选择文件夹';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => '导入备份';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => '导入 SSH 配置';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => '导入设置';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => '选择 SSH 密钥';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => '上传文件';
 
   @override
   String notificationTerminalTitle(int count) {

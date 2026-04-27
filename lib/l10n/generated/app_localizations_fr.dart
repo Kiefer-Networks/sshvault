@@ -1408,6 +1408,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Synchroniser automatiquement au démarrage de l\'application';
 
   @override
+  String get syncBackgroundSync => 'Synchroniser en arrière-plan';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sync périodique du coffre via WorkManager même app fermée.';
+
+  @override
   String get syncNow => 'Synchroniser maintenant';
 
   @override
@@ -1435,13 +1442,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Version du coffre-fort';
-
-  @override
-  String get syncBackgroundSync => 'Synchroniser en arrière-plan';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Sync périodique du coffre via WorkManager même app fermée.';
 
   @override
   String get syncTitle => 'Synchronisation';
@@ -1897,7 +1897,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sftpFileSaved => 'Fichier enregistré';
 
   @override
-  String get fileChooserOpenFile => 'Ouvrir le fichier';
+  String get fileChooserOpenFile => 'Ouvrir un fichier';
 
   @override
   String get fileChooserSaveFile => 'Enregistrer le fichier';
@@ -1915,7 +1915,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fileChooserImportSettings => 'Importer les paramètres';
 
   @override
-  String get fileChooserPickKeyFile => 'Choisir une clé SSH';
+  String get fileChooserPickKeyFile => 'Choisir un fichier de clé SSH';
 
   @override
   String get fileChooserUploadFiles => 'Téléverser des fichiers';

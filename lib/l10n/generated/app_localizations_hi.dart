@@ -1400,6 +1400,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'ऐप शुरू होने पर स्वचालित रूप से सिंक करें';
 
   @override
+  String get syncBackgroundSync => 'पृष्ठभूमि में सिंक करें';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'ऐप बंद होने पर भी WorkManager के माध्यम से नियमित वॉल्ट सिंक चलाएं।';
+
+  @override
   String get syncNow => 'अभी सिंक करें';
 
   @override
@@ -1427,13 +1434,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'वॉल्ट संस्करण';
-
-  @override
-  String get syncBackgroundSync => 'पृष्ठभूमि में सिंक करें';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'ऐप बंद होने पर भी WorkManager के माध्यम से नियमित वॉल्ट सिंक चलाएं।';
 
   @override
   String get syncTitle => 'सिंक';
@@ -1888,28 +1888,28 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sftpFileSaved => 'फ़ाइल सहेजी गई';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'फ़ाइल खोलें';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'फ़ाइल सहेजें';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'फ़ोल्डर चुनें';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'बैकअप आयात करें';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'SSH कॉन्फ़िग आयात करें';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'सेटिंग्स आयात करें';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'SSH कुंजी चुनें';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'फ़ाइलें अपलोड करें';
 
   @override
   String notificationTerminalTitle(int count) {

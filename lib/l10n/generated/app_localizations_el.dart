@@ -1408,6 +1408,13 @@ class AppLocalizationsEl extends AppLocalizations {
       'Αυτόματος συγχρονισμός κατά την εκκίνηση της εφαρμογής';
 
   @override
+  String get syncBackgroundSync => 'Συγχρονισμός στο παρασκήνιο';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Περιοδικός συγχρονισμός θησαυροφυλακίου μέσω WorkManager ακόμη και όταν η εφαρμογή είναι κλειστή.';
+
+  @override
   String get syncNow => 'Συγχρονισμός τώρα';
 
   @override
@@ -1435,13 +1442,6 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Έκδοση Vault';
-
-  @override
-  String get syncBackgroundSync => 'Συγχρονισμός στο παρασκήνιο';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Περιοδικός συγχρονισμός θησαυροφυλακίου μέσω WorkManager ακόμη και όταν η εφαρμογή είναι κλειστή.';
 
   @override
   String get syncTitle => 'Συγχρονισμός';
@@ -1896,28 +1896,28 @@ class AppLocalizationsEl extends AppLocalizations {
   String get sftpFileSaved => 'Το αρχείο αποθηκεύτηκε';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Άνοιγμα αρχείου';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Αποθήκευση αρχείου';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Επιλογή φακέλου';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Εισαγωγή αντιγράφου';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Εισαγωγή SSH config';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Εισαγωγή ρυθμίσεων';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Επιλογή κλειδιού SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Μεταφόρτωση αρχείων';
 
   @override
   String notificationTerminalTitle(int count) {

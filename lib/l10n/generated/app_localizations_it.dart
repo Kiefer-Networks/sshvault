@@ -1405,6 +1405,13 @@ class AppLocalizationsIt extends AppLocalizations {
       'Sincronizza automaticamente all\'avvio dell\'app';
 
   @override
+  String get syncBackgroundSync => 'Sincronizza in background';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sync periodico del vault tramite WorkManager anche con app chiusa.';
+
+  @override
   String get syncNow => 'Sincronizza ora';
 
   @override
@@ -1432,13 +1439,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Versione del vault';
-
-  @override
-  String get syncBackgroundSync => 'Sincronizza in background';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Sync periodico del vault tramite WorkManager anche con app chiusa.';
 
   @override
   String get syncTitle => 'Sincronizzazione';
@@ -1894,28 +1894,28 @@ class AppLocalizationsIt extends AppLocalizations {
   String get sftpFileSaved => 'File salvato';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Apri file';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Salva file';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Scegli cartella';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Importa backup';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Importa config SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Importa impostazioni';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Scegli file chiave SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Carica file';
 
   @override
   String notificationTerminalTitle(int count) {

@@ -1397,6 +1397,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Automatically sync when the app starts';
 
   @override
+  String get syncBackgroundSync => 'Sync in background';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Run periodic sync even when the app is closed (Android only — uses extra battery)';
+
+  @override
   String get syncNow => 'Sync Now';
 
   @override
@@ -1424,13 +1431,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Vault Version';
-
-  @override
-  String get syncBackgroundSync => 'Sync in background';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Run periodic sync even when the app is closed (Android only — uses extra battery)';
 
   @override
   String get syncTitle => 'Sync';

@@ -1397,6 +1397,13 @@ class AppLocalizationsVi extends AppLocalizations {
       'Tu dong dong bo khi ung dung khoi dong';
 
   @override
+  String get syncBackgroundSync => 'Đồng bộ nền';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Đồng bộ vault định kỳ qua WorkManager ngay cả khi đóng ứng dụng.';
+
+  @override
   String get syncNow => 'Dong bo ngay';
 
   @override
@@ -1424,13 +1431,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Phien ban kho';
-
-  @override
-  String get syncBackgroundSync => 'Đồng bộ nền';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Đồng bộ vault định kỳ qua WorkManager ngay cả khi đóng ứng dụng.';
 
   @override
   String get syncTitle => 'Dong bo';
@@ -1884,28 +1884,28 @@ class AppLocalizationsVi extends AppLocalizations {
   String get sftpFileSaved => 'Da luu tep';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Mở tệp';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Lưu tệp';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Chọn thư mục';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Nhập sao lưu';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Nhập cấu hình SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Nhập cài đặt';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Chọn tệp khoá SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Tải lên tệp';
 
   @override
   String notificationTerminalTitle(int count) {

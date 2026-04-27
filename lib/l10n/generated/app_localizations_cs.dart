@@ -1398,6 +1398,13 @@ class AppLocalizationsCs extends AppLocalizations {
       'Automaticky synchronizovat při spuštění aplikace';
 
   @override
+  String get syncBackgroundSync => 'Synchronizovat na pozadí';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodická synchronizace trezoru pomocí WorkManager i při zavřené aplikaci.';
+
+  @override
   String get syncNow => 'Synchronizovat nyní';
 
   @override
@@ -1425,13 +1432,6 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Verze trezoru';
-
-  @override
-  String get syncBackgroundSync => 'Synchronizovat na pozadí';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Periodická synchronizace trezoru pomocí WorkManager i při zavřené aplikaci.';
 
   @override
   String get syncTitle => 'Synchronizace';
@@ -1885,28 +1885,28 @@ class AppLocalizationsCs extends AppLocalizations {
   String get sftpFileSaved => 'Soubor uložen';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Otevřít soubor';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Uložit soubor';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Vybrat složku';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Importovat zálohu';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Importovat SSH config';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Importovat nastavení';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Vybrat klíč SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Nahrát soubory';
 
   @override
   String notificationTerminalTitle(int count) {

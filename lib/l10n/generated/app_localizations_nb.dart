@@ -1397,6 +1397,13 @@ class AppLocalizationsNb extends AppLocalizations {
       'Synkroniser automatisk når appen starter';
 
   @override
+  String get syncBackgroundSync => 'Synkroniser i bakgrunnen';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodisk hvelvsynk via WorkManager selv når appen er lukket.';
+
+  @override
   String get syncNow => 'Synkroniser nå';
 
   @override
@@ -1424,13 +1431,6 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Hvelvversjon';
-
-  @override
-  String get syncBackgroundSync => 'Synkroniser i bakgrunnen';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Periodisk hvelvsynk via WorkManager selv når appen er lukket.';
 
   @override
   String get syncTitle => 'Synkronisering';
@@ -1886,28 +1886,28 @@ class AppLocalizationsNb extends AppLocalizations {
   String get sftpFileSaved => 'Fil lagret';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Åpne fil';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Lagre fil';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Velg mappe';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Importer sikkerhetskopi';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Importer SSH-konfig';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Importer innstillinger';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Velg SSH-nøkkel';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Last opp filer';
 
   @override
   String notificationTerminalTitle(int count) {

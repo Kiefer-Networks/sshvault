@@ -2730,6 +2730,18 @@ abstract class AppLocalizations {
   /// **'Automatically sync when the app starts'**
   String get syncAutoSyncDescription;
 
+  /// No description provided for @syncBackgroundSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync in background'**
+  String get syncBackgroundSync;
+
+  /// No description provided for @syncBackgroundSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Run periodic sync even when the app is closed (Android only — uses extra battery)'**
+  String get syncBackgroundSyncDescription;
+
   /// No description provided for @syncNow.
   ///
   /// In en, this message translates to:
@@ -2788,12 +2800,6 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Sync'**
-  /// No description provided for @syncBackgroundSync.
-  String get syncBackgroundSync;
-
-  /// No description provided for @syncBackgroundSyncDescription.
-  String get syncBackgroundSyncDescription;
-
   String get syncTitle;
 
   /// No description provided for @settingsSectionNetwork.

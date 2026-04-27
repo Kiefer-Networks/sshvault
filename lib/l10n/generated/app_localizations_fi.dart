@@ -1403,6 +1403,13 @@ class AppLocalizationsFi extends AppLocalizations {
       'Synkronoi automaattisesti sovelluksen käynnistyessä';
 
   @override
+  String get syncBackgroundSync => 'Synkronoi taustalla';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Kassakaapin säännöllinen synkronointi WorkManagerilla myös sovelluksen ollessa suljettuna.';
+
+  @override
   String get syncNow => 'Synkronoi nyt';
 
   @override
@@ -1430,13 +1437,6 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Holvin versio';
-
-  @override
-  String get syncBackgroundSync => 'Synkronoi taustalla';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Kassakaapin säännöllinen synkronointi WorkManagerilla myös sovelluksen ollessa suljettuna.';
 
   @override
   String get syncTitle => 'Synkronointi';
@@ -1891,28 +1891,28 @@ class AppLocalizationsFi extends AppLocalizations {
   String get sftpFileSaved => 'Tiedosto tallennettu';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Avaa tiedosto';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Tallenna tiedosto';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Valitse kansio';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Tuo varmuuskopio';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Tuo SSH-asetukset';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Tuo asetukset';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Valitse SSH-avain';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Lataa tiedostoja';
 
   @override
   String notificationTerminalTitle(int count) {

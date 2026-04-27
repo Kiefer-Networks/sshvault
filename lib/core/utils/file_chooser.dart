@@ -126,8 +126,15 @@ class FileChooser {
   static TargetPlatform Function() platformReader = _defaultPlatformReader;
 
   /// Overridable for tests. Defaults to the real `FilePicker.platform`.
+  ///
+  /// Resolved lazily on first access so unit tests that swap the override
+  /// in `setUp()` are not racing the field initializer (which would
+  /// otherwise throw `LateInitializationError` if no platform plugin is
+  /// registered when the test isolate boots).
   @visibleForTesting
-  static FilePicker picker = FilePicker.platform;
+  static FilePicker? pickerOverride;
+
+  static FilePicker get picker => pickerOverride ?? FilePicker.platform;
 
   /// Resets all overrides to their production defaults.
   @visibleForTesting
@@ -135,7 +142,7 @@ class FileChooser {
     environmentReader = _defaultEnvReader;
     fileExistsReader = _defaultExistsReader;
     platformReader = _defaultPlatformReader;
-    picker = FilePicker.platform;
+    pickerOverride = null;
   }
 
   static String? _defaultEnvReader(String key) => Platform.environment[key];

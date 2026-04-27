@@ -1405,6 +1405,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Sincronizar automáticamente al iniciar la app';
 
   @override
+  String get syncBackgroundSync => 'Sincronizar en segundo plano';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sincronización periódica del vault con WorkManager incluso con la app cerrada.';
+
+  @override
   String get syncNow => 'Sincronizar ahora';
 
   @override
@@ -1432,13 +1439,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Versión del vault';
-
-  @override
-  String get syncBackgroundSync => 'Sincronizar en segundo plano';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Sincronización periódica del vault con WorkManager incluso con la app cerrada.';
 
   @override
   String get syncTitle => 'Sync';
@@ -1903,7 +1903,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fileChooserOpenDirectory => 'Elegir carpeta';
 
   @override
-  String get fileChooserImportArchive => 'Importar copia';
+  String get fileChooserImportArchive => 'Importar copia de seguridad';
 
   @override
   String get fileChooserImportSshConfig => 'Importar config SSH';
@@ -1912,7 +1912,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fileChooserImportSettings => 'Importar ajustes';
 
   @override
-  String get fileChooserPickKeyFile => 'Elegir clave SSH';
+  String get fileChooserPickKeyFile => 'Elegir archivo de clave SSH';
 
   @override
   String get fileChooserUploadFiles => 'Subir archivos';

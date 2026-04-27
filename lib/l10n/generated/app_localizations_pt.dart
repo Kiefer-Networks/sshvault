@@ -1402,6 +1402,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Sincronizar automaticamente ao iniciar o aplicativo';
 
   @override
+  String get syncBackgroundSync => 'Sincronizar em segundo plano';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sincronização periódica do vault via WorkManager mesmo com app fechado.';
+
+  @override
   String get syncNow => 'Sincronizar agora';
 
   @override
@@ -1429,13 +1436,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Versão do cofre';
-
-  @override
-  String get syncBackgroundSync => 'Sincronizar em segundo plano';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Sincronização periódica do vault via WorkManager mesmo com app fechado.';
 
   @override
   String get syncTitle => 'Sincronização';
@@ -1891,28 +1891,28 @@ class AppLocalizationsPt extends AppLocalizations {
   String get sftpFileSaved => 'Arquivo salvo';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Abrir arquivo';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Salvar arquivo';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Escolher pasta';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Importar backup';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Importar config SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Importar configurações';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Escolher chave SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Enviar arquivos';
 
   @override
   String notificationTerminalTitle(int count) {

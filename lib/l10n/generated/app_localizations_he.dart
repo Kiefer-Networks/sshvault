@@ -1384,6 +1384,13 @@ class AppLocalizationsHe extends AppLocalizations {
   String get syncAutoSyncDescription => 'סנכרון אוטומטי בהפעלת האפליקציה';
 
   @override
+  String get syncBackgroundSync => 'סנכרון ברקע';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'סנכרון תקופתי של הכספת באמצעות WorkManager גם כשהאפליקציה סגורה.';
+
+  @override
   String get syncNow => 'סנכרן עכשיו';
 
   @override
@@ -1411,13 +1418,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'גרסת כספת';
-
-  @override
-  String get syncBackgroundSync => 'סנכרון ברקע';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'סנכרון תקופתי של הכספת באמצעות WorkManager גם כשהאפליקציה סגורה.';
 
   @override
   String get syncTitle => 'סנכרון';
@@ -1869,28 +1869,28 @@ class AppLocalizationsHe extends AppLocalizations {
   String get sftpFileSaved => 'הקובץ נשמר';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'פתח קובץ';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'שמור קובץ';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'בחר תיקייה';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'ייבא גיבוי';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'ייבא הגדרות SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'ייבא הגדרות';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'בחר קובץ מפתח SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'העלה קבצים';
 
   @override
   String notificationTerminalTitle(int count) {

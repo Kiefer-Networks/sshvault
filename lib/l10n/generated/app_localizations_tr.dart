@@ -1401,6 +1401,13 @@ class AppLocalizationsTr extends AppLocalizations {
       'Uygulama başladığında otomatik senkronize et';
 
   @override
+  String get syncBackgroundSync => 'Arka planda senkronize et';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Uygulama kapalıyken bile WorkManager ile periyodik kasa senkronizasyonu.';
+
+  @override
   String get syncNow => 'Şimdi Senkronize Et';
 
   @override
@@ -1428,13 +1435,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Kasa Sürümü';
-
-  @override
-  String get syncBackgroundSync => 'Arka planda senkronize et';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Uygulama kapalıyken bile WorkManager ile periyodik kasa senkronizasyonu.';
 
   @override
   String get syncTitle => 'Senkronizasyon';
@@ -1888,28 +1888,28 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sftpFileSaved => 'Dosya kaydedildi';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Dosya aç';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Dosyayı kaydet';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Klasör seç';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Yedeği içe aktar';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'SSH yapılandırmasını içe aktar';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Ayarları içe aktar';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'SSH anahtar dosyası seç';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Dosyaları yükle';
 
   @override
   String notificationTerminalTitle(int count) {

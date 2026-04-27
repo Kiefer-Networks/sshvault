@@ -1400,6 +1400,13 @@ class AppLocalizationsId extends AppLocalizations {
       'Sinkronisasi otomatis saat aplikasi dimulai';
 
   @override
+  String get syncBackgroundSync => 'Sinkronisasi latar belakang';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sinkronisasi vault berkala via WorkManager bahkan saat aplikasi tertutup.';
+
+  @override
   String get syncNow => 'Sinkronkan Sekarang';
 
   @override
@@ -1427,13 +1434,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Versi Vault';
-
-  @override
-  String get syncBackgroundSync => 'Sinkronisasi latar belakang';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Sinkronisasi vault berkala via WorkManager bahkan saat aplikasi tertutup.';
 
   @override
   String get syncTitle => 'Sinkronisasi';
@@ -1889,28 +1889,28 @@ class AppLocalizationsId extends AppLocalizations {
   String get sftpFileSaved => 'File disimpan';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Buka file';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Simpan file';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Pilih folder';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Impor cadangan';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Impor konfigurasi SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Impor pengaturan';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Pilih file kunci SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Unggah file';
 
   @override
   String notificationTerminalTitle(int count) {

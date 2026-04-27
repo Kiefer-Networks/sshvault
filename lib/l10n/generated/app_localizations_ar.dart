@@ -1389,6 +1389,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncAutoSyncDescription => 'المزامنة تلقائيًا عند بدء التطبيق';
 
   @override
+  String get syncBackgroundSync => 'مزامنة في الخلفية';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'مزامنة دورية للخزنة عبر WorkManager حتى عند إغلاق التطبيق.';
+
+  @override
   String get syncNow => 'مزامنة الآن';
 
   @override
@@ -1416,13 +1423,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'إصدار الخزنة';
-
-  @override
-  String get syncBackgroundSync => 'مزامنة في الخلفية';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'مزامنة دورية للخزنة عبر WorkManager حتى عند إغلاق التطبيق.';
 
   @override
   String get syncTitle => 'المزامنة';
@@ -1875,28 +1875,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sftpFileSaved => 'تم حفظ الملف';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'فتح ملف';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'حفظ الملف';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'اختر مجلدًا';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'استيراد نسخة احتياطية';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'استيراد إعدادات SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'استيراد الإعدادات';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'اختر مفتاح SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'رفع ملفات';
 
   @override
   String notificationTerminalTitle(int count) {

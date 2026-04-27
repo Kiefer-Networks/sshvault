@@ -176,14 +176,19 @@ void main() {
       // above covers the channel contract directly.
     );
 
-    test('handles MissingPluginException without crashing', () async {
+    test('invoker raises MissingPluginException unmodified — the catch '
+        'sits in _setItems / markRecent, not in the test seam', () async {
       final svc = JumpListService.instance
         ..invoker = (_, _) async {
           throw MissingPluginException('not registered');
         };
 
-      // Should not throw.
-      await svc.invoker('setItems', const []);
+      // The invoker hook is the raw boundary; production swallow-handlers
+      // wrap it. Asserting the throw here documents that contract.
+      await expectLater(
+        () => svc.invoker('setItems', const []),
+        throwsA(isA<MissingPluginException>()),
+      );
     });
 
     test('markRecent forwards serverId + name to the channel', () async {

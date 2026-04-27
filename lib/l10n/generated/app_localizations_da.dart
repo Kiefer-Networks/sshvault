@@ -1399,6 +1399,13 @@ class AppLocalizationsDa extends AppLocalizations {
       'Synkroniser automatisk når appen starter';
 
   @override
+  String get syncBackgroundSync => 'Synkroniser i baggrunden';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodisk vault-sync via WorkManager selv når appen er lukket.';
+
+  @override
   String get syncNow => 'Synkroniser nu';
 
   @override
@@ -1426,13 +1433,6 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Boksversion';
-
-  @override
-  String get syncBackgroundSync => 'Synkroniser i baggrunden';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Periodisk vault-sync via WorkManager selv når appen er lukket.';
 
   @override
   String get syncTitle => 'Synkronisering';
@@ -1888,28 +1888,28 @@ class AppLocalizationsDa extends AppLocalizations {
   String get sftpFileSaved => 'Fil gemt';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Åbn fil';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Gem fil';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Vælg mappe';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Importer sikkerhedskopi';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Importer SSH-config';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Importer indstillinger';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Vælg SSH-nøgle';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Upload filer';
 
   @override
   String notificationTerminalTitle(int count) {

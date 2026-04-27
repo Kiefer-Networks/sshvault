@@ -1370,6 +1370,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncAutoSyncDescription => 'アプリ起動時に自動的に同期';
 
   @override
+  String get syncBackgroundSync => 'バックグラウンドで同期';
+
+  @override
+  String get syncBackgroundSyncDescription => 'アプリが閉じていても WorkManager で定期的に同期。';
+
+  @override
   String get syncNow => '今すぐ同期';
 
   @override
@@ -1396,12 +1402,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'ボールトバージョン';
-
-  @override
-  String get syncBackgroundSync => 'バックグラウンドで同期';
-
-  @override
-  String get syncBackgroundSyncDescription => 'アプリが閉じていても WorkManager で定期的に同期。';
 
   @override
   String get syncTitle => '同期';
@@ -1852,28 +1852,28 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sftpFileSaved => 'ファイルを保存しました';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'ファイルを開く';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'ファイルを保存';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'フォルダを選択';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'バックアップをインポート';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'SSH設定をインポート';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => '設定をインポート';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'SSH鍵ファイルを選択';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'ファイルをアップロード';
 
   @override
   String notificationTerminalTitle(int count) {

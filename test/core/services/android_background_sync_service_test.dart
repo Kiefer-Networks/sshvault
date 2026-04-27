@@ -24,8 +24,9 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(_FakeConstraints());
-    registerFallbackValue(ExistingPeriodicWorkPolicy.update);
+    registerFallbackValue(ExistingWorkPolicy.replace);
     registerFallbackValue(BackoffPolicy.exponential);
+    registerFallbackValue(Duration.zero);
   });
 
   group('AndroidBackgroundSyncService — platform gating', () {
@@ -92,7 +93,7 @@ void main() {
               NetworkType.connected,
             ),
           ),
-          existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
+          existingWorkPolicy: ExistingWorkPolicy.replace,
           backoffPolicy: BackoffPolicy.exponential,
           backoffPolicyDelay: any(named: 'backoffPolicyDelay'),
         ),

@@ -139,15 +139,17 @@ void main() {
       },
     );
 
-    test('handles MissingPluginException without crashing', () async {
+    test('invoker raises MissingPluginException unmodified — production '
+        'swallow-handlers sit one level higher', () async {
       final svc = AndroidShortcutsService.instance
         ..invoker = (_, _) async {
           throw MissingPluginException('not registered');
         };
 
-      // Should not throw — caller must be resilient on platforms or test
-      // builds where the native helper isn't wired.
-      await svc.invoker('setFavorites', const <Object>[]);
+      await expectLater(
+        () => svc.invoker('setFavorites', const <Object>[]),
+        throwsA(isA<MissingPluginException>()),
+      );
     });
 
     test('records the exact method name expected by Kotlin', () async {

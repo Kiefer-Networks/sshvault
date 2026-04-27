@@ -1393,6 +1393,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get syncAutoSyncDescription => 'ซิงค์อัตโนมัติเมื่อเปิดแอป';
 
   @override
+  String get syncBackgroundSync => 'ซิงค์ในเบื้องหลัง';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'ซิงค์วอลต์เป็นระยะผ่าน WorkManager แม้แอปจะปิดอยู่';
+
+  @override
   String get syncNow => 'ซิงค์ตอนนี้';
 
   @override
@@ -1420,13 +1427,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'เวอร์ชันตู้นิรภัย';
-
-  @override
-  String get syncBackgroundSync => 'ซิงค์ในเบื้องหลัง';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'ซิงค์วอลต์เป็นระยะผ่าน WorkManager แม้แอปจะปิดอยู่';
 
   @override
   String get syncTitle => 'ซิงค์';
@@ -1880,28 +1880,28 @@ class AppLocalizationsTh extends AppLocalizations {
   String get sftpFileSaved => 'บันทึกไฟล์แล้ว';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'เปิดไฟล์';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'บันทึกไฟล์';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'เลือกโฟลเดอร์';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'นำเข้าข้อมูลสำรอง';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'นำเข้าการกำหนดค่า SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'นำเข้าการตั้งค่า';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'เลือกไฟล์คีย์ SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'อัปโหลดไฟล์';
 
   @override
   String notificationTerminalTitle(int count) {

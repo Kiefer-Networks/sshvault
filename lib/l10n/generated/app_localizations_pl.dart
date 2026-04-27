@@ -1402,6 +1402,13 @@ class AppLocalizationsPl extends AppLocalizations {
       'Automatyczna synchronizacja przy uruchomieniu aplikacji';
 
   @override
+  String get syncBackgroundSync => 'Synchronizuj w tle';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Okresowa synchronizacja sejfu przez WorkManager nawet przy zamkniętej aplikacji.';
+
+  @override
   String get syncNow => 'Synchronizuj teraz';
 
   @override
@@ -1429,13 +1436,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Wersja sejfu';
-
-  @override
-  String get syncBackgroundSync => 'Synchronizuj w tle';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Okresowa synchronizacja sejfu przez WorkManager nawet przy zamkniętej aplikacji.';
 
   @override
   String get syncTitle => 'Synchronizacja';
@@ -1889,28 +1889,28 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sftpFileSaved => 'Plik zapisany';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Otwórz plik';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Zapisz plik';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Wybierz folder';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Importuj kopię zapasową';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Importuj config SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Importuj ustawienia';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Wybierz klucz SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Prześlij pliki';
 
   @override
   String notificationTerminalTitle(int count) {

@@ -1404,6 +1404,13 @@ class AppLocalizationsHu extends AppLocalizations {
       'Automatikus szinkronizálás az alkalmazás indításakor';
 
   @override
+  String get syncBackgroundSync => 'Háttérben szinkronizál';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'A trezor időszakos szinkronizálása WorkManager segítségével, akár zárt alkalmazás mellett is.';
+
+  @override
   String get syncNow => 'Szinkronizálás most';
 
   @override
@@ -1431,13 +1438,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Széf verzió';
-
-  @override
-  String get syncBackgroundSync => 'Háttérben szinkronizál';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'A trezor időszakos szinkronizálása WorkManager segítségével, akár zárt alkalmazás mellett is.';
 
   @override
   String get syncTitle => 'Szinkronizálás';
@@ -1893,28 +1893,28 @@ class AppLocalizationsHu extends AppLocalizations {
   String get sftpFileSaved => 'Fájl mentve';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Fájl megnyitása';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Fájl mentése';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Mappa kiválasztása';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Biztonsági mentés importálása';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'SSH-konfig importálása';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Beállítások importálása';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'SSH-kulcs kiválasztása';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Fájlok feltöltése';
 
   @override
   String notificationTerminalTitle(int count) {

@@ -1401,6 +1401,13 @@ class AppLocalizationsUk extends AppLocalizations {
       'Автоматична синхронізація при запуску застосунку';
 
   @override
+  String get syncBackgroundSync => 'Синхронізація у фоні';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Періодична синхронізація сховища через WorkManager навіть при закритому застосунку.';
+
+  @override
   String get syncNow => 'Синхронізувати зараз';
 
   @override
@@ -1428,13 +1435,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Версія сховища';
-
-  @override
-  String get syncBackgroundSync => 'Синхронізація у фоні';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Періодична синхронізація сховища через WorkManager навіть при закритому застосунку.';
 
   @override
   String get syncTitle => 'Синхронізація';
@@ -1890,28 +1890,28 @@ class AppLocalizationsUk extends AppLocalizations {
   String get sftpFileSaved => 'Файл збережено';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Відкрити файл';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Зберегти файл';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Вибрати папку';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Імпорт резервної копії';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Імпорт SSH-конфігу';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Імпорт налаштувань';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Вибрати SSH-ключ';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Завантажити файли';
 
   @override
   String notificationTerminalTitle(int count) {

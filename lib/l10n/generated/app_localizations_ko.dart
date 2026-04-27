@@ -1373,6 +1373,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get syncAutoSyncDescription => '앱 시작 시 자동으로 동기화';
 
   @override
+  String get syncBackgroundSync => '백그라운드 동기화';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      '앱이 닫혀 있어도 WorkManager로 주기적으로 동기화.';
+
+  @override
   String get syncNow => '지금 동기화';
 
   @override
@@ -1399,13 +1406,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get syncVaultVersion => '볼트 버전';
-
-  @override
-  String get syncBackgroundSync => '백그라운드 동기화';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      '앱이 닫혀 있어도 WorkManager로 주기적으로 동기화.';
 
   @override
   String get syncTitle => '동기화';
@@ -1857,28 +1857,28 @@ class AppLocalizationsKo extends AppLocalizations {
   String get sftpFileSaved => '파일이 저장되었습니다';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => '파일 열기';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => '파일 저장';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => '폴더 선택';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => '백업 가져오기';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'SSH 구성 가져오기';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => '설정 가져오기';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'SSH 키 파일 선택';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => '파일 업로드';
 
   @override
   String notificationTerminalTitle(int count) {

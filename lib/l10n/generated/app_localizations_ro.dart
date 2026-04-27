@@ -1404,6 +1404,13 @@ class AppLocalizationsRo extends AppLocalizations {
       'Sincronizare automata la pornirea aplicatiei';
 
   @override
+  String get syncBackgroundSync => 'Sincronizare în fundal';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Sincronizare periodică a seifului via WorkManager chiar și cu aplicația închisă.';
+
+  @override
   String get syncNow => 'Sincronizare acum';
 
   @override
@@ -1431,13 +1438,6 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Versiune seif';
-
-  @override
-  String get syncBackgroundSync => 'Sincronizare în fundal';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Sincronizare periodică a seifului via WorkManager chiar și cu aplicația închisă.';
 
   @override
   String get syncTitle => 'Sincronizare';
@@ -1893,28 +1893,28 @@ class AppLocalizationsRo extends AppLocalizations {
   String get sftpFileSaved => 'Fisier salvat';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Deschide fișier';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Salvează fișier';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Alege folder';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Importă rezervă';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'Importă config SSH';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Importă setări';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'Alege cheie SSH';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Încarcă fișiere';
 
   @override
   String notificationTerminalTitle(int count) {

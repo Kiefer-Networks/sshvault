@@ -141,14 +141,17 @@ void main() {
       expect(payload[1]['id'], 's2');
     });
 
-    test('handles MissingPluginException without crashing', () async {
+    test('invoker raises MissingPluginException unmodified — production '
+        'swallow-handlers sit one level higher', () async {
       final svc = AndroidWidgetService.instance
         ..invoker = (_, _) async {
           throw MissingPluginException('not registered');
         };
 
-      // Should not throw — the production code logs and disables itself.
-      await svc.invoker('setFavorites', const []);
+      await expectLater(
+        () => svc.invoker('setFavorites', const []),
+        throwsA(isA<MissingPluginException>()),
+      );
     });
   });
 }

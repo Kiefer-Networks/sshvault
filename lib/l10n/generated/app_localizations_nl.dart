@@ -1404,6 +1404,13 @@ class AppLocalizationsNl extends AppLocalizations {
       'Automatisch synchroniseren bij het starten van de app';
 
   @override
+  String get syncBackgroundSync => 'Synchroniseren op achtergrond';
+
+  @override
+  String get syncBackgroundSyncDescription =>
+      'Periodieke vault-sync via WorkManager ook bij gesloten app.';
+
+  @override
   String get syncNow => 'Nu synchroniseren';
 
   @override
@@ -1431,13 +1438,6 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get syncVaultVersion => 'Kluisversie';
-
-  @override
-  String get syncBackgroundSync => 'Synchroniseren op achtergrond';
-
-  @override
-  String get syncBackgroundSyncDescription =>
-      'Periodieke vault-sync via WorkManager ook bij gesloten app.';
 
   @override
   String get syncTitle => 'Synchronisatie';
@@ -1893,28 +1893,28 @@ class AppLocalizationsNl extends AppLocalizations {
   String get sftpFileSaved => 'Bestand opgeslagen';
 
   @override
-  String get fileChooserOpenFile => 'Open file';
+  String get fileChooserOpenFile => 'Bestand openen';
 
   @override
-  String get fileChooserSaveFile => 'Save file';
+  String get fileChooserSaveFile => 'Bestand opslaan';
 
   @override
-  String get fileChooserOpenDirectory => 'Choose folder';
+  String get fileChooserOpenDirectory => 'Map kiezen';
 
   @override
-  String get fileChooserImportArchive => 'Import backup';
+  String get fileChooserImportArchive => 'Back-up importeren';
 
   @override
-  String get fileChooserImportSshConfig => 'Import SSH config';
+  String get fileChooserImportSshConfig => 'SSH-config importeren';
 
   @override
-  String get fileChooserImportSettings => 'Import settings';
+  String get fileChooserImportSettings => 'Instellingen importeren';
 
   @override
-  String get fileChooserPickKeyFile => 'Pick SSH key file';
+  String get fileChooserPickKeyFile => 'SSH-sleutelbestand kiezen';
 
   @override
-  String get fileChooserUploadFiles => 'Upload files';
+  String get fileChooserUploadFiles => 'Bestanden uploaden';
 
   @override
   String notificationTerminalTitle(int count) {

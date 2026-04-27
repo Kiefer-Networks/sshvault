@@ -113,7 +113,7 @@ void main() {
 
     setUp(() {
       mock = _MockFilePicker();
-      FileChooser.picker = mock;
+      FileChooser.pickerOverride = mock;
     });
 
     test('passes localized title through to FilePicker', () async {
@@ -241,7 +241,7 @@ void main() {
   group('saveFile', () {
     test('forwards dialog title, file name, bytes and filters', () async {
       final mock = _MockFilePicker();
-      FileChooser.picker = mock;
+      FileChooser.pickerOverride = mock;
       final bytes = Uint8List.fromList([9, 9, 9]);
 
       when(
@@ -277,7 +277,7 @@ void main() {
   group('openDir', () {
     test('forwards dialog title to getDirectoryPath', () async {
       final mock = _MockFilePicker();
-      FileChooser.picker = mock;
+      FileChooser.pickerOverride = mock;
 
       when(
         () => mock.getDirectoryPath(dialogTitle: any(named: 'dialogTitle')),
@@ -292,7 +292,7 @@ void main() {
   group('openFiles', () {
     test('returns empty list on cancel and forwards allowMultiple', () async {
       final mock = _MockFilePicker();
-      FileChooser.picker = mock;
+      FileChooser.pickerOverride = mock;
 
       when(
         () => mock.pickFiles(

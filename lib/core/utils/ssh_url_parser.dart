@@ -65,6 +65,11 @@ class SshUrl {
     final trimmed = input.trim();
     if (trimmed.isEmpty) return null;
 
+    if (RegExp(r'^[a-zA-Z]+://@').hasMatch(trimmed)) return null;
+    if (RegExp(r'^[a-zA-Z]+://[^/?#]+:0(?:[/?#]|$)').hasMatch(trimmed)) {
+      return null;
+    }
+
     final Uri uri;
     try {
       uri = Uri.parse(trimmed);
@@ -88,11 +93,12 @@ class SshUrl {
     } else if (_ipv4Regex.hasMatch(rawHost)) {
       final parts = rawHost.split('.').map(int.parse);
       if (!parts.every((p) => p >= 0 && p <= 255)) return null;
+    } else if (RegExp(r'^[\d.]+$').hasMatch(rawHost)) {
+      return null;
     } else if (!_hostnameRegex.hasMatch(rawHost)) {
       return null;
     }
 
-    // Port: Uri.parse returns 0 when none was given.
     int port;
     if (uri.hasPort) {
       port = uri.port;
