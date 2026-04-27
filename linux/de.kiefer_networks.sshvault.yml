@@ -168,11 +168,14 @@ modules:
         sha256: bd59abd5f1314e411d0d55ce3643e91cef633271f58126be529de5fb71c5ab38
       # Drop Vala vapi generation — Freedesktop SDK 24.08 ships no Vala
       # compiler. The .vapi binding is not needed at runtime; only the
-      # .so + .typelib are. Removing the find_package(Vala) line plus
-      # its dependent if-block keeps CMake configure happy.
+      # .so + .typelib are. Make find_package(Vala) optional, and add a
+      # standalone add_custom_target("ido_typelib" ALL ...) so the
+      # introspection commands still fire (the original ALL trigger
+      # depended on .vapi which is now gated).
       - type: shell
         commands:
-          - "sed -i '/find_package(Vala/,/^    endif/d' src/CMakeLists.txt"
+          - "sed -i 's|find_package(Vala REQUIRED QUIET)|find_package(Vala QUIET)|' src/CMakeLists.txt"
+          - "sed -i '/find_package(Vala QUIET)/i \\    add_custom_target(\"ido_typelib\" ALL DEPENDS \"${CMAKE_CURRENT_BINARY_DIR}/AyatanaIdo3-0.4.typelib\")' src/CMakeLists.txt"
 
   - name: libayatana-indicator
     buildsystem: cmake-ninja
