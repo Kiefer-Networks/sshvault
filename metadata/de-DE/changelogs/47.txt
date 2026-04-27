@@ -1,0 +1,35 @@
+SSHVault 2.0 — vollständige Desktop-Integration auf jeder Plattform.
+
+Linux: ssh:// + sftp:// Handler, AppIndicator/SNI-Tray, Single-
+Instance via DBus, KRunner / rofi / polybar Trigger, libsecret-
+Keyring, ssh-agent, xdg-Portale (Theme, Dateiauswahl, globaler
+Shortcut), AppArmor, login1 Power-Inhibit, Wayland-Clipboard,
+HiDPI pro Monitor, kompletter bash/zsh-CLI, Drag-and-Drop Import.
+
+Windows: URL- + .pub/.pem/.ppk-Handler, Wincred / Windows Hello,
+Pageant + OpenSSH-Agent-Kompatibilität, Toast-Benachrichtigungen,
+Autostart, Power-Inhibit, Mica + Acrylic + dunkle Titelleiste
+via DWM, Jump List, ITaskbarList3-Thumbnail-Toolbar mit SFTP-
+Fortschritt, .ppk-Import, MiniDumpWriteDump, Inno-Setup-Installer.
+
+macOS: URL-Handler, natives NSMenu, NSAppearance-Follow, Services-
+Menü, NSVisualEffectView-Vibrancy, NSWindow-Tabs, UN-Notifications
+mit Aktionen, Quick-Look-Extension, Privacy-Manifest.
+
+Android: URL- + Schlüsseldatei-Handler, App-Shortcuts + Quick-
+Settings-Kachel, Foreground-Service, WakeLock, Splash-Screen-API,
+adaptives + getöntes Icon, Edge-to-Edge, Material You, Home-Widget,
+Picture-in-Picture, Notification-Channels, WorkManager-
+Hintergrundsync, Predictive Back, AAB-Splits + ProGuard, Android-
+Keystore (StrongBox) für den Master-Key, optionales Screen-Pinning.
+
+iOS / iPadOS: URL-Handler, Files-App, iCloud-Keychain-Sync, Siri /
+App Intents, Core Spotlight, UIDropInteraction, native Haptik,
+BGTaskScheduler, Multi-Window, ⌘N/⌘W/⌘T/⌘,/⌘F, AirDrop, Live
+Activities + Dynamic Island, WidgetKit Home + Lock Screen, Face ID
+/ Touch ID Pre-Unlock, ATS, NSFileProtectionComplete für die
+SQLCipher-DB.
+
+Plus hybride Post-Quanten-SSH-KEX (mlkem768x25519-sha256,
+sntrup761x25519-sha512@openssh.com) über liboqs, Tombstone-
+basierte Löschungs-Sync und 16 KB ELF-Page-Alignment für Android 15+.

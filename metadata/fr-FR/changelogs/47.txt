@@ -1,0 +1,39 @@
+SSHVault 2.0 — intégration desktop complète sur chaque plateforme.
+
+Linux : gestionnaires ssh:// + sftp://, tray AppIndicator/SNI,
+instance unique via DBus, déclencheurs KRunner / rofi / polybar,
+libsecret, ssh-agent, portails xdg (thème, sélecteurs de fichier,
+raccourci global), AppArmor, login1 power-inhibit, presse-papiers
+Wayland, HiDPI par écran, CLI bash/zsh complète, import
+drag-and-drop.
+
+Windows : gestionnaires d'URL + .pub/.pem/.ppk, Wincred / Windows
+Hello, compatibilité agent Pageant + OpenSSH, toasts natifs, auto-
+démarrage, power-inhibit, Mica + Acrylic + titre sombre via DWM,
+Jump List, ITaskbarList3 avec progression SFTP, import .ppk,
+MiniDumpWriteDump, installeur Inno Setup.
+
+macOS : gestionnaires d'URL, NSMenu natif, NSAppearance live-
+follow, menu Services, vibrancy NSVisualEffectView, onglets
+NSWindow, toasts UN avec actions, extension Quick Look, Privacy
+Manifest.
+
+Android : gestionnaires d'URL + fichiers de clé, App Shortcuts +
+Quick Settings Tile, Foreground Service, WakeLock, Splash Screen
+API, icône adaptative + thématique, edge-to-edge, Material You,
+widget d'accueil, Picture-in-Picture, canaux de notification,
+sync en arrière-plan via WorkManager, retour prédictif, splits
+AAB + ProGuard, Android Keystore (StrongBox) enveloppe la clé
+maître, Screen-Pinning optionnel.
+
+iOS / iPadOS : gestionnaires d'URL, navigation Files-App, sync
+iCloud Keychain, Siri / App Intents, Core Spotlight,
+UIDropInteraction, haptics natifs, BGTaskScheduler, multi-
+fenêtres, ⌘N/⌘W/⌘T/⌘,/⌘F, AirDrop, Live Activities + Dynamic
+Island, widgets WidgetKit Home + Lock Screen, Face ID / Touch ID
+pre-unlock, ATS, NSFileProtectionComplete sur la base SQLCipher.
+
+Plus KEX SSH post-quantique hybride (mlkem768x25519-sha256,
+sntrup761x25519-sha512@openssh.com) via liboqs, sync de
+suppression basée sur tombstones et alignement ELF 16 Ko pour
+Android 15+.

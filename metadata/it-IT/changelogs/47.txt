@@ -1,0 +1,37 @@
+SSHVault 2.0 — integrazione desktop completa su ogni piattaforma.
+
+Linux: handler ssh:// + sftp://, tray AppIndicator/SNI, istanza
+singola via DBus, trigger KRunner / rofi / polybar, libsecret,
+ssh-agent, portali xdg (tema, selettori di file, scorciatoia
+globale), AppArmor, login1 power-inhibit, clipboard Wayland,
+HiDPI per monitor, CLI bash/zsh completa, import drag-and-drop.
+
+Windows: handler URL + .pub/.pem/.ppk, Wincred / Windows Hello,
+compatibilità agente Pageant + OpenSSH, toast nativi, avvio
+automatico, power-inhibit, Mica + Acrylic + barra del titolo
+scura via DWM, Jump List, ITaskbarList3 con avanzamento SFTP,
+import .ppk, MiniDumpWriteDump, installer Inno Setup.
+
+macOS: handler URL, NSMenu nativo, NSAppearance live-follow, menu
+Services, vibrancy NSVisualEffectView, schede NSWindow, toast UN
+con azioni, estensione Quick Look, Privacy Manifest.
+
+Android: handler URL + file chiave, App Shortcuts + Quick Settings
+Tile, Foreground Service, WakeLock, Splash Screen API, icona
+adattiva + a tema, edge-to-edge, Material You, widget home,
+Picture-in-Picture, canali di notifica, sync in background via
+WorkManager, predictive back, split AAB + ProGuard, Android
+Keystore (StrongBox) avvolge la master-key, Screen-Pinning
+opzionale.
+
+iOS / iPadOS: handler URL, navigazione Files, sync iCloud
+Keychain, Siri / App Intents, Core Spotlight, UIDropInteraction,
+haptics nativi, BGTaskScheduler, multi-finestra, ⌘N/⌘W/⌘T/⌘,/⌘F,
+AirDrop, Live Activities + Dynamic Island, widget WidgetKit Home
++ Lock Screen, Face ID / Touch ID pre-unlock, ATS,
+NSFileProtectionComplete sul DB SQLCipher.
+
+In più KEX SSH post-quantum ibrido (mlkem768x25519-sha256,
+sntrup761x25519-sha512@openssh.com) via liboqs, sync di
+cancellazione basato su tombstones e allineamento ELF 16 KB per
+Android 15+.
