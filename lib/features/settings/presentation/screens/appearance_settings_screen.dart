@@ -322,11 +322,11 @@ class AppearanceSettingsScreen extends ConsumerWidget {
               ),
             ],
 
-            // --- Notifications (Windows only) ---
-            // Native Windows toasts (Windows.UI.Notifications) support
-            // inline action buttons that persist in the Action Center.
-            // Linux + macOS keep using `flutter_local_notifications`, so
-            // this toggle is hidden everywhere else.
+            // --- Notifications (Windows / macOS) ---
+            // Native toasts on both platforms support inline action
+            // buttons that persist in the Action Center / Notification
+            // Center. Linux keeps using `flutter_local_notifications`,
+            // so this section is hidden there.
             if (Platform.isWindows) ...[
               Spacing.verticalLg,
               const SectionHeader(title: 'Notifications'),
@@ -344,6 +344,28 @@ class AppearanceSettingsScreen extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .setWindowsToastActionsEnabled(v);
+                    },
+                  ),
+                ],
+              ),
+            ],
+            if (Platform.isMacOS) ...[
+              Spacing.verticalLg,
+              const SectionHeader(title: 'Notifications'),
+              SettingsGroupCard(
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.notifications_active_outlined,
+                    iconColor: Theme.of(context).colorScheme.primary,
+                    title: 'Show action buttons',
+                    subtitleText:
+                        'Add Disconnect / Show buttons to macOS '
+                        'notifications. Buttons persist in Notification Center.',
+                    value: settings.macosToastActionsEnabled,
+                    onChanged: (v) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setMacosToastActionsEnabled(v);
                     },
                   ),
                 ],

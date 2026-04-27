@@ -86,6 +86,10 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   // Windows-only: render session toasts with action buttons (Disconnect /
   // Show). Default-on; users can disable in Settings → Notifications.
   static const _keyWindowsToastActionsEnabled = 'windows_toast_actions_enabled';
+  // macOS-only: same toggle for the native UNUserNotificationCenter path.
+  // Default-on; honored by [TerminalNotificationService] when building the
+  // next session toast.
+  static const _keyMacosToastActionsEnabled = 'macos_toast_actions_enabled';
   // Windows 11 chrome (Mica + rounded corners). The matching DAO keys are
   // also read directly from `main.dart` (pre-runApp boot path) so the very
   // first frame is already styled — keep these names in sync.
@@ -295,6 +299,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       // (which were always missing on a fresh install) at the default.
       windowsToastActionsEnabled:
           all[_keyWindowsToastActionsEnabled] != 'false',
+      macosToastActionsEnabled: all[_keyMacosToastActionsEnabled] != 'false',
       // Windows 11 chrome — both default-on. Win10 silently degrades:
       // Mica → Acrylic and the rounded-corner attribute is a no-op.
       windowsMicaBackdrop: all[_keyWindowsMicaBackdrop] != 'false',
@@ -378,6 +383,17 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     );
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyWindowsToastActionsEnabled, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Toggles the "Show action buttons" toggle for native macOS
+  /// `UNUserNotificationCenter` toasts. Default-on. Mirrors
+  /// [setWindowsToastActionsEnabled]; only the storage key differs so the
+  /// two settings round-trip independently across migrations.
+  Future<void> setMacosToastActionsEnabled(bool enabled) async {
+    _log.info(_tag, 'macOS toast actions ${enabled ? 'enabled' : 'disabled'}');
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyMacosToastActionsEnabled, enabled.toString());
     ref.invalidateSelf();
   }
 

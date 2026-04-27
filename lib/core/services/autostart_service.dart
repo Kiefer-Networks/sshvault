@@ -1,4 +1,4 @@
-/// Cross-desktop autostart integration for SSHVault (Linux + Windows).
+/// Cross-desktop autostart integration for SSHVault (Linux + Windows + macOS).
 ///
 /// On **Linux**, writes an XDG `.desktop` file under `~/.config/autostart/`
 /// so the user's session manager (GNOME, KDE, XFCE, Cinnamon, ...) launches
@@ -27,8 +27,15 @@
 /// (e.g. `GetCurrentPackageId` in `kernel32.dll` returning success). For
 /// the current Inno-Setup distribution we always use the Run-key fallback.
 ///
+/// On **macOS**, dispatches to the native `LoginItemHelper` over the
+/// `de.kiefer_networks.sshvault/login_item` MethodChannel. macOS 13+ uses
+/// `SMAppService.mainApp` (the modern, sandbox-safe Login Items API);
+/// older releases fall back to a launchd plist under
+/// `~/Library/LaunchAgents/`. All transport happens through the platform
+/// channel, so Dart never touches `ServiceManagement` directly.
+///
 /// All public methods throw [UnsupportedError] on platforms other than
-/// Linux and Windows.
+/// Linux, Windows, and macOS.
 library;
 
 import 'dart:async';
@@ -36,6 +43,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
+import 'package:flutter/services.dart';
 
 /// Reverse-DNS application id, must match the Flatpak app id and the
 /// .desktop filename so desktop integration (icons, taskbar grouping)
@@ -45,6 +53,17 @@ const String _appId = 'de.kiefer_networks.sshvault';
 /// Filename written under `$XDG_CONFIG_HOME/autostart/`. Convention is
 /// to use the app's reverse-DNS id.
 const String _autostartFileName = '$_appId.desktop';
+
+/// MethodChannel name shared with `macos/Runner/LoginItemHelper.swift`.
+/// Exposed so tests (and the helper itself) can pin the wire format.
+const String macosLoginItemChannelName =
+    'de.kiefer_networks.sshvault/login_item';
+
+/// Lazily-constructed channel handle. Held at top level rather than per
+/// service instance so we don't recreate the binding on every method call.
+const MethodChannel _macosLoginItemChannel = MethodChannel(
+  macosLoginItemChannelName,
+);
 
 /// Service that manages the XDG autostart entry for SSHVault.
 ///
@@ -82,6 +101,11 @@ class AutostartService {
   /// the Windows backend dispatches to real `advapi32.dll` calls.
   final WindowsRegistryStub? _registryOverride;
 
+  /// Optional override for the macOS Login Item channel. Tests inject a
+  /// fake `MethodChannel` so they can assert on the exact method names
+  /// without touching `SMAppService`.
+  final MethodChannel? _macosChannelOverride;
+
   const AutostartService({
     this.homeOverride,
     this.xdgConfigHomeOverride,
@@ -89,7 +113,9 @@ class AutostartService {
     this.execOverride,
     this.flatpakOverride,
     WindowsRegistryStub? registryOverride,
-  }) : _registryOverride = registryOverride;
+    MethodChannel? macosChannelOverride,
+  }) : _registryOverride = registryOverride,
+       _macosChannelOverride = macosChannelOverride;
 
   /// Returns `true` when an active autostart entry exists. An entry with
   /// `Hidden=true` counts as disabled even if the file is still on disk.
@@ -99,6 +125,9 @@ class AutostartService {
   Future<bool> isEnabled() async {
     if (Platform.isWindows) {
       return _windows().isEnabled();
+    }
+    if (Platform.isMacOS) {
+      return _macos().isEnabled();
     }
     _assertLinux();
     final file = File(_autostartPath());
@@ -116,6 +145,9 @@ class AutostartService {
   Future<void> enable({bool minimized = true}) async {
     if (Platform.isWindows) {
       return _windows().enable(minimized: minimized);
+    }
+    if (Platform.isMacOS) {
+      return _macos().enable();
     }
     _assertLinux();
     final dir = Directory(_autostartDir());
@@ -140,6 +172,9 @@ class AutostartService {
     if (Platform.isWindows) {
       return _windows().disable();
     }
+    if (Platform.isMacOS) {
+      return _macos().disable();
+    }
     _assertLinux();
     final file = File(_autostartPath());
     if (!await file.exists()) return;
@@ -158,6 +193,13 @@ class AutostartService {
   _WindowsAutostartBackend _windows() => _WindowsAutostartBackend(
     execOverride: execOverride,
     registry: _registryOverride,
+  );
+
+  /// Builds the macOS backend. The default channel is a top-level `const`
+  /// so we don't recreate it per call; tests pass a fake via
+  /// `macosChannelOverride`.
+  _MacosAutostartBackend _macos() => _MacosAutostartBackend(
+    channel: _macosChannelOverride ?? _macosLoginItemChannel,
   );
 
   // ---------------------------------------------------------------------
@@ -218,9 +260,43 @@ class AutostartService {
   void _assertLinux() {
     if (!Platform.isLinux) {
       throw UnsupportedError(
-        'AutostartService is only supported on Linux and Windows',
+        'AutostartService is only supported on Linux, Windows, and macOS',
       );
     }
+  }
+}
+
+// ---------------------------------------------------------------------
+// macOS backend.
+//
+// All work happens in the native helper (see
+// `macos/Runner/LoginItemHelper.swift`). This class is just a thin
+// MethodChannel proxy so platform branching stays inside the service and
+// the public API remains a single class.
+// ---------------------------------------------------------------------
+
+/// Wraps the platform-channel calls to the native `LoginItemHelper`. Kept
+/// internal so callers go through [AutostartService].
+class _MacosAutostartBackend {
+  _MacosAutostartBackend({required this.channel});
+
+  final MethodChannel channel;
+
+  /// Defensive cast — the native side returns `Bool`, but a stale plugin
+  /// or a misconfigured fake could yield `null`; treat that as "off".
+  Future<bool> isEnabled() async {
+    final v = await channel.invokeMethod<bool>('isEnabled');
+    return v ?? false;
+  }
+
+  /// `--minimized` semantics live in the launchd plist on the native
+  /// side; the Dart layer simply asks for "on".
+  Future<void> enable() async {
+    await channel.invokeMethod<bool>('enable');
+  }
+
+  Future<void> disable() async {
+    await channel.invokeMethod<bool>('disable');
   }
 }
 

@@ -1,0 +1,16 @@
+macOS-Desktop-Integration (teilweise — Items 1, 2, 4, 5, 11, 13, 14, 15, 17, 31, 32).
+
+- ssh:// + sftp:// URL-Handler via Info.plist CFBundleURLTypes; AppDelegate puffert URLs die vor Flutter-Boot ankommen.
+- Natives NSMenu — File/Edit/View/Window/Help mit Apple-Shortcuts (⌘N, ⌘W, ⌘,, ⌘Q, ^Tab, ^⇧Tab).
+- NSAppearance live-follow via KVO — System-Theme-Wechsel kommt ohne Neustart durch.
+- macOS Services-Menü — Rechtsklick auf markierten Text in jeder App → "Connect with SSHVault".
+- NSDraggingDestination Drag-and-Drop für SSH-Keys vom Finder.
+- NSVisualEffectView-Vibrancy-Backdrop (.underWindowBackground) mit transparenter Titlebar und Full-Size-Content-View.
+- Native NSWindow-Tabs damit Sessions in Apple-Tabs gruppieren.
+- Unified-Compact-Toolbar plus Window-Restoration-ID — Position überlebt Neustarts.
+- Native UNUserNotificationCenter-Toasts via local_notifier mit Reconnect/Disconnect/Show Action-Buttons.
+- Quick-Look-Extension-Gerüst für .pub/.pem/.ppk im Finder.
+- Apple Privacy Manifest (PrivacyInfo.xcprivacy) macOS+iOS — null Tracking, keine Daten, deklarierte API-Gründe.
+- Privacy-Descriptions in Info.plist für Downloads/Documents/Desktop, AppleEvents, FaceID/Touch-ID.
+
+Noch ausstehend (Queue für nächsten Pass): macOS-Keychain (Item 3), 1Password+Secretive Agent-Detection (8), SMAppService Auto-Start (6), IOPMAssertion Power-Inhibit (7), NSStatusItem (9), Touch ID Pre-Unlock (18), Core Spotlight (16).

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -152,22 +153,33 @@ class AppShellState extends ConsumerState<AppShell> {
 
         _notificationService = ref.read(terminalNotificationProvider);
 
-        // Windows toast action wiring: opaque tags emitted by the native
-        // toast (or its persisted Action-Center entry) are pattern-matched
-        // here and dispatched to the right session.
+        // Desktop toast action wiring: opaque tags emitted by the native
+        // toast (or its persisted Action-Center / Notification-Center
+        // entry) are pattern-matched here and dispatched to the right
+        // session. The Windows + macOS callbacks share the same handler
+        // because the tag vocabulary matches.
+        void handleDesktopAction(String tag) {
+          if (tag.startsWith('disconnect:')) {
+            final sessionId = tag.substring('disconnect:'.length);
+            ref.read(sessionManagerProvider.notifier).closeSession(sessionId);
+          } else if (tag.startsWith('show:')) {
+            windowManager.show();
+            windowManager.focus();
+            ref
+                .read(shellNavigationProvider)
+                ?.goBranch(AppConstants.terminalBranchIndex);
+          }
+        }
+
         if (Platform.isWindows) {
-          _notificationService!.onWindowsAction((tag) {
-            if (tag.startsWith('disconnect:')) {
-              final sessionId = tag.substring('disconnect:'.length);
-              ref.read(sessionManagerProvider.notifier).closeSession(sessionId);
-            } else if (tag.startsWith('show:')) {
-              windowManager.show();
-              windowManager.focus();
-              ref
-                  .read(shellNavigationProvider)
-                  ?.goBranch(AppConstants.terminalBranchIndex);
-            }
-          });
+          _notificationService!.onWindowsAction(handleDesktopAction);
+        }
+        if (Platform.isMacOS) {
+          _notificationService!.onMacosAction(handleDesktopAction);
+          // Kick off the macOS permission prompt the first time the shell
+          // mounts. Subsequent calls are cheap — UNUserNotificationCenter
+          // returns the cached decision without re-prompting the user.
+          unawaited(_notificationService!.ensureMacosAuthorized());
         }
 
         // Update notification when terminal sessions change
@@ -230,17 +242,21 @@ class AppShellState extends ConsumerState<AppShell> {
 
     // For the disconnect action we wire the FIRST active session — the
     // toast is a single rolling entry, so we let "Disconnect" close the
-    // most recently surfaced one. The Action-Center entry stays in sync
-    // via replace-by-id semantics in WindowsNotificationService.
+    // most recently surfaced one. The Action-Center / Notification-Center
+    // entry stays in sync via replace-by-id semantics in the platform
+    // notification services.
     final settings = ref.read(settingsProvider).value;
-    final actionsEnabled = settings?.windowsToastActionsEnabled ?? true;
+    final winActionsEnabled = settings?.windowsToastActionsEnabled ?? true;
+    final macActionsEnabled = settings?.macosToastActionsEnabled ?? true;
     final disconnectTag = 'disconnect:${active.first.id}';
 
     service.show(
       title: l10n.notificationTerminalTitle(active.length),
       body: active.map((s) => s.title).join(', '),
-      windowsActionsEnabled: actionsEnabled,
+      windowsActionsEnabled: winActionsEnabled,
+      macosActionsEnabled: macActionsEnabled,
       windowsDisconnectTag: disconnectTag,
+      macosDisconnectTag: disconnectTag,
     );
   }
 

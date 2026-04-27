@@ -1,0 +1,16 @@
+macOS desktop integration pass (partial — items 1, 2, 4, 5, 11, 13, 14, 15, 17, 31, 32).
+
+- ssh:// + sftp:// URL scheme handlers via Info.plist CFBundleURLTypes; AppDelegate buffers URLs delivered before Flutter is ready and replays them.
+- Native macOS NSMenu — File / Edit / View / Window / Help with proper Apple shortcuts (⌘N, ⌘W, ⌘,, ⌘Q, ^Tab, ^⇧Tab).
+- NSAppearance live-follow via KVO — system light/dark switch propagates to Flutter without restart.
+- macOS Services menu provider — right-click selected text in any app → "Connect with SSHVault".
+- NSDraggingDestination drag-and-drop SSH keys onto the window from Finder.
+- NSVisualEffectView vibrancy backdrop (.underWindowBackground material) with transparent title bar and full-size content view.
+- Native NSWindow tabs (allowsAutomaticWindowTabbing) so Sessions group into Apple-native tab bars.
+- Unified compact toolbar style with restoration identifier so window position persists across launches.
+- Native UNUserNotificationCenter toasts via local_notifier with Reconnect / Disconnect / Show action buttons in macOS Notification Center.
+- Quick Look extension scaffold for .pub / .pem / .ppk previews in Finder.
+- Apple Privacy Manifest (PrivacyInfo.xcprivacy) at macOS + iOS Runner declaring zero tracking, no collected data, FileTimestamp / UserDefaults / SystemBootTime API access reasons.
+- Privacy-usage descriptions added to Info.plist (Downloads / Documents / Desktop folders, AppleEvents, FaceID/Touch-ID).
+
+Still pending (queued for next pass): macOS Keychain backend (item 3), 1Password+Secretive ssh-agent socket detection (item 8), SMAppService Login-Item auto-start (item 6), IOPMAssertion power-inhibit (item 7), NSStatusItem menu-bar icon (item 9), Touch ID pre-unlock (item 18), Core Spotlight indexing (item 16). All have agent prompts ready; re-dispatch after this commit lands.

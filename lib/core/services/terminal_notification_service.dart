@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:sshvault/core/services/macos_notification_service.dart';
 import 'package:sshvault/core/services/windows_notification_service.dart';
 
 /// Manages ongoing notifications for active SSH terminal sessions.
@@ -15,8 +16,15 @@ import 'package:sshvault/core/services/windows_notification_service.dart';
 /// instead of the legacy balloon-style notifications produced by
 /// `flutter_local_notifications` on Win32.
 ///
-/// On Linux / macOS the existing `flutter_local_notifications` path is
-/// retained unchanged.
+/// On macOS we route through [MacosNotificationService] which is backed by
+/// the native `UNUserNotificationCenter` API (Swift plugin under
+/// `macos/Runner/UNUserNotifications.swift`). This replaces the deprecated
+/// `NSUserNotification` path baked into `local_notifier` 0.1.6 and
+/// `flutter_local_notifications`'s legacy macOS implementation, restoring
+/// support for multiple inline action buttons (Reconnect / Disconnect /
+/// Show) that persist in Notification Center.
+///
+/// On Linux the existing `flutter_local_notifications` path is retained.
 class TerminalNotificationService {
   static const _channelId = 'terminal_sessions';
   static const _channelName = 'Terminal Sessions';
@@ -27,25 +35,43 @@ class TerminalNotificationService {
   /// stack of stale notifications).
   static const _windowsToastId = 'sshvault.terminal.sessions';
 
+  /// Stable id used for the macOS Notification Center entry. Same intent
+  /// as [_windowsToastId] — replace-by-id semantics keep the Notification
+  /// Center clean when the active-session set churns.
+  static const _macosToastId = 'sshvault.terminal.sessions';
+
   /// Set by the shell to navigate to the terminal branch on tap.
   static void Function()? onNotificationTapped;
 
   final _plugin = FlutterLocalNotificationsPlugin();
   final WindowsNotificationService? _windows;
+  final MacosNotificationService? _macos;
   bool _initialized = false;
 
   /// Subscription to the Windows toast action stream — owned for the
   /// lifetime of the service, cancelled in [dismiss] when shutting down.
   StreamSubscription<String>? _windowsActionSub;
 
-  /// Optional handler for the "Disconnect" toast action on Windows. Wired
-  /// by the shell via [onWindowsAction].
-  void Function(String tag)? _onWindowsAction;
+  /// Subscription to the macOS notification action stream. Mirrors the
+  /// Windows path so the shell can use a single unified handler.
+  StreamSubscription<String>? _macosActionSub;
 
-  TerminalNotificationService({WindowsNotificationService? windowsService})
-    : _windows = Platform.isWindows
-          ? (windowsService ?? WindowsNotificationService())
-          : null;
+  /// Optional handler for desktop toast actions. Wired by the shell via
+  /// [onWindowsAction] / [onMacosAction]. We keep the two slots distinct
+  /// even though their tag vocabularies overlap so the shell can opt one
+  /// platform out without affecting the other.
+  void Function(String tag)? _onWindowsAction;
+  void Function(String tag)? _onMacosAction;
+
+  TerminalNotificationService({
+    WindowsNotificationService? windowsService,
+    MacosNotificationService? macosService,
+  }) : _windows = Platform.isWindows
+           ? (windowsService ?? WindowsNotificationService())
+           : null,
+       _macos = Platform.isMacOS
+           ? (macosService ?? MacosNotificationService())
+           : null;
 
   /// Hook for the shell to receive opaque action tags emitted by Windows
   /// toast buttons (e.g. "disconnect:SESSION_ID", "show:"). Called once
@@ -55,6 +81,27 @@ class TerminalNotificationService {
     _windowsActionSub ??= _windows?.actionStream.listen((tag) {
       _onWindowsAction?.call(tag);
     });
+  }
+
+  /// Hook for the shell to receive opaque action tags emitted by macOS
+  /// `UNUserNotification` buttons. Tag vocabulary is identical to the
+  /// Windows side (`disconnect:SESSION_ID`, `reconnect:HOST_ID`, `show:`)
+  /// so the shell can share the same dispatch logic.
+  void onMacosAction(void Function(String tag) handler) {
+    _onMacosAction = handler;
+    _macosActionSub ??= _macos?.actionStream.listen((tag) {
+      _onMacosAction?.call(tag);
+    });
+  }
+
+  /// Requests UNUserNotificationCenter authorization on macOS. No-op on
+  /// other platforms. Should be called once early in app start so the
+  /// system permission dialog appears before the first toast attempts to
+  /// surface (otherwise the toast is silently dropped). Returns `true` if
+  /// the user has granted permission.
+  Future<bool> ensureMacosAuthorized() async {
+    if (!Platform.isMacOS) return true;
+    return await _macos?.requestAuthorization() ?? false;
   }
 
   Future<void> _ensureInitialized() async {
@@ -80,7 +127,8 @@ class TerminalNotificationService {
       },
     );
 
-    // Request permission on iOS and Android 13+
+    // Request permission on iOS and Android 13+. macOS does NOT use this
+    // path anymore — it goes through MacosNotificationService.
     if (Platform.isIOS) {
       await _plugin
           .resolvePlatformSpecificImplementation<
@@ -99,16 +147,20 @@ class TerminalNotificationService {
   /// Show or update the ongoing session notification.
   ///
   /// On Windows the call routes to [WindowsNotificationService.show] with
-  /// "Disconnect" + "Show" action buttons. The provided
-  /// [windowsDisconnectTag] is the opaque payload re-emitted on the
-  /// service's stream when the user clicks "Disconnect" — the shell maps
-  /// it back to the right session via the action handler registered with
-  /// [onWindowsAction].
+  /// "Disconnect" + "Show" action buttons. On macOS it routes to
+  /// [MacosNotificationService.show] with the same action set. The
+  /// provided [windowsDisconnectTag] / [macosDisconnectTag] is the opaque
+  /// payload re-emitted on the matching service's stream when the user
+  /// clicks "Disconnect" — the shell maps it back to the right session
+  /// via the action handler registered with [onWindowsAction] /
+  /// [onMacosAction].
   Future<void> show({
     required String title,
     required String body,
     bool windowsActionsEnabled = true,
+    bool macosActionsEnabled = true,
     String? windowsDisconnectTag,
+    String? macosDisconnectTag,
   }) async {
     if (Platform.isWindows) {
       final actions = <WindowsNotificationAction>[
@@ -122,6 +174,21 @@ class TerminalNotificationService {
       ];
       await _windows?.show(
         id: _windowsToastId,
+        title: title,
+        body: body,
+        actions: actions,
+      );
+      return;
+    }
+    if (Platform.isMacOS) {
+      final actions = <MacosNotificationAction>[
+        if (macosActionsEnabled && macosDisconnectTag != null)
+          MacosNotificationAction(label: 'Disconnect', tag: macosDisconnectTag),
+        if (macosActionsEnabled)
+          const MacosNotificationAction(label: 'Show', tag: 'show:'),
+      ];
+      await _macos?.show(
+        id: _macosToastId,
         title: title,
         body: body,
         actions: actions,
@@ -166,6 +233,12 @@ class TerminalNotificationService {
       await _windows?.dismiss(_windowsToastId);
       await _windowsActionSub?.cancel();
       _windowsActionSub = null;
+      return;
+    }
+    if (Platform.isMacOS) {
+      await _macos?.dismiss(_macosToastId);
+      await _macosActionSub?.cancel();
+      _macosActionSub = null;
       return;
     }
     if (!Platform.isAndroid && !Platform.isIOS) return;

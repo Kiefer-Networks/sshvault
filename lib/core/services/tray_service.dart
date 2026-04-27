@@ -1,15 +1,20 @@
-/// Linux system tray integration for SSHVault.
+/// Linux + macOS system tray integration for SSHVault.
 ///
-/// Uses the `tray_manager` package (libayatana-appindicator under the hood)
-/// so the icon shows up correctly on:
+/// Uses the `tray_manager` package. On Linux it is backed by
+/// libayatana-appindicator so the icon shows up correctly on:
 ///   - KDE Plasma (StatusNotifierItem native)
 ///   - GNOME Shell with the AppIndicator / KStatusNotifierItem extension
 ///   - XFCE
 ///   - Cinnamon
 ///
-/// The whole service is a no-op on non-Linux platforms. Callers should still
-/// guard at the call site (`if (Platform.isLinux)`) so the import graph
-/// pulls nothing on macOS / mobile.
+/// On macOS the package wraps `NSStatusItem`. We feed it a template image
+/// (a black-on-transparent PNG) and set `isTemplate: true` so AppKit
+/// auto-tints it for both light and dark menu bars — the standard
+/// human-interface-guideline behaviour for system menu-bar extras.
+///
+/// On Windows / mobile this service is a no-op. Callers should still guard
+/// at the call site (`if (Platform.isLinux || Platform.isMacOS)`) where it
+/// matters so the import graph stays minimal.
 library;
 
 import 'dart:async';
@@ -77,12 +82,34 @@ class TrayService with TrayListener {
 
   static final TrayService instance = TrayService._();
 
-  /// Asset path for the default icon.
+  /// Asset path for the default icon (Linux full-color tray icon).
   static const String _defaultIconPath = 'assets/images/app_icon.png';
 
   /// Optional "active" icon used when at least one session is open.
   /// Falls back to the default + tooltip change if the asset is missing.
   static const String _activeIconPath = 'assets/images/app_icon_active.png';
+
+  /// macOS NSStatusItem template image. Must be a black-on-transparent PNG
+  /// so that AppKit can re-tint it (white on dark menu bar, black on light)
+  /// when [isTemplate] is true — the standard look for native menu-bar
+  /// extras. The current asset is a placeholder copied from the app icon;
+  /// see TODO in [_iconAssetPathFor] to replace it with a proper 18x18
+  /// (and 36x36 @2x) template glyph before shipping.
+  static const String _macOsTemplateIconPath =
+      'assets/images/macos_status_template.png';
+
+  /// Pick the right icon path for the current platform.
+  static String _iconAssetPathFor({required bool active}) {
+    if (Platform.isMacOS) {
+      // On macOS we always use the template image — AppKit handles tinting
+      // and dark-mode automatically. We don't have a separate "active"
+      // template glyph yet; status is conveyed via tooltip.
+      // TODO(macos): ship a dedicated `macos_status_template_active.png`
+      // (e.g. with a small dot) once design is finalized.
+      return _macOsTemplateIconPath;
+    }
+    return active ? _activeIconPath : _defaultIconPath;
+  }
 
   /// Tooltip shown when hovering the tray icon.
   static const String _baseTooltip = 'SSHVault — Zero-knowledge SSH client';
@@ -108,12 +135,16 @@ class TrayService with TrayListener {
   ProviderSubscription? _favoritesSub;
   ProviderSubscription? _settingsSub;
 
+  /// True when the current platform has a tray surface we can drive.
+  static bool get _isTraySupported => Platform.isLinux || Platform.isMacOS;
+
   /// Initialize the tray icon and start listening for state changes.
   ///
   /// Safe to call repeatedly — the second invocation is a no-op.
-  /// Returns immediately on non-Linux.
+  /// Returns immediately on platforms without a supported tray surface
+  /// (currently anything other than Linux and macOS).
   Future<void> init(ProviderContainer container) async {
-    if (!Platform.isLinux) return;
+    if (!_isTraySupported) return;
     if (_initialized) return;
 
     final settings = container.read(settingsProvider).value;
@@ -135,7 +166,13 @@ class TrayService with TrayListener {
   Future<void> _bootstrap(ProviderContainer container) async {
     _container = container;
     try {
-      await trayManager.setIcon(_defaultIconPath);
+      await trayManager.setIcon(
+        _iconAssetPathFor(active: false),
+        // macOS NSStatusItem: tell AppKit this is a template image so it
+        // gets auto-tinted for the active menu-bar appearance. The flag
+        // is silently ignored on Linux/Windows.
+        isTemplate: Platform.isMacOS,
+      );
       await trayManager.setToolTip(_baseTooltip);
       trayManager.addListener(this);
 
@@ -163,7 +200,7 @@ class TrayService with TrayListener {
     _sessionsSub?.close();
     _favoritesSub?.close();
     _settingsSub?.close();
-    if (Platform.isLinux && _initialized) {
+    if (_isTraySupported && _initialized) {
       try {
         trayManager.removeListener(this);
         await trayManager.destroy();
@@ -213,16 +250,22 @@ class TrayService with TrayListener {
   }
 
   Future<void> _refreshIconForSessions(List<SshSessionEntity> sessions) async {
-    if (!Platform.isLinux || !_initialized) return;
+    if (!_isTraySupported || !_initialized) return;
     final activeCount = sessions
         .where((s) => s.status == SshConnectionStatus.connected)
         .length;
     try {
-      // Try the dedicated "active" icon, otherwise just update the tooltip.
-      if (activeCount > 0 && await _activeIconExists()) {
+      // On Linux: try the dedicated colored "active" icon if it ships;
+      // otherwise fall back to the default and rely on the tooltip.
+      // On macOS: we use the same template image either way (see
+      // [_iconAssetPathFor]) — tooltip carries the "(N active)" hint.
+      if (Platform.isLinux && activeCount > 0 && await _activeIconExists()) {
         await trayManager.setIcon(_activeIconPath);
       } else {
-        await trayManager.setIcon(_defaultIconPath);
+        await trayManager.setIcon(
+          _iconAssetPathFor(active: activeCount > 0),
+          isTemplate: Platform.isMacOS,
+        );
       }
       await trayManager.setToolTip(
         activeCount == 0 ? _baseTooltip : '$_baseTooltip ($activeCount active)',
@@ -263,7 +306,7 @@ class TrayService with TrayListener {
     // Refresh the visibility cache so the menu shows the right toggle. If
     // the call fails (e.g. window_manager not yet ensured) we keep the
     // last known value — no point spamming logs with transient errors.
-    if (Platform.isLinux) {
+    if (_isTraySupported) {
       try {
         _windowVisible = await windowManager.isVisible();
       } catch (_) {
@@ -277,7 +320,7 @@ class TrayService with TrayListener {
       windowVisible: _windowVisible,
     );
 
-    if (!Platform.isLinux || !_initialized) return;
+    if (!_isTraySupported || !_initialized) return;
     try {
       await trayManager.setContextMenu(_toNativeMenu(_menuItems));
     } catch (e) {
@@ -411,7 +454,7 @@ class TrayService with TrayListener {
   // ---------------------------------------------------------------------
 
   Future<void> _showWindow() async {
-    if (!Platform.isLinux) return;
+    if (!_isTraySupported) return;
     try {
       await windowManager.show();
       await windowManager.focus();
@@ -427,7 +470,7 @@ class TrayService with TrayListener {
   }
 
   Future<void> _hideWindow() async {
-    if (!Platform.isLinux) return;
+    if (!_isTraySupported) return;
     try {
       await windowManager.hide();
       _windowVisible = false;
@@ -438,7 +481,7 @@ class TrayService with TrayListener {
   }
 
   Future<void> _toggleWindow() async {
-    if (!Platform.isLinux) return;
+    if (!_isTraySupported) return;
     try {
       final visible = await windowManager.isVisible();
       if (visible) {

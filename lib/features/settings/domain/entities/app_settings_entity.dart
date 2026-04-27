@@ -138,6 +138,14 @@ class AppSettingsEntity {
   /// Settings → Notifications. Ignored on non-Windows platforms.
   final bool windowsToastActionsEnabled;
 
+  // ---------- macOS-only: native UNUserNotificationCenter toasts ----------
+
+  /// When `true` (default), session toasts on macOS render with action
+  /// buttons ("Disconnect", "Show") in Notification Center via the native
+  /// `UNUserNotificationCenter` API. Mirrors [windowsToastActionsEnabled];
+  /// ignored on non-macOS platforms.
+  final bool macosToastActionsEnabled;
+
   // ---------- Windows 11 chrome (Mica / rounded corners) ----------
 
   /// Use Windows 11 Mica backdrop (Acrylic on Win10). Default `true`.
@@ -201,6 +209,7 @@ class AppSettingsEntity {
     this.windowMaximized = false,
     this.forcedPixelRatio = 0,
     this.windowsToastActionsEnabled = true,
+    this.macosToastActionsEnabled = true,
     this.windowsMicaBackdrop = true,
     this.windowsRoundCorners = true,
   });
@@ -274,6 +283,7 @@ class AppSettingsEntity {
     bool? windowMaximized,
     double? forcedPixelRatio,
     bool? windowsToastActionsEnabled,
+    bool? macosToastActionsEnabled,
     bool? windowsMicaBackdrop,
     bool? windowsRoundCorners,
   }) {
@@ -342,6 +352,8 @@ class AppSettingsEntity {
       forcedPixelRatio: forcedPixelRatio ?? this.forcedPixelRatio,
       windowsToastActionsEnabled:
           windowsToastActionsEnabled ?? this.windowsToastActionsEnabled,
+      macosToastActionsEnabled:
+          macosToastActionsEnabled ?? this.macosToastActionsEnabled,
       windowsMicaBackdrop: windowsMicaBackdrop ?? this.windowsMicaBackdrop,
       windowsRoundCorners: windowsRoundCorners ?? this.windowsRoundCorners,
     );

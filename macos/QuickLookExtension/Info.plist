@@ -4,78 +4,53 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>SSHVault Quick Look</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIconFile</key>
-	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>de.kiefer_networks.SSHVault.QuickLookExtension</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
-	<string>APPL</string>
+	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>$(PRODUCT_COPYRIGHT)</string>
-	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>SSHVault connects to servers on your local network.</string>
-	<key>NSDownloadsFolderUsageDescription</key>
-	<string>SSHVault saves downloaded SFTP files to your Downloads folder.</string>
-	<key>NSDocumentsFolderUsageDescription</key>
-	<string>SSHVault reads SSH config and known_hosts from ~/Documents if you choose.</string>
-	<key>NSDesktopFolderUsageDescription</key>
-	<string>SSHVault reads SSH key files dropped from Desktop.</string>
-	<key>NSAppleEventsUsageDescription</key>
-	<string>SSHVault uses Apple Events to bring its window to front when you click a notification.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>SSHVault uses Touch ID to unlock your encrypted vault.</string>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_ssh._tcp</string>
-		<string>_sftp-ssh._tcp</string>
-	</array>
-	<key>CFBundleURLTypes</key>
-	<array>
+
+	<key>NSExtension</key>
+	<dict>
+		<key>NSExtensionPointIdentifier</key>
+		<string>com.apple.quicklook.preview</string>
+		<key>NSExtensionPrincipalClass</key>
+		<string>$(PRODUCT_MODULE_NAME).PreviewProvider</string>
+		<key>NSExtensionAttributes</key>
 		<dict>
-			<key>CFBundleURLName</key>
-			<string>de.kiefer_networks.sshvault.ssh</string>
-			<key>CFBundleURLSchemes</key>
+			<key>QLSupportedContentTypes</key>
 			<array>
-				<string>ssh</string>
-				<string>sftp</string>
+				<string>de.kiefer-networks.sshvault.public-key</string>
+				<string>de.kiefer-networks.sshvault.pem-key</string>
+				<string>de.kiefer-networks.sshvault.ppk-key</string>
 			</array>
+			<key>QLSupportsSearchableItems</key>
+			<false/>
 		</dict>
-	</array>
-	<key>NSServices</key>
-	<array>
-		<dict>
-			<key>NSMenuItem</key>
-			<dict>
-				<key>default</key>
-				<string>Connect with SSHVault</string>
-			</dict>
-			<key>NSMessage</key>
-			<string>connectWithSSHVault</string>
-			<key>NSPortName</key>
-			<string>SSHVault</string>
-			<key>NSSendTypes</key>
-			<array>
-				<string>NSStringPboardType</string>
-			</array>
-		</dict>
-	</array>
-	<key>UTExportedTypeDeclarations</key>
+	</dict>
+
+	<!--
+	  We re-declare the imported UTIs here so the extension binary can be
+	  loaded standalone (e.g. when the user has not yet launched the host
+	  app once after install). The host app's Info.plist exports the same
+	  identifiers via UTExportedTypeDeclarations.
+	-->
+	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
 			<key>UTTypeIdentifier</key>
@@ -142,25 +117,6 @@
 					<string>application/x-putty-private-key</string>
 				</array>
 			</dict>
-		</dict>
-	</array>
-	<key>UTImportedTypeDeclarations</key>
-	<array/>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeName</key>
-			<string>SSH Key File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>de.kiefer-networks.sshvault.public-key</string>
-				<string>de.kiefer-networks.sshvault.pem-key</string>
-				<string>de.kiefer-networks.sshvault.ppk-key</string>
-			</array>
 		</dict>
 	</array>
 </dict>

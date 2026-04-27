@@ -533,6 +533,17 @@ Arabic, Chinese, Czech, Danish, Dutch, English, Finnish, French, German, Greek, 
 
 Translation files are in `lib/l10n/`.
 
+## Privacy
+
+SSHVault is built with a privacy-first philosophy:
+
+- **Zero telemetry** - no analytics, crash reporting, or usage metrics are collected
+- **Zero tracking** - no advertising identifiers, no third-party tracking domains
+- **All data local** - SSH credentials, vault contents, settings, and host history live only on your device (encrypted at rest)
+- **No accounts, no cloud** - SSHVault never phones home; the only network traffic is the SSH/SFTP connections you initiate
+
+The Apple Privacy Manifest is published at [`macos/Runner/PrivacyInfo.xcprivacy`](macos/Runner/PrivacyInfo.xcprivacy) (macOS) and [`ios/Runner/PrivacyInfo.xcprivacy`](ios/Runner/PrivacyInfo.xcprivacy) (iOS). It declares `NSPrivacyTracking=false` and an empty `NSPrivacyCollectedDataTypes` array, plus the required reason codes for the small set of platform APIs SSHVault actually uses (file timestamps for vault export metadata, `NSUserDefaults` for the settings DataStore, and system boot time).
+
 ## Donate
 
 If you find SSHVault useful, consider supporting development:

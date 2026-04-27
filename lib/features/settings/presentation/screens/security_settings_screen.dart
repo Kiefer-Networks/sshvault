@@ -672,6 +672,7 @@ class _MasterKeyStorageTileState extends ConsumerState<_MasterKeyStorageTile> {
           MasterKeyBackend.encryptedFile => 'Encrypted file (fallback)',
           MasterKeyBackend.windowsCredentialManager =>
             'Windows Credential Manager',
+          MasterKeyBackend.macosKeychain => 'macOS Keychain',
           null =>
             snapshot.connectionState == ConnectionState.waiting
                 ? '...'

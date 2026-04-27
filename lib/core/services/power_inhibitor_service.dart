@@ -30,13 +30,28 @@
 // Each [InhibitorLockHandle] returned to the caller represents one slot
 // in that counter; releasing the last one clears the system state.
 //
-// On macOS / mobile every public method is a cheap no-op so callers
-// don't need to platform-gate.
+// macOS backend (IOKit IOPMAssertionCreateWithName via MethodChannel):
+//
+//   IOPMAssertionCreateWithName(
+//     kIOPMAssertionTypePreventUserIdleSystemSleep,
+//     kIOPMAssertionLevelOn,
+//     <reason>,
+//     &id,
+//   ) -> IOPMAssertionID
+//
+// The native bridge in `macos/Runner/PowerInhibitor.swift` exposes
+// `acquire(reason)` (returns the assertion id as an Int) and
+// `release(id)`. Each [InhibitorLockHandle] holds the returned id and
+// hands it back to the channel on release.
+//
+// On mobile every public method is a cheap no-op so callers don't need
+// to platform-gate.
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:dbus/dbus.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:sshvault/core/ffi/win32_power.dart' as win32;
@@ -62,6 +77,11 @@ const String kPowerInhibitorWhat = 'sleep:idle';
 /// delays it by a few seconds).
 const String kPowerInhibitorMode = 'block';
 
+/// MethodChannel name shared with `macos/Runner/PowerInhibitor.swift`.
+/// Must stay in sync with the native side.
+const String kMacosPowerInhibitChannel =
+    'de.kiefer_networks.sshvault/power_inhibit';
+
 /// Function shape that performs the actual `Inhibit` call against the
 /// system bus. Tests inject a fake here so the service can be exercised
 /// without a real bus.
@@ -79,6 +99,13 @@ typedef InhibitInvoker =
 /// flag mask and returns the previous mask (or `0` on failure).
 typedef WindowsExecutionStateInvoker = int Function(int esFlags);
 
+/// Function shape for the macOS IOPMAssertion bridge. `acquire` returns
+/// the IOPMAssertionID (UInt32 widened to Int), `release` is fire-and-
+/// forget. Tests inject fakes; production wiring goes through the
+/// platform MethodChannel registered in `AppDelegate`.
+typedef MacosAcquireInvoker = Future<int> Function(String reason);
+typedef MacosReleaseInvoker = Future<void> Function(int id);
+
 /// Closeable handle for a single inhibitor lock.
 ///
 /// On Linux, holding the handle keeps an underlying logind fd open. On
@@ -89,19 +116,33 @@ class InhibitorLockHandle {
   /// Linux flavour: backed by an open file descriptor returned from
   /// login1's `Inhibit` call.
   InhibitorLockHandle._linux(ResourceHandle handle, this._onRelease)
-    : _handle = handle;
+    : _handle = handle,
+      _macosAssertionId = null;
 
   /// Windows flavour: a refcount slot only. The actual system state is
   /// owned by [PowerInhibitorService] and maintained via the service's
   /// internal counter; releasing the last handle triggers the
   /// `ES_CONTINUOUS`-only call that clears the inhibit.
-  InhibitorLockHandle._windows(this._onRelease) : _handle = null;
+  InhibitorLockHandle._windows(this._onRelease)
+    : _handle = null,
+      _macosAssertionId = null;
+
+  /// macOS flavour: holds the IOPMAssertionID returned by the native
+  /// bridge. Releasing invokes `release(id)` on the channel.
+  InhibitorLockHandle._macos(int assertionId, this._onRelease)
+    : _handle = null,
+      _macosAssertionId = assertionId;
 
   final ResourceHandle? _handle;
+  final int? _macosAssertionId;
   final void Function(InhibitorLockHandle handle)? _onRelease;
   bool _released = false;
 
   bool get isReleased => _released;
+
+  /// macOS-only: the IOPMAssertion id this handle owns, or `null` for
+  /// Linux/Windows handles.
+  int? get macosAssertionId => _macosAssertionId;
 
   /// Releases this lock. On Linux this closes the underlying file
   /// descriptor (login1 observes the close and drops the inhibit). On
@@ -163,15 +204,27 @@ class PowerInhibitorService {
   PowerInhibitorService({
     InhibitInvoker? invoker,
     WindowsExecutionStateInvoker? windowsInvoker,
+    MacosAcquireInvoker? macosAcquire,
+    MacosReleaseInvoker? macosRelease,
     LoggingService? logger,
   }) : _invoker = invoker,
        _windowsInvoker = windowsInvoker,
+       _macosAcquire = macosAcquire,
+       _macosRelease = macosRelease,
        _log = logger ?? LoggingService.instance;
 
   static const _tag = 'PowerInhibitor';
 
+  /// Channel used for the default macOS bridge. Tests override the
+  /// invokers above and never touch this.
+  static const MethodChannel _macosChannel = MethodChannel(
+    kMacosPowerInhibitChannel,
+  );
+
   final InhibitInvoker? _invoker;
   final WindowsExecutionStateInvoker? _windowsInvoker;
+  final MacosAcquireInvoker? _macosAcquire;
+  final MacosReleaseInvoker? _macosRelease;
   final LoggingService _log;
 
   /// All currently-held locks. Kept so [releaseAll] can clean up at
@@ -196,6 +249,9 @@ class PowerInhibitorService {
     }
     if (Platform.isWindows) {
       return _acquireWindows(reason);
+    }
+    if (Platform.isMacOS) {
+      return _acquireMacos(reason);
     }
     return null;
   }
@@ -253,6 +309,32 @@ class PowerInhibitorService {
     }
   }
 
+  /// Acquires a macOS IOPMAssertion lock via the platform channel.
+  ///
+  /// On success the returned [InhibitorLockHandle] holds the
+  /// `IOPMAssertionID` returned by the native bridge; releasing the
+  /// handle invokes `release(id)` over the channel which calls
+  /// `IOPMAssertionRelease`.
+  ///
+  /// IOKit itself is refcounted per assertion id, so unlike Windows we
+  /// don't need a service-level counter — every handle is independent.
+  Future<InhibitorLockHandle?> _acquireMacos(String reason) async {
+    try {
+      final acquire = _macosAcquire ?? _defaultMacosAcquire;
+      final assertionId = await acquire(reason);
+      final lock = InhibitorLockHandle._macos(assertionId, _onLockReleased);
+      _heldLocks.add(lock);
+      _log.info(
+        _tag,
+        'Acquired sleep inhibitor (IOPM): $reason (id=$assertionId)',
+      );
+      return lock;
+    } catch (e, st) {
+      _log.warning(_tag, 'Failed to acquire sleep inhibitor: $e\n$st');
+      return null;
+    }
+  }
+
   /// Releases every lock currently held by this service. Safe to call
   /// repeatedly; locks already released are skipped.
   void releaseAll() {
@@ -277,6 +359,20 @@ class PowerInhibitorService {
       } catch (e, st) {
         _log.warning(_tag, 'Failed to clear Win32 execution state: $e\n$st');
       }
+    }
+    // macOS: each handle owns its own IOPMAssertionID. Hand it back to
+    // the native bridge so `IOPMAssertionRelease` can be called. Fire-
+    // and-forget — failures are logged but don't surface to callers.
+    final assertionId = handle.macosAssertionId;
+    if (Platform.isMacOS && assertionId != null) {
+      final release = _macosRelease ?? _defaultMacosRelease;
+      // ignore: discarded_futures
+      release(assertionId).catchError((Object e, StackTrace st) {
+        _log.warning(
+          _tag,
+          'Failed to release IOPM assertion $assertionId: $e\n$st',
+        );
+      });
     }
   }
 
@@ -312,6 +408,28 @@ class PowerInhibitorService {
       await client.close();
     }
   }
+
+  /// Default macOS acquire bridge — invokes `acquire(reason)` on the
+  /// platform channel registered by `PowerInhibitor.swift` and returns
+  /// the IOPMAssertionID as an `int`. Throws on channel/native failure.
+  static Future<int> _defaultMacosAcquire(String reason) async {
+    final result = await _macosChannel.invokeMethod<int>(
+      'acquire',
+      <String, Object?>{'reason': reason},
+    );
+    if (result == null) {
+      throw StateError('macOS power_inhibit acquire returned null');
+    }
+    return result;
+  }
+
+  /// Default macOS release bridge — fire-and-forget call to
+  /// `release(id)` on the platform channel.
+  static Future<void> _defaultMacosRelease(int id) async {
+    await _macosChannel.invokeMethod<void>('release', <String, Object?>{
+      'id': id,
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -339,16 +457,17 @@ final powerInhibitorServiceProvider = Provider<PowerInhibitorService>((ref) {
 /// user disables it, any held lock is released and no new locks are
 /// acquired until they re-enable it.
 ///
-/// On unsupported platforms (macOS / mobile) this provider is
-/// initialised but the underlying [PowerInhibitorService.acquireSleepLock]
-/// is a no-op, so the watcher is effectively dormant. On Linux it talks
-/// to logind; on Windows it talks to `kernel32!SetThreadExecutionState`.
+/// On unsupported platforms (mobile) this provider is initialised but
+/// the underlying [PowerInhibitorService.acquireSleepLock] is a no-op,
+/// so the watcher is effectively dormant. On Linux it talks to logind;
+/// on Windows it talks to `kernel32!SetThreadExecutionState`; on macOS
+/// it talks to `IOPMAssertionCreateWithName` via the native bridge.
 final sshSessionPowerInhibitorProvider = Provider<void>((ref) {
   // Always-on listener; no listeners required to exist for the
   // subscription, so the provider must be `keepAlive` (non-autoDispose).
   ref.keepAlive();
 
-  if (!Platform.isLinux && !Platform.isWindows) return;
+  if (!Platform.isLinux && !Platform.isWindows && !Platform.isMacOS) return;
 
   final svc = ref.watch(powerInhibitorServiceProvider);
   InhibitorLockHandle? heldLock;

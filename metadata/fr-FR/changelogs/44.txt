@@ -1,0 +1,14 @@
+Intégration au bureau macOS (partielle).
+
+- Gestionnaires ssh:// et sftp:// via CFBundleURLTypes.
+- NSMenu natif (File/Edit/View/Window/Help) avec raccourcis Apple.
+- Live-follow NSAppearance.
+- Menu Services macOS — clic droit sur texte → "Connect with SSHVault".
+- Drag-and-drop de clés SSH depuis le Finder.
+- NSVisualEffectView vibrancy + barre de titre transparente.
+- Onglets NSWindow natifs + toolbar unified compact.
+- UNUserNotificationCenter natif avec boutons Reconnect/Disconnect/Show.
+- Squelette Quick Look pour .pub/.pem/.ppk.
+- Apple Privacy Manifest + descriptions d'usage dans Info.plist.
+
+À suivre : Keychain, détection ssh-agent 1Password/Secretive, SMAppService, IOPMAssertion, NSStatusItem, Touch ID pre-unlock, Spotlight (prochaine passe).

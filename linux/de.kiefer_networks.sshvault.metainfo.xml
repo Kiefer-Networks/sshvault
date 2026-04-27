@@ -36,6 +36,11 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.14.0" date="2026-04-27">
+      <description>
+        <p>macOS desktop integration pass (partial): ssh:// + sftp:// URL scheme handlers, native NSMenu with Apple-standard shortcuts, NSAppearance live-follow, macOS Services menu provider, NSDraggingDestination drag-and-drop SSH key import, NSVisualEffectView vibrancy backdrop with transparent titlebar and full-size content view, native NSWindow tabs, unified compact toolbar with restoration identifier, native UNUserNotificationCenter toasts via local_notifier with Reconnect / Disconnect / Show action buttons, Quick Look extension scaffold for .pub / .pem / .ppk previews, Apple Privacy Manifest (PrivacyInfo.xcprivacy) + privacy-usage descriptions in Info.plist. Items still queued: Keychain backend, 1Password / Secretive ssh-agent detection, SMAppService login item, IOPMAssertion power inhibit, NSStatusItem menu-bar icon, Touch ID pre-unlock, Core Spotlight indexing.</p>
+      </description>
+    </release>
     <release version="1.13.0" date="2026-04-27">
       <description>
         <p>Windows desktop integration pass: ssh:// + sftp:// URL handlers and .pub/.pem/.ppk file associations, named-mutex single instance with WM_COPYDATA argv forwarding, Windows Credential Manager (Wincred / DPAPI) backend for the master vault key with Windows Hello pre-unlock, Pageant + OpenSSH-for-Windows agent compatibility, WM_DROPFILES drag-and-drop key import, native Windows toast notifications via local_notifier with action buttons and Action-Center persistence, HKCU\...\Run\SSHVault auto-start, SetThreadExecutionState power-inhibit during sessions, Windows 11 Mica backdrop with Acrylic fallback plus dark-mode title bar and rounded corners via DWM, Jump List (taskbar right-click) with recent + favorite hosts and Quick-connect / Reopen-last-session tasks, ITaskbarList3 thumbnail toolbar mini-buttons and SFTP transfer progress, console window hidden in Release (subsystem WINDOWS) with Per-Monitor V2 DPI awareness and GDI scaling, PuTTY .ppk import (v2 + v3, encrypted + unencrypted), MiniDumpWriteDump crash-dump handler writing redacted .dmp files to %LOCALAPPDATA%\SSHVault\crashes\, and an opt-in Windows Defender folder-exclusion prompt during install.</p>

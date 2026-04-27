@@ -1,8 +1,10 @@
-// Linux drag-and-drop bridge.
+// Cross-platform drag-and-drop bridge (Linux + macOS + Windows).
 //
-// The C++ side (`linux/runner/my_application.cc`) registers the toplevel GTK
-// window as a drop target for `text/uri-list` and forwards three events on
-// the `de.kiefer_networks.sshvault/drop` MethodChannel:
+// The Linux C++ side (`linux/runner/my_application.cc`) registers the toplevel
+// GTK window as a drop target for `text/uri-list`. On macOS, the
+// `MainFlutterWindow.swift` content view registers as an
+// `NSDraggingDestination` for `.fileURL`. Both platforms forward three events
+// on the same `de.kiefer_networks.sshvault/drop` MethodChannel:
 //
 //   - `dropFiles(List<String> paths)` — file(s) released onto the window
 //   - `dragEnter()`                   — pointer entered while dragging
@@ -75,7 +77,7 @@ class ClassifiedDrop {
 ///
 /// `init()` is idempotent and is wired from `main.dart` after `runApp` so the
 /// navigator key and providers are available by the time the first drop event
-/// arrives. On non-Linux platforms `init()` is a no-op.
+/// arrives. On platforms without a native bridge `init()` is a no-op.
 class FileDropService {
   FileDropService._();
   static final FileDropService instance = FileDropService._();
@@ -102,12 +104,12 @@ class FileDropService {
     ProviderContainer? container,
   }) {
     if (_initialized) return;
-    if (!kIsWeb && !Platform.isLinux) return;
+    if (!kIsWeb && !Platform.isLinux && !Platform.isMacOS) return;
     _navigatorKey = navigatorKey;
     _container = container;
     _channel.setMethodCallHandler(_handleCall);
     _initialized = true;
-    LoggingService.instance.info(_tag, 'Linux drag-and-drop bridge ready');
+    LoggingService.instance.info(_tag, 'Drag-and-drop bridge ready');
   }
 
   /// Test-only reset so each test gets a clean slate. Only touches the

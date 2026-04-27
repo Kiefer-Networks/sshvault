@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:sshvault/core/services/macos_keychain.dart' show MacosKeychain;
 import 'package:sshvault/core/services/windows_credential_manager.dart';
 
 /// Logical key under which the vault master key is stored.
@@ -67,6 +69,13 @@ enum MasterKeyBackend {
   /// backend on Windows; chosen instead of [systemKeyring] when
   /// `Platform.isWindows`.
   windowsCredentialManager,
+
+  /// macOS login Keychain entry (`Security.framework`) stored as a
+  /// `kSecClassGenericPassword` with service `de.kiefer_networks.SSHVault`
+  /// and accessibility `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`.
+  /// Preferred backend on macOS; chosen instead of [systemKeyring] when
+  /// `Platform.isMacOS`.
+  macosKeychain,
 }
 
 /// Minimal contract for the `org.freedesktop.portal.Secret` portal call,
@@ -137,20 +146,26 @@ class KeyringService {
     String? supportDirOverride,
     SecretPortalClient? portalClient,
     WindowsCredentialManager? windowsCredentialManager,
+    MacosKeychain? macosKeychain,
     bool? isWindowsOverride,
+    bool? isMacOsOverride,
     MasterKeyBiometricGate? biometricGate,
   }) : _storage = storage ?? _defaultStorage(),
        _supportDirOverride = supportDirOverride,
        _portalClient = portalClient ?? _LiveSecretPortalClient(),
        _wincred = windowsCredentialManager ?? WindowsCredentialManager(),
+       _macosKeychain = macosKeychain ?? MacosKeychain(),
        _isWindows = isWindowsOverride ?? Platform.isWindows,
+       _isMacOs = isMacOsOverride ?? Platform.isMacOS,
        _biometricGate = biometricGate ?? const _DisabledBiometricGate();
 
   final FlutterSecureStorage _storage;
   final String? _supportDirOverride;
   final SecretPortalClient _portalClient;
   final WindowsCredentialManager _wincred;
+  final MacosKeychain _macosKeychain;
   final bool _isWindows;
+  final bool _isMacOs;
   final MasterKeyBiometricGate _biometricGate;
 
   /// True when this service is running on Windows (or has been told it is
@@ -158,6 +173,13 @@ class KeyringService {
   /// paths prefer the Windows Credential Vault over `flutter_secure_storage`.
   @visibleForTesting
   bool get isWindowsBackendActive => _isWindows && _wincred.isSupported;
+
+  /// True when this service is running on macOS (or has been told it is via
+  /// the test-only `isMacOsOverride` flag). When true the read/write paths
+  /// prefer the macOS login Keychain (driven directly through
+  /// `Security.framework`) over `flutter_secure_storage`.
+  @visibleForTesting
+  bool get isMacOsBackendActive => _isMacOs && _macosKeychain.isSupported;
 
   /// Tracks whether we've already shown a fallback warning this process,
   /// used by the settings banner so we don't spam the user.
@@ -229,6 +251,27 @@ class KeyringService {
       return null;
     }
 
+    if (isMacOsBackendActive) {
+      try {
+        final bytes = await _macosKeychain.read(kVaultMasterKeyId);
+        if (bytes != null) return _utf8FromBytes(bytes);
+      } catch (e) {
+        debugPrint('[KeyringService] macOS Keychain read failed: $e');
+      }
+      try {
+        final fssValue = await _storage.read(key: kVaultMasterKeyId);
+        if (fssValue != null) {
+          // One-shot migration: copy fss → Keychain and remove the fss
+          // entry so we don't have two sources of truth.
+          await _migrateFssToMacosKeychain(fssValue);
+          return fssValue;
+        }
+      } catch (e) {
+        debugPrint('[KeyringService] fss read (macOS migration) failed: $e');
+      }
+      return null;
+    }
+
     try {
       final value = await _storage.read(key: kVaultMasterKeyId);
       if (value != null) return value;
@@ -242,6 +285,25 @@ class KeyringService {
     // them as a hex string so the rest of the pipeline (which expects a
     // UTF-8 master key) doesn't choke on raw binary.
     return _readFromPortal();
+  }
+
+  /// Copies a key from `flutter_secure_storage` (the legacy macOS/iOS
+  /// Keychain-via-fss location) into our directly-managed Keychain entry,
+  /// then removes the fss entry. Best-effort: errors are logged but don't
+  /// propagate, because the user's key has already been read successfully.
+  Future<void> _migrateFssToMacosKeychain(String value) async {
+    try {
+      await _macosKeychain.write(kVaultMasterKeyId, _utf8ToBytes(value));
+      try {
+        await _storage.delete(key: kVaultMasterKeyId);
+      } catch (e) {
+        debugPrint(
+          '[KeyringService] macOS Keychain migration: fss delete failed: $e',
+        );
+      }
+    } catch (e) {
+      debugPrint('[KeyringService] macOS Keychain migration write failed: $e');
+    }
   }
 
   /// Copies a key from `flutter_secure_storage` (the legacy DPAPI-via-fss
@@ -287,6 +349,26 @@ class KeyringService {
       }
     }
 
+    if (isMacOsBackendActive) {
+      try {
+        await _macosKeychain.write(kVaultMasterKeyId, _utf8ToBytes(value));
+        // Drop any stale fss entry so [readVaultKey] always reads through
+        // the directly-managed Keychain entry from now on.
+        try {
+          await _storage.delete(key: kVaultMasterKeyId);
+        } catch (_) {
+          // Best effort.
+        }
+        return MasterKeyBackend.macosKeychain;
+      } catch (e) {
+        debugPrint(
+          '[KeyringService] macOS Keychain write failed: $e -- falling back',
+        );
+        // Fall through to the fss/file path so the user is not locked out
+        // if the Keychain refuses (e.g. headless launchd context).
+      }
+    }
+
     try {
       await _storage.write(key: kVaultMasterKeyId, value: value);
       // Successful keyring write -- purge any stale file copy.
@@ -321,6 +403,13 @@ class KeyringService {
         debugPrint('[KeyringService] Wincred delete failed: $e');
       }
     }
+    if (isMacOsBackendActive) {
+      try {
+        await _macosKeychain.delete(kVaultMasterKeyId);
+      } catch (e) {
+        debugPrint('[KeyringService] macOS Keychain delete failed: $e');
+      }
+    }
     try {
       await _storage.delete(key: kVaultMasterKeyId);
     } catch (e) {
@@ -341,6 +430,16 @@ class KeyringService {
         }
       } catch (e) {
         debugPrint('[KeyringService] Wincred currentBackend probe failed: $e');
+      }
+    }
+    if (isMacOsBackendActive) {
+      try {
+        final bytes = await _macosKeychain.read(kVaultMasterKeyId);
+        if (bytes != null) return MasterKeyBackend.macosKeychain;
+      } catch (e) {
+        debugPrint(
+          '[KeyringService] macOS Keychain currentBackend probe failed: $e',
+        );
       }
     }
     try {
@@ -478,6 +577,18 @@ class KeyringService {
       if (await file.exists()) await file.delete();
     } catch (e) {
       debugPrint('[KeyringService] portal cache delete failed: $e');
+    }
+  }
+
+  static List<int> _utf8ToBytes(String value) => utf8.encode(value);
+
+  static String _utf8FromBytes(List<int> bytes) {
+    try {
+      return utf8.decode(bytes);
+    } catch (_) {
+      // Treat malformed UTF-8 the same way the Windows side does: return
+      // an empty string so the caller treats this as "no key".
+      return '';
     }
   }
 
