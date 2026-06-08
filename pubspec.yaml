@@ -18,7 +18,7 @@ dependencies:
   riverpod_annotation: ^4.0.2
 
   # Navigation
-  go_router: ^17.2.3
+  go_router: ^17.3.0
 
   # Database
   drift: ^2.31.0
@@ -37,7 +37,7 @@ dependencies:
   # backend talks to GNOME Keyring / KWallet over the freedesktop Secret
   # Service API. On headless boxes KeyringService transparently falls
   # back to an encrypted file (see lib/core/storage/keyring_service.dart).
-  flutter_secure_storage: ^10.2.0
+  flutter_secure_storage: ^10.3.1
 
   # Crypto
   pointycastle: ^4.0.0
@@ -111,7 +111,7 @@ dependencies:
   # VPN Detection (native, no external dependency)
 
   # Linux DBus integration (single-instance + krunner/rofi/polybar triggers)
-  dbus: ^0.7.10
+  dbus: ^0.7.14
 
   # CLI argv parsing (sshvault --version / --help / --import-config / ...)
   args: ^2.5.0
