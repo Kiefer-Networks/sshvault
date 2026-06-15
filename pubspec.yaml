@@ -14,19 +14,19 @@ dependencies:
   intl: ^0.20.2
 
   # State Management
-  flutter_riverpod: ^3.2.1
+  flutter_riverpod: ^3.3.2
   riverpod_annotation: ^4.0.2
 
   # Navigation
   go_router: ^17.3.0
 
   # Database
-  drift: ^2.31.0
-  drift_flutter: ^0.2.8
+  drift: ^2.34.0
+  drift_flutter: ^0.3.0
 
   # Immutable Models
   freezed_annotation: ^3.0.0
-  json_annotation: ^4.11.0
+  json_annotation: ^4.12.0
 
   # Unique IDs
   uuid: ^4.5.1
@@ -47,7 +47,7 @@ dependencies:
   # File System
   path: ^1.9.0
   archive: ^4.0.2
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
   file_picker: ^10.3.10
   share_plus: ^12.0.1
   flutter_local_notifications: ^21.0.0
@@ -77,7 +77,7 @@ dependencies:
   flutter_slidable: ^4.0.3
 
   # SSH & Terminal
-  dartssh2: ^2.9.0
+  dartssh2: ^2.18.0
   xterm: ^4.0.0
   package_info_plus: ^9.0.0
 
@@ -85,7 +85,7 @@ dependencies:
   socks5_proxy: ^2.1.1
 
   # Linux/Windows system tray + window control
-  tray_manager: ^0.5.2
+  tray_manager: ^0.5.3
   window_manager: ^0.5.1
 
   # Windows 11 Mica / Acrylic backdrop. Linux/macOS implementations exist
@@ -132,10 +132,10 @@ dev_dependencies:
 
   # Code Generation
   build_runner: ^2.15.0
-  freezed: ^3.2.5
-  json_serializable: ^6.13.0
-  riverpod_generator: ^4.0.3
-  drift_dev: ^2.31.0
+  freezed: ^3.2.6-dev.1
+  json_serializable: ^6.13.2
+  riverpod_generator: ^4.0.4-dev.1
+  drift_dev: ^2.34.0
 
 dependency_overrides:
   # Local fork with SFTP subsystem await fix (sendSubsystem was not awaited in sftp())
