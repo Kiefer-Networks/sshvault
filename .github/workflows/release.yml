@@ -161,12 +161,12 @@ jobs:
           cp build/app/outputs/bundle/release/app-release.aab \
              "SSHVault-${VERSION}.aab"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-*.apk
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: android-aab
           path: SSHVault-*.aab
@@ -225,7 +225,7 @@ jobs:
           flatpak build-bundle repo "SSHVault-${VERSION}.flatpak" de.kiefer_networks.sshvault
           mv "SSHVault-${VERSION}.flatpak" ../
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: linux-flatpak
           path: '*.flatpak'
@@ -316,7 +316,7 @@ jobs:
             -ov -format UDZO \
             "SSHVault-${VERSION}-macos.dmg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macos-dmg
           path: '*.dmg'
@@ -380,7 +380,7 @@ jobs:
         run: |
           & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' /DAppVersion="$env:VERSION" windows\installer.iss
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: windows-build
           path: installer-output/*.exe
