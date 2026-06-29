@@ -55,7 +55,7 @@ dependencies:
   image_picker: ^1.2.2
 
   # Networking
-  dio: ^5.7.0
+  dio: ^5.10.0
 
   # Android-only background sync. The plugin spawns a headless Flutter
   # engine and dispatches into a top-level `callbackDispatcher`, so the
