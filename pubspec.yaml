@@ -22,7 +22,7 @@ dependencies:
 
   # Database
   drift: ^2.34.1
-  drift_flutter: ^0.3.0
+  drift_flutter: ^0.3.1
 
   # Immutable Models
   freezed_annotation: ^3.0.0
@@ -67,7 +67,7 @@ dependencies:
   device_info_plus: ^12.3.0
 
   # Biometric Authentication
-  local_auth: ^3.0.1
+  local_auth: ^3.0.2
 
   # In-App Purchase
 
@@ -131,7 +131,7 @@ dev_dependencies:
   mocktail: ^1.0.5
 
   # Code Generation
-  build_runner: ^2.15.0
+  build_runner: ^2.15.1
   freezed: ^3.2.6-dev.1
   json_serializable: ^6.13.2
   riverpod_generator: ^4.0.4-dev.1
