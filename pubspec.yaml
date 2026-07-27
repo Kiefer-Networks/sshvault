@@ -21,7 +21,7 @@ dependencies:
   go_router: ^17.3.0
 
   # Database
-  drift: ^2.34.2
+  drift: ^2.34.3
   drift_flutter: ^0.3.1
 
   # Immutable Models
@@ -55,7 +55,7 @@ dependencies:
   image_picker: ^1.2.3
 
   # Networking
-  dio: ^5.10.0
+  dio: ^5.11.0
 
   # Android-only background sync. The plugin spawns a headless Flutter
   # engine and dispatches into a top-level `callbackDispatcher`, so the
