@@ -61,7 +61,7 @@ dependencies:
   # engine and dispatches into a top-level `callbackDispatcher`, so the
   # auto-sync keeps running with the app closed. iOS / desktop targets
   # don't ship a worker — `AndroidBackgroundSyncService` no-ops there.
-  workmanager: ^0.9.0+3
+  workmanager: ^0.10.7
 
   # Device Info
   device_info_plus: ^12.3.0
@@ -100,7 +100,7 @@ dependencies:
   # so the app picks up the system accent. The plugin no-ops on
   # non-Android / pre-Android-12 devices, so reading
   # `DynamicColorPlugin.getCorePalette()` there returns `null`.
-  dynamic_color: ^1.7.0
+  dynamic_color: ^1.9.0
 
   # Native Windows toast notifications (Windows.UI.Notifications) — backs
   # `WindowsNotificationService`. On Linux/macOS we keep falling through
