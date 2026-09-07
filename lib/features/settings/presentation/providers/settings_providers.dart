@@ -741,10 +741,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   Future<void> setServerSystemInfoConsent(bool enabled) async {
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyServerSystemInfoConsent, enabled.toString());
-    await dao.setValue(
-      _keyServerSystemInfoAutoRefresh,
-      enabled.toString(),
-    );
+    await dao.setValue(_keyServerSystemInfoAutoRefresh, enabled.toString());
     ref.invalidateSelf();
   }
 
@@ -759,10 +756,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   Future<void> setServerSystemInfoRefreshInterval(int seconds) async {
     final clamped = seconds.clamp(30, 86400);
     final dao = ref.read(databaseProvider).appSettingsDao;
-    await dao.setValue(
-      _keyServerSystemInfoRefreshInterval,
-      clamped.toString(),
-    );
+    await dao.setValue(_keyServerSystemInfoRefreshInterval, clamped.toString());
     ref.invalidateSelf();
   }
 

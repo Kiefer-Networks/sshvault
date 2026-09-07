@@ -29,11 +29,14 @@ class AppSettingsEntity {
   final bool backgroundSyncEnabled;
   final int localVaultVersion;
   final bool preventScreenshots;
+
   /// Explicit consent to query technical system metadata from SSH servers.
   /// This is local-only and opt-in by default.
   final bool serverSystemInfoConsent;
+
   /// Periodically refresh collected server metadata while consent is enabled.
   final bool serverSystemInfoAutoRefresh;
+
   /// Refresh interval in seconds. Defaults to five minutes.
   final int serverSystemInfoRefreshIntervalSecs;
   final String dnsServers;

@@ -40,8 +40,9 @@ import 'package:sshvault/features/terminal/presentation/models/terminal_theme_da
 // ---------------------------------------------------------------------------
 
 final sshServiceProvider = Provider<SshService>((ref) => SshService());
-final remoteSystemMetricsServiceProvider =
-    Provider<RemoteSystemMetricsService>((ref) => RemoteSystemMetricsService());
+final remoteSystemMetricsServiceProvider = Provider<RemoteSystemMetricsService>(
+  (ref) => RemoteSystemMetricsService(),
+);
 
 final terminalNotificationProvider = Provider<TerminalNotificationService>(
   (ref) => TerminalNotificationService(),
@@ -378,7 +379,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     }
     _refreshSystemMetrics(session);
     if (settings!.serverSystemInfoAutoRefresh) {
-      final seconds = settings.serverSystemInfoRefreshIntervalSecs.clamp(30, 86400).toInt();
+      final seconds = settings.serverSystemInfoRefreshIntervalSecs
+          .clamp(30, 86400)
+          .toInt();
       _metricsTimers[session.id]?.cancel();
       _metricsTimers[session.id] = Timer.periodic(
         Duration(seconds: seconds),
@@ -399,18 +402,24 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     final client = session.client;
     if (client == null || !state.any((s) => identical(s, session))) return;
     try {
-      final metrics = await ref.read(remoteSystemMetricsServiceProvider).collect(client);
+      final metrics = await ref
+          .read(remoteSystemMetricsServiceProvider)
+          .collect(client);
       if (!state.any((s) => identical(s, session))) return;
-      final result = await ref.read(serverUseCasesProvider).getServer(session.serverId);
+      final result = await ref
+          .read(serverUseCasesProvider)
+          .getServer(session.serverId);
       await result.fold(
         onSuccess: (server) async {
-          final update = await ref.read(serverUseCasesProvider).updateServer(
-            server.copyWith(
-              systemMetricsJson: jsonEncode(metrics.toJson()),
-              updatedAt: DateTime.now(),
-            ),
-            null,
-          );
+          final update = await ref
+              .read(serverUseCasesProvider)
+              .updateServer(
+                server.copyWith(
+                  systemMetricsJson: jsonEncode(metrics.toJson()),
+                  updatedAt: DateTime.now(),
+                ),
+                null,
+              );
           update.fold(
             onSuccess: (_) {},
             onFailure: (failure) => LoggingService.instance.warning(
@@ -432,7 +441,10 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       ref.invalidate(folderGroupedServersProvider);
       _notifyChange();
     } catch (e) {
-      LoggingService.instance.debug('SessionManager', 'System metrics collection failed: $e');
+      LoggingService.instance.debug(
+        'SessionManager',
+        'System metrics collection failed: $e',
+      );
     }
   }
 
@@ -455,29 +467,29 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       final result = await serverUseCases.getServer(serverId);
       if (result.isSuccess) {
         final server = result.value;
-          final unchanged =
-              server.osFamily == distro.id &&
-              server.osName == distro.name &&
-              server.osVersion == distro.version &&
-              server.osPrettyName == distro.prettyName;
-          if (unchanged) return;
-          final updated = server.copyWith(
-            distroId: distro.id,
-            distroName: distro.displayName,
-            osFamily: _osFamilyFor(distro.id),
-            osName: distro.name,
-            osVersion: distro.version,
-            osPrettyName: distro.prettyName,
-            osDetectedAt: DateTime.now(),
-          );
-          await serverUseCases.updateServer(updated, null);
-          ref.invalidate(serverDetailProvider(serverId));
+        final unchanged =
+            server.osFamily == distro.id &&
+            server.osName == distro.name &&
+            server.osVersion == distro.version &&
+            server.osPrettyName == distro.prettyName;
+        if (unchanged) return;
+        final updated = server.copyWith(
+          distroId: distro.id,
+          distroName: distro.displayName,
+          osFamily: _osFamilyFor(distro.id),
+          osName: distro.name,
+          osVersion: distro.version,
+          osPrettyName: distro.prettyName,
+          osDetectedAt: DateTime.now(),
+        );
+        await serverUseCases.updateServer(updated, null);
+        ref.invalidate(serverDetailProvider(serverId));
       } else {
         final f = result.failure;
-          LoggingService.instance.debug(
-            'SessionManager',
-            'Distribution detection failed: $f',
-          );
+        LoggingService.instance.debug(
+          'SessionManager',
+          'Distribution detection failed: $f',
+        );
       }
     } catch (e) {
       LoggingService.instance.debug(

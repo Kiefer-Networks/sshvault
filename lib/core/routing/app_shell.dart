@@ -660,7 +660,12 @@ class _DesktopDetailsPane extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      Expanded(child: Text(server.name, style: theme.textTheme.titleLarge)),
+                      Expanded(
+                        child: Text(
+                          server.name,
+                          style: theme.textTheme.titleLarge,
+                        ),
+                      ),
                       PopupMenuButton<String>(
                         tooltip: l10n.navMore,
                         onSelected: (action) async {
@@ -676,18 +681,48 @@ class _DesktopDetailsPane extends ConsumerWidget {
                               isDestructive: true,
                             );
                             if (confirmed == true && context.mounted) {
-                              await ref.read(serverListProvider.notifier).deleteServer(server.id);
-                              ref.read(desktopSelectedServerIdProvider.notifier).state = null;
+                              await ref
+                                  .read(serverListProvider.notifier)
+                                  .deleteServer(server.id);
+                              ref
+                                      .read(
+                                        desktopSelectedServerIdProvider
+                                            .notifier,
+                                      )
+                                      .state =
+                                  null;
                             }
                           } else if (action == 'connect') {
-                            await ref.read(sessionManagerProvider.notifier).openSession(server.id);
-                            ref.read(shellNavigationProvider)?.goBranch(AppConstants.terminalBranchIndex);
+                            await ref
+                                .read(sessionManagerProvider.notifier)
+                                .openSession(server.id);
+                            ref
+                                .read(shellNavigationProvider)
+                                ?.goBranch(AppConstants.terminalBranchIndex);
                           }
                         },
                         itemBuilder: (_) => [
-                          PopupMenuItem(value: 'connect', child: ListTile(leading: const Icon(Icons.terminal), title: Text(l10n.serverConnect))),
-                          PopupMenuItem(value: 'edit', child: ListTile(leading: const Icon(Icons.edit), title: Text(l10n.edit))),
-                          PopupMenuItem(value: 'delete', child: ListTile(leading: const Icon(Icons.delete), title: Text(l10n.delete))),
+                          PopupMenuItem(
+                            value: 'connect',
+                            child: ListTile(
+                              leading: const Icon(Icons.terminal),
+                              title: Text(l10n.serverConnect),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: ListTile(
+                              leading: const Icon(Icons.edit),
+                              title: Text(l10n.edit),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: ListTile(
+                              leading: const Icon(Icons.delete),
+                              title: Text(l10n.delete),
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -713,14 +748,32 @@ class _DesktopDetailsPane extends ConsumerWidget {
                     label: Text(l10n.serverConnect),
                   ),
                   Spacing.verticalMd,
-                  Card(margin: EdgeInsets.zero, elevation: 0, child: Padding(
-                    padding: const EdgeInsets.all(Spacing.md),
-                    child: Column(children: [
-                      _DetailsRow(icon: Icons.dns_outlined, label: l10n.serverDetailHost, value: server.hostname),
-                      _DetailsRow(icon: Icons.numbers, label: l10n.serverDetailPort, value: '${server.port}'),
-                      _DetailsRow(icon: Icons.person_outline, label: l10n.serverDetailUsername, value: server.username),
-                    ]),
-                  )),
+                  Card(
+                    margin: EdgeInsets.zero,
+                    elevation: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(Spacing.md),
+                      child: Column(
+                        children: [
+                          _DetailsRow(
+                            icon: Icons.dns_outlined,
+                            label: l10n.serverDetailHost,
+                            value: server.hostname,
+                          ),
+                          _DetailsRow(
+                            icon: Icons.numbers,
+                            label: l10n.serverDetailPort,
+                            value: '${server.port}',
+                          ),
+                          _DetailsRow(
+                            icon: Icons.person_outline,
+                            label: l10n.serverDetailUsername,
+                            value: server.username,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   if (server.osName != null || server.osVersion != null) ...[
                     Spacing.verticalLg,
                     Card(
@@ -730,21 +783,49 @@ class _DesktopDetailsPane extends ConsumerWidget {
                       child: ListTile(
                         leading: Icon(_osIcon(server.osFamily)),
                         title: Text(l10n.serverDetailSystemInfo),
-                        subtitle: Text([server.osName, server.osVersion]
-                            .whereType<String>().where((v) => v.isNotEmpty).join(' ')),
-                        trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                          if (server.osDetectedAt != null) Text(_relativeTime(server.osDetectedAt!), style: theme.textTheme.labelSmall),
-                          IconButton(icon: const Icon(Icons.refresh), tooltip: l10n.retry, onPressed: () async {
-                            final active = session?.serverId == server.id ? session : null;
-                            if (active != null) { await ref.read(sessionManagerProvider.notifier).reconnectSession(active.id); }
-                            else { await ref.read(sessionManagerProvider.notifier).openSession(server.id); }
-                          }),
-                        ]),
+                        subtitle: Text(
+                          [server.osName, server.osVersion]
+                              .whereType<String>()
+                              .where((v) => v.isNotEmpty)
+                              .join(' '),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (server.osDetectedAt != null)
+                              Text(
+                                _relativeTime(server.osDetectedAt!),
+                                style: theme.textTheme.labelSmall,
+                              ),
+                            IconButton(
+                              icon: const Icon(Icons.refresh),
+                              tooltip: l10n.retry,
+                              onPressed: () async {
+                                final active = session?.serverId == server.id
+                                    ? session
+                                    : null;
+                                if (active != null) {
+                                  await ref
+                                      .read(sessionManagerProvider.notifier)
+                                      .reconnectSession(active.id);
+                                } else {
+                                  await ref
+                                      .read(sessionManagerProvider.notifier)
+                                      .openSession(server.id);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                   if (server.systemMetricsJson != null) ...[
-                    ..._systemMetricRows(server.systemMetricsJson!, l10n, theme),
+                    ..._systemMetricRows(
+                      server.systemMetricsJson!,
+                      l10n,
+                      theme,
+                    ),
                   ],
                   if (server.tags.isNotEmpty) ...[
                     Spacing.verticalMd,
@@ -764,7 +845,11 @@ class _DesktopDetailsPane extends ConsumerWidget {
     );
   }
 
-  List<Widget> _systemMetricRows(String raw, AppLocalizations l10n, ThemeData theme) {
+  List<Widget> _systemMetricRows(
+    String raw,
+    AppLocalizations l10n,
+    ThemeData theme,
+  ) {
     try {
       final value = jsonDecode(raw);
       if (value is! Map) return const [];
@@ -773,35 +858,111 @@ class _DesktopDetailsPane extends ConsumerWidget {
       );
       final rows = <Widget>[];
       if (metrics.kernelVersion != null || metrics.kernelName != null) {
-        rows.add(_MetricCard(icon: Icons.memory, label: l10n.serverDetailKernel,
-          value: [metrics.kernelName, metrics.kernelVersion].whereType<String>().where((v) => v.isNotEmpty).join(' ')));
+        rows.add(
+          _MetricCard(
+            icon: Icons.memory,
+            label: l10n.serverDetailKernel,
+            value: [
+              metrics.kernelName,
+              metrics.kernelVersion,
+            ].whereType<String>().where((v) => v.isNotEmpty).join(' '),
+          ),
+        );
       }
       if (metrics.cpuModel != null || metrics.cpuCores != null) {
-        rows.add(_MetricCard(icon: Icons.developer_board, label: l10n.serverDetailCpu,
-          value: [metrics.cpuModel, if (metrics.cpuVendor != null) metrics.cpuVendor, if (metrics.cpuCores != null) '${metrics.cpuCores}', if (metrics.cpuPhysicalCores != null) '${metrics.cpuPhysicalCores}'].whereType<String>().join(' · ')));
+        rows.add(
+          _MetricCard(
+            icon: Icons.developer_board,
+            label: l10n.serverDetailCpu,
+            value: [
+              metrics.cpuModel,
+              if (metrics.cpuVendor != null) metrics.cpuVendor,
+              if (metrics.cpuCores != null) '${metrics.cpuCores}',
+              if (metrics.cpuPhysicalCores != null)
+                '${metrics.cpuPhysicalCores}',
+            ].whereType<String>().join(' · '),
+          ),
+        );
       }
       if (metrics.isVirtualMachine == true) {
-        rows.add(_MetricCard(icon: Icons.cloud_outlined, label: l10n.serverDetailVirtualMachine, value: l10n.serverDetailVirtualMachine));
+        rows.add(
+          _MetricCard(
+            icon: Icons.cloud_outlined,
+            label: l10n.serverDetailVirtualMachine,
+            value: l10n.serverDetailVirtualMachine,
+          ),
+        );
       }
       if (metrics.serialNumber != null) {
-        rows.add(_MetricCard(icon: Icons.confirmation_number_outlined, label: l10n.serverDetailSerial, value: metrics.serialNumber!));
+        rows.add(
+          _MetricCard(
+            icon: Icons.confirmation_number_outlined,
+            label: l10n.serverDetailSerial,
+            value: metrics.serialNumber!,
+          ),
+        );
       }
       if (metrics.ramBytes != null) {
-        rows.add(_MetricCard(icon: Icons.memory, label: l10n.serverDetailRam,
-          value: _formatBytes(metrics.ramBytes!)));
+        rows.add(
+          _MetricCard(
+            icon: Icons.memory,
+            label: l10n.serverDetailRam,
+            value: _formatBytes(metrics.ramBytes!),
+          ),
+        );
       }
       if (metrics.disks.isNotEmpty) {
-        final docker = metrics.disks.where((d) => d.mountPoint.contains('overlay2') || d.mountPoint.contains('/docker/')).toList();
-        final regular = metrics.disks.where((d) => !docker.contains(d)).toList();
-        rows.add(Card(margin: EdgeInsets.zero, elevation: 0, child: Padding(
-          padding: const EdgeInsets.all(Spacing.md),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [const Icon(Icons.storage, size: 18), Spacing.horizontalSm, Text(l10n.serverDetailDisks, style: theme.textTheme.titleSmall)]),
-            Spacing.verticalSm,
-            ...regular.take(6).map((d) => _StorageLine(mount: d.mountPoint, free: d.freeBytes, total: d.totalBytes)),
-            if (docker.isNotEmpty) _StorageLine(mount: 'Docker', free: docker.fold<int>(0, (a, d) => a + d.freeBytes), total: docker.fold<int>(0, (a, d) => a + d.totalBytes), emphasized: true),
-          ]),
-        )));
+        final docker = metrics.disks
+            .where(
+              (d) =>
+                  d.mountPoint.contains('overlay2') ||
+                  d.mountPoint.contains('/docker/'),
+            )
+            .toList();
+        final regular = metrics.disks
+            .where((d) => !docker.contains(d))
+            .toList();
+        rows.add(
+          Card(
+            margin: EdgeInsets.zero,
+            elevation: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(Spacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.storage, size: 18),
+                      Spacing.horizontalSm,
+                      Text(
+                        l10n.serverDetailDisks,
+                        style: theme.textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                  Spacing.verticalSm,
+                  ...regular
+                      .take(6)
+                      .map(
+                        (d) => _StorageLine(
+                          mount: d.mountPoint,
+                          free: d.freeBytes,
+                          total: d.totalBytes,
+                        ),
+                      ),
+                  if (docker.isNotEmpty)
+                    _StorageLine(
+                      mount: 'Docker',
+                      free: docker.fold<int>(0, (a, d) => a + d.freeBytes),
+                      total: docker.fold<int>(0, (a, d) => a + d.totalBytes),
+                      emphasized: true,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
       }
       return rows.isEmpty ? const [] : [Spacing.verticalMd, ...rows];
     } catch (_) {
@@ -826,11 +987,24 @@ class _DesktopDetailsPane extends ConsumerWidget {
 }
 
 class _MetricCard extends StatelessWidget {
-  final IconData icon; final String label; final String value;
-  const _MetricCard({required this.icon, required this.label, required this.value});
-  @override Widget build(BuildContext context) => Card(
-    margin: const EdgeInsets.only(bottom: Spacing.sm), elevation: 0,
-    child: ListTile(dense: true, leading: Icon(icon), title: Text(label), subtitle: Text(value)),
+  final IconData icon;
+  final String label;
+  final String value;
+  const _MetricCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+  @override
+  Widget build(BuildContext context) => Card(
+    margin: const EdgeInsets.only(bottom: Spacing.sm),
+    elevation: 0,
+    child: ListTile(
+      dense: true,
+      leading: Icon(icon),
+      title: Text(label),
+      subtitle: Text(value),
+    ),
   );
 }
 
@@ -844,16 +1018,39 @@ String _formatBytes(int bytes) {
 }
 
 class _StorageLine extends StatelessWidget {
-  final String mount; final int free; final int total; final bool emphasized;
-  const _StorageLine({required this.mount, required this.free, required this.total, this.emphasized = false});
-  @override Widget build(BuildContext context) {
+  final String mount;
+  final int free;
+  final int total;
+  final bool emphasized;
+  const _StorageLine({
+    required this.mount,
+    required this.free,
+    required this.total,
+    this.emphasized = false,
+  });
+  @override
+  Widget build(BuildContext context) {
     final ratio = total > 0 ? (1 - free / total).clamp(0.0, 1.0) : 0.0;
     final freeText = _formatBytes(free);
     final totalText = _formatBytes(total);
-    return Padding(padding: const EdgeInsets.only(bottom: Spacing.sm), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(children: [Icon(emphasized ? Icons.view_in_ar : Icons.folder_open, size: 16), Spacing.horizontalXs, Expanded(child: Text(mount, overflow: TextOverflow.ellipsis)), Text('$freeText / $totalText')]),
-      const SizedBox(height: 4), LinearProgressIndicator(value: ratio, minHeight: 5),
-    ]));
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Spacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(emphasized ? Icons.view_in_ar : Icons.folder_open, size: 16),
+              Spacing.horizontalXs,
+              Expanded(child: Text(mount, overflow: TextOverflow.ellipsis)),
+              Text('$freeText / $totalText'),
+            ],
+          ),
+          const SizedBox(height: 4),
+          LinearProgressIndicator(value: ratio, minHeight: 5),
+        ],
+      ),
+    );
   }
 }
 
@@ -870,10 +1067,7 @@ class _DetailsRow extends StatelessWidget {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (icon != null) ...[
-          Icon(icon, size: 16),
-          const SizedBox(width: 8),
-        ],
+        if (icon != null) ...[Icon(icon, size: 16), const SizedBox(width: 8)],
         SizedBox(width: 72, child: Text(label)),
         Expanded(child: Text(value, textAlign: TextAlign.end)),
       ],

@@ -118,9 +118,9 @@ class AdaptiveNotification {
       _showSystemNotification(message).catchError((error, stack) {
         debugPrint('[Notifications] Native notification failed: $error');
         if (context.mounted) {
-          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-            SnackBar(content: Text(message), duration: duration),
-          );
+          ScaffoldMessenger.maybeOf(
+            context,
+          )?.showSnackBar(SnackBar(content: Text(message), duration: duration));
         }
       });
       return;

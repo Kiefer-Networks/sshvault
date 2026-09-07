@@ -155,9 +155,7 @@ class ApiClient {
     return NetworkFailure(
       message,
       statusCode: statusCode,
-      responseData: data is Map
-          ? Map<String, dynamic>.from(data)
-          : null,
+      responseData: data is Map ? Map<String, dynamic>.from(data) : null,
       cause: e,
     );
   }

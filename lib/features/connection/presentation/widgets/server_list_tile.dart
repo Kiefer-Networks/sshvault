@@ -195,13 +195,33 @@ class ServerListTile extends ConsumerWidget {
                   } else if (action == 'delete') {
                     onDelete();
                   } else if (action == 'connect') {
-                    await ref.read(sessionManagerProvider.notifier).openSession(server.id);
+                    await ref
+                        .read(sessionManagerProvider.notifier)
+                        .openSession(server.id);
                   }
                 },
                 itemBuilder: (_) => [
-                  PopupMenuItem(value: 'connect', child: ListTile(leading: const Icon(Icons.terminal), title: Text(l10n.serverConnect))),
-                  PopupMenuItem(value: 'edit', child: ListTile(leading: const Icon(Icons.edit), title: Text(l10n.edit))),
-                  PopupMenuItem(value: 'delete', child: ListTile(leading: const Icon(Icons.delete), title: Text(l10n.delete))),
+                  PopupMenuItem(
+                    value: 'connect',
+                    child: ListTile(
+                      leading: const Icon(Icons.terminal),
+                      title: Text(l10n.serverConnect),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: ListTile(
+                      leading: const Icon(Icons.edit),
+                      title: Text(l10n.edit),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: ListTile(
+                      leading: const Icon(Icons.delete),
+                      title: Text(l10n.delete),
+                    ),
+                  ),
                 ],
               ),
             if (onDetail != null && !isDesktop)

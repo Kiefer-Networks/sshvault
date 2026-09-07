@@ -237,8 +237,8 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   value: settings.serverSystemInfoAutoRefresh,
                   onChanged: settings.serverSystemInfoConsent
                       ? (enabled) => ref
-                          .read(settingsProvider.notifier)
-                          .setServerSystemInfoAutoRefresh(enabled)
+                            .read(settingsProvider.notifier)
+                            .setServerSystemInfoAutoRefresh(enabled)
                       : null,
                 ),
                 SettingsTile(
@@ -248,7 +248,8 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   subtitleText: l10n.serverSystemInfoRefreshIntervalMinutes(
                     settings.serverSystemInfoRefreshIntervalSecs ~/ 60,
                   ),
-                  onTap: settings.serverSystemInfoConsent &&
+                  onTap:
+                      settings.serverSystemInfoConsent &&
                           settings.serverSystemInfoAutoRefresh
                       ? () async {
                           final value = await showSettingsSelectionDialog<int>(
@@ -260,9 +261,10 @@ class SecuritySettingsScreen extends ConsumerWidget {
                               for (final seconds in [60, 300, 900, 1800, 3600])
                                 SelectionOption(
                                   value: seconds,
-                                  label: l10n.serverSystemInfoRefreshIntervalMinutes(
-                                    seconds ~/ 60,
-                                  ),
+                                  label: l10n
+                                      .serverSystemInfoRefreshIntervalMinutes(
+                                        seconds ~/ 60,
+                                      ),
                                 ),
                             ],
                           );
