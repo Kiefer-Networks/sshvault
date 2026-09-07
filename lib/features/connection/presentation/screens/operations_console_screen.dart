@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -14,17 +15,22 @@ import 'package:sshvault/core/widgets/settings/section_card.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_reachability_provider.dart';
 import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
 import 'package:sshvault/features/connection/presentation/widgets/filter_bottom_sheet.dart';
 import 'package:sshvault/features/connection/presentation/widgets/search_filter_bar.dart';
 import 'package:sshvault/features/connection/presentation/widgets/server_import_flow.dart';
-import 'package:sshvault/features/connection/presentation/widgets/server_list_tile.dart';
 import 'package:sshvault/features/connection/presentation/widgets/tag_chip.dart';
 import 'package:sshvault/features/terminal/data/services/remote_system_metrics_service.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
+
+/// How often the Fleet grid re-checks TCP reachability for every visible
+/// host. Surfaced verbatim in [_FleetFooter] ("polling every 30s") — keep
+/// that text in sync if this changes.
+const _reachabilityPollInterval = Duration(seconds: 30);
 
 enum _ConsoleTab { fleet, sessions, activity }
 
@@ -39,7 +45,7 @@ enum _ConsoleTab { fleet, sessions, activity }
 /// (`lib/l10n/generated/`) that are committed and checked for freshness in
 /// CI via `flutter gen-l10n`, which requires the Flutter SDK. The same
 /// trade-off already exists for the iPad-only action in
-/// [ServerListTile] — see the comment there.
+/// `ServerListTile` — see the comment there.
 class OperationsConsoleScreen extends ConsumerStatefulWidget {
   const OperationsConsoleScreen({super.key});
 
@@ -52,6 +58,7 @@ class _OperationsConsoleScreenState
     extends ConsumerState<OperationsConsoleScreen> {
   _ConsoleTab _tab = _ConsoleTab.fleet;
   late final TextEditingController _searchController;
+  Timer? _reachabilityPollTimer;
 
   @override
   void initState() {
@@ -59,10 +66,22 @@ class _OperationsConsoleScreenState
     _searchController = TextEditingController(
       text: ref.read(serverFilterProvider).searchQuery,
     );
+    // The reachability check (serverReachabilityProvider) is a one-shot TCP
+    // probe per host — without a repeating tick a card's status pill would
+    // freeze at whatever it read on first paint. Re-probing periodically is
+    // what makes "polling every 30s" in the footer true rather than a label
+    // copied from the mockup with nothing behind it.
+    _reachabilityPollTimer = Timer.periodic(_reachabilityPollInterval, (_) {
+      final servers = ref.read(serverListProvider).value ?? const [];
+      for (final server in servers) {
+        ref.invalidate(serverReachabilityProvider(server));
+      }
+    });
   }
 
   @override
   void dispose() {
+    _reachabilityPollTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -316,10 +335,7 @@ class _FleetCard extends ConsumerWidget {
                   children: [
                     _OsBadge(server: server),
                     const Spacer(),
-                    ConnectionStatusBadge(
-                      connectionStatus: session?.status,
-                      server: server,
-                    ),
+                    _StatusPill(server: server, sessionStatus: session?.status),
                     IconButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
@@ -513,6 +529,62 @@ class _FleetCard extends ConsumerWidget {
   }
 }
 
+/// A live status pill for one host: the active session's status when a
+/// session is open, otherwise a periodically re-checked TCP reachability
+/// probe ([serverReachabilityProvider]) — the same signal [_FleetFooter]
+/// aggregates, so a green "Online" pill and the footer's online count
+/// can never disagree about what "online" means.
+class _StatusPill extends ConsumerWidget {
+  final ServerEntity server;
+  final SshConnectionStatus? sessionStatus;
+
+  const _StatusPill({required this.server, this.sessionStatus});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final outline = Theme.of(context).colorScheme.outlineVariant;
+
+    if (sessionStatus != null) {
+      final (label, color) = switch (sessionStatus!) {
+        SshConnectionStatus.connected => ('Connected', Colors.green),
+        SshConnectionStatus.connecting ||
+        SshConnectionStatus.authenticating => ('Connecting', Colors.amber),
+        SshConnectionStatus.error => ('Error', Colors.red),
+        SshConnectionStatus.disconnected => ('Disconnected', outline),
+      };
+      return _pill(label, color);
+    }
+
+    final reachability = ref.watch(serverReachabilityProvider(server));
+    return reachability.when(
+      loading: () => _pill('Checking…', outline),
+      error: (_, _) => _pill('Unreachable', Colors.red),
+      data: (status) => switch (status) {
+        ServerReachability.portOpen => _pill('Online', Colors.green),
+        ServerReachability.portClosed => _pill('Port closed', Colors.amber),
+        ServerReachability.unreachable => _pill('Unreachable', Colors.red),
+      },
+    );
+  }
+
+  Widget _pill(String label, Color color) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+    decoration: BoxDecoration(
+      color: color.withAlpha(38),
+      borderRadius: BorderRadius.circular(999),
+    ),
+    child: Text(
+      label,
+      style: TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.3,
+        color: color,
+      ),
+    ),
+  );
+}
+
 class _OsBadge extends StatelessWidget {
   final ServerEntity server;
   const _OsBadge({required this.server});
@@ -525,10 +597,35 @@ class _OsBadge extends StatelessWidget {
     _ => Icons.help_outline,
   };
 
+  /// A short fleet-dashboard-style code ("UBU 24.04", "WIN 2022") instead
+  /// of the full `osPrettyName` string, which is long enough to always
+  /// truncate inside the card's fixed-width badge.
+  static String _code(ServerEntity server) {
+    final family = server.osFamily?.toLowerCase();
+    final version = (server.osVersion ?? '').trim();
+    final String base;
+    switch (family) {
+      case 'windows':
+        base = 'WIN';
+      case 'macos':
+        base = 'MAC';
+      case 'bsd':
+        base = 'BSD';
+      default:
+        final name = (server.osName ?? '').trim();
+        final letters = name.replaceAll(RegExp('[^A-Za-z]'), '');
+        base = letters.isEmpty
+            ? (family?.toUpperCase() ?? '')
+            : letters.substring(0, letters.length.clamp(0, 3)).toUpperCase();
+    }
+    if (base.isEmpty) return '';
+    return version.isEmpty ? base : '$base $version';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final label = server.osPrettyName ?? server.osName ?? server.osVersion;
+    final code = _code(server);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
@@ -546,9 +643,9 @@ class _OsBadge extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 120),
+            constraints: const BoxConstraints(maxWidth: 90),
             child: Text(
-              label ?? '—',
+              code.isEmpty ? '—' : code,
               style: theme.textTheme.labelSmall?.copyWith(
                 fontFamily: AppConstants.monospaceFontFamily,
               ),
@@ -707,21 +804,46 @@ class _DiskUsageLine extends StatelessWidget {
   }
 }
 
-class _FleetFooter extends StatelessWidget {
+class _FleetFooter extends ConsumerWidget {
   final List<ServerEntity> servers;
   final List<SshSessionEntity> sessions;
   const _FleetFooter({required this.servers, required this.sessions});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final connectedIds = sessions
-        .where((s) => s.status == SshConnectionStatus.connected)
-        .map((s) => s.serverId)
-        .toSet();
-    final connectedCount = servers
-        .where((s) => connectedIds.contains(s.id))
-        .length;
+    final sessionStatusByServer = {
+      for (final s in sessions) s.serverId: s.status,
+    };
+
+    // Same resolution order as _StatusPill on each card: an open session
+    // wins, otherwise fall back to the polled TCP reachability check — so
+    // these counts can never disagree with what the grid is showing.
+    var online = 0;
+    var unreachable = 0;
+    for (final server in servers) {
+      final sessionStatus = sessionStatusByServer[server.id];
+      if (sessionStatus == SshConnectionStatus.connected) {
+        online++;
+        continue;
+      }
+      if (sessionStatus == SshConnectionStatus.error) {
+        unreachable++;
+        continue;
+      }
+      if (sessionStatus != null) continue; // connecting/authenticating
+
+      final reachability = ref.watch(serverReachabilityProvider(server));
+      switch (reachability.value) {
+        case ServerReachability.portOpen:
+          online++;
+        case ServerReachability.portClosed:
+        case ServerReachability.unreachable:
+          unreachable++;
+        case null:
+          break; // still probing
+      }
+    }
     final neverConnected = servers
         .where((s) => s.lastConnectedAt == null)
         .length;
@@ -761,7 +883,11 @@ class _FleetFooter extends StatelessWidget {
           children: [
             Text('${servers.length} hosts'),
             Spacing.horizontalLg,
-            Text('$connectedCount connected'),
+            Text('$online online'),
+            if (unreachable > 0) ...[
+              Spacing.horizontalLg,
+              Text('$unreachable unreachable'),
+            ],
             if (neverConnected > 0) ...[
               Spacing.horizontalLg,
               Text('$neverConnected never connected'),
@@ -770,6 +896,8 @@ class _FleetFooter extends StatelessWidget {
               Spacing.horizontalLg,
               Text('avg disk $avgDisk%'),
             ],
+            const Spacer(),
+            Text('polling every ${_reachabilityPollInterval.inSeconds}s'),
           ],
         ),
       ),
