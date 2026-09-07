@@ -73,10 +73,14 @@ class _ConnectionOverlayState extends State<ConnectionOverlay> {
         return;
       }
 
-      // Other platforms still get the plain notification + dialog.
+      // Other platforms still get the plain notification + dialog. Prefer
+      // native OS delivery — a dropped SSH session is exactly the kind of
+      // thing that should surface even if the window is minimized or in
+      // the tray, not just the in-app dialog shown right below.
       AdaptiveNotification.show(
         context,
         message: message.isNotEmpty ? '$title: $message' : title,
+        preferSystem: true,
       );
 
       showAdaptiveConfirmDialog(

@@ -110,8 +110,15 @@ class AdaptiveNotification {
     Duration duration = const Duration(seconds: 3),
     String? actionLabel,
     VoidCallback? onAction,
+    // Native OS delivery survives the window being minimized or in the
+    // tray — the only reason to ask for it is a message that matters even
+    // when nobody's looking (SecurityWarningDialog's background alerts).
+    // Everything else defaults to the in-app SnackBar so it actually
+    // matches the app's own theme instead of the OS's native toast style,
+    // which Flutter has no way to restyle.
+    bool preferSystem = false,
   }) {
-    if (_supportsSystemNotification) {
+    if (_supportsSystemNotification && preferSystem) {
       // Native delivery is best-effort. Portable Windows builds may not have
       // a registered AUMID yet; an unhandled rejected Future here used to
       // surface as a Flutter error when changing a setting.

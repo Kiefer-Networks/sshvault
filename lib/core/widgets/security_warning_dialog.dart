@@ -50,7 +50,11 @@ class SecurityWarningDialog extends StatelessWidget {
   }) {
     // Fire system notification so the user is alerted even when the app
     // is in the background (macOS notification center, iOS overlay, etc.).
-    AdaptiveNotification.show(context, message: '$title: $message');
+    AdaptiveNotification.show(
+      context,
+      message: '$title: $message',
+      preferSystem: true,
+    );
 
     return showDialog(
       context: context,
