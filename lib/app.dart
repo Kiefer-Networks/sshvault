@@ -4,6 +4,7 @@ import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/routing/app_router.dart';
+import 'package:sshvault/core/routing/desktop_shortcuts.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/core/security/security_providers.dart';
 import 'package:sshvault/core/services/desktop_appearance_service.dart';
@@ -470,7 +471,14 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
           child: EdgeToEdgeSystemUi(
             brightness: brightness,
             child: IosKeyboardShortcuts(
-              child: _wrapWithDropOverlay(_wrapWithLock(settingsAsync, child)),
+              // Wraps the *entire* routed app, root-navigator overlays
+              // (Settings, server forms, …) included — see DesktopShortcuts'
+              // own doc comment for why that placement matters.
+              child: DesktopShortcuts(
+                child: _wrapWithDropOverlay(
+                  _wrapWithLock(settingsAsync, child),
+                ),
+              ),
             ),
           ),
         );

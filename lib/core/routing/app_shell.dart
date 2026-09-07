@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
@@ -304,14 +303,11 @@ class AppShellState extends ConsumerState<AppShell> {
     );
   }
 
-  static bool get _isDesktop =>
-      Platform.isLinux || Platform.isMacOS || Platform.isWindows;
-
   @override
   Widget build(BuildContext context) {
     final sessionCount = ref.watch(sessionManagerProvider).length;
 
-    Widget shell = LayoutBuilder(
+    return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
 
@@ -332,129 +328,6 @@ class AppShellState extends ConsumerState<AppShell> {
           child: widget.navigationShell,
         );
       },
-    );
-
-    if (_isDesktop) {
-      shell = _DesktopShortcuts(
-        ref: ref,
-        navigationShell: widget.navigationShell,
-        child: shell,
-      );
-    }
-
-    return shell;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Desktop Keyboard Shortcuts
-// ---------------------------------------------------------------------------
-
-class _DesktopShortcuts extends StatefulWidget {
-  final WidgetRef ref;
-  final StatefulNavigationShell navigationShell;
-  final Widget child;
-
-  const _DesktopShortcuts({
-    required this.ref,
-    required this.navigationShell,
-    required this.child,
-  });
-
-  @override
-  State<_DesktopShortcuts> createState() => _DesktopShortcutsState();
-}
-
-class _DesktopShortcutsState extends State<_DesktopShortcuts> {
-  static const _menuChannel = MethodChannel('de.kiefer_networks.sshvault/menu');
-
-  /// Use Meta on macOS, Control everywhere else.
-  static final bool _useMeta = Platform.isMacOS;
-
-  @override
-  void initState() {
-    super.initState();
-    _menuChannel.setMethodCallHandler(_handleMenuCall);
-  }
-
-  @override
-  void dispose() {
-    _menuChannel.setMethodCallHandler(null);
-    super.dispose();
-  }
-
-  Future<void> _handleMenuCall(MethodCall call) async {
-    if (call.method == 'openSettings' && mounted) {
-      GoRouter.of(context).push('/settings');
-    }
-  }
-
-  SingleActivator _shortcut(LogicalKeyboardKey key, {bool shift = false}) {
-    return SingleActivator(
-      key,
-      meta: _useMeta,
-      control: !_useMeta,
-      shift: shift,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CallbackShortcuts(
-      bindings: {
-        // Cmd/Ctrl+, → open Settings
-        _shortcut(LogicalKeyboardKey.comma): () {
-          GoRouter.of(context).push('/settings');
-        },
-
-        // Ctrl/Cmd+K → open the command palette from anywhere in the shell
-        _shortcut(LogicalKeyboardKey.keyK): () {
-          showCommandPalette(context);
-        },
-
-        // Ctrl/Cmd+T → navigate to Hosts (to start new connection)
-        _shortcut(LogicalKeyboardKey.keyT): () {
-          widget.navigationShell.goBranch(0, initialLocation: true);
-        },
-
-        // Ctrl/Cmd+W → close active terminal tab
-        _shortcut(LogicalKeyboardKey.keyW): () {
-          final sessions = widget.ref.read(sessionManagerProvider);
-          if (sessions.isEmpty) return;
-          final active = widget.ref.read(activeSessionProvider);
-          if (active != null) {
-            widget.ref
-                .read(sessionManagerProvider.notifier)
-                .closeSession(active.id);
-          }
-        },
-
-        // Ctrl/Cmd+Plus → increase font size
-        _shortcut(LogicalKeyboardKey.equal): () {
-          widget.ref.read(terminalFontSizeProvider.notifier).increase();
-        },
-
-        // Ctrl/Cmd+Minus → decrease font size
-        _shortcut(LogicalKeyboardKey.minus): () {
-          widget.ref.read(terminalFontSizeProvider.notifier).decrease();
-        },
-
-        // Ctrl/Cmd+1-9 → switch terminal tab
-        for (var i = 0; i < 9; i++)
-          _shortcut(LogicalKeyboardKey(0x31 + i)): () {
-            final sessions = widget.ref.read(sessionManagerProvider);
-            if (i < sessions.length) {
-              widget.ref.read(activeSessionIndexProvider.notifier).state = i;
-              final sessionCount = sessions.length;
-              if (sessionCount > 0) {
-                widget.navigationShell.goBranch(
-                  AppConstants.terminalBranchIndex,
-                );
-              }
-            }
-          },
-      },
-      child: Focus(autofocus: true, child: widget.child),
     );
   }
 }

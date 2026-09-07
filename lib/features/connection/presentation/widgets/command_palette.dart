@@ -8,8 +8,10 @@ import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/server_import_flow.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
+import 'package:sshvault/l10n/generated/app_localizations.dart';
 
 /// Opens the Command Deck's ⌘K palette — the desktop shell's single entry
 /// point for connecting to a host or jumping to any section. There is no
@@ -308,7 +310,7 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
   }
 }
 
-class _PaletteRow extends StatelessWidget {
+class _PaletteRow extends ConsumerWidget {
   final _PaletteEntry entry;
   final bool isSelected;
   final VoidCallback onTap;
@@ -320,7 +322,7 @@ class _PaletteRow extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final (icon, title, subtitle, hint) = switch (entry) {
       _ServerEntry(:final server) => (
@@ -402,10 +404,95 @@ class _PaletteRow extends StatelessWidget {
                     ),
                   ),
                 ),
+              if (entry case _ServerEntry(:final server)) ...[
+                const SizedBox(width: 2),
+                _ServerRowActions(server: server),
+              ],
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Server management (details / edit / duplicate / delete) — connecting is
+/// the row's primary action (click or Enter), management is everything the
+/// Fleet grid used to offer via its own per-card menu. Without this, the
+/// palette can add hosts but never edit, retag, or remove one again.
+class _ServerRowActions extends ConsumerWidget {
+  final ServerEntity server;
+  const _ServerRowActions({required this.server});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    return PopupMenuButton<String>(
+      tooltip: l10n.navMore,
+      icon: Icon(
+        Icons.more_vert,
+        size: 16,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+      onSelected: (action) async {
+        switch (action) {
+          case 'detail':
+            Navigator.of(context).pop();
+            context.push('/server/${server.id}');
+          case 'edit':
+            Navigator.of(context).pop();
+            context.push('/server/${server.id}/edit');
+          case 'duplicate':
+            Navigator.of(context).pop();
+            await ref
+                .read(serverListProvider.notifier)
+                .duplicateServer(server.id, copySuffix: l10n.serverCopySuffix);
+          case 'delete':
+            final confirmed = await ConfirmDialog.show(
+              context,
+              title: l10n.serverDeleteTitle,
+              message: l10n.serverDeleteMessage(server.name),
+            );
+            if (confirmed == true) {
+              await ref
+                  .read(serverListProvider.notifier)
+                  .deleteServer(server.id);
+              if (context.mounted) Navigator.of(context).pop();
+            }
+        }
+      },
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: 'detail',
+          child: ListTile(
+            leading: const Icon(Icons.info_outlined),
+            title: Text(l10n.serverDetails),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'edit',
+          child: ListTile(
+            leading: const Icon(Icons.edit),
+            title: Text(l10n.edit),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'duplicate',
+          child: ListTile(
+            leading: const Icon(Icons.copy),
+            title: Text(l10n.serverDuplicate),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: ListTile(
+            leading: const Icon(Icons.delete),
+            title: Text(l10n.delete),
+          ),
+        ),
+      ],
     );
   }
 }
