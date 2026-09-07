@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/services/logging_service.dart';
@@ -258,6 +259,50 @@ class _LockScreenState extends ConsumerState<LockScreen>
     ref.read(_lockStateProvider.notifier).forceRebuild();
   }
 
+  static final _digitKeys = {
+    LogicalKeyboardKey.digit0: '0',
+    LogicalKeyboardKey.digit1: '1',
+    LogicalKeyboardKey.digit2: '2',
+    LogicalKeyboardKey.digit3: '3',
+    LogicalKeyboardKey.digit4: '4',
+    LogicalKeyboardKey.digit5: '5',
+    LogicalKeyboardKey.digit6: '6',
+    LogicalKeyboardKey.digit7: '7',
+    LogicalKeyboardKey.digit8: '8',
+    LogicalKeyboardKey.digit9: '9',
+    LogicalKeyboardKey.numpad0: '0',
+    LogicalKeyboardKey.numpad1: '1',
+    LogicalKeyboardKey.numpad2: '2',
+    LogicalKeyboardKey.numpad3: '3',
+    LogicalKeyboardKey.numpad4: '4',
+    LogicalKeyboardKey.numpad5: '5',
+    LogicalKeyboardKey.numpad6: '6',
+    LogicalKeyboardKey.numpad7: '7',
+    LogicalKeyboardKey.numpad8: '8',
+    LogicalKeyboardKey.numpad9: '9',
+  };
+
+  /// The on-screen [PinNumPad] was mouse/touch-only — there was no way to
+  /// type a PIN on a physical keyboard to unlock the desktop app. Digits
+  /// (top row or numpad) map to [_onDigit], Backspace/Delete to
+  /// [_onBackspace].
+  KeyEventResult _handlePhysicalKey(KeyEvent event, {required bool hasPin}) {
+    if (!hasPin) return KeyEventResult.ignored;
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+
+    final digit = _digitKeys[event.logicalKey];
+    if (digit != null) {
+      _onDigit(digit);
+      return KeyEventResult.handled;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.backspace ||
+        event.logicalKey == LogicalKeyboardKey.delete) {
+      _onBackspace();
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
   Future<void> _verifyPin() async {
     final lockState = ref.read(_lockStateProvider);
     if (lockState.isVerifying) return;
@@ -354,86 +399,91 @@ class _LockScreenState extends ConsumerState<LockScreen>
       initialEntries: [
         OverlayEntry(
           builder: (_) => Scaffold(
-            body: Center(
-              child: SingleChildScrollView(
-                padding: Spacing.paddingHorizontalXxxl,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ExcludeSemantics(
-                      child: Icon(
-                        isLockedOut ? Icons.lock : Icons.lock_outline,
-                        size: 64,
-                        color: isLockedOut
-                            ? theme.colorScheme.error
-                            : theme.colorScheme.primary,
+            body: Focus(
+              autofocus: true,
+              onKeyEvent: (node, event) =>
+                  _handlePhysicalKey(event, hasPin: settings?.hasPin ?? false),
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: Spacing.paddingHorizontalXxxl,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ExcludeSemantics(
+                        child: Icon(
+                          isLockedOut ? Icons.lock : Icons.lock_outline,
+                          size: 64,
+                          color: isLockedOut
+                              ? theme.colorScheme.error
+                              : theme.colorScheme.primary,
+                        ),
                       ),
-                    ),
-                    Spacing.verticalLg,
-                    Text(
-                      l10n.lockScreenTitle,
-                      style: theme.textTheme.headlineSmall,
-                    ),
-                    if (isLockedOut) ...[
-                      Spacing.verticalSm,
+                      Spacing.verticalLg,
                       Text(
-                        l10n.lockScreenLockedOut(
-                          settings!.remainingLockout.inMinutes + 1,
-                        ),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.error,
-                        ),
+                        l10n.lockScreenTitle,
+                        style: theme.textTheme.headlineSmall,
                       ),
-                    ],
-                    Spacing.verticalXxxl,
-
-                    if (settings?.hasPin ?? false) ...[
-                      PinDotIndicator(
-                        length: _pin.length,
-                        hasError: lockState.pinError != null,
-                      ),
-                      if (lockState.pinError != null) ...[
-                        Spacing.verticalMd,
+                      if (isLockedOut) ...[
+                        Spacing.verticalSm,
                         Text(
-                          lockState.pinError!,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          l10n.lockScreenLockedOut(
+                            settings!.remainingLockout.inMinutes + 1,
+                          ),
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.error,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                      if (lockState.isVerifying) ...[
-                        Spacing.verticalMd,
-                        const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ],
                       Spacing.verticalXxxl,
-                      PinNumPad(
-                        onDigit: _onDigit,
-                        onBackspace: _onBackspace,
-                        onConfirm: hasBiometric ? _tryBiometric : null,
-                        bottomRightChild: hasBiometric
-                            ? const Icon(Icons.fingerprint)
-                            : const Icon(Icons.check),
-                      ),
-                    ],
 
-                    if (!(settings?.hasPin ?? false) && hasBiometric) ...[
-                      Tooltip(
-                        message: l10n.lockScreenTitle,
-                        child: IconButton.filled(
-                          onPressed: lockState.isAuthenticating || isLockedOut
-                              ? null
-                              : _tryBiometric,
-                          icon: const Icon(Icons.fingerprint),
-                          iconSize: 48,
+                      if (settings?.hasPin ?? false) ...[
+                        PinDotIndicator(
+                          length: _pin.length,
+                          hasError: lockState.pinError != null,
                         ),
-                      ),
+                        if (lockState.pinError != null) ...[
+                          Spacing.verticalMd,
+                          Text(
+                            lockState.pinError!,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.error,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                        if (lockState.isVerifying) ...[
+                          Spacing.verticalMd,
+                          const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ],
+                        Spacing.verticalXxxl,
+                        PinNumPad(
+                          onDigit: _onDigit,
+                          onBackspace: _onBackspace,
+                          onConfirm: hasBiometric ? _tryBiometric : null,
+                          bottomRightChild: hasBiometric
+                              ? const Icon(Icons.fingerprint)
+                              : const Icon(Icons.check),
+                        ),
+                      ],
+
+                      if (!(settings?.hasPin ?? false) && hasBiometric) ...[
+                        Tooltip(
+                          message: l10n.lockScreenTitle,
+                          child: IconButton.filled(
+                            onPressed: lockState.isAuthenticating || isLockedOut
+                                ? null
+                                : _tryBiometric,
+                            icon: const Icon(Icons.fingerprint),
+                            iconSize: 48,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
