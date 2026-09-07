@@ -18,12 +18,13 @@ import 'package:sshvault/features/settings/presentation/providers/settings_provi
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
-import 'package:sshvault/features/connection/presentation/screens/operations_console_screen.dart';
+import 'package:sshvault/core/theme/app_theme.dart';
+import 'package:sshvault/features/connection/presentation/screens/command_deck_home_screen.dart';
+import 'package:sshvault/features/connection/presentation/widgets/command_palette.dart';
 
-/// Breakpoints following Material 3 Compact / Medium / Expanded.
+/// Breakpoint following Material 3 Compact vs. Medium/Expanded.
 abstract final class ShellBreakpoints {
   static const double mobile = 600;
-  static const double railExtended = 1200;
 }
 
 /// Navigation items shown in Drawer and NavigationRail.
@@ -327,7 +328,6 @@ class AppShellState extends ConsumerState<AppShell> {
         return _DesktopScaffold(
           currentIndex: widget.navigationShell.currentIndex,
           onDestinationSelected: _onDestinationSelected,
-          extended: width >= ShellBreakpoints.railExtended,
           sessionCount: sessionCount,
           child: widget.navigationShell,
         );
@@ -405,6 +405,11 @@ class _DesktopShortcutsState extends State<_DesktopShortcuts> {
         // Cmd/Ctrl+, → open Settings
         _shortcut(LogicalKeyboardKey.comma): () {
           GoRouter.of(context).push('/settings');
+        },
+
+        // Ctrl/Cmd+K → open the command palette from anywhere in the shell
+        _shortcut(LogicalKeyboardKey.keyK): () {
+          showCommandPalette(context);
         },
 
         // Ctrl/Cmd+T → navigate to Hosts (to start new connection)
@@ -499,125 +504,214 @@ class _MobileScaffold extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Desktop: Row with NavigationRail + content
+// Desktop: Command Deck shell — compact icon rail + full-bleed content.
+//
+// Forced into its own dark, amber-accented theme (AppTheme.buildCommandDeck)
+// regardless of the user's light/dark setting: mobile and tablet keep that
+// choice, but the desktop shell commits to one look on purpose, the same
+// way a terminal emulator doesn't ship a "light mode" for the buffer itself.
 // ---------------------------------------------------------------------------
 
 class _DesktopScaffold extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
-  final bool extended;
   final int sessionCount;
   final Widget child;
 
   const _DesktopScaffold({
     required this.currentIndex,
     required this.onDestinationSelected,
-    required this.extended,
     required this.sessionCount,
     required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final showTerminal = sessionCount > 0;
+    return Theme(
+      data: AppTheme.buildCommandDeck(),
+      child: Builder(
+        builder: (context) {
+          final theme = Theme.of(context);
+          final showTerminal = sessionCount > 0;
 
-    final (:items, :breaks) = _buildVisibleNavItems(
-      context,
-      showTerminal: showTerminal,
-      sessionCount: sessionCount,
-    );
+          final (:items, :breaks) = _buildVisibleNavItems(
+            context,
+            showTerminal: showTerminal,
+            sessionCount: sessionCount,
+          );
 
-    // Clamp selectedIndex if a dynamic item is hidden but was selected
-    final clampedIndex = currentIndex < items.length ? currentIndex : 0;
+          // Clamp selectedIndex if a dynamic item is hidden but was selected
+          final clampedIndex = currentIndex < items.length ? currentIndex : 0;
 
-    return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) => Row(
-          children: [
-            NavigationRail(
-              selectedIndex: clampedIndex,
-              onDestinationSelected: onDestinationSelected,
-              extended: extended,
-              leading: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: Spacing.sm,
-                  horizontal: extended ? Spacing.lg : 0,
+          return Scaffold(
+            backgroundColor: theme.colorScheme.surface,
+            body: Row(
+              children: [
+                _DeckRail(
+                  items: items,
+                  breaks: breaks,
+                  selectedIndex: clampedIndex,
+                  onDestinationSelected: onDestinationSelected,
+                  sessionCount: sessionCount,
+                  showTerminal: showTerminal,
                 ),
-                child: extended
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(
-                            'assets/images/app_icon.png',
-                            width: 24,
-                            height: 24,
-                          ),
-                          Spacing.horizontalMd,
-                          Text(
-                            l10n.appName,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      )
-                    : Image.asset(
-                        'assets/images/app_icon.png',
-                        width: 24,
-                        height: 24,
-                      ),
-              ),
-              trailing: Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: Spacing.lg),
-                    child: _SettingsRailButton(),
+                VerticalDivider(
+                  thickness: 1,
+                  width: 1,
+                  color: theme.colorScheme.outlineVariant,
+                ),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Branch 0's own route (ServerListScreen) stays
+                      // mounted — via Offstage, not omitted — so the
+                      // StatefulShellRoute branch keeps its Navigator/state
+                      // alive for when the window narrows back below the
+                      // mobile breakpoint.
+                      Offstage(offstage: currentIndex == 0, child: child),
+                      if (currentIndex == 0) const CommandDeckHomeScreen(),
+                    ],
                   ),
                 ),
-              ),
-              destinations: [
-                for (var i = 0; i < items.length; i++)
-                  NavigationRailDestination(
-                    padding: breaks.contains(i)
-                        ? const EdgeInsets.only(top: Spacing.md)
-                        : EdgeInsets.zero,
-                    icon: showTerminal && i == items.length - 1
-                        ? Badge(
-                            label: Text('$sessionCount'),
-                            child: Icon(items[i].icon),
-                          )
-                        : Icon(items[i].icon),
-                    selectedIcon: showTerminal && i == items.length - 1
-                        ? Badge(
-                            label: Text('$sessionCount'),
-                            child: Icon(items[i].selectedIcon),
-                          )
-                        : Icon(items[i].selectedIcon),
-                    label: Text(items[i].label),
-                  ),
               ],
             ),
-            VerticalDivider(
-              thickness: 1,
-              width: 1,
-              color: theme.dividerTheme.color,
-            ),
-            Expanded(
-              child: Stack(
-                children: [
-                  // Branch 0's own route (ServerListScreen) stays mounted
-                  // — via Offstage, not omitted — so the StatefulShellRoute
-                  // branch keeps its Navigator/state alive for when the
-                  // window narrows back below the mobile breakpoint.
-                  Offstage(offstage: currentIndex == 0, child: child),
-                  if (currentIndex == 0) const OperationsConsoleScreen(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Compact, icon-only rail — the Command Deck shell has no extended/labeled
+/// mode. Discoverability comes from tooltips and the command palette's own
+/// "Go to …" entries, not from a wordmark next to every icon.
+class _DeckRail extends StatelessWidget {
+  final List<_NavItem> items;
+  final Set<int> breaks;
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+  final int sessionCount;
+  final bool showTerminal;
+
+  const _DeckRail({
+    required this.items,
+    required this.breaks,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+    required this.sessionCount,
+    required this.showTerminal,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    return Container(
+      width: 56,
+      color: theme.colorScheme.surface,
+      child: Column(
+        children: [
+          const SizedBox(height: 14),
+          Image.asset('assets/images/app_icon.png', width: 26, height: 26),
+          const SizedBox(height: 4),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              children: [
+                for (var i = 0; i < items.length; i++) ...[
+                  if (breaks.contains(i))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Divider(
+                        height: 1,
+                        indent: 14,
+                        endIndent: 14,
+                        color: theme.colorScheme.outlineVariant,
+                      ),
+                    ),
+                  _DeckRailIcon(
+                    icon: items[i].icon,
+                    selectedIcon: items[i].selectedIcon,
+                    label: items[i].label,
+                    selected: i == selectedIndex,
+                    badge: showTerminal && i == items.length - 1
+                        ? sessionCount
+                        : null,
+                    onTap: () => onDestinationSelected(i),
+                  ),
                 ],
-              ),
+              ],
             ),
-          ],
+          ),
+          _DeckRailIcon(
+            icon: Icons.search,
+            selectedIcon: Icons.search,
+            label: '${l10n.searchServers} (Ctrl+K)',
+            selected: false,
+            onTap: () => showCommandPalette(context),
+          ),
+          const SizedBox(height: 2),
+          _SettingsRailButton(),
+          const SizedBox(height: 14),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeckRailIcon extends StatelessWidget {
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
+  final bool selected;
+  final int? badge;
+  final VoidCallback onTap;
+
+  const _DeckRailIcon({
+    required this.icon,
+    required this.selectedIcon,
+    required this.label,
+    required this.selected,
+    this.badge,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    Widget iconWidget = Icon(
+      selected ? selectedIcon : icon,
+      size: 20,
+      color: selected
+          ? theme.colorScheme.primary
+          : theme.colorScheme.onSurfaceVariant,
+    );
+    if (badge != null && badge! > 0) {
+      iconWidget = Badge(label: Text('$badge'), child: iconWidget);
+    }
+    return Tooltip(
+      message: label,
+      waitDuration: const Duration(milliseconds: 400),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            height: 44,
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: selected
+                  ? theme.colorScheme.primary.withAlpha(31)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+              border: selected
+                  ? Border.all(color: theme.colorScheme.primary.withAlpha(90))
+                  : null,
+            ),
+            alignment: Alignment.center,
+            child: iconWidget,
+          ),
         ),
       ),
     );

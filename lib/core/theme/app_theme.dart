@@ -27,6 +27,57 @@ abstract final class AppTheme {
     return _buildDark(seedColor ?? defaultSeedColor);
   }
 
+  /// Phosphor-terminal accent — amber, the classic single-color CRT tube
+  /// color SSH terminals showed before color monitors were standard.
+  static const Color commandDeckSeed = Color(0xFFFFB454);
+
+  /// "Command Deck": the desktop-only theme applied to [AppShell]'s wide
+  /// layout (see `_DesktopScaffold`). Built on the same dark Material 3
+  /// theme as [buildDark] — same cards, inputs, dialogs, navigation rail —
+  /// re-seeded on amber and pulled down to a near-black ground instead of
+  /// the seed's default warm-grey dark surfaces, with the UI set in the
+  /// app's existing monospace stack instead of the default sans body font.
+  /// Mobile and tablet layouts are untouched; they keep the user's chosen
+  /// light/dark theme.
+  static ThemeData buildCommandDeck() {
+    final base = _buildDark(commandDeckSeed);
+    final scheme = base.colorScheme.copyWith(
+      surface: const Color(0xFF0B0C0E),
+      surfaceContainerLowest: const Color(0xFF0B0C0E),
+      surfaceContainerLow: const Color(0xFF121417),
+      surfaceContainer: const Color(0xFF16181C),
+      surfaceContainerHigh: const Color(0xFF1B1E22),
+      surfaceContainerHighest: const Color(0xFF212428),
+      outline: const Color(0xFF3A3D42),
+      outlineVariant: const Color(0xFF2A2D31),
+    );
+    return base.copyWith(
+      colorScheme: scheme,
+      scaffoldBackgroundColor: scheme.surface,
+      textTheme: base.textTheme.apply(
+        fontFamily: AppConstants.monospaceFontFamily,
+      ),
+      primaryTextTheme: base.primaryTextTheme.apply(
+        fontFamily: AppConstants.monospaceFontFamily,
+      ),
+      cardTheme: base.cardTheme.copyWith(
+        color: scheme.surfaceContainerLow,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: scheme.outlineVariant),
+        ),
+      ),
+      appBarTheme: base.appBarTheme.copyWith(backgroundColor: scheme.surface),
+      navigationRailTheme: base.navigationRailTheme.copyWith(
+        backgroundColor: scheme.surface,
+      ),
+      dialogTheme: base.dialogTheme.copyWith(
+        backgroundColor: scheme.surfaceContainer,
+      ),
+      dividerTheme: base.dividerTheme.copyWith(color: scheme.outlineVariant),
+    );
+  }
+
   static ThemeData _buildLight(Color seed) {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: seed,
