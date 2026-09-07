@@ -44,6 +44,9 @@ coding.md
 # Flutter apps, vendored packages and native platform subprojects.
 build/
 coverage/
+
+# Stray liboqs CMake install dir from local PQ builds (unexpanded $var path)
+$inst/
 *.dart.js
 *.dart.js.deps
 *.dart.js.map
