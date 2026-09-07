@@ -139,14 +139,14 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(tags, tags.deletedAt);
           if (from >= 3) await m.addColumn(snippets, snippets.deletedAt);
         }
-        if (from < 12) {
+        if (from < 12 && to >= 12) {
           await m.addColumn(servers, servers.osFamily);
           await m.addColumn(servers, servers.osName);
           await m.addColumn(servers, servers.osVersion);
           await m.addColumn(servers, servers.osPrettyName);
           await m.addColumn(servers, servers.osDetectedAt);
         }
-        if (from < 13) {
+        if (from < 13 && to >= 13) {
           await m.addColumn(servers, servers.systemMetricsJson);
         }
       },
