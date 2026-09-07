@@ -348,7 +348,11 @@ class _FleetCard extends ConsumerWidget {
                     ),
                     PopupMenuButton<String>(
                       tooltip: l10n.navMore,
-                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 30,
+                        minHeight: 30,
+                      ),
                       onSelected: (action) async {
                         switch (action) {
                           case 'connect':
