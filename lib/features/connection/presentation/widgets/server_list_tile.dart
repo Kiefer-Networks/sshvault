@@ -117,7 +117,7 @@ class ServerListTile extends ConsumerWidget {
               size: 44,
             ),
             Spacing.horizontalXs,
-            _ConnectionStatusBadge(
+            ConnectionStatusBadge(
               connectionStatus: connectionStatus,
               server: server,
             ),
@@ -238,11 +238,20 @@ class ServerListTile extends ConsumerWidget {
   }
 }
 
-class _ConnectionStatusBadge extends ConsumerWidget {
+/// Shows an active session's live status, or the last-known TCP
+/// reachability ([serverReachabilityProvider]) when no session is open.
+///
+/// Shared between [ServerListTile] and the desktop Operations Console so
+/// both surfaces agree on what "online" means for a host.
+class ConnectionStatusBadge extends ConsumerWidget {
   final SshConnectionStatus? connectionStatus;
   final ServerEntity server;
 
-  const _ConnectionStatusBadge({this.connectionStatus, required this.server});
+  const ConnectionStatusBadge({
+    super.key,
+    this.connectionStatus,
+    required this.server,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
