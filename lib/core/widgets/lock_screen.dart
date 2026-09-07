@@ -297,6 +297,15 @@ class _LockScreenState extends ConsumerState<LockScreen>
   /// widget's whole lifetime, including after unlock, since [LockScreen]
   /// keeps wrapping `child` rather than being torn down.
   bool _handlePhysicalKey(KeyEvent event) {
+    // Temporary: prove whether this handler fires at all before guessing at
+    // a 4th fix. Remove once PIN-via-keyboard is confirmed working.
+    LoggingService.instance.debug(
+      'LockScreen',
+      'key=${event.logicalKey} runtimeType=${event.runtimeType} '
+          'isUnlocked=${ref.read(_lockStateProvider).isUnlocked} '
+          'hasPin=${ref.read(settingsProvider).value?.hasPin}',
+    );
+
     final lockState = ref.read(_lockStateProvider);
     if (lockState.isUnlocked) return false;
 

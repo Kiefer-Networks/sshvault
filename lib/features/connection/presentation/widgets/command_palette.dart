@@ -8,6 +8,9 @@ import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/screens/folder_form_dialog.dart';
+import 'package:sshvault/features/connection/presentation/screens/ssh_key_form_dialog.dart';
+import 'package:sshvault/features/connection/presentation/screens/tag_form_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/server_import_flow.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
@@ -69,8 +72,9 @@ void _goBranch(WidgetRef ref, int index) {
 }
 
 // Hint strings are shown verbatim in the palette row — only ones backed by
-// a real binding in `_DesktopShortcuts` (app_shell.dart) belong here. A
-// hint for a shortcut that doesn't exist would be a lie the UI tells.
+// a real binding in `DesktopShortcuts` (desktop_shortcuts.dart) belong
+// here. A hint for a shortcut that doesn't exist would be a lie the UI
+// tells.
 List<_CommandEntry> _navigationCommands() => [
   _CommandEntry(
     label: 'Go to Hosts',
@@ -125,6 +129,34 @@ List<_CommandEntry> _navigationCommands() => [
     hint: '',
     icon: Icons.add,
     run: (context, ref) => ServerImportFlow.addServer(context, ref),
+  ),
+  _CommandEntry(
+    label: 'Add SSH Key…',
+    hint: '',
+    icon: Icons.vpn_key,
+    run: (context, ref) => SshKeyFormDialog.show(context),
+  ),
+  _CommandEntry(
+    label: 'Import SSH Key…',
+    hint: '',
+    icon: Icons.file_upload_outlined,
+    // Passing an (empty) prefillPrivateKey is what makes the dialog jump
+    // straight to its Import tab instead of the default Generate one —
+    // see SshKeyFormDialog's own drag-and-drop prefill logic.
+    run: (context, ref) =>
+        SshKeyFormDialog.show(context, prefillPrivateKey: ''),
+  ),
+  _CommandEntry(
+    label: 'Create Tag…',
+    hint: '',
+    icon: Icons.label_outline,
+    run: (context, ref) => TagFormDialog.show(context),
+  ),
+  _CommandEntry(
+    label: 'Create Folder…',
+    hint: '',
+    icon: Icons.create_new_folder_outlined,
+    run: (context, ref) => FolderFormDialog.show(context),
   ),
 ];
 

@@ -38,79 +38,140 @@ abstract final class AppRouter {
     initialLocation: '/',
     routes: [
       // ------------------------------------------------------------------
-      // Shell: indexed-stack keeps each branch's state alive.
+      // Persistent shell: the rail/drawer wraps *both* the indexed-stack
+      // branches below (Hosts, SFTP, …) and /settings, as siblings under
+      // this one ShellRoute — so opening Settings pushes onto this
+      // shell's own nested navigator instead of the root one, keeping the
+      // rail on screen instead of covering it with a second, unrelated
+      // navigation surface. Only true full-screen flows (auth, a server's
+      // own detail/edit form, …) still use parentNavigatorKey:
+      // rootNavigatorKey below to bypass this shell entirely.
       // ------------------------------------------------------------------
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return AppShell(navigationShell: navigationShell);
+      ShellRoute(
+        builder: (context, state, child) {
+          return AppShell(location: state.uri.path, child: child);
         },
-        branches: [
-          // 0 — Hosts
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/',
-                builder: (context, state) => const ServerListScreen(),
+        routes: [
+          // Indexed-stack keeps each branch's state alive.
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) {
+              return ShellNavigationRegistrar(navigationShell: navigationShell);
+            },
+            branches: [
+              // 0 — Hosts
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/',
+                    builder: (context, state) => const ServerListScreen(),
+                  ),
+                ],
+              ),
+
+              // 1 — SFTP
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/sftp',
+                    builder: (context, state) => const SftpBrowserScreen(),
+                  ),
+                ],
+              ),
+
+              // 2 — Snippets
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/snippets',
+                    builder: (context, state) => const SnippetListScreen(),
+                  ),
+                ],
+              ),
+
+              // 3 — SSH Keys
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/keys',
+                    builder: (context, state) => const SshKeyListScreen(),
+                  ),
+                ],
+              ),
+
+              // 4 — Folders
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/folders',
+                    builder: (context, state) => const FolderBrowserScreen(),
+                  ),
+                ],
+              ),
+
+              // 5 — Tags
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/tags',
+                    builder: (context, state) => const TagListScreen(),
+                  ),
+                ],
+              ),
+
+              // 6 — Terminal
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/terminal',
+                    builder: (context, state) => const TerminalBranchScreen(),
+                  ),
+                ],
               ),
             ],
           ),
 
-          // 1 — SFTP
-          StatefulShellBranch(
+          // Settings hub + sub-routes — nested here (not under
+          // rootNavigatorKey) so they inherit this ShellRoute's own
+          // navigator and keep the rail visible throughout.
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) => const SettingsHubScreen(),
             routes: [
               GoRoute(
-                path: '/sftp',
-                builder: (context, state) => const SftpBrowserScreen(),
+                path: 'account',
+                builder: (context, state) => const AccountSyncScreen(),
               ),
-            ],
-          ),
-
-          // 2 — Snippets
-          StatefulShellBranch(
-            routes: [
               GoRoute(
-                path: '/snippets',
-                builder: (context, state) => const SnippetListScreen(),
+                path: 'security',
+                builder: (context, state) => const SecuritySettingsScreen(),
               ),
-            ],
-          ),
-
-          // 3 — SSH Keys
-          StatefulShellBranch(
-            routes: [
               GoRoute(
-                path: '/keys',
-                builder: (context, state) => const SshKeyListScreen(),
+                path: 'ssh',
+                builder: (context, state) => const SshSettingsScreen(),
               ),
-            ],
-          ),
-
-          // 4 — Folders
-          StatefulShellBranch(
-            routes: [
               GoRoute(
-                path: '/folders',
-                builder: (context, state) => const FolderBrowserScreen(),
+                path: 'appearance',
+                builder: (context, state) => const AppearanceSettingsScreen(),
               ),
-            ],
-          ),
-
-          // 5 — Tags
-          StatefulShellBranch(
-            routes: [
               GoRoute(
-                path: '/tags',
-                builder: (context, state) => const TagListScreen(),
+                path: 'network',
+                builder: (context, state) => const NetworkSettingsScreen(),
               ),
-            ],
-          ),
-
-          // 6 — Terminal
-          StatefulShellBranch(
-            routes: [
               GoRoute(
-                path: '/terminal',
-                builder: (context, state) => const TerminalBranchScreen(),
+                path: 'export',
+                builder: (context, state) => const ExportSettingsScreen(),
+              ),
+              GoRoute(
+                path: 'known-hosts',
+                builder: (context, state) => const KnownHostListScreen(),
+              ),
+              GoRoute(
+                path: 'import-ssh-config',
+                builder: (context, state) => const SshConfigImportScreen(),
+              ),
+              GoRoute(
+                path: 'about',
+                builder: (context, state) => const AboutScreen(),
               ),
             ],
           ),
@@ -161,60 +222,6 @@ abstract final class AppRouter {
           final id = state.pathParameters['id']!;
           return SnippetFormScreen(snippetId: id);
         },
-      ),
-
-      // Settings hub + sub-routes
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/settings',
-        builder: (context, state) => const SettingsHubScreen(),
-        routes: [
-          GoRoute(
-            path: 'account',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const AccountSyncScreen(),
-          ),
-          GoRoute(
-            path: 'security',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const SecuritySettingsScreen(),
-          ),
-          GoRoute(
-            path: 'ssh',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const SshSettingsScreen(),
-          ),
-          GoRoute(
-            path: 'appearance',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const AppearanceSettingsScreen(),
-          ),
-          GoRoute(
-            path: 'network',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const NetworkSettingsScreen(),
-          ),
-          GoRoute(
-            path: 'export',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const ExportSettingsScreen(),
-          ),
-          GoRoute(
-            path: 'known-hosts',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const KnownHostListScreen(),
-          ),
-          GoRoute(
-            path: 'import-ssh-config',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const SshConfigImportScreen(),
-          ),
-          GoRoute(
-            path: 'about',
-            parentNavigatorKey: rootNavigatorKey,
-            builder: (context, state) => const AboutScreen(),
-          ),
-        ],
       ),
 
       // Auth routes

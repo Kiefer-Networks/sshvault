@@ -101,16 +101,69 @@ const _baseSectionBreaks = {3}; // before SSH Keys
   return (items: items, breaks: breaks);
 }
 
-/// The root shell widget used by [StatefulShellRoute].
+/// Registers the current [StatefulNavigationShell] into
+/// [shellNavigationProvider] and renders it unchanged.
 ///
-/// Renders a [Drawer] on mobile (< 600 dp) and a [NavigationRail] on
-/// tablet / desktop (>= 600 dp).  The rail extends its labels at >= 1200 dp.
+/// This exists because [AppShell] is now the *outer* `ShellRoute`'s builder
+/// (see `app_router.dart`) rather than the `StatefulShellRoute`'s own — it
+/// wraps Settings as well as the branches, so Settings keeps the rail
+/// instead of covering it with a second, rail-less screen. That means
+/// `AppShell` no longer receives a `navigationShell` directly; this tiny
+/// widget is the `StatefulShellRoute`'s builder instead, and publishes the
+/// shell into the provider so the persistent rail above it can still drive
+/// `goBranch`/`currentIndex`.
+class ShellNavigationRegistrar extends ConsumerStatefulWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const ShellNavigationRegistrar({super.key, required this.navigationShell});
+
+  @override
+  ConsumerState<ShellNavigationRegistrar> createState() =>
+      ShellNavigationRegistrarState();
+}
+
+class ShellNavigationRegistrarState
+    extends ConsumerState<ShellNavigationRegistrar> {
+  void _register() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(shellNavigationProvider.notifier).state =
+            widget.navigationShell;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _register();
+  }
+
+  @override
+  void didUpdateWidget(covariant ShellNavigationRegistrar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _register();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.navigationShell;
+}
+
+/// The persistent desktop rail / mobile drawer shell, wrapping the outer
+/// `ShellRoute` in `app_router.dart` — meaning it wraps *both* the
+/// `StatefulShellRoute` branches (Hosts, SFTP, …) and `/settings` (plus its
+/// sub-routes), so navigating into Settings keeps the same rail on screen
+/// instead of replacing it with a second, unrelated navigation surface.
+///
+/// Renders a [Drawer] on mobile (< 600 dp) and a compact icon rail on
+/// tablet / desktop (>= 600 dp).
 ///
 /// Branch screens can open the drawer via [AppShell.maybeOf(context)].
 class AppShell extends ConsumerStatefulWidget {
-  final StatefulNavigationShell navigationShell;
+  final String location;
+  final Widget child;
 
-  const AppShell({super.key, required this.navigationShell});
+  const AppShell({super.key, required this.location, required this.child});
 
   /// Allows branch screens to access the shell scaffold (e.g. to open the
   /// drawer on mobile).
@@ -141,9 +194,6 @@ class AppShellState extends ConsumerState<AppShell> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        ref.read(shellNavigationProvider.notifier).state =
-            widget.navigationShell;
-
         // Navigate to terminal when the notification is tapped
         TerminalNotificationService.onNotificationTapped = () {
           ref
@@ -284,27 +334,21 @@ class AppShellState extends ConsumerState<AppShell> {
     }
   }
 
-  @override
-  void didUpdateWidget(covariant AppShell oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref.read(shellNavigationProvider.notifier).state =
-            widget.navigationShell;
-      }
-    });
-  }
-
   void _onDestinationSelected(int index) {
-    widget.navigationShell.goBranch(
-      index,
-      initialLocation: index == widget.navigationShell.currentIndex,
-    );
+    final shell = ref.read(shellNavigationProvider);
+    if (shell == null) return;
+    shell.goBranch(index, initialLocation: index == shell.currentIndex);
   }
 
   @override
   Widget build(BuildContext context) {
     final sessionCount = ref.watch(sessionManagerProvider).length;
+    // shellNavigationProvider keeps the last-registered branch shell even
+    // while /settings is on top of it (pushed, not replacing — the
+    // StatefulShellRoute stays mounted underneath), so the rail can keep
+    // highlighting where you'll land when you leave Settings.
+    final currentIndex = ref.watch(shellNavigationProvider)?.currentIndex ?? 0;
+    final isSettings = widget.location.startsWith('/settings');
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -313,18 +357,19 @@ class AppShellState extends ConsumerState<AppShell> {
         if (width < ShellBreakpoints.mobile) {
           return _MobileScaffold(
             scaffoldKey: scaffoldKey,
-            currentIndex: widget.navigationShell.currentIndex,
+            currentIndex: currentIndex,
             onDestinationSelected: _onDestinationSelected,
             sessionCount: sessionCount,
-            child: widget.navigationShell,
+            child: widget.child,
           );
         }
 
         return _DesktopScaffold(
-          currentIndex: widget.navigationShell.currentIndex,
+          currentIndex: currentIndex,
+          isSettings: isSettings,
           onDestinationSelected: _onDestinationSelected,
           sessionCount: sessionCount,
-          child: widget.navigationShell,
+          child: widget.child,
         );
       },
     );
@@ -379,22 +424,24 @@ class _MobileScaffold extends StatelessWidget {
 // Desktop: Command Deck shell — compact icon rail + full-bleed content.
 //
 // Runs under AppTheme.buildCommandDeck() — a dark, amber-accented theme
-// applied above the router in app.dart's MaterialApp.router builder (not
-// here) so it also covers root-navigator routes like /settings and
-// /server/:id/edit, which render as siblings of AppShell rather than its
-// descendants. Mobile and tablet keep the user's own light/dark choice;
-// the desktop shell commits to one look on purpose, the same way a
-// terminal emulator doesn't ship a "light mode" for the buffer itself.
+// applied above the router in app.dart's MaterialApp.router builder, so it
+// also covers /settings and every other route this same outer ShellRoute
+// wraps (see app_router.dart). Mobile and tablet keep the user's own
+// light/dark choice; the desktop shell commits to one look on purpose, the
+// same way a terminal emulator doesn't ship a "light mode" for the buffer
+// itself.
 // ---------------------------------------------------------------------------
 
 class _DesktopScaffold extends StatelessWidget {
   final int currentIndex;
+  final bool isSettings;
   final ValueChanged<int> onDestinationSelected;
   final int sessionCount;
   final Widget child;
 
   const _DesktopScaffold({
     required this.currentIndex,
+    required this.isSettings,
     required this.onDestinationSelected,
     required this.sessionCount,
     required this.child,
@@ -411,8 +458,12 @@ class _DesktopScaffold extends StatelessWidget {
       sessionCount: sessionCount,
     );
 
-    // Clamp selectedIndex if a dynamic item is hidden but was selected
-    final clampedIndex = currentIndex < items.length ? currentIndex : 0;
+    // Clamp selectedIndex if a dynamic item is hidden but was selected.
+    // -1 while on Settings so no branch icon falsely shows as active —
+    // _SettingsRailButton carries its own active state instead.
+    final clampedIndex = isSettings
+        ? -1
+        : (currentIndex < items.length ? currentIndex : 0);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -425,6 +476,7 @@ class _DesktopScaffold extends StatelessWidget {
             onDestinationSelected: onDestinationSelected,
             sessionCount: sessionCount,
             showTerminal: showTerminal,
+            settingsActive: isSettings,
           ),
           VerticalDivider(
             thickness: 1,
@@ -432,16 +484,24 @@ class _DesktopScaffold extends StatelessWidget {
             color: theme.colorScheme.outlineVariant,
           ),
           Expanded(
-            child: Stack(
-              children: [
-                // Branch 0's own route (ServerListScreen) stays mounted —
-                // via Offstage, not omitted — so the StatefulShellRoute
-                // branch keeps its Navigator/state alive for when the
-                // window narrows back below the mobile breakpoint.
-                Offstage(offstage: currentIndex == 0, child: child),
-                if (currentIndex == 0) const CommandDeckHomeScreen(),
-              ],
-            ),
+            // /settings (and its sub-routes) is a sibling route under the
+            // same outer ShellRoute as the branches — not a child of branch
+            // 0 — so it never needs the Offstage/CommandDeckHomeScreen
+            // substitution below; `child` is already exactly the settings
+            // screen and nothing else is mounted underneath it right now.
+            child: isSettings
+                ? child
+                : Stack(
+                    children: [
+                      // Branch 0's own route (ServerListScreen) stays
+                      // mounted — via Offstage, not omitted — so the
+                      // StatefulShellRoute branch keeps its Navigator/state
+                      // alive for when the window narrows back below the
+                      // mobile breakpoint.
+                      Offstage(offstage: currentIndex == 0, child: child),
+                      if (currentIndex == 0) const CommandDeckHomeScreen(),
+                    ],
+                  ),
           ),
         ],
       ),
@@ -459,6 +519,7 @@ class _DeckRail extends StatelessWidget {
   final ValueChanged<int> onDestinationSelected;
   final int sessionCount;
   final bool showTerminal;
+  final bool settingsActive;
 
   const _DeckRail({
     required this.items,
@@ -467,6 +528,7 @@ class _DeckRail extends StatelessWidget {
     required this.onDestinationSelected,
     required this.sessionCount,
     required this.showTerminal,
+    required this.settingsActive,
   });
 
   @override
@@ -518,7 +580,7 @@ class _DeckRail extends StatelessWidget {
             onTap: () => showCommandPalette(context),
           ),
           const SizedBox(height: 2),
-          _SettingsRailButton(),
+          _SettingsRailButton(active: settingsActive),
           const SizedBox(height: 14),
         ],
       ),
@@ -645,9 +707,14 @@ class _SyncStatusIcon extends ConsumerWidget {
 }
 
 class _SettingsRailButton extends ConsumerWidget {
+  final bool active;
+
+  const _SettingsRailButton({this.active = false});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     final syncState = ref.watch(syncProvider);
     final serverReachable = ref.watch(serverReachableProvider).value ?? true;
     final showBadge = syncState.hasError || !serverReachable;
@@ -655,9 +722,12 @@ class _SettingsRailButton extends ConsumerWidget {
     return Badge(
       smallSize: 8,
       isLabelVisible: showBadge,
-      backgroundColor: Theme.of(context).colorScheme.error,
+      backgroundColor: theme.colorScheme.error,
       child: IconButton(
-        icon: const Icon(Icons.settings_outlined),
+        icon: Icon(
+          active ? Icons.settings : Icons.settings_outlined,
+          color: active ? theme.colorScheme.primary : null,
+        ),
         tooltip: l10n.navSettings,
         onPressed: () => context.push('/settings'),
       ),
