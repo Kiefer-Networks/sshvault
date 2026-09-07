@@ -17,7 +17,6 @@ import 'package:sshvault/features/settings/presentation/providers/settings_provi
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
-import 'package:sshvault/core/theme/app_theme.dart';
 import 'package:sshvault/features/connection/presentation/screens/command_deck_home_screen.dart';
 import 'package:sshvault/features/connection/presentation/widgets/command_palette.dart';
 
@@ -379,10 +378,13 @@ class _MobileScaffold extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // Desktop: Command Deck shell — compact icon rail + full-bleed content.
 //
-// Forced into its own dark, amber-accented theme (AppTheme.buildCommandDeck)
-// regardless of the user's light/dark setting: mobile and tablet keep that
-// choice, but the desktop shell commits to one look on purpose, the same
-// way a terminal emulator doesn't ship a "light mode" for the buffer itself.
+// Runs under AppTheme.buildCommandDeck() — a dark, amber-accented theme
+// applied above the router in app.dart's MaterialApp.router builder (not
+// here) so it also covers root-navigator routes like /settings and
+// /server/:id/edit, which render as siblings of AppShell rather than its
+// descendants. Mobile and tablet keep the user's own light/dark choice;
+// the desktop shell commits to one look on purpose, the same way a
+// terminal emulator doesn't ship a "light mode" for the buffer itself.
 // ---------------------------------------------------------------------------
 
 class _DesktopScaffold extends StatelessWidget {
@@ -400,56 +402,48 @@ class _DesktopScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: AppTheme.buildCommandDeck(),
-      child: Builder(
-        builder: (context) {
-          final theme = Theme.of(context);
-          final showTerminal = sessionCount > 0;
+    final theme = Theme.of(context);
+    final showTerminal = sessionCount > 0;
 
-          final (:items, :breaks) = _buildVisibleNavItems(
-            context,
-            showTerminal: showTerminal,
+    final (:items, :breaks) = _buildVisibleNavItems(
+      context,
+      showTerminal: showTerminal,
+      sessionCount: sessionCount,
+    );
+
+    // Clamp selectedIndex if a dynamic item is hidden but was selected
+    final clampedIndex = currentIndex < items.length ? currentIndex : 0;
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
+      body: Row(
+        children: [
+          _DeckRail(
+            items: items,
+            breaks: breaks,
+            selectedIndex: clampedIndex,
+            onDestinationSelected: onDestinationSelected,
             sessionCount: sessionCount,
-          );
-
-          // Clamp selectedIndex if a dynamic item is hidden but was selected
-          final clampedIndex = currentIndex < items.length ? currentIndex : 0;
-
-          return Scaffold(
-            backgroundColor: theme.colorScheme.surface,
-            body: Row(
+            showTerminal: showTerminal,
+          ),
+          VerticalDivider(
+            thickness: 1,
+            width: 1,
+            color: theme.colorScheme.outlineVariant,
+          ),
+          Expanded(
+            child: Stack(
               children: [
-                _DeckRail(
-                  items: items,
-                  breaks: breaks,
-                  selectedIndex: clampedIndex,
-                  onDestinationSelected: onDestinationSelected,
-                  sessionCount: sessionCount,
-                  showTerminal: showTerminal,
-                ),
-                VerticalDivider(
-                  thickness: 1,
-                  width: 1,
-                  color: theme.colorScheme.outlineVariant,
-                ),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      // Branch 0's own route (ServerListScreen) stays
-                      // mounted — via Offstage, not omitted — so the
-                      // StatefulShellRoute branch keeps its Navigator/state
-                      // alive for when the window narrows back below the
-                      // mobile breakpoint.
-                      Offstage(offstage: currentIndex == 0, child: child),
-                      if (currentIndex == 0) const CommandDeckHomeScreen(),
-                    ],
-                  ),
-                ),
+                // Branch 0's own route (ServerListScreen) stays mounted —
+                // via Offstage, not omitted — so the StatefulShellRoute
+                // branch keeps its Navigator/state alive for when the
+                // window narrows back below the mobile breakpoint.
+                Offstage(offstage: currentIndex == 0, child: child),
+                if (currentIndex == 0) const CommandDeckHomeScreen(),
               ],
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }

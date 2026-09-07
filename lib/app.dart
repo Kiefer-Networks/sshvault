@@ -4,6 +4,7 @@ import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/routing/app_router.dart';
+import 'package:sshvault/core/routing/app_shell.dart';
 import 'package:sshvault/core/routing/desktop_shortcuts.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/core/security/security_providers.dart';
@@ -455,9 +456,25 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
       builder: (context, child) {
         final screenWidth = MediaQuery.of(context).size.width;
         final baseTheme = Theme.of(context);
-        final scaledTheme = baseTheme.copyWith(
-          textTheme: responsiveTextTheme(baseTheme.textTheme, screenWidth),
-        );
+        // The Command Deck theme has to be applied here — above *both*
+        // navigators — not inside AppShell/_DesktopScaffold. Routes like
+        // /settings and /server/:id/edit carry `parentNavigatorKey:
+        // rootNavigatorKey` (app_router.dart), so they render as siblings
+        // of AppShell on the root Navigator, not as its descendants; a
+        // Theme wrapped around _DesktopScaffold's content never reaches
+        // them, which is exactly why Settings kept the old look after the
+        // shell itself went dark. Same reasoning as DesktopShortcuts below.
+        final isDesktopShell =
+            DesktopShortcuts.isDesktop &&
+            screenWidth >= ShellBreakpoints.mobile;
+        final scaledTheme = isDesktopShell
+            ? AppTheme.buildCommandDeck()
+            : baseTheme.copyWith(
+                textTheme: responsiveTextTheme(
+                  baseTheme.textTheme,
+                  screenWidth,
+                ),
+              );
         // Drive Android system bar styling from the *resolved* theme
         // brightness (after themeMode + platform brightness collapse).
         // EdgeToEdgeSystemUi is a no-op on non-mobile platforms.

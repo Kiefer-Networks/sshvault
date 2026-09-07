@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
+import 'package:sshvault/core/routing/app_router.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/features/connection/presentation/widgets/command_palette.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
@@ -16,13 +17,15 @@ import 'package:sshvault/features/terminal/presentation/providers/terminal_provi
 /// builder — not around [AppShell] itself. [AppShell] only covers the
 /// `StatefulShellRoute`'s branch content; routes like `/settings`,
 /// `/server/:id/edit` and every snippet/key screen are pushed on the root
-/// navigator *outside* that subtree (see `app_router.dart`). A
-/// `CallbackShortcuts` scoped to [AppShell] stops seeing key events the
-/// moment one of those routes is on screen — which is exactly why Ctrl+K
-/// went dead while on Settings. Reading the current branch shell via
-/// [shellNavigationProvider] (already the pattern the command palette
-/// itself uses) instead of a constructor-injected `navigationShell` is
-/// what makes hoisting this above the router config possible.
+/// navigator *outside* that subtree (see `app_router.dart`).
+///
+/// Registered via [HardwareKeyboard.addHandler] rather than a
+/// `CallbackShortcuts`/`Focus(autofocus: true)` pair: the latter only
+/// fires while a descendant of *this* widget holds primary focus, and a
+/// modal route, a text field grabbing focus on open, or simply nothing
+/// having claimed focus yet all break that silently. A hardware-level
+/// handler runs for every key event regardless of what currently has
+/// focus, which is what "the shortcut works everywhere" actually requires.
 class DesktopShortcuts extends ConsumerStatefulWidget {
   final Widget child;
 
@@ -45,27 +48,34 @@ class _DesktopShortcutsState extends ConsumerState<DesktopShortcuts> {
   void initState() {
     super.initState();
     _menuChannel.setMethodCallHandler(_handleMenuCall);
+    if (DesktopShortcuts.isDesktop) {
+      HardwareKeyboard.instance.addHandler(_handleKeyEvent);
+    }
   }
 
   @override
   void dispose() {
     _menuChannel.setMethodCallHandler(null);
+    if (DesktopShortcuts.isDesktop) {
+      HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
+    }
     super.dispose();
   }
 
   Future<void> _handleMenuCall(MethodCall call) async {
     if (call.method == 'openSettings' && mounted) {
-      GoRouter.of(context).push('/settings');
+      final ctx = rootNavigatorKey.currentContext;
+      if (ctx != null) GoRouter.of(ctx).push('/settings');
     }
   }
 
-  SingleActivator _shortcut(LogicalKeyboardKey key, {bool shift = false}) {
-    return SingleActivator(
-      key,
-      meta: _useMeta,
-      control: !_useMeta,
-      shift: shift,
-    );
+  bool get _modifierPressed {
+    final pressed = HardwareKeyboard.instance.logicalKeysPressed;
+    return _useMeta
+        ? (pressed.contains(LogicalKeyboardKey.metaLeft) ||
+              pressed.contains(LogicalKeyboardKey.metaRight))
+        : (pressed.contains(LogicalKeyboardKey.controlLeft) ||
+              pressed.contains(LogicalKeyboardKey.controlRight));
   }
 
   void _goBranch(int index, {bool initialLocation = false}) {
@@ -74,58 +84,62 @@ class _DesktopShortcutsState extends ConsumerState<DesktopShortcuts> {
         ?.goBranch(index, initialLocation: initialLocation);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (!DesktopShortcuts.isDesktop) return widget.child;
+  bool _handleKeyEvent(KeyEvent event) {
+    if (event is! KeyDownEvent) return false;
+    if (!_modifierPressed) return false;
 
-    return CallbackShortcuts(
-      bindings: {
-        // Cmd/Ctrl+, → open Settings
-        _shortcut(LogicalKeyboardKey.comma): () {
-          GoRouter.of(context).push('/settings');
-        },
+    final key = event.logicalKey;
+    final ctx = rootNavigatorKey.currentContext;
 
-        // Ctrl/Cmd+K → open the command palette from anywhere in the app
-        _shortcut(LogicalKeyboardKey.keyK): () {
-          showCommandPalette(context);
-        },
+    if (key == LogicalKeyboardKey.keyK) {
+      if (ctx != null) showCommandPalette(ctx);
+      return true;
+    }
 
-        // Ctrl/Cmd+T → navigate to Hosts (to start new connection)
-        _shortcut(LogicalKeyboardKey.keyT): () {
-          _goBranch(0, initialLocation: true);
-        },
+    if (key == LogicalKeyboardKey.comma) {
+      if (ctx != null) GoRouter.of(ctx).push('/settings');
+      return true;
+    }
 
-        // Ctrl/Cmd+W → close active terminal tab
-        _shortcut(LogicalKeyboardKey.keyW): () {
-          final sessions = ref.read(sessionManagerProvider);
-          if (sessions.isEmpty) return;
-          final active = ref.read(activeSessionProvider);
-          if (active != null) {
-            ref.read(sessionManagerProvider.notifier).closeSession(active.id);
-          }
-        },
+    if (key == LogicalKeyboardKey.keyT) {
+      _goBranch(0, initialLocation: true);
+      return true;
+    }
 
-        // Ctrl/Cmd+Plus → increase font size
-        _shortcut(LogicalKeyboardKey.equal): () {
-          ref.read(terminalFontSizeProvider.notifier).increase();
-        },
+    if (key == LogicalKeyboardKey.keyW) {
+      final sessions = ref.read(sessionManagerProvider);
+      if (sessions.isEmpty) return false;
+      final active = ref.read(activeSessionProvider);
+      if (active != null) {
+        ref.read(sessionManagerProvider.notifier).closeSession(active.id);
+      }
+      return true;
+    }
 
-        // Ctrl/Cmd+Minus → decrease font size
-        _shortcut(LogicalKeyboardKey.minus): () {
-          ref.read(terminalFontSizeProvider.notifier).decrease();
-        },
+    if (key == LogicalKeyboardKey.equal) {
+      ref.read(terminalFontSizeProvider.notifier).increase();
+      return true;
+    }
 
-        // Ctrl/Cmd+1-9 → switch terminal tab
-        for (var i = 0; i < 9; i++)
-          _shortcut(LogicalKeyboardKey(0x31 + i)): () {
-            final sessions = ref.read(sessionManagerProvider);
-            if (i < sessions.length) {
-              ref.read(activeSessionIndexProvider.notifier).state = i;
-              _goBranch(AppConstants.terminalBranchIndex);
-            }
-          },
-      },
-      child: Focus(autofocus: true, child: widget.child),
-    );
+    if (key == LogicalKeyboardKey.minus) {
+      ref.read(terminalFontSizeProvider.notifier).decrease();
+      return true;
+    }
+
+    for (var i = 0; i < 9; i++) {
+      if (key == LogicalKeyboardKey(0x31 + i)) {
+        final sessions = ref.read(sessionManagerProvider);
+        if (i < sessions.length) {
+          ref.read(activeSessionIndexProvider.notifier).state = i;
+          _goBranch(AppConstants.terminalBranchIndex);
+        }
+        return true;
+      }
+    }
+
+    return false;
   }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
