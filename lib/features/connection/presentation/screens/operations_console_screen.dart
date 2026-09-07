@@ -644,7 +644,11 @@ class _DiskUsageLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    if (metrics.disks.isEmpty) {
+    // Docker/Podman overlay mounts (one per running container) are never
+    // the host's real storage — exclude them so a busy container host
+    // doesn't pick a meaningless overlay mount as its "primary" disk.
+    final candidates = metrics.disks.excludingDockerMounts;
+    if (candidates.isEmpty) {
       return Row(
         children: [
           Icon(
@@ -662,10 +666,10 @@ class _DiskUsageLine extends StatelessWidget {
         ],
       );
     }
-    final primary = metrics.disks.firstWhere(
+    final primary = candidates.firstWhere(
       (d) => d.mountPoint == '/' || d.mountPoint.toUpperCase().startsWith('C:'),
       orElse: () =>
-          metrics.disks.reduce((a, b) => a.totalBytes >= b.totalBytes ? a : b),
+          candidates.reduce((a, b) => a.totalBytes >= b.totalBytes ? a : b),
     );
     final ratio = primary.totalBytes > 0
         ? (primary.usedBytes / primary.totalBytes).clamp(0.0, 1.0)
@@ -725,8 +729,9 @@ class _FleetFooter extends StatelessWidget {
     final diskRatios = <double>[];
     for (final server in servers) {
       final metrics = _parseMetrics(server.systemMetricsJson);
-      if (metrics == null || metrics.disks.isEmpty) continue;
-      final primary = metrics.disks.reduce(
+      final candidates = metrics?.disks.excludingDockerMounts ?? const [];
+      if (candidates.isEmpty) continue;
+      final primary = candidates.reduce(
         (a, b) => a.totalBytes >= b.totalBytes ? a : b,
       );
       if (primary.totalBytes > 0) {

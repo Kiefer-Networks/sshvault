@@ -29,6 +29,24 @@ class RemoteDiskMetrics {
         usedBytes: (json['usedBytes'] as num?)?.toInt() ?? 0,
         freeBytes: (json['freeBytes'] as num?)?.toInt() ?? 0,
       );
+
+  /// True for a container-overlay mount (Docker/Podman `overlay2` storage,
+  /// bind mounts under `/var/lib/docker/`). These are not a separate disk —
+  /// there is one per running container — so every UI that lists disks
+  /// groups them into a single "Docker" line instead of listing each one.
+  bool get isDockerMount =>
+      mountPoint.contains('overlay2') || mountPoint.contains('/docker/');
+}
+
+/// Splits a disk list into real filesystems and container-overlay mounts,
+/// so every UI that renders [RemoteSystemMetrics.disks] groups Docker the
+/// same way instead of listing one row per container.
+extension RemoteDiskGrouping on List<RemoteDiskMetrics> {
+  List<RemoteDiskMetrics> get excludingDockerMounts =>
+      where((d) => !d.isDockerMount).toList(growable: false);
+
+  List<RemoteDiskMetrics> get dockerMountsOnly =>
+      where((d) => d.isDockerMount).toList(growable: false);
 }
 
 /// Technical metadata collected after SSH authentication. No file contents or credentials.
