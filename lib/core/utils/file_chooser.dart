@@ -132,9 +132,10 @@ class FileChooser {
   /// otherwise throw `LateInitializationError` if no platform plugin is
   /// registered when the test isolate boots).
   @visibleForTesting
-  static FilePicker? pickerOverride;
+  static FilePickerPlatform? pickerOverride;
 
-  static FilePicker get picker => pickerOverride ?? FilePicker.platform;
+  static FilePickerPlatform get picker =>
+      pickerOverride ?? FilePickerPlatform.instance;
 
   /// Resets all overrides to their production defaults.
   @visibleForTesting
@@ -192,19 +193,17 @@ class FileChooser {
     List<FileTypeFilter> filters = const <FileTypeFilter>[FileTypeFilter.any],
     bool withData = false,
   }) async {
-    final result = await picker.pickFiles(
+    final f = await picker.pickFile(
       dialogTitle: dialogTitle,
       type: _resolveFileType(filters),
       allowedExtensions: _resolveAllowedExtensions(filters),
-      withData: withData,
     );
-    if (result == null || result.files.isEmpty) return null;
-    final f = result.files.first;
+    if (f == null) return null;
     return FileChooserResult(
       name: f.name,
       path: f.path,
-      bytes: f.bytes,
-      size: f.size,
+      bytes: withData || f.path == null ? await f.readAsBytes() : null,
+      size: await f.length(),
     );
   }
 
@@ -219,20 +218,19 @@ class FileChooser {
       dialogTitle: dialogTitle,
       type: _resolveFileType(filters),
       allowedExtensions: _resolveAllowedExtensions(filters),
-      withData: withData,
-      allowMultiple: true,
     );
-    if (result == null) return const <FileChooserResult>[];
-    return result.files
-        .map(
-          (f) => FileChooserResult(
-            name: f.name,
-            path: f.path,
-            bytes: f.bytes,
-            size: f.size,
-          ),
-        )
-        .toList(growable: false);
+    return Future.wait(
+      result
+          .map(
+            (f) async => FileChooserResult(
+              name: f.name,
+              path: f.path,
+              bytes: withData || f.path == null ? await f.readAsBytes() : null,
+              size: await f.length(),
+            ),
+          )
+          .toList(growable: false),
+    );
   }
 
   /// Opens a save-as dialog.
@@ -243,16 +241,18 @@ class FileChooser {
   static Future<String?> saveFile({
     required String dialogTitle,
     required String fileName,
-    Uint8List? bytes,
+    required Uint8List bytes,
     List<FileTypeFilter> filters = const <FileTypeFilter>[FileTypeFilter.any],
-  }) {
-    return picker.saveFile(
+  }) async {
+    final uri = await picker.saveFile(
       dialogTitle: dialogTitle,
       fileName: fileName,
       bytes: bytes,
-      type: _resolveFileType(filters),
-      allowedExtensions: _resolveAllowedExtensions(filters),
+      mimeType: filters.firstOrNull?.mime == '*/*' || filters.isEmpty
+          ? 'application/octet-stream'
+          : filters.first.mime,
     );
+    return uri?.scheme == 'file' ? uri!.toFilePath() : uri?.toString();
   }
 
   /// Opens a directory selection dialog.

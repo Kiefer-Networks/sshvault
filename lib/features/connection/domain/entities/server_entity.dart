@@ -24,6 +24,16 @@ abstract class ServerEntity with _$ServerEntity {
     @Default(0) int sortOrder,
     String? distroId,
     String? distroName,
+    /// Operating system information detected after a successful SSH login.
+    /// These values are part of the encrypted vault payload and are optional
+    /// for servers created before OS detection was introduced.
+    @JsonKey(name: 'os_family') String? osFamily,
+    @JsonKey(name: 'os_name') String? osName,
+    @JsonKey(name: 'os_version') String? osVersion,
+    @JsonKey(name: 'os_pretty_name') String? osPrettyName,
+    @JsonKey(name: 'os_detected_at') DateTime? osDetectedAt,
+    /// JSON encoded [RemoteSystemMetrics], kept opaque inside the vault.
+    String? systemMetricsJson,
     @Default([]) List<TagEntity> tags,
     String? jumpHostId,
     // Post-Connect

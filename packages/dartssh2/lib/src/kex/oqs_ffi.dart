@@ -307,7 +307,30 @@ class _OqsLib {
       return DynamicLibrary.process();
     }
     if (Platform.isWindows) {
-      return DynamicLibrary.open('liboqs.dll');
+      try {
+        final executable = Platform.resolvedExecutable;
+        final separator = executable.lastIndexOf('\\');
+        if (separator >= 0) {
+          return DynamicLibrary.open(
+            '${executable.substring(0, separator)}\\liboqs.dll',
+          );
+        }
+        return DynamicLibrary.open('liboqs.dll');
+      } catch (_) {
+        try {
+          // Some MSVC/vcpkg builds use the shorter Windows DLL name.
+          final executable = Platform.resolvedExecutable;
+          final separator = executable.lastIndexOf('\\');
+          if (separator >= 0) {
+            return DynamicLibrary.open(
+              '${executable.substring(0, separator)}\\oqs.dll',
+            );
+          }
+          return DynamicLibrary.open('oqs.dll');
+        } catch (_) {
+          return DynamicLibrary.open('liboqs.dll');
+        }
+      }
     }
     throw UnsupportedError(
       'liboqs is not available on ${Platform.operatingSystem}',

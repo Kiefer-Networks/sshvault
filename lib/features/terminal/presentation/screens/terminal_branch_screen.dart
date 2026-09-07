@@ -1,4 +1,7 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,6 +117,7 @@ class _TerminalBranchScreenState extends ConsumerState<TerminalBranchScreen> {
           autofocus: false,
           keyboardAppearance: Brightness.dark,
           deleteDetection: true,
+          hardwareKeyboardOnly: Platform.isWindows,
         ),
       );
     }
@@ -312,7 +316,7 @@ double _scaleTerminalFont(double base, double dpr) {
   return base + ramp;
 }
 
-class _TerminalPane extends StatelessWidget {
+class _TerminalPane extends StatefulWidget {
   final SshSessionEntity session;
   final TerminalTheme theme;
   final double fontSize;
@@ -330,23 +334,81 @@ class _TerminalPane extends StatelessWidget {
   });
 
   @override
+  State<_TerminalPane> createState() => _TerminalPaneState();
+}
+
+class _TerminalPaneState extends State<_TerminalPane> {
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode(debugLabel: 'ssh-terminal');
+    if (widget.autofocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && widget.session.status == SshConnectionStatus.connected) {
+          _focusNode.requestFocus();
+        }
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(_TerminalPane oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.autofocus &&
+        widget.session.status == SshConnectionStatus.connected &&
+        oldWidget.session.status != SshConnectionStatus.connected) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _focusNode.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         TerminalView(
-          session.terminal,
-          theme: theme,
-          textStyle: TerminalStyle(fontSize: fontSize),
-          autofocus: autofocus,
+          widget.session.terminal,
+          theme: widget.theme,
+          textStyle: TerminalStyle(fontSize: widget.fontSize),
+          focusNode: _focusNode,
+          autofocus: widget.autofocus,
           keyboardAppearance: Brightness.dark,
           deleteDetection: true,
+          hardwareKeyboardOnly: Platform.isWindows,
+          // Some Windows Flutter builds expose printable key events without
+          // a character value. xterm can map control keys in that case, but
+          // letters would otherwise be dropped. Recover the printable label
+          // at the terminal boundary while preserving Ctrl/Alt shortcuts.
+          onKeyEvent: (focusNode, event) {
+            if (event is KeyDownEvent &&
+                event.character == null &&
+                !HardwareKeyboard.instance.isControlPressed &&
+                !HardwareKeyboard.instance.isAltPressed &&
+                !HardwareKeyboard.instance.isMetaPressed) {
+              final label = event.logicalKey.keyLabel;
+              if (label.runes.length == 1 && label.trim().isNotEmpty) {
+                widget.session.terminal.textInput(label);
+                return KeyEventResult.handled;
+              }
+            }
+            return KeyEventResult.ignored;
+          },
         ),
         ConnectionOverlay(
-          status: session.status,
-          serverName: session.title,
-          errorMessage: session.errorMessage,
-          onRetry: onRetry,
-          onClose: onClose,
+          status: widget.session.status,
+          serverName: widget.session.title,
+          errorMessage: widget.session.errorMessage,
+          onRetry: widget.onRetry,
+          onClose: widget.onClose,
         ),
       ],
     );

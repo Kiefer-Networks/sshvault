@@ -18,7 +18,7 @@ dependencies:
   riverpod_annotation: ^4.0.2
 
   # Navigation
-  go_router: ^17.3.0
+  go_router: ^18.0.1
 
   # Database
   drift: ^2.34.3
@@ -31,13 +31,13 @@ dependencies:
   # Unique IDs
   uuid: ^4.6.0
 
-  # Secure Storage — flutter_secure_storage 10.x already routes Linux
+  # Secure Storage — flutter_secure_storage 11.x routes Linux
   # writes through libsecret via flutter_secure_storage_linux 3.x, so no
   # separate `libsecret_flutter` dependency is required. The Linux
   # backend talks to GNOME Keyring / KWallet over the freedesktop Secret
   # Service API. On headless boxes KeyringService transparently falls
   # back to an encrypted file (see lib/core/storage/keyring_service.dart).
-  flutter_secure_storage: ^10.3.1
+  flutter_secure_storage: ^11.0.0
 
   # Crypto
   pointycastle: ^4.0.0
@@ -48,9 +48,9 @@ dependencies:
   path: ^1.9.0
   archive: ^4.0.2
   path_provider: ^2.1.6
-  file_picker: ^10.3.10
-  share_plus: ^12.0.1
-  flutter_local_notifications: ^21.0.0
+  file_picker: ^12.2.0
+  share_plus: ^13.3.0
+  flutter_local_notifications: ^22.3.0
   url_launcher: ^6.3.1
   image_picker: ^1.2.3
 
@@ -64,7 +64,7 @@ dependencies:
   workmanager: ^0.10.7
 
   # Device Info
-  device_info_plus: ^12.3.0
+  device_info_plus: ^13.2.0
 
   # Biometric Authentication
   local_auth: ^3.0.2
@@ -73,13 +73,13 @@ dependencies:
 
   # UI
   cupertino_icons: ^1.0.8
-  font_awesome_flutter: ^10.8.0
+  font_awesome_flutter: ^11.0.0
   flutter_slidable: ^4.0.3
 
   # SSH & Terminal
-  dartssh2: ^2.18.0
+  dartssh2: ^4.1.0
   xterm: ^4.0.0
-  package_info_plus: ^9.0.0
+  package_info_plus: ^10.2.1
 
   # Proxy
   socks5_proxy: ^2.1.1
@@ -100,7 +100,8 @@ dependencies:
   # so the app picks up the system accent. The plugin no-ops on
   # non-Android / pre-Android-12 devices, so reading
   # `DynamicColorPlugin.getCorePalette()` there returns `null`.
-  dynamic_color: ^1.9.0
+  dynamic_color: ^2.1.0
+  material_color_utilities: ^0.13.0
 
   # Native Windows toast notifications (Windows.UI.Notifications) — backs
   # `WindowsNotificationService`. On Linux/macOS we keep falling through
@@ -122,23 +123,24 @@ dependencies:
   # helpers; `win32` provides typed bindings for FindWindowW,
   # CreateFileMappingW, MapViewOfFile, SendMessageW, CreateFileW etc.
   ffi: ^2.1.0
-  win32: ^5.5.0
+  win32: ^6.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   mocktail: ^1.0.5
+  cross_file: ^0.3.5+5
 
   # Code Generation
   build_runner: ^2.15.1
-  freezed: ^3.2.6-dev.1
+  freezed: ^4.0.1
   json_serializable: ^6.14.1
-  riverpod_generator: ^4.0.4-dev.1
+  riverpod_generator: ^4.0.9
   drift_dev: ^2.34.0
 
 dependency_overrides:
-  # Local fork with SFTP subsystem await fix (sendSubsystem was not awaited in sftp())
+  # dartssh2 4.1.0 with local proxy and Teleport compatibility adapters
   dartssh2:
     path: packages/dartssh2
 

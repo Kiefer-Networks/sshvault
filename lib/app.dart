@@ -479,12 +479,8 @@ class _SSHVaultAppState extends ConsumerState<SSHVaultApp> {
   }
 
   Widget _wrapWithLock(AsyncValue settingsAsync, Widget? child) {
-    final settings = settingsAsync.value;
     final content = child ?? const SizedBox.shrink();
-    if (settings != null && settings.hasAnyLock) {
-      return LockScreen(child: content);
-    }
-    return content;
+    return AppLockGate(child: content);
   }
 
   /// Linux drag-and-drop overlay. Driven by [dragInProgressProvider], which

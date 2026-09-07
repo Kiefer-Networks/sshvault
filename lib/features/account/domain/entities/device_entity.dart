@@ -8,6 +8,7 @@ abstract class DeviceEntity with _$DeviceEntity {
   const factory DeviceEntity({
     required String id,
     required String name,
+    @JsonKey(name: 'user_id') String? userId,
     @Default('') String platform,
     @JsonKey(name: 'last_sync') DateTime? lastSync,
     @JsonKey(name: 'last_ip') String? lastIp,

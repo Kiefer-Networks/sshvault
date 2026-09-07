@@ -151,6 +151,24 @@ void main() {
     });
   });
 
+  test(
+    'malformed remote vault returns a failure rather than throwing',
+    () async {
+      when(() => mockSyncRepo.getVault()).thenAnswer(
+        (_) async => const Success(VaultEntity(version: 3, blob: '%%%')),
+      );
+      expect((await sut.pull(syncPassword)).isFailure, isTrue);
+      expect((await sut.validatePassword(syncPassword)).isFailure, isTrue);
+      verifyNever(
+        () => mockExportImportRepo.importFromJsonString(
+          any(),
+          any(),
+          includeCredentials: true,
+        ),
+      );
+    },
+  );
+
   group('pull', () {
     test('fetches, decrypts, and imports successfully', () async {
       when(() => mockSyncRepo.getVault()).thenAnswer(
@@ -475,6 +493,14 @@ void main() {
   });
 
   group('changeEncryptionPassword', () {
+    test('preserves original network failure during password change', () async {
+      const failure = SyncFailure('Service unavailable', statusCode: 503);
+      when(
+        () => mockSyncRepo.getVault(),
+      ).thenAnswer((_) async => const Err(failure));
+      final result = await sut.changeEncryptionPassword('old', 'new');
+      expect(result.failure, same(failure));
+    });
     test('pulls with old password and pushes with new password', () async {
       // Pull with old password
       when(() => mockSyncRepo.getVault()).thenAnswer(
@@ -511,6 +537,13 @@ void main() {
       final result = await sut.changeEncryptionPassword('old-pass', 'new-pass');
       expect(result.isSuccess, isTrue);
       expect(result.value, 4);
+      verify(
+        () => mockExportImportRepo.importFromJsonString(
+          any(),
+          ImportConflictStrategy.mergeServerWins,
+          includeCredentials: true,
+        ),
+      ).called(1);
     });
 
     test('returns failure when old password is wrong', () async {
@@ -527,4 +560,45 @@ void main() {
       expect(result.isFailure, isTrue);
     });
   });
+
+  test(
+    'partial import failure aborts sync before upload and version advance',
+    () async {
+      when(() => mockSyncRepo.getVault()).thenAnswer(
+        (_) async => Success(
+          VaultEntity(version: 3, blob: validBlob, checksum: validChecksum),
+        ),
+      );
+      when(
+        () => mockEncryption.decryptFromExport(any(), any()),
+      ).thenAnswer((_) async => const Success(jsonData));
+      when(
+        () => mockExportImportRepo.importFromJsonString(
+          any(),
+          any(),
+          includeCredentials: true,
+        ),
+      ).thenAnswer(
+        (_) async => const Success(
+          ImportResult(
+            serversImported: 1,
+            errors: ['Private-key storage unavailable'],
+          ),
+        ),
+      );
+      final result = await sut.pull(syncPassword);
+      expect(result.isFailure, isTrue);
+      expect(
+        result.failure.message,
+        contains('Private-key storage unavailable'),
+      );
+      verifyNever(
+        () => mockSyncRepo.putVault(
+          version: any(named: 'version'),
+          blob: any(named: 'blob'),
+          checksum: any(named: 'checksum'),
+        ),
+      );
+    },
+  );
 }

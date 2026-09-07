@@ -30,16 +30,16 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
-  Future<Result<UserEntity>> updateProfile({String? email}) async {
-    final result = await _apiClient.put('/v1/user', data: {'email': ?email});
+  Future<Result<void>> updateProfile({
+    required String email,
+    required String currentPassword,
+  }) async {
+    final result = await _apiClient.put(
+      '/v1/user',
+      data: {'email': email, 'current_password': currentPassword},
+    );
     return result.fold(
-      onSuccess: (data) {
-        try {
-          return Success(UserEntity.fromJson(data));
-        } catch (e) {
-          return Err(NetworkFailure('Invalid profile response', cause: e));
-        }
-      },
+      onSuccess: (_) => const Success(null),
       onFailure: (f) => Err(f),
     );
   }
@@ -101,10 +101,10 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
-  Future<Result<int>> logoutAllDevices() async {
+  Future<Result<int?>> logoutAllDevices() async {
     final result = await _apiClient.post('/v1/auth/logout-all');
     return result.fold(
-      onSuccess: (data) => Success(data['revoked'] as int? ?? 0),
+      onSuccess: (data) => Success(data['revoked'] as int?),
       onFailure: (f) => Err(f),
     );
   }

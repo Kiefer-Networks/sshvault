@@ -50,7 +50,9 @@ class SSHAuthAbortError with SSHMessageError implements SSHAuthError {
   @override
   final String message;
 
-  SSHAuthAbortError(this.message);
+  final SSHError? reason;
+
+  SSHAuthAbortError(this.message, [this.reason]);
 }
 
 /// Errors that happen when the library receives an malformed packet.
@@ -59,6 +61,20 @@ class SSHPacketError with SSHMessageError implements SSHError {
   final String message;
 
   SSHPacketError(this.message);
+}
+
+/// Thrown when the peer terminates the connection with SSH_MSG_DISCONNECT.
+///
+/// The peer explains itself in that message, so its description is carried
+/// through to the caller instead of being reduced to a bare disconnection.
+class SSHDisconnectError with SSHMessageError implements SSHError {
+  /// The RFC 4253 §11.1 reason code sent by the peer.
+  final int reasonCode;
+
+  @override
+  final String message;
+
+  SSHDisconnectError(this.reasonCode, this.message);
 }
 
 /// Errors that happen when the library receives an unexpected packet.
@@ -117,33 +133,6 @@ class SSHHostkeyError with SSHMessageError implements SSHError {
   final String message;
 
   SSHHostkeyError(this.message);
-}
-
-/// Thrown when the SSH transport cannot find any common algorithm with the
-/// peer for one of the negotiated layers (key exchange, host key, cipher,
-/// or MAC). [layer] identifies which negotiation failed; [supported] is
-/// the local list and [remote] is the list the peer offered, both useful
-/// when surfacing a precise error to the user.
-class SSHAlgorithmNegotiationError with SSHMessageError implements SSHError {
-  /// The negotiation layer that failed (e.g. `'key exchange'`, `'cipher'`).
-  final String layer;
-
-  /// Algorithms this client supports for [layer], in preference order.
-  final List<String> supported;
-
-  /// Algorithms the remote peer offered for [layer].
-  final List<String> remote;
-
-  SSHAlgorithmNegotiationError({
-    required this.layer,
-    required this.supported,
-    required this.remote,
-  });
-
-  @override
-  String get message => 'No matching $layer algorithm. '
-      'Server offers: ${remote.join(', ')}. '
-      'Client supports: ${supported.join(', ')}.';
 }
 
 /// Errors related to the underlying socket.

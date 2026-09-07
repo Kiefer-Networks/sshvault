@@ -1,5 +1,6 @@
-import 'dart:math' show Random;
 import 'dart:typed_data';
+
+import 'package:dartssh2/src/utils/list.dart';
 
 /// Contains rfc4253 packet format related constants and helper functions.
 abstract class SSHPacket {
@@ -47,12 +48,8 @@ abstract class SSHPacket {
     final result = BytesBuilder(copy: false);
     result.add(Uint8List.view(header.buffer));
     result.add(payload);
-    final secureRandom = Random.secure();
-    final randomPadding = Uint8List(padding);
-    for (var i = 0; i < padding; i++) {
-      randomPadding[i] = secureRandom.nextInt(256);
-    }
-    result.add(randomPadding);
+    // RFC 4253 §6 requires the padding to consist of random bytes.
+    result.add(randomBytes(padding));
     return result.takeBytes();
   }
 }
@@ -74,5 +71,14 @@ class SSHPacketSN {
     } else {
       _value++;
     }
+  }
+
+  /// Resets the sequence number back to zero.
+  ///
+  /// Used by the strict key exchange mode, which resets both sequence numbers
+  /// after every SSH_MSG_NEWKEYS instead of letting them run monotonically for
+  /// the whole session.
+  void reset() {
+    _value = 0;
   }
 }

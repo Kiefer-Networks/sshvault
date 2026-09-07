@@ -127,6 +127,23 @@ void main() {
   });
 
   group('getVaultHistory', () {
+    test(
+      'preserves the documented creation timestamp of each version',
+      () async {
+        when(() => mockApi.get('/v1/vault/history')).thenAnswer(
+          (_) async => const Success({
+            'history': [
+              {'version': 1, 'checksum': 'abc', 'created_at': 1735689600},
+            ],
+          }),
+        );
+        final result = await sut.getVaultHistory();
+        expect(result.isSuccess, isTrue);
+        expect(result.value.single.updatedAt, DateTime.utc(2025));
+        expect(result.value.single.checksum, 'abc');
+      },
+    );
+
     test('returns list of VaultEntity on success', () async {
       when(() => mockApi.get('/v1/vault/history')).thenAnswer(
         (_) async => const Success({

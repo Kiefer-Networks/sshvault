@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'known_host_entity.dart';
@@ -9,6 +9,7 @@ part of 'known_host_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $KnownHostEntityCopyWith<KnownHostEntity> get copyWith => _$KnownHostEntityCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is KnownHostEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.port, port) || other.port == port)&&(identical(other.keyType, keyType) || other.keyType == keyType)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.trusted, trusted) || other.trusted == trusted)&&(identical(other.firstSeenAt, firstSeenAt) || other.firstSeenAt == firstSeenAt)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  final _this = this as KnownHostEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is KnownHostEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.hostname, _this.hostname) || other.hostname == _this.hostname)&&(identical(other.port, _this.port) || other.port == _this.port)&&(identical(other.keyType, _this.keyType) || other.keyType == _this.keyType)&&(identical(other.fingerprint, _this.fingerprint) || other.fingerprint == _this.fingerprint)&&(identical(other.trusted, _this.trusted) || other.trusted == _this.trusted)&&(identical(other.firstSeenAt, _this.firstSeenAt) || other.firstSeenAt == _this.firstSeenAt)&&(identical(other.lastSeenAt, _this.lastSeenAt) || other.lastSeenAt == _this.lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,hostname,port,keyType,fingerprint,trusted,firstSeenAt,lastSeenAt);
+int get hashCode {
+  final _this = this as KnownHostEntity;
+  return Object.hash(runtimeType,_this.id,_this.hostname,_this.port,_this.keyType,_this.fingerprint,_this.trusted,_this.firstSeenAt,_this.lastSeenAt);
+}
 
 @override
 String toString() {
-  return 'KnownHostEntity(id: $id, hostname: $hostname, port: $port, keyType: $keyType, fingerprint: $fingerprint, trusted: $trusted, firstSeenAt: $firstSeenAt, lastSeenAt: $lastSeenAt)';
+  final _this = this as KnownHostEntity;
+  return 'KnownHostEntity(id: ${_this.id}, hostname: ${_this.hostname}, port: ${_this.port}, keyType: ${_this.keyType}, fingerprint: ${_this.fingerprint}, trusted: ${_this.trusted}, firstSeenAt: ${_this.firstSeenAt}, lastSeenAt: ${_this.lastSeenAt})';
 }
 
 
@@ -66,7 +72,7 @@ class _$KnownHostEntityCopyWithImpl<$Res>
 /// Create a copy of KnownHostEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? hostname = null,Object? port = null,Object? keyType = null,Object? fingerprint = null,Object? trusted = null,Object? firstSeenAt = null,Object? lastSeenAt = null,}) {
-  return _then(_self.copyWith(
+  return _then(KnownHostEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,hostname: null == hostname ? _self.hostname : hostname // ignore: cast_nullable_to_non_nullable
 as String,port: null == port ? _self.port : port // ignore: cast_nullable_to_non_nullable
@@ -241,16 +247,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _KnownHostEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.port, port) || other.port == port)&&(identical(other.keyType, keyType) || other.keyType == keyType)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.trusted, trusted) || other.trusted == trusted)&&(identical(other.firstSeenAt, firstSeenAt) || other.firstSeenAt == firstSeenAt)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _KnownHostEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.port, port) || other.port == port)&&(identical(other.keyType, keyType) || other.keyType == keyType)&&(identical(other.fingerprint, fingerprint) || other.fingerprint == fingerprint)&&(identical(other.trusted, trusted) || other.trusted == trusted)&&(identical(other.firstSeenAt, firstSeenAt) || other.firstSeenAt == firstSeenAt)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,hostname,port,keyType,fingerprint,trusted,firstSeenAt,lastSeenAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,hostname,port,keyType,fingerprint,trusted,firstSeenAt,lastSeenAt);
+}
 
 @override
 String toString() {
-  return 'KnownHostEntity(id: $id, hostname: $hostname, port: $port, keyType: $keyType, fingerprint: $fingerprint, trusted: $trusted, firstSeenAt: $firstSeenAt, lastSeenAt: $lastSeenAt)';
+    return 'KnownHostEntity(id: $id, hostname: $hostname, port: $port, keyType: $keyType, fingerprint: $fingerprint, trusted: $trusted, firstSeenAt: $firstSeenAt, lastSeenAt: $lastSeenAt)';
 }
 
 

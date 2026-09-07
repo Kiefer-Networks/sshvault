@@ -221,14 +221,32 @@ void registerHybridKexFactories() {
 /// from the advertised KEX list instead of crashing the handshake.
 bool? _mlkem768Available;
 bool? _sntrup761Available;
+String? _mlkem768Error;
+String? _sntrup761Error;
 
 bool _isMlkem768Available() {
-  return _mlkem768Available ??= OqsKem.isAvailable('ML-KEM-768');
+  if (_mlkem768Available != null) return _mlkem768Available!;
+  try {
+    OqsKem.lookup('ML-KEM-768');
+    return _mlkem768Available = true;
+  } catch (e) {
+    _mlkem768Error = e.toString();
+    return _mlkem768Available = false;
+  }
 }
 
 bool _isSntrup761Available() {
-  return _sntrup761Available ??= OqsKem.isAvailable('sntrup761');
+  if (_sntrup761Available != null) return _sntrup761Available!;
+  try {
+    OqsKem.lookup('sntrup761');
+    return _sntrup761Available = true;
+  } catch (e) {
+    _sntrup761Error = e.toString();
+    return _sntrup761Available = false;
+  }
 }
+
+String? get hybridKexAvailabilityError => _mlkem768Error ?? _sntrup761Error;
 
 /// Strips hybrid PQ KEX names from [requested] when the underlying KEM
 /// is not available on this platform. Other entries are returned in

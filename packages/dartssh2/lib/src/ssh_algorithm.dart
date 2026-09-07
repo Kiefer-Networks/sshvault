@@ -43,14 +43,24 @@ class SSHAlgorithms {
   /// Algorithm used for the authentication.
   final List<SSHMacType> mac;
 
+  /// Creates an algorithm preference set.
+  ///
+  /// Every list is ordered by preference: the first entry that the peer also
+  /// supports is the one that gets negotiated (RFC 4253 §7.1). The defaults
+  /// follow modern OpenSSH defaults and omit legacy algorithms that require an
+  /// explicit compatibility opt-in.
+  ///
+  /// Legacy algorithms remain implemented and can be re-enabled explicitly.
+  /// This includes SHA-1 key exchange and host-key signatures, CBC ciphers,
+  /// `diffie-hellman-group1-sha1` (1024-bit DH), `hmac-md5`, and the truncated
+  /// `hmac-sha2-[256|512]-96` variants.
   const SSHAlgorithms({
     this.kex = const [
-      // Hybrid post-quantum KEX (matches OpenSSH 9.9+ default order).
-      // Each one falls back to the classical entries below if the
-      // server does not advertise it or the local liboqs build does
-      // not include the KEM.
+      // Prefer hybrid post-quantum exchange when liboqs is bundled. The
+      // transport filters these entries on platforms without the runtime.
       SSHKexType.mlkem768x25519Sha256,
       SSHKexType.sntrup761x25519Sha512,
+      SSHKexType.x25519Rfc,
       SSHKexType.x25519,
       SSHKexType.nistp521,
       SSHKexType.nistp384,
@@ -67,19 +77,19 @@ class SSHAlgorithms {
       SSHHostkeyType.ecdsa256,
     ],
     this.cipher = const [
-      SSHCipherType.chacha20Poly1305,
       SSHCipherType.aes256gcm,
       SSHCipherType.aes128gcm,
+      SSHCipherType.chacha20poly1305,
       SSHCipherType.aes256ctr,
       SSHCipherType.aes128ctr,
     ],
     this.mac = const [
+      // Encrypt-then-MAC is preferred over the encrypt-and-MAC variants.
       SSHMacType.hmacSha256Etm,
       SSHMacType.hmacSha512Etm,
       SSHMacType.hmacSha256,
       SSHMacType.hmacSha512,
-      SSHMacType.hmacSha256_96,
-      SSHMacType.hmacSha512_96,
+      SSHMacType.hmacSha1,
     ],
   });
 }

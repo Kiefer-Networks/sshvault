@@ -3,9 +3,10 @@
 # ============================================================================
 
 # --------------------------------------------------------------------------
-# AI / KI Tool Artifacts — remove all traces of AI-assisted development
+# Local assistant/editor state
 # --------------------------------------------------------------------------
 .claude/
+.codex/
 .claude_memory/
 .cursor/
 .cursorignore
@@ -40,13 +41,16 @@ coding.md
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
-/coverage/
+# Flutter apps, vendored packages and native platform subprojects.
+build/
+coverage/
 *.dart.js
 *.dart.js.deps
 *.dart.js.map
 *.dart.precompiled.js
-pubspec.lock
+# Keep pubspec.lock versioned: this is an application, not a package.
+# Keep generated Dart/localization sources and plugin registrants versioned.
+# They are required by the existing clean-checkout build and CI workflow.
 
 # --------------------------------------------------------------------------
 # Go Backend
@@ -90,18 +94,55 @@ server/coverage.html
 ehthumbs.db
 Thumbs.db
 Desktop.ini
+desktop.ini
+Thumbs.db:encryptable
+ehthumbs_vista.db
 $RECYCLE.BIN/
+*.stackdump
 
 # --------------------------------------------------------------------------
 # Build & Compilation
 # --------------------------------------------------------------------------
+/linux/flutter/ephemeral/
+/windows/flutter/ephemeral/
+/macos/Flutter/ephemeral/
 *.class
 *.o
+*.obj
 *.a
+*.lib
+*.exp
+*.dll
 *.so
 *.dylib
 *.exe
 *.out
+*.pdb
+*.ilk
+*.idb
+*.ipch
+*.dmp
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+build.ninja
+.ninja_deps
+.ninja_log
+
+# Local installers/release artifacts; do not ignore all ZIPs (test fixtures).
+/installer-output/
+/artifacts/
+/*.zip
+*.apk
+*.apks
+*.aab
+*.msi
+*.msix
+*.msixbundle
+*.appx
+*.appxbundle
+*.dmg
+*.flatpak
 
 # --------------------------------------------------------------------------
 # Logs & Temp
@@ -111,6 +152,13 @@ $RECYCLE.BIN/
 *.temp
 *.pid
 *.seed
+/tmp/
+/temp/
+/test-results/
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
 
 # --------------------------------------------------------------------------
 # Security — never commit secrets
@@ -141,8 +189,34 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/.gradle/
+.gradle/
+.kotlin/
+.cxx/
+.externalNativeBuild/
+.android/
 /android/local.properties
 /android/key.properties
+
+# --------------------------------------------------------------------------
+# Windows / Visual Studio (including projects opened from the repo root)
+# --------------------------------------------------------------------------
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.db-shm
+*.VC.db-wal
+*.VC.opendb
+/windows/Debug/
+/windows/Release/
+/windows/x64/
+/windows/x86/
+/windows/ARM64/
+/windows/Generated Files/
+/windows/AppPackages/
+/windows/BundleArtifacts/
 
 # --------------------------------------------------------------------------
 # iOS / macOS

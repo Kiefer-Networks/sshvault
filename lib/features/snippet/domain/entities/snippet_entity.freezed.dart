@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'snippet_entity.dart';
@@ -9,6 +9,7 @@ part of 'snippet_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $SnippetEntityCopyWith<SnippetEntity> get copyWith => _$SnippetEntityCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnippetEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.content, content) || other.content == content)&&(identical(other.language, language) || other.language == language)&&(identical(other.description, description) || other.description == description)&&(identical(other.groupId, groupId) || other.groupId == groupId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other.tags, tags)&&const DeepCollectionEquality().equals(other.variables, variables)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as SnippetEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnippetEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.content, _this.content) || other.content == _this.content)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.groupId, _this.groupId) || other.groupId == _this.groupId)&&(identical(other.sortOrder, _this.sortOrder) || other.sortOrder == _this.sortOrder)&&const DeepCollectionEquality().equals(other.tags, _this.tags)&&const DeepCollectionEquality().equals(other.variables, _this.variables)&&(identical(other.ownerId, _this.ownerId) || other.ownerId == _this.ownerId)&&(identical(other.sharedWith, _this.sharedWith) || other.sharedWith == _this.sharedWith)&&(identical(other.permissions, _this.permissions) || other.permissions == _this.permissions)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,content,language,description,groupId,sortOrder,const DeepCollectionEquality().hash(tags),const DeepCollectionEquality().hash(variables),ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as SnippetEntity;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.content,_this.language,_this.description,_this.groupId,_this.sortOrder,const DeepCollectionEquality().hash(_this.tags),const DeepCollectionEquality().hash(_this.variables),_this.ownerId,_this.sharedWith,_this.permissions,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnippetEntity(id: $id, name: $name, content: $content, language: $language, description: $description, groupId: $groupId, sortOrder: $sortOrder, tags: $tags, variables: $variables, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as SnippetEntity;
+  return 'SnippetEntity(id: ${_this.id}, name: ${_this.name}, content: ${_this.content}, language: ${_this.language}, description: ${_this.description}, groupId: ${_this.groupId}, sortOrder: ${_this.sortOrder}, tags: ${_this.tags}, variables: ${_this.variables}, ownerId: ${_this.ownerId}, sharedWith: ${_this.sharedWith}, permissions: ${_this.permissions}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -66,7 +72,7 @@ class _$SnippetEntityCopyWithImpl<$Res>
 /// Create a copy of SnippetEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? content = null,Object? language = null,Object? description = null,Object? groupId = freezed,Object? sortOrder = null,Object? tags = null,Object? variables = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SnippetEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
@@ -223,7 +229,7 @@ return $default(_that.id,_that.name,_that.content,_that.language,_that.descripti
 @JsonSerializable()
 
 class _SnippetEntity implements SnippetEntity {
-  const _SnippetEntity({required this.id, required this.name, required this.content, this.language = 'bash', this.description = '', this.groupId, this.sortOrder = 0, final  List<TagEntity> tags = const [], final  List<SnippetVariableEntity> variables = const [], this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt, this.deletedAt}): _tags = tags,_variables = variables;
+  const _SnippetEntity({required this.id, required this.name, required this.content, this.language = 'bash', this.description = '', this.groupId, this.sortOrder = 0,  List<TagEntity> tags = const [],  List<SnippetVariableEntity> variables = const [], this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt, this.deletedAt}): _tags = tags,_variables = variables;
   factory _SnippetEntity.fromJson(Map<String, dynamic> json) => _$SnippetEntityFromJson(json);
 
 @override final  String id;
@@ -267,16 +273,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnippetEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.content, content) || other.content == content)&&(identical(other.language, language) || other.language == language)&&(identical(other.description, description) || other.description == description)&&(identical(other.groupId, groupId) || other.groupId == groupId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other._tags, _tags)&&const DeepCollectionEquality().equals(other._variables, _variables)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnippetEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.content, content) || other.content == content)&&(identical(other.language, language) || other.language == language)&&(identical(other.description, description) || other.description == description)&&(identical(other.groupId, groupId) || other.groupId == groupId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other.tags, _tags)&&const DeepCollectionEquality().equals(other.variables, _variables)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,content,language,description,groupId,sortOrder,const DeepCollectionEquality().hash(_tags),const DeepCollectionEquality().hash(_variables),ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,content,language,description,groupId,sortOrder,const DeepCollectionEquality().hash(_tags),const DeepCollectionEquality().hash(_variables),ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'SnippetEntity(id: $id, name: $name, content: $content, language: $language, description: $description, groupId: $groupId, sortOrder: $sortOrder, tags: $tags, variables: $variables, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SnippetEntity(id: $id, name: $name, content: $content, language: $language, description: $description, groupId: $groupId, sortOrder: $sortOrder, tags: $tags, variables: $variables, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -345,16 +353,21 @@ $SnippetVariableEntityCopyWith<SnippetVariableEntity> get copyWith => _$SnippetV
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnippetVariableEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.defaultValue, defaultValue) || other.defaultValue == defaultValue)&&(identical(other.description, description) || other.description == description)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder));
+  final _this = this as SnippetVariableEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnippetVariableEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.defaultValue, _this.defaultValue) || other.defaultValue == _this.defaultValue)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.sortOrder, _this.sortOrder) || other.sortOrder == _this.sortOrder));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,defaultValue,description,sortOrder);
+int get hashCode {
+  final _this = this as SnippetVariableEntity;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.defaultValue,_this.description,_this.sortOrder);
+}
 
 @override
 String toString() {
-  return 'SnippetVariableEntity(id: $id, name: $name, defaultValue: $defaultValue, description: $description, sortOrder: $sortOrder)';
+  final _this = this as SnippetVariableEntity;
+  return 'SnippetVariableEntity(id: ${_this.id}, name: ${_this.name}, defaultValue: ${_this.defaultValue}, description: ${_this.description}, sortOrder: ${_this.sortOrder})';
 }
 
 
@@ -383,7 +396,7 @@ class _$SnippetVariableEntityCopyWithImpl<$Res>
 /// Create a copy of SnippetVariableEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? defaultValue = null,Object? description = null,Object? sortOrder = null,}) {
-  return _then(_self.copyWith(
+  return _then(SnippetVariableEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,defaultValue: null == defaultValue ? _self.defaultValue : defaultValue // ignore: cast_nullable_to_non_nullable
@@ -552,16 +565,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnippetVariableEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.defaultValue, defaultValue) || other.defaultValue == defaultValue)&&(identical(other.description, description) || other.description == description)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnippetVariableEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.defaultValue, defaultValue) || other.defaultValue == defaultValue)&&(identical(other.description, description) || other.description == description)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,defaultValue,description,sortOrder);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,defaultValue,description,sortOrder);
+}
 
 @override
 String toString() {
-  return 'SnippetVariableEntity(id: $id, name: $name, defaultValue: $defaultValue, description: $description, sortOrder: $sortOrder)';
+    return 'SnippetVariableEntity(id: $id, name: $name, defaultValue: $defaultValue, description: $description, sortOrder: $sortOrder)';
 }
 
 

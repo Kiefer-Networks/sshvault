@@ -161,7 +161,8 @@ final attestationCheckProvider = FutureProvider.autoDispose<AttestationStatus>((
 /// Manages the [HeartbeatService] lifecycle tied to authentication state.
 ///
 /// Starts on authentication, stops on logout / unauthentication.
-/// Fires [onSessionExpired] when max consecutive failures are reached.
+/// Availability failures do not invalidate authentication. Explicit refresh
+/// rejection is handled by the authentication interceptor.
 final heartbeatProvider = Provider<HeartbeatService?>((ref) {
   final log = LoggingService.instance;
   const tag = 'Heartbeat';
@@ -177,12 +178,6 @@ final heartbeatProvider = Provider<HeartbeatService?>((ref) {
     apiClient: apiClient,
     interval: const Duration(seconds: AppConstants.heartbeatIntervalSeconds),
     maxFailures: AppConstants.heartbeatMaxFailures,
-    onSessionExpired: () {
-      log.error(tag, 'Heartbeat session expired — forcing logout');
-      // Mark as heartbeat-triggered for the UI to show warning
-      ref.read(heartbeatExpiredProvider.notifier).state = true;
-      ref.read(authProvider.notifier).logout();
-    },
   );
 
   heartbeat.start();

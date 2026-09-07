@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'transfer_item.dart';
@@ -9,6 +9,7 @@ part of 'transfer_item.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $TransferItemCopyWith<TransferItem> get copyWith => _$TransferItemCopyWithImpl<T
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TransferItem&&(identical(other.id, id) || other.id == id)&&(identical(other.sourcePath, sourcePath) || other.sourcePath == sourcePath)&&(identical(other.destinationPath, destinationPath) || other.destinationPath == destinationPath)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.transferredBytes, transferredBytes) || other.transferredBytes == transferredBytes)&&(identical(other.sourceServerId, sourceServerId) || other.sourceServerId == sourceServerId)&&(identical(other.destinationServerId, destinationServerId) || other.destinationServerId == destinationServerId)&&(identical(other.error, error) || other.error == error)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
+  final _this = this as TransferItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TransferItem&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.sourcePath, _this.sourcePath) || other.sourcePath == _this.sourcePath)&&(identical(other.destinationPath, _this.destinationPath) || other.destinationPath == _this.destinationPath)&&(identical(other.direction, _this.direction) || other.direction == _this.direction)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.totalBytes, _this.totalBytes) || other.totalBytes == _this.totalBytes)&&(identical(other.transferredBytes, _this.transferredBytes) || other.transferredBytes == _this.transferredBytes)&&(identical(other.sourceServerId, _this.sourceServerId) || other.sourceServerId == _this.sourceServerId)&&(identical(other.destinationServerId, _this.destinationServerId) || other.destinationServerId == _this.destinationServerId)&&(identical(other.error, _this.error) || other.error == _this.error)&&(identical(other.startedAt, _this.startedAt) || other.startedAt == _this.startedAt)&&(identical(other.completedAt, _this.completedAt) || other.completedAt == _this.completedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,sourcePath,destinationPath,direction,status,totalBytes,transferredBytes,sourceServerId,destinationServerId,error,startedAt,completedAt);
+int get hashCode {
+  final _this = this as TransferItem;
+  return Object.hash(runtimeType,_this.id,_this.sourcePath,_this.destinationPath,_this.direction,_this.status,_this.totalBytes,_this.transferredBytes,_this.sourceServerId,_this.destinationServerId,_this.error,_this.startedAt,_this.completedAt);
+}
 
 @override
 String toString() {
-  return 'TransferItem(id: $id, sourcePath: $sourcePath, destinationPath: $destinationPath, direction: $direction, status: $status, totalBytes: $totalBytes, transferredBytes: $transferredBytes, sourceServerId: $sourceServerId, destinationServerId: $destinationServerId, error: $error, startedAt: $startedAt, completedAt: $completedAt)';
+  final _this = this as TransferItem;
+  return 'TransferItem(id: ${_this.id}, sourcePath: ${_this.sourcePath}, destinationPath: ${_this.destinationPath}, direction: ${_this.direction}, status: ${_this.status}, totalBytes: ${_this.totalBytes}, transferredBytes: ${_this.transferredBytes}, sourceServerId: ${_this.sourceServerId}, destinationServerId: ${_this.destinationServerId}, error: ${_this.error}, startedAt: ${_this.startedAt}, completedAt: ${_this.completedAt})';
 }
 
 
@@ -63,7 +69,7 @@ class _$TransferItemCopyWithImpl<$Res>
 /// Create a copy of TransferItem
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? sourcePath = null,Object? destinationPath = null,Object? direction = null,Object? status = null,Object? totalBytes = null,Object? transferredBytes = null,Object? sourceServerId = freezed,Object? destinationServerId = freezed,Object? error = freezed,Object? startedAt = freezed,Object? completedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(TransferItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,sourcePath: null == sourcePath ? _self.sourcePath : sourcePath // ignore: cast_nullable_to_non_nullable
 as String,destinationPath: null == destinationPath ? _self.destinationPath : destinationPath // ignore: cast_nullable_to_non_nullable
@@ -243,16 +249,18 @@ _$TransferItemCopyWith<_TransferItem> get copyWith => __$TransferItemCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TransferItem&&(identical(other.id, id) || other.id == id)&&(identical(other.sourcePath, sourcePath) || other.sourcePath == sourcePath)&&(identical(other.destinationPath, destinationPath) || other.destinationPath == destinationPath)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.transferredBytes, transferredBytes) || other.transferredBytes == transferredBytes)&&(identical(other.sourceServerId, sourceServerId) || other.sourceServerId == sourceServerId)&&(identical(other.destinationServerId, destinationServerId) || other.destinationServerId == destinationServerId)&&(identical(other.error, error) || other.error == error)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TransferItem&&(identical(other.id, id) || other.id == id)&&(identical(other.sourcePath, sourcePath) || other.sourcePath == sourcePath)&&(identical(other.destinationPath, destinationPath) || other.destinationPath == destinationPath)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.transferredBytes, transferredBytes) || other.transferredBytes == transferredBytes)&&(identical(other.sourceServerId, sourceServerId) || other.sourceServerId == sourceServerId)&&(identical(other.destinationServerId, destinationServerId) || other.destinationServerId == destinationServerId)&&(identical(other.error, error) || other.error == error)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,sourcePath,destinationPath,direction,status,totalBytes,transferredBytes,sourceServerId,destinationServerId,error,startedAt,completedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,sourcePath,destinationPath,direction,status,totalBytes,transferredBytes,sourceServerId,destinationServerId,error,startedAt,completedAt);
+}
 
 @override
 String toString() {
-  return 'TransferItem(id: $id, sourcePath: $sourcePath, destinationPath: $destinationPath, direction: $direction, status: $status, totalBytes: $totalBytes, transferredBytes: $transferredBytes, sourceServerId: $sourceServerId, destinationServerId: $destinationServerId, error: $error, startedAt: $startedAt, completedAt: $completedAt)';
+    return 'TransferItem(id: $id, sourcePath: $sourcePath, destinationPath: $destinationPath, direction: $direction, status: $status, totalBytes: $totalBytes, transferredBytes: $transferredBytes, sourceServerId: $sourceServerId, destinationServerId: $destinationServerId, error: $error, startedAt: $startedAt, completedAt: $completedAt)';
 }
 
 

@@ -565,10 +565,14 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
   }
 
   Future<void> _pickKeyFile() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final result = await FileChooser.openFile(
-        dialogTitle: AppLocalizations.of(context)!.fileChooserPickKeyFile,
-        filters: const [FileTypeFilter.pem, FileTypeFilter.plainText],
+        dialogTitle: l10n.fileChooserPickKeyFile,
+        // SSH private keys commonly have no extension (for example
+        // ~/.ssh/id_ed25519 or ~/.ssh/id_priv). Filter by content below so
+        // Windows does not hide valid extensionless OpenSSH keys.
+        filters: const [FileTypeFilter.any],
       );
       if (result == null) return;
 
@@ -592,12 +596,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       // Accept either standard PEM-wrapped keys or PuTTY's line-based .ppk
       // format. .ppk files start with `PuTTY-User-Key-File-2:` or `-3:`.
       if (!content.contains('-----BEGIN') && !PpkParser.looksLikePpk(content)) {
+        final message = l10n.sshKeyFormInvalidFormat;
         ref.read(_sshKeyFormStateProvider.notifier).state = ref
             .read(_sshKeyFormStateProvider)
-            .copyWith(
-              error: () =>
-                  AppLocalizations.of(context)!.sshKeyFormInvalidFormat,
-            );
+            .copyWith(error: () => null);
+        if (mounted) AdaptiveNotification.show(context, message: message);
         return;
       }
 

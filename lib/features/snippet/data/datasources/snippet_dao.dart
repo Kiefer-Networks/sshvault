@@ -51,9 +51,9 @@ class SnippetDao extends DatabaseAccessor<AppDatabase> with _$SnippetDaoMixin {
       query = query
         ..where(
           (s) =>
-              s.name.like('%$escaped%') |
-              s.content.like('%$escaped%') |
-              s.description.like('%$escaped%'),
+              s.name.like('%$escaped%', escapeChar: '\\') |
+              s.content.like('%$escaped%', escapeChar: '\\') |
+              s.description.like('%$escaped%', escapeChar: '\\'),
         );
     }
 

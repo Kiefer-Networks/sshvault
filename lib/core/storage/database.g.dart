@@ -1598,6 +1598,71 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _osFamilyMeta = const VerificationMeta(
+    'osFamily',
+  );
+  @override
+  late final GeneratedColumn<String> osFamily = GeneratedColumn<String>(
+    'os_family',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _osNameMeta = const VerificationMeta('osName');
+  @override
+  late final GeneratedColumn<String> osName = GeneratedColumn<String>(
+    'os_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _osVersionMeta = const VerificationMeta(
+    'osVersion',
+  );
+  @override
+  late final GeneratedColumn<String> osVersion = GeneratedColumn<String>(
+    'os_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _osPrettyNameMeta = const VerificationMeta(
+    'osPrettyName',
+  );
+  @override
+  late final GeneratedColumn<String> osPrettyName = GeneratedColumn<String>(
+    'os_pretty_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _osDetectedAtMeta = const VerificationMeta(
+    'osDetectedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> osDetectedAt = GeneratedColumn<DateTime>(
+    'os_detected_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _systemMetricsJsonMeta = const VerificationMeta(
+    'systemMetricsJson',
+  );
+  @override
+  late final GeneratedColumn<String> systemMetricsJson =
+      GeneratedColumn<String>(
+        'system_metrics_json',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _jumpHostIdMeta = const VerificationMeta(
     'jumpHostId',
   );
@@ -1808,6 +1873,12 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
     sortOrder,
     distroId,
     distroName,
+    osFamily,
+    osName,
+    osVersion,
+    osPrettyName,
+    osDetectedAt,
+    systemMetricsJson,
     jumpHostId,
     proxyType,
     proxyHost,
@@ -1930,6 +2001,51 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
       context.handle(
         _distroNameMeta,
         distroName.isAcceptableOrUnknown(data['distro_name']!, _distroNameMeta),
+      );
+    }
+    if (data.containsKey('os_family')) {
+      context.handle(
+        _osFamilyMeta,
+        osFamily.isAcceptableOrUnknown(data['os_family']!, _osFamilyMeta),
+      );
+    }
+    if (data.containsKey('os_name')) {
+      context.handle(
+        _osNameMeta,
+        osName.isAcceptableOrUnknown(data['os_name']!, _osNameMeta),
+      );
+    }
+    if (data.containsKey('os_version')) {
+      context.handle(
+        _osVersionMeta,
+        osVersion.isAcceptableOrUnknown(data['os_version']!, _osVersionMeta),
+      );
+    }
+    if (data.containsKey('os_pretty_name')) {
+      context.handle(
+        _osPrettyNameMeta,
+        osPrettyName.isAcceptableOrUnknown(
+          data['os_pretty_name']!,
+          _osPrettyNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('os_detected_at')) {
+      context.handle(
+        _osDetectedAtMeta,
+        osDetectedAt.isAcceptableOrUnknown(
+          data['os_detected_at']!,
+          _osDetectedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('system_metrics_json')) {
+      context.handle(
+        _systemMetricsJsonMeta,
+        systemMetricsJson.isAcceptableOrUnknown(
+          data['system_metrics_json']!,
+          _systemMetricsJsonMeta,
+        ),
       );
     }
     if (data.containsKey('jump_host_id')) {
@@ -2122,6 +2238,30 @@ class $ServersTable extends Servers with TableInfo<$ServersTable, Server> {
         DriftSqlType.string,
         data['${effectivePrefix}distro_name'],
       ),
+      osFamily: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}os_family'],
+      ),
+      osName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}os_name'],
+      ),
+      osVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}os_version'],
+      ),
+      osPrettyName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}os_pretty_name'],
+      ),
+      osDetectedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}os_detected_at'],
+      ),
+      systemMetricsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}system_metrics_json'],
+      ),
       jumpHostId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}jump_host_id'],
@@ -2211,6 +2351,12 @@ class Server extends DataClass implements Insertable<Server> {
   final int sortOrder;
   final String? distroId;
   final String? distroName;
+  final String? osFamily;
+  final String? osName;
+  final String? osVersion;
+  final String? osPrettyName;
+  final DateTime? osDetectedAt;
+  final String? systemMetricsJson;
   final String? jumpHostId;
   final String proxyType;
   final String proxyHost;
@@ -2243,6 +2389,12 @@ class Server extends DataClass implements Insertable<Server> {
     required this.sortOrder,
     this.distroId,
     this.distroName,
+    this.osFamily,
+    this.osName,
+    this.osVersion,
+    this.osPrettyName,
+    this.osDetectedAt,
+    this.systemMetricsJson,
     this.jumpHostId,
     required this.proxyType,
     required this.proxyHost,
@@ -2285,6 +2437,24 @@ class Server extends DataClass implements Insertable<Server> {
     }
     if (!nullToAbsent || distroName != null) {
       map['distro_name'] = Variable<String>(distroName);
+    }
+    if (!nullToAbsent || osFamily != null) {
+      map['os_family'] = Variable<String>(osFamily);
+    }
+    if (!nullToAbsent || osName != null) {
+      map['os_name'] = Variable<String>(osName);
+    }
+    if (!nullToAbsent || osVersion != null) {
+      map['os_version'] = Variable<String>(osVersion);
+    }
+    if (!nullToAbsent || osPrettyName != null) {
+      map['os_pretty_name'] = Variable<String>(osPrettyName);
+    }
+    if (!nullToAbsent || osDetectedAt != null) {
+      map['os_detected_at'] = Variable<DateTime>(osDetectedAt);
+    }
+    if (!nullToAbsent || systemMetricsJson != null) {
+      map['system_metrics_json'] = Variable<String>(systemMetricsJson);
     }
     if (!nullToAbsent || jumpHostId != null) {
       map['jump_host_id'] = Variable<String>(jumpHostId);
@@ -2344,6 +2514,24 @@ class Server extends DataClass implements Insertable<Server> {
       distroName: distroName == null && nullToAbsent
           ? const Value.absent()
           : Value(distroName),
+      osFamily: osFamily == null && nullToAbsent
+          ? const Value.absent()
+          : Value(osFamily),
+      osName: osName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(osName),
+      osVersion: osVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(osVersion),
+      osPrettyName: osPrettyName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(osPrettyName),
+      osDetectedAt: osDetectedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(osDetectedAt),
+      systemMetricsJson: systemMetricsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(systemMetricsJson),
       jumpHostId: jumpHostId == null && nullToAbsent
           ? const Value.absent()
           : Value(jumpHostId),
@@ -2398,6 +2586,14 @@ class Server extends DataClass implements Insertable<Server> {
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       distroId: serializer.fromJson<String?>(json['distroId']),
       distroName: serializer.fromJson<String?>(json['distroName']),
+      osFamily: serializer.fromJson<String?>(json['osFamily']),
+      osName: serializer.fromJson<String?>(json['osName']),
+      osVersion: serializer.fromJson<String?>(json['osVersion']),
+      osPrettyName: serializer.fromJson<String?>(json['osPrettyName']),
+      osDetectedAt: serializer.fromJson<DateTime?>(json['osDetectedAt']),
+      systemMetricsJson: serializer.fromJson<String?>(
+        json['systemMetricsJson'],
+      ),
       jumpHostId: serializer.fromJson<String?>(json['jumpHostId']),
       proxyType: serializer.fromJson<String>(json['proxyType']),
       proxyHost: serializer.fromJson<String>(json['proxyHost']),
@@ -2437,6 +2633,12 @@ class Server extends DataClass implements Insertable<Server> {
       'sortOrder': serializer.toJson<int>(sortOrder),
       'distroId': serializer.toJson<String?>(distroId),
       'distroName': serializer.toJson<String?>(distroName),
+      'osFamily': serializer.toJson<String?>(osFamily),
+      'osName': serializer.toJson<String?>(osName),
+      'osVersion': serializer.toJson<String?>(osVersion),
+      'osPrettyName': serializer.toJson<String?>(osPrettyName),
+      'osDetectedAt': serializer.toJson<DateTime?>(osDetectedAt),
+      'systemMetricsJson': serializer.toJson<String?>(systemMetricsJson),
       'jumpHostId': serializer.toJson<String?>(jumpHostId),
       'proxyType': serializer.toJson<String>(proxyType),
       'proxyHost': serializer.toJson<String>(proxyHost),
@@ -2472,6 +2674,12 @@ class Server extends DataClass implements Insertable<Server> {
     int? sortOrder,
     Value<String?> distroId = const Value.absent(),
     Value<String?> distroName = const Value.absent(),
+    Value<String?> osFamily = const Value.absent(),
+    Value<String?> osName = const Value.absent(),
+    Value<String?> osVersion = const Value.absent(),
+    Value<String?> osPrettyName = const Value.absent(),
+    Value<DateTime?> osDetectedAt = const Value.absent(),
+    Value<String?> systemMetricsJson = const Value.absent(),
     Value<String?> jumpHostId = const Value.absent(),
     String? proxyType,
     String? proxyHost,
@@ -2504,6 +2712,14 @@ class Server extends DataClass implements Insertable<Server> {
     sortOrder: sortOrder ?? this.sortOrder,
     distroId: distroId.present ? distroId.value : this.distroId,
     distroName: distroName.present ? distroName.value : this.distroName,
+    osFamily: osFamily.present ? osFamily.value : this.osFamily,
+    osName: osName.present ? osName.value : this.osName,
+    osVersion: osVersion.present ? osVersion.value : this.osVersion,
+    osPrettyName: osPrettyName.present ? osPrettyName.value : this.osPrettyName,
+    osDetectedAt: osDetectedAt.present ? osDetectedAt.value : this.osDetectedAt,
+    systemMetricsJson: systemMetricsJson.present
+        ? systemMetricsJson.value
+        : this.systemMetricsJson,
     jumpHostId: jumpHostId.present ? jumpHostId.value : this.jumpHostId,
     proxyType: proxyType ?? this.proxyType,
     proxyHost: proxyHost ?? this.proxyHost,
@@ -2546,6 +2762,18 @@ class Server extends DataClass implements Insertable<Server> {
       distroName: data.distroName.present
           ? data.distroName.value
           : this.distroName,
+      osFamily: data.osFamily.present ? data.osFamily.value : this.osFamily,
+      osName: data.osName.present ? data.osName.value : this.osName,
+      osVersion: data.osVersion.present ? data.osVersion.value : this.osVersion,
+      osPrettyName: data.osPrettyName.present
+          ? data.osPrettyName.value
+          : this.osPrettyName,
+      osDetectedAt: data.osDetectedAt.present
+          ? data.osDetectedAt.value
+          : this.osDetectedAt,
+      systemMetricsJson: data.systemMetricsJson.present
+          ? data.systemMetricsJson.value
+          : this.systemMetricsJson,
       jumpHostId: data.jumpHostId.present
           ? data.jumpHostId.value
           : this.jumpHostId,
@@ -2601,6 +2829,12 @@ class Server extends DataClass implements Insertable<Server> {
           ..write('sortOrder: $sortOrder, ')
           ..write('distroId: $distroId, ')
           ..write('distroName: $distroName, ')
+          ..write('osFamily: $osFamily, ')
+          ..write('osName: $osName, ')
+          ..write('osVersion: $osVersion, ')
+          ..write('osPrettyName: $osPrettyName, ')
+          ..write('osDetectedAt: $osDetectedAt, ')
+          ..write('systemMetricsJson: $systemMetricsJson, ')
           ..write('jumpHostId: $jumpHostId, ')
           ..write('proxyType: $proxyType, ')
           ..write('proxyHost: $proxyHost, ')
@@ -2638,6 +2872,12 @@ class Server extends DataClass implements Insertable<Server> {
     sortOrder,
     distroId,
     distroName,
+    osFamily,
+    osName,
+    osVersion,
+    osPrettyName,
+    osDetectedAt,
+    systemMetricsJson,
     jumpHostId,
     proxyType,
     proxyHost,
@@ -2674,6 +2914,12 @@ class Server extends DataClass implements Insertable<Server> {
           other.sortOrder == this.sortOrder &&
           other.distroId == this.distroId &&
           other.distroName == this.distroName &&
+          other.osFamily == this.osFamily &&
+          other.osName == this.osName &&
+          other.osVersion == this.osVersion &&
+          other.osPrettyName == this.osPrettyName &&
+          other.osDetectedAt == this.osDetectedAt &&
+          other.systemMetricsJson == this.systemMetricsJson &&
           other.jumpHostId == this.jumpHostId &&
           other.proxyType == this.proxyType &&
           other.proxyHost == this.proxyHost &&
@@ -2708,6 +2954,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
   final Value<int> sortOrder;
   final Value<String?> distroId;
   final Value<String?> distroName;
+  final Value<String?> osFamily;
+  final Value<String?> osName;
+  final Value<String?> osVersion;
+  final Value<String?> osPrettyName;
+  final Value<DateTime?> osDetectedAt;
+  final Value<String?> systemMetricsJson;
   final Value<String?> jumpHostId;
   final Value<String> proxyType;
   final Value<String> proxyHost;
@@ -2741,6 +2993,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.sortOrder = const Value.absent(),
     this.distroId = const Value.absent(),
     this.distroName = const Value.absent(),
+    this.osFamily = const Value.absent(),
+    this.osName = const Value.absent(),
+    this.osVersion = const Value.absent(),
+    this.osPrettyName = const Value.absent(),
+    this.osDetectedAt = const Value.absent(),
+    this.systemMetricsJson = const Value.absent(),
     this.jumpHostId = const Value.absent(),
     this.proxyType = const Value.absent(),
     this.proxyHost = const Value.absent(),
@@ -2775,6 +3033,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     this.sortOrder = const Value.absent(),
     this.distroId = const Value.absent(),
     this.distroName = const Value.absent(),
+    this.osFamily = const Value.absent(),
+    this.osName = const Value.absent(),
+    this.osVersion = const Value.absent(),
+    this.osPrettyName = const Value.absent(),
+    this.osDetectedAt = const Value.absent(),
+    this.systemMetricsJson = const Value.absent(),
     this.jumpHostId = const Value.absent(),
     this.proxyType = const Value.absent(),
     this.proxyHost = const Value.absent(),
@@ -2814,6 +3078,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Expression<int>? sortOrder,
     Expression<String>? distroId,
     Expression<String>? distroName,
+    Expression<String>? osFamily,
+    Expression<String>? osName,
+    Expression<String>? osVersion,
+    Expression<String>? osPrettyName,
+    Expression<DateTime>? osDetectedAt,
+    Expression<String>? systemMetricsJson,
     Expression<String>? jumpHostId,
     Expression<String>? proxyType,
     Expression<String>? proxyHost,
@@ -2848,6 +3118,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
       if (sortOrder != null) 'sort_order': sortOrder,
       if (distroId != null) 'distro_id': distroId,
       if (distroName != null) 'distro_name': distroName,
+      if (osFamily != null) 'os_family': osFamily,
+      if (osName != null) 'os_name': osName,
+      if (osVersion != null) 'os_version': osVersion,
+      if (osPrettyName != null) 'os_pretty_name': osPrettyName,
+      if (osDetectedAt != null) 'os_detected_at': osDetectedAt,
+      if (systemMetricsJson != null) 'system_metrics_json': systemMetricsJson,
       if (jumpHostId != null) 'jump_host_id': jumpHostId,
       if (proxyType != null) 'proxy_type': proxyType,
       if (proxyHost != null) 'proxy_host': proxyHost,
@@ -2885,6 +3161,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
     Value<int>? sortOrder,
     Value<String?>? distroId,
     Value<String?>? distroName,
+    Value<String?>? osFamily,
+    Value<String?>? osName,
+    Value<String?>? osVersion,
+    Value<String?>? osPrettyName,
+    Value<DateTime?>? osDetectedAt,
+    Value<String?>? systemMetricsJson,
     Value<String?>? jumpHostId,
     Value<String>? proxyType,
     Value<String>? proxyHost,
@@ -2919,6 +3201,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
       sortOrder: sortOrder ?? this.sortOrder,
       distroId: distroId ?? this.distroId,
       distroName: distroName ?? this.distroName,
+      osFamily: osFamily ?? this.osFamily,
+      osName: osName ?? this.osName,
+      osVersion: osVersion ?? this.osVersion,
+      osPrettyName: osPrettyName ?? this.osPrettyName,
+      osDetectedAt: osDetectedAt ?? this.osDetectedAt,
+      systemMetricsJson: systemMetricsJson ?? this.systemMetricsJson,
       jumpHostId: jumpHostId ?? this.jumpHostId,
       proxyType: proxyType ?? this.proxyType,
       proxyHost: proxyHost ?? this.proxyHost,
@@ -2986,6 +3274,24 @@ class ServersCompanion extends UpdateCompanion<Server> {
     }
     if (distroName.present) {
       map['distro_name'] = Variable<String>(distroName.value);
+    }
+    if (osFamily.present) {
+      map['os_family'] = Variable<String>(osFamily.value);
+    }
+    if (osName.present) {
+      map['os_name'] = Variable<String>(osName.value);
+    }
+    if (osVersion.present) {
+      map['os_version'] = Variable<String>(osVersion.value);
+    }
+    if (osPrettyName.present) {
+      map['os_pretty_name'] = Variable<String>(osPrettyName.value);
+    }
+    if (osDetectedAt.present) {
+      map['os_detected_at'] = Variable<DateTime>(osDetectedAt.value);
+    }
+    if (systemMetricsJson.present) {
+      map['system_metrics_json'] = Variable<String>(systemMetricsJson.value);
     }
     if (jumpHostId.present) {
       map['jump_host_id'] = Variable<String>(jumpHostId.value);
@@ -3061,6 +3367,12 @@ class ServersCompanion extends UpdateCompanion<Server> {
           ..write('sortOrder: $sortOrder, ')
           ..write('distroId: $distroId, ')
           ..write('distroName: $distroName, ')
+          ..write('osFamily: $osFamily, ')
+          ..write('osName: $osName, ')
+          ..write('osVersion: $osVersion, ')
+          ..write('osPrettyName: $osPrettyName, ')
+          ..write('osDetectedAt: $osDetectedAt, ')
+          ..write('systemMetricsJson: $systemMetricsJson, ')
           ..write('jumpHostId: $jumpHostId, ')
           ..write('proxyType: $proxyType, ')
           ..write('proxyHost: $proxyHost, ')
@@ -6494,7 +6806,7 @@ final class $$SshKeysTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.servers,
-    aliasName: $_aliasNameGenerator(db.sshKeys.id, db.servers.sshKeyId),
+    aliasName: 'ssh_keys__id__servers__ssh_key_id',
   );
 
   $$ServersTableProcessedTableManager get serversRefs {
@@ -6841,7 +7153,7 @@ class $$SshKeysTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$SshKeysTable, SshKey>(table),
                   $$SshKeysTableReferences(db, table, e),
                 ),
               )
@@ -6923,9 +7235,8 @@ final class $$GroupsTableReferences
     extends BaseReferences<_$AppDatabase, $GroupsTable, Group> {
   $$GroupsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $GroupsTable _parentIdTable(_$AppDatabase db) => db.groups.createAlias(
-    $_aliasNameGenerator(db.groups.parentId, db.groups.id),
-  );
+  static $GroupsTable _parentIdTable(_$AppDatabase db) =>
+      db.groups.createAlias('groups__parent_id__groups__id');
 
   $$GroupsTableProcessedTableManager? get parentId {
     final $_column = $_itemColumn<String>('parent_id');
@@ -6945,7 +7256,7 @@ final class $$GroupsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.servers,
-    aliasName: $_aliasNameGenerator(db.groups.id, db.servers.groupId),
+    aliasName: 'groups__id__servers__group_id',
   );
 
   $$ServersTableProcessedTableManager get serversRefs {
@@ -6964,7 +7275,7 @@ final class $$GroupsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.snippets,
-    aliasName: $_aliasNameGenerator(db.groups.id, db.snippets.groupId),
+    aliasName: 'groups__id__snippets__group_id',
   );
 
   $$SnippetsTableProcessedTableManager get snippetsRefs {
@@ -7418,8 +7729,10 @@ class $$GroupsTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$GroupsTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$GroupsTable, Group>(table),
+                  $$GroupsTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -7541,6 +7854,12 @@ typedef $$ServersTableCreateCompanionBuilder =
       Value<int> sortOrder,
       Value<String?> distroId,
       Value<String?> distroName,
+      Value<String?> osFamily,
+      Value<String?> osName,
+      Value<String?> osVersion,
+      Value<String?> osPrettyName,
+      Value<DateTime?> osDetectedAt,
+      Value<String?> systemMetricsJson,
       Value<String?> jumpHostId,
       Value<String> proxyType,
       Value<String> proxyHost,
@@ -7576,6 +7895,12 @@ typedef $$ServersTableUpdateCompanionBuilder =
       Value<int> sortOrder,
       Value<String?> distroId,
       Value<String?> distroName,
+      Value<String?> osFamily,
+      Value<String?> osName,
+      Value<String?> osVersion,
+      Value<String?> osPrettyName,
+      Value<DateTime?> osDetectedAt,
+      Value<String?> systemMetricsJson,
       Value<String?> jumpHostId,
       Value<String> proxyType,
       Value<String> proxyHost,
@@ -7599,9 +7924,8 @@ final class $$ServersTableReferences
     extends BaseReferences<_$AppDatabase, $ServersTable, Server> {
   $$ServersTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $GroupsTable _groupIdTable(_$AppDatabase db) => db.groups.createAlias(
-    $_aliasNameGenerator(db.servers.groupId, db.groups.id),
-  );
+  static $GroupsTable _groupIdTable(_$AppDatabase db) =>
+      db.groups.createAlias('servers__group_id__groups__id');
 
   $$GroupsTableProcessedTableManager? get groupId {
     final $_column = $_itemColumn<String>('group_id');
@@ -7617,8 +7941,8 @@ final class $$ServersTableReferences
     );
   }
 
-  static $SshKeysTable _sshKeyIdTable(_$AppDatabase db) => db.sshKeys
-      .createAlias($_aliasNameGenerator(db.servers.sshKeyId, db.sshKeys.id));
+  static $SshKeysTable _sshKeyIdTable(_$AppDatabase db) =>
+      db.sshKeys.createAlias('servers__ssh_key_id__ssh_keys__id');
 
   $$SshKeysTableProcessedTableManager? get sshKeyId {
     final $_column = $_itemColumn<String>('ssh_key_id');
@@ -7637,7 +7961,7 @@ final class $$ServersTableReferences
   static MultiTypedResultKey<$ServerTagsTable, List<ServerTag>>
   _serverTagsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.serverTags,
-    aliasName: $_aliasNameGenerator(db.servers.id, db.serverTags.serverId),
+    aliasName: 'servers__id__server_tags__server_id',
   );
 
   $$ServerTagsTableProcessedTableManager get serverTagsRefs {
@@ -7655,7 +7979,7 @@ final class $$ServersTableReferences
   static MultiTypedResultKey<$SftpBookmarksTable, List<SftpBookmark>>
   _sftpBookmarksRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.sftpBookmarks,
-    aliasName: $_aliasNameGenerator(db.servers.id, db.sftpBookmarks.serverId),
+    aliasName: 'servers__id__sftp_bookmarks__server_id',
   );
 
   $$SftpBookmarksTableProcessedTableManager get sftpBookmarksRefs {
@@ -7742,6 +8066,36 @@ class $$ServersTableFilterComposer
 
   ColumnFilters<String> get distroName => $composableBuilder(
     column: $table.distroName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get osFamily => $composableBuilder(
+    column: $table.osFamily,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get osName => $composableBuilder(
+    column: $table.osName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get osVersion => $composableBuilder(
+    column: $table.osVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get osPrettyName => $composableBuilder(
+    column: $table.osPrettyName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get osDetectedAt => $composableBuilder(
+    column: $table.osDetectedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get systemMetricsJson => $composableBuilder(
+    column: $table.systemMetricsJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7996,6 +8350,36 @@ class $$ServersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get osFamily => $composableBuilder(
+    column: $table.osFamily,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get osName => $composableBuilder(
+    column: $table.osName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get osVersion => $composableBuilder(
+    column: $table.osVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get osPrettyName => $composableBuilder(
+    column: $table.osPrettyName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get osDetectedAt => $composableBuilder(
+    column: $table.osDetectedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get systemMetricsJson => $composableBuilder(
+    column: $table.systemMetricsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get jumpHostId => $composableBuilder(
     column: $table.jumpHostId,
     builder: (column) => ColumnOrderings(column),
@@ -8172,6 +8556,30 @@ class $$ServersTableAnnotationComposer
 
   GeneratedColumn<String> get distroName => $composableBuilder(
     column: $table.distroName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get osFamily =>
+      $composableBuilder(column: $table.osFamily, builder: (column) => column);
+
+  GeneratedColumn<String> get osName =>
+      $composableBuilder(column: $table.osName, builder: (column) => column);
+
+  GeneratedColumn<String> get osVersion =>
+      $composableBuilder(column: $table.osVersion, builder: (column) => column);
+
+  GeneratedColumn<String> get osPrettyName => $composableBuilder(
+    column: $table.osPrettyName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get osDetectedAt => $composableBuilder(
+    column: $table.osDetectedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get systemMetricsJson => $composableBuilder(
+    column: $table.systemMetricsJson,
     builder: (column) => column,
   );
 
@@ -8386,6 +8794,12 @@ class $$ServersTableTableManager
                 Value<int> sortOrder = const Value.absent(),
                 Value<String?> distroId = const Value.absent(),
                 Value<String?> distroName = const Value.absent(),
+                Value<String?> osFamily = const Value.absent(),
+                Value<String?> osName = const Value.absent(),
+                Value<String?> osVersion = const Value.absent(),
+                Value<String?> osPrettyName = const Value.absent(),
+                Value<DateTime?> osDetectedAt = const Value.absent(),
+                Value<String?> systemMetricsJson = const Value.absent(),
                 Value<String?> jumpHostId = const Value.absent(),
                 Value<String> proxyType = const Value.absent(),
                 Value<String> proxyHost = const Value.absent(),
@@ -8419,6 +8833,12 @@ class $$ServersTableTableManager
                 sortOrder: sortOrder,
                 distroId: distroId,
                 distroName: distroName,
+                osFamily: osFamily,
+                osName: osName,
+                osVersion: osVersion,
+                osPrettyName: osPrettyName,
+                osDetectedAt: osDetectedAt,
+                systemMetricsJson: systemMetricsJson,
                 jumpHostId: jumpHostId,
                 proxyType: proxyType,
                 proxyHost: proxyHost,
@@ -8454,6 +8874,12 @@ class $$ServersTableTableManager
                 Value<int> sortOrder = const Value.absent(),
                 Value<String?> distroId = const Value.absent(),
                 Value<String?> distroName = const Value.absent(),
+                Value<String?> osFamily = const Value.absent(),
+                Value<String?> osName = const Value.absent(),
+                Value<String?> osVersion = const Value.absent(),
+                Value<String?> osPrettyName = const Value.absent(),
+                Value<DateTime?> osDetectedAt = const Value.absent(),
+                Value<String?> systemMetricsJson = const Value.absent(),
                 Value<String?> jumpHostId = const Value.absent(),
                 Value<String> proxyType = const Value.absent(),
                 Value<String> proxyHost = const Value.absent(),
@@ -8487,6 +8913,12 @@ class $$ServersTableTableManager
                 sortOrder: sortOrder,
                 distroId: distroId,
                 distroName: distroName,
+                osFamily: osFamily,
+                osName: osName,
+                osVersion: osVersion,
+                osPrettyName: osPrettyName,
+                osDetectedAt: osDetectedAt,
+                systemMetricsJson: systemMetricsJson,
                 jumpHostId: jumpHostId,
                 proxyType: proxyType,
                 proxyHost: proxyHost,
@@ -8508,7 +8940,7 @@ class $$ServersTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ServersTable, Server>(table),
                   $$ServersTableReferences(db, table, e),
                 ),
               )
@@ -8676,7 +9108,7 @@ final class $$TagsTableReferences
   static MultiTypedResultKey<$ServerTagsTable, List<ServerTag>>
   _serverTagsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.serverTags,
-    aliasName: $_aliasNameGenerator(db.tags.id, db.serverTags.tagId),
+    aliasName: 'tags__id__server_tags__tag_id',
   );
 
   $$ServerTagsTableProcessedTableManager get serverTagsRefs {
@@ -8694,7 +9126,7 @@ final class $$TagsTableReferences
   static MultiTypedResultKey<$SnippetTagsTable, List<SnippetTag>>
   _snippetTagsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.snippetTags,
-    aliasName: $_aliasNameGenerator(db.tags.id, db.snippetTags.tagId),
+    aliasName: 'tags__id__snippet_tags__tag_id',
   );
 
   $$SnippetTagsTableProcessedTableManager get snippetTagsRefs {
@@ -9035,8 +9467,10 @@ class $$TagsTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$TagsTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$TagsTable, Tag>(table),
+                  $$TagsTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -9121,8 +9555,8 @@ final class $$ServerTagsTableReferences
     extends BaseReferences<_$AppDatabase, $ServerTagsTable, ServerTag> {
   $$ServerTagsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ServersTable _serverIdTable(_$AppDatabase db) => db.servers
-      .createAlias($_aliasNameGenerator(db.serverTags.serverId, db.servers.id));
+  static $ServersTable _serverIdTable(_$AppDatabase db) =>
+      db.servers.createAlias('server_tags__server_id__servers__id');
 
   $$ServersTableProcessedTableManager get serverId {
     final $_column = $_itemColumn<String>('server_id')!;
@@ -9138,9 +9572,8 @@ final class $$ServerTagsTableReferences
     );
   }
 
-  static $TagsTable _tagIdTable(_$AppDatabase db) => db.tags.createAlias(
-    $_aliasNameGenerator(db.serverTags.tagId, db.tags.id),
-  );
+  static $TagsTable _tagIdTable(_$AppDatabase db) =>
+      db.tags.createAlias('server_tags__tag_id__tags__id');
 
   $$TagsTableProcessedTableManager get tagId {
     final $_column = $_itemColumn<String>('tag_id')!;
@@ -9374,7 +9807,7 @@ class $$ServerTagsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ServerTagsTable, ServerTag>(table),
                   $$ServerTagsTableReferences(db, table, e),
                 ),
               )
@@ -9490,9 +9923,8 @@ final class $$SnippetsTableReferences
     extends BaseReferences<_$AppDatabase, $SnippetsTable, Snippet> {
   $$SnippetsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $GroupsTable _groupIdTable(_$AppDatabase db) => db.groups.createAlias(
-    $_aliasNameGenerator(db.snippets.groupId, db.groups.id),
-  );
+  static $GroupsTable _groupIdTable(_$AppDatabase db) =>
+      db.groups.createAlias('snippets__group_id__groups__id');
 
   $$GroupsTableProcessedTableManager? get groupId {
     final $_column = $_itemColumn<String>('group_id');
@@ -9511,7 +9943,7 @@ final class $$SnippetsTableReferences
   static MultiTypedResultKey<$SnippetTagsTable, List<SnippetTag>>
   _snippetTagsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.snippetTags,
-    aliasName: $_aliasNameGenerator(db.snippets.id, db.snippetTags.snippetId),
+    aliasName: 'snippets__id__snippet_tags__snippet_id',
   );
 
   $$SnippetTagsTableProcessedTableManager get snippetTagsRefs {
@@ -9529,10 +9961,7 @@ final class $$SnippetsTableReferences
   static MultiTypedResultKey<$SnippetVariablesTable, List<SnippetVariable>>
   _snippetVariablesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.snippetVariables,
-    aliasName: $_aliasNameGenerator(
-      db.snippets.id,
-      db.snippetVariables.snippetId,
-    ),
+    aliasName: 'snippets__id__snippet_variables__snippet_id',
   );
 
   $$SnippetVariablesTableProcessedTableManager get snippetVariablesRefs {
@@ -10008,7 +10437,7 @@ class $$SnippetsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$SnippetsTable, Snippet>(table),
                   $$SnippetsTableReferences(db, table, e),
                 ),
               )
@@ -10145,9 +10574,7 @@ final class $$SnippetTagsTableReferences
   $$SnippetTagsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $SnippetsTable _snippetIdTable(_$AppDatabase db) =>
-      db.snippets.createAlias(
-        $_aliasNameGenerator(db.snippetTags.snippetId, db.snippets.id),
-      );
+      db.snippets.createAlias('snippet_tags__snippet_id__snippets__id');
 
   $$SnippetsTableProcessedTableManager get snippetId {
     final $_column = $_itemColumn<String>('snippet_id')!;
@@ -10163,9 +10590,8 @@ final class $$SnippetTagsTableReferences
     );
   }
 
-  static $TagsTable _tagIdTable(_$AppDatabase db) => db.tags.createAlias(
-    $_aliasNameGenerator(db.snippetTags.tagId, db.tags.id),
-  );
+  static $TagsTable _tagIdTable(_$AppDatabase db) =>
+      db.tags.createAlias('snippet_tags__tag_id__tags__id');
 
   $$TagsTableProcessedTableManager get tagId {
     final $_column = $_itemColumn<String>('tag_id')!;
@@ -10399,7 +10825,7 @@ class $$SnippetTagsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$SnippetTagsTable, SnippetTag>(table),
                   $$SnippetTagsTableReferences(db, table, e),
                 ),
               )
@@ -10507,9 +10933,7 @@ final class $$SnippetVariablesTableReferences
   );
 
   static $SnippetsTable _snippetIdTable(_$AppDatabase db) =>
-      db.snippets.createAlias(
-        $_aliasNameGenerator(db.snippetVariables.snippetId, db.snippets.id),
-      );
+      db.snippets.createAlias('snippet_variables__snippet_id__snippets__id');
 
   $$SnippetsTableProcessedTableManager get snippetId {
     final $_column = $_itemColumn<String>('snippet_id')!;
@@ -10761,7 +11185,7 @@ class $$SnippetVariablesTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$SnippetVariablesTable, SnippetVariable>(table),
                   $$SnippetVariablesTableReferences(db, table, e),
                 ),
               )
@@ -10942,7 +11366,16 @@ class $$AppSettingsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$AppSettingsTable, AppSetting>(table),
+                  BaseReferences<_$AppDatabase, $AppSettingsTable, AppSetting>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -11205,7 +11638,16 @@ class $$KnownHostsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$KnownHostsTable, KnownHost>(table),
+                  BaseReferences<_$AppDatabase, $KnownHostsTable, KnownHost>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -11256,9 +11698,7 @@ final class $$SftpBookmarksTableReferences
   );
 
   static $ServersTable _serverIdTable(_$AppDatabase db) =>
-      db.servers.createAlias(
-        $_aliasNameGenerator(db.sftpBookmarks.serverId, db.servers.id),
-      );
+      db.servers.createAlias('sftp_bookmarks__server_id__servers__id');
 
   $$ServersTableProcessedTableManager get serverId {
     final $_column = $_itemColumn<String>('server_id')!;
@@ -11504,7 +11944,7 @@ class $$SftpBookmarksTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$SftpBookmarksTable, SftpBookmark>(table),
                   $$SftpBookmarksTableReferences(db, table, e),
                 ),
               )

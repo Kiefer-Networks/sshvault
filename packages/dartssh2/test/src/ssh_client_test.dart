@@ -1,4 +1,12 @@
+// Also uses test_utils.dart, which imports dart:io.
+@TestOn('vm')
+@Tags(['integration'])
+library;
+
+import 'dart:convert';
+
 import 'package:dartssh2/dartssh2.dart';
+import 'package:dartssh2/src/ssh_channel.dart';
 import 'package:test/test.dart';
 
 import '../test_utils.dart';
@@ -9,6 +17,67 @@ void main() {
       var client = await getHoneypotClient();
       await client.authenticated;
       client.close();
+    });
+
+    test('chacha20-poly1305 works against a ssh server', () async {
+      final client = await getHoneypotClient(
+        algorithms: const SSHAlgorithms(
+          cipher: [SSHCipherType.chacha20poly1305],
+        ),
+      );
+      await client.authenticated;
+      client.close();
+    });
+
+    test('onVerifyHostKey is called with OpenSSH-style SHA256 fingerprint',
+        () async {
+      var verifyCalled = false;
+      String? hostkeyType;
+      String? hostkeyFingerprint;
+
+      var client = SSHClient(
+        await SSHSocket.connect('test.rebex.net', 22),
+        username: 'demo',
+        onPasswordRequest: () => 'password',
+        onUserInfoRequest: (req) => [for (final _ in req.prompts) 'password'],
+        onVerifyHostKey: (type, fingerprint) {
+          verifyCalled = true;
+          hostkeyType = type;
+          hostkeyFingerprint = utf8.decode(fingerprint);
+          return true;
+        },
+      );
+
+      await client.authenticated;
+      client.close();
+
+      expect(verifyCalled, isTrue);
+      expect(hostkeyType, isNotEmpty);
+      expect(hostkeyFingerprint, startsWith('SHA256:'));
+      final base64Part = hostkeyFingerprint!.substring(7);
+      expect(base64Part.length, equals(43));
+      expect(() => base64.decode('$base64Part='), returnsNormally);
+    });
+
+    test('onVerifyHostKey returning false aborts connection', () async {
+      var client = SSHClient(
+        await SSHSocket.connect('test.rebex.net', 22),
+        username: 'demo',
+        onPasswordRequest: () => 'password',
+        onVerifyHostKey: (type, fingerprint) {
+          return false;
+        },
+      );
+
+      try {
+        await client.authenticated;
+        fail('should have thrown');
+      } catch (e) {
+        expect(e, isA<SSHAuthAbortError>());
+        expect((e as SSHAuthAbortError).reason, isA<SSHHostkeyError>());
+      } finally {
+        client.close();
+      }
     });
 
     // test('throws SSHAuthFailError when password is wrong', () async {
@@ -137,6 +206,8 @@ void main() {
         fail('should have thrown');
       } catch (e) {
         expect(e, isA<SSHAuthAbortError>());
+        expect((e as SSHAuthAbortError).reason,
+            anyOf(isNull, isA<SSHSocketError>()));
       }
 
       client.close();
@@ -154,6 +225,85 @@ void main() {
     test('works', () async {
       final client = await getTestClient();
       await client.ping();
+    });
+  });
+
+  group('SSHClient.forwardDynamic', () {
+    test('starts and closes local dynamic forward', () async {
+      final client = await getTestClient();
+
+      final dynamicForward = await client.forwardDynamic(
+        bindHost: '127.0.0.1',
+        bindPort: 0,
+      );
+
+      expect(dynamicForward.port, greaterThan(0));
+      expect(dynamicForward.isClosed, isFalse);
+
+      await dynamicForward.close();
+      expect(dynamicForward.isClosed, isTrue);
+
+      client.close();
+    });
+  });
+
+  group('SSHClient.runWithResult', () {
+    test('returns command output and exit code', () async {
+      final client = await getTestClient();
+
+      final result = await client.runWithResult('echo dartssh2');
+
+      expect(utf8.decode(result.stdout), contains('dartssh2'));
+      expect(result.output, result.stdout);
+      expect(result.stderr, isEmpty);
+      if (result.exitCode != null) {
+        expect(result.exitCode, 0);
+      }
+      expect(result.exitSignal, isNull);
+
+      client.close();
+    });
+
+    test('returns non-zero exit code for failing command', () async {
+      final client = await getTestClient();
+
+      final result = await client.runWithResult('command-that-does-not-exist');
+
+      expect(result.output, isNotEmpty);
+      if (result.exitCode != null) {
+        expect(result.exitCode, isNot(0));
+      }
+      expect(result.exitSignal, isNull);
+
+      client.close();
+    });
+  });
+
+  group('SSHClient.flush', () {
+    test('can flush client, session, channel, and forward channel', () async {
+      final client = await getTestClient();
+      await client.authenticated;
+
+      await client.flush();
+
+      final session = await client.execute('echo flush_test');
+      await session.flush();
+
+      final controller = SSHChannelController(
+        localId: 1,
+        localMaximumPacketSize: 1024,
+        localInitialWindowSize: 1024,
+        remoteId: 2,
+        remoteMaximumPacketSize: 1024,
+        remoteInitialWindowSize: 1024,
+        sendMessage: (msg) {},
+        onFlush: () async {},
+      );
+      final forwardChannel = SSHForwardChannel(controller.channel);
+      await forwardChannel.flush();
+
+      await session.done;
+      client.close();
     });
   });
 }

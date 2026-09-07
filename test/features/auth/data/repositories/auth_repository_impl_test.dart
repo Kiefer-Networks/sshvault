@@ -24,16 +24,18 @@ void main() {
   });
 
   group('register', () {
-    test('returns AuthResponse on success', () async {
+    test('accepts opaque registration without authentication tokens', () async {
       when(
         () => mockApi.post('/v1/auth/register', data: any(named: 'data')),
-      ).thenAnswer((_) async => Success(authResponseData));
+      ).thenAnswer(
+        (_) async => const Success({
+          'status':
+              'If registration is available, check your email to verify your account.',
+        }),
+      );
 
       final result = await sut.register('test@example.com', 'password123');
       expect(result.isSuccess, isTrue);
-      expect(result.value.user.email, 'test@example.com');
-      expect(result.value.accessToken, 'access-123');
-      expect(result.value.refreshToken, 'refresh-456');
     });
 
     test('returns AuthFailure on network error', () async {
@@ -197,20 +199,28 @@ void main() {
   group('verifyEmail', () {
     test('returns Success', () async {
       when(
-        () => mockApi.get(any()),
+        () => mockApi.post('/v1/auth/verify-email', data: any(named: 'data')),
       ).thenAnswer((_) async => const Success(<String, dynamic>{}));
 
-      final result = await sut.verifyEmail('verify-token');
+      final result = await sut.verifyEmail('verify-token', 'new-password');
       expect(result.isSuccess, isTrue);
+      verify(
+        () => mockApi.post(
+          '/v1/auth/verify-email',
+          data: {'token': 'verify-token', 'new_password': 'new-password'},
+        ),
+      ).called(1);
     });
 
     test('returns AuthFailure on error', () async {
-      when(() => mockApi.get(any())).thenAnswer(
+      when(
+        () => mockApi.post('/v1/auth/verify-email', data: any(named: 'data')),
+      ).thenAnswer(
         (_) async =>
             const Err(NetworkFailure('token expired', statusCode: 410)),
       );
 
-      final result = await sut.verifyEmail('expired-token');
+      final result = await sut.verifyEmail('expired-token', 'new-password');
       expect(result.isFailure, isTrue);
     });
   });

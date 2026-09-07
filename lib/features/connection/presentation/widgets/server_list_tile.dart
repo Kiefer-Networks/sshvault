@@ -13,6 +13,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_reachability_provider.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:sshvault/features/connection/presentation/widgets/tag_chip.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
@@ -59,6 +60,7 @@ class ServerListTile extends ConsumerWidget {
 
     final showOpenInWindow = _showMultiWindowAction(context);
 
+    final isDesktop = !kIsWeb && MediaQuery.of(context).size.width >= 1100;
     return Slidable(
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
@@ -102,11 +104,24 @@ class ServerListTile extends ConsumerWidget {
         ],
       ),
       child: ListTile(
-        onTap: onTap,
-        leading: CircleIcon(
-          icon: IconConstants.getIcon(server.iconName),
-          color: Color(server.color),
-          size: 44,
+        onTap: () {
+          ref.read(desktopSelectedServerIdProvider.notifier).state = server.id;
+          onTap();
+        },
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleIcon(
+              icon: IconConstants.getIcon(server.iconName),
+              color: Color(server.color),
+              size: 44,
+            ),
+            Spacing.horizontalXs,
+            _ConnectionStatusBadge(
+              connectionStatus: connectionStatus,
+              server: server,
+            ),
+          ],
         ),
         title: Row(
           children: [
@@ -121,11 +136,6 @@ class ServerListTile extends ConsumerWidget {
                     : theme.colorScheme.error,
               ),
             ],
-            Spacing.horizontalSm,
-            _ConnectionStatusBadge(
-              connectionStatus: connectionStatus,
-              server: server,
-            ),
           ],
         ),
         subtitle: Column(
@@ -176,7 +186,25 @@ class ServerListTile extends ConsumerWidget {
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               ),
-            if (onDetail != null)
+            if (isDesktop)
+              PopupMenuButton<String>(
+                tooltip: l10n.navMore,
+                onSelected: (action) async {
+                  if (action == 'edit') {
+                    onEdit();
+                  } else if (action == 'delete') {
+                    onDelete();
+                  } else if (action == 'connect') {
+                    await ref.read(sessionManagerProvider.notifier).openSession(server.id);
+                  }
+                },
+                itemBuilder: (_) => [
+                  PopupMenuItem(value: 'connect', child: ListTile(leading: const Icon(Icons.terminal), title: Text(l10n.serverConnect))),
+                  PopupMenuItem(value: 'edit', child: ListTile(leading: const Icon(Icons.edit), title: Text(l10n.edit))),
+                  PopupMenuItem(value: 'delete', child: ListTile(leading: const Icon(Icons.delete), title: Text(l10n.delete))),
+                ],
+              ),
+            if (onDetail != null && !isDesktop)
               IconButton(
                 icon: const Icon(Icons.info_outlined),
                 onPressed: onDetail,
@@ -199,20 +227,21 @@ class _ConnectionStatusBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final Color color;
     final bool glow;
 
     switch (connectionStatus) {
       case SshConnectionStatus.connected:
-        color = colorScheme.tertiary;
+        color = Colors.green;
         glow = true;
       case SshConnectionStatus.connecting:
       case SshConnectionStatus.authenticating:
-        color = colorScheme.secondary;
+        color = Colors.amber;
         glow = true;
       case SshConnectionStatus.error:
-        color = colorScheme.error;
+        color = Colors.red;
         glow = false;
       case SshConnectionStatus.disconnected:
         color = colorScheme.outlineVariant;
@@ -221,11 +250,37 @@ class _ConnectionStatusBadge extends ConsumerWidget {
         // No active session — show TCP reachability
         final reachability = ref.watch(serverReachabilityProvider(server));
         return reachability.when(
-          loading: () => _badge(colorScheme.secondary, glow: true),
-          error: (_, _) => _badge(colorScheme.error, glow: false),
-          data: (reachable) => reachable
-              ? _badge(colorScheme.tertiary, glow: true)
-              : _badge(colorScheme.error, glow: false),
+          loading: () => Tooltip(
+            message: l10n.serverReachabilityChecking,
+            child: _badge(colorScheme.secondary, glow: true),
+          ),
+          error: (_, _) => Tooltip(
+            message: l10n.serverNotReachable,
+            child: _badge(colorScheme.error, glow: false),
+          ),
+          data: (status) {
+            final (color, message, glow) = switch (status) {
+              ServerReachability.unreachable => (
+                Colors.red,
+                l10n.serverNotReachable,
+                false,
+              ),
+              ServerReachability.portClosed => (
+                Colors.amber,
+                l10n.serverPortClosed,
+                false,
+              ),
+              ServerReachability.portOpen => (
+                Colors.green,
+                l10n.serverPortOpen,
+                true,
+              ),
+            };
+            return Tooltip(
+              message: message,
+              child: _badge(color, glow: glow),
+            );
+          },
         );
     }
 

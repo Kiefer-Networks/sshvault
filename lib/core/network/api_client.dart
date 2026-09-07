@@ -138,7 +138,7 @@ class ApiClient {
     final data = e.response?.data;
 
     String message;
-    if (data is Map<String, dynamic> && data.containsKey('error')) {
+    if (data is Map<String, dynamic> && data['error'] is String) {
       message = data['error'] as String;
     } else if (data is String && data.isNotEmpty) {
       // Plain-text or HTML error from reverse proxy
@@ -152,6 +152,13 @@ class ApiClient {
       };
     }
 
-    return NetworkFailure(message, statusCode: statusCode, cause: e);
+    return NetworkFailure(
+      message,
+      statusCode: statusCode,
+      responseData: data is Map
+          ? Map<String, dynamic>.from(data)
+          : null,
+      cause: e,
+    );
   }
 }

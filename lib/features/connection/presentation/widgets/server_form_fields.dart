@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sshvault/core/ssh/agent_identities.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -13,7 +14,6 @@ import 'package:sshvault/features/connection/presentation/widgets/ssh_key_select
 /// without having to extend the persisted server entity. When the form
 /// stores this id the runtime auth path should source the key from the
 /// running agent rather than from the SSHVault key vault.
-const String kSshAgentSentinelKeyId = '__ssh_agent__';
 
 class ServerFormFields extends ConsumerWidget {
   final TextEditingController nameController;

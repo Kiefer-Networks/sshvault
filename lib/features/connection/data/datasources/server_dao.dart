@@ -44,10 +44,10 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
     return (select(servers)..where(
           (s) =>
               s.deletedAt.isNull() &
-              (s.name.like('%$escaped%') |
-                  s.hostname.like('%$escaped%') |
-                  s.username.like('%$escaped%') |
-                  s.notes.like('%$escaped%')),
+              (s.name.like('%$escaped%', escapeChar: '\\') |
+                  s.hostname.like('%$escaped%', escapeChar: '\\') |
+                  s.username.like('%$escaped%', escapeChar: '\\') |
+                  s.notes.like('%$escaped%', escapeChar: '\\')),
         ))
         .get();
   }
@@ -66,9 +66,9 @@ class ServerDao extends DatabaseAccessor<AppDatabase> with _$ServerDaoMixin {
       query = query
         ..where(
           (s) =>
-              s.name.like('%$escaped%') |
-              s.hostname.like('%$escaped%') |
-              s.username.like('%$escaped%'),
+              s.name.like('%$escaped%', escapeChar: '\\') |
+              s.hostname.like('%$escaped%', escapeChar: '\\') |
+              s.username.like('%$escaped%', escapeChar: '\\'),
         );
     }
 

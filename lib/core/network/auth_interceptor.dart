@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/core/storage/secure_storage_service.dart';
@@ -13,8 +11,7 @@ class AuthInterceptor extends Interceptor {
   final SecureStorageService _storage;
   final Dio _dio;
   final OnAuthExpired? onAuthExpired;
-  bool _isRefreshing = false;
-  Completer<void>? _refreshCompleter;
+  Future<String?>? _refreshFuture;
 
   AuthInterceptor(this._storage, this._dio, {this.onAuthExpired});
 
@@ -24,6 +21,11 @@ class AuthInterceptor extends Interceptor {
     '/auth/login',
     '/auth/register',
     '/health',
+    '/auth/challenge',
+    '/auth/logout',
+    '/auth/confirm-email-change',
+    '/attestation',
+    '/attestation/pubkey',
     '/auth/forgot-password',
     '/auth/reset-password',
     '/auth/verify-email',
@@ -71,113 +73,96 @@ class AuthInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    if (err.response?.statusCode != 401) {
+    if (err.response?.statusCode != 401 ||
+        _isPublicPath(err.requestOptions.path)) {
       return handler.next(err);
     }
 
-    // Skip refresh for auth endpoints
-    if (err.requestOptions.path.contains('/auth/refresh') ||
-        err.requestOptions.path.contains('/auth/login')) {
-      _log.warning(
-        _tag,
-        '401 on auth endpoint ${err.requestOptions.path} — not refreshing',
-      );
-      return handler.next(err);
-    }
-
-    _log.info(
-      _tag,
-      '401 on ${err.requestOptions.path} — attempting token refresh',
-    );
-
-    // If another refresh is already in progress, wait for it and retry.
-    if (_isRefreshing) {
-      _log.debug(_tag, 'Token refresh already in progress, waiting');
-      try {
-        await _refreshCompleter!.future;
-        // Refresh succeeded — retry with the new token.
-        final tokenResult = await _storage.getAccessToken();
-        final token = tokenResult.isSuccess ? tokenResult.value : null;
-        final opts = err.requestOptions;
-        opts.headers['Authorization'] = 'Bearer $token';
-        final retryResponse = await _dio.fetch(opts);
-        return handler.resolve(retryResponse);
-      } catch (e) {
-        _log.warning(_tag, 'Concurrent token refresh failed: $e');
-        return handler.next(err);
+    try {
+      // A delayed 401 may arrive after another request already rotated the
+      // token. Reuse that token instead of consuming the replacement again.
+      final stored = await _storage.getAccessToken();
+      var token = stored.isSuccess ? stored.value : null;
+      if (token == null ||
+          err.requestOptions.headers['Authorization'] == 'Bearer $token') {
+        final pending = _refreshFuture ??= _refreshTokens();
+        try {
+          token = await pending;
+        } finally {
+          if (identical(_refreshFuture, pending)) _refreshFuture = null;
+        }
       }
-    }
+      if (token == null) return handler.next(err);
 
-    _isRefreshing = true;
-    final completer = Completer<void>();
-    _refreshCompleter = completer;
+      final options = err.requestOptions;
+      options.headers['Authorization'] = 'Bearer $token';
+      // This Dio has no auth interceptor: retries are bounded to one request.
+      final response = await _dio.fetch<dynamic>(options);
+      return handler.resolve(response);
+    } on DioException catch (error) {
+      // The refreshed session remains valid even if the retried operation
+      // fails. Surface the actual operation error without clearing tokens.
+      return handler.next(error);
+    } catch (error) {
+      _log.error(_tag, 'Authentication retry failed: $error');
+      return handler.next(err);
+    }
+  }
+
+  Future<String?> _refreshTokens() async {
     try {
       final refreshResult = await _storage.getRefreshToken();
       final refreshToken = refreshResult.isSuccess ? refreshResult.value : null;
-      if (refreshToken == null) {
-        _log.warning(_tag, 'No refresh token available — session expired');
+      if (refreshToken == null || refreshToken.isEmpty) {
         await _handleAuthExpired();
-        completer.completeError(StateError('No refresh token available'));
-        return handler.next(err);
+        return null;
       }
-
-      _log.debug(_tag, 'Refreshing access token');
       final response = await _dio.post<Map<String, dynamic>>(
         '/v1/auth/refresh',
         data: {'refresh_token': refreshToken},
       );
-
       final data = response.data;
-      if (data == null) {
-        _log.error(_tag, 'Token refresh returned empty response');
+      final access = data?['access_token'];
+      final refresh = data?['refresh_token'];
+      if (access is! String ||
+          access.isEmpty ||
+          refresh is! String ||
+          refresh.isEmpty) {
+        _log.error(_tag, 'Invalid token refresh response');
+        // A 2xx refresh may already have consumed the single-use token.
+        // Replaying it after an unusable response could revoke every session.
         await _handleAuthExpired();
-        completer.completeError(StateError('Empty refresh response'));
-        return handler.next(err);
+        return null;
       }
-      final newAccessToken = data['access_token'] as String;
-      final newRefreshToken = data['refresh_token'] as String;
-      String? expiresAt;
-      final rawExpiry = data['expires_at'];
+      final accessSaved = await _storage.saveAccessToken(access);
+      final refreshSaved = await _storage.saveRefreshToken(refresh);
+      if (accessSaved.isFailure || refreshSaved.isFailure) {
+        // A rotated token that could not be saved cannot safely be replayed.
+        await _handleAuthExpired();
+        return null;
+      }
+      final rawExpiry = data?['expires_at'];
       if (rawExpiry is int) {
-        expiresAt = DateTime.fromMillisecondsSinceEpoch(
-          rawExpiry * 1000,
-          isUtc: true,
-        ).toIso8601String();
+        await _storage.saveTokenExpiry(
+          DateTime.fromMillisecondsSinceEpoch(
+            rawExpiry * 1000,
+            isUtc: true,
+          ).toIso8601String(),
+        );
       } else if (rawExpiry is String) {
-        expiresAt = rawExpiry;
+        await _storage.saveTokenExpiry(rawExpiry);
       }
-
-      await _storage.saveAccessToken(newAccessToken);
-      await _storage.saveRefreshToken(newRefreshToken);
-      if (expiresAt != null) {
-        await _storage.saveTokenExpiry(expiresAt);
+      return access;
+    } on DioException catch (error) {
+      // Only explicit refresh rejection proves that the session is invalid.
+      // Offline, timeouts, rate limiting and server failures are retryable.
+      if (error.response?.statusCode == 401) {
+        await _handleAuthExpired(sessionRevoked: true);
       }
-
-      _log.info(_tag, 'Token refreshed successfully');
-
-      // Signal waiting requests that the refresh succeeded.
-      completer.complete();
-
-      // Retry original request with new token
-      final opts = err.requestOptions;
-      opts.headers['Authorization'] = 'Bearer $newAccessToken';
-      final retryResponse = await _dio.fetch(opts);
-      return handler.resolve(retryResponse);
-    } on DioException catch (e) {
-      final statusCode = e.response?.statusCode;
-      _log.error(
-        _tag,
-        'Token refresh failed: ${statusCode ?? 'N/A'} ${e.message}',
-      );
-      // 401 on refresh means the session was explicitly revoked
-      // (e.g. logout-all-devices). Other errors are transient.
-      await _handleAuthExpired(sessionRevoked: statusCode == 401);
-      if (!completer.isCompleted) {
-        completer.completeError(StateError('Token refresh failed'));
-      }
-      return handler.next(err);
-    } finally {
-      _isRefreshing = false;
+      return null;
+    } catch (error) {
+      _log.error(_tag, 'Token refresh failed: $error');
+      return null;
     }
   }
 
@@ -185,7 +170,7 @@ class AuthInterceptor extends Interceptor {
     _log.warning(
       _tag,
       sessionRevoked
-          ? 'Session revoked — clearing all local data'
+          ? 'Session revoked — clearing tokens'
           : 'Auth expired — clearing tokens',
     );
     await _storage.clearAuthTokens();

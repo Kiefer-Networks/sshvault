@@ -3924,6 +3924,42 @@ abstract class AppLocalizations {
   /// **'App Lock'**
   String get settingsSectionAppLock;
 
+  /// No description provided for @serverSystemInfoConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow server system information queries (OS, kernel, CPU, RAM and disks)'**
+  String get serverSystemInfoConsent;
+
+  /// No description provided for @serverSystemInfoConsentDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'When enabled, SSHVault reads technical metadata only. No files or secrets are accessed.'**
+  String get serverSystemInfoConsentDescription;
+
+  /// No description provided for @serverSystemInfoAutoRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically refresh server information'**
+  String get serverSystemInfoAutoRefresh;
+
+  /// No description provided for @serverSystemInfoAutoRefreshDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh the values after successful connections and at the selected interval.'**
+  String get serverSystemInfoAutoRefreshDescription;
+
+  /// No description provided for @serverSystemInfoRefreshInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh interval'**
+  String get serverSystemInfoRefreshInterval;
+
+  /// No description provided for @serverSystemInfoRefreshIntervalValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {seconds} seconds'**
+  String serverSystemInfoRefreshIntervalValue(int seconds);
+
   /// No description provided for @settingsSectionPrivacy.
   ///
   /// In en, this message translates to:
@@ -4775,6 +4811,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This device'**
   String get thisDevice;
+
+  /// No description provided for @serverReachabilityChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking reachability'**
+  String get serverReachabilityChecking;
+
+  /// No description provided for @serverNotReachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not reachable'**
+  String get serverNotReachable;
+
+  /// No description provided for @serverPortClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reachable, port closed'**
+  String get serverPortClosed;
+
+  /// No description provided for @serverPortOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reachable and port open'**
+  String get serverPortOpen;
+
+  /// No description provided for @settingsDuressPinRemoveWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the duress PIN? Normal PIN and biometric settings remain unchanged.'**
+  String get settingsDuressPinRemoveWarning;
+
+  /// No description provided for @desktopDetailsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a server or open a connection to view details.'**
+  String get desktopDetailsEmpty;
+
+  /// No description provided for @serverDetailLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated'**
+  String get serverDetailLastUpdated;
+
+  /// No description provided for @serverDetailCpu.
+  ///
+  /// In en, this message translates to:
+  /// **'CPU'**
+  String get serverDetailCpu;
+
+  /// No description provided for @serverDetailRam.
+  ///
+  /// In en, this message translates to:
+  /// **'RAM'**
+  String get serverDetailRam;
+
+  /// No description provided for @serverDetailKernel.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel'**
+  String get serverDetailKernel;
+
+  /// No description provided for @serverDetailDisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Disks'**
+  String get serverDetailDisks;
+
+  /// No description provided for @serverDetailSystemInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'System information'**
+  String get serverDetailSystemInfo;
+
+  /// No description provided for @serverSystemInfoRefreshIntervalMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {minutes} minutes'**
+  String serverSystemInfoRefreshIntervalMinutes(int minutes);
+
+  /// No description provided for @serverDetailVirtualMachine.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual machine'**
+  String get serverDetailVirtualMachine;
+
+  /// No description provided for @serverDetailPhysicalCores.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical cores'**
+  String get serverDetailPhysicalCores;
+
+  /// No description provided for @serverDetailSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial number'**
+  String get serverDetailSerial;
+
+  /// No description provided for @serverDetailCpuVendor.
+  ///
+  /// In en, this message translates to:
+  /// **'CPU vendor'**
+  String get serverDetailCpuVendor;
 }
 
 class _AppLocalizationsDelegate

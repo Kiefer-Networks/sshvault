@@ -13,7 +13,8 @@ class VaultEntity {
 
   factory VaultEntity.fromJson(Map<String, dynamic> json) {
     DateTime? updatedAt;
-    final raw = json['updated_at'];
+    // History entries use created_at for the time this vault version was saved.
+    final raw = json['updated_at'] ?? json['created_at'];
     if (raw is int) {
       updatedAt = DateTime.fromMillisecondsSinceEpoch(raw * 1000, isUtc: true);
     } else if (raw is String) {

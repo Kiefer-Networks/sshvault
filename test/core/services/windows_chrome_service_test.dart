@@ -128,30 +128,26 @@ void main() {
     svc.resetForTest();
   });
 
-  test(
-    'applyChrome is a no-op on non-Windows platforms',
-    () async {
-      // On Linux/macOS test runners the service short-circuits before
-      // touching any of the overrides — so neither acrylic init nor any
-      // DWM call should fire. (On a Windows runner the test still passes
-      // because we override every codepath.)
-      await svc.applyChrome(
-        const WindowsChromeOptions(
-          backdrop: WindowsBackdrop.mica,
-          roundedCorners: true,
-          darkTheme: true,
-        ),
-      );
+  test('applyChrome is a no-op on non-Windows platforms', () async {
+    // On Linux/macOS test runners the service short-circuits before
+    // touching any of the overrides — so neither acrylic init nor any
+    // DWM call should fire. (On a Windows runner the test still passes
+    // because we override every codepath.)
+    await svc.applyChrome(
+      const WindowsChromeOptions(
+        backdrop: WindowsBackdrop.mica,
+        roundedCorners: true,
+        darkTheme: true,
+      ),
+    );
 
-      // We can't assert "exactly zero calls" portably (Windows would record
-      // them), but on a Linux runner the count must stay at zero. We make
-      // the assumption explicit: at least the FFI invariants hold —
-      // `findFlutterRunnerHwnd` is never called when DWM access fails on
-      // an unsupported platform.
-      expect(dwm.calls, anyOf(isEmpty, isNotEmpty));
-    },
-    skip: 'Platform-gated — see Mica/dark/corner tests below for FFI cov.',
-  );
+    // We can't assert "exactly zero calls" portably (Windows would record
+    // them), but on a Linux runner the count must stay at zero. We make
+    // the assumption explicit: at least the FFI invariants hold —
+    // `findFlutterRunnerHwnd` is never called when DWM access fails on
+    // an unsupported platform.
+    expect(dwm.calls, anyOf(isEmpty, isNotEmpty));
+  }, skip: 'Platform-gated — see Mica/dark/corner tests below for FFI cov.');
 
   group('FFI surface (override path, all platforms)', () {
     // The override-driven group bypasses the `Platform.isWindows` guard

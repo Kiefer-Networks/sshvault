@@ -193,16 +193,12 @@ void main() {
       timeout: const Timeout(Duration(seconds: 60)),
     );
 
-    test(
-      'PPK v3 Ed25519 rejects wrong passphrase',
-      () async {
-        expect(
-          () => PpkParser.parse(_ppkV3EncEd25519, passphrase: 'wrong'),
-          throwsA(isA<PpkParseException>()),
-        );
-      },
-      timeout: const Timeout(Duration(seconds: 60)),
-    );
+    test('PPK v3 Ed25519 rejects wrong passphrase', () async {
+      expect(
+        () => PpkParser.parse(_ppkV3EncEd25519, passphrase: 'wrong'),
+        throwsA(isA<PpkParseException>()),
+      );
+    }, timeout: const Timeout(Duration(seconds: 60)));
   });
 
   group('PpkParser.parse — MAC tampering', () {

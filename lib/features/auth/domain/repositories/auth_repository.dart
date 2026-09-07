@@ -2,7 +2,7 @@ import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/features/auth/domain/entities/auth_response.dart';
 
 abstract class AuthRepository {
-  Future<Result<AuthResponse>> register(String email, String password);
+  Future<Result<void>> register(String email, String password);
   Future<Result<AuthResponse>> login(
     String email,
     String password, {
@@ -11,5 +11,5 @@ abstract class AuthRepository {
   Future<Result<void>> logout(String refreshToken);
   Future<Result<void>> forgotPassword(String email);
   Future<Result<void>> resetPassword(String token, String newPassword);
-  Future<Result<void>> verifyEmail(String token);
+  Future<Result<void>> verifyEmail(String token, String newPassword);
 }

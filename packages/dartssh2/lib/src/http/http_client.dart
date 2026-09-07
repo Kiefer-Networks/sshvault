@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:dartssh2/src/http/http_date.dart';
 import 'package:dartssh2/src/http/http_exception.dart';
 import 'package:dartssh2/src/http/line_decoder.dart';
 import 'package:dartssh2/src/http/http_content_type.dart';
@@ -23,13 +25,29 @@ import 'package:dartssh2/src/ssh_client.dart';
 /// host that are easier to communicate with using HTTP. *Not* for communicating
 /// with API endpoints on the internet.
 class SSHHttpClient {
-  const SSHHttpClient(this.client);
+  const SSHHttpClient(this.client, {this.idleTimeout});
 
   final SSHClient client;
 
+  /// Maximum time to wait between two pieces of a response before giving up.
+  ///
+  /// A response that carries neither `Content-Length` nor
+  /// `Transfer-Encoding: chunked` is delimited by the peer closing the
+  /// connection (RFC 9112 §6.3), so it has to be read until end of stream.
+  /// A peer that sends such a response and then holds the connection open
+  /// would keep that read waiting forever, and nothing else here bounds it.
+  ///
+  /// When set, a [TimeoutException] is thrown if the server goes this long
+  /// without sending anything further. It is an inactivity timeout, not a
+  /// deadline for the whole response, so a large but steadily arriving body
+  /// is never cut short. Null (the default) keeps the previous unbounded
+  /// behaviour.
+  final Duration? idleTimeout;
+
   /// Send a HTTP request to [uri] with the provided [method].
   SSHHttpClientRequest request(String method, Uri uri, bool body) {
-    final request = SSHHttpClientRequest._(client, method, uri, body);
+    final request =
+        SSHHttpClientRequest._(client, method, uri, body, idleTimeout);
     return request;
   }
 
@@ -91,8 +109,16 @@ class SSHHttpClientRequest {
   /// Whether or not the HTTP request has a body.
   bool get hasBody => _body != null;
 
-  SSHHttpClientRequest._(this.client, this.method, this.uri, bool body)
-      : _body = body ? BytesBuilder() : null;
+  /// See [SSHHttpClient.idleTimeout].
+  final Duration? idleTimeout;
+
+  SSHHttpClientRequest._(
+    this.client,
+    this.method,
+    this.uri,
+    bool body,
+    this.idleTimeout,
+  ) : _body = body ? BytesBuilder() : null;
 
   /// Write content into the body of the HTTP request.
   void write(Object? obj) {
@@ -139,7 +165,11 @@ class SSHHttpClientRequest {
 
     final socket = await client.forwardLocal(uri.host, uri.port);
     socket.sink.add(buffer.toString().codeUnits);
-    return SSHHttpClientResponse.from(socket);
+    return SSHHttpClientResponse.from(
+      socket,
+      method: method,
+      idleTimeout: idleTimeout,
+    );
   }
 }
 
@@ -403,7 +433,19 @@ class SSHHttpClientResponse {
 
   /// Creates an instance of [SSHHttpClientResponse] that contains the response
   /// sent by the HTTP server over [socket].
-  static Future<SSHHttpClientResponse> from(SSHSocket socket) async {
+  ///
+  /// [method] is the request method this is a response to. It is only used to
+  /// recognise a response to `HEAD`, which never carries a body however the
+  /// framing headers are set. Leaving it null assumes the response may have
+  /// one.
+  ///
+  /// [idleTimeout] bounds the wait between two pieces of the response; see
+  /// [SSHHttpClient.idleTimeout].
+  static Future<SSHHttpClientResponse> from(
+    SSHSocket socket, {
+    String? method,
+    Duration? idleTimeout,
+  }) async {
     int? statusCode;
     String? reasonPhrase;
     final body = StringBuffer();
@@ -411,27 +453,135 @@ class SSHHttpClientResponse {
 
     var inHeader = false;
     var inBody = false;
-    var contentLength = 0;
+    // -1 means "unknown" (no Content-Length header was present). In that
+    // case the body length is not known in advance, so reading continues
+    // until the stream ends (the connection is closed by the peer) rather
+    // than breaking out early. Only a non-negative value here means a
+    // Content-Length header was actually parsed from the response.
+    var contentLength = -1;
     var contentRead = 0;
+    var finished = false;
+
+    // Chunked transfer encoding state (RFC 7230 §4.1).
+    var chunked = false;
+    var expectingChunkSize = false;
+    var expectingChunkData = false;
+    var expectingChunkCRLF = false;
+    var inTrailers = false;
+    var currentChunkSize = 0;
 
     void processLine(String line, int bytesRead, LineDecoder decoder) {
+      // Everything after the response is complete is not ours to parse: a
+      // bodyless response may be followed by bytes still in the decoder's
+      // buffer, and feeding those through the header branch below would
+      // fail as a malformed header line.
+      if (finished) return;
+
+      final normalizedLine = line.trimRight();
       if (inBody) {
-        body.write(line);
-        contentRead += bytesRead;
+        if (chunked) {
+          if (expectingChunkSize) {
+            final trimmed = line.trim();
+            // Allow optional chunk extensions: <size>;(extension...)
+            final semi = trimmed.indexOf(';');
+            final sizeStr =
+                (semi >= 0 ? trimmed.substring(0, semi) : trimmed).trim();
+            currentChunkSize = int.parse(sizeStr, radix: 16);
+            if (currentChunkSize == 0) {
+              // Last-chunk; proceed to optional trailer headers terminated
+              // by a blank line.
+              expectingChunkSize = false;
+              inTrailers = true;
+              return;
+            }
+            // Read exactly currentChunkSize bytes for chunk data.
+            expectingChunkSize = false;
+            expectingChunkData = true;
+            decoder.expectedByteCount = currentChunkSize;
+            return;
+          }
+          if (expectingChunkData) {
+            // Append chunk data (decoded as UTF-8 text).
+            body.write(line);
+            expectingChunkData = false;
+            expectingChunkCRLF = true;
+            // The next line in the stream is the trailing CRLF/LF after chunk data.
+            // Leave decoder.expectedByteCount as -1 to scan until the next '\n'.
+            return;
+          }
+          if (expectingChunkCRLF) {
+            // Ignore CRLF and expect next chunk size line.
+            expectingChunkCRLF = false;
+            expectingChunkSize = true;
+            return;
+          }
+          if (inTrailers) {
+            // Read trailers until blank line, then finish.
+            if (line.trim().isEmpty) {
+              finished = true;
+            } else {
+              // Store trailer headers if needed.
+              final separator = line.indexOf(':');
+              if (separator > 0) {
+                final name = line.substring(0, separator).toLowerCase().trim();
+                final value = line.substring(separator + 1).trim();
+                headers.putIfAbsent(name, () => []).add(value);
+              }
+            }
+            return;
+          }
+          // Should not reach here under normal chunked flow.
+          return;
+        } else {
+          body.write(line);
+          contentRead += bytesRead;
+        }
       } else if (inHeader) {
-        if (line.trim().isEmpty) {
+        if (normalizedLine.trim().isEmpty) {
           inBody = true;
-          if (contentLength > 0) {
-            decoder.expectedByteCount = contentLength;
+
+          // RFC 9110 §6.4.1 and RFC 9112 §6.3: a 1xx, 204 or 304
+          // response, and any response to HEAD, never has a body, whatever
+          // the framing headers say. Stopping here matters because without
+          // a `Content-Length` the read below runs until the peer closes
+          // the connection -- for these responses that is a wait for
+          // something that is never coming.
+          if (_responseHasNoBody(statusCode, method)) {
+            finished = true;
+            return;
+          }
+
+          // Decide body framing.
+          final te = headers[SSHHttpHeaders.transferEncodingHeader]
+              ?.join(',')
+              .toLowerCase();
+          if (te != null && te.contains('chunked')) {
+            chunked = true;
+            expectingChunkSize = true;
+          } else {
+            // Identity transfer; use Content-Length when provided.
+            if (contentLength > 0) {
+              decoder.expectedByteCount = contentLength;
+            }
           }
           return;
         }
-        final separator = line.indexOf(':');
-        final name = line.substring(0, separator).toLowerCase().trim();
-        final value = line.substring(separator + 1).trim();
+        final separator = normalizedLine.indexOf(':');
+        if (separator <= 0) {
+          throw FormatException(
+            'Invalid header line: "$normalizedLine" - no colon separator found',
+          );
+        }
+        final name =
+            normalizedLine.substring(0, separator).toLowerCase().trim();
+        final value = normalizedLine.substring(separator + 1).trim();
+        final normalizedValue = value.toLowerCase();
         if (name == SSHHttpHeaders.transferEncodingHeader &&
-            value.toLowerCase() != 'identity') {
-          throw UnsupportedError('only identity transfer encoding is accepted');
+            normalizedValue != 'identity' &&
+            normalizedValue != 'chunked') {
+          throw UnsupportedError(
+            "only 'identity' or 'chunked' transfer encodings are accepted: $normalizedValue",
+          );
         }
         if (name == SSHHttpHeaders.contentLengthHeader) {
           contentLength = int.parse(value);
@@ -440,11 +590,12 @@ class SSHHttpClientResponse {
           headers[name] = [];
         }
         headers[name]!.add(value);
-      } else if (line.startsWith('HTTP/1.1') || line.startsWith('HTTP/1.0')) {
+      } else if (normalizedLine.startsWith('HTTP/1.1') ||
+          normalizedLine.startsWith('HTTP/1.0')) {
         statusCode = int.parse(
-          line.substring('HTTP/1.x '.length, 'HTTP/1.x xxx'.length),
+          normalizedLine.substring('HTTP/1.x '.length, 'HTTP/1.x xxx'.length),
         );
-        reasonPhrase = line.substring('HTTP/1.x xxx '.length);
+        reasonPhrase = normalizedLine.substring('HTTP/1.x xxx '.length);
         inHeader = true;
       } else {
         throw UnsupportedError('unsupported http response format');
@@ -453,19 +604,30 @@ class SSHHttpClientResponse {
 
     final lineDecoder = LineDecoder.withCallback(processLine);
 
-    await for (final chunk in socket.stream) {
-      if (!inHeader ||
-          !inBody ||
-          ((contentRead + lineDecoder.bufferedBytes) < contentLength)) {
-        lineDecoder.add(chunk);
-        continue;
-      }
-      break;
-    }
+    // An inactivity timeout rather than a deadline for the whole response,
+    // so a large body that keeps arriving is never cut short. Applied to
+    // the stream rather than around the loop so that firing it cancels the
+    // subscription instead of leaving it running behind a failed future.
+    final responseStream = idleTimeout == null
+        ? socket.stream
+        : socket.stream.timeout(idleTimeout);
 
     try {
+      await for (final chunk in responseStream) {
+        lineDecoder.add(chunk);
+        if (finished) break;
+        if (!chunked) {
+          if (inHeader && inBody && contentLength >= 0) {
+            if ((contentRead + lineDecoder.bufferedBytes) >= contentLength) {
+              break;
+            }
+          }
+        }
+      }
       lineDecoder.close();
     } finally {
+      // Also covers the paths that throw out of the loop -- a timeout, or a
+      // malformed response -- which used to leave the socket open.
       socket.close();
     }
 
@@ -495,6 +657,33 @@ class SSHHttpClientResponse {
       body: body.toString(),
     );
   }
+}
+
+/// Whether a response with this [statusCode], to a request with this
+/// [method], is defined to carry no body at all.
+///
+/// Per RFC 9110 §6.4.1 that is any 1xx, 204 or 304 response, plus every
+/// response to a HEAD request. For these the framing headers describe the
+/// body the request would have had, so neither a `Content-Length` nor its
+/// absence says anything about what is actually on the wire.
+bool _responseHasNoBody(int? statusCode, String? method) {
+  if (method != null && method.toUpperCase() == 'HEAD') return true;
+  if (statusCode == null) return false;
+  if (statusCode >= 100 && statusCode < 200) return true;
+  return statusCode == 204 || statusCode == 304;
+}
+
+/// Parses a `Host` header value (e.g. `example.com`, `example.com:8080`,
+/// or the IPv6 form `[::1]:22`) into a [Uri] whose `host`/`port` reflect
+/// the authority.
+///
+/// [Uri.parse] treats a bare authority like `example.com:8080` as having
+/// scheme `example.com` and path `8080` (host/port both empty/zero), so a
+/// `//` prefix is added to make it unambiguous. A [val] that already
+/// includes a scheme (e.g. `http://example.com`) is tolerated as-is.
+Uri _parseHostHeaderUri(String val) {
+  final hasScheme = RegExp(r'^[a-zA-Z][a-zA-Z0-9+\-.]*://').hasMatch(val);
+  return Uri.parse(hasScheme ? val : '//$val');
 }
 
 class _SSHHttpClientResponseHeaders implements SSHHttpHeaders {
@@ -559,7 +748,7 @@ class _SSHHttpClientResponseHeaders implements SSHHttpHeaders {
   DateTime? get date {
     final val = value(SSHHttpHeaders.dateHeader);
     if (val != null) {
-      return DateTime.parse(val);
+      return parseHttpDate(val);
     }
     return null;
   }
@@ -573,7 +762,7 @@ class _SSHHttpClientResponseHeaders implements SSHHttpHeaders {
   DateTime? get expires {
     final val = value(SSHHttpHeaders.expiresHeader);
     if (val != null) {
-      return DateTime.parse(val);
+      return parseHttpDate(val);
     }
     return null;
   }
@@ -591,7 +780,7 @@ class _SSHHttpClientResponseHeaders implements SSHHttpHeaders {
   String? get host {
     final val = value(SSHHttpHeaders.hostHeader);
     if (val != null) {
-      return Uri.parse(val).host;
+      return _parseHostHeaderUri(val).host;
     }
     return null;
   }
@@ -600,7 +789,7 @@ class _SSHHttpClientResponseHeaders implements SSHHttpHeaders {
   DateTime? get ifModifiedSince {
     final val = value(SSHHttpHeaders.ifModifiedSinceHeader);
     if (val != null) {
-      return DateTime.parse(val);
+      return parseHttpDate(val);
     }
     return null;
   }
@@ -632,7 +821,8 @@ class _SSHHttpClientResponseHeaders implements SSHHttpHeaders {
   int? get port {
     final val = value(SSHHttpHeaders.hostHeader);
     if (val != null) {
-      return Uri.parse(val).port;
+      final uri = _parseHostHeaderUri(val);
+      return uri.hasPort ? uri.port : null;
     }
     return null;
   }

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/utils/auto_sync_mixin.dart';
 import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
+import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 
 final tagListProvider = AsyncNotifierProvider<TagListNotifier, List<TagEntity>>(
   TagListNotifier.new,
@@ -25,6 +26,8 @@ class TagListNotifier extends AsyncNotifier<List<TagEntity>>
     result.fold(
       onSuccess: (_) {
         ref.invalidateSelf();
+        ref.invalidate(serverListProvider);
+        ref.invalidate(serverCountByTagProvider);
         triggerAutoSync();
       },
       onFailure: (failure) => throw failure,
@@ -37,6 +40,8 @@ class TagListNotifier extends AsyncNotifier<List<TagEntity>>
     result.fold(
       onSuccess: (_) {
         ref.invalidateSelf();
+        ref.invalidate(serverListProvider);
+        ref.invalidate(serverCountByTagProvider);
         triggerAutoSync();
       },
       onFailure: (failure) => throw failure,
@@ -49,6 +54,8 @@ class TagListNotifier extends AsyncNotifier<List<TagEntity>>
     result.fold(
       onSuccess: (_) {
         ref.invalidateSelf();
+        ref.invalidate(serverListProvider);
+        ref.invalidate(serverCountByTagProvider);
         triggerAutoSync();
       },
       onFailure: (failure) => throw failure,

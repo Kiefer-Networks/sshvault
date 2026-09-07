@@ -142,13 +142,15 @@ class IosBackgroundSyncService {
         syncPassword,
         settings.localVaultVersion,
       );
-      return result.fold(
-        onSuccess: (newVersion) {
+      return await result.fold<Future<bool>>(
+        onSuccess: (newVersion) async {
           _log.info(_tag, 'BGTask sync completed (v=$newVersion)');
-          _ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
+          await _ref
+              .read(settingsProvider.notifier)
+              .setLocalVaultVersion(newVersion);
           return true;
         },
-        onFailure: (f) {
+        onFailure: (f) async {
           _log.warning(_tag, 'BGTask sync failed: $f');
           return false;
         },

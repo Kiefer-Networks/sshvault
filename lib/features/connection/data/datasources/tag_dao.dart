@@ -35,6 +35,9 @@ class TagDao extends DatabaseAccessor<AppDatabase> with _$TagDaoMixin {
   /// it is restored or skipped.
   Future<int> deleteTagById(String id) async {
     await (delete(serverTags)..where((st) => st.tagId.equals(id))).go();
+    await (delete(
+      attachedDatabase.snippetTags,
+    )..where((st) => st.tagId.equals(id))).go();
     final now = DateTime.now();
     return (update(tags)..where((t) => t.id.equals(id))).write(
       TagsCompanion(deletedAt: Value(now), updatedAt: Value(now)),

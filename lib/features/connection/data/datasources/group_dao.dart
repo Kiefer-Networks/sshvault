@@ -40,12 +40,23 @@ class GroupDao extends DatabaseAccessor<AppDatabase> with _$GroupDaoMixin {
       update(groups).replace(group);
 
   /// Soft delete — preserves the row so peers can replicate the deletion.
-  Future<int> deleteGroupById(String id) {
+  Future<int> deleteGroupById(String id) => transaction(() async {
     final now = DateTime.now();
+    await (update(groups)..where((g) => g.parentId.equals(id))).write(
+      GroupsCompanion(parentId: const Value(null), updatedAt: Value(now)),
+    );
+    await (update(servers)..where((s) => s.groupId.equals(id))).write(
+      ServersCompanion(groupId: const Value(null), updatedAt: Value(now)),
+    );
+    await (update(
+      attachedDatabase.snippets,
+    )..where((s) => s.groupId.equals(id))).write(
+      SnippetsCompanion(groupId: const Value(null), updatedAt: Value(now)),
+    );
     return (update(groups)..where((g) => g.id.equals(id))).write(
       GroupsCompanion(deletedAt: Value(now), updatedAt: Value(now)),
     );
-  }
+  });
 
   Future<int> hardDeleteGroupById(String id) =>
       (delete(groups)..where((g) => g.id.equals(id))).go();

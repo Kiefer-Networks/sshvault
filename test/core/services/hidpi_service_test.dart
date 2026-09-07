@@ -1,3 +1,6 @@
+@TestOn('linux')
+library;
+
 // Tests for the HiDPI / per-monitor scale bridge.
 //
 // We exercise the method-call handler directly (via `handleCallForTest`)

@@ -1,4 +1,9 @@
+// Uses dart:mirrors, which is VM-only.
+@TestOn('vm')
+library;
+
 import 'dart:typed_data';
+import 'dart:mirrors';
 
 import 'package:dartssh2/dartssh2.dart';
 import 'package:dartssh2/src/ssh_algorithm.dart';
@@ -40,21 +45,96 @@ void main() {
     });
   });
 
+  group('AEAD cipher metadata', () {
+    test('AES-GCM ciphers are marked as AEAD', () {
+      expect(SSHCipherType.aes128gcm.isAead, isTrue);
+      expect(SSHCipherType.aes256gcm.isAead, isTrue);
+      expect(SSHCipherType.aes128gcm.ivSize, 12);
+      expect(SSHCipherType.aes128gcm.aeadTagSize, 16);
+    });
+
+    test('OpenSSH ChaCha20-Poly1305 exposes packet-cipher metadata', () {
+      final cipher = SSHCipherType.chacha20poly1305;
+
+      expect(cipher.isAead, isTrue);
+      expect(cipher.keySize, 64);
+      expect(cipher.ivSize, 0);
+      expect(cipher.blockSize, 8);
+      expect(cipher.aeadTagSize, 16);
+    });
+
+    test('AEAD ciphers do not expose BlockCipher API', () {
+      for (final cipher in [
+        SSHCipherType.chacha20poly1305,
+        SSHCipherType.aes128gcm,
+      ]) {
+        expect(
+          () => cipher.createCipher(
+            Uint8List(cipher.keySize),
+            Uint8List(cipher.ivSize),
+            forEncryption: true,
+          ),
+          throwsA(isA<UnsupportedError>()),
+        );
+      }
+    });
+
+    test('fromName resolves AEAD ciphers', () {
+      expect(
+        SSHCipherType.fromName('chacha20-poly1305@openssh.com'),
+        SSHCipherType.chacha20poly1305,
+      );
+      expect(
+        SSHCipherType.fromName('aes128-gcm@openssh.com'),
+        SSHCipherType.aes128gcm,
+      );
+      expect(
+        SSHCipherType.fromName('aes256-gcm@openssh.com'),
+        SSHCipherType.aes256gcm,
+      );
+    });
+
+    test('createCipher throws when cipher factory is missing', () {
+      final library = reflectClass(SSHCipherType).owner as LibraryMirror;
+      final ctor = MirrorSystem.getSymbol('_', library);
+      final dynamic custom = reflectClass(SSHCipherType).newInstance(
+        ctor,
+        const [],
+        {
+          #name: 'custom-null-factory',
+          #keySize: 16,
+          #ivSize: 16,
+          #blockSize: 16,
+          #isAead: false,
+          #aeadTagSize: 0,
+          #cipherFactory: null,
+        },
+      ).reflectee;
+
+      expect(
+        () => custom.createCipher(
+          Uint8List(16),
+          Uint8List(16),
+          forEncryption: true,
+        ),
+        throwsA(isA<StateError>()),
+      );
+    });
+  });
+
   test('Default values are set correctly', () {
     final algorithms = SSHAlgorithms();
 
     expect(
         algorithms.kex,
         equals([
+          SSHKexType.x25519Rfc,
           SSHKexType.x25519,
           SSHKexType.nistp521,
           SSHKexType.nistp384,
           SSHKexType.nistp256,
           SSHKexType.dhGexSha256,
           SSHKexType.dh14Sha256,
-          SSHKexType.dh14Sha1,
-          SSHKexType.dhGexSha1,
-          SSHKexType.dh1Sha1,
         ]));
 
     expect(
@@ -63,7 +143,6 @@ void main() {
           SSHHostkeyType.ed25519,
           SSHHostkeyType.rsaSha512,
           SSHHostkeyType.rsaSha256,
-          SSHHostkeyType.rsaSha1,
           SSHHostkeyType.ecdsa521,
           SSHHostkeyType.ecdsa384,
           SSHHostkeyType.ecdsa256,
@@ -72,24 +151,74 @@ void main() {
     expect(
         algorithms.cipher,
         equals([
-          SSHCipherType.aes128ctr,
-          SSHCipherType.aes128cbc,
+          SSHCipherType.aes256gcm,
+          SSHCipherType.aes128gcm,
+          SSHCipherType.chacha20poly1305,
           SSHCipherType.aes256ctr,
-          SSHCipherType.aes256cbc,
+          SSHCipherType.aes128ctr,
         ]));
 
     expect(
         algorithms.mac,
         equals([
-          SSHMacType.hmacSha256_96,
-          SSHMacType.hmacSha512_96,
           SSHMacType.hmacSha256Etm,
           SSHMacType.hmacSha512Etm,
-          SSHMacType.hmacSha1,
           SSHMacType.hmacSha256,
           SSHMacType.hmacSha512,
-          SSHMacType.hmacMd5,
+          SSHMacType.hmacSha1,
         ]));
+  });
+
+  group('Default algorithm preferences', () {
+    final algorithms = SSHAlgorithms();
+
+    test('prefer AEAD over CTR', () {
+      final names = algorithms.cipher.toNameList();
+      final lastCtr = names.lastIndexWhere((name) => name.endsWith('-ctr'));
+      final lastGcm = names.lastIndexWhere((name) => name.contains('gcm'));
+
+      expect(lastGcm, lessThan(lastCtr));
+    });
+
+    test('prefer encrypt-then-MAC over encrypt-and-MAC', () {
+      final macs = algorithms.mac;
+      final lastEtm = macs.lastIndexWhere((mac) => mac.isEtm);
+      final firstPlain = macs.indexWhere((mac) => !mac.isEtm);
+
+      expect(lastEtm, lessThan(firstPlain));
+    });
+
+    test('exclude broken algorithms', () {
+      expect(algorithms.mac, isNot(contains(SSHMacType.hmacMd5)));
+      expect(algorithms.mac, isNot(contains(SSHMacType.hmacSha256_96)));
+      expect(algorithms.mac, isNot(contains(SSHMacType.hmacSha512_96)));
+      expect(algorithms.kex, isNot(contains(SSHKexType.dh1Sha1)));
+      expect(algorithms.kex, isNot(contains(SSHKexType.dh14Sha1)));
+      expect(algorithms.kex, isNot(contains(SSHKexType.dhGexSha1)));
+      expect(algorithms.hostkey, isNot(contains(SSHHostkeyType.rsaSha1)));
+      expect(algorithms.cipher, isNot(contains(SSHCipherType.aes128cbc)));
+      expect(algorithms.cipher, isNot(contains(SSHCipherType.aes256cbc)));
+    });
+
+    test('keep hmac-sha1 last for OpenSSH compatibility', () {
+      expect(algorithms.mac.last, SSHMacType.hmacSha1);
+    });
+
+    test('legacy algorithms remain available through explicit configuration',
+        () {
+      const legacy = SSHAlgorithms(
+        kex: [SSHKexType.dh14Sha1, SSHKexType.dhGexSha1],
+        hostkey: [SSHHostkeyType.rsaSha1],
+        cipher: [SSHCipherType.aes128cbc, SSHCipherType.aes256cbc],
+      );
+
+      expect(legacy.kex, [SSHKexType.dh14Sha1, SSHKexType.dhGexSha1]);
+      expect(legacy.hostkey, [SSHHostkeyType.rsaSha1]);
+      expect(
+        legacy.cipher,
+        [SSHCipherType.aes128cbc, SSHCipherType.aes256cbc],
+      );
+    });
   });
 }
 
@@ -109,6 +238,28 @@ void testCipher(SSHCipherType type) {
     final decrypted = decrypter.processAll(cipherText);
 
     expect(decrypted, plainText);
+  });
+
+  test('$type rejects invalid key length', () {
+    expect(
+      () => type.createCipher(
+        Uint8List(type.keySize - 1),
+        Uint8List(type.blockSize),
+        forEncryption: true,
+      ),
+      throwsA(isA<ArgumentError>()),
+    );
+  });
+
+  test('$type rejects invalid IV length', () {
+    expect(
+      () => type.createCipher(
+        Uint8List(type.keySize),
+        Uint8List(type.ivSize - 1),
+        forEncryption: true,
+      ),
+      throwsA(isA<ArgumentError>()),
+    );
   });
 
   // test('$type needs init after reset', () {

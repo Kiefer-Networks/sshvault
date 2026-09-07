@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
 import 'package:xterm/xterm.dart';
@@ -36,11 +35,12 @@ class SshSessionEntity {
   SSHClient? client;
   SSHClient? jumpHostClient;
   SSHSession? session;
-  StreamSubscription<Uint8List>? stdoutSubscription;
-  StreamSubscription<Uint8List>? stderrSubscription;
+  StreamSubscription<String>? stdoutSubscription;
+  StreamSubscription<String>? stderrSubscription;
   SshConnectionStatus status;
   String? errorMessage;
   DistroInfo? distroInfo;
+  int connectionGeneration = 0;
   final DateTime createdAt;
 
   SshSessionEntity({

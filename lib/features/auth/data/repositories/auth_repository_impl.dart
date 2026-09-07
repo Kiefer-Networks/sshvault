@@ -10,19 +10,13 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._apiClient);
 
   @override
-  Future<Result<AuthResponse>> register(String email, String password) async {
+  Future<Result<void>> register(String email, String password) async {
     final result = await _apiClient.post(
       '/v1/auth/register',
       data: {'email': email, 'password': password},
     );
     return result.fold(
-      onSuccess: (data) {
-        try {
-          return Success(AuthResponse.fromJson(data));
-        } catch (e) {
-          return Err(AuthFailure('Invalid response format', cause: e));
-        }
-      },
+      onSuccess: (_) => const Success(null),
       onFailure: (f) => Err(AuthFailure(f.message, cause: f.cause)),
     );
   }
@@ -91,9 +85,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<void>> verifyEmail(String token) async {
-    final result = await _apiClient.get(
-      '/v1/auth/verify-email?token=${Uri.encodeComponent(token)}',
+  Future<Result<void>> verifyEmail(String token, String newPassword) async {
+    final result = await _apiClient.post(
+      '/v1/auth/verify-email',
+      data: {'token': token, 'new_password': newPassword},
     );
     return result.fold(
       onSuccess: (_) => const Success(null),

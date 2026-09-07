@@ -62,62 +62,70 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
     String? passphrase,
   }) async {
     try {
-      final now = DateTime.now();
-      final id = _uuid.v4();
+      return await _sshKeyDao.transaction(() async {
+        final now = DateTime.now();
+        final id = _uuid.v4();
 
-      // Extract public key if not provided
-      String publicKey = key.publicKey;
-      if (publicKey.isEmpty) {
-        final extractResult = await _sshKeyService.extractPublicKey(privateKey);
-        if (extractResult.isSuccess) {
-          publicKey = extractResult.value;
-        } else {
-          return Err(extractResult.failure);
+        // Extract public key if not provided
+        String publicKey = key.publicKey;
+        if (publicKey.isEmpty) {
+          final extractResult = await _sshKeyService.extractPublicKey(
+            privateKey,
+          );
+          if (extractResult.isSuccess) {
+            publicKey = extractResult.value;
+          } else {
+            return Err(extractResult.failure);
+          }
         }
-      }
 
-      // Compute fingerprint
-      String fingerprint = key.fingerprint;
-      if (fingerprint.isEmpty && publicKey.isNotEmpty) {
-        try {
-          fingerprint = _sshKeyService.computeFingerprint(publicKey);
-        } catch (e) {
-          _log.warning(_tag, 'Failed to compute SSH key fingerprint: $e');
-          fingerprint = '';
+        // Compute fingerprint
+        String fingerprint = key.fingerprint;
+        if (fingerprint.isEmpty && publicKey.isNotEmpty) {
+          try {
+            fingerprint = _sshKeyService.computeFingerprint(publicKey);
+          } catch (e) {
+            _log.warning(_tag, 'Failed to compute SSH key fingerprint: $e');
+            fingerprint = '';
+          }
         }
-      }
 
-      // Check for duplicate by fingerprint or public key content
-      if (fingerprint.isNotEmpty) {
-        final existing = await _sshKeyDao.getSshKeyByFingerprint(fingerprint);
-        if (existing != null) {
-          return Err(DuplicateSshKeyFailure(existing.name));
+        // Check for duplicate by fingerprint or public key content
+        if (fingerprint.isNotEmpty) {
+          final existing = await _sshKeyDao.getSshKeyByFingerprint(fingerprint);
+          if (existing != null) {
+            return Err(DuplicateSshKeyFailure(existing.name));
+          }
         }
-      }
-      if (publicKey.isNotEmpty) {
-        final existing = await _sshKeyDao.getSshKeyByPublicKey(publicKey);
-        if (existing != null) {
-          return Err(DuplicateSshKeyFailure(existing.name));
+        if (publicKey.isNotEmpty) {
+          final existing = await _sshKeyDao.getSshKeyByPublicKey(publicKey);
+          if (existing != null) {
+            return Err(DuplicateSshKeyFailure(existing.name));
+          }
         }
-      }
 
-      final newKey = key.copyWith(
-        id: id,
-        publicKey: publicKey,
-        fingerprint: fingerprint,
-        createdAt: now,
-        updatedAt: now,
-      );
+        final newKey = key.copyWith(
+          id: id,
+          publicKey: publicKey,
+          fingerprint: fingerprint,
+          createdAt: now,
+          updatedAt: now,
+        );
 
-      await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(newKey));
+        await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(newKey));
 
-      // Save private key and passphrase in SecureStorage
-      await _secureStorage.saveSshKeyPrivateKey(id, privateKey);
-      if (passphrase != null && passphrase.isNotEmpty) {
-        await _secureStorage.saveSshKeyPassphrase(id, passphrase);
-      }
+        // Save private key and passphrase in SecureStorage
+        await _requireStorage(
+          _secureStorage.saveSshKeyPrivateKey(id, privateKey),
+        );
+        if (passphrase != null && passphrase.isNotEmpty) {
+          await _requireStorage(
+            _secureStorage.saveSshKeyPassphrase(id, passphrase),
+          );
+        }
 
-      return Success(newKey);
+        return Success(newKey);
+      });
     } catch (e) {
       if (e is Failure) return Err(e);
       return Err(DatabaseFailure('Failed to create SSH key: $e'));
@@ -148,7 +156,7 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
         );
       }
       await _sshKeyDao.deleteSshKeyById(id);
-      await _secureStorage.deleteSshKeySecrets(id);
+      await _requireStorage(_secureStorage.deleteSshKeySecrets(id));
       return const Success(null);
     } catch (e) {
       return Err(DatabaseFailure('Failed to delete SSH key', cause: e));
@@ -173,5 +181,11 @@ class SshKeyRepositoryImpl implements SshKeyRepository {
   @override
   Future<Result<String?>> getSshKeyPassphrase(String id) {
     return _secureStorage.getSshKeyPassphrase(id);
+  }
+
+  Future<T> _requireStorage<T>(Future<Result<T>> operation) async {
+    final result = await operation;
+    if (result.isFailure) throw result.failure;
+    return result.value;
   }
 }

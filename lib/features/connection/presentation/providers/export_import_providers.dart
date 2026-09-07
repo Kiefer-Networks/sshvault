@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sshvault/core/storage/vault_reset_service.dart';
 import 'package:sshvault/features/connection/domain/repositories/export_import_repository.dart';
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
 
@@ -44,6 +45,7 @@ class ExportImportNotifier extends Notifier<AsyncValue<String?>> {
     );
     return result.fold(
       onSuccess: (importResult) {
+        invalidateVaultData(ref.container);
         state = const AsyncData(importSuccessfulKey);
         return importResult;
       },

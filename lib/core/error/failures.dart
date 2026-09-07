@@ -46,7 +46,13 @@ final class SftpFailure extends Failure {
 
 final class NetworkFailure extends Failure {
   final int? statusCode;
-  const NetworkFailure(super.message, {this.statusCode, super.cause});
+  final Map<String, dynamic>? responseData;
+  const NetworkFailure(
+    super.message, {
+    this.statusCode,
+    this.responseData,
+    super.cause,
+  });
 }
 
 final class AuthFailure extends Failure {

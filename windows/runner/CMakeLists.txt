@@ -52,15 +52,12 @@ endif()
 
 target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 
-# Force the WINDOWS subsystem in Release so a stray console window never appears
-# when the app is launched from Explorer or a shortcut. Debug keeps CONSOLE so
-# `flutter run`/IDE output stays visible. The entry point is `wWinMain` either
-# way (defined in main.cpp), which matches the WINDOWS subsystem default.
+# The runner defines the Unicode `wWinMain` entry point. Every configuration
+# therefore needs the Windows subsystem; using Console for Debug makes MSVC
+# search for a `main` symbol and fails at link time.
 set_target_properties(${BINARY_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
 target_link_options(${BINARY_NAME} PRIVATE
-    $<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>
-    $<$<CONFIG:Profile>:/SUBSYSTEM:WINDOWS>
-    $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>
+    /SUBSYSTEM:WINDOWS
 )
 
 # Run the Flutter tool portions of the build. This must not be removed.

@@ -489,7 +489,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get serverDetailPort => 'Port';
 
   @override
-  String get serverDetailUsername => 'Benutzername';
+  String get serverDetailUsername => 'Benutzer';
 
   @override
   String get serverDetailFolder => 'Ordner';
@@ -2094,6 +2094,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsSectionAppLock => 'App-Sperre';
 
   @override
+  String get serverSystemInfoConsent =>
+      'Server-Systeminformationen abfragen (Betriebssystem, Kernel, CPU, RAM und Datenträger)';
+
+  @override
+  String get serverSystemInfoConsentDescription =>
+      'SSHVault liest nur technische Metadaten. Keine Dateien oder Geheimnisse werden gelesen.';
+
+  @override
+  String get serverSystemInfoAutoRefresh =>
+      'Serverinformationen automatisch aktualisieren';
+
+  @override
+  String get serverSystemInfoAutoRefreshDescription =>
+      'Werte nach erfolgreichen Verbindungen und im gewählten Intervall aktualisieren.';
+
+  @override
+  String get serverSystemInfoRefreshInterval => 'Aktualisierungsintervall';
+
+  @override
+  String serverSystemInfoRefreshIntervalValue(int seconds) {
+    return 'Alle $seconds Sekunden';
+  }
+
+  @override
   String get settingsSectionPrivacy => 'Datenschutz';
 
   @override
@@ -2587,4 +2611,59 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get thisDevice => 'Dieses Gerät';
+
+  @override
+  String get serverReachabilityChecking => 'Erreichbarkeit wird geprüft';
+
+  @override
+  String get serverNotReachable => 'Nicht erreichbar';
+
+  @override
+  String get serverPortClosed => 'Erreichbar, Port nicht offen';
+
+  @override
+  String get serverPortOpen => 'Erreichbar und Port offen';
+
+  @override
+  String get settingsDuressPinRemoveWarning =>
+      'Remove the duress PIN? Normal PIN and biometric settings remain unchanged.';
+
+  @override
+  String get desktopDetailsEmpty =>
+      'Wähle einen Server oder öffne eine Verbindung, um Details anzuzeigen.';
+
+  @override
+  String get serverDetailLastUpdated => 'Zuletzt aktualisiert';
+
+  @override
+  String get serverDetailCpu => 'CPU';
+
+  @override
+  String get serverDetailRam => 'RAM';
+
+  @override
+  String get serverDetailKernel => 'Kernel';
+
+  @override
+  String get serverDetailDisks => 'Datenträger';
+
+  @override
+  String get serverDetailSystemInfo => 'Systeminformationen';
+
+  @override
+  String serverSystemInfoRefreshIntervalMinutes(int minutes) {
+    return 'Alle $minutes Minuten';
+  }
+
+  @override
+  String get serverDetailVirtualMachine => 'Virtuelle Maschine';
+
+  @override
+  String get serverDetailPhysicalCores => 'Physische Kerne';
+
+  @override
+  String get serverDetailSerial => 'Seriennummer';
+
+  @override
+  String get serverDetailCpuVendor => 'CPU-Hersteller';
 }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'group_entity.dart';
@@ -9,6 +9,7 @@ part of 'group_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $GroupEntityCopyWith<GroupEntity> get copyWith => _$GroupEntityCopyWithImpl<Grou
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other.children, children)&&(identical(other.serverCount, serverCount) || other.serverCount == serverCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  final _this = this as GroupEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.iconName, _this.iconName) || other.iconName == _this.iconName)&&(identical(other.parentId, _this.parentId) || other.parentId == _this.parentId)&&(identical(other.sortOrder, _this.sortOrder) || other.sortOrder == _this.sortOrder)&&const DeepCollectionEquality().equals(other.children, _this.children)&&(identical(other.serverCount, _this.serverCount) || other.serverCount == _this.serverCount)&&(identical(other.ownerId, _this.ownerId) || other.ownerId == _this.ownerId)&&(identical(other.sharedWith, _this.sharedWith) || other.sharedWith == _this.sharedWith)&&(identical(other.permissions, _this.permissions) || other.permissions == _this.permissions)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,color,iconName,parentId,sortOrder,const DeepCollectionEquality().hash(children),serverCount,ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
+int get hashCode {
+  final _this = this as GroupEntity;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.color,_this.iconName,_this.parentId,_this.sortOrder,const DeepCollectionEquality().hash(_this.children),_this.serverCount,_this.ownerId,_this.sharedWith,_this.permissions,_this.createdAt,_this.updatedAt,_this.deletedAt);
+}
 
 @override
 String toString() {
-  return 'GroupEntity(id: $id, name: $name, color: $color, iconName: $iconName, parentId: $parentId, sortOrder: $sortOrder, children: $children, serverCount: $serverCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  final _this = this as GroupEntity;
+  return 'GroupEntity(id: ${_this.id}, name: ${_this.name}, color: ${_this.color}, iconName: ${_this.iconName}, parentId: ${_this.parentId}, sortOrder: ${_this.sortOrder}, children: ${_this.children}, serverCount: ${_this.serverCount}, ownerId: ${_this.ownerId}, sharedWith: ${_this.sharedWith}, permissions: ${_this.permissions}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -66,7 +72,7 @@ class _$GroupEntityCopyWithImpl<$Res>
 /// Create a copy of GroupEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? color = null,Object? iconName = null,Object? parentId = freezed,Object? sortOrder = null,Object? children = null,Object? serverCount = null,Object? ownerId = freezed,Object? sharedWith = freezed,Object? permissions = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(GroupEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
@@ -222,7 +228,7 @@ return $default(_that.id,_that.name,_that.color,_that.iconName,_that.parentId,_t
 @JsonSerializable()
 
 class _GroupEntity implements GroupEntity {
-  const _GroupEntity({required this.id, required this.name, this.color = 0xFF6C63FF, this.iconName = 'server', this.parentId, this.sortOrder = 0, final  List<GroupEntity> children = const [], this.serverCount = 0, this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt, this.deletedAt}): _children = children;
+  const _GroupEntity({required this.id, required this.name, this.color = 0xFF6C63FF, this.iconName = 'server', this.parentId, this.sortOrder = 0,  List<GroupEntity> children = const [], this.serverCount = 0, this.ownerId, this.sharedWith, this.permissions, required this.createdAt, required this.updatedAt, this.deletedAt}): _children = children;
   factory _GroupEntity.fromJson(Map<String, dynamic> json) => _$GroupEntityFromJson(json);
 
 @override final  String id;
@@ -259,16 +265,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other._children, _children)&&(identical(other.serverCount, serverCount) || other.serverCount == serverCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&const DeepCollectionEquality().equals(other.children, _children)&&(identical(other.serverCount, serverCount) || other.serverCount == serverCount)&&(identical(other.ownerId, ownerId) || other.ownerId == ownerId)&&(identical(other.sharedWith, sharedWith) || other.sharedWith == sharedWith)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,color,iconName,parentId,sortOrder,const DeepCollectionEquality().hash(_children),serverCount,ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,color,iconName,parentId,sortOrder,const DeepCollectionEquality().hash(_children),serverCount,ownerId,sharedWith,permissions,createdAt,updatedAt,deletedAt);
+}
 
 @override
 String toString() {
-  return 'GroupEntity(id: $id, name: $name, color: $color, iconName: $iconName, parentId: $parentId, sortOrder: $sortOrder, children: $children, serverCount: $serverCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'GroupEntity(id: $id, name: $name, color: $color, iconName: $iconName, parentId: $parentId, sortOrder: $sortOrder, children: $children, serverCount: $serverCount, ownerId: $ownerId, sharedWith: $sharedWith, permissions: $permissions, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 

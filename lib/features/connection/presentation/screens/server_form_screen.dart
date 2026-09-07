@@ -103,6 +103,7 @@ class ServerFormScreen extends ConsumerStatefulWidget {
 }
 
 class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
+  ServerEntity? _loadedServer;
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _hostnameController = TextEditingController();
@@ -152,6 +153,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
       serverDetailProvider(widget.serverId!).future,
     );
     if (!mounted) return;
+    _loadedServer = result;
     _nameController.text = result.name;
     _hostnameController.text = result.hostname;
     _portController.text = result.port.toString();
@@ -497,6 +499,7 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
   }
 
   Future<void> _save() async {
+    if (widget.isEditing && _loadedServer == null) return;
     if (!_formKey.currentState!.validate()) return;
 
     final notifierState = ref.read(_serverFormStateProvider.notifier);
@@ -514,8 +517,22 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
           )
           .toList();
 
-      final server = ServerEntity(
-        id: widget.serverId ?? '',
+      // Editing must preserve metadata that the form does not expose, such
+      // as favorites, connection history, ordering and sharing permissions.
+      final base =
+          _loadedServer ??
+          ServerEntity(
+            id: '',
+            name: '',
+            hostname: '',
+            port: AppConstants.defaultSshPort,
+            username: '',
+            authMethod: currentState.authMethod,
+            color: currentState.color,
+            createdAt: now,
+            updatedAt: now,
+          );
+      final server = base.copyWith(
         name: _nameController.text.trim(),
         hostname: _hostnameController.text.trim(),
         port: int.parse(_portController.text.trim()),
@@ -538,7 +555,6 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
         postConnectCommands: _postConnectController.text.trim(),
         requiresVpn: currentState.requiresVpn,
         tags: tags,
-        createdAt: now,
         updatedAt: now,
       );
 

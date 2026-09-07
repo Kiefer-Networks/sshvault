@@ -144,7 +144,14 @@ abstract final class IconConstants {
 
 class ServerIcon {
   final String name;
-  final IconData icon;
+  final Object _icon;
 
-  const ServerIcon(this.name, this.icon);
+  const ServerIcon(this.name, this._icon)
+    : assert(_icon is IconData || _icon is FaIconData);
+
+  IconData get icon => switch (_icon) {
+    FaIconData data => data.data,
+    IconData data => data,
+    _ => throw StateError('Unsupported server icon'),
+  };
 }

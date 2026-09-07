@@ -156,7 +156,7 @@ class SecuritySettingsScreen extends ConsumerWidget {
                         ),
                       ],
                     );
-                    if (v != null) {
+                    if (v != null && context.mounted) {
                       ref
                           .read(settingsProvider.notifier)
                           .setClipboardAutoClear(v);
@@ -212,6 +212,73 @@ class SecuritySettingsScreen extends ConsumerWidget {
                       }
                     }
                   },
+                ),
+                SettingsSwitchTile(
+                  icon: Icons.insights_outlined,
+                  iconColor: AppColors.iconBlue,
+                  title: l10n.serverSystemInfoConsent,
+                  subtitleText: l10n.serverSystemInfoConsentDescription,
+                  value: settings.serverSystemInfoConsent,
+                  onChanged: (enabled) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setServerSystemInfoConsent(enabled);
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.settingsUpdated,
+                    );
+                  },
+                ),
+                SettingsSwitchTile(
+                  icon: Icons.update_outlined,
+                  iconColor: AppColors.iconCyan,
+                  title: l10n.serverSystemInfoAutoRefresh,
+                  subtitleText: l10n.serverSystemInfoAutoRefreshDescription,
+                  value: settings.serverSystemInfoAutoRefresh,
+                  onChanged: settings.serverSystemInfoConsent
+                      ? (enabled) => ref
+                          .read(settingsProvider.notifier)
+                          .setServerSystemInfoAutoRefresh(enabled)
+                      : null,
+                ),
+                SettingsTile(
+                  icon: Icons.schedule_outlined,
+                  iconColor: AppColors.iconPurple,
+                  title: l10n.serverSystemInfoRefreshInterval,
+                  subtitleText: l10n.serverSystemInfoRefreshIntervalMinutes(
+                    settings.serverSystemInfoRefreshIntervalSecs ~/ 60,
+                  ),
+                  onTap: settings.serverSystemInfoConsent &&
+                          settings.serverSystemInfoAutoRefresh
+                      ? () async {
+                          final value = await showSettingsSelectionDialog<int>(
+                            context: context,
+                            title: l10n.serverSystemInfoRefreshInterval,
+                            currentValue:
+                                settings.serverSystemInfoRefreshIntervalSecs,
+                            options: [
+                              for (final seconds in [60, 300, 900, 1800, 3600])
+                                SelectionOption(
+                                  value: seconds,
+                                  label: l10n.serverSystemInfoRefreshIntervalMinutes(
+                                    seconds ~/ 60,
+                                  ),
+                                ),
+                            ],
+                          );
+                          if (value != null) {
+                            ref
+                                .read(settingsProvider.notifier)
+                                .setServerSystemInfoRefreshInterval(value);
+                            if (context.mounted) {
+                              AdaptiveNotification.show(
+                                context,
+                                message: l10n.settingsUpdated,
+                              );
+                            }
+                          }
+                        }
+                      : null,
                 ),
               ],
             ),
@@ -306,18 +373,12 @@ class SecuritySettingsScreen extends ConsumerWidget {
                   iconColor: AppColors.iconBlue,
                   title: 'Forward agent by default',
                   subtitleText:
-                      'Expose \$SSH_AUTH_SOCK to remote shells when '
-                      'opening new SSH sessions.',
+                      'Allow remote shells to use the local agent for signing. '
+                      'Enable only for servers you trust.',
                   value: settings.sshAgentForwardByDefault,
-                  onChanged: (v) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .setSshAgentForwardByDefault(v);
-                    AdaptiveNotification.show(
-                      context,
-                      message: l10n.settingsUpdated,
-                    );
-                  },
+                  onChanged: (value) => ref
+                      .read(settingsProvider.notifier)
+                      .setSshAgentForwardByDefault(value),
                 ),
                 SettingsTile(
                   icon: Icons.timer_outlined,
@@ -621,7 +682,7 @@ class _DuressPinTile extends ConsumerWidget {
     final confirmed = await showAdaptiveConfirmDialog(
       context,
       title: l10n.settingsDuressPin,
-      message: l10n.settingsPinRemoveWarning,
+      message: l10n.settingsDuressPinRemoveWarning,
       cancelLabel: l10n.cancel,
       confirmLabel: l10n.settingsPinRemove,
       isDestructive: true,

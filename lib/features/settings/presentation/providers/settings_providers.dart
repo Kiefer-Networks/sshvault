@@ -43,6 +43,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
   static const _keyBackgroundSyncEnabled = 'background_sync_enabled';
   static const _keyLocalVaultVersion = 'local_vault_version';
   static const _keyPreventScreenshots = 'prevent_screenshots';
+  static const _keyServerSystemInfoConsent = 'server_system_info_consent';
+  static const _keyServerSystemInfoAutoRefresh =
+      'server_system_info_auto_refresh';
+  static const _keyServerSystemInfoRefreshInterval =
+      'server_system_info_refresh_interval_secs';
   static const _keyDnsServers = 'dns_servers';
   static const _keyDefaultAuthMethod = 'default_auth_method';
   static const _keyConnectionTimeout = 'connection_timeout_secs';
@@ -222,14 +227,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     );
   }
 
-  /// Reads a value from secure storage, returning empty string on failure.
+  /// A missing secret is distinct from an unavailable keyring. Propagate
+  /// read failures so startup cannot mistake an unreadable PIN for no lock.
   Future<String> _readSecure(dynamic secureStorage, String key) async {
-    try {
-      final result = await secureStorage.read(key: key);
-      return result ?? '';
-    } catch (_) {
-      return '';
-    }
+    final result = await secureStorage.read(key: key);
+    return result ?? '';
   }
 
   AppSettingsEntity _buildEntity(
@@ -263,6 +265,12 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
       backgroundSyncEnabled: all[_keyBackgroundSyncEnabled] == 'true',
       localVaultVersion: int.tryParse(all[_keyLocalVaultVersion] ?? '') ?? 0,
       preventScreenshots: all[_keyPreventScreenshots] == 'true',
+      serverSystemInfoConsent: all[_keyServerSystemInfoConsent] == 'true',
+      serverSystemInfoAutoRefresh:
+          all[_keyServerSystemInfoAutoRefresh] == 'true' &&
+          all[_keyServerSystemInfoConsent] == 'true',
+      serverSystemInfoRefreshIntervalSecs:
+          int.tryParse(all[_keyServerSystemInfoRefreshInterval] ?? '') ?? 300,
       dnsServers: all[_keyDnsServers] ?? '',
       defaultAuthMethod: all[_keyDefaultAuthMethod] ?? 'password',
       connectionTimeoutSecs:
@@ -724,6 +732,37 @@ class SettingsNotifier extends AsyncNotifier<AppSettingsEntity> {
     _log.info(_tag, 'Prevent screenshots ${enabled ? 'enabled' : 'disabled'}');
     final dao = ref.read(databaseProvider).appSettingsDao;
     await dao.setValue(_keyPreventScreenshots, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  /// Enables technical server metadata discovery only after explicit consent.
+  /// Enabling consent also enables automatic refresh as requested by the user;
+  /// revoking consent disables refresh immediately.
+  Future<void> setServerSystemInfoConsent(bool enabled) async {
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyServerSystemInfoConsent, enabled.toString());
+    await dao.setValue(
+      _keyServerSystemInfoAutoRefresh,
+      enabled.toString(),
+    );
+    ref.invalidateSelf();
+  }
+
+  Future<void> setServerSystemInfoAutoRefresh(bool enabled) async {
+    final current = state.value;
+    if (current != null && !current.serverSystemInfoConsent) return;
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(_keyServerSystemInfoAutoRefresh, enabled.toString());
+    ref.invalidateSelf();
+  }
+
+  Future<void> setServerSystemInfoRefreshInterval(int seconds) async {
+    final clamped = seconds.clamp(30, 86400);
+    final dao = ref.read(databaseProvider).appSettingsDao;
+    await dao.setValue(
+      _keyServerSystemInfoRefreshInterval,
+      clamped.toString(),
+    );
     ref.invalidateSelf();
   }
 

@@ -140,48 +140,43 @@ You can install SSHVault directly from GitHub releases using [Obtainium](https:/
 
 Weak algorithms (DH-group1, CBC ciphers, HMAC-MD5/SHA1, ssh-rsa) are excluded from default negotiation.
 
-### ssh-agent integration (Linux + macOS)
+### ssh-agent integration (Linux, macOS and Windows)
 
-SSHVault talks directly to the OpenSSH agent over the unix-domain socket
-referenced by `$SSH_AUTH_SOCK`, using a pure-Dart implementation of the
-agent wire protocol (no native bindings, no shelling out to `ssh-add`).
-This unlocks two flows:
+On Linux/macOS SSHVault uses the Unix socket referenced by `$SSH_AUTH_SOCK`.
+On Windows it detects the OpenSSH named-pipe agent first, then Pageant.
+Select **Use key from ssh-agent** when configuring key authentication;
+the client tries supported identities held by that agent without importing
+private keys. Agent-backed authentication also works for SFTP and jump hosts.
 
-- **Read from the running agent** — when adding a host, SSHVault offers
-  every key currently held by the agent so you can pick one without
-  copying private material into the vault.
-- **Write SSHVault keys to the running agent** — each key in the vault
-  has *Add to ssh-agent* / *Remove from agent* buttons, so other Linux
-  apps (git, scp, ansible, vscode-remote-ssh) can use SSHVault-managed
-  keys without ever touching the underlying private file. Lifetime is
-  configurable in *Settings → Security → ssh-agent integration* (default
-  1 h, `0` = no expiry).
+**Forward agent by default** in Security settings lets new terminal sessions
+request remote access to local identity listing and signing. Forwarding is
+opt-in; remote requests cannot add or remove local keys. Agent-loaded vault
+keys show an `agent` chip on the key list.
 
-Agent-loaded keys are surfaced with an `agent` chip on the key list so
-you can tell at a glance which material is live in the running session.
-
-The integration is environment-aware: on platforms or sessions where
-`$SSH_AUTH_SOCK` is unset (Windows, headless CI, mobile) the feature
-gracefully degrades — the buttons remain hidden, the host-form
-"Use key from ssh-agent" option is suppressed, and SSHVault falls back
-to its own key vault as if the agent integration weren't there.
-
+Keys must currently be loaded using `ssh-add` or the agent's own UI. SSHVault
+does not expose add/remove buttons; the Windows key-add APIs remain incomplete.
+If no agent is available, the form hides the agent selector. A saved host
+configured for agent authentication reports a connection failure until its
+agent is available again.
 ### Supported SSH algorithms
 
-The bundled hardened `dartssh2` fork advertises only modern algorithms.
-Connections to servers that require something not on this list will fail
-during the SSH transport handshake (the connect dialog reports which
-class — KEX, cipher, MAC, host key — was rejected).
+SSHVault bundles dartssh2 4.1.0 with compatibility adapters for proxies,
+Teleport certificates and TLS. Upstream transport validation, strict KEX,
+async identities and channel lifecycle fixes are retained. Existing saved
+host-key pins remain valid through fingerprint-format normalization.
 
-| Layer | Supported (in negotiation order) |
-|-------|----------------------------------|
-| Key exchange | `mlkem768x25519-sha256`, `sntrup761x25519-sha512@openssh.com`, `curve25519-sha256@libssh.org`, `ecdh-sha2-nistp521`, `ecdh-sha2-nistp384`, `ecdh-sha2-nistp256`, `diffie-hellman-group-exchange-sha256`, `diffie-hellman-group14-sha256` |
+| Layer | Enabled algorithms (preference order) |
+|-------|---------------------------------------|
+| Key exchange | `curve25519-sha256`, `curve25519-sha256@libssh.org`, `ecdh-sha2-nistp521`, `ecdh-sha2-nistp384`, `ecdh-sha2-nistp256`, `diffie-hellman-group-exchange-sha256`, `diffie-hellman-group14-sha256` |
 | Host key | `ssh-ed25519`, `rsa-sha2-512`, `rsa-sha2-256`, `ecdsa-sha2-nistp521`, `ecdsa-sha2-nistp384`, `ecdsa-sha2-nistp256` |
-| Cipher | `chacha20-poly1305@openssh.com`, `aes256-gcm@openssh.com`, `aes128-gcm@openssh.com`, `aes256-ctr`, `aes128-ctr` |
-| MAC | `hmac-sha2-256-etm@openssh.com`, `hmac-sha2-512-etm@openssh.com`, `hmac-sha2-256`, `hmac-sha2-512`, `hmac-sha2-256-96`, `hmac-sha2-512-96` (ignored when an AEAD cipher is selected) |
+| Cipher | `aes256-gcm@openssh.com`, `aes128-gcm@openssh.com`, `chacha20-poly1305@openssh.com`, `aes256-ctr`, `aes128-ctr` |
+| MAC | `hmac-sha2-256-etm@openssh.com`, `hmac-sha2-512-etm@openssh.com`, `hmac-sha2-256`, `hmac-sha2-512` (not used with AEAD) |
 
-The two hybrid post-quantum KEX algorithms (`mlkem768x25519-sha256`, `sntrup761x25519-sha512@openssh.com`) match the OpenSSH 9.9+ default order and are advertised first. The KEMs come from the [Open Quantum Safe](https://github.com/open-quantum-safe/liboqs) `liboqs` library bundled per platform via Dart FFI; on builds where `liboqs` is not present (e.g. Flutter web) the names are stripped from the advertised list at runtime and the client falls back to classical KEX without any error.
-
+The previous bespoke ML-KEM/sntrup integration is not compatible with the
+upstream 4.1 transport and is **not advertised or enabled**. Its source is
+preserved in `packages/dartssh2/legacy-pq/` for a separately tested rebase.
+Servers requiring only post-quantum KEX currently cannot connect; servers
+also offering one of the classical algorithms above can connect securely.
 ### PuTTY .ppk import
 
 SSHVault imports PuTTY private keys (`.ppk`) directly — no `puttygen`
@@ -208,7 +203,7 @@ conversion required.
 
 ## Architecture
 
-- **Client:** Flutter 3.11+ / Dart 3.11+
+- **Client:** Flutter 3.47.2 / Dart 3.13.2
 - **Backend:** [sshvault-server](https://github.com/Kiefer-Networks/sshvault-api) — Go 1.26+, PostgreSQL 16+, chi router
 - **State Management:** Riverpod (no setState)
 - **Local Database:** Drift (SQLite) + Platform Secure Storage
@@ -222,7 +217,7 @@ Clean Architecture with feature-based folder structure. Structured logging only.
 
 ### Prerequisites
 
-- Flutter SDK 3.11+ ([install guide](https://docs.flutter.dev/get-started/install))
+- Flutter SDK 3.47.2 ([install guide](https://docs.flutter.dev/get-started/install))
 - Android SDK with `minSdk 33` (Android 13+)
 - Java 17+ (for Android builds)
 - For Linux: `sudo dnf install libsecret-devel` (Fedora) or `sudo apt install libsecret-1-dev` (Debian/Ubuntu)
@@ -293,7 +288,7 @@ bundletool install-apks \
 ```
 
 R8/ProGuard rules for the bundled native libraries (Drift, SQLCipher,
-BouncyCastle, liboqs FFI, `flutter_local_notifications`) live in
+BouncyCastle, `flutter_local_notifications`) live in
 `android/app/proguard-rules.pro` and are applied automatically because
 `isMinifyEnabled = true` and `isShrinkResources = true` are set on the
 release build type.
@@ -637,7 +632,7 @@ post-install hook (`linux/apparmor/postinst.sh`), which then runs
 | `~/.ssh/config`, `~/.ssh/known_hosts`, `~/.ssh/id_*`, `~/.ssh/id_*.pub` | read-only |
 | `~/.local/share/sshvault/`, `~/.config/sshvault/` | read/write |
 | `~/.config/autostart/de.kiefer_networks.sshvault.desktop` | read/write |
-| Bundled `flutter_assets/`, `libapp.so`, `libflutter_linux_gtk.so`, `libliboqs.so*` | read |
+| Bundled `flutter_assets/`, `libapp.so`, `libflutter_linux_gtk.so` | read |
 | TCP/UDP network (IPv4 + IPv6) | outbound |
 | ssh-agent socket (`$SSH_AUTH_SOCK`), `ssh-keysign` helper | unix peer / exec |
 | DBus: own well-known name `de.kiefer_networks.SSHVault` | bind |

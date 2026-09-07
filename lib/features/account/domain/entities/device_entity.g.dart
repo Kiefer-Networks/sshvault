@@ -10,6 +10,7 @@ _DeviceEntity _$DeviceEntityFromJson(Map<String, dynamic> json) =>
     _DeviceEntity(
       id: json['id'] as String,
       name: json['name'] as String,
+      userId: json['user_id'] as String?,
       platform: json['platform'] as String? ?? '',
       lastSync: json['last_sync'] == null
           ? null
@@ -27,6 +28,7 @@ Map<String, dynamic> _$DeviceEntityToJson(_DeviceEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'user_id': instance.userId,
       'platform': instance.platform,
       'last_sync': instance.lastSync?.toIso8601String(),
       'last_ip': instance.lastIp,

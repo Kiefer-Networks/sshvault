@@ -22,7 +22,16 @@ class Socks5SSHSocket implements SSHSocket {
     String? password,
     Duration? timeout,
   }) async {
-    final proxyAddress = InternetAddress(proxyHost);
+    var proxyAddress = InternetAddress.tryParse(proxyHost);
+    if (proxyAddress == null) {
+      final lookup = InternetAddress.lookup(proxyHost);
+      final addresses =
+          timeout == null ? await lookup : await lookup.timeout(timeout);
+      if (addresses.isEmpty) {
+        throw SocketException('Proxy hostname did not resolve', address: null);
+      }
+      proxyAddress = addresses.first;
+    }
     final targetAddress = InternetAddress(
       targetHost,
       type: InternetAddressType.unix,
@@ -58,6 +67,9 @@ class Socks5SSHSocket implements SSHSocket {
 
   @override
   StreamSink<List<int>> get sink => _socket;
+
+  @override
+  Future<void> flush() => _socket.flush();
 
   @override
   Future<void> close() async {

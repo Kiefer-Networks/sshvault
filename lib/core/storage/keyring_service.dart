@@ -234,7 +234,7 @@ class KeyringService {
   static FlutterSecureStorage _defaultStorage() {
     return const FlutterSecureStorage(
       // ignore: deprecated_member_use
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      aOptions: AndroidOptions(resetOnError: false),
       iOptions: IOSOptions(
         accessibility: KeychainAccessibility.first_unlock_this_device,
       ),
@@ -457,31 +457,35 @@ class KeyringService {
         : MasterKeyBackend.encryptedFile;
   }
 
-  /// Deletes the master vault key from both the keyring and the file
-  /// fallback. Errors are swallowed so a partial deletion still removes
-  /// the other half.
+  /// Attempts every backend and reports any failed deletion to the caller.
   Future<void> deleteVaultKey() async {
-    if (isWindowsBackendActive) {
+    Object? firstError;
+    StackTrace? firstStack;
+    Future<void> attempt(Future<void> Function() operation) async {
       try {
-        await _wincred.delete(kWindowsMasterKeyTarget);
-      } catch (e) {
-        debugPrint('[KeyringService] Wincred delete failed: $e');
+        await operation();
+      } catch (error, stack) {
+        firstError ??= error;
+        firstStack ??= stack;
       }
+    }
+
+    if (isWindowsBackendActive) {
+      await attempt(() => _wincred.delete(kWindowsMasterKeyTarget));
     }
     if (isMacOsBackendActive) {
-      try {
-        await _macosKeychain.delete(kVaultMasterKeyId);
-      } catch (e) {
-        debugPrint('[KeyringService] macOS Keychain delete failed: $e');
-      }
+      await attempt(() => _macosKeychain.delete(kVaultMasterKeyId));
     }
-    try {
-      await _storage.delete(key: kVaultMasterKeyId);
-    } catch (e) {
-      debugPrint('[KeyringService] keyring delete failed: $e');
-    }
-    await _deleteFile();
-    await _deletePortalCache();
+    await attempt(() => _storage.delete(key: kVaultMasterKeyId));
+    await attempt(() async {
+      final file = await _legacyFile();
+      if (await file.exists()) await file.delete();
+    });
+    await attempt(() async {
+      final file = await _portalCacheFile();
+      if (await file.exists()) await file.delete();
+    });
+    if (firstError != null) Error.throwWithStackTrace(firstError!, firstStack!);
   }
 
   /// Detects which backend currently holds the master key. Returns null
@@ -633,15 +637,6 @@ class KeyringService {
       if (await file.exists()) await file.delete();
     } catch (e) {
       debugPrint('[KeyringService] fallback delete failed: $e');
-    }
-  }
-
-  Future<void> _deletePortalCache() async {
-    try {
-      final file = await _portalCacheFile();
-      if (await file.exists()) await file.delete();
-    } catch (e) {
-      debugPrint('[KeyringService] portal cache delete failed: $e');
     }
   }
 

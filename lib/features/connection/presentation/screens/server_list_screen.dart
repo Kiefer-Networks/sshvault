@@ -229,6 +229,11 @@ class ServerListScreen extends ConsumerWidget {
         final sshKeyId = entry.identityFile != null
             ? keyIdByPath[entry.identityFile]
             : null;
+        if (entry.identityFile != null && sshKeyId == null) {
+          // Never create a key-auth server without the imported key actually
+          // being persisted and linked; it would only fail later at SSH auth.
+          continue;
+        }
         final server = ServerEntity(
           id: '',
           name: entry.name,
@@ -498,6 +503,13 @@ class ServerListScreen extends ConsumerWidget {
                       child: ServerListTile(
                         server: server,
                         onTap: () async {
+                          if (_isDesktop) {
+                            ref
+                                .read(desktopSelectedServerIdProvider.notifier)
+                                .state = server
+                                .id;
+                            return;
+                          }
                           await ref
                               .read(sessionManagerProvider.notifier)
                               .openSession(server.id);
@@ -607,6 +619,11 @@ class ServerListScreen extends ConsumerWidget {
         return ServerListTile(
           server: server,
           onTap: () async {
+            if (_isDesktop) {
+              ref.read(desktopSelectedServerIdProvider.notifier).state =
+                  server.id;
+              return;
+            }
             await ref
                 .read(sessionManagerProvider.notifier)
                 .openSession(server.id);

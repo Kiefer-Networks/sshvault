@@ -132,11 +132,22 @@ class AppDatabase extends _$AppDatabase {
         if (from < 11) {
           // Tombstones — sync needs deletes to propagate, so each
           // soft-deletable entity gains a nullable deletedAt timestamp.
-          await m.addColumn(sshKeys, sshKeys.deletedAt);
+          // Tables created above already use their complete current schema.
+          if (from >= 2) await m.addColumn(sshKeys, sshKeys.deletedAt);
           await m.addColumn(servers, servers.deletedAt);
           await m.addColumn(groups, groups.deletedAt);
           await m.addColumn(tags, tags.deletedAt);
-          await m.addColumn(snippets, snippets.deletedAt);
+          if (from >= 3) await m.addColumn(snippets, snippets.deletedAt);
+        }
+        if (from < 12) {
+          await m.addColumn(servers, servers.osFamily);
+          await m.addColumn(servers, servers.osName);
+          await m.addColumn(servers, servers.osVersion);
+          await m.addColumn(servers, servers.osPrettyName);
+          await m.addColumn(servers, servers.osDetectedAt);
+        }
+        if (from < 13) {
+          await m.addColumn(servers, servers.systemMetricsJson);
         }
       },
     );

@@ -36,6 +36,12 @@ class Servers extends Table {
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   TextColumn get distroId => text().nullable()();
   TextColumn get distroName => text().nullable()();
+  TextColumn get osFamily => text().nullable()();
+  TextColumn get osName => text().nullable()();
+  TextColumn get osVersion => text().nullable()();
+  TextColumn get osPrettyName => text().nullable()();
+  DateTimeColumn get osDetectedAt => dateTime().nullable()();
+  TextColumn get systemMetricsJson => text().nullable()();
   TextColumn get jumpHostId => text().nullable()();
   // Proxy
   TextColumn get proxyType => text().withDefault(const Constant('none'))();

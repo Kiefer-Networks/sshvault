@@ -116,28 +116,9 @@ class SyncUseCases {
       'Vault fetched (version=${vault.version}, ${vault.blob!.length} chars blob)',
     );
 
-    // 2. Decode blob
-    final blobBytes = base64Decode(vault.blob!);
-
-    // 3. Verify checksum
-    if (vault.checksum != null) {
-      final checksum = crypto.sha256.convert(blobBytes).toString();
-      if (!CryptoUtils.constantTimeStringEquals(checksum, vault.checksum!)) {
-        _log.error(_tag, 'Pull failed: blob checksum mismatch');
-        return const Err(
-          SyncFailure('Checksum mismatch — vault data may be corrupted'),
-        );
-      }
-      _log.debug(_tag, 'Blob checksum verified');
-    }
-
-    // 4. Parse envelope and decrypt
-    final envelopeJson = utf8.decode(blobBytes);
-    final envelope = ExportEnvelope.fromJson(
-      jsonDecode(envelopeJson) as Map<String, dynamic>,
-    );
-    _log.debug(_tag, 'Envelope parsed (v${envelope.version})');
-
+    final parsed = _decodeEnvelope(vault.blob!, vault.checksum);
+    if (parsed.isFailure) return Err(parsed.failure);
+    final envelope = parsed.value;
     final decryptResult = await _encryptionService.decryptFromExport(
       envelope,
       syncPassword,
@@ -163,6 +144,13 @@ class SyncUseCases {
     if (importResult.isFailure) {
       _log.error(_tag, 'Pull failed: import error — ${importResult.failure}');
       return Err(importResult.failure);
+    }
+    if (importResult.value.errors.isNotEmpty) {
+      return Err(
+        SyncFailure(
+          'Vault import was incomplete: ${importResult.value.errors.join('; ')}',
+        ),
+      );
     }
 
     sw.stop();
@@ -195,11 +183,9 @@ class SyncUseCases {
       return const Success(true);
     }
 
-    final blobBytes = base64Decode(vault.blob!);
-    final envelopeJson = utf8.decode(blobBytes);
-    final envelope = ExportEnvelope.fromJson(
-      jsonDecode(envelopeJson) as Map<String, dynamic>,
-    );
+    final parsed = _decodeEnvelope(vault.blob!, vault.checksum);
+    if (parsed.isFailure) return Err(parsed.failure);
+    final envelope = parsed.value;
     final decryptResult = await _encryptionService.decryptFromExport(
       envelope,
       syncPassword,
@@ -211,6 +197,31 @@ class SyncUseCases {
       _log.warning(_tag, 'Sync password validation failed — wrong password');
     }
     return Success(decryptResult.isSuccess);
+  }
+
+  Result<ExportEnvelope> _decodeEnvelope(
+    String blob,
+    String? expectedChecksum,
+  ) {
+    try {
+      final bytes = base64Decode(blob);
+      if (expectedChecksum != null &&
+          !CryptoUtils.constantTimeStringEquals(
+            crypto.sha256.convert(bytes).toString(),
+            expectedChecksum,
+          )) {
+        return const Err(
+          SyncFailure('Checksum mismatch — vault data may be corrupted'),
+        );
+      }
+      return Success(
+        ExportEnvelope.fromJson(
+          jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>,
+        ),
+      );
+    } catch (error) {
+      return Err(SyncFailure('Invalid encrypted vault format', cause: error));
+    }
   }
 
   /// Full sync: pull first (merge), then push
@@ -286,11 +297,11 @@ class SyncUseCases {
     // 1. Pull + decrypt with old password to validate
     final pullResult = await pull(
       oldPassword,
-      strategy: ImportConflictStrategy.overwrite,
+      strategy: ImportConflictStrategy.mergeServerWins,
     );
     if (pullResult.isFailure) {
       _log.error(_tag, 'Password change failed: old password incorrect');
-      return const Err(SyncFailure('Wrong current password'));
+      return Err(pullResult.failure);
     }
 
     // 2. Push with new password

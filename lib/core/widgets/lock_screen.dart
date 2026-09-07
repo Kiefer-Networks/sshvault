@@ -4,13 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/services/logging_service.dart';
-import 'package:sshvault/core/storage/database_provider.dart';
-import 'package:sshvault/core/storage/secure_storage_provider.dart';
+import 'package:sshvault/core/storage/vault_reset_service.dart';
+import 'package:sshvault/core/routing/app_router.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/services/biometric_provider.dart';
 import 'package:sshvault/core/widgets/pin_num_pad.dart';
+import 'package:sshvault/core/widgets/error_state.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+
+/// Never expose the router while the persisted lock configuration is unknown.
+class AppLockGate extends ConsumerWidget {
+  final Widget child;
+  const AppLockGate({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    if (settings.hasError) {
+      return Scaffold(
+        body: ErrorState(
+          error: settings.error!,
+          onRetry: () => ref.invalidate(settingsProvider),
+        ),
+      );
+    }
+    final value = settings.value;
+    if (value == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    return value.hasAnyLock ? LockScreen(child: child) : child;
+  }
+}
 
 class _LockState {
   final bool isUnlocked;
@@ -254,20 +279,28 @@ class _LockScreenState extends ConsumerState<LockScreen>
     // Check duress PIN first — silently wipe all data and show a fake
     // unlock so the coercing party sees an empty (reset) app.
     final isDuress = await notifier.verifyDuressPin(_pin);
+    if (!mounted) return;
     if (isDuress) {
       LoggingService.instance.warning(
         'LockScreen',
         'Duress PIN entered — wiping all local data',
       );
       try {
-        await ref.read(secureStorageProvider).clearAllData();
-        final db = ref.read(databaseProvider);
-        await db.deleteAllData();
+        final container = ProviderScope.containerOf(context, listen: false);
+        await resetLocalVault(container);
+        AppRouter.router.go('/');
       } catch (e) {
         LoggingService.instance.error(
           'LockScreen',
           'Failed to wipe data during duress: $e',
         );
+        if (mounted) {
+          _pin = '';
+          ref
+              .read(_lockStateProvider.notifier)
+              .setVerifyFailed(pinError: l10n.error('Unable to unlock'));
+        }
+        return;
       }
       if (!mounted) return;
       // Show a normal unlock — the attacker sees an empty app
@@ -314,87 +347,99 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
     final hasBiometric = settings?.biometricUnlock ?? false;
 
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: Spacing.paddingHorizontalXxxl,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ExcludeSemantics(
-                child: Icon(
-                  isLockedOut ? Icons.lock : Icons.lock_outline,
-                  size: 64,
-                  color: isLockedOut
-                      ? theme.colorScheme.error
-                      : theme.colorScheme.primary,
+    // AppLockGate replaces the router child while locked.  That child is
+    // therefore outside the Navigator's Overlay; Tooltip/RawTooltip needs an
+    // Overlay ancestor on desktop as well as on mobile.
+    return Overlay(
+      initialEntries: [
+        OverlayEntry(
+          builder: (_) => Scaffold(
+            body: Center(
+              child: SingleChildScrollView(
+                padding: Spacing.paddingHorizontalXxxl,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ExcludeSemantics(
+                      child: Icon(
+                        isLockedOut ? Icons.lock : Icons.lock_outline,
+                        size: 64,
+                        color: isLockedOut
+                            ? theme.colorScheme.error
+                            : theme.colorScheme.primary,
+                      ),
+                    ),
+                    Spacing.verticalLg,
+                    Text(
+                      l10n.lockScreenTitle,
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                    if (isLockedOut) ...[
+                      Spacing.verticalSm,
+                      Text(
+                        l10n.lockScreenLockedOut(
+                          settings!.remainingLockout.inMinutes + 1,
+                        ),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.error,
+                        ),
+                      ),
+                    ],
+                    Spacing.verticalXxxl,
+
+                    if (settings?.hasPin ?? false) ...[
+                      PinDotIndicator(
+                        length: _pin.length,
+                        hasError: lockState.pinError != null,
+                      ),
+                      if (lockState.pinError != null) ...[
+                        Spacing.verticalMd,
+                        Text(
+                          lockState.pinError!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.error,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                      if (lockState.isVerifying) ...[
+                        Spacing.verticalMd,
+                        const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ],
+                      Spacing.verticalXxxl,
+                      PinNumPad(
+                        onDigit: _onDigit,
+                        onBackspace: _onBackspace,
+                        onConfirm: hasBiometric ? _tryBiometric : null,
+                        bottomRightChild: hasBiometric
+                            ? const Icon(Icons.fingerprint)
+                            : const Icon(Icons.check),
+                      ),
+                    ],
+
+                    if (!(settings?.hasPin ?? false) && hasBiometric) ...[
+                      Tooltip(
+                        message: l10n.lockScreenTitle,
+                        child: IconButton.filled(
+                          onPressed: lockState.isAuthenticating || isLockedOut
+                              ? null
+                              : _tryBiometric,
+                          icon: const Icon(Icons.fingerprint),
+                          iconSize: 48,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
-              Spacing.verticalLg,
-              Text(l10n.lockScreenTitle, style: theme.textTheme.headlineSmall),
-              if (isLockedOut) ...[
-                Spacing.verticalSm,
-                Text(
-                  l10n.lockScreenLockedOut(
-                    settings!.remainingLockout.inMinutes + 1,
-                  ),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.error,
-                  ),
-                ),
-              ],
-              Spacing.verticalXxxl,
-
-              if (settings?.hasPin ?? false) ...[
-                PinDotIndicator(
-                  length: _pin.length,
-                  hasError: lockState.pinError != null,
-                ),
-                if (lockState.pinError != null) ...[
-                  Spacing.verticalMd,
-                  Text(
-                    lockState.pinError!,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.error,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-                if (lockState.isVerifying) ...[
-                  Spacing.verticalMd,
-                  const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ],
-                Spacing.verticalXxxl,
-                PinNumPad(
-                  onDigit: _onDigit,
-                  onBackspace: _onBackspace,
-                  onConfirm: hasBiometric ? _tryBiometric : null,
-                  bottomRightChild: hasBiometric
-                      ? const Icon(Icons.fingerprint)
-                      : const Icon(Icons.check),
-                ),
-              ],
-
-              if (!(settings?.hasPin ?? false) && hasBiometric) ...[
-                Tooltip(
-                  message: l10n.lockScreenTitle,
-                  child: IconButton.filled(
-                    onPressed: lockState.isAuthenticating || isLockedOut
-                        ? null
-                        : _tryBiometric,
-                    icon: const Icon(Icons.fingerprint),
-                    iconSize: 48,
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

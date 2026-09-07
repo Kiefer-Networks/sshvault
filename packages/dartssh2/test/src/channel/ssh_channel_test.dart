@@ -1,3 +1,8 @@
+// Also uses test_utils.dart, which imports dart:io.
+@TestOn('vm')
+@Tags(['integration'])
+library;
+
 import 'package:dartssh2/dartssh2.dart';
 import 'package:test/test.dart';
 

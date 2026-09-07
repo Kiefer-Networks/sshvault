@@ -1,14 +1,15 @@
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:convert';
+import 'package:sshvault/features/host_key/domain/services/host_key_verifier.dart';
 
 import 'package:dartssh2/dartssh2.dart';
+import 'package:sshvault/core/ssh/agent_identities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 import 'package:xterm/xterm.dart';
 
-import 'package:sshvault/core/crypto/crypto_utils.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/core/routing/app_router.dart';
@@ -27,7 +28,10 @@ import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dar
 import 'package:sshvault/features/host_key/presentation/providers/known_host_providers.dart';
 import 'package:sshvault/features/host_key/presentation/widgets/host_key_verification_dialog.dart';
 import 'package:sshvault/features/settings/presentation/providers/proxy_settings_provider.dart';
+import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
+import 'package:sshvault/features/settings/domain/entities/app_settings_entity.dart';
 import 'package:sshvault/features/terminal/data/services/ssh_service.dart';
+import 'package:sshvault/features/terminal/data/services/remote_system_metrics_service.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:sshvault/features/terminal/presentation/models/terminal_theme_data.dart';
 
@@ -36,6 +40,8 @@ import 'package:sshvault/features/terminal/presentation/models/terminal_theme_da
 // ---------------------------------------------------------------------------
 
 final sshServiceProvider = Provider<SshService>((ref) => SshService());
+final remoteSystemMetricsServiceProvider =
+    Provider<RemoteSystemMetricsService>((ref) => RemoteSystemMetricsService());
 
 final terminalNotificationProvider = Provider<TerminalNotificationService>(
   (ref) => TerminalNotificationService(),
@@ -54,9 +60,25 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
   static const _uuid = Uuid();
   // Transient status replaced once server name loads; no BuildContext available.
   static const _connectingPlaceholder = 'Connecting...';
+  final Map<String, Timer> _metricsTimers = {};
 
   @override
-  List<SshSessionEntity> build() => [];
+  List<SshSessionEntity> build() {
+    ref.listen<AsyncValue<AppSettingsEntity>>(settingsProvider, (_, _) {
+      for (final session in state) {
+        if (session.status == SshConnectionStatus.connected) {
+          _startSystemMetricsRefresh(session);
+        }
+      }
+    });
+    ref.onDispose(() {
+      for (final timer in _metricsTimers.values) {
+        timer.cancel();
+      }
+      _metricsTimers.clear();
+    });
+    return [];
+  }
 
   /// Opens a new session or switches to an existing one for the given server.
   Future<void> openSession(String serverId) async {
@@ -88,6 +110,10 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
   }
 
   Future<void> _connectSession(SshSessionEntity session) async {
+    final generation = ++session.connectionGeneration;
+    bool isCurrent() =>
+        session.connectionGeneration == generation &&
+        state.any((entry) => identical(entry, session));
     final sshService = ref.read(sshServiceProvider);
     final serverUseCases = ref.read(serverUseCasesProvider);
     final sshKeyUseCases = ref.read(sshKeyUseCasesProvider);
@@ -114,7 +140,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       // Load managed key if applicable
       String? managedPrivateKey;
       String? managedPassphrase;
-      if (server.sshKeyId != null && server.authMethod != AuthMethod.password) {
+      if (server.sshKeyId != null &&
+          server.sshKeyId != kSshAgentSentinelKeyId &&
+          server.authMethod != AuthMethod.password) {
         final keyResult = await sshKeyUseCases.getSshKeyPrivateKey(
           server.sshKeyId!,
         );
@@ -149,6 +177,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
             onFailure: (_) => null,
           );
           if (jumpHost.sshKeyId != null &&
+              jumpHost.sshKeyId != kSshAgentSentinelKeyId &&
               jumpHost.authMethod != AuthMethod.password) {
             final keyResult = await sshKeyUseCases.getSshKeyPrivateKey(
               jumpHost.sshKeyId!,
@@ -178,6 +207,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
         }
       }
 
+      if (!isCurrent()) return;
       session.status = SshConnectionStatus.authenticating;
       _notifyChange();
 
@@ -196,6 +226,8 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       final result = await sshService.connect(
         server: server,
         credentials: credentials,
+        forwardAgent:
+            ref.read(settingsProvider).value?.sshAgentForwardByDefault ?? false,
         terminal: session.terminal,
         managedPrivateKey: managedPrivateKey,
         managedPassphrase: managedPassphrase,
@@ -213,6 +245,13 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
       result.fold(
         onSuccess: (connection) {
+          if (!isCurrent()) {
+            connection.stdoutSubscription.cancel();
+            connection.stderrSubscription.cancel();
+            connection.client.close();
+            connection.jumpHostClient?.close();
+            return;
+          }
           session.client = connection.client;
           session.jumpHostClient = connection.jumpHostClient;
           session.session = connection.session;
@@ -226,8 +265,9 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
           // Listen for session close
           connection.session.done.then((_) {
-            if (state.any((s) => s.id == session.id)) {
+            if (isCurrent()) {
               session.status = SshConnectionStatus.disconnected;
+              _metricsTimers.remove(session.id)?.cancel();
               session.cancelSubscriptions();
               _notifyChange();
             }
@@ -239,13 +279,18 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
             _notifyChange();
           };
 
-          // Detect distro in background
-          _detectDistro(session);
+          // Persist OS detection before collecting the remaining system
+          // metrics. Both operations update the complete encrypted server
+          // entity; running them concurrently could make the older write
+          // overwrite systemMetricsJson (or the OS fields), leaving the UI
+          // with only the OS information.
+          unawaited(_detectDistroAndStartMetrics(session));
 
           // Execute post-connect commands
           _executePostConnectCommands(session, server);
         },
         onFailure: (failure) {
+          if (!isCurrent()) return;
           session.status = SshConnectionStatus.error;
           session.errorMessage = failure.message;
         },
@@ -253,6 +298,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
       _notifyChange();
     } catch (e) {
+      if (!isCurrent()) return;
       session.status = SshConnectionStatus.error;
       session.errorMessage = errorMessage(e);
       _notifyChange();
@@ -264,6 +310,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     if (index < 0) return;
 
     final session = state[index];
+    _metricsTimers.remove(sessionId)?.cancel();
     session.cancelSubscriptions();
     session.client?.close();
     session.closeJumpHost();
@@ -286,6 +333,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
   void closeAllSessions() {
     for (final session in state) {
+      _metricsTimers.remove(session.id)?.cancel();
       session.cancelSubscriptions();
       session.client?.close();
       session.closeJumpHost();
@@ -307,6 +355,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
     // Reset state
     session.client = null;
+    _metricsTimers.remove(sessionId)?.cancel();
     session.jumpHostClient = null;
     session.session = null;
     session.status = SshConnectionStatus.connecting;
@@ -315,6 +364,76 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
 
     // Reconnect
     await _connectSession(session);
+  }
+
+  void _startSystemMetricsRefresh(SshSessionEntity session) {
+    final settings = ref.read(settingsProvider).value;
+    if (settings?.serverSystemInfoConsent != true ||
+        session.client == null ||
+        settings?.serverSystemInfoAutoRefresh != true) {
+      _metricsTimers.remove(session.id)?.cancel();
+      if (settings?.serverSystemInfoConsent != true || session.client == null) {
+        return;
+      }
+    }
+    _refreshSystemMetrics(session);
+    if (settings!.serverSystemInfoAutoRefresh) {
+      final seconds = settings.serverSystemInfoRefreshIntervalSecs.clamp(30, 86400).toInt();
+      _metricsTimers[session.id]?.cancel();
+      _metricsTimers[session.id] = Timer.periodic(
+        Duration(seconds: seconds),
+        (_) => _refreshSystemMetrics(session),
+      );
+    }
+  }
+
+  Future<void> _detectDistroAndStartMetrics(SshSessionEntity session) async {
+    await _detectDistro(session);
+    if (state.any((s) => identical(s, session)) &&
+        session.status == SshConnectionStatus.connected) {
+      _startSystemMetricsRefresh(session);
+    }
+  }
+
+  Future<void> _refreshSystemMetrics(SshSessionEntity session) async {
+    final client = session.client;
+    if (client == null || !state.any((s) => identical(s, session))) return;
+    try {
+      final metrics = await ref.read(remoteSystemMetricsServiceProvider).collect(client);
+      if (!state.any((s) => identical(s, session))) return;
+      final result = await ref.read(serverUseCasesProvider).getServer(session.serverId);
+      await result.fold(
+        onSuccess: (server) async {
+          final update = await ref.read(serverUseCasesProvider).updateServer(
+            server.copyWith(
+              systemMetricsJson: jsonEncode(metrics.toJson()),
+              updatedAt: DateTime.now(),
+            ),
+            null,
+          );
+          update.fold(
+            onSuccess: (_) {},
+            onFailure: (failure) => LoggingService.instance.warning(
+              'SessionManager',
+              'Failed to persist system metrics for ${session.serverId}: $failure',
+            ),
+          );
+        },
+        onFailure: (failure) async => LoggingService.instance.warning(
+          'SessionManager',
+          'Could not load server before persisting system metrics: $failure',
+        ),
+      );
+      ref.invalidate(serverDetailProvider(session.serverId));
+      // The desktop pane normally watches serverDetailProvider, while the
+      // list and mobile routes may still hold the previous entity. Invalidate
+      // both caches so freshly collected values are visible everywhere.
+      ref.invalidate(serverListProvider);
+      ref.invalidate(folderGroupedServersProvider);
+      _notifyChange();
+    } catch (e) {
+      LoggingService.instance.debug('SessionManager', 'System metrics collection failed: $e');
+    }
   }
 
   Future<void> _detectDistro(SshSessionEntity session) async {
@@ -326,7 +445,7 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       _notifyChange();
 
       // Persist distro info on the server entity
-      _saveDistroInfo(session.serverId, distro);
+      await _saveDistroInfo(session.serverId, distro);
     }
   }
 
@@ -334,29 +453,47 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     try {
       final serverUseCases = ref.read(serverUseCasesProvider);
       final result = await serverUseCases.getServer(serverId);
-      result.fold(
-        onSuccess: (server) async {
-          if (server.distroId == distro.id) return;
+      if (result.isSuccess) {
+        final server = result.value;
+          final unchanged =
+              server.osFamily == distro.id &&
+              server.osName == distro.name &&
+              server.osVersion == distro.version &&
+              server.osPrettyName == distro.prettyName;
+          if (unchanged) return;
           final updated = server.copyWith(
             distroId: distro.id,
             distroName: distro.displayName,
+            osFamily: _osFamilyFor(distro.id),
+            osName: distro.name,
+            osVersion: distro.version,
+            osPrettyName: distro.prettyName,
+            osDetectedAt: DateTime.now(),
           );
           await serverUseCases.updateServer(updated, null);
           ref.invalidate(serverDetailProvider(serverId));
-        },
-        onFailure: (f) {
+      } else {
+        final f = result.failure;
           LoggingService.instance.debug(
             'SessionManager',
             'Distribution detection failed: $f',
           );
-        },
-      );
+      }
     } catch (e) {
       LoggingService.instance.debug(
         'SessionManager',
         'Distribution detection failed: $e',
       );
     }
+  }
+
+  String _osFamilyFor(String id) {
+    final value = id.toLowerCase();
+    if (value == 'windows') return 'windows';
+    if (value.contains('darwin') || value.contains('mac')) return 'macos';
+    if (value.contains('bsd')) return 'bsd';
+    if (value == 'linux') return 'linux';
+    return 'other';
   }
 
   Future<void> _updateLastConnectedAt(String serverId) async {
@@ -387,70 +524,19 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
   }
 
   SSHHostkeyVerifyHandler _buildHostKeyVerifier(ServerEntity server) {
-    return (String type, Uint8List fingerprint) async {
-      final hex = _fingerprintToHex(fingerprint);
-      final repo = ref.read(knownHostRepositoryProvider);
-      final existing = await repo.findByHostAndPort(
-        server.hostname,
-        server.port,
-      );
-
-      KnownHostEntity? known;
-      if (existing.isSuccess) {
-        known = existing.value;
-      }
-
-      if (known != null) {
-        if (CryptoUtils.constantTimeStringEquals(known.fingerprint, hex)) {
-          await repo.save(known.copyWith(lastSeenAt: DateTime.now()));
-          return true;
-        }
-        // Key changed
-        final accepted = await _showHostKeyDialog(
-          server.hostname,
-          server.port,
-          type,
-          hex,
-          known,
-        );
-        if (accepted) {
-          await repo.save(
-            known.copyWith(
-              keyType: type,
-              fingerprint: hex,
-              lastSeenAt: DateTime.now(),
-            ),
-          );
-          ref.invalidate(knownHostListProvider);
-        }
-        return accepted;
-      }
-
-      // First connection — TOFU
-      final accepted = await _showHostKeyDialog(
+    return HostKeyVerifier(
+      repository: ref.read(knownHostRepositoryProvider),
+      hostname: server.hostname,
+      port: server.port,
+      confirm: (type, fingerprint, previous) => _showHostKeyDialog(
         server.hostname,
         server.port,
         type,
-        hex,
-        null,
-      );
-      if (accepted) {
-        final now = DateTime.now();
-        await repo.save(
-          KnownHostEntity(
-            id: _uuid.v4(),
-            hostname: server.hostname,
-            port: server.port,
-            keyType: type,
-            fingerprint: hex,
-            firstSeenAt: now,
-            lastSeenAt: now,
-          ),
-        );
-        ref.invalidate(knownHostListProvider);
-      }
-      return accepted;
-    };
+        fingerprint,
+        previous,
+      ),
+      onStored: () => ref.invalidate(knownHostListProvider),
+    ).verify;
   }
 
   Future<bool> _showHostKeyDialog(
@@ -475,10 +561,6 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
       ),
     );
     return result ?? false;
-  }
-
-  static String _fingerprintToHex(Uint8List bytes) {
-    return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(':');
   }
 
   void _notifyChange() {

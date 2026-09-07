@@ -125,7 +125,7 @@ class SnippetRepositoryImpl implements SnippetRepository {
         await _snippetDao.setSnippetVariables(newSnippet.id, varCompanions);
       }
 
-      return getSnippet(newSnippet.id);
+      return await getSnippet(newSnippet.id);
     } catch (e) {
       return Err(DatabaseFailure('Failed to create snippet', cause: e));
     }
@@ -151,7 +151,7 @@ class SnippetRepositoryImpl implements SnippetRepository {
       }).toList();
       await _snippetDao.setSnippetVariables(snippet.id, varCompanions);
 
-      return getSnippet(snippet.id);
+      return await getSnippet(snippet.id);
     } catch (e) {
       return Err(DatabaseFailure('Failed to update snippet', cause: e));
     }

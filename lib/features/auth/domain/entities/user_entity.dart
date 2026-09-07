@@ -8,6 +8,7 @@ abstract class UserEntity with _$UserEntity {
   const factory UserEntity({
     required String id,
     required String email,
+    @JsonKey(name: 'pending_email') String? pendingEmail,
     @Default(false) bool verified,
     @Default('') String avatar,
     @JsonKey(name: 'created_at') DateTime? createdAt,

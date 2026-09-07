@@ -40,7 +40,6 @@ class AdaptiveNotification {
 
   static Future<void> _ensureSystemInitialized() async {
     if (_systemInitialized) return;
-    _systemInitialized = true;
 
     const macSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -79,6 +78,9 @@ class AdaptiveNotification {
       ),
       onDidReceiveNotificationResponse: _onNotificationResponse,
     );
+    // Mark initialized only after setup succeeds so a transient platform
+    // failure can be retried on the next notification.
+    _systemInitialized = true;
 
     // Permission requests need a real OS — gating on dart:io's Platform
     // (rather than defaultTargetPlatform) keeps flutter_test happy: tests
@@ -110,7 +112,17 @@ class AdaptiveNotification {
     VoidCallback? onAction,
   }) {
     if (_supportsSystemNotification) {
-      _showSystemNotification(message);
+      // Native delivery is best-effort. Portable Windows builds may not have
+      // a registered AUMID yet; an unhandled rejected Future here used to
+      // surface as a Flutter error when changing a setting.
+      _showSystemNotification(message).catchError((error, stack) {
+        debugPrint('[Notifications] Native notification failed: $error');
+        if (context.mounted) {
+          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+            SnackBar(content: Text(message), duration: duration),
+          );
+        }
+      });
       return;
     }
 

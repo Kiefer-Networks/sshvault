@@ -41,14 +41,28 @@ void main() {
   });
 
   group('updateProfile', () {
-    test('returns updated UserEntity on success', () async {
-      when(
-        () => mockApi.put('/v1/user', data: any(named: 'data')),
-      ).thenAnswer((_) async => Success(userJson));
+    test(
+      'accepts pending confirmation instead of an updated profile',
+      () async {
+        when(
+          () => mockApi.put('/v1/user', data: any(named: 'data')),
+        ).thenAnswer(
+          (_) async => const Success({'status': 'pending_confirmation'}),
+        );
 
-      final result = await sut.updateProfile(email: 'new@test.com');
-      expect(result.isSuccess, isTrue);
-    });
+        final result = await sut.updateProfile(
+          email: 'new@test.com',
+          currentPassword: 'password',
+        );
+        expect(result.isSuccess, isTrue);
+        verify(
+          () => mockApi.put(
+            '/v1/user',
+            data: {'email': 'new@test.com', 'current_password': 'password'},
+          ),
+        ).called(1);
+      },
+    );
 
     test('returns failure on error', () async {
       when(() => mockApi.put('/v1/user', data: any(named: 'data'))).thenAnswer(
@@ -56,7 +70,10 @@ void main() {
             const Err(NetworkFailure('invalid email', statusCode: 422)),
       );
 
-      final result = await sut.updateProfile(email: 'bad');
+      final result = await sut.updateProfile(
+        email: 'bad',
+        currentPassword: 'password',
+      );
       expect(result.isFailure, isTrue);
     });
   });
@@ -194,6 +211,18 @@ void main() {
   });
 
   group('logoutAllDevices', () {
+    test(
+      'does not invent a revoked count for the documented status response',
+      () async {
+        when(() => mockApi.post('/v1/auth/logout-all')).thenAnswer(
+          (_) async => const Success({'status': 'all sessions revoked'}),
+        );
+        final result = await sut.logoutAllDevices();
+        expect(result.isSuccess, isTrue);
+        expect(result.value, isNull);
+      },
+    );
+
     test('returns revoked count', () async {
       when(
         () => mockApi.post('/v1/auth/logout-all'),

@@ -56,6 +56,16 @@ void main() {
       expect(result.value['id'], '1');
     });
 
+    test('malformed proxy error body still returns a NetworkFailure', () async {
+      adapter.responseData = {
+        'error': {'message': 'bad gateway'},
+      };
+      adapter.statusCode = 502;
+      final result = await client.get('/v1/user');
+      expect(result.isFailure, isTrue);
+      expect((result.failure as NetworkFailure).statusCode, 502);
+    });
+
     test('returns Success with empty map when response is null', () async {
       adapter.responseData = null;
       adapter.statusCode = 200;

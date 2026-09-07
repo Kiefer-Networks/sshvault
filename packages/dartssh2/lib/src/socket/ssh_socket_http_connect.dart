@@ -8,8 +8,9 @@ import 'package:dartssh2/src/socket/ssh_socket.dart';
 /// SSHSocket implementation that connects through an HTTP CONNECT proxy.
 class HttpConnectSSHSocket implements SSHSocket {
   final Socket _socket;
+  final Stream<Uint8List> _stream;
 
-  HttpConnectSSHSocket._(this._socket);
+  HttpConnectSSHSocket._(this._socket, this._stream);
 
   /// Connects to [targetHost]:[targetPort] via an HTTP CONNECT proxy at
   /// [proxyHost]:[proxyPort]. Optional [username]/[password] for Basic auth.
@@ -48,18 +49,32 @@ class HttpConnectSSHSocket implements SSHSocket {
     final completer = Completer<void>();
     final responseBuffer = <int>[];
     late final StreamSubscription<Uint8List> sub;
+    var connected = false;
+    final output = StreamController<Uint8List>(
+      onPause: () => sub.pause(),
+      onResume: () => sub.resume(),
+      onCancel: () => sub.cancel(),
+    );
 
     sub = socket.listen(
       (data) {
+        if (connected) {
+          output.add(data);
+          return;
+        }
         responseBuffer.addAll(data);
-        final response = utf8.decode(responseBuffer, allowMalformed: true);
-        if (response.contains('\r\n\r\n')) {
-          sub.cancel();
+        final response = latin1.decode(responseBuffer);
+        final headerEnd = response.indexOf('\r\n\r\n');
+        if (headerEnd >= 0) {
           // Check for 200 status
           final statusLine = response.split('\r\n').first;
           final parts = statusLine.split(' ');
           final statusCode = parts.length > 1 ? int.tryParse(parts[1]) : null;
           if (statusCode == 200) {
+            connected = true;
+            final remaining = responseBuffer.sublist(headerEnd + 4);
+            responseBuffer.clear();
+            if (remaining.isNotEmpty) output.add(Uint8List.fromList(remaining));
             completer.complete();
           } else {
             socket.destroy();
@@ -67,12 +82,19 @@ class HttpConnectSSHSocket implements SSHSocket {
               SocketException('HTTP CONNECT failed: $statusLine'),
             );
           }
+        } else if (responseBuffer.length > 65536) {
+          socket.destroy();
+          completer.completeError(
+              const SocketException('HTTP CONNECT headers too large'));
         }
       },
       onError: (Object error) {
         if (!completer.isCompleted) {
           completer.completeError(error);
+        } else if (connected) {
+          output.addError(error);
         }
+        output.close();
       },
       onDone: () {
         if (!completer.isCompleted) {
@@ -83,20 +105,30 @@ class HttpConnectSSHSocket implements SSHSocket {
       },
     );
 
-    if (timeout != null) {
-      await completer.future.timeout(timeout);
-    } else {
-      await completer.future;
+    try {
+      if (timeout != null) {
+        await completer.future.timeout(timeout);
+      } else {
+        await completer.future;
+      }
+    } catch (_) {
+      socket.destroy();
+      await sub.cancel();
+      output.close();
+      rethrow;
     }
 
-    return HttpConnectSSHSocket._(socket);
+    return HttpConnectSSHSocket._(socket, output.stream);
   }
 
   @override
-  Stream<Uint8List> get stream => _socket;
+  Stream<Uint8List> get stream => _stream;
 
   @override
   StreamSink<List<int>> get sink => _socket;
+
+  @override
+  Future<void> flush() => _socket.flush();
 
   @override
   Future<void> close() async {

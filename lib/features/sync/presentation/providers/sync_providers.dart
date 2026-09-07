@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/error/failures.dart';
+import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/core/network/api_provider.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
@@ -28,6 +29,90 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
 
   Timer? _debounceTimer;
   Timer? _periodicSyncTimer;
+  Future<void>? _activeOperation;
+  bool _stopped = false;
+  bool _pushQueued = false;
+
+  Future<void> sync() => _runExclusive(_sync);
+  Future<void> pushOnly() {
+    if (!_stopped && _activeOperation != null) _pushQueued = true;
+    return _runExclusive(_pushOnly);
+  }
+
+  Future<void> pullOnly() => _runExclusive(_pullOnly);
+
+  Future<Result<int>> changeEncryptionPassword(
+    String oldPassword,
+    String newPassword,
+  ) async {
+    if (_stopped || _activeOperation != null) {
+      return const Err(SyncFailure('Wait for the current sync to finish'));
+    }
+    Result<int> outcome = const Err(SyncFailure('Password change failed'));
+    await _runExclusive(() async {
+      state = const AsyncValue.data(SyncStatus.syncing);
+      final result = await ref
+          .read(syncUseCasesProvider)
+          .changeEncryptionPassword(oldPassword, newPassword);
+      if (result.isFailure) {
+        outcome = result;
+        state = AsyncValue.error(result.failure, StackTrace.current);
+        return;
+      }
+      final saved = await ref
+          .read(secureStorageProvider)
+          .saveSyncPassword(newPassword);
+      if (saved.isFailure) {
+        outcome = const Err(
+          StorageFailure(
+            'The server password was changed, but could not be saved on this device. '
+            'Enter the new encryption password before syncing again.',
+          ),
+        );
+        state = AsyncValue.error(outcome.failure, StackTrace.current);
+        return;
+      }
+      await ref
+          .read(settingsProvider.notifier)
+          .setLocalVaultVersion(result.value);
+      _invalidateAllDataProviders();
+      state = const AsyncValue.data(SyncStatus.success);
+      outcome = result;
+    });
+    return outcome;
+  }
+
+  Future<void> _runExclusive(Future<void> Function() operation) {
+    if (_stopped) return Future<void>.value();
+    final active = _activeOperation;
+    if (active != null) return active;
+    final completion = Completer<void>();
+    _activeOperation = completion.future;
+    () async {
+      try {
+        var next = operation;
+        do {
+          _pushQueued = false;
+          await next();
+          next = _pushOnly;
+        } while (_pushQueued && !_stopped && !state.hasError);
+      } catch (error, stack) {
+        if (ref.mounted) state = AsyncValue.error(error, stack);
+      } finally {
+        _activeOperation = null;
+        completion.complete();
+      }
+    }();
+    return completion.future;
+  }
+
+  /// Prevent future syncs and finish any pending import before a local wipe.
+  Future<void> stopAndWait() async {
+    _stopped = true;
+    _debounceTimer?.cancel();
+    _periodicSyncTimer?.cancel();
+    await _activeOperation;
+  }
 
   @override
   Future<SyncStatus> build() async {
@@ -47,6 +132,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
 
   /// Schedule a debounced push (called by CRUD providers)
   void schedulePush() {
+    if (_stopped) return;
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(seconds: 3), () {
       _log.debug(_tag, 'Debounced push triggered');
@@ -57,6 +143,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
   /// Start periodic background sync using the configured interval.
   void _startPeriodicSync() {
     _periodicSyncTimer?.cancel();
+    if (_stopped) return;
     final settings = ref.read(settingsProvider).value;
     final intervalMinutes = settings?.autoSyncIntervalMinutes ?? 5;
     _periodicSyncTimer = Timer.periodic(Duration(minutes: intervalMinutes), (
@@ -88,9 +175,11 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     ref.invalidate(favoriteServersProvider);
     ref.invalidate(recentServersProvider);
     ref.invalidate(folderGroupedServersProvider);
+    ref.invalidate(serversLinkedToKeyProvider);
 
     // Force providers to rebuild in the next frame so UI updates immediately
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!ref.mounted) return;
       ref.read(serverListProvider);
       ref.read(folderGroupedServersProvider);
       ref.read(favoriteServersProvider);
@@ -98,7 +187,7 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     });
   }
 
-  Future<void> sync() async {
+  Future<void> _sync() async {
     // Check auth status
     final authStatus = ref.read(authProvider).value;
     if (authStatus != AuthStatus.authenticated) {
@@ -121,27 +210,18 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     _log.info(_tag, 'Sync initiated by user');
 
     // Get local vault version from settings
-    final settings = ref.read(settingsProvider).value;
-    final localVersion = settings?.localVaultVersion ?? 0;
+    final settings = await ref.read(settingsProvider.future);
+    final localVersion = settings.localVaultVersion;
 
     final useCases = ref.read(syncUseCasesProvider);
-    var result = await useCases.sync(syncPassword, localVersion);
+    final result = await useCases.sync(syncPassword, localVersion);
 
-    // If pull decryption failed (corrupted server vault from old crypto bug),
-    // fall back to push-only to overwrite with correctly encrypted local data.
-    if (result.isFailure && result.failure is CryptoFailure) {
-      _log.warning(
-        _tag,
-        'Pull decryption failed — falling back to push-only '
-        'to re-encrypt server vault',
-      );
-      result = await useCases.push(syncPassword, localVersion);
-    }
-
-    result.fold(
-      onSuccess: (newVersion) {
+    await result.fold<Future<void>>(
+      onSuccess: (newVersion) async {
         // Update local vault version
-        ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
+        await ref
+            .read(settingsProvider.notifier)
+            .setLocalVaultVersion(newVersion);
 
         // Invalidate all data providers so they reload from DB
         _invalidateAllDataProviders();
@@ -149,14 +229,14 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
         _log.info(_tag, 'Sync successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
       },
-      onFailure: (f) {
+      onFailure: (f) async {
         _log.error(_tag, 'Sync failed: $f');
         state = AsyncValue.error(f, StackTrace.current);
       },
     );
   }
 
-  Future<void> pushOnly() async {
+  Future<void> _pushOnly() async {
     // Auth guard
     final authStatus = ref.read(authProvider).value;
     if (authStatus != AuthStatus.authenticated) return;
@@ -169,26 +249,28 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     state = const AsyncValue.data(SyncStatus.syncing);
     _log.info(_tag, 'Push-only initiated');
 
-    final settings = ref.read(settingsProvider).value;
-    final localVersion = settings?.localVaultVersion ?? 0;
+    final settings = await ref.read(settingsProvider.future);
+    final localVersion = settings.localVaultVersion;
 
     final useCases = ref.read(syncUseCasesProvider);
     final result = await useCases.pushWithRetry(syncPassword, localVersion);
 
-    result.fold(
-      onSuccess: (newVersion) {
-        ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
+    await result.fold<Future<void>>(
+      onSuccess: (newVersion) async {
+        await ref
+            .read(settingsProvider.notifier)
+            .setLocalVaultVersion(newVersion);
         _log.info(_tag, 'Push-only successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
       },
-      onFailure: (f) {
+      onFailure: (f) async {
         _log.error(_tag, 'Push-only failed: $f');
         state = AsyncValue.error(f, StackTrace.current);
       },
     );
   }
 
-  Future<void> pullOnly() async {
+  Future<void> _pullOnly() async {
     // Auth guard
     final authStatus = ref.read(authProvider).value;
     if (authStatus != AuthStatus.authenticated) return;
@@ -204,16 +286,18 @@ class SyncNotifier extends AsyncNotifier<SyncStatus> {
     final useCases = ref.read(syncUseCasesProvider);
     final result = await useCases.pull(syncPassword);
 
-    result.fold(
-      onSuccess: (newVersion) {
-        ref.read(settingsProvider.notifier).setLocalVaultVersion(newVersion);
+    await result.fold<Future<void>>(
+      onSuccess: (newVersion) async {
+        await ref
+            .read(settingsProvider.notifier)
+            .setLocalVaultVersion(newVersion);
 
         _invalidateAllDataProviders();
 
         _log.info(_tag, 'Pull-only successful (version=$newVersion)');
         state = const AsyncValue.data(SyncStatus.success);
       },
-      onFailure: (f) {
+      onFailure: (f) async {
         _log.error(_tag, 'Pull-only failed: $f');
         state = AsyncValue.error(f, StackTrace.current);
       },

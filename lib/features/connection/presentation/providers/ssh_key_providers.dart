@@ -89,8 +89,9 @@ final serversLinkedToKeyProvider =
       final useCases = ref.watch(serverUseCasesProvider);
       final result = await useCases.getServers();
       return result.fold(
-        onSuccess: (servers) =>
-            servers.where((s) => s.sshKeyId == keyId).toList(),
+        onSuccess: (servers) => servers
+            .where((s) => s.deletedAt == null && s.sshKeyId == keyId)
+            .toList(),
         onFailure: (_) => [],
       );
     });

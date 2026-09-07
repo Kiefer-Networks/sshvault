@@ -5,10 +5,8 @@ import 'package:sshvault/core/network/api_client.dart';
 import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 
-/// Periodically verifies server availability and identity via heartbeat.
-///
-/// Sends a signed heartbeat request every [interval] (default 60s).
-/// If [maxFailures] consecutive heartbeats fail, invokes [onSessionExpired].
+/// Periodically checks server availability. Public health responses cannot
+/// establish session validity; outages must never revoke local authentication.
 class HeartbeatService {
   static final _log = LoggingService.instance;
   static const _tag = 'Heartbeat';
@@ -94,10 +92,7 @@ class HeartbeatService {
       'Heartbeat failed ($_consecutiveFailures/$maxFailures): $reason',
     );
 
-    if (_consecutiveFailures >= maxFailures) {
-      _log.error(_tag, 'Max heartbeat failures reached, terminating session');
-      stop();
-      onSessionExpired?.call();
-    }
+    // Keep probing through an outage. AuthInterceptor handles explicit token
+    // rejection independently, while offline vault access remains available.
   }
 }

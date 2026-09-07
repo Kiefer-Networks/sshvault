@@ -15,12 +15,12 @@ void main() {
   // Windows) we still verify the platform guard fires, but skip the
   // filesystem assertions because the implementation is a no-op there.
   group('AutostartService — platform gating', () {
-    test('throws UnsupportedError on non-Linux hosts', () async {
-      if (Platform.isLinux) return;
+    test('throws UnsupportedError on unsupported hosts', () async {
+      if (Platform.isLinux || Platform.isWindows) return;
       const svc = AutostartService();
-      expect(svc.isEnabled, throwsA(isA<UnsupportedError>()));
-      expect(svc.enable, throwsA(isA<UnsupportedError>()));
-      expect(svc.disable, throwsA(isA<UnsupportedError>()));
+      await expectLater(svc.isEnabled, throwsA(isA<UnsupportedError>()));
+      await expectLater(svc.enable, throwsA(isA<UnsupportedError>()));
+      await expectLater(svc.disable, throwsA(isA<UnsupportedError>()));
     });
   });
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:sshvault/core/constants/app_constants.dart';
 
 abstract final class AppTheme {

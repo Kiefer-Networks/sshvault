@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'sftp_pane_state.dart';
@@ -9,6 +9,7 @@ part of 'sftp_pane_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SftpPaneStateCopyWith<SftpPaneState> get copyWith => _$SftpPaneStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneState&&(identical(other.source, source) || other.source == source)&&(identical(other.currentPath, currentPath) || other.currentPath == currentPath)&&const DeepCollectionEquality().equals(other.entries, entries)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other.selectedPaths, selectedPaths)&&(identical(other.sortField, sortField) || other.sortField == sortField)&&(identical(other.sortAscending, sortAscending) || other.sortAscending == sortAscending)&&(identical(other.showHidden, showHidden) || other.showHidden == showHidden)&&(identical(other.needsHostSelection, needsHostSelection) || other.needsHostSelection == needsHostSelection));
+  final _this = this as SftpPaneState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneState&&(identical(other.source, _this.source) || other.source == _this.source)&&(identical(other.currentPath, _this.currentPath) || other.currentPath == _this.currentPath)&&const DeepCollectionEquality().equals(other.entries, _this.entries)&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.error, _this.error) || other.error == _this.error)&&const DeepCollectionEquality().equals(other.selectedPaths, _this.selectedPaths)&&(identical(other.sortField, _this.sortField) || other.sortField == _this.sortField)&&(identical(other.sortAscending, _this.sortAscending) || other.sortAscending == _this.sortAscending)&&(identical(other.showHidden, _this.showHidden) || other.showHidden == _this.showHidden)&&(identical(other.needsHostSelection, _this.needsHostSelection) || other.needsHostSelection == _this.needsHostSelection));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,source,currentPath,const DeepCollectionEquality().hash(entries),isLoading,error,const DeepCollectionEquality().hash(selectedPaths),sortField,sortAscending,showHidden,needsHostSelection);
+int get hashCode {
+  final _this = this as SftpPaneState;
+  return Object.hash(runtimeType,_this.source,_this.currentPath,const DeepCollectionEquality().hash(_this.entries),_this.isLoading,_this.error,const DeepCollectionEquality().hash(_this.selectedPaths),_this.sortField,_this.sortAscending,_this.showHidden,_this.needsHostSelection);
+}
 
 @override
 String toString() {
-  return 'SftpPaneState(source: $source, currentPath: $currentPath, entries: $entries, isLoading: $isLoading, error: $error, selectedPaths: $selectedPaths, sortField: $sortField, sortAscending: $sortAscending, showHidden: $showHidden, needsHostSelection: $needsHostSelection)';
+  final _this = this as SftpPaneState;
+  return 'SftpPaneState(source: ${_this.source}, currentPath: ${_this.currentPath}, entries: ${_this.entries}, isLoading: ${_this.isLoading}, error: ${_this.error}, selectedPaths: ${_this.selectedPaths}, sortField: ${_this.sortField}, sortAscending: ${_this.sortAscending}, showHidden: ${_this.showHidden}, needsHostSelection: ${_this.needsHostSelection})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SftpPaneStateCopyWithImpl<$Res>
 /// Create a copy of SftpPaneState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? source = null,Object? currentPath = null,Object? entries = null,Object? isLoading = null,Object? error = freezed,Object? selectedPaths = null,Object? sortField = null,Object? sortAscending = null,Object? showHidden = null,Object? needsHostSelection = null,}) {
-  return _then(_self.copyWith(
+  return _then(SftpPaneState(
 source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
 as SftpPaneSource,currentPath: null == currentPath ? _self.currentPath : currentPath // ignore: cast_nullable_to_non_nullable
 as String,entries: null == entries ? _self.entries : entries // ignore: cast_nullable_to_non_nullable
@@ -224,7 +230,7 @@ return $default(_that.source,_that.currentPath,_that.entries,_that.isLoading,_th
 
 
 class _SftpPaneState implements SftpPaneState {
-  const _SftpPaneState({required this.source, required this.currentPath, final  List<SftpEntry> entries = const [], this.isLoading = false, this.error, final  Set<String> selectedPaths = const {}, this.sortField = SortField.name, this.sortAscending = true, this.showHidden = false, this.needsHostSelection = false}): _entries = entries,_selectedPaths = selectedPaths;
+  const _SftpPaneState({required this.source, required this.currentPath,  List<SftpEntry> entries = const [], this.isLoading = false, this.error,  Set<String> selectedPaths = const {}, this.sortField = SortField.name, this.sortAscending = true, this.showHidden = false, this.needsHostSelection = false}): _entries = entries,_selectedPaths = selectedPaths;
   
 
 @override final  SftpPaneSource source;
@@ -260,16 +266,18 @@ _$SftpPaneStateCopyWith<_SftpPaneState> get copyWith => __$SftpPaneStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SftpPaneState&&(identical(other.source, source) || other.source == source)&&(identical(other.currentPath, currentPath) || other.currentPath == currentPath)&&const DeepCollectionEquality().equals(other._entries, _entries)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other._selectedPaths, _selectedPaths)&&(identical(other.sortField, sortField) || other.sortField == sortField)&&(identical(other.sortAscending, sortAscending) || other.sortAscending == sortAscending)&&(identical(other.showHidden, showHidden) || other.showHidden == showHidden)&&(identical(other.needsHostSelection, needsHostSelection) || other.needsHostSelection == needsHostSelection));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SftpPaneState&&(identical(other.source, source) || other.source == source)&&(identical(other.currentPath, currentPath) || other.currentPath == currentPath)&&const DeepCollectionEquality().equals(other.entries, _entries)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other.selectedPaths, _selectedPaths)&&(identical(other.sortField, sortField) || other.sortField == sortField)&&(identical(other.sortAscending, sortAscending) || other.sortAscending == sortAscending)&&(identical(other.showHidden, showHidden) || other.showHidden == showHidden)&&(identical(other.needsHostSelection, needsHostSelection) || other.needsHostSelection == needsHostSelection));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,source,currentPath,const DeepCollectionEquality().hash(_entries),isLoading,error,const DeepCollectionEquality().hash(_selectedPaths),sortField,sortAscending,showHidden,needsHostSelection);
+int get hashCode {
+    return Object.hash(runtimeType,source,currentPath,const DeepCollectionEquality().hash(_entries),isLoading,error,const DeepCollectionEquality().hash(_selectedPaths),sortField,sortAscending,showHidden,needsHostSelection);
+}
 
 @override
 String toString() {
-  return 'SftpPaneState(source: $source, currentPath: $currentPath, entries: $entries, isLoading: $isLoading, error: $error, selectedPaths: $selectedPaths, sortField: $sortField, sortAscending: $sortAscending, showHidden: $showHidden, needsHostSelection: $needsHostSelection)';
+    return 'SftpPaneState(source: $source, currentPath: $currentPath, entries: $entries, isLoading: $isLoading, error: $error, selectedPaths: $selectedPaths, sortField: $sortField, sortAscending: $sortAscending, showHidden: $showHidden, needsHostSelection: $needsHostSelection)';
 }
 
 

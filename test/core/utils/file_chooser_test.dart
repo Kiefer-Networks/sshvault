@@ -8,6 +8,7 @@
 // for in-memory stubs.
 
 import 'package:file_picker/file_picker.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -15,11 +16,12 @@ import 'package:sshvault/core/utils/file_chooser.dart';
 
 // We never assign to FilePicker.platform — the wrapper exposes its own
 // `picker` slot — so PlatformInterface registration is not needed.
-class _MockFilePicker extends Mock implements FilePicker {}
+class _MockFilePicker extends Mock implements FilePickerPlatform {}
 
 void main() {
   setUpAll(() {
     registerFallbackValue(FileType.any);
+    registerFallbackValue(Uint8List(0));
   });
 
   tearDown(() {
@@ -118,22 +120,20 @@ void main() {
 
     test('passes localized title through to FilePicker', () async {
       when(
-        () => mock.pickFiles(
+        () => mock.pickFile(
           dialogTitle: any(named: 'dialogTitle'),
           type: any(named: 'type'),
           allowedExtensions: any(named: 'allowedExtensions'),
-          withData: any(named: 'withData'),
         ),
       ).thenAnswer((_) async => null);
 
       await FileChooser.openFile(dialogTitle: 'L10N TITLE');
 
       verify(
-        () => mock.pickFiles(
+        () => mock.pickFile(
           dialogTitle: 'L10N TITLE',
           type: FileType.any,
           allowedExtensions: null,
-          withData: false,
         ),
       ).called(1);
     });
@@ -142,11 +142,10 @@ void main() {
       'translates MIME filters to FileType.custom + allowedExtensions',
       () async {
         when(
-          () => mock.pickFiles(
+          () => mock.pickFile(
             dialogTitle: any(named: 'dialogTitle'),
             type: any(named: 'type'),
             allowedExtensions: any(named: 'allowedExtensions'),
-            withData: any(named: 'withData'),
           ),
         ).thenAnswer((_) async => null);
 
@@ -156,11 +155,10 @@ void main() {
         );
 
         final captured = verify(
-          () => mock.pickFiles(
+          () => mock.pickFile(
             dialogTitle: 'pick',
             type: captureAny(named: 'type'),
             allowedExtensions: captureAny(named: 'allowedExtensions'),
-            withData: false,
           ),
         ).captured;
         expect(captured[0], FileType.custom);
@@ -174,11 +172,10 @@ void main() {
 
     test('any-only filter list resolves to FileType.any', () async {
       when(
-        () => mock.pickFiles(
+        () => mock.pickFile(
           dialogTitle: any(named: 'dialogTitle'),
           type: any(named: 'type'),
           allowedExtensions: any(named: 'allowedExtensions'),
-          withData: any(named: 'withData'),
         ),
       ).thenAnswer((_) async => null);
 
@@ -188,11 +185,10 @@ void main() {
       );
 
       verify(
-        () => mock.pickFiles(
+        () => mock.pickFile(
           dialogTitle: 't',
           type: FileType.any,
           allowedExtensions: null,
-          withData: false,
         ),
       ).called(1);
     });
@@ -200,22 +196,24 @@ void main() {
     test(
       'returns FileChooserResult with name + path + bytes from result',
       () async {
-        final pf = PlatformFile(
+        final pf = _PickedFile(
           name: 'id_ed25519',
           size: 4,
           path: '/tmp/id_ed25519',
           bytes: Uint8List.fromList([1, 2, 3, 4]),
         );
         when(
-          () => mock.pickFiles(
+          () => mock.pickFile(
             dialogTitle: any(named: 'dialogTitle'),
             type: any(named: 'type'),
             allowedExtensions: any(named: 'allowedExtensions'),
-            withData: any(named: 'withData'),
           ),
-        ).thenAnswer((_) async => FilePickerResult([pf]));
+        ).thenAnswer((_) async => pf);
 
-        final result = await FileChooser.openFile(dialogTitle: 't');
+        final result = await FileChooser.openFile(
+          dialogTitle: 't',
+          withData: true,
+        );
         expect(result, isNotNull);
         expect(result!.name, 'id_ed25519');
         expect(result.path, '/tmp/id_ed25519');
@@ -225,11 +223,10 @@ void main() {
 
     test('returns null when user cancels', () async {
       when(
-        () => mock.pickFiles(
+        () => mock.pickFile(
           dialogTitle: any(named: 'dialogTitle'),
           type: any(named: 'type'),
           allowedExtensions: any(named: 'allowedExtensions'),
-          withData: any(named: 'withData'),
         ),
       ).thenAnswer((_) async => null);
 
@@ -249,10 +246,9 @@ void main() {
           dialogTitle: any(named: 'dialogTitle'),
           fileName: any(named: 'fileName'),
           bytes: any(named: 'bytes'),
-          type: any(named: 'type'),
-          allowedExtensions: any(named: 'allowedExtensions'),
+          mimeType: any(named: 'mimeType'),
         ),
-      ).thenAnswer((_) async => '/out/x.json');
+      ).thenAnswer((_) async => Uri.file('/out/x.json'));
 
       final saved = await FileChooser.saveFile(
         dialogTitle: 'Save settings',
@@ -261,14 +257,13 @@ void main() {
         filters: const [FileTypeFilter.json],
       );
 
-      expect(saved, '/out/x.json');
+      expect(saved, Uri.file('/out/x.json').toFilePath());
       verify(
         () => mock.saveFile(
           dialogTitle: 'Save settings',
           fileName: 'x.json',
           bytes: bytes,
-          type: FileType.custom,
-          allowedExtensions: ['json'],
+          mimeType: 'application/json',
         ),
       ).called(1);
     });
@@ -299,10 +294,8 @@ void main() {
           dialogTitle: any(named: 'dialogTitle'),
           type: any(named: 'type'),
           allowedExtensions: any(named: 'allowedExtensions'),
-          withData: any(named: 'withData'),
-          allowMultiple: any(named: 'allowMultiple'),
         ),
-      ).thenAnswer((_) async => null);
+      ).thenAnswer((_) async => <PlatformFile>[]);
 
       final files = await FileChooser.openFiles(dialogTitle: 'upload');
       expect(files, isEmpty);
@@ -311,10 +304,35 @@ void main() {
           dialogTitle: 'upload',
           type: FileType.any,
           allowedExtensions: null,
-          withData: false,
-          allowMultiple: true,
         ),
       ).called(1);
     });
   });
+}
+
+final class _PickedFile extends PlatformFile {
+  _PickedFile({
+    required this.name,
+    required this.size,
+    required this.path,
+    required this.bytes,
+  });
+  @override
+  final String name;
+  final int size;
+  @override
+  final String path;
+  final Uint8List bytes;
+  @override
+  Uri get uri => Uri.file(path);
+  @override
+  XFile get xFile => XFile.fromData(bytes, name: name);
+  @override
+  int lengthSync() => size;
+  @override
+  Future<int> length() async => size;
+  @override
+  Future<Uint8List> readAsBytes() async => bytes;
+  @override
+  Stream<Uint8List> readAsByteStream() => Stream.value(bytes);
 }

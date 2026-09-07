@@ -55,10 +55,17 @@ class SyncRepositoryImpl implements SyncRepository {
       },
       onFailure: (f) {
         if (f is NetworkFailure && f.statusCode == 409) {
+          final currentVersion = f.responseData?['current_version'];
+          final serverMessage = f.responseData?['message'];
           return Err(
             SyncFailure(
-              'Conflict: server has a newer version',
-              conflictVersion: version,
+              serverMessage is String && serverMessage.isNotEmpty
+                  ? serverMessage
+                  : 'Conflict: server has a newer version',
+              conflictVersion: currentVersion is int
+                  ? currentVersion
+                  : int.tryParse('$currentVersion') ?? version,
+              statusCode: 409,
             ),
           );
         }

@@ -10,6 +10,9 @@ import 'package:sshvault/features/connection/presentation/providers/tag_provider
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
 
+/// Server currently selected for the wide desktop context pane.
+final desktopSelectedServerIdProvider = StateProvider<String?>((ref) => null);
+
 enum ViewMode { list, grid }
 
 final viewModeProvider = StateProvider<ViewMode>((ref) => ViewMode.list);
@@ -42,11 +45,18 @@ class ServerListNotifier extends AsyncNotifier<List<ServerEntity>>
     ref.invalidate(favoriteServersProvider);
     ref.invalidate(recentServersProvider);
     ref.invalidate(sshKeyListProvider);
+    // Key tiles watch a family provider for their linked-server names. It is
+    // independent from the host list and must be invalidated explicitly after
+    // create/update/delete, otherwise deleted tombstones remain visible and
+    // can incorrectly block key deletion.
+    ref.invalidate(serversLinkedToKeyProvider);
     // Folder + tag count badges read from these providers; without
     // explicit invalidation the sidebar / dashboard tiles keep stale
     // counts until app restart.
     ref.invalidate(folderListProvider);
     ref.invalidate(tagListProvider);
+    // Server tag assignments change the cached counts shown on the Tags page.
+    ref.invalidate(serverCountByTagProvider);
     if (serverId != null) {
       ref.invalidate(serverDetailProvider(serverId));
       ref.invalidate(serverCredentialsProvider(serverId));

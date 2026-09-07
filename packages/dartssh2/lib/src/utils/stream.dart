@@ -31,34 +31,6 @@ class MaxChunkSize extends StreamTransformerBase<Uint8List, Uint8List> {
   }
 }
 
-class MinChunkSize extends StreamTransformerBase<Uint8List, Uint8List> {
-  MinChunkSize(this.size);
-
-  final int size;
-
-  var _yielded = false;
-
-  @override
-  Stream<Uint8List> bind(Stream<Uint8List> stream) async* {
-    var buffer = BytesBuilder(copy: false);
-
-    await for (var chunk in stream) {
-      buffer.add(chunk);
-
-      if (buffer.length < size) {
-        continue;
-      }
-
-      yield buffer.takeBytes();
-      _yielded = true;
-    }
-
-    if (buffer.isNotEmpty || !_yielded) {
-      yield buffer.takeBytes();
-    }
-  }
-}
-
 /// A helper class that can be used to read data from a data stream on demand.
 abstract class StreamConsumerBase<T> {
   /// Creates a new [StreamConsumer] that reads from [stream].

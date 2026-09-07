@@ -5,6 +5,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/network/api_provider.dart';
+import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/core/storage/database_provider.dart';
 import 'package:sshvault/features/account/presentation/providers/account_providers.dart';
@@ -74,16 +75,21 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     final result = await repo.login(email, password, deviceName: deviceName);
     state = await result.fold(
       onSuccess: (auth) async {
-        await _persistTokens(
-          auth.accessToken,
-          auth.refreshToken,
-          auth.expiresAt,
-          auth.user.email,
-        );
-        await _registerDeviceIfNeeded();
-        _invalidateAccountProviders();
-        _log.info(_tag, 'Login successful');
-        return const AsyncValue.data(AuthStatus.authenticated);
+        try {
+          await _persistTokens(
+            auth.accessToken,
+            auth.refreshToken,
+            auth.expiresAt,
+            auth.user.email,
+          );
+          await _registerDeviceIfNeeded();
+          _invalidateAccountProviders();
+          _log.info(_tag, 'Login successful');
+          return const AsyncValue.data(AuthStatus.authenticated);
+        } catch (error, stack) {
+          await ref.read(secureStorageProvider).clearAuthTokens();
+          return AsyncValue.error(error, stack);
+        }
       },
       onFailure: (f) async {
         _log.error(_tag, 'Login failed: $f');
@@ -92,30 +98,23 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     );
   }
 
-  Future<void> register(String email, String password) async {
+  Future<bool> register(String email, String password) async {
     _log.info(_tag, 'Registration attempt');
     state = const AsyncValue.loading();
     final repo = ref.read(authRepositoryProvider);
 
     final result = await repo.register(email, password);
     state = await result.fold(
-      onSuccess: (auth) async {
-        await _persistTokens(
-          auth.accessToken,
-          auth.refreshToken,
-          auth.expiresAt,
-          auth.user.email,
-        );
-        await _registerDeviceIfNeeded();
-        _invalidateAccountProviders();
-        _log.info(_tag, 'Registration successful');
-        return const AsyncValue.data(AuthStatus.authenticated);
+      onSuccess: (_) async {
+        _log.info(_tag, 'Registration accepted — mailbox activation required');
+        return const AsyncValue.data(AuthStatus.unauthenticated);
       },
       onFailure: (f) async {
         _log.error(_tag, 'Registration failed: $f');
         return AsyncValue.error(f, StackTrace.current);
       },
     );
+    return result.isSuccess;
   }
 
   Future<void> logout({bool deleteLocalData = false}) async {
@@ -164,12 +163,18 @@ class AuthNotifier extends AsyncNotifier<AuthStatus> {
     String email,
   ) async {
     final storage = ref.read(secureStorageProvider);
-    await storage.saveAccessToken(accessToken);
-    await storage.saveRefreshToken(refreshToken);
-    if (expiresAt != null) {
-      await storage.saveTokenExpiry(expiresAt);
+    Future<void> requireSaved(Future<Result<void>> operation) async {
+      final result = await operation;
+      if (result.isFailure) throw result.failure;
     }
-    await storage.saveUserEmail(email);
+
+    // Access token is the startup authentication marker; commit it last.
+    await requireSaved(storage.saveRefreshToken(refreshToken));
+    if (expiresAt != null) {
+      await requireSaved(storage.saveTokenExpiry(expiresAt));
+    }
+    await requireSaved(storage.saveUserEmail(email));
+    await requireSaved(storage.saveAccessToken(accessToken));
     _log.debug(_tag, 'Auth tokens persisted');
   }
 

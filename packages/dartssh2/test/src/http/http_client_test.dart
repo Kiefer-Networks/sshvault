@@ -1,0 +1,490 @@
+import 'dart:async';
+import 'dart:typed_data';
+
+import 'package:dartssh2/src/http/http_client.dart';
+import 'package:dartssh2/src/http/http_exception.dart';
+import 'package:dartssh2/src/socket/ssh_socket.dart';
+import 'package:test/test.dart';
+
+void main() {
+  group('SSHHttpClientResponse.from', () {
+    test('parses status line, headers and body', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'content-length: 5\r\n',
+        'content-type: text/plain; charset=utf-8\r\n',
+        '\r\n',
+        'hello',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.body, 'hello');
+      expect(response.headers.contentLength, 5);
+      expect(response.headers.contentType?.mimeType, 'text/plain');
+      expect(socket.closed, isTrue);
+    });
+
+    test('supports HTTP/1.0 responses', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.0 404 Not Found\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.statusCode, 404);
+      expect(response.reasonPhrase, 'Not Found');
+      expect(response.body, isEmpty);
+    });
+
+    test(
+        'reads the full body when there is no Content-Length and the body '
+        'arrives in a separate segment from the headers', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'content-type: text/plain\r\n',
+        '\r\n',
+        'hello world',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.statusCode, 200);
+      expect(response.body, 'hello world');
+      expect(response.headers.contentLength, -1);
+      expect(socket.closed, isTrue);
+    });
+
+    test(
+        'reads the full body when there is no Content-Length and the body '
+        'arrives in the same segment as the headers', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n'
+            'content-type: text/plain\r\n'
+            '\r\n'
+            'hello world',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.statusCode, 200);
+      expect(response.body, 'hello world');
+      expect(response.headers.contentLength, -1);
+      expect(socket.closed, isTrue);
+    });
+
+    test('a 204 response is complete without waiting for the peer to close',
+        () async {
+      // No Content-Length, and the socket never ends on its own. Reading to
+      // end of stream here would hang; a 204 has no body by definition.
+      final socket = _FakeSocket(
+        [
+          'HTTP/1.1 204 No Content\r\n',
+          'server: test\r\n',
+          '\r\n',
+        ],
+        keepOpen: true,
+      );
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.statusCode, 204);
+      expect(response.body, isEmpty);
+      expect(socket.closed, isTrue);
+    });
+
+    test('a 304 response is complete without waiting for the peer to close',
+        () async {
+      final socket = _FakeSocket(
+        [
+          'HTTP/1.1 304 Not Modified\r\n',
+          'etag: "abc"\r\n',
+          '\r\n',
+        ],
+        keepOpen: true,
+      );
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.statusCode, 304);
+      expect(response.body, isEmpty);
+      expect(response.headers.value('etag'), '"abc"');
+      expect(socket.closed, isTrue);
+    });
+
+    test('a response to HEAD ignores Content-Length and reads no body',
+        () async {
+      // Content-Length on a HEAD response describes the body the equivalent
+      // GET would have returned, not what is on the wire. Reading it would
+      // wait for 11 bytes that are never sent.
+      final socket = _FakeSocket(
+        [
+          'HTTP/1.1 200 OK\r\n',
+          'content-length: 11\r\n',
+          '\r\n',
+        ],
+        keepOpen: true,
+      );
+
+      final response = await SSHHttpClientResponse.from(socket, method: 'HEAD');
+
+      expect(response.statusCode, 200);
+      expect(response.body, isEmpty);
+      expect(response.headers.contentLength, 11);
+      expect(socket.closed, isTrue);
+    });
+
+    test('idleTimeout bounds a body that is delimited by connection close',
+        () async {
+      // A 200 with neither Content-Length nor chunked encoding is read to
+      // end of stream. This peer sends the headers and then goes quiet
+      // without closing, which is exactly the case that used to hang.
+      final socket = _FakeSocket(
+        [
+          'HTTP/1.1 200 OK\r\n',
+          'content-type: text/plain\r\n',
+          '\r\n',
+          'partial',
+        ],
+        keepOpen: true,
+      );
+
+      await expectLater(
+        SSHHttpClientResponse.from(
+          socket,
+          idleTimeout: const Duration(milliseconds: 50),
+        ),
+        throwsA(isA<TimeoutException>()),
+      );
+      expect(socket.closed, isTrue);
+    });
+
+    test('throws for unsupported transfer encoding', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'transfer-encoding: compress\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      await expectLater(
+        SSHHttpClientResponse.from(socket),
+        throwsA(isA<UnsupportedError>()),
+      );
+    });
+
+    test('throws for unsupported response format', () async {
+      final socket = _FakeSocket([
+        'NOT_HTTP\r\n',
+      ]);
+
+      await expectLater(
+        SSHHttpClientResponse.from(socket),
+        throwsA(isA<UnsupportedError>()),
+      );
+    });
+  });
+
+  group('SSHHttpClientResponse chunked transfer encoding', () {
+    test('decodes a single-chunk body', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'transfer-encoding: chunked\r\n',
+        '\r\n',
+        '5\r\nhello\r\n0\r\n\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.statusCode, 200);
+      expect(response.body, 'hello');
+      expect(socket.closed, isTrue);
+    });
+
+    test('decodes multiple chunks into concatenated body', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'transfer-encoding: chunked\r\n',
+        '\r\n',
+        '5\r\nhello\r\n',
+        '1\r\n \r\n',
+        '6\r\nworld!\r\n0\r\n\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.body, 'hello world!');
+    });
+
+    test('ignores chunk extensions', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'transfer-encoding: chunked\r\n',
+        '\r\n',
+        '5;name=value\r\nhello\r\n0\r\n\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.body, 'hello');
+    });
+
+    test('parses trailer headers after last-chunk', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'transfer-encoding: chunked\r\n',
+        '\r\n',
+        '5\r\nhello\r\n0\r\n',
+        'x-trailer: yes\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.body, 'hello');
+      expect(response.headers.value('x-trailer'), 'yes');
+    });
+
+    test('handles empty chunked body', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 204 No Content\r\n',
+        'transfer-encoding: chunked\r\n',
+        '\r\n',
+        '0\r\n\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.statusCode, 204);
+      expect(response.body, isEmpty);
+    });
+
+    test('ignores spaces in chunk size and before chunk extensions', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'transfer-encoding: chunked\r\n',
+        '\r\n',
+        '5   ; extension-key=extension-value\r\nhello\r\n0\r\n\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.body, 'hello');
+    });
+
+    test('decodes chunked body using LF-only delimiters', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\n',
+        'transfer-encoding: chunked\n',
+        '\n',
+        '5\nhello\n0\n\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.body, 'hello');
+    });
+  });
+
+  group('SSHHttpClientResponse headers', () {
+    test('throws FormatException on header line without colon', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'invalid_header_line_without_colon\r\n',
+        '\r\n',
+      ]);
+
+      expect(
+        () => SSHHttpClientResponse.from(socket),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
+    test('parses RFC 7231 IMF-fixdate format in header', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'date: Sun, 06 Nov 1994 08:49:37 GMT\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+      expect(response.headers.date, DateTime.utc(1994, 11, 6, 8, 49, 37));
+    });
+
+    test('throws when reading duplicated header via value()', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'x-test: a\r\n',
+        'x-test: b\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(
+        () => response.headers.value('x-test'),
+        throwsA(isA<SSHHttpException>()),
+      );
+    });
+
+    test('parses date-like headers and exposes raw host header', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'host: localhost:8080\r\n',
+        'date: 2024-01-01T10:00:00.000Z\r\n',
+        'expires: 2024-01-01T12:00:00.000Z\r\n',
+        'if-modified-since: 2024-01-01T09:00:00.000Z\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.headers.value('host'), 'localhost:8080');
+      expect(response.headers.date, DateTime.parse('2024-01-01T10:00:00.000Z'));
+      expect(
+          response.headers.expires, DateTime.parse('2024-01-01T12:00:00.000Z'));
+      expect(
+        response.headers.ifModifiedSince,
+        DateTime.parse('2024-01-01T09:00:00.000Z'),
+      );
+    });
+
+    test('host and port parse a plain hostname with no port', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'host: example.com\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.headers.host, 'example.com');
+      expect(response.headers.port, isNull);
+    });
+
+    test('host and port parse a hostname with a port', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'host: example.com:8080\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.headers.host, 'example.com');
+      expect(response.headers.port, 8080);
+    });
+
+    test('host and port parse an IPv6 literal with a port', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'host: [::1]:22\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(response.headers.host, '::1');
+      expect(response.headers.port, 22);
+    });
+
+    test('response headers are immutable', () async {
+      final socket = _FakeSocket([
+        'HTTP/1.1 200 OK\r\n',
+        'content-length: 0\r\n',
+        '\r\n',
+      ]);
+
+      final response = await SSHHttpClientResponse.from(socket);
+
+      expect(
+        () => response.headers.add('x', '1'),
+        throwsA(isA<UnsupportedError>()),
+      );
+      expect(
+        () => response.headers.set('x', '1'),
+        throwsA(isA<UnsupportedError>()),
+      );
+      expect(
+        () => response.headers.removeAll('x'),
+        throwsA(isA<UnsupportedError>()),
+      );
+      expect(
+        () => response.headers.clear(),
+        throwsA(isA<UnsupportedError>()),
+      );
+    });
+  });
+}
+
+class _FakeSocket implements SSHSocket {
+  _FakeSocket(List<String> chunks, {this.keepOpen = false})
+      : _chunks = chunks
+            .map((chunk) => Uint8List.fromList(chunk.codeUnits))
+            .toList(growable: false);
+
+  /// When true the response stream delivers [_chunks] and then stays open
+  /// indefinitely, the way a peer that never closes the connection behaves.
+  /// Reading a response to end of stream can only be proven to stop early
+  /// against a socket that never ends on its own.
+  final bool keepOpen;
+
+  final List<Uint8List> _chunks;
+  final _sinkController = StreamController<List<int>>();
+  final _doneCompleter = Completer<void>();
+  StreamController<Uint8List>? _streamController;
+  bool closed = false;
+
+  @override
+  Stream<Uint8List> get stream {
+    if (!keepOpen) return Stream<Uint8List>.fromIterable(_chunks);
+
+    var controller = _streamController;
+    if (controller == null) {
+      controller = StreamController<Uint8List>();
+      _streamController = controller;
+      for (final chunk in _chunks) {
+        controller.add(chunk);
+      }
+    }
+    return controller.stream;
+  }
+
+  @override
+  StreamSink<List<int>> get sink => _sinkController.sink;
+
+  @override
+  Future<void> get done => _doneCompleter.future;
+
+  @override
+  Future<void> close() async {
+    closed = true;
+    if (!_doneCompleter.isCompleted) {
+      _doneCompleter.complete();
+    }
+    unawaited(_streamController?.close());
+    await _sinkController.close();
+  }
+
+  @override
+  void destroy() {
+    closed = true;
+    if (!_doneCompleter.isCompleted) {
+      _doneCompleter.complete();
+    }
+    unawaited(_sinkController.close());
+  }
+
+  @override
+  Future<void> flush() async {}
+}

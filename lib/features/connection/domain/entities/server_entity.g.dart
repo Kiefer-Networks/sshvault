@@ -23,6 +23,14 @@ _ServerEntity _$ServerEntityFromJson(Map<String, dynamic> json) =>
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
       distroId: json['distroId'] as String?,
       distroName: json['distroName'] as String?,
+      osFamily: json['os_family'] as String?,
+      osName: json['os_name'] as String?,
+      osVersion: json['os_version'] as String?,
+      osPrettyName: json['os_pretty_name'] as String?,
+      osDetectedAt: json['os_detected_at'] == null
+          ? null
+          : DateTime.parse(json['os_detected_at'] as String),
+      systemMetricsJson: json['systemMetricsJson'] as String?,
       tags:
           (json['tags'] as List<dynamic>?)
               ?.map((e) => TagEntity.fromJson(e as Map<String, dynamic>))
@@ -69,6 +77,12 @@ Map<String, dynamic> _$ServerEntityToJson(_ServerEntity instance) =>
       'sortOrder': instance.sortOrder,
       'distroId': instance.distroId,
       'distroName': instance.distroName,
+      'os_family': instance.osFamily,
+      'os_name': instance.osName,
+      'os_version': instance.osVersion,
+      'os_pretty_name': instance.osPrettyName,
+      'os_detected_at': instance.osDetectedAt?.toIso8601String(),
+      'systemMetricsJson': instance.systemMetricsJson,
       'tags': instance.tags.map((e) => e.toJson()).toList(),
       'jumpHostId': instance.jumpHostId,
       'postConnectCommands': instance.postConnectCommands,

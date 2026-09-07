@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
+import 'package:sshvault/features/terminal/data/services/terminal_io.dart';
 
 import 'package:dartssh2/dartssh2.dart';
+import 'package:sshvault/core/ssh/ssh_algorithms.dart';
+import 'package:sshvault/core/ssh/agent_identities.dart';
+import 'package:sshvault/core/ssh/local_agent_forwarder.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/error/result.dart';
 import 'package:sshvault/core/services/logging_service.dart';
@@ -17,8 +21,8 @@ import 'package:xterm/xterm.dart';
 typedef SshConnection = ({
   SSHClient client,
   SSHSession session,
-  StreamSubscription<Uint8List> stdoutSubscription,
-  StreamSubscription<Uint8List> stderrSubscription,
+  StreamSubscription<String> stdoutSubscription,
+  StreamSubscription<String> stderrSubscription,
   SSHClient? jumpHostClient,
 });
 
@@ -40,12 +44,7 @@ class SshService {
     ProxyCredentials? proxyCredentials,
     SSHHostkeyVerifyHandler? onVerifyHostKey,
     SSHHostkeyVerifyHandler? onVerifyJumpHostKey,
-    // ssh-agent forwarding: when true the caller would like the remote
-    // shell to see $SSH_AUTH_SOCK. The current dartssh2 fork does not
-    // implement the auth-agent-req channel request, so this is recorded for
-    // future wiring (likely a custom channel request once dartssh2 grows
-    // the capability). Tracking it explicitly lets the UI surface the
-    // requested-but-not-supported state honestly.
+    // Explicit opt-in: expose local agent listing/signing to the destination.
     bool forwardAgent = false,
   }) async {
     _log.info(
@@ -53,10 +52,11 @@ class SshService {
       'Connecting to ${server.hostname}:${server.port} as ${server.username}'
       '${forwardAgent ? ' (agent forwarding requested)' : ''}',
     );
+    SSHClient? jumpHostClient;
+    SSHClient? client;
+    final openedSockets = <SSHSocket>[];
+    var connected = false;
     try {
-      SSHClient? jumpHostClient;
-      SSHClient client;
-
       if (jumpHost != null && jumpHostCredentials != null) {
         _log.info(
           _tag,
@@ -69,15 +69,18 @@ class SshService {
           proxyConfig,
           proxyCredentials,
         );
+        openedSockets.add(jumpSocket);
 
         jumpHostClient = SSHClient(
           jumpSocket,
           username: jumpHost.username,
+          algorithms: sshVaultAlgorithms,
+          printDebug: (message) => _log.debug(_tag, '[jump] $message'),
           onPasswordRequest: _buildPasswordHandler(
             jumpHost,
             jumpHostCredentials,
           ),
-          identities: _buildIdentities(
+          identities: await _buildIdentities(
             jumpHost,
             jumpHostCredentials,
             jumpHostPrivateKey,
@@ -93,12 +96,16 @@ class SshService {
           server.hostname,
           server.port,
         );
+        openedSockets.add(forward);
 
         client = SSHClient(
           forward,
+          agentHandler: forwardAgent ? LocalAgentForwarder() : null,
           username: server.username,
+          algorithms: sshVaultAlgorithms,
+          printDebug: (message) => _log.debug(_tag, message ?? ''),
           onPasswordRequest: _buildPasswordHandler(server, credentials),
-          identities: _buildIdentities(
+          identities: await _buildIdentities(
             server,
             credentials,
             managedPrivateKey,
@@ -113,6 +120,7 @@ class SshService {
           proxyConfig,
           proxyCredentials,
         );
+        openedSockets.add(socket);
 
         _log.debug(
           _tag,
@@ -121,9 +129,12 @@ class SshService {
 
         client = SSHClient(
           socket,
+          agentHandler: forwardAgent ? LocalAgentForwarder() : null,
           username: server.username,
+          algorithms: sshVaultAlgorithms,
+          printDebug: (message) => _log.debug(_tag, message ?? ''),
           onPasswordRequest: _buildPasswordHandler(server, credentials),
-          identities: _buildIdentities(
+          identities: await _buildIdentities(
             server,
             credentials,
             managedPrivateKey,
@@ -142,83 +153,119 @@ class SshService {
 
       _log.info(_tag, 'Shell session opened for ${server.hostname}');
 
-      // UTF-8 decoder that tolerates malformed sequences (e.g. binary data
-      // mixed into terminal output). allowMalformed replaces invalid bytes
-      // with U+FFFD instead of throwing.
-      const utf8 = Utf8Decoder(allowMalformed: true);
-
-      // Wire terminal output → SSH session
-      terminal.onOutput = (data) {
-        session.write(Uint8List.fromList(data.codeUnits));
-      };
-
-      // Wire SSH stdout → terminal (store subscription for cleanup)
-      final stdoutSub = session.stdout.listen(
-        (data) => terminal.write(utf8.convert(data)),
+      final subscriptions = wireTerminalIo(
+        session,
+        terminal,
         onDone: () {
           _log.info(_tag, 'Connection closed for ${server.hostname}');
           terminal.write('\r\n[Connection closed]\r\n');
         },
       );
-
-      // Wire SSH stderr → terminal (store subscription for cleanup)
-      final stderrSub = session.stderr.listen(
-        (data) => terminal.write(utf8.convert(data)),
-      );
-
-      // Wire terminal resize → SSH
-      terminal.onResize = (width, height, pixelWidth, pixelHeight) {
-        session.resizeTerminal(width, height);
-      };
-
+      connected = true;
       return Success((
         client: client,
         session: session,
-        stdoutSubscription: stdoutSub,
-        stderrSubscription: stderrSub,
+        stdoutSubscription: subscriptions.stdout,
+        stderrSubscription: subscriptions.stderr,
         jumpHostClient: jumpHostClient,
       ));
-    } on SSHAlgorithmNegotiationError catch (e) {
+    } on SSHHandshakeError catch (e) {
+      _log.error(_tag, 'SSH handshake failed for ${server.hostname}: $e');
+      return Err(
+        SshConnectionFailure('SSH handshake failed: ${e.message}', cause: e),
+      );
+    } on SSHInternalError catch (e) {
+      // dartssh2 reports an empty algorithm intersection as an internal
+      // transport error. Preserve the actual reason so the UI does not show
+      // the misleading generic "authentication aborted" message.
+      final detail = e.error.toString();
       _log.error(
         _tag,
-        'Algorithm negotiation failed (${e.layer}) for ${server.hostname}:${server.port}. '
-        'Server offered: ${e.remote.join(', ')}. '
-        'Client supports: ${e.supported.join(', ')}.',
+        'SSH transport negotiation failed for ${server.hostname}: $detail',
       );
       return Err(
         SshConnectionFailure(
-          'SSHVault and the server share no common ${e.layer} algorithm. '
-          'The server requires ${e.remote.join(', ')}, '
-          'but this client only supports ${e.supported.join(', ')}. '
-          'Adjust the server configuration or wait for client support to land.',
+          'SSH negotiation failed for ${server.hostname}: $detail',
           cause: e,
         ),
       );
     } on SSHAuthFailError catch (e) {
       _log.error(
         _tag,
-        'Authentication failed for ${server.username}@${server.hostname}: $e',
+        'Authentication failed for ${server.username}@${server.hostname}: ${e.message}',
       );
       return Err(
         SshConnectionFailure(
-          'Authentication failed for ${server.username}@${server.hostname}',
+          'SSH-Authentifizierung fehlgeschlagen: ${e.message}',
           cause: e,
         ),
       );
     } on SSHAuthAbortError catch (e) {
       _log.error(_tag, 'Authentication aborted for ${server.hostname}: $e');
-      return Err(SshConnectionFailure('Authentication aborted', cause: e));
+      final reason = e.reason?.toString() ?? e.message;
+      if (reason.contains('No matching key exchange algorithm') ||
+          reason.contains('ML-KEM unavailable') ||
+          reason.contains('sntrup unavailable')) {
+        return Err(
+          SshConnectionFailure(
+            'PQ-SSH-Schlüsselaustausch ist nicht verfügbar: ${hybridKexAvailabilityError ?? 'liboqs.dll fehlt oder konnte nicht geladen werden'}. Lege liboqs.dll neben sshvault.exe ab oder erlaube auf dem Server curve25519-sha256.',
+            cause: e,
+          ),
+        );
+      }
+      return Err(
+        SshConnectionFailure('Authentication aborted: $reason', cause: e),
+      );
+    } on TimeoutException catch (e) {
+      _log.error(
+        _tag,
+        'Connection timed out for ${server.hostname}:${server.port}: $e',
+      );
+      return Err(
+        SshConnectionFailure(
+          'Zeitüberschreitung beim Verbinden mit ${server.hostname}:${server.port}. Prüfe Erreichbarkeit, Firewall und Port.',
+          cause: e,
+        ),
+      );
+    } on SocketException catch (e) {
+      _log.error(
+        _tag,
+        'Network connection failed for ${server.hostname}:${server.port}: $e',
+      );
+      return Err(
+        SshConnectionFailure(
+          'Server ${server.hostname}:${server.port} ist nicht erreichbar: ${e.message}',
+          cause: e,
+        ),
+      );
     } catch (e) {
       _log.error(
         _tag,
         'Failed to connect to ${server.hostname}:${server.port}: $e',
       );
+      final detail = e.toString();
+      if (detail.contains('No matching key exchange algorithm')) {
+        return Err(
+          SshConnectionFailure(
+            'Kein kompatibler SSH-Schlüsselaustausch. Der Server verlangt PQ-KEX; Windows benötigt dafür liboqs.dll im Programmordner.',
+            cause: e,
+          ),
+        );
+      }
       return Err(
         SshConnectionFailure(
           'Failed to connect to ${server.hostname}:${server.port}',
           cause: e,
         ),
       );
+    } finally {
+      if (!connected) {
+        client?.close();
+        jumpHostClient?.close();
+        for (final socket in openedSockets) {
+          socket.destroy();
+        }
+      }
     }
   }
 
@@ -232,34 +279,58 @@ class SshService {
     return () => password;
   }
 
-  List<SSHKeyPair>? _buildIdentities(
+  Future<List<SSHIdentity>?> _buildIdentities(
     ServerEntity server,
     ServerCredentials credentials,
     String? managedPrivateKey,
     String? managedPassphrase,
-  ) {
+  ) async {
     if (server.authMethod == AuthMethod.password) return null;
+    if (server.sshKeyId == kSshAgentSentinelKeyId) {
+      final agentKeys = await loadAgentIdentities();
+      _log.info(
+        _tag,
+        'Using Windows ssh-agent (${agentKeys.length} identities)',
+      );
+      return agentKeys;
+    }
 
     // Managed key takes priority
     final privateKey = managedPrivateKey ?? credentials.privateKey;
     final passphrase = managedPassphrase ?? credentials.passphrase;
 
-    if (privateKey == null || privateKey.isEmpty) return null;
+    if (privateKey == null || privateKey.isEmpty) {
+      _log.error(
+        _tag,
+        'No usable private key for ${server.username}@${server.hostname} '
+        '(sshKeyId=${server.sshKeyId ?? 'none'})',
+      );
+      return null;
+    }
 
     try {
-      return SSHKeyPair.fromPem(privateKey, passphrase);
+      final identities = SSHKeyPair.fromPem(privateKey, passphrase);
+      _log.info(
+        _tag,
+        'Loaded ${identities.length} private-key identity(ies) for '
+        '${server.username}@${server.hostname}',
+      );
+      return identities;
     } catch (e) {
+      _log.error(
+        _tag,
+        'Private-key parse failed for ${server.username}@${server.hostname}: $e',
+      );
       return null;
     }
   }
 
   Future<DistroInfo?> detectDistro(SSHClient client) async {
     try {
-      final result = await client.run(
-        'cat /etc/os-release 2>/dev/null || echo ""',
+      final osRelease = await client.run(
+        'cat /etc/os-release 2>/dev/null || true',
       );
-      final output = utf8.decode(result);
-      if (output.trim().isEmpty) return null;
+      final output = utf8.decode(osRelease);
 
       final map = <String, String>{};
       for (final line in output.split('\n')) {
@@ -275,14 +346,42 @@ class SshService {
 
       final id = map['ID'];
       final name = map['NAME'];
-      if (id == null && name == null) return null;
+      if (id != null || name != null) {
+        return DistroInfo(
+          id: id ?? name!.toLowerCase(),
+          name: name ?? id!,
+          version: map['VERSION_ID'],
+          prettyName: map['PRETTY_NAME'],
+        );
+      }
 
-      return DistroInfo(
-        id: id ?? name!.toLowerCase(),
-        name: name ?? id!,
-        version: map['VERSION_ID'],
-        prettyName: map['PRETTY_NAME'],
-      );
+      // /etc/os-release is Linux-specific. uname works on macOS, BSD and
+      // other Unix systems; Windows OpenSSH falls through to `ver`.
+      final uname = utf8
+          .decode(await client.run('uname -s 2>/dev/null || true'))
+          .trim();
+      final kernel = utf8
+          .decode(await client.run('uname -r 2>/dev/null || true'))
+          .trim();
+      if (uname.isNotEmpty) {
+        return DistroInfo(
+          id: uname.toLowerCase(),
+          name: uname,
+          version: kernel.isEmpty ? null : kernel,
+          prettyName: kernel.isEmpty ? uname : '$uname $kernel',
+        );
+      }
+
+      final windows = utf8
+          .decode(
+            await client.run('cmd /c ver 2>NUL || ver 2>/dev/null || true'),
+          )
+          .trim();
+      if (windows.isNotEmpty && windows.toLowerCase().contains('windows')) {
+        return DistroInfo(id: 'windows', name: 'Windows', prettyName: windows);
+      }
+
+      return null;
     } catch (e) {
       _log.debug(_tag, 'Distro detection failed: $e');
       return null;

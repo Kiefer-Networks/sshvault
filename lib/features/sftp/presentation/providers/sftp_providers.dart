@@ -560,10 +560,25 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
   static const _uuid = Uuid();
   static const _maxConcurrent = 2;
   final Map<String, Completer<void>> _cancelTokens = {};
+  final Map<String, Completer<void>> _pauseGates = {};
   int _activeCount = 0;
+  bool _disposed = false;
 
   @override
-  List<TransferItem> build() => [];
+  List<TransferItem> build() {
+    ref.onDispose(() {
+      _disposed = true;
+      for (final token in _cancelTokens.values) {
+        if (!token.isCompleted) token.complete();
+      }
+      _cancelTokens.clear();
+      for (final gate in _pauseGates.values) {
+        if (!gate.isCompleted) gate.complete();
+      }
+      _pauseGates.clear();
+    });
+    return [];
+  }
 
   Future<void> enqueueDownload(
     SftpPaneSource source,
@@ -637,17 +652,47 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
   }
 
   void pauseTransfer(String id) {
+    final item = state.where((item) => item.id == id).firstOrNull;
+    if (item == null ||
+        (item.status != TransferStatus.active &&
+            item.status != TransferStatus.queued)) {
+      return;
+    }
+    if (_cancelTokens.containsKey(id)) {
+      _pauseGates.putIfAbsent(id, () => Completer<void>());
+    }
     _updateItem(id, (item) => item.copyWith(status: TransferStatus.paused));
   }
 
   void resumeTransfer(String id) {
-    _updateItem(id, (item) => item.copyWith(status: TransferStatus.queued));
-    _processQueue();
+    final item = state.where((item) => item.id == id).firstOrNull;
+    if (item?.status != TransferStatus.paused) return;
+    if (_cancelTokens.containsKey(id)) {
+      _updateItem(id, (item) => item.copyWith(status: TransferStatus.active));
+      _releasePause(id);
+    } else {
+      _updateItem(id, (item) => item.copyWith(status: TransferStatus.queued));
+      _processQueue();
+    }
+  }
+
+  Future<void> _waitUntilResumed(String id) async {
+    while (!_disposed) {
+      final gate = _pauseGates[id];
+      if (gate == null) return;
+      await gate.future;
+    }
+  }
+
+  void _releasePause(String id) {
+    final gate = _pauseGates.remove(id);
+    if (gate != null && !gate.isCompleted) gate.complete();
   }
 
   void cancelTransfer(String id) {
-    _cancelTokens[id]?.complete();
-    _cancelTokens.remove(id);
+    final token = _cancelTokens[id];
+    if (token != null && !token.isCompleted) token.complete();
+    _releasePause(id);
     _updateItem(id, (item) => item.copyWith(status: TransferStatus.cancelled));
   }
 
@@ -663,6 +708,7 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
   }
 
   void _processQueue() {
+    if (_disposed) return;
     if (_activeCount >= _maxConcurrent) return;
 
     final queued = state.where((i) => i.status == TransferStatus.queued);
@@ -710,6 +756,7 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
               );
             },
             cancelToken: cancelToken,
+            waitUntilResumed: () => _waitUntilResumed(item.id),
           );
           if (result.isFailure) throw result.failure;
 
@@ -735,6 +782,7 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
               );
             },
             cancelToken: cancelToken,
+            waitUntilResumed: () => _waitUntilResumed(item.id),
           );
           if (result.isFailure) throw result.failure;
 
@@ -768,10 +816,13 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
               );
             },
             cancelToken: cancelToken,
+            waitUntilResumed: () => _waitUntilResumed(item.id),
           );
           if (result.isFailure) throw result.failure;
       }
 
+      await _waitUntilResumed(item.id);
+      if (_disposed) return;
       final current = state.where((i) => i.id == item.id).firstOrNull;
       if (current != null && current.status == TransferStatus.active) {
         _updateItem(
@@ -783,6 +834,7 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
         );
       }
     } catch (e) {
+      if (_disposed) return;
       final current = state.where((i) => i.id == item.id).firstOrNull;
       if (current != null && current.status != TransferStatus.cancelled) {
         _updateItem(
@@ -792,6 +844,7 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
         );
       }
     } finally {
+      _releasePause(item.id);
       _cancelTokens.remove(item.id);
       _activeCount--;
       _processQueue();
@@ -799,6 +852,7 @@ class TransferManagerNotifier extends Notifier<List<TransferItem>> {
   }
 
   void _updateItem(String id, TransferItem Function(TransferItem) updater) {
+    if (_disposed) return;
     state = [
       for (final item in state)
         if (item.id == id) updater(item) else item,

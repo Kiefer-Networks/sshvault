@@ -24,6 +24,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+  bool _registrationAccepted = false;
 
   @override
   void dispose() {
@@ -39,6 +40,33 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
     final obscurePassword = ref.watch(_obscurePasswordProvider);
+
+    if (_registrationAccepted) {
+      return AdaptiveScaffold(
+        title: l10n.authRegister,
+        body: Center(
+          child: Padding(
+            padding: Spacing.paddingAllXxl,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'If registration is available, check your email to verify '
+                  'your account. Open the verification link, choose your '
+                  'account password there, then return here to sign in.',
+                  textAlign: TextAlign.center,
+                ),
+                Spacing.verticalLg,
+                AdaptiveButton.filled(
+                  onPressed: () => context.go('/login'),
+                  child: Text(l10n.authLogin),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     ref.listen(authProvider, (prev, next) {
       if (next.value == AuthStatus.authenticated && mounted) {
@@ -168,8 +196,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                   ),
                   Spacing.verticalLg,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(l10n.authHasAccount),
                       AdaptiveButton.text(
@@ -189,9 +218,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref
+    final accepted = await ref
         .read(authProvider.notifier)
         .register(_emailController.text.trim(), _passwordController.text);
+    if (mounted && accepted) {
+      setState(() => _registrationAccepted = true);
+    }
   }
 }
 

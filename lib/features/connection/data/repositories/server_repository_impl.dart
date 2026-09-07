@@ -88,24 +88,30 @@ class ServerRepositoryImpl implements ServerRepository {
     ServerCredentials? credentials,
   ) async {
     try {
-      final now = DateTime.now();
-      final id = _uuid.v4();
-      final newServer = server.copyWith(id: id, createdAt: now, updatedAt: now);
-
-      await _serverDao.insertServer(ServerMapper.toCompanion(newServer));
-
-      if (server.tags.isNotEmpty) {
-        await _serverDao.setServerTags(
-          id,
-          server.tags.map((t) => t.id).toList(),
+      return await _serverDao.transaction(() async {
+        final now = DateTime.now();
+        final id = _uuid.v4();
+        final newServer = server.copyWith(
+          id: id,
+          createdAt: now,
+          updatedAt: now,
         );
-      }
 
-      if (credentials != null) {
-        await _saveCredentials(id, credentials);
-      }
+        await _serverDao.insertServer(ServerMapper.toCompanion(newServer));
 
-      return Success(newServer);
+        if (server.tags.isNotEmpty) {
+          await _serverDao.setServerTags(
+            id,
+            server.tags.map((t) => t.id).toList(),
+          );
+        }
+
+        if (credentials != null) {
+          await _saveCredentials(id, credentials);
+        }
+
+        return Success(newServer);
+      });
     } catch (e) {
       return Err(DatabaseFailure('Failed to create server', cause: e));
     }
@@ -117,19 +123,21 @@ class ServerRepositoryImpl implements ServerRepository {
     ServerCredentials? credentials,
   ) async {
     try {
-      final updated = server.copyWith(updatedAt: DateTime.now());
-      await _serverDao.updateServer(ServerMapper.toCompanion(updated));
+      return await _serverDao.transaction(() async {
+        final updated = server.copyWith(updatedAt: DateTime.now());
+        await _serverDao.updateServer(ServerMapper.toCompanion(updated));
 
-      await _serverDao.setServerTags(
-        server.id,
-        server.tags.map((t) => t.id).toList(),
-      );
+        await _serverDao.setServerTags(
+          server.id,
+          server.tags.map((t) => t.id).toList(),
+        );
 
-      if (credentials != null) {
-        await _saveCredentials(server.id, credentials);
-      }
+        if (credentials != null) {
+          await _saveCredentials(server.id, credentials);
+        }
 
-      return Success(updated);
+        return Success(updated);
+      });
     } catch (e) {
       return Err(DatabaseFailure('Failed to update server', cause: e));
     }
@@ -140,7 +148,7 @@ class ServerRepositoryImpl implements ServerRepository {
     try {
       await _serverDao.setServerTags(id, []);
       await _serverDao.deleteServerById(id);
-      await _secureStorage.deleteCredentials(id);
+      await _requireStorage(_secureStorage.deleteCredentials(id));
       return const Success(null);
     } catch (e) {
       return Err(DatabaseFailure('Failed to delete server', cause: e));
@@ -165,39 +173,44 @@ class ServerRepositoryImpl implements ServerRepository {
         );
 
         try {
-          await _serverDao.insertServer(ServerMapper.toCompanion(duplicate));
-          if (server.tags.isNotEmpty) {
-            await _serverDao.setServerTags(
-              newId,
-              server.tags.map((t) => t.id).toList(),
-            );
-          }
-
-          // Copy credentials
-          final creds = await _secureStorage.getAllCredentials(id);
-          if (creds.isSuccess) {
-            final credMap = creds.value;
-            if (credMap['password'] != null) {
-              await _secureStorage.savePassword(newId, credMap['password']!);
-            }
-            if (credMap['privateKey'] != null) {
-              await _secureStorage.savePrivateKey(
+          return await _serverDao.transaction(() async {
+            await _serverDao.insertServer(ServerMapper.toCompanion(duplicate));
+            if (server.tags.isNotEmpty) {
+              await _serverDao.setServerTags(
                 newId,
-                credMap['privateKey']!,
+                server.tags.map((t) => t.id).toList(),
               );
             }
-            if (credMap['publicKey'] != null) {
-              await _secureStorage.savePublicKey(newId, credMap['publicKey']!);
-            }
-            if (credMap['passphrase'] != null) {
-              await _secureStorage.savePassphrase(
-                newId,
-                credMap['passphrase']!,
-              );
-            }
-          }
 
-          return Success(duplicate);
+            // Copy credentials
+            final creds = await _secureStorage.getAllCredentials(id);
+            if (creds.isFailure) throw creds.failure;
+            if (creds.isSuccess) {
+              final credMap = creds.value;
+              if (credMap['password'] != null) {
+                await _requireStorage(
+                  _secureStorage.savePassword(newId, credMap['password']!),
+                );
+              }
+              if (credMap['privateKey'] != null) {
+                await _requireStorage(
+                  _secureStorage.savePrivateKey(newId, credMap['privateKey']!),
+                );
+              }
+              if (credMap['publicKey'] != null) {
+                await _requireStorage(
+                  _secureStorage.savePublicKey(newId, credMap['publicKey']!),
+                );
+              }
+              if (credMap['passphrase'] != null) {
+                await _requireStorage(
+                  _secureStorage.savePassphrase(newId, credMap['passphrase']!),
+                );
+              }
+            }
+
+            return Success(duplicate);
+          });
         } catch (e) {
           return Err(DatabaseFailure('Failed to duplicate server', cause: e));
         }
@@ -290,10 +303,14 @@ class ServerRepositoryImpl implements ServerRepository {
     ServerCredentials credentials,
   ) async {
     if (credentials.password != null) {
-      await _secureStorage.savePassword(serverId, credentials.password!);
+      await _requireStorage(
+        _secureStorage.savePassword(serverId, credentials.password!),
+      );
     }
     if (credentials.privateKey != null) {
-      await _secureStorage.savePrivateKey(serverId, credentials.privateKey!);
+      await _requireStorage(
+        _secureStorage.savePrivateKey(serverId, credentials.privateKey!),
+      );
 
       // Auto-generate public key from private key if not provided
       String? publicKey = credentials.publicKey;
@@ -306,13 +323,25 @@ class ServerRepositoryImpl implements ServerRepository {
         }
       }
       if (publicKey != null && publicKey.isNotEmpty) {
-        await _secureStorage.savePublicKey(serverId, publicKey);
+        await _requireStorage(
+          _secureStorage.savePublicKey(serverId, publicKey),
+        );
       }
     } else if (credentials.publicKey != null) {
-      await _secureStorage.savePublicKey(serverId, credentials.publicKey!);
+      await _requireStorage(
+        _secureStorage.savePublicKey(serverId, credentials.publicKey!),
+      );
     }
     if (credentials.passphrase != null) {
-      await _secureStorage.savePassphrase(serverId, credentials.passphrase!);
+      await _requireStorage(
+        _secureStorage.savePassphrase(serverId, credentials.passphrase!),
+      );
     }
+  }
+
+  Future<T> _requireStorage<T>(Future<Result<T>> operation) async {
+    final result = await operation;
+    if (result.isFailure) throw result.failure;
+    return result.value;
   }
 }

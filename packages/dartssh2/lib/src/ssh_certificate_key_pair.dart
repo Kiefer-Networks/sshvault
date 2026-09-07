@@ -34,7 +34,7 @@ const _certTypeMap = {
 /// );
 /// final client = SSHClient(socket, identities: [certKeyPair], ...);
 /// ```
-class SSHCertificateKeyPair implements SSHKeyPair {
+class SSHCertificateKeyPair extends SSHKeyPair {
   /// The underlying key pair used for signing.
   final SSHKeyPair innerKeyPair;
 

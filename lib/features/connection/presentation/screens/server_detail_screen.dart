@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/services/secure_clipboard.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
@@ -21,6 +22,7 @@ import 'package:sshvault/features/connection/presentation/widgets/status_badge.d
 import 'package:sshvault/features/connection/presentation/widgets/tag_chip.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
+import 'package:sshvault/features/terminal/data/services/remote_system_metrics_service.dart';
 
 class ServerDetailScreen extends ConsumerWidget {
   final String serverId;
@@ -233,28 +235,34 @@ class ServerDetailScreen extends ConsumerWidget {
                   distroName: server.distroName,
                 ),
 
+                if (server.systemMetricsJson != null)
+                  _SystemMetricsSection(raw: server.systemMetricsJson!),
+
                 Spacing.verticalLg,
 
                 // Tags
                 if (server.tags.isNotEmpty) ...[
-                  SectionCard(
-                    padding: Spacing.paddingAllLg,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.serverDetailTags,
-                          style: theme.textTheme.titleSmall,
-                        ),
-                        Spacing.verticalSm,
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: server.tags
-                              .map((tag) => TagChip(tag: tag))
-                              .toList(),
-                        ),
-                      ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: SectionCard(
+                      padding: Spacing.paddingAllLg,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.serverDetailTags,
+                            style: theme.textTheme.titleSmall,
+                          ),
+                          Spacing.verticalSm,
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: server.tags
+                                .map((tag) => TagChip(tag: tag))
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Spacing.verticalLg,
@@ -328,6 +336,44 @@ class ServerDetailScreen extends ConsumerWidget {
       context,
       message: AppLocalizations.of(context)!.copiedToClipboard,
     );
+  }
+}
+
+class _SystemMetricsSection extends StatelessWidget {
+  final String raw;
+  const _SystemMetricsSection({required this.raw});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return const SizedBox.shrink();
+      final m = RemoteSystemMetrics.fromJson(Map<String, Object?>.from(decoded));
+      final rows = <Widget>[];
+      if (m.kernelName != null || m.kernelVersion != null) {
+        rows.add(InfoRow(icon: Icons.memory, label: l10n.serverDetailKernel, value: [m.kernelName, m.kernelVersion].whereType<String>().join(' ')));
+      }
+      if (m.cpuModel != null || m.cpuCores != null) {
+        rows.add(InfoRow(icon: Icons.developer_board, label: l10n.serverDetailCpu, value: [m.cpuModel, if (m.cpuCores != null) '${m.cpuCores}'].whereType<String>().join(' · ')));
+      }
+      if (m.ramBytes != null) {
+        rows.add(InfoRow(icon: Icons.memory, label: l10n.serverDetailRam, value: '${(m.ramBytes! / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB'));
+      }
+      if (m.disks.isNotEmpty) {
+        rows.add(InfoRow(icon: Icons.storage, label: l10n.serverDetailDisks, value: m.disks.map((d) => '${d.mountPoint} ${(d.freeBytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB').join(', ')));
+      }
+      if (rows.isEmpty) return const SizedBox.shrink();
+      return Padding(
+        padding: const EdgeInsets.only(top: Spacing.lg),
+        child: SectionCard(
+          padding: Spacing.paddingAllLg,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(l10n.serverDetailSystemInfo, style: Theme.of(context).textTheme.titleSmall), Spacing.verticalMd, ...rows]),
+        ),
+      );
+    } catch (_) {
+      return const SizedBox.shrink();
+    }
   }
 }
 

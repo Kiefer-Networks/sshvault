@@ -95,8 +95,9 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
       final json = entity.toJson();
       json['tagIds'] = tagRows.map((t) => t.id).toList();
 
-      if (includeCredentials) {
+      if (includeCredentials && server.deletedAt == null) {
         final credsResult = await _secureStorage.getAllCredentials(server.id);
+        if (credsResult.isFailure) throw credsResult.failure;
         if (credsResult.isSuccess) {
           json['credentials'] = credsResult.value;
         }
@@ -109,12 +110,14 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     for (final sshKey in sshKeys) {
       final entity = SshKeyMapper.fromDrift(sshKey);
       final json = entity.toJson();
-      if (includeCredentials) {
+      if (includeCredentials && sshKey.deletedAt == null) {
         final privResult = await _secureStorage.getSshKeyPrivateKey(sshKey.id);
+        if (privResult.isFailure) throw privResult.failure;
         if (privResult.isSuccess && privResult.value != null) {
           json['privateKey'] = privResult.value;
         }
         final passResult = await _secureStorage.getSshKeyPassphrase(sshKey.id);
+        if (passResult.isFailure) throw passResult.failure;
         if (passResult.isSuccess && passResult.value != null) {
           json['passphrase'] = passResult.value;
         }
@@ -248,7 +251,11 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
         data = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
       }
 
-      return _importData(data, strategy, includeCredentials: password != null);
+      return await _importData(
+        data,
+        strategy,
+        includeCredentials: password != null,
+      );
     } catch (e) {
       return Err(ImportFailure('Failed to import file', cause: e));
     }
@@ -306,7 +313,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   }) async {
     try {
       final data = jsonDecode(jsonString) as Map<String, dynamic>;
-      return _importData(
+      return await _importData(
         data,
         strategy,
         includeCredentials: includeCredentials,
@@ -334,6 +341,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
   }) {
     if (strategy == ImportConflictStrategy.skip) return false;
     if (strategy == ImportConflictStrategy.rename) return true;
+    if (strategy == ImportConflictStrategy.overwrite) return true;
 
     final localClock =
         localDeletedAt != null && localDeletedAt.isAfter(localUpdatedAt)
@@ -357,11 +365,78 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     var skipped = 0;
     final errors = <String>[];
 
+    // Resolve all collisions before importing any rows, including forward
+    // references (children before parents and jump hosts later in the file).
+    final remappedIds = <String, Map<String, String>>{};
+    if (strategy == ImportConflictStrategy.rename) {
+      final existingIds = <String, Set<String>>{
+        'groups': (await _groupDao.getAllGroupsIncludingDeleted())
+            .map((r) => r.id)
+            .toSet(),
+        'tags': (await _tagDao.getAllTagsIncludingDeleted())
+            .map((r) => r.id)
+            .toSet(),
+        'sshKeys': (await _sshKeyDao.getAllSshKeysIncludingDeleted())
+            .map((r) => r.id)
+            .toSet(),
+        'servers': (await _serverDao.getAllServersIncludingDeleted())
+            .map((r) => r.id)
+            .toSet(),
+        'snippets': (await _snippetDao.getAllSnippetsIncludingDeleted())
+            .map((r) => r.id)
+            .toSet(),
+      };
+      for (final entry in existingIds.entries) {
+        remappedIds[entry.key] = {
+          for (final row in (data[entry.key] as List<dynamic>? ?? []))
+            if (row is Map &&
+                row['id'] is String &&
+                entry.value.contains(row['id']))
+              row['id'] as String: _uuid.v4(),
+        };
+      }
+    }
+
+    Map<String, dynamic> remap(Map source, String type) {
+      final map = Map<String, dynamic>.from(source);
+      if (strategy != ImportConflictStrategy.rename) return map;
+      final originalId = map['id'];
+      final newId = remappedIds[type]?[originalId];
+      if (newId != null) {
+        map['id'] = newId;
+        map['name'] = '${map['name']} (Imported)';
+      }
+      for (final entry in const {
+        'parentId': 'groups',
+        'groupId': 'groups',
+        'sshKeyId': 'sshKeys',
+        'jumpHostId': 'servers',
+      }.entries) {
+        final value = map[entry.key];
+        if (value != null) {
+          map[entry.key] = remappedIds[entry.value]?[value] ?? value;
+        }
+      }
+      if (map['tagIds'] is List) {
+        map['tagIds'] = (map['tagIds'] as List)
+            .map((id) => remappedIds['tags']?[id] ?? id)
+            .toList();
+      }
+      if (newId != null && type == 'snippets' && map['variables'] is List) {
+        map['variables'] = (map['variables'] as List)
+            .map(
+              (v) => {...Map<String, dynamic>.from(v as Map), 'id': _uuid.v4()},
+            )
+            .toList();
+      }
+      return map;
+    }
+
     // Import groups first
     final groups = (data['groups'] as List<dynamic>?) ?? [];
     for (final groupJson in groups) {
       try {
-        final map = Map<String, dynamic>.from(groupJson as Map);
+        final map = remap(groupJson as Map, 'groups');
         final id = map['id'] as String;
         final existing = await _groupDao.getGroupByIdIncludingDeleted(id);
         final entity = GroupEntity.fromJson(map);
@@ -403,7 +478,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     final tags = (data['tags'] as List<dynamic>?) ?? [];
     for (final tagJson in tags) {
       try {
-        final map = Map<String, dynamic>.from(tagJson as Map);
+        final map = remap(tagJson as Map, 'tags');
         final id = map['id'] as String;
         final existing = await _tagDao.getTagByIdIncludingDeleted(id);
         final entity = TagEntity.fromJson(map);
@@ -446,57 +521,67 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     var sshKeysImported = 0;
     for (final sshKeyJson in sshKeysData) {
       try {
-        final map = Map<String, dynamic>.from(sshKeyJson as Map);
-        final id = map['id'] as String;
-        final existing = await _sshKeyDao.getSshKeyByIdIncludingDeleted(id);
+        await _sshKeyDao.transaction(() async {
+          final map = remap(sshKeyJson as Map, 'sshKeys');
+          final id = map['id'] as String;
+          final existing = await _sshKeyDao.getSshKeyByIdIncludingDeleted(id);
 
-        // Extract secrets before creating entity
-        final privateKey = map.remove('privateKey') as String?;
-        final passphrase = map.remove('passphrase') as String?;
+          // Extract secrets before creating entity
+          final privateKey = map.remove('privateKey') as String?;
+          final passphrase = map.remove('passphrase') as String?;
 
-        String sshKeyId = id;
-        final entity = SshKeyEntity.fromJson(map);
+          String sshKeyId = id;
+          final entity = SshKeyEntity.fromJson(map);
 
-        if (existing != null) {
-          if (!_shouldApplyRemote(
-            strategy: strategy,
-            localUpdatedAt: existing.updatedAt,
-            localDeletedAt: existing.deletedAt,
-            remoteUpdatedAt: entity.updatedAt,
-            remoteDeletedAt: entity.deletedAt,
-          )) {
-            skipped++;
-            continue;
-          }
-          switch (strategy) {
-            case ImportConflictStrategy.skip:
+          if (existing != null) {
+            if (!_shouldApplyRemote(
+              strategy: strategy,
+              localUpdatedAt: existing.updatedAt,
+              localDeletedAt: existing.deletedAt,
+              remoteUpdatedAt: entity.updatedAt,
+              remoteDeletedAt: entity.deletedAt,
+            )) {
               skipped++;
-              continue;
-            case ImportConflictStrategy.overwrite:
-            case ImportConflictStrategy.mergeServerWins:
-              await _sshKeyDao.updateSshKey(SshKeyMapper.toCompanion(entity));
-            case ImportConflictStrategy.rename:
-              sshKeyId = _uuid.v4();
-              map['id'] = sshKeyId;
-              map['name'] = '${map['name']} (Imported)';
-              final renamed = SshKeyEntity.fromJson(map);
-              await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(renamed));
+              return;
+            }
+            switch (strategy) {
+              case ImportConflictStrategy.skip:
+                skipped++;
+                return;
+              case ImportConflictStrategy.overwrite:
+              case ImportConflictStrategy.mergeServerWins:
+                await _sshKeyDao.updateSshKey(SshKeyMapper.toCompanion(entity));
+              case ImportConflictStrategy.rename:
+                sshKeyId = _uuid.v4();
+                map['id'] = sshKeyId;
+                map['name'] = '${map['name']} (Imported)';
+                final renamed = SshKeyEntity.fromJson(map);
+                await _sshKeyDao.insertSshKey(
+                  SshKeyMapper.toCompanion(renamed),
+                );
+            }
+          } else {
+            await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(entity));
           }
-        } else {
-          await _sshKeyDao.insertSshKey(SshKeyMapper.toCompanion(entity));
-        }
 
-        // Restore secrets
-        if (includeCredentials) {
-          if (privateKey != null) {
-            await _secureStorage.saveSshKeyPrivateKey(sshKeyId, privateKey);
+          // Restore secrets
+          if (entity.deletedAt != null) {
+            await _requireStorage(_secureStorage.deleteSshKeySecrets(sshKeyId));
+          } else if (includeCredentials) {
+            if (privateKey != null) {
+              await _requireStorage(
+                _secureStorage.saveSshKeyPrivateKey(sshKeyId, privateKey),
+              );
+            }
+            if (passphrase != null) {
+              await _requireStorage(
+                _secureStorage.saveSshKeyPassphrase(sshKeyId, passphrase),
+              );
+            }
           }
-          if (passphrase != null) {
-            await _secureStorage.saveSshKeyPassphrase(sshKeyId, passphrase);
-          }
-        }
 
-        sshKeysImported++;
+          sshKeysImported++;
+        });
       } catch (e) {
         errors.add('SSH key import error: $e');
       }
@@ -506,78 +591,91 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     final servers = (data['servers'] as List<dynamic>?) ?? [];
     for (final serverJson in servers) {
       try {
-        final map = Map<String, dynamic>.from(serverJson as Map);
-        final id = map['id'] as String;
-        final existing = await _serverDao.getServerByIdIncludingDeleted(id);
+        await _serverDao.transaction(() async {
+          final map = remap(serverJson as Map, 'servers');
+          final id = map['id'] as String;
+          final existing = await _serverDao.getServerByIdIncludingDeleted(id);
 
-        String serverId = id;
-        final entity = ServerEntity.fromJson(map);
+          String serverId = id;
+          final entity = ServerEntity.fromJson(map);
 
-        if (existing != null) {
-          if (!_shouldApplyRemote(
-            strategy: strategy,
-            localUpdatedAt: existing.updatedAt,
-            localDeletedAt: existing.deletedAt,
-            remoteUpdatedAt: entity.updatedAt,
-            remoteDeletedAt: entity.deletedAt,
-          )) {
-            skipped++;
-            continue;
-          }
-          switch (strategy) {
-            case ImportConflictStrategy.skip:
+          if (existing != null) {
+            if (!_shouldApplyRemote(
+              strategy: strategy,
+              localUpdatedAt: existing.updatedAt,
+              localDeletedAt: existing.deletedAt,
+              remoteUpdatedAt: entity.updatedAt,
+              remoteDeletedAt: entity.deletedAt,
+            )) {
               skipped++;
-              continue;
-            case ImportConflictStrategy.overwrite:
-            case ImportConflictStrategy.mergeServerWins:
-              await _serverDao.updateServer(ServerMapper.toCompanion(entity));
-            case ImportConflictStrategy.rename:
-              serverId = _uuid.v4();
-              map['id'] = serverId;
-              map['name'] = '${map['name']} (Imported)';
-              final renamed = ServerEntity.fromJson(map);
-              await _serverDao.insertServer(ServerMapper.toCompanion(renamed));
+              return;
+            }
+            switch (strategy) {
+              case ImportConflictStrategy.skip:
+                skipped++;
+                return;
+              case ImportConflictStrategy.overwrite:
+              case ImportConflictStrategy.mergeServerWins:
+                await _serverDao.updateServer(ServerMapper.toCompanion(entity));
+              case ImportConflictStrategy.rename:
+                serverId = _uuid.v4();
+                map['id'] = serverId;
+                map['name'] = '${map['name']} (Imported)';
+                final renamed = ServerEntity.fromJson(map);
+                await _serverDao.insertServer(
+                  ServerMapper.toCompanion(renamed),
+                );
+            }
+          } else {
+            await _serverDao.insertServer(ServerMapper.toCompanion(entity));
           }
-        } else {
-          await _serverDao.insertServer(ServerMapper.toCompanion(entity));
-        }
 
-        // Restore tags
-        final tagIds = (map['tagIds'] as List<dynamic>?)?.cast<String>() ?? [];
-        if (tagIds.isNotEmpty) {
+          // Restore tags
+          final tagIds =
+              (map['tagIds'] as List<dynamic>?)?.cast<String>() ?? [];
           await _serverDao.setServerTags(serverId, tagIds);
-        }
 
-        // Restore credentials
-        if (includeCredentials && map['credentials'] != null) {
-          final creds = map['credentials'] as Map<String, dynamic>;
-          if (creds['password'] != null) {
-            await _secureStorage.savePassword(
-              serverId,
-              creds['password'] as String,
-            );
+          // Restore credentials
+          if (entity.deletedAt != null) {
+            await _requireStorage(_secureStorage.deleteCredentials(serverId));
+          } else if (includeCredentials && map['credentials'] != null) {
+            final creds = map['credentials'] as Map<String, dynamic>;
+            if (creds['password'] != null) {
+              await _requireStorage(
+                _secureStorage.savePassword(
+                  serverId,
+                  creds['password'] as String,
+                ),
+              );
+            }
+            if (creds['privateKey'] != null) {
+              await _requireStorage(
+                _secureStorage.savePrivateKey(
+                  serverId,
+                  creds['privateKey'] as String,
+                ),
+              );
+            }
+            if (creds['publicKey'] != null) {
+              await _requireStorage(
+                _secureStorage.savePublicKey(
+                  serverId,
+                  creds['publicKey'] as String,
+                ),
+              );
+            }
+            if (creds['passphrase'] != null) {
+              await _requireStorage(
+                _secureStorage.savePassphrase(
+                  serverId,
+                  creds['passphrase'] as String,
+                ),
+              );
+            }
           }
-          if (creds['privateKey'] != null) {
-            await _secureStorage.savePrivateKey(
-              serverId,
-              creds['privateKey'] as String,
-            );
-          }
-          if (creds['publicKey'] != null) {
-            await _secureStorage.savePublicKey(
-              serverId,
-              creds['publicKey'] as String,
-            );
-          }
-          if (creds['passphrase'] != null) {
-            await _secureStorage.savePassphrase(
-              serverId,
-              creds['passphrase'] as String,
-            );
-          }
-        }
 
-        serversImported++;
+          serversImported++;
+        });
       } catch (e) {
         errors.add('Server import error: $e');
       }
@@ -588,7 +686,7 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
     var snippetsImported = 0;
     for (final snippetJson in snippetsData) {
       try {
-        final map = Map<String, dynamic>.from(snippetJson as Map);
+        final map = remap(snippetJson as Map, 'snippets');
         final id = map['id'] as String;
         final existing = await _snippetDao.getSnippetByIdIncludingDeleted(id);
 
@@ -638,12 +736,10 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
         }
 
         // Restore snippet tags
-        if (snippetTagIds.isNotEmpty) {
-          await _snippetDao.setSnippetTags(snippetId, snippetTagIds);
-        }
+        await _snippetDao.setSnippetTags(snippetId, snippetTagIds);
 
         // Restore variables
-        if (variablesData.isNotEmpty) {
+        {
           final varCompanions = variablesData.map((v) {
             final varEntity = SnippetVariableEntity.fromJson(v);
             return SnippetMapper.variableToCompanion(varEntity, snippetId);
@@ -685,5 +781,11 @@ class ExportImportRepositoryImpl implements ExportImportRepository {
         errors: errors,
       ),
     );
+  }
+
+  Future<T> _requireStorage<T>(Future<Result<T>> operation) async {
+    final result = await operation;
+    if (result.isFailure) throw result.failure;
+    return result.value;
   }
 }

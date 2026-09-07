@@ -182,8 +182,11 @@ class SftpService {
     String localPath, {
     void Function(int transferred, int total)? onProgress,
     Completer<void>? cancelToken,
+    Future<void> Function()? waitUntilResumed,
   }) async {
     try {
+      await waitUntilResumed?.call();
+      if (cancelToken?.isCompleted ?? false) return const Success(null);
       final attrs = await client.stat(remotePath);
       final totalBytes = attrs.size ?? 0;
 
@@ -196,6 +199,7 @@ class SftpService {
 
       try {
         while (true) {
+          await waitUntilResumed?.call();
           if (cancelToken?.isCompleted ?? false) {
             await sink.close();
             await file.close();
@@ -236,8 +240,11 @@ class SftpService {
     String remotePath, {
     void Function(int transferred, int total)? onProgress,
     Completer<void>? cancelToken,
+    Future<void> Function()? waitUntilResumed,
   }) async {
     try {
+      await waitUntilResumed?.call();
+      if (cancelToken?.isCompleted ?? false) return const Success(null);
       final localFile = File(localPath);
       final totalBytes = await localFile.length();
 
@@ -255,6 +262,7 @@ class SftpService {
 
       try {
         await for (final chunk in stream) {
+          await waitUntilResumed?.call();
           if (cancelToken?.isCompleted ?? false) {
             await file.close();
             return const Success(null);
@@ -284,8 +292,11 @@ class SftpService {
     String destPath, {
     void Function(int transferred, int total)? onProgress,
     Completer<void>? cancelToken,
+    Future<void> Function()? waitUntilResumed,
   }) async {
     try {
+      await waitUntilResumed?.call();
+      if (cancelToken?.isCompleted ?? false) return const Success(null);
       final attrs = await source.stat(sourcePath);
       final totalBytes = attrs.size ?? 0;
 
@@ -303,6 +314,7 @@ class SftpService {
 
       try {
         while (true) {
+          await waitUntilResumed?.call();
           if (cancelToken?.isCompleted ?? false) {
             await srcFile.close();
             await dstFile.close();

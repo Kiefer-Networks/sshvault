@@ -3,6 +3,8 @@
 // Linux test runner, then verify the dispatched payloads match the
 // contract that `windows/runner/taskbar_helper.cpp` expects.
 
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sshvault/core/services/windows_taskbar_service.dart';
@@ -168,6 +170,7 @@ void main() {
 
   group('platform gate', () {
     test('no-op when platformOverride is false on non-Windows', () async {
+      if (Platform.isWindows) return;
       service.platformOverride = false;
       await service.setProgress(TaskbarProgressState.normal, 0.5);
       await service.setSessionThumbnailButtons(hasActive: true);

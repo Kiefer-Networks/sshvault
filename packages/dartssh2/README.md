@@ -9,11 +9,8 @@
   <a href="https://www.dartdocs.org/documentation/dartssh2/latest/">
     <img src="https://img.shields.io/badge/Docs-dartssh2-blue.svg" alt="DartSSH2 documentation">
   </a>
-  <a href="https://github.com/TerminalStudio/dartssh2/actions/workflows/dart.yml">
-    <img src="https://github.com/TerminalStudio/dartssh2/actions/workflows/dart.yml/badge.svg" alt="DartSSH2 GitHub Actions workflow status">
-  </a>
-  <a href="https://ko-fi.com/F1F61K6BL">
-    <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-F16061?style=flat&logo=buy-me-a-coffee&logoColor=white&labelColor=555555" alt="Support me on Ko-fi">
+  <a href="https://github.com/vicajilau/dartssh2/actions/workflows/dart.yml">
+    <img src="https://github.com/vicajilau/dartssh2/actions/workflows/dart.yml/badge.svg" alt="DartSSH2 GitHub Actions workflow status">
   </a>
 </p>
 
@@ -25,11 +22,12 @@ SSH and SFTP client written in pure Dart, aiming to be feature-rich as well as e
 
 ## ✨ Features
 
--  **Pure Dart**: Working with both Dart VM and Flutter.
+-  **Pure Dart**: Runs on the Dart VM, Flutter and the web. Browser support is checked in CI against a real OpenSSH server, see [Web support](#web-support).
 -  **SSH Session**: Executing commands, spawning shells, setting environment variables, pseudo terminals, etc.
--  **Authentication**: Supports password, private key and interactive authentication method.
--  **Forwarding**: Supports local forwarding and remote forwarding.
+-  **Authentication**: Supports password, in-memory private keys (`SSHKeyPair`), external asynchronous identities (`SSHIdentity` for Secure Enclave, YubiKey/FIDO2, smart cards, OS agents), RFC 4252 §7.8 public-key probing, RFC 4252 §9 hostbased authentication, and keyboard-interactive authentication.
+-  **Forwarding**: Supports local forwarding, remote forwarding, and dynamic forwarding (SOCKS5 CONNECT).
 -  **SFTP**: Supports all operations defined in [SFTPv3 protocol](https://datatracker.ietf.org/doc/html/draft-ietf-secsh-filexfer-02) including upload, download, list, link, remove, rename, etc.
+-  **Non-blocking Key Exchange**: Automatically offloads heavy key exchange calculations (X25519, NIST Curves, DH) to background isolates on supported VM platforms, preventing the main UI thread from freezing during connection.
 
 ## 🧬 Built with dartssh2
 
@@ -47,13 +45,21 @@ SSH and SFTP client written in pure Dart, aiming to be feature-rich as well as e
     <td style="text-align: center;">
       <b><a href="https://github.com/hsduren/dartshell">DartShell</a></b>
     </td>
+    <!-- Naviterm -->
+    <td style="text-align: center;">
+      <b><a href="https://github.com/jc-hk-1916/NaviTerm">Naviterm</a></b>
+    </td>
+    <!-- TealKit -->
+    <td style="text-align: center;">
+      <b><a href="https://github.com/lschaffer/tealkit">TealKit</a></b>
+    </td>
   </tr>
 
-  <tr> 
+  <tr>
     <!-- ServerBox -->
     <td>
-      <img src="https://raw.githubusercontent.com/TerminalStudio/dartssh2/master/media/showcase-1-serverbox.1.jpg" width="150px" alt="ServerBox interface displaying connection management options">
-      <img src="https://raw.githubusercontent.com/TerminalStudio/dartssh2/master/media/showcase-1-serverbox.2.png" width="150px" alt="ServerBox user interface for server control and monitoring">
+      <img src="https://raw.githubusercontent.com/vicajilau/dartssh2/main/media/showcase-1-serverbox.1.jpg" width="150px" alt="ServerBox interface displaying connection management options">
+      <img src="https://raw.githubusercontent.com/vicajilau/dartssh2/main/media/showcase-1-serverbox.2.png" width="150px" alt="ServerBox user interface for server control and monitoring">
     </td>
     <!-- NoPorts -->
     <td>
@@ -65,12 +71,22 @@ SSH and SFTP client written in pure Dart, aiming to be feature-rich as well as e
     <td>
       <img src="https://github.com/hsduren/dartshell/blob/main/info1.png" width="300px" alt="dartShell displaying terminal and session information for SSH operations">
     </td>
+    <!-- NaviTerm -->
+    <td>
+      <a href="https://apps.apple.com/us/app/naviterm-ssh-sftp-tunnels/id6747072398">
+        <img src="https://raw.githubusercontent.com/jc-hk-1916/NaviTerm/main/images/1.png" width="300px" alt="Your all-in-one SSH terminal, SFTP client, and port forwarding tool, built from the ground up for macOS, iPhone, and iPad.">
+      </a>
+    </td>
+    <!-- TealKit -->
+    <td>
+      <a href="https://github.com/lschaffer/tealkit">
+        <img src="https://github.com/lschaffer/tealkit/blob/master/images/repo/desktop_playground_ssh_test.png" width="500px" alt="TealKit multiplatform agentic AI platform utilizing isolated SSH tools">
+      </a>
+    </td>
   </tr>
 </table>
 
-
 > Feel free to add your own app here by opening a pull request.
-
 
 
 ## 🧪 Try
@@ -94,7 +110,7 @@ dartsftp user@example.com
 
 > If the `dartssh` command can't be found after installation, you might need to [set up your path](https://dart.dev/tools/pub/cmd/pub-global#running-a-script-from-your-path).
 
-## 🚀 Quick start 
+## 🚀 Quick start
 
 ### Connect to a remote host
 ```dart
@@ -107,21 +123,161 @@ void main() async {
 }
 ```
 
+> Note: `SSHSocket.connect()` uses native TCP sockets (`dart:io`) and is not
+> available on Flutter Web / Dart Web. See [Web support](#web-support) below
+> for browser-compatible transport options.
+
 > `SSHSocket` is an interface and it's possible to implement your own `SSHSocket` if you want to use a different underlying transport rather than standard TCP socket. For example WebSocket or Unix domain socket.
+
+### Verify the host key
+
+The example above authenticates the *server to nobody*: dartssh2 always checks
+that the host key signature is valid, which proves the server owns the private
+key it presented, but it cannot know whether that key is the one you expected.
+Without that second check, an attacker who can intercept the connection can
+present their own key and read the whole session.
+
+Pass `onVerifyHostKey` to decide whether the key is trusted. It receives the
+key type and the OpenSSH-style SHA256 fingerprint, and returning `false`
+aborts the connection:
+
+```dart
+final client = SSHClient(
+  await SSHSocket.connect('localhost', 22),
+  username: '<username>',
+  onPasswordRequest: () => '<password>',
+  onVerifyHostKey: (type, fingerprint) {
+    final expected = knownHosts['localhost']; // your own storage
+    if (expected == null) {
+      // First connection: ask the user, then remember the answer.
+      return promptUserToTrust(type, utf8.decode(fingerprint));
+    }
+    return utf8.decode(fingerprint) == expected;
+  },
+);
+```
+
+The handler may return a `Future<bool>`, so it can await a UI prompt or a
+lookup in persistent storage. When `onVerifyHostKey` is omitted, **every host
+key is accepted**, which is only appropriate for tests and for networks you
+already trust end to end.
+
+> `disableHostkeyVerification: true` is a separate and stronger opt-out: it
+> skips the signature check as well. Do not use it outside of local testing.
+
+### Web support
+
+dartssh2 runs on Flutter Web and Dart Web. The protocol, authentication,
+sessions, channel forwarding and SFTP all work compiled to JavaScript, and CI
+checks it rather than assuming it: on every pull request a browser completes a
+handshake, runs a command, holds an `aes256-gcm` session and round-trips a file
+over SFTP against a real OpenSSH server.
+
+**You have to supply the transport.** Browsers cannot open TCP sockets, so this
+fails:
+
+```dart
+await SSHSocket.connect('host', 22);
+```
+
+`SSHSocket` is an interface, so give it something a browser does have, normally
+a WebSocket to a proxy that bridges to your SSH endpoint. For a minimal working
+pair of both ends, see [`tool/ws_bridge.dart`](tool/ws_bridge.dart) and the
+socket in
+[`test/src/integration/web_interop_test.dart`](test/src/integration/web_interop_test.dart).
+
+Two things are not available in a browser:
+
+- `chacha20-poly1305@openssh.com`, because PointyCastle's Poly1305 needs
+  full-width 64-bit integers. It sits third in the default cipher list, so
+  AES-GCM or AES-CTR is negotiated instead and nothing needs doing. Only
+  pinning it explicitly will fail.
+- `SftpFile.downloadToRandomAccess`, which takes a `dart:io`
+  `RandomAccessFile`, and there is no local file to hand it. Use
+  `SftpFile.downloadTo`, which takes a sink, or `SftpFile.read`.
+
+### Customize client SSH identification
+
+If your jump host or SSH gateway restricts client versions, you can customize the
+software version part of the identification string (`SSH-2.0-<ident>`):
+
+```dart
+void main() async {
+  final client = SSHClient(
+    await SSHSocket.connect('localhost', 22),
+    username: '<username>',
+    onPasswordRequest: () => '<password>',
+    ident: 'MyClient_1.0',
+  );
+}
+```
+
+`ident` defaults to `DartSSH_2.0`.
+
+### Refresh the session keys
+
+`SSHClient.rekey()` starts a new key exchange on a live connection, which is
+worth doing between large transfers on a long-lived session. Channels and
+sessions keep working across it, since outgoing packets are buffered until the
+new keys are in effect.
+
+```dart
+void main() async {
+  await client.rekey(); // resolves once the new keys are in effect
+}
+```
+
+The returned future completes at `SSH_MSG_NEWKEYS`, or with the error that
+ended the connection if it dropped first, so awaiting it is enough to notice a
+failed rekey without watching `done`. If an exchange is already running, from
+either side, no second one is sent and the future tracks the one in flight.
+
+As of 4.0.0 the host key is compared against the one already accepted for the
+connection, and a server that presents a different one has the connection
+terminated with `SSHHostkeyError`, as OpenSSH does. `onVerifyHostKey` is
+consulted once per connection, not once per exchange.
+
+### Configure handshake and authentication timeouts
+
+You can specify optional timeouts for the transport handshake and user authentication:
+
+```dart
+void main() async {
+  final client = SSHClient(
+    await SSHSocket.connect('localhost', 22),
+    username: '<username>',
+    onPasswordRequest: () => '<password>',
+    handshakeTimeout: const Duration(seconds: 15),
+    authTimeout: const Duration(seconds: 15),
+  );
+}
+```
+
+By default, these parameters are `null` (no timeout is enforced). Without these timeouts, the connection or authentication process could hang indefinitely if the remote server becomes unresponsive.
 
 ### Spawn a shell on remote host
 
 ```dart
 void main() async {
   final shell = await client.shell();
-  stdout.addStream(shell.stdout); // listening for stdout
-  stderr.addStream(shell.stderr); // listening for stderr
-  stdin.cast<Uint8List>().listen(shell.write); // writing to stdin
+
+  // Attach local terminal streams only when a terminal is available.
+  // GUI apps on Windows may not have stdin/stdout/stderr attached.
+  final hasTerminal = stdin.hasTerminal && stdout.hasTerminal && stderr.hasTerminal;
+  if (hasTerminal) {
+    stdout.addStream(shell.stdout); // listening for stdout
+    stderr.addStream(shell.stderr); // listening for stderr
+    stdin.cast<Uint8List>().listen(shell.write); // writing to stdin
+  }
 
   await shell.done; // wait for shell to exit
-  client.close();
+  await client.close();
 }
 ```
+
+> Note: The stdin/stdout bridging above is for CLI apps. If your app is launched
+> without a terminal (for example, double-clicking a Windows `.exe`), skip the
+> local stdio wiring and use your own UI/input pipeline.
 
 ### Execute a command on remote host
 
@@ -141,7 +297,51 @@ void main() async {
 }
 ```
 
-> `client.run()` is a convenience method that wraps `client.execute()` for running non-interactive commands.
+> `client.run()` is a convenience method that returns combined output bytes.
+> Use `client.runWithResult()` when you need separate `stdout` / `stderr`
+> streams and command exit metadata (`exitCode` / `exitSignal`).
+
+To also access command exit metadata:
+
+```dart
+void main() async {
+  final result = await client.runWithResult('echo hello');
+  print('exitCode: ${result.exitCode}');
+  print('stdout: ${utf8.decode(result.stdout)}');
+  print('stderr: ${utf8.decode(result.stderr)}');
+}
+```
+
+### End-to-end flow example
+
+Use `example/run_flows.dart` to test the main execution flows in one run:
+
+- `run()`
+- `runWithResult()`
+- `execute()`
+- optional `shell()` via `--shell`
+
+Run it with environment variables:
+
+```sh
+SSH_HOST=test.rebex.net SSH_PORT=22 SSH_USERNAME=demo SSH_PASSWORD=password dart run example/run_flows.dart
+```
+
+Run shell flow too:
+
+```sh
+SSH_HOST=test.rebex.net SSH_PORT=22 SSH_USERNAME=demo SSH_PASSWORD=password dart run example/run_flows.dart --shell
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:SSH_HOST = 'test.rebex.net'
+$env:SSH_PORT = '22'
+$env:SSH_USERNAME = 'demo'
+$env:SSH_PASSWORD = 'password'
+dart run example/run_flows.dart --shell
+```
 
 ### Start a process on remote host
 ```dart
@@ -169,6 +369,25 @@ void main() async {
 ```
 
 Processes killed by signals do not have an exit code, instead they have an exit signal property.
+
+**Waiting for exit status with a timeout**
+
+Alternatively, you can wait for the remote process to report its exit status or exit signal with an optional timeout using `session.waitForExit()`:
+
+```dart
+void main() async {
+  final session = await client.execute('sleep 5');
+
+  // Wait for the exit status to be reported (or up to 10 seconds).
+  final exitCode = await session.waitForExit(timeout: Duration(seconds: 10));
+
+  if (exitCode != null) {
+    print('Process exited with code: $exitCode');
+  } else {
+    print('Process timed out or was terminated by a signal');
+  }
+}
+```
 
 ### Forward connections on local port 8080 to the server
 
@@ -202,8 +421,41 @@ void main() async {
 }
 ```
 
-### Authenticate with public keys
+### Start a local SOCKS5 proxy through SSH (`ssh -D` style)
 
+```dart
+void main() async {
+  final dynamicForward = await client.forwardDynamic(
+    bindHost: '127.0.0.1',
+    bindPort: 1080,
+    options: const SSHDynamicForwardOptions(
+      handshakeTimeout: Duration(seconds: 10),
+      connectTimeout: Duration(seconds: 15),
+      maxConnections: 128,
+    ),
+    filter: (host, port) {
+      // Optional allow/deny policy.
+      return true;
+    },
+  );
+
+  print('SOCKS5 proxy at ${dynamicForward.host}:${dynamicForward.port}');
+}
+```
+
+This currently supports SOCKS5 `NO AUTH` + `CONNECT`.
+It requires `dart:io` and is not available on web runtimes.
+
+Quick verification from your terminal:
+
+```sh
+curl --proxy socks5h://127.0.0.1:1080 https://ifconfig.me
+```
+
+If the proxy is working, this command returns the public egress IP seen through
+the SSH tunnel.
+
+### Authenticate with public keys
 ```dart
 void main() async {
   final client = SSHClient(
@@ -217,11 +469,62 @@ void main() async {
 }
 ```
 
+### Authenticate with external identities (Secure Enclave, Smart Cards, Hardware Tokens)
+
+Use `SSHIdentity.custom` or implement `SSHIdentity` when signing is performed asynchronously by external hardware, the operating system, or a remote agent:
+
+```dart
+void main() async {
+  final identity = SSHIdentity.custom(
+    type: 'ssh-ed25519',
+    publicKey: SSHRawHostKey(rawPublicKeyBytes),
+    signer: (challengeData) async {
+      // Perform signing asynchronously via Hardware Token, OS Keystore, or Secure Enclave
+      final signatureBytes = await myExternalSigner.sign(challengeData);
+      return SSHRawSignature(signatureBytes);
+    },
+    // Set shouldProbe: true to send an unsigned RFC 4252 §7.8 query first,
+    // avoiding PIN prompts or user interaction if the server rejects the key.
+    shouldProbe: true,
+    comment: 'YubiKey 5C NFC',
+  );
+
+  final client = SSHClient(
+    socket,
+    username: '<username>',
+    identities: [identity],
+  );
+}
+```
+
+### Authenticate with the client host key (hostbased)
+
+Hostbased authentication (RFC 4252 §9) proves the identity of the *machine* the
+client runs on, rather than the user. The server trusts the client host, and
+authorises the local account through it:
+
+```dart
+void main() async {
+  final client = SSHClient(
+    socket,
+    username: '<username on the server>',
+    hostbasedIdentities: [hostKeyPair],
+    hostName: 'workstation.example.com',
+    userNameOnClientHost: 'localuser',
+  );
+}
+```
+
+`hostbasedIdentities` holds keys belonging to the client host, not to the user,
+so they are usually the host keys in `/etc/ssh`. The method is only offered when
+all three options are set and the identity list is not empty, and `hostName`
+must be the fully qualified name the server knows the client host by.
+
 ### Use encrypted PEM files
 ```dart
 void main() async {
   // Test whether the private key is encrypted.
-  final encrypted = SSHKeyPair.isEncrypted(await File('path/to/id_rsa').readAsString());
+  final encrypted = SSHKeyPair.isEncryptedPem(await File('path/to/id_rsa').readAsString());
   print(encrypted);
 
 // If the private key is encrypted, you need to provide the passphrase.
@@ -230,15 +533,32 @@ void main() async {
 }
 ```
 
-Decrypt PEM file with [`compute`](https://api.flutter.dev/flutter/foundation/compute-constant.html) in Flutter
+`OpenSSHKeyPair.toPem()` writes them too. A non-empty passphrase encrypts the
+private section with `aes256-ctr` keyed by `bcrypt_pbkdf`, the same way
+`ssh-keygen` does, so the result opens with any OpenSSH tool. A null or empty
+passphrase writes the unencrypted form:
 
 ```dart
 void main() async {
-  List<SSHKeyPair> decryptKeyPairs(List<String> args) {
-    return SSHKeyPair.fromPem(args[0], args[1]);
+  final keys = SSHKeyPair.fromPem(await File('path/to/id_ed25519').readAsString());
+  final pair = keys.first as OpenSSHKeyPair;
+
+  // Defaults to OpenSSH's 24 bcrypt rounds; pass `rounds:` to change it.
+  await File('path/to/id_ed25519.new').writeAsString(
+    pair.toPem(passphrase: '<passphrase>'),
+  );
+}
+```
+
+Decrypting encrypted PEM files (especially those using secure key derivation functions like `bcrypt` with many rounds) is a CPU-intensive operation that can freeze the UI. In Flutter, you can offload this decryption to a background isolate using the [`compute`](https://api.flutter.dev/flutter/foundation/compute-constant.html) function:
+
+```dart
+void main() async {
+  List<SSHKeyPair> decryptKeyPairs((String pem, String passphrase) args) {
+    return SSHKeyPair.fromPem(args.$1, args.$2);
   }
 
-  final keypairs = await compute(decryptKeyPairs, ['<pem text>', '<passphrase>']);
+  final keypairs = await compute(decryptKeyPairs, ('<pem text>', '<passphrase>'));
 }
 ```
 
@@ -296,6 +616,71 @@ void main() async {
 }
 ```
 
+### Download remote file (high-level API)
+```dart
+void main() async {
+  final sftp = await client.sftp();
+  final output = File('local_file.txt').openWrite();
+
+  final bytes = await sftp.download(
+    '/remote/file.txt',
+    output,
+    onProgress: (bytesRead) => print('downloaded: $bytesRead bytes'),
+    closeDestination: true,
+  );
+
+  print('download complete: $bytes bytes');
+}
+```
+
+`download()` and `downloadTo()` are opt-in convenience APIs built on top of the
+existing stream-based behavior, so existing code remains fully compatible.
+
+When to use each API:
+
+- Use `sftp.download(path, sink)` when you only have a remote path and want the
+  simplest one-liner flow. It opens and closes the remote file for you.
+- Use `file.downloadTo(sink)` when you already have an open `SftpFile` (for
+  example you want partial downloads with `offset`/`length` or want to reuse the
+  same handle).
+
+```dart
+void main() async {
+  final sftp = await client.sftp();
+  final file = await sftp.open('/remote/file.txt');
+  final output = File('local_partial.bin').openWrite();
+
+  try {
+    // Download bytes [1024, 1024 + 4096) using an existing open handle.
+    await file.downloadTo(
+      output,
+      offset: 1024,
+      length: 4096,
+      closeDestination: true,
+    );
+  } finally {
+    await file.close();
+  }
+}
+```
+
+For high-latency links or large files, you can tune pipelining:
+
+```dart
+void main() async {
+  final sftp = await client.sftp();
+  final output = File('local_file.txt').openWrite();
+
+  await sftp.download(
+    '/remote/file.txt',
+    output,
+    chunkSize: 64 * 1024,
+    maxPendingRequests: 128,
+    closeDestination: true,
+  );
+}
+```
+
 ### Write remote file
 ```dart
 void main() async {
@@ -314,6 +699,10 @@ void main() async {
 ```
 
 ### File upload
+
+Uploads pipeline up to 64 outstanding write requests, matching OpenSSH. Pass
+`chunkSize` and `maxPendingRequests` to `write` to tune it, as with `download`.
+
 ```dart
 void main() async {
   final sftp = await client.sftp();
@@ -399,46 +788,103 @@ void main() async {
 
 ### SSH client:
 
-- [example/example.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/example.dart)
-- [example/execute.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/execute.dart)
-- [example/forward_local.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/forward_local.dart)
-- [example/forward_remote.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/forward_remote.dart)
-- [example/pubkey.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/pubkey.dart)
-- [example/shell.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/shell.dart)
-- [example/ssh_jump.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/ssh_jump.dart)
+- [example/example.dart](https://github.com/vicajilau/dartssh2/blob/main/example/example.dart)
+- [example/execute.dart](https://github.com/vicajilau/dartssh2/blob/main/example/execute.dart)
+- [example/forward_local.dart](https://github.com/vicajilau/dartssh2/blob/main/example/forward_local.dart)
+- [example/forward_remote.dart](https://github.com/vicajilau/dartssh2/blob/main/example/forward_remote.dart)
+- [example/pubkey.dart](https://github.com/vicajilau/dartssh2/blob/main/example/pubkey.dart)
+- [example/shell.dart](https://github.com/vicajilau/dartssh2/blob/main/example/shell.dart)
+- [example/ssh_jump.dart](https://github.com/vicajilau/dartssh2/blob/main/example/ssh_jump.dart)
 
 ### SFTP:
-- [example/sftp_read.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/sftp_read.dart)
-- [example/sftp_list.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/sftp_list.dart)
-- [example/sftp_stat.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/sftp_stat.dart)
-- [example/sftp_upload.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/sftp_upload.dart)
-- [example/sftp_filetype.dart](https://github.com/TerminalStudio/dartssh2/blob/master/example/sftp_filetype.dart)
+- [example/sftp_read.dart](https://github.com/vicajilau/dartssh2/blob/main/example/sftp_read.dart)
+- [example/sftp_list.dart](https://github.com/vicajilau/dartssh2/blob/main/example/sftp_list.dart)
+- [example/sftp_stat.dart](https://github.com/vicajilau/dartssh2/blob/main/example/sftp_stat.dart)
+- [example/sftp_upload.dart](https://github.com/vicajilau/dartssh2/blob/main/example/sftp_upload.dart)
+- [example/sftp_filetype.dart](https://github.com/vicajilau/dartssh2/blob/main/example/sftp_filetype.dart)
 
 
 
 ## 🔐 Supported algorithms
 
-**Host key**: 
+**Host key**:
 - `ssh-rsa`
 - `rsa-sha2-[256|512]`
 - `ecdsa-sha2-nistp[256|384|521]`
 - `ssh-ed25519`
 
-**Key exchange**: 
+**Key exchange**:
 - `curve25519-sha256`
 - `ecdh-sha2-nistp[256|384|521] `
 - `diffie-hellman-group-exchange-sha[1|256]`
 - `diffie-hellman-group14-sha[1|256]`
 - `diffie-hellman-group1-sha1 `
-  
-**Cipher**: 
+
+**Cipher**:
+- `chacha20-poly1305@openssh.com`
+- `aes[128|256]-gcm@openssh.com`
 - `aes[128|192|256]-ctr`
 - `aes[128|192|256]-cbc`
 
-**Integrity**: 
-- `hmac-md5`
-- `hmac-sha1`
+**Integrity**:
+- `hmac-sha2-[256|512]-etm@openssh.com`
 - `hmac-sha2-[256|512]`
+- `hmac-sha2-[256|512]-96`
+- `hmac-sha1`
+- `hmac-md5`
+
+### Default preferences
+
+Each list is ordered by preference and the first algorithm the server also
+supports is the one that gets used. The defaults match what OpenSSH proposes
+in `myproposal.h`:
+
+| | Default order |
+|---|---|
+| **Key exchange** | curve25519 → ECDH NIST → DH group-exchange/group14 SHA-256 |
+| **Host key** | `ssh-ed25519` → `rsa-sha2-512/256` → ECDSA |
+| **Cipher** | AES-GCM → ChaCha20-Poly1305 → AES-CTR |
+| **Integrity** | ETM variants → `hmac-sha2-256/512` → `hmac-sha1` |
+
+Everything else in the lists above is implemented but **left out of the
+defaults**. Pass it to `SSHAlgorithms` explicitly if a legacy server leaves you
+no choice:
+
+- `diffie-hellman-group14-sha1` and `diffie-hellman-group-exchange-sha1`, whose
+  exchange hash is SHA-1.
+- `diffie-hellman-group1-sha1`, which is SHA-1 as well and whose 1024-bit group
+  is below any current recommendation.
+- `ssh-rsa`, which signs host keys with SHA-1 and is open to chosen-prefix
+  collisions. OpenSSH disabled it by default in 8.8.
+- `aes[128|192|256]-cbc`, vulnerable to the plaintext recovery of CVE-2008-5161.
+- `hmac-md5`.
+- The truncated `hmac-sha2-[256|512]-96` variants.
+
+> Removed from the defaults in 4.0.0. A server that offers nothing but these
+> was reachable before and is not any more, so if you talk to an older router,
+> NAS or embedded device, pass the algorithm it needs.
+
+```dart
+void main() async {
+  final client = SSHClient(
+    await SSHSocket.connect('localhost', 22),
+    username: '<username>',
+    onPasswordRequest: () => '<password>',
+    algorithms: const SSHAlgorithms(
+      // Only do this for a server that supports nothing better.
+      kex: [SSHKexType.dh14Sha1, SSHKexType.dh1Sha1],
+    ),
+  );
+
+  // Use the client...
+  await client.close();
+}
+```
+
+### Protocol hardening
+
+- **Strict key exchange** (`kex-strict-c-v00@openssh.com`) is negotiated automatically and enabled whenever the server supports it. It is the countermeasure against the Terrapin attack ([CVE-2023-48795](https://terrapin-attack.com)): packet sequence numbers are reset after every `SSH_MSG_NEWKEYS`, and the optional `SSH_MSG_IGNORE` / `SSH_MSG_UNIMPLEMENTED` / `SSH_MSG_DEBUG` messages are rejected while a key exchange is running. `SSHClient.strictKex` reports whether it is active on a live connection.
+- **EXT_INFO** ([RFC 8308](https://datatracker.ietf.org/doc/html/rfc8308)) is requested via `ext-info-c`. The signature algorithms the server advertises are exposed as `SSHClient.serverSigAlgs`.
 
 **Private key**:
 
@@ -450,7 +896,7 @@ void main() async {
 | **OpenSSH Ed25519** | ✔️         | ✔️          | ✔️         | WIP         |
 
 
-  
+
 ## ⏳ Roadmap
 
 - [x] Fix broken tests.
@@ -480,6 +926,7 @@ void main() async {
 ## Credits
 
 - [https://github.com/GreenAppers/dartssh](https://github.com/GreenAppers/dartssh) by GreenAppers.
+- dartssh2 was created at [TerminalStudio](https://github.com/TerminalStudio), where it was developed and maintained up to version 3.0.1, before moving to this repository.
 
 ## License
 

@@ -109,6 +109,9 @@ class TeleportSSHSocket implements SSHSocket {
   StreamSink<List<int>> get sink => _socket;
 
   @override
+  Future<void> flush() => _socket.flush();
+
+  @override
   Future<void> get done => _socket.done;
 
   @override

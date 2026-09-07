@@ -14,7 +14,6 @@
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/services/logging_service.dart';
 import 'package:sshvault/core/storage/secure_storage_provider.dart';
@@ -77,17 +76,17 @@ void callbackDispatcher() {
         settings.localVaultVersion,
       );
 
-      return result.fold(
-        onSuccess: (newVersion) {
+      return await result.fold<Future<bool>>(
+        onSuccess: (newVersion) async {
           log.info(tag, 'Background sync completed (v=$newVersion)');
           // Persist the new version so the foreground UI picks it up
           // when the user next opens the app.
-          container
+          await container
               .read(settingsProvider.notifier)
               .setLocalVaultVersion(newVersion);
           return true;
         },
-        onFailure: (f) {
+        onFailure: (f) async {
           log.warning(tag, 'Background sync failed: $f');
           // Returning false signals WorkManager to apply backoff.
           return false;
@@ -119,10 +118,7 @@ class AndroidBackgroundSyncService {
   /// the platform check short-circuits before touching the plugin.
   Future<void> initialize() async {
     if (!_isSupported || _initialized) return;
-    await _workmanager.initialize(
-      callbackDispatcher,
-      isInDebugMode: kDebugMode,
-    );
+    await _workmanager.initialize(callbackDispatcher);
     _initialized = true;
     _log.debug(_tag, 'WorkManager initialized');
   }

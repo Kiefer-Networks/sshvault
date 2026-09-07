@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'sftp_entry.dart';
@@ -9,6 +9,7 @@ part of 'sftp_entry.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SftpEntryCopyWith<SftpEntry> get copyWith => _$SftpEntryCopyWithImpl<SftpEntry>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpEntry&&(identical(other.name, name) || other.name == name)&&(identical(other.path, path) || other.path == path)&&(identical(other.type, type) || other.type == type)&&(identical(other.size, size) || other.size == size)&&(identical(other.modified, modified) || other.modified == modified)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.group, group) || other.group == group)&&(identical(other.linkTarget, linkTarget) || other.linkTarget == linkTarget));
+  final _this = this as SftpEntry;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpEntry&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.path, _this.path) || other.path == _this.path)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.size, _this.size) || other.size == _this.size)&&(identical(other.modified, _this.modified) || other.modified == _this.modified)&&(identical(other.permissions, _this.permissions) || other.permissions == _this.permissions)&&(identical(other.owner, _this.owner) || other.owner == _this.owner)&&(identical(other.group, _this.group) || other.group == _this.group)&&(identical(other.linkTarget, _this.linkTarget) || other.linkTarget == _this.linkTarget));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,path,type,size,modified,permissions,owner,group,linkTarget);
+int get hashCode {
+  final _this = this as SftpEntry;
+  return Object.hash(runtimeType,_this.name,_this.path,_this.type,_this.size,_this.modified,_this.permissions,_this.owner,_this.group,_this.linkTarget);
+}
 
 @override
 String toString() {
-  return 'SftpEntry(name: $name, path: $path, type: $type, size: $size, modified: $modified, permissions: $permissions, owner: $owner, group: $group, linkTarget: $linkTarget)';
+  final _this = this as SftpEntry;
+  return 'SftpEntry(name: ${_this.name}, path: ${_this.path}, type: ${_this.type}, size: ${_this.size}, modified: ${_this.modified}, permissions: ${_this.permissions}, owner: ${_this.owner}, group: ${_this.group}, linkTarget: ${_this.linkTarget})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SftpEntryCopyWithImpl<$Res>
 /// Create a copy of SftpEntry
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? path = null,Object? type = null,Object? size = null,Object? modified = null,Object? permissions = freezed,Object? owner = freezed,Object? group = freezed,Object? linkTarget = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SftpEntry(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
@@ -237,16 +243,18 @@ _$SftpEntryCopyWith<_SftpEntry> get copyWith => __$SftpEntryCopyWithImpl<_SftpEn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SftpEntry&&(identical(other.name, name) || other.name == name)&&(identical(other.path, path) || other.path == path)&&(identical(other.type, type) || other.type == type)&&(identical(other.size, size) || other.size == size)&&(identical(other.modified, modified) || other.modified == modified)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.group, group) || other.group == group)&&(identical(other.linkTarget, linkTarget) || other.linkTarget == linkTarget));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SftpEntry&&(identical(other.name, name) || other.name == name)&&(identical(other.path, path) || other.path == path)&&(identical(other.type, type) || other.type == type)&&(identical(other.size, size) || other.size == size)&&(identical(other.modified, modified) || other.modified == modified)&&(identical(other.permissions, permissions) || other.permissions == permissions)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.group, group) || other.group == group)&&(identical(other.linkTarget, linkTarget) || other.linkTarget == linkTarget));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,path,type,size,modified,permissions,owner,group,linkTarget);
+int get hashCode {
+    return Object.hash(runtimeType,name,path,type,size,modified,permissions,owner,group,linkTarget);
+}
 
 @override
 String toString() {
-  return 'SftpEntry(name: $name, path: $path, type: $type, size: $size, modified: $modified, permissions: $permissions, owner: $owner, group: $group, linkTarget: $linkTarget)';
+    return 'SftpEntry(name: $name, path: $path, type: $type, size: $size, modified: $modified, permissions: $permissions, owner: $owner, group: $group, linkTarget: $linkTarget)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'sftp_pane_source.dart';
@@ -9,6 +9,7 @@ part of 'sftp_pane_source.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$SftpPaneSource {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneSource);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneSource);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'SftpPaneSource()';
+    return 'SftpPaneSource()';
 }
 
 
@@ -185,7 +186,7 @@ class SftpPaneSourceLocal implements SftpPaneSource {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneSourceLocal);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneSourceLocal);
 }
 
 
@@ -194,7 +195,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'SftpPaneSource.local()';
+    return 'SftpPaneSource.local()';
 }
 
 
@@ -223,16 +224,18 @@ $SftpPaneSourceRemoteCopyWith<SftpPaneSourceRemote> get copyWith => _$SftpPaneSo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneSourceRemote&&(identical(other.serverId, serverId) || other.serverId == serverId)&&(identical(other.serverName, serverName) || other.serverName == serverName));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SftpPaneSourceRemote&&(identical(other.serverId, serverId) || other.serverId == serverId)&&(identical(other.serverName, serverName) || other.serverName == serverName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,serverId,serverName);
+int get hashCode {
+    return Object.hash(runtimeType,serverId,serverName);
+}
 
 @override
 String toString() {
-  return 'SftpPaneSource.remote(serverId: $serverId, serverName: $serverName)';
+    return 'SftpPaneSource.remote(serverId: $serverId, serverName: $serverName)';
 }
 
 

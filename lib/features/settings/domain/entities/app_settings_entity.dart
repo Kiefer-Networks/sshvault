@@ -29,6 +29,13 @@ class AppSettingsEntity {
   final bool backgroundSyncEnabled;
   final int localVaultVersion;
   final bool preventScreenshots;
+  /// Explicit consent to query technical system metadata from SSH servers.
+  /// This is local-only and opt-in by default.
+  final bool serverSystemInfoConsent;
+  /// Periodically refresh collected server metadata while consent is enabled.
+  final bool serverSystemInfoAutoRefresh;
+  /// Refresh interval in seconds. Defaults to five minutes.
+  final int serverSystemInfoRefreshIntervalSecs;
   final String dnsServers;
   // SSH defaults
   final String defaultAuthMethod;
@@ -212,6 +219,9 @@ class AppSettingsEntity {
     this.backgroundSyncEnabled = false,
     this.localVaultVersion = 0,
     this.preventScreenshots = false,
+    this.serverSystemInfoConsent = false,
+    this.serverSystemInfoAutoRefresh = false,
+    this.serverSystemInfoRefreshIntervalSecs = 300,
     this.dnsServers = '',
     this.defaultAuthMethod = 'password',
     this.connectionTimeoutSecs = 30,
@@ -290,6 +300,9 @@ class AppSettingsEntity {
     bool? backgroundSyncEnabled,
     int? localVaultVersion,
     bool? preventScreenshots,
+    bool? serverSystemInfoConsent,
+    bool? serverSystemInfoAutoRefresh,
+    int? serverSystemInfoRefreshIntervalSecs,
     String? dnsServers,
     String? defaultAuthMethod,
     int? connectionTimeoutSecs,
@@ -353,6 +366,13 @@ class AppSettingsEntity {
           backgroundSyncEnabled ?? this.backgroundSyncEnabled,
       localVaultVersion: localVaultVersion ?? this.localVaultVersion,
       preventScreenshots: preventScreenshots ?? this.preventScreenshots,
+      serverSystemInfoConsent:
+          serverSystemInfoConsent ?? this.serverSystemInfoConsent,
+      serverSystemInfoAutoRefresh:
+          serverSystemInfoAutoRefresh ?? this.serverSystemInfoAutoRefresh,
+      serverSystemInfoRefreshIntervalSecs:
+          serverSystemInfoRefreshIntervalSecs ??
+          this.serverSystemInfoRefreshIntervalSecs,
       dnsServers: dnsServers ?? this.dnsServers,
       defaultAuthMethod: defaultAuthMethod ?? this.defaultAuthMethod,
       connectionTimeoutSecs:

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sshvault/core/error/result.dart';
@@ -179,6 +177,9 @@ void main() {
       'clears tokens and calls onAuthExpired when no refresh token',
       () async {
         when(
+          () => mockStorage.getAccessToken(),
+        ).thenAnswer((_) async => const Success(null));
+        when(
           () => mockStorage.getRefreshToken(),
         ).thenAnswer((_) async => const Success(null));
         when(
@@ -194,18 +195,7 @@ void main() {
         );
         final handler = _MockErrorHandler();
 
-        // The interceptor internally completes a Completer with error
-        // when no refresh token is available. We need to catch the
-        // unhandled async error from the completer's future.
-        await runZonedGuarded(
-          () async {
-            sut.onError(err, handler);
-            await Future<void>.delayed(const Duration(milliseconds: 200));
-          },
-          (error, stack) {
-            // Expected: StateError from completer.completeError
-          },
-        );
+        await sut.onError(err, handler);
 
         expect(handler.nextCalled, isTrue);
         expect(authExpiredCalled, isTrue);

@@ -52,10 +52,7 @@ void main() {
       mock = _MockWorkmanager();
       svc = AndroidBackgroundSyncService(workmanager: mock);
 
-      when(
-        () =>
-            mock.initialize(any(), isInDebugMode: any(named: 'isInDebugMode')),
-      ).thenAnswer((_) async {});
+      when(() => mock.initialize(any())).thenAnswer((_) async {});
       when(
         () => mock.registerPeriodicTask(
           any(),
@@ -76,10 +73,7 @@ void main() {
 
       await svc.enableBackgroundSync(interval: const Duration(hours: 1));
 
-      verify(
-        () =>
-            mock.initialize(any(), isInDebugMode: any(named: 'isInDebugMode')),
-      ).called(1);
+      verify(() => mock.initialize(any())).called(1);
       verify(
         () => mock.registerPeriodicTask(
           'sshvault.periodic-sync',
@@ -108,10 +102,7 @@ void main() {
 
       // initialize() must be idempotent — calling enable twice in a row
       // should not re-spin the headless engine.
-      verify(
-        () =>
-            mock.initialize(any(), isInDebugMode: any(named: 'isInDebugMode')),
-      ).called(1);
+      verify(() => mock.initialize(any())).called(1);
       verify(
         () => mock.registerPeriodicTask(
           any(),

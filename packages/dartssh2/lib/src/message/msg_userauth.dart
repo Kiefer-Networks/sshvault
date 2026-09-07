@@ -23,10 +23,17 @@ class SSH_Message_Userauth_Request extends SSHMessage {
   final Uint8List? publicKey;
   final Uint8List? signature;
 
-  /* 'publickey' method specific fields */
+  /* 'keyboard-interactive' method specific fields */
 
   final String? languageTag;
   final String? submethods;
+
+  /* 'hostbased' method specific fields */
+
+  final String? hostKeyAlgorithm;
+  final Uint8List? hostKey;
+  final String? clientHostName;
+  final String? clientUsername;
 
   SSH_Message_Userauth_Request({
     required this.user,
@@ -39,6 +46,10 @@ class SSH_Message_Userauth_Request extends SSHMessage {
     this.signature,
     this.languageTag,
     this.submethods,
+    this.hostKeyAlgorithm,
+    this.hostKey,
+    this.clientHostName,
+    this.clientUsername,
   });
 
   factory SSH_Message_Userauth_Request.password({
@@ -101,6 +112,27 @@ class SSH_Message_Userauth_Request extends SSHMessage {
     );
   }
 
+  factory SSH_Message_Userauth_Request.hostbased({
+    required String username,
+    required String hostKeyAlgorithm,
+    required Uint8List hostKey,
+    required String clientHostName,
+    required String clientUsername,
+    required Uint8List signature,
+    String serviceName = 'ssh-connection',
+  }) {
+    return SSH_Message_Userauth_Request(
+      serviceName: serviceName,
+      user: username,
+      methodName: 'hostbased',
+      hostKeyAlgorithm: hostKeyAlgorithm,
+      hostKey: hostKey,
+      clientHostName: clientHostName,
+      clientUsername: clientUsername,
+      signature: signature,
+    );
+  }
+
   factory SSH_Message_Userauth_Request.none({
     required String user,
     String serviceName = 'ssh-connection',
@@ -121,32 +153,36 @@ class SSH_Message_Userauth_Request extends SSHMessage {
     switch (methodName) {
       case 'password':
         final hasNewPassword = reader.readBool();
-        final password = reader.readUtf8();
         if (hasNewPassword) {
+          // RFC 4252 §8 puts the old password on the wire first, then the new
+          // one.
           final oldPassword = reader.readUtf8();
+          final newPassword = reader.readUtf8();
           return SSH_Message_Userauth_Request.newPassword(
             user: user,
             oldPassword: oldPassword,
-            newPassword: password,
+            newPassword: newPassword,
             serviceName: serviceName,
           );
         } else {
           return SSH_Message_Userauth_Request.password(
             user: user,
-            password: password,
+            password: reader.readUtf8(),
             serviceName: serviceName,
           );
         }
       case 'publickey':
+        // RFC 4252 §7: the boolean says whether a signature follows the public
+        // key, and it precedes the algorithm name.
+        final hasSignature = reader.readBool();
         final publicKeyAlgorithm = reader.readUtf8();
         final publicKey = reader.readString();
-        final signature = reader.readString();
         return SSH_Message_Userauth_Request.publicKey(
           username: user,
           serviceName: serviceName,
           publicKeyAlgorithm: publicKeyAlgorithm,
           publicKey: publicKey,
-          signature: signature,
+          signature: hasSignature ? reader.readString() : null,
         );
       case 'keyboard-interactive':
         final languageTag = reader.readUtf8();
@@ -156,6 +192,16 @@ class SSH_Message_Userauth_Request extends SSHMessage {
           serviceName: serviceName,
           languageTag: languageTag,
           submethods: submethods,
+        );
+      case 'hostbased':
+        return SSH_Message_Userauth_Request.hostbased(
+          username: user,
+          serviceName: serviceName,
+          hostKeyAlgorithm: reader.readUtf8(),
+          hostKey: reader.readString(),
+          clientHostName: reader.readUtf8(),
+          clientUsername: reader.readUtf8(),
+          signature: reader.readString(),
         );
       case 'none':
         return SSH_Message_Userauth_Request.none(
@@ -194,6 +240,13 @@ class SSH_Message_Userauth_Request extends SSHMessage {
       case 'keyboard-interactive':
         writer.writeUtf8(languageTag!);
         writer.writeUtf8(submethods!);
+        break;
+      case 'hostbased':
+        writer.writeUtf8(hostKeyAlgorithm!);
+        writer.writeString(hostKey!);
+        writer.writeUtf8(clientHostName!);
+        writer.writeUtf8(clientUsername!);
+        writer.writeString(signature!);
         break;
       case 'none':
         break;
@@ -339,6 +392,50 @@ class SSH_Message_Userauth_Passwd_ChangeReq extends SSHMessage {
   }
 }
 
+/// Sent by the server to indicate that a probed public key is acceptable
+/// for authentication (RFC 4252 §7.8, message ID 60).
+class SSH_Message_Userauth_PK_Ok extends SSHMessage {
+  static const messageId = 60;
+
+  /// Public key algorithm name (e.g. `ssh-ed25519`, `ssh-rsa`).
+  final String publicKeyAlgorithm;
+
+  /// Raw bytes of the accepted public key.
+  final Uint8List publicKey;
+
+  /// Creates an [SSH_Message_Userauth_PK_Ok] message.
+  SSH_Message_Userauth_PK_Ok({
+    required this.publicKeyAlgorithm,
+    required this.publicKey,
+  });
+
+  /// Decodes [SSH_Message_Userauth_PK_Ok] from binary [bytes].
+  factory SSH_Message_Userauth_PK_Ok.decode(Uint8List bytes) {
+    final reader = SSHMessageReader(bytes);
+    reader.skip(1);
+    final publicKeyAlgorithm = reader.readUtf8();
+    final publicKey = reader.readString();
+    return SSH_Message_Userauth_PK_Ok(
+      publicKeyAlgorithm: publicKeyAlgorithm,
+      publicKey: publicKey,
+    );
+  }
+
+  @override
+  Uint8List encode() {
+    final writer = SSHMessageWriter();
+    writer.writeUint8(messageId);
+    writer.writeUtf8(publicKeyAlgorithm);
+    writer.writeString(publicKey);
+    return writer.takeBytes();
+  }
+
+  @override
+  String toString() {
+    return 'SSH_Message_Userauth_PK_Ok(publicKeyAlgorithm: $publicKeyAlgorithm)';
+  }
+}
+
 class SSH_Message_Userauth_InfoRequest implements SSHMessage {
   static const messageId = 60;
 
@@ -433,6 +530,6 @@ class SSH_Message_Userauth_InfoResponse implements SSHMessage {
 
   @override
   String toString() {
-    return '$runtimeType(responses: $responses)';
+    return '$runtimeType(responses: ${responses.length})';
   }
 }

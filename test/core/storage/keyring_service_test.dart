@@ -38,7 +38,14 @@ void main() {
   setUp(() async {
     storage = _MockSecureStorage();
     tempDir = await Directory.systemTemp.createTemp('keyring_test_');
-    sut = KeyringService(storage: storage, supportDirOverride: tempDir.path);
+    sut = KeyringService(
+      isWindowsOverride: false,
+      isMacOsOverride: false,
+      isAndroidOverride: false,
+      storage: storage,
+      supportDirOverride: tempDir.path,
+      portalClient: _FakePortalClient(null),
+    );
   });
 
   tearDown(() async {
@@ -62,6 +69,20 @@ void main() {
   });
 
   group('KeyringService — read/write/delete', () {
+    test(
+      'deleteVaultKey reports failure after still deleting fallback files',
+      () async {
+        final legacyFile = File(
+          p.join(tempDir.path, kVaultMasterKeyLegacyFile),
+        );
+        await legacyFile.writeAsString('secret');
+        when(
+          () => storage.delete(key: kVaultMasterKeyId),
+        ).thenThrow(StateError('keyring unavailable'));
+        await expectLater(sut.deleteVaultKey(), throwsA(isA<StateError>()));
+        expect(await legacyFile.exists(), isFalse);
+      },
+    );
     test('readVaultKey delegates to FlutterSecureStorage', () async {
       when(
         () => storage.read(key: kVaultMasterKeyId),
@@ -238,6 +259,9 @@ void main() {
         Uint8List.fromList(<int>[0xDE, 0xAD, 0xBE, 0xEF]),
       );
       final svc = KeyringService(
+        isWindowsOverride: false,
+        isMacOsOverride: false,
+        isAndroidOverride: false,
         storage: storage,
         supportDirOverride: tempDir.path,
         portalClient: portal,
@@ -265,6 +289,9 @@ void main() {
         'the portal answer', () async {
       final portal = _FakePortalClient(null);
       final svc = KeyringService(
+        isWindowsOverride: false,
+        isMacOsOverride: false,
+        isAndroidOverride: false,
         storage: storage,
         supportDirOverride: tempDir.path,
         portalClient: portal,
@@ -288,6 +315,9 @@ void main() {
         Uint8List.fromList(<int>[0x01, 0x02, 0x03]),
       );
       final svc = KeyringService(
+        isWindowsOverride: false,
+        isMacOsOverride: false,
+        isAndroidOverride: false,
         storage: storage,
         supportDirOverride: tempDir.path,
         portalClient: portal,
@@ -308,6 +338,9 @@ void main() {
         'exist', () async {
       final portal = _FakePortalClient(Uint8List.fromList(<int>[0xAA]));
       final svc = KeyringService(
+        isWindowsOverride: false,
+        isMacOsOverride: false,
+        isAndroidOverride: false,
         storage: storage,
         supportDirOverride: tempDir.path,
         portalClient: portal,
@@ -330,6 +363,9 @@ void main() {
     test('currentBackend reports portalSecret when both the legacy file '
         'and the portal cache are present', () async {
       final svc = KeyringService(
+        isWindowsOverride: false,
+        isMacOsOverride: false,
+        isAndroidOverride: false,
         storage: storage,
         supportDirOverride: tempDir.path,
         portalClient: _FakePortalClient(null),

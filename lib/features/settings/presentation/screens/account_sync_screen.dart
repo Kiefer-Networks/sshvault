@@ -849,23 +849,16 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
         }
       } else {
         try {
-          final useCases = ref.read(syncUseCasesProvider);
-          final changeResult = await useCases.changeEncryptionPassword(
-            oldPw.text,
-            newPw.text,
-          );
+          final changeResult = await ref
+              .read(syncProvider.notifier)
+              .changeEncryptionPassword(oldPw.text, newPw.text);
           changeResult.fold(
-            onSuccess: (_) async {
+            onSuccess: (_) {
               if (!mounted) return;
-              final router = GoRouter.of(context);
               AdaptiveNotification.show(
                 context,
                 message: l10n.changeEncryptionSuccess,
               );
-              await ref
-                  .read(authProvider.notifier)
-                  .logout(deleteLocalData: true);
-              if (mounted) router.go('/');
             },
             onFailure: (f) {
               if (mounted) {
@@ -910,7 +903,9 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
             final router = GoRouter.of(context);
             AdaptiveNotification.show(
               context,
-              message: l10n.logoutAllDevicesSuccessCount(revokedCount),
+              message: revokedCount == null
+                  ? l10n.logoutAllDevicesSuccess
+                  : l10n.logoutAllDevicesSuccessCount(revokedCount),
             );
             await ref.read(authProvider.notifier).logout(deleteLocalData: true);
             if (mounted) router.go('/');
