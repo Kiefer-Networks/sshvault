@@ -267,8 +267,10 @@ class _FleetView extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator.adaptive()),
-      error: (error, _) =>
-          ErrorState(error: error, onRetry: () => ref.invalidate(serverListProvider)),
+      error: (error, _) => ErrorState(
+        error: error,
+        onRetry: () => ref.invalidate(serverListProvider),
+      ),
     );
   }
 }
@@ -661,9 +663,7 @@ class _DiskUsageLine extends StatelessWidget {
       );
     }
     final primary = metrics.disks.firstWhere(
-      (d) =>
-          d.mountPoint == '/' ||
-          d.mountPoint.toUpperCase().startsWith('C:'),
+      (d) => d.mountPoint == '/' || d.mountPoint.toUpperCase().startsWith('C:'),
       orElse: () =>
           metrics.disks.reduce((a, b) => a.totalBytes >= b.totalBytes ? a : b),
     );
@@ -744,7 +744,9 @@ class _FleetFooter extends StatelessWidget {
         vertical: Spacing.sm,
       ),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
+        border: Border(
+          top: BorderSide(color: theme.colorScheme.outlineVariant),
+        ),
       ),
       child: DefaultTextStyle(
         style: theme.textTheme.labelSmall!.copyWith(
