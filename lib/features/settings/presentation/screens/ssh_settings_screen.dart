@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/settings/presentation/providers/settings_providers.dart';
-import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
@@ -16,170 +15,153 @@ class SshSettingsScreen extends ConsumerWidget {
     final settingsAsync = ref.watch(settingsProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    return AdaptiveScaffold(
-      title: l10n.settingsSectionSshDefaults,
-      body: settingsAsync.when(
-        data: (settings) => ListView(
-          padding: Spacing.paddingHorizontalLgVerticalSm,
-          children: [
-            // Connection section
-            Spacing.verticalSm,
-            SectionHeader(title: l10n.settingsSectionConnection),
-            SettingsGroupCard(
-              children: [
-                Semantics(
-                  button: true,
-                  label:
-                      '${l10n.settingsDefaultPort}: ${settings.defaultSshPort}',
-                  child: SettingsTile(
-                    icon: Icons.numbers,
-                    iconColor: AppColors.iconOrange,
-                    title: l10n.settingsDefaultPort,
-                    subtitleText: settings.defaultSshPort.toString(),
-                    onTap: () =>
-                        _editPort(context, ref, l10n, settings.defaultSshPort),
-                  ),
+    return settingsAsync.when(
+      data: (settings) => ListView(
+        padding: Spacing.paddingHorizontalLgVerticalSm,
+        children: [
+          SettingsPaneHeader(title: l10n.settingsSectionSshDefaults),
+          // Connection section
+          Spacing.verticalSm,
+          SectionHeader(title: l10n.settingsSectionConnection),
+          SettingsGroupCard(
+            children: [
+              Semantics(
+                button: true,
+                label:
+                    '${l10n.settingsDefaultPort}: ${settings.defaultSshPort}',
+                child: SettingsTile(
+                  icon: Icons.numbers,
+                  title: l10n.settingsDefaultPort,
+                  subtitleText: settings.defaultSshPort.toString(),
+                  onTap: () =>
+                      _editPort(context, ref, l10n, settings.defaultSshPort),
                 ),
-                SettingsTile(
-                  icon: Icons.person_outline,
-                  iconColor: AppColors.iconBlue,
-                  title: l10n.settingsDefaultUsername,
-                  subtitleText: settings.defaultUsername,
-                  onTap: () => _editUsername(
-                    context,
-                    ref,
-                    l10n,
-                    settings.defaultUsername,
-                  ),
-                ),
-                SettingsTile(
-                  icon: Icons.key_outlined,
-                  iconColor: AppColors.iconGreen,
-                  title: l10n.settingsDefaultAuthMethod,
-                  subtitleText: settings.defaultAuthMethod == 'key'
-                      ? l10n.settingsAuthKey
-                      : l10n.settingsAuthPassword,
-                  onTap: () async {
-                    final v = await showSettingsSelectionDialog<String>(
-                      context: context,
-                      title: l10n.settingsDefaultAuthMethod,
-                      currentValue: settings.defaultAuthMethod,
-                      options: [
-                        SelectionOption(
-                          value: 'password',
-                          label: l10n.settingsAuthPassword,
-                        ),
-                        SelectionOption(
-                          value: 'key',
-                          label: l10n.settingsAuthKey,
-                        ),
-                      ],
-                    );
-                    if (v != null) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setDefaultAuthMethod(v);
-                      if (context.mounted) {
-                        AdaptiveNotification.show(
-                          context,
-                          message: l10n.settingsUpdated,
-                        );
-                      }
+              ),
+              SettingsTile(
+                icon: Icons.person_outline,
+                title: l10n.settingsDefaultUsername,
+                subtitleText: settings.defaultUsername,
+                onTap: () =>
+                    _editUsername(context, ref, l10n, settings.defaultUsername),
+              ),
+              SettingsTile(
+                icon: Icons.key_outlined,
+                title: l10n.settingsDefaultAuthMethod,
+                subtitleText: settings.defaultAuthMethod == 'key'
+                    ? l10n.settingsAuthKey
+                    : l10n.settingsAuthPassword,
+                onTap: () async {
+                  final v = await showSettingsSelectionDialog<String>(
+                    context: context,
+                    title: l10n.settingsDefaultAuthMethod,
+                    currentValue: settings.defaultAuthMethod,
+                    options: [
+                      SelectionOption(
+                        value: 'password',
+                        label: l10n.settingsAuthPassword,
+                      ),
+                      SelectionOption(
+                        value: 'key',
+                        label: l10n.settingsAuthKey,
+                      ),
+                    ],
+                  );
+                  if (v != null) {
+                    ref.read(settingsProvider.notifier).setDefaultAuthMethod(v);
+                    if (context.mounted) {
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsUpdated,
+                      );
                     }
-                  },
+                  }
+                },
+              ),
+              SettingsTile(
+                icon: Icons.timer_outlined,
+                title: l10n.settingsConnectionTimeout,
+                subtitleText: l10n.settingsConnectionTimeoutValue(
+                  settings.connectionTimeoutSecs,
                 ),
-                SettingsTile(
-                  icon: Icons.timer_outlined,
-                  iconColor: AppColors.iconRed,
-                  title: l10n.settingsConnectionTimeout,
-                  subtitleText: l10n.settingsConnectionTimeoutValue(
-                    settings.connectionTimeoutSecs,
-                  ),
-                  onTap: () => _editTimeout(
-                    context,
-                    ref,
-                    l10n,
-                    settings.connectionTimeoutSecs,
-                  ),
+                onTap: () => _editTimeout(
+                  context,
+                  ref,
+                  l10n,
+                  settings.connectionTimeoutSecs,
                 ),
-                SettingsTile(
-                  icon: Icons.favorite_border,
-                  iconColor: AppColors.iconPink,
-                  title: l10n.settingsKeepaliveInterval,
-                  subtitleText: l10n.settingsKeepaliveIntervalValue(
-                    settings.keepaliveIntervalSecs,
-                  ),
-                  onTap: () => _editKeepalive(
-                    context,
-                    ref,
-                    l10n,
-                    settings.keepaliveIntervalSecs,
-                  ),
+              ),
+              SettingsTile(
+                icon: Icons.favorite_border,
+                title: l10n.settingsKeepaliveInterval,
+                subtitleText: l10n.settingsKeepaliveIntervalValue(
+                  settings.keepaliveIntervalSecs,
                 ),
-              ],
-            ),
+                onTap: () => _editKeepalive(
+                  context,
+                  ref,
+                  l10n,
+                  settings.keepaliveIntervalSecs,
+                ),
+              ),
+            ],
+          ),
 
-            // Terminal section
-            Spacing.verticalLg,
-            SectionHeader(title: l10n.settingsSectionTerminal),
-            SettingsGroupCard(
-              children: [
-                SettingsSwitchTile(
-                  icon: Icons.compress,
-                  iconColor: AppColors.iconTeal,
-                  title: l10n.settingsCompression,
-                  subtitleText: l10n.settingsCompressionDescription,
-                  value: settings.sshCompression,
-                  onChanged: (v) {
-                    ref.read(settingsProvider.notifier).setSshCompression(v);
-                    AdaptiveNotification.show(
-                      context,
-                      message: l10n.settingsUpdated,
-                    );
-                  },
-                ),
-                SettingsTile(
-                  icon: Icons.terminal,
-                  iconColor: AppColors.iconDeepPurple,
-                  title: l10n.settingsTerminalType,
-                  subtitleText: settings.defaultTerminalType,
-                  onTap: () async {
-                    final v = await showSettingsSelectionDialog<String>(
-                      context: context,
-                      title: l10n.settingsTerminalType,
-                      currentValue: settings.defaultTerminalType,
-                      options: const [
-                        SelectionOption(
-                          value: 'xterm-256color',
-                          label: 'xterm-256color',
-                        ),
-                        SelectionOption(value: 'xterm', label: 'xterm'),
-                        SelectionOption(value: 'vt100', label: 'vt100'),
-                      ],
-                    );
-                    if (v != null) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setDefaultTerminalType(v);
-                      if (context.mounted) {
-                        AdaptiveNotification.show(
-                          context,
-                          message: l10n.settingsUpdated,
-                        );
-                      }
+          // Terminal section
+          Spacing.verticalLg,
+          SectionHeader(title: l10n.settingsSectionTerminal),
+          SettingsGroupCard(
+            children: [
+              SettingsSwitchTile(
+                icon: Icons.compress,
+                title: l10n.settingsCompression,
+                subtitleText: l10n.settingsCompressionDescription,
+                value: settings.sshCompression,
+                onChanged: (v) {
+                  ref.read(settingsProvider.notifier).setSshCompression(v);
+                  AdaptiveNotification.show(
+                    context,
+                    message: l10n.settingsUpdated,
+                  );
+                },
+              ),
+              SettingsTile(
+                icon: Icons.terminal,
+                title: l10n.settingsTerminalType,
+                subtitleText: settings.defaultTerminalType,
+                onTap: () async {
+                  final v = await showSettingsSelectionDialog<String>(
+                    context: context,
+                    title: l10n.settingsTerminalType,
+                    currentValue: settings.defaultTerminalType,
+                    options: const [
+                      SelectionOption(
+                        value: 'xterm-256color',
+                        label: 'xterm-256color',
+                      ),
+                      SelectionOption(value: 'xterm', label: 'xterm'),
+                      SelectionOption(value: 'vt100', label: 'vt100'),
+                    ],
+                  );
+                  if (v != null) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setDefaultTerminalType(v);
+                    if (context.mounted) {
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsUpdated,
+                      );
                     }
-                  },
-                ),
-              ],
-            ),
-            Spacing.verticalLg,
-          ],
-        ),
-        loading: () =>
-            const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) =>
-            Center(child: Text(l10n.error(errorMessage(error)))),
+                  }
+                },
+              ),
+            ],
+          ),
+          Spacing.verticalLg,
+        ],
       ),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+      error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
     );
   }
 

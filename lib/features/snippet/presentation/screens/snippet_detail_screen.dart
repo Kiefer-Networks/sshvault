@@ -28,6 +28,14 @@ class SnippetDetailScreen extends ConsumerWidget {
 
     return AdaptiveScaffold(
       title: l10n.snippetDetailTitle,
+      breadcrumb: [
+        BreadcrumbSegment(
+          l10n.navSnippets,
+          onTap: () =>
+              context.canPop() ? context.pop() : context.go('/snippets'),
+        ),
+        BreadcrumbSegment(snippetAsync.value?.name ?? l10n.snippetDetailTitle),
+      ],
       actions: [
         IconButton(
           icon: const Icon(Icons.edit),

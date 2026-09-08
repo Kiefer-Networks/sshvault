@@ -236,6 +236,7 @@ class _KeyGenerationDialogState extends ConsumerState<KeyGenerationDialog> {
                   Spacing.verticalSm,
                   TextFormField(
                     controller: _commentController,
+                    autofocus: true,
                     enabled: !genState.generating,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.comment_outlined),

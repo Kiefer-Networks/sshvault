@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,242 +28,235 @@ class NetworkSettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return AdaptiveScaffold(
-      title: l10n.settingsSectionNetwork,
-      body: settingsAsync.when(
-        data: (settings) {
-          final servers = settings.dnsServerList.isEmpty
-              ? List<String>.from(_defaultServers)
-              : settings.dnsServerList;
-          final isCustom = settings.dnsServers.isNotEmpty;
+    return settingsAsync.when(
+      data: (settings) {
+        final servers = settings.dnsServerList.isEmpty
+            ? List<String>.from(_defaultServers)
+            : settings.dnsServerList;
+        final isCustom = settings.dnsServers.isNotEmpty;
 
-          return ListView(
-            padding: Spacing.paddingHorizontalLgVerticalSm,
-            children: [
-              Spacing.verticalSm,
-              SectionHeader(title: l10n.sectionDnsOverHttps),
+        return ListView(
+          padding: Spacing.paddingHorizontalLgVerticalSm,
+          children: [
+            SettingsPaneHeader(title: l10n.settingsSectionNetwork),
+            Spacing.verticalSm,
+            SectionHeader(title: l10n.sectionDnsOverHttps),
 
-              // Description card
-              SectionCard(
-                child: Text(
-                  l10n.settingsDohDescription,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
+            // Description card
+            SectionCard(
+              child: Text(
+                l10n.settingsDohDescription,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-              Spacing.verticalLg,
+            ),
+            Spacing.verticalLg,
 
-              // DNS Server list
-              SettingsGroupCard(
-                children: [
-                  for (final url in servers)
-                    Semantics(
-                      label: url,
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.dns_outlined,
-                          color: theme.colorScheme.primary,
-                        ),
-                        title: Text(
-                          url,
-                          style: theme.textTheme.bodyMedium,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: _defaultServers.contains(url)
-                            ? Text(
-                                l10n.settingsDnsDefaultBadge,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                ),
-                              )
-                            : null,
-                        trailing: Tooltip(
-                          message: l10n.settingsDnsRemoveServerTooltip,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.close,
-                              size: 20,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                            onPressed: () {
-                              final newList = servers
-                                  .where((s) => s != url)
-                                  .toList();
-                              ref
-                                  .read(settingsProvider.notifier)
-                                  .setDnsServers(newList.join(','));
-                              AdaptiveNotification.show(
-                                context,
-                                message: l10n.settingsDnsServerRemoved,
-                              );
-                            },
+            // DNS Server list
+            SettingsGroupCard(
+              children: [
+                for (final url in servers)
+                  Semantics(
+                    label: url,
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.dns_outlined,
+                        color: theme.colorScheme.primary,
+                      ),
+                      title: Text(
+                        url,
+                        style: theme.textTheme.bodyMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: _defaultServers.contains(url)
+                          ? Text(
+                              l10n.settingsDnsDefaultBadge,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                              ),
+                            )
+                          : null,
+                      trailing: Tooltip(
+                        message: l10n.settingsDnsRemoveServerTooltip,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
+                          onPressed: () {
+                            final newList = servers
+                                .where((s) => s != url)
+                                .toList();
+                            ref
+                                .read(settingsProvider.notifier)
+                                .setDnsServers(newList.join(','));
+                            AdaptiveNotification.show(
+                              context,
+                              message: l10n.settingsDnsServerRemoved,
+                            );
+                          },
                         ),
                       ),
                     ),
-                  ListTile(
-                    leading: Icon(Icons.add, color: theme.colorScheme.primary),
-                    title: Text(
-                      l10n.settingsDnsAddServer,
-                      style: TextStyle(color: theme.colorScheme.primary),
-                    ),
-                    onTap: () => _addDnsServer(context, ref, l10n, servers),
                   ),
-                ],
-              ),
+                ListTile(
+                  leading: Icon(Icons.add, color: theme.colorScheme.primary),
+                  title: Text(
+                    l10n.settingsDnsAddServer,
+                    style: TextStyle(color: theme.colorScheme.primary),
+                  ),
+                  onTap: () => _addDnsServer(context, ref, l10n, servers),
+                ),
+              ],
+            ),
 
-              // --- Default Proxy ---
-              Spacing.verticalXxl,
-              SectionHeader(title: l10n.proxyDefaultProxy),
-              const _ProxySettingsSection(),
+            // --- Default Proxy ---
+            Spacing.verticalXxl,
+            SectionHeader(title: l10n.proxyDefaultProxy),
+            const _ProxySettingsSection(),
+            Spacing.verticalLg,
+
+            // --- Desktop integration (Linux/Windows) ---
+            // Hidden on platforms where a tray icon makes no sense
+            // (macOS uses the dock; iOS/Android have no tray concept).
+            if (Platform.isLinux || Platform.isWindows) ...[
               Spacing.verticalLg,
-
-              // --- Desktop integration (Linux/Windows) ---
-              // Hidden on platforms where a tray icon makes no sense
-              // (macOS uses the dock; iOS/Android have no tray concept).
-              if (Platform.isLinux || Platform.isWindows) ...[
-                Spacing.verticalLg,
-                const SectionHeader(title: 'Desktop integration'),
-                SettingsGroupCard(
-                  children: [
-                    SettingsSwitchTile(
-                      icon: Icons.dashboard_customize_outlined,
-                      iconColor: theme.colorScheme.primary,
-                      title: 'Show system tray icon',
-                      subtitleText:
-                          'Keep SSHVault accessible from the system tray '
-                          'with quick access to favorites and active sessions.',
-                      value: settings.showSystemTray,
-                      onChanged: (v) {
-                        ref
+              const SectionHeader(title: 'Desktop integration'),
+              SettingsGroupCard(
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.dashboard_customize_outlined,
+                    title: 'Show system tray icon',
+                    subtitleText:
+                        'Keep SSHVault accessible from the system tray '
+                        'with quick access to favorites and active sessions.',
+                    value: settings.showSystemTray,
+                    onChanged: (v) {
+                      ref.read(settingsProvider.notifier).setShowSystemTray(v);
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsUpdated,
+                      );
+                    },
+                  ),
+                  // Auto-start: Linux XDG `.desktop` entry, or Windows
+                  // HKCU Run-key value. Same toggle, same label â€” the
+                  // service dispatches by platform.
+                  if (Platform.isLinux || Platform.isWindows)
+                    SwitchListTile(
+                      secondary: Icon(
+                        Icons.power_settings_new,
+                        color: theme.colorScheme.primary,
+                      ),
+                      title: const Text('Start SSHVault on login'),
+                      subtitle: const Text('Boots minimized to system tray'),
+                      value: settings.autoStartEnabled,
+                      onChanged: (v) async {
+                        await ref
                             .read(settingsProvider.notifier)
-                            .setShowSystemTray(v);
+                            .setAutoStartEnabled(v);
+                        if (context.mounted) {
+                          AdaptiveNotification.show(
+                            context,
+                            message: l10n.settingsUpdated,
+                          );
+                        }
+                      },
+                    ),
+                  // Close-to-tray (Linux/Windows). When on, hitting the
+                  // [Ã—] button hides the window into the tray instead of
+                  // quitting the app. Only meaningful when the tray icon
+                  // is enabled.
+                  SwitchListTile(
+                    secondary: Icon(
+                      Icons.close_fullscreen_outlined,
+                      color: theme.colorScheme.primary,
+                    ),
+                    title: const Text('Close button minimizes to tray'),
+                    subtitle: const Text(
+                      'Clicking the window close button hides SSHVault '
+                      'into the tray instead of quitting.',
+                    ),
+                    value: settings.closeToTray,
+                    onChanged: (v) async {
+                      await ref
+                          .read(settingsProvider.notifier)
+                          .setCloseToTray(v);
+                      if (context.mounted) {
                         AdaptiveNotification.show(
                           context,
                           message: l10n.settingsUpdated,
                         );
-                      },
-                    ),
-                    // Auto-start: Linux XDG `.desktop` entry, or Windows
-                    // HKCU Run-key value. Same toggle, same label — the
-                    // service dispatches by platform.
-                    if (Platform.isLinux || Platform.isWindows)
-                      SwitchListTile(
-                        secondary: Icon(
-                          Icons.power_settings_new,
-                          color: theme.colorScheme.primary,
-                        ),
-                        title: const Text('Start SSHVault on login'),
-                        subtitle: const Text('Boots minimized to system tray'),
-                        value: settings.autoStartEnabled,
-                        onChanged: (v) async {
-                          await ref
-                              .read(settingsProvider.notifier)
-                              .setAutoStartEnabled(v);
-                          if (context.mounted) {
-                            AdaptiveNotification.show(
-                              context,
-                              message: l10n.settingsUpdated,
-                            );
-                          }
-                        },
-                      ),
-                    // Close-to-tray (Linux/Windows). When on, hitting the
-                    // [×] button hides the window into the tray instead of
-                    // quitting the app. Only meaningful when the tray icon
-                    // is enabled.
-                    SwitchListTile(
-                      secondary: Icon(
-                        Icons.close_fullscreen_outlined,
-                        color: theme.colorScheme.primary,
-                      ),
-                      title: const Text('Close button minimizes to tray'),
-                      subtitle: const Text(
-                        'Clicking the window close button hides SSHVault '
-                        'into the tray instead of quitting.',
-                      ),
-                      value: settings.closeToTray,
-                      onChanged: (v) async {
-                        await ref
-                            .read(settingsProvider.notifier)
-                            .setCloseToTray(v);
-                        if (context.mounted) {
-                          AdaptiveNotification.show(
-                            context,
-                            message: l10n.settingsUpdated,
-                          );
-                        }
-                      },
-                    ),
-                    // Resume-on-login is only useful when the binary is
-                    // booted minimized (autostart or `--minimized`); the
-                    // service still gates on that flag at boot time.
-                    SwitchListTile(
-                      secondary: Icon(
-                        Icons.history,
-                        color: theme.colorScheme.primary,
-                      ),
-                      title: const Text('Resume sessions on login'),
-                      subtitle: const Text(
-                        'Reopen the hosts that were active before the last '
-                        'quit when SSHVault is started minimized.',
-                      ),
-                      value: settings.resumeOnLogin,
-                      onChanged: (v) async {
-                        await ref
-                            .read(settingsProvider.notifier)
-                            .setResumeOnLogin(v);
-                        if (context.mounted) {
-                          AdaptiveNotification.show(
-                            context,
-                            message: l10n.settingsUpdated,
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                if (Platform.isLinux) ...[
-                  Spacing.verticalMd,
-                  const _GlobalShortcutSection(),
-                ],
-                // Windows-only: surface the ssh:// / sftp:// + .pub/.pem/.ppk
-                // handler state. Read-only status row plus a "Re-register"
-                // action so the user can self-heal a broken / mismatched
-                // registry (e.g. portable build moved between drives).
-                if (Platform.isWindows) ...[
-                  Spacing.verticalMd,
-                  const _WindowsProtocolRegistrationSection(),
-                ],
-              ],
-
-              // Reset button
-              if (isCustom) ...[
-                Spacing.verticalMd,
-                Center(
-                  child: TextButton.icon(
-                    onPressed: () {
-                      ref.read(settingsProvider.notifier).setDnsServers('');
-                      AdaptiveNotification.show(
-                        context,
-                        message: l10n.settingsDnsResetSuccess,
-                      );
+                      }
                     },
-                    icon: const Icon(Icons.restore, size: 18),
-                    label: Text(l10n.settingsDnsResetDefaults),
                   ),
-                ),
+                  // Resume-on-login is only useful when the binary is
+                  // booted minimized (autostart or `--minimized`); the
+                  // service still gates on that flag at boot time.
+                  SwitchListTile(
+                    secondary: Icon(
+                      Icons.history,
+                      color: theme.colorScheme.primary,
+                    ),
+                    title: const Text('Resume sessions on login'),
+                    subtitle: const Text(
+                      'Reopen the hosts that were active before the last '
+                      'quit when SSHVault is started minimized.',
+                    ),
+                    value: settings.resumeOnLogin,
+                    onChanged: (v) async {
+                      await ref
+                          .read(settingsProvider.notifier)
+                          .setResumeOnLogin(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsUpdated,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+              if (Platform.isLinux) ...[
+                Spacing.verticalMd,
+                const _GlobalShortcutSection(),
               ],
-              Spacing.verticalLg,
+              // Windows-only: surface the ssh:// / sftp:// + .pub/.pem/.ppk
+              // handler state. Read-only status row plus a "Re-register"
+              // action so the user can self-heal a broken / mismatched
+              // registry (e.g. portable build moved between drives).
+              if (Platform.isWindows) ...[
+                Spacing.verticalMd,
+                const _WindowsProtocolRegistrationSection(),
+              ],
             ],
-          );
-        },
-        loading: () =>
-            const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) =>
-            Center(child: Text(l10n.error(errorMessage(error)))),
-      ),
+
+            // Reset button
+            if (isCustom) ...[
+              Spacing.verticalMd,
+              Center(
+                child: TextButton.icon(
+                  onPressed: () {
+                    ref.read(settingsProvider.notifier).setDnsServers('');
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.settingsDnsResetSuccess,
+                    );
+                  },
+                  icon: const Icon(Icons.restore, size: 18),
+                  label: Text(l10n.settingsDnsResetDefaults),
+                ),
+              ),
+            ],
+            Spacing.verticalLg,
+          ],
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+      error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
     );
   }
 
@@ -500,7 +493,7 @@ class _ProxySettingsSectionState extends ConsumerState<_ProxySettingsSection> {
 
 /// Linux-only "Global shortcut" panel. Shown alongside the system-tray /
 /// auto-start tiles. Reads [globalShortcutStatusProvider] to render either
-/// the bound state ("Super+Shift+S — Re-bind") or the dbus-send fallback
+/// the bound state ("Super+Shift+S â€” Re-bind") or the dbus-send fallback
 /// instructions for desktops without the GlobalShortcuts portal.
 class _GlobalShortcutSection extends ConsumerWidget {
   const _GlobalShortcutSection();
@@ -529,7 +522,7 @@ class _GlobalShortcutSection extends ConsumerWidget {
                     : status.portalAvailable
                     ? 'Click "Re-bind" to confirm the trigger.'
                     : 'Your desktop does not expose the GlobalShortcuts '
-                          'portal — see the manual binding instructions below.',
+                          'portal â€” see the manual binding instructions below.',
               ),
               value: status.bound,
               onChanged: status.portalAvailable
@@ -593,7 +586,7 @@ class _GlobalShortcutSection extends ConsumerWidget {
                   ),
                   Spacing.verticalXs,
                   Text(
-                    'Open Settings → Keyboard → Application Shortcuts and '
+                    'Open Settings â†’ Keyboard â†’ Application Shortcuts and '
                     'bind any key combination to:',
                     style: theme.textTheme.bodyMedium,
                   ),
@@ -614,7 +607,7 @@ class _GlobalShortcutSection extends ConsumerWidget {
   }
 
   /// Renders the portal trigger string ("SUPER+SHIFT+s") in a slightly more
-  /// human form ("Super+Shift+S"). Pure formatting — does not validate.
+  /// human form ("Super+Shift+S"). Pure formatting â€” does not validate.
   String _humanTrigger(String? raw) {
     if (raw == null || raw.isEmpty) return 'Super+Shift+S';
     return raw
@@ -708,7 +701,7 @@ class _WindowsProtocolRegistrationSectionState
               title: const Text('Registered as ssh:// handler'),
               subtitle: Text(
                 registered == null
-                    ? 'Checking registry…'
+                    ? 'Checking registryâ€¦'
                     : registered
                     ? 'ssh://, sftp:// and .pub/.pem/.ppk files open '
                           'with SSHVault.'

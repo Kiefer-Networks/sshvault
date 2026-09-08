@@ -80,7 +80,14 @@ Future<bool?> showAdaptiveConfirmDialog(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  // Autofocused so Enter cancels rather than confirms —
+                  // the safe default for a dialog that's frequently used
+                  // for destructive actions (delete server, delete
+                  // account, …). This is the app's single most-reused
+                  // confirm dialog; before this it had no autofocus
+                  // anywhere, so Enter/Tab did nothing useful on open.
                   TextButton(
+                    autofocus: true,
                     onPressed: () => Navigator.pop(ctx, false),
                     child: Text(cancelLabel),
                   ),

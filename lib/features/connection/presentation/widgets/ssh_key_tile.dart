@@ -20,11 +20,18 @@ class SshKeyTile extends ConsumerWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
+  /// Tighter row for the desktop Keys master/detail column — see
+  /// `KeysMasterDetail`.
+  final bool dense;
+  final bool selected;
+
   const SshKeyTile({
     super.key,
     required this.sshKey,
     this.onEdit,
     this.onDelete,
+    this.dense = false,
+    this.selected = false,
   });
 
   @override
@@ -82,144 +89,160 @@ class SshKeyTile extends ConsumerWidget {
             ),
         ],
       ),
-      child: ListTile(
-        leading: CircleIcon(
-          icon: Icons.vpn_key_outlined,
-          color: theme.colorScheme.primary,
-          size: 44,
-        ),
-        title: Row(
-          children: [
-            Expanded(child: Text(sshKey.name, overflow: TextOverflow.ellipsis)),
-            Spacing.horizontalSm,
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Spacing.sm,
-                vertical: 2,
-              ),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.secondaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                sshKey.keyType.displayName,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.onSecondaryContainer,
+      child: Container(
+        color: selected ? theme.colorScheme.primary.withAlpha(22) : null,
+        child: ListTile(
+          dense: dense,
+          visualDensity: dense ? VisualDensity.compact : null,
+          contentPadding: dense
+              ? const EdgeInsets.symmetric(horizontal: 12, vertical: 2)
+              : null,
+          leading: CircleIcon(
+            icon: Icons.vpn_key_outlined,
+            color: theme.colorScheme.primary,
+            size: dense ? 30 : 44,
+          ),
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  sshKey.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: dense ? const TextStyle(fontSize: 13.5) : null,
                 ),
               ),
-            ),
-            if (loadedInAgent) ...[
               Spacing.horizontalSm,
-              Tooltip(
-                message: 'Loaded in ssh-agent',
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Spacing.sm,
-                    vertical: 2,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Spacing.sm,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  sshKey.keyType.displayName,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSecondaryContainer,
                   ),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.tertiaryContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.memory,
-                        size: 12,
-                        color: theme.colorScheme.onTertiaryContainer,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'agent',
-                        style: theme.textTheme.labelSmall?.copyWith(
+                ),
+              ),
+              if (loadedInAgent) ...[
+                Spacing.horizontalSm,
+                Tooltip(
+                  message: 'Loaded in ssh-agent',
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Spacing.sm,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.tertiaryContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.memory,
+                          size: 12,
                           color: theme.colorScheme.onTertiaryContainer,
                         ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'agent',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onTertiaryContainer,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (sshKey.fingerprint.isNotEmpty) ...[
+                const SizedBox(height: Spacing.xxxs),
+                Semantics(
+                  label: '${sshKey.name} fingerprint: ${sshKey.fingerprint}',
+                  child: Text(
+                    sshKey.fingerprint,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontFamily: AppConstants.monospaceFontFamily,
+                      fontSize: 11,
+                      color: theme.colorScheme.onSurface.withAlpha(
+                        AppConstants.alpha153,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (sshKey.fingerprint.isNotEmpty) ...[
-              const SizedBox(height: Spacing.xxxs),
-              Semantics(
-                label: '${sshKey.name} fingerprint: ${sshKey.fingerprint}',
-                child: Text(
-                  sshKey.fingerprint,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: AppConstants.monospaceFontFamily,
-                    fontSize: 11,
-                    color: theme.colorScheme.onSurface.withAlpha(
-                      AppConstants.alpha153,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
-            if (serverNames.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: Spacing.xxxs),
-                child: Text(
-                  serverNames.map((s) => s.name).join(', '),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withAlpha(
-                      AppConstants.alpha153,
+              ],
+              if (serverNames.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: Spacing.xxxs),
+                  child: Text(
+                    serverNames.map((s) => s.name).join(', '),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withAlpha(
+                        AppConstants.alpha153,
+                      ),
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-          ],
+            ],
+          ),
+          isThreeLine: serverNames.isNotEmpty,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (sshKey.publicKey.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.copy),
+                  tooltip: l10n.sshKeyTileCopyPublicKey,
+                  onPressed: () {
+                    ref
+                        .read(secureClipboardProvider)
+                        .copyPlain(sshKey.publicKey);
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.sshKeyTilePublicKeyCopied,
+                    );
+                  },
+                  visualDensity: VisualDensity.compact,
+                ),
+              // Native share-sheet hand-off (UIActivityViewController on iOS,
+              // Intent chooser on Android — both surface AirDrop / Nearby
+              // Share without us having to call the OS APIs directly). Only
+              // mobile platforms ship a system share sheet that's worth the
+              // extra button; on desktop the user can already drag the
+              // public-key text out of the edit screen.
+              if (sshKey.publicKey.isNotEmpty && isMobilePlatform)
+                IconButton(
+                  icon: const Icon(Icons.ios_share),
+                  tooltip: l10n.share,
+                  onPressed: () => ShareSheet.sharePublicKey(sshKey),
+                  visualDensity: VisualDensity.compact,
+                ),
+              if (onEdit != null)
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  tooltip: l10n.edit,
+                  onPressed: onEdit,
+                  visualDensity: VisualDensity.compact,
+                ),
+            ],
+          ),
+          onTap: onEdit,
         ),
-        isThreeLine: serverNames.isNotEmpty,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (sshKey.publicKey.isNotEmpty)
-              IconButton(
-                icon: const Icon(Icons.copy),
-                tooltip: l10n.sshKeyTileCopyPublicKey,
-                onPressed: () {
-                  ref.read(secureClipboardProvider).copyPlain(sshKey.publicKey);
-                  AdaptiveNotification.show(
-                    context,
-                    message: l10n.sshKeyTilePublicKeyCopied,
-                  );
-                },
-                visualDensity: VisualDensity.compact,
-              ),
-            // Native share-sheet hand-off (UIActivityViewController on iOS,
-            // Intent chooser on Android — both surface AirDrop / Nearby
-            // Share without us having to call the OS APIs directly). Only
-            // mobile platforms ship a system share sheet that's worth the
-            // extra button; on desktop the user can already drag the
-            // public-key text out of the edit screen.
-            if (sshKey.publicKey.isNotEmpty && isMobilePlatform)
-              IconButton(
-                icon: const Icon(Icons.ios_share),
-                tooltip: l10n.share,
-                onPressed: () => ShareSheet.sharePublicKey(sshKey),
-                visualDensity: VisualDensity.compact,
-              ),
-            if (onEdit != null)
-              IconButton(
-                icon: const Icon(Icons.edit),
-                tooltip: l10n.edit,
-                onPressed: onEdit,
-                visualDensity: VisualDensity.compact,
-              ),
-          ],
-        ),
-        onTap: onEdit,
       ),
     );
   }

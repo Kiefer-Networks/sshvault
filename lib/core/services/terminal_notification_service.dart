@@ -63,6 +63,18 @@ class TerminalNotificationService {
   void Function(String tag)? _onWindowsAction;
   void Function(String tag)? _onMacosAction;
 
+  /// Fingerprint of the last content actually posted to the OS. The shell
+  /// calls [show] on every `sessionManagerProvider` change — which fires
+  /// far more often than the notification's visible text actually changes
+  /// (a session's mutable `status`/`title`/`distroInfo` fields each update
+  /// separately as a connection progresses: connecting, authenticating,
+  /// connected, then again once remote system info arrives). Re-posting a
+  /// native Windows/macOS toast for each of those reshows the banner every
+  /// time even though nothing the user reads changed — this is what
+  /// produced a burst of toasts for a single connect. Skip the repost
+  /// unless the actual displayed content is different from last time.
+  String? _lastShownKey;
+
   TerminalNotificationService({
     WindowsNotificationService? windowsService,
     MacosNotificationService? macosService,
@@ -162,6 +174,12 @@ class TerminalNotificationService {
     String? windowsDisconnectTag,
     String? macosDisconnectTag,
   }) async {
+    final key =
+        '$title|$body|$windowsActionsEnabled|$windowsDisconnectTag|'
+        '$macosActionsEnabled|$macosDisconnectTag';
+    if (key == _lastShownKey) return;
+    _lastShownKey = key;
+
     if (Platform.isWindows) {
       final actions = <WindowsNotificationAction>[
         if (windowsActionsEnabled && windowsDisconnectTag != null)
@@ -229,6 +247,7 @@ class TerminalNotificationService {
 
   /// Dismiss the session notification.
   Future<void> dismiss() async {
+    _lastShownKey = null;
     if (Platform.isWindows) {
       await _windows?.dismiss(_windowsToastId);
       await _windowsActionSub?.cancel();

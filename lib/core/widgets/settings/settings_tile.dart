@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sshvault/core/widgets/settings/circle_icon.dart';
+import 'package:sshvault/core/widgets/settings/settings_row.dart';
 
 class SettingsTile extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
   final String title;
   final String? subtitleText;
   final Widget? subtitle;
@@ -13,7 +12,6 @@ class SettingsTile extends StatelessWidget {
   const SettingsTile({
     super.key,
     required this.icon,
-    required this.iconColor,
     required this.title,
     this.subtitleText,
     this.subtitle,
@@ -26,19 +24,11 @@ class SettingsTile extends StatelessWidget {
     return Semantics(
       label: subtitleText != null ? '$title, $subtitleText' : title,
       button: onTap != null,
-      child: ListTile(
-        leading: CircleIcon(icon: icon, color: iconColor),
+      child: SettingsRow(
+        icon: icon,
         title: Text(title),
         subtitle:
-            subtitle ??
-            (subtitleText != null
-                ? Text(
-                    subtitleText!,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  )
-                : null),
+            subtitle ?? (subtitleText != null ? Text(subtitleText!) : null),
         trailing: trailing,
         onTap: onTap,
       ),

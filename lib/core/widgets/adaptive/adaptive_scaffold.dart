@@ -3,8 +3,19 @@ import 'dart:io' show Platform;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive_app_bar.dart';
+import 'package:sshvault/core/widgets/breadcrumb_bar.dart';
+export 'package:sshvault/core/widgets/breadcrumb_bar.dart'
+    show BreadcrumbSegment;
 
 bool get _isApplePlatform => Platform.isIOS || Platform.isMacOS;
+
+// Desktop, not "wide window" — a resized-narrow desktop window still shows
+// the mobile drawer shell (see ShellBreakpoints.mobile in app_shell.dart),
+// but a nested detail/edit screen reached through it is still a desktop
+// navigation concept. Mirrors DesktopShortcuts.isDesktop; duplicated here
+// (rather than imported) to avoid a core/widgets -> core/routing edge.
+bool get _isDesktopPlatform =>
+    Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
 /// A scaffold that builds its app bar from [title] or accepts a pre-built one.
 ///
@@ -21,6 +32,7 @@ class AdaptiveScaffold extends StatelessWidget {
     this.automaticallyImplyLeading = true,
     this.floatingActionButton,
     this.backgroundColor,
+    this.breadcrumb,
   }) : appBar = null;
 
   /// Creates a scaffold with a pre-built [appBar].
@@ -30,6 +42,7 @@ class AdaptiveScaffold extends StatelessWidget {
     required this.body,
     this.floatingActionButton,
     this.backgroundColor,
+    this.breadcrumb,
   }) : title = null,
        actions = null,
        leading = null,
@@ -43,6 +56,11 @@ class AdaptiveScaffold extends StatelessWidget {
   final Widget body;
   final Widget? floatingActionButton;
   final Color? backgroundColor;
+
+  /// Desktop-only "Hosts / prod-db-01 / Edit"-style trail rendered between
+  /// the app bar and [body]. Ignored on iOS/Android and on the Cupertino
+  /// (macOS/iOS, no custom [appBar]) path.
+  final List<BreadcrumbSegment>? breadcrumb;
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +106,20 @@ class AdaptiveScaffold extends StatelessWidget {
       );
     }
 
+    final showBreadcrumb =
+        _isDesktopPlatform && breadcrumb != null && breadcrumb!.isNotEmpty;
+
     return Scaffold(
       appBar: resolvedAppBar,
       backgroundColor: backgroundColor,
-      body: body,
+      body: showBreadcrumb
+          ? Column(
+              children: [
+                BreadcrumbBar(segments: breadcrumb!),
+                Expanded(child: body),
+              ],
+            )
+          : body,
       floatingActionButton: floatingActionButton,
     );
   }

@@ -6,6 +6,7 @@ import 'package:sshvault/core/constants/color_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/tag_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/tag_providers.dart';
+import 'package:sshvault/core/widgets/settings/settings_pane_header.dart';
 import 'package:sshvault/features/connection/presentation/widgets/color_picker_field.dart';
 
 final _tagFormColorProvider = StateProvider.autoDispose<int>(
@@ -15,7 +16,21 @@ final _tagFormColorProvider = StateProvider.autoDispose<int>(
 class TagFormDialog extends ConsumerStatefulWidget {
   final TagEntity? tag;
 
-  const TagFormDialog({super.key, this.tag});
+  /// True when rendered inline inside `TagsMasterDetail`'s detail pane
+  /// instead of as its own pushed full-screen route. Swaps the AppBar for
+  /// a slim in-pane header and calls [onSaved]/[onCancel] instead of
+  /// popping a route that was never pushed.
+  final bool embedded;
+  final VoidCallback? onSaved;
+  final VoidCallback? onCancel;
+
+  const TagFormDialog({
+    super.key,
+    this.tag,
+    this.embedded = false,
+    this.onSaved,
+    this.onCancel,
+  });
 
   bool get isEditing => tag != null;
 
@@ -69,6 +84,46 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
         : l10n.tagFormTitleNew;
     final saveText = widget.isEditing ? l10n.update : l10n.create;
 
+    final formFields = ListView(
+      padding: Spacing.paddingAllMd,
+      children: [
+        TextField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            labelText: l10n.tagFormNameLabel,
+            prefixIcon: const Icon(Icons.label_outline),
+          ),
+          keyboardType: TextInputType.text,
+          autofocus: true,
+        ),
+        Spacing.verticalLg,
+        ColorPickerField(
+          selectedColor: color,
+          onColorChanged: (c) =>
+              ref.read(_tagFormColorProvider.notifier).state = c,
+        ),
+      ],
+    );
+
+    if (widget.embedded) {
+      return Column(
+        children: [
+          SettingsPaneHeader(
+            title: titleText,
+            actions: [
+              if (widget.onCancel != null)
+                TextButton(
+                  onPressed: widget.onCancel,
+                  child: Text(l10n.cancel),
+                ),
+              TextButton(onPressed: _save, child: Text(saveText)),
+            ],
+          ),
+          Expanded(child: formFields),
+        ],
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -78,26 +133,7 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
         title: Text(titleText),
         actions: [TextButton(onPressed: _save, child: Text(saveText))],
       ),
-      body: ListView(
-        padding: Spacing.paddingAllLg,
-        children: [
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: l10n.tagFormNameLabel,
-              prefixIcon: const Icon(Icons.label_outline),
-            ),
-            keyboardType: TextInputType.text,
-            autofocus: true,
-          ),
-          Spacing.verticalLg,
-          ColorPickerField(
-            selectedColor: color,
-            onColorChanged: (c) =>
-                ref.read(_tagFormColorProvider.notifier).state = c,
-          ),
-        ],
-      ),
+      body: formFields,
     );
   }
 
@@ -123,6 +159,11 @@ class _TagFormDialogState extends ConsumerState<TagFormDialog> {
       );
     }
 
-    if (mounted) Navigator.of(context).pop();
+    if (!mounted) return;
+    if (widget.onSaved != null) {
+      widget.onSaved!();
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 }

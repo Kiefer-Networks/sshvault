@@ -131,6 +131,23 @@ class _SnippetFormScreenState extends ConsumerState<SnippetFormScreen> {
     final formState = ref.watch(_snippetFormProvider);
 
     return AdaptiveScaffold.withAppBar(
+      breadcrumb: [
+        BreadcrumbSegment(
+          l10n.navSnippets,
+          onTap: () =>
+              context.canPop() ? context.pop() : context.go('/snippets'),
+        ),
+        if (widget.isEditing)
+          BreadcrumbSegment(
+            _nameController.text.isEmpty
+                ? l10n.snippetFormTitleEdit
+                : _nameController.text,
+            onTap: () => context.go('/snippet/${widget.snippetId}'),
+          ),
+        BreadcrumbSegment(
+          widget.isEditing ? l10n.edit : l10n.snippetFormTitleNew,
+        ),
+      ],
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),

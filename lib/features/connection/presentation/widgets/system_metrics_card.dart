@@ -82,8 +82,16 @@ class SystemMetricsCard extends StatelessWidget {
       );
     }
 
-    final realDisks = metrics.disks.excludingDockerMounts;
+    // realDisks already excludes Docker overlays, kernel pseudo-filesystems
+    // (proc/tmpfs/squashfs/...) and network mounts — those three used to
+    // all be lumped in here together, which is what pushed real disks (a
+    // ZFS pool's several datasets, say) out of the old fixed 6-row cap on
+    // any host with more than a couple of them. No cap here now: once the
+    // noise is filtered out, whatever's left over is exactly what a user
+    // means by "my disks".
+    final realDisks = metrics.disks.realDisks;
     final dockerDisks = metrics.disks.dockerMountsOnly;
+    final networkMounts = metrics.disks.networkMounts;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +112,7 @@ class SystemMetricsCard extends StatelessWidget {
             ],
           ),
           Spacing.verticalSm,
-          for (final disk in realDisks.take(6))
+          for (final disk in realDisks)
             _DiskRow(
               label: disk.mountPoint,
               used: disk.usedBytes,
@@ -118,7 +126,103 @@ class SystemMetricsCard extends StatelessWidget {
               emphasized: true,
             ),
         ],
+        if (networkMounts.isNotEmpty) ...[
+          Spacing.verticalMd,
+          Row(
+            children: [
+              Icon(Icons.dns_outlined, size: 18, color: mutedIconColor),
+              Spacing.horizontalSm,
+              // Hardcoded English: this label has no existing l10n key and
+              // adding one means regenerating all 28 locales, same reason
+              // other brand-new desktop-shell text in this app is English.
+              Text(
+                'Network Mounts',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: mutedLabelColor,
+                ),
+              ),
+            ],
+          ),
+          Spacing.verticalSm,
+          for (final mount in networkMounts)
+            _DiskRow(
+              label: '${mount.mountPoint}  ·  ${mount.fsType}',
+              used: mount.usedBytes,
+              total: mount.totalBytes,
+              icon: Icons.dns_outlined,
+            ),
+        ],
+        if (metrics.proxmoxGuests.isNotEmpty) ...[
+          Spacing.verticalMd,
+          Row(
+            children: [
+              Icon(Icons.dns, size: 18, color: mutedIconColor),
+              Spacing.horizontalSm,
+              const Text('Proxmox'),
+            ],
+          ),
+          Spacing.verticalSm,
+          for (final guest in metrics.proxmoxGuests)
+            _ProxmoxGuestRow(guest: guest),
+        ],
       ],
+    );
+  }
+}
+
+class _ProxmoxGuestRow extends StatelessWidget {
+  final ProxmoxGuest guest;
+  const _ProxmoxGuestRow({required this.guest});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final statusColor = guest.running
+        ? theme.colorScheme.tertiary
+        : theme.colorScheme.onSurfaceVariant;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Spacing.xs),
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: statusColor,
+              shape: BoxShape.circle,
+            ),
+          ),
+          Spacing.horizontalSm,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+            decoration: BoxDecoration(
+              border: Border.all(color: theme.colorScheme.outlineVariant),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              guest.type == 'lxc' ? 'LXC' : 'VM',
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontFamily: AppConstants.monospaceFontFamily,
+              ),
+            ),
+          ),
+          Spacing.horizontalSm,
+          Expanded(
+            child: Text(
+              guest.name,
+              style: theme.textTheme.bodySmall,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Text(
+            '#${guest.vmid}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontFamily: AppConstants.monospaceFontFamily,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -128,12 +232,14 @@ class _DiskRow extends StatelessWidget {
   final int used;
   final int total;
   final bool emphasized;
+  final IconData? icon;
 
   const _DiskRow({
     required this.label,
     required this.used,
     required this.total,
     this.emphasized = false,
+    this.icon,
   });
 
   @override
@@ -148,7 +254,7 @@ class _DiskRow extends StatelessWidget {
           Row(
             children: [
               Icon(
-                emphasized ? Icons.view_in_ar : Icons.folder_open,
+                icon ?? (emphasized ? Icons.view_in_ar : Icons.folder_open),
                 size: 16,
                 color: theme.colorScheme.onSurface.withAlpha(
                   AppConstants.alpha102,

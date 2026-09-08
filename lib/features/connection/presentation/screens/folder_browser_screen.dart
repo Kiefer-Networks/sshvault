@@ -30,11 +30,32 @@ final _folderTileConnectingProvider = StateProvider.autoDispose
     .family<bool, String>((ref, folderId) => false);
 
 class FolderBrowserScreen extends ConsumerWidget {
-  const FolderBrowserScreen({super.key});
+  /// Tighter rows for the desktop Folders master/detail column — see
+  /// `FoldersMasterDetail`.
+  final bool dense;
+
+  /// When set (desktop master/detail), tapping a folder's row selects it
+  /// for the detail pane in addition to its normal expand/collapse.
+  final ValueChanged<String>? onFolderSelected;
+
+  /// Overrides the "+" FAB (desktop master/detail only) to open the
+  /// inline create form in the detail pane instead of the mobile/default
+  /// full-screen `FolderFormDialog`.
+  final VoidCallback? onAddPressed;
+
+  const FolderBrowserScreen({
+    super.key,
+    this.dense = false,
+    this.onFolderSelected,
+    this.onAddPressed,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final foldersAsync = ref.watch(folderTreeProvider);
+    final selectedId = dense
+        ? ref.watch(desktopSelectedFolderIdProvider)
+        : null;
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -48,7 +69,7 @@ class FolderBrowserScreen extends ConsumerWidget {
         message: l10n.folderAddButton,
         child: FloatingActionButton(
           heroTag: 'addFolderFab',
-          onPressed: () => _showFolderForm(context, ref),
+          onPressed: onAddPressed ?? () => _showFolderForm(context, ref),
           child: const Icon(Icons.add),
         ),
       ),
@@ -67,7 +88,12 @@ class FolderBrowserScreen extends ConsumerWidget {
             );
           }
 
-          final widgets = _buildFolderList(context, ref, folders);
+          final widgets = _buildFolderList(
+            context,
+            ref,
+            folders,
+            selectedId: selectedId,
+          );
           return ListView.separated(
             padding: const EdgeInsets.only(bottom: Spacing.fabClearance),
             itemCount: widgets.length,
@@ -90,6 +116,7 @@ class FolderBrowserScreen extends ConsumerWidget {
     WidgetRef ref,
     List<GroupEntity> folders, {
     int depth = 0,
+    String? selectedId,
   }) {
     final widgets = <Widget>[];
     for (final folder in folders) {
@@ -99,6 +126,11 @@ class FolderBrowserScreen extends ConsumerWidget {
           child: _FolderTile(
             folder: folder,
             depth: depth,
+            dense: dense,
+            selected: folder.id == selectedId,
+            onSelect: onFolderSelected == null
+                ? null
+                : () => onFolderSelected!(folder.id),
             onEdit: () => _showFolderForm(context, ref, folder: folder),
             onDelete: () => _deleteFolder(context, ref, folder),
           ),
@@ -106,7 +138,13 @@ class FolderBrowserScreen extends ConsumerWidget {
       );
       if (folder.children.isNotEmpty) {
         widgets.addAll(
-          _buildFolderList(context, ref, folder.children, depth: depth + 1),
+          _buildFolderList(
+            context,
+            ref,
+            folder.children,
+            depth: depth + 1,
+            selectedId: selectedId,
+          ),
         );
       }
     }
@@ -144,12 +182,18 @@ class FolderBrowserScreen extends ConsumerWidget {
 class _FolderTile extends ConsumerWidget {
   final GroupEntity folder;
   final int depth;
+  final bool dense;
+  final bool selected;
+  final VoidCallback? onSelect;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _FolderTile({
     required this.folder,
     this.depth = 0,
+    this.dense = false,
+    this.selected = false,
+    this.onSelect,
     required this.onEdit,
     required this.onDelete,
   });
@@ -227,35 +271,37 @@ class _FolderTile extends ConsumerWidget {
             ],
           ),
           child: Container(
-            decoration: depth > 0
-                ? BoxDecoration(
-                    border: Border(
-                      left: BorderSide(color: folderColor, width: 3),
-                    ),
-                  )
-                : null,
+            decoration: BoxDecoration(
+              color: selected ? theme.colorScheme.primary.withAlpha(22) : null,
+              border: depth > 0
+                  ? Border(left: BorderSide(color: folderColor, width: 3))
+                  : null,
+            ),
             child: ListTile(
+              dense: dense,
+              visualDensity: dense ? VisualDensity.compact : null,
               contentPadding: EdgeInsets.only(
-                left: Spacing.lg + depth * Spacing.xxl,
-                right: Spacing.lg,
+                left: (dense ? Spacing.sm : Spacing.lg) + depth * Spacing.xxl,
+                right: dense ? Spacing.sm : Spacing.lg,
               ),
               leading: Container(
-                width: 44,
-                height: 44,
+                width: dense ? 30 : 44,
+                height: dense ? 30 : 44,
                 decoration: BoxDecoration(
                   color: folderColor.withAlpha(30),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(dense ? 8 : 12),
                 ),
                 child: Icon(
                   IconConstants.getIcon(folder.iconName),
                   color: folderColor,
-                  size: 22,
+                  size: dense ? 16 : 22,
                 ),
               ),
               title: Text(
                 folder.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: dense ? const TextStyle(fontSize: 13.5) : null,
               ),
               subtitle: Text(
                 l10n.folderServerCount(folder.serverCount),
@@ -325,17 +371,19 @@ class _FolderTile extends ConsumerWidget {
                   ),
                 ],
               ),
-              onTap: folder.serverCount > 0
-                  ? () =>
-                        ref
-                                .read(
-                                  _folderTileExpandedProvider(
-                                    folder.id,
-                                  ).notifier,
-                                )
-                                .state =
-                            !expanded
-                  : null,
+              onTap:
+                  onSelect ??
+                  (folder.serverCount > 0
+                      ? () =>
+                            ref
+                                    .read(
+                                      _folderTileExpandedProvider(
+                                        folder.id,
+                                      ).notifier,
+                                    )
+                                    .state =
+                                !expanded
+                      : null),
             ),
           ),
         ),

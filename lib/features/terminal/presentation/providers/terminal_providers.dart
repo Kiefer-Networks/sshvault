@@ -448,6 +448,23 @@ class SessionManagerNotifier extends Notifier<List<SshSessionEntity>> {
     }
   }
 
+  /// Manually re-collects system metrics for [serverId] right now, if a
+  /// live, authenticated session for it exists. Backs the "Refresh" action
+  /// in the host row/detail menus — without this, the only way to update
+  /// stored disk/CPU/Proxmox info was waiting for the periodic
+  /// auto-refresh (which most users don't even have enabled) or fully
+  /// disconnecting and reconnecting. Returns `false` when there's no open
+  /// session to collect through, so the caller can tell the user why
+  /// nothing happened instead of refresh silently doing nothing.
+  Future<bool> refreshMetricsNow(String serverId) async {
+    final session = state
+        .where((s) => s.serverId == serverId && s.client != null)
+        .firstOrNull;
+    if (session == null) return false;
+    await _refreshSystemMetrics(session);
+    return true;
+  }
+
   Future<void> _detectDistro(SshSessionEntity session) async {
     if (session.client == null) return;
     final sshService = ref.read(sshServiceProvider);

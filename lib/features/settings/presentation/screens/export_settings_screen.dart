@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/utils/file_chooser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
-import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/connection/presentation/providers/export_import_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
@@ -24,118 +23,110 @@ class ExportSettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return AdaptiveScaffold(
-      title: l10n.settingsSectionExport,
-      body: settingsAsync.when(
-        data: (settings) => ListView(
-          padding: Spacing.paddingHorizontalLgVerticalSm,
-          children: [
-            // Export Section
-            Spacing.verticalSm,
-            SectionHeader(title: l10n.exportSectionTitle),
-            SettingsGroupCard(
-              children: [
-                SettingsSwitchTile(
-                  icon: Icons.enhanced_encryption_outlined,
-                  iconColor: AppColors.iconDeepOrange,
-                  title: l10n.settingsEncryptExport,
-                  value: settings.encryptExportByDefault,
-                  onChanged: (v) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .setEncryptExportByDefault(v);
-                  },
-                ),
-                SettingsTile(
-                  icon: Icons.description_outlined,
-                  iconColor: AppColors.iconBlue,
-                  title: l10n.settingsExportJson,
-                  subtitleText: l10n.exportJsonButton,
-                  onTap: () => _exportJson(context, ref),
-                ),
-                SettingsTile(
-                  icon: Icons.lock_outlined,
-                  iconColor: AppColors.iconDeepPurple,
-                  title: l10n.settingsExportEncrypted,
-                  subtitleText: l10n.exportZipButton,
-                  onTap: () => _exportEncrypted(context, ref),
-                ),
-              ],
-            ),
+    return settingsAsync.when(
+      data: (settings) => ListView(
+        padding: Spacing.paddingHorizontalLgVerticalSm,
+        children: [
+          SettingsPaneHeader(title: l10n.settingsSectionExport),
+          // Export Section
+          Spacing.verticalSm,
+          SectionHeader(title: l10n.exportSectionTitle),
+          SettingsGroupCard(
+            children: [
+              SettingsSwitchTile(
+                icon: Icons.enhanced_encryption_outlined,
+                title: l10n.settingsEncryptExport,
+                value: settings.encryptExportByDefault,
+                onChanged: (v) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .setEncryptExportByDefault(v);
+                },
+              ),
+              SettingsTile(
+                icon: Icons.description_outlined,
+                title: l10n.settingsExportJson,
+                subtitleText: l10n.exportJsonButton,
+                onTap: () => _exportJson(context, ref),
+              ),
+              SettingsTile(
+                icon: Icons.lock_outlined,
+                title: l10n.settingsExportEncrypted,
+                subtitleText: l10n.exportZipButton,
+                onTap: () => _exportEncrypted(context, ref),
+              ),
+            ],
+          ),
 
-            // Import Section
-            Spacing.verticalLg,
-            SectionHeader(title: l10n.settingsSectionImport),
-            SettingsGroupCard(
-              children: [
-                SettingsTile(
-                  icon: Icons.file_open_outlined,
-                  iconColor: AppColors.iconTeal,
-                  title: l10n.settingsImportFile,
-                  subtitleText: l10n.importSupportedFormats,
-                  onTap: () => _importFile(context, ref),
-                ),
-              ],
-            ),
+          // Import Section
+          Spacing.verticalLg,
+          SectionHeader(title: l10n.settingsSectionImport),
+          SettingsGroupCard(
+            children: [
+              SettingsTile(
+                icon: Icons.file_open_outlined,
+                title: l10n.settingsImportFile,
+                subtitleText: l10n.importSupportedFormats,
+                onTap: () => _importFile(context, ref),
+              ),
+            ],
+          ),
 
-            // Status
-            Spacing.verticalLg,
-            if (exportState.isLoading)
-              const Center(child: CircularProgressIndicator.adaptive()),
-            if (exportState.hasError)
-              Semantics(
-                liveRegion: true,
-                child: Card(
-                  color: theme.colorScheme.errorContainer,
-                  child: Padding(
-                    padding: Spacing.paddingAllMd,
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          color: theme.colorScheme.onErrorContainer,
-                          size: 20,
-                        ),
-                        Spacing.horizontalSm,
-                        Expanded(
-                          child: Text(
-                            errorMessage(exportState.error!),
-                            style: TextStyle(
-                              color: theme.colorScheme.onErrorContainer,
-                            ),
+          // Status
+          Spacing.verticalLg,
+          if (exportState.isLoading)
+            const Center(child: CircularProgressIndicator.adaptive()),
+          if (exportState.hasError)
+            Semantics(
+              liveRegion: true,
+              child: Card(
+                color: theme.colorScheme.errorContainer,
+                child: Padding(
+                  padding: Spacing.paddingAllMd,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        color: theme.colorScheme.onErrorContainer,
+                        size: 20,
+                      ),
+                      Spacing.horizontalSm,
+                      Expanded(
+                        child: Text(
+                          errorMessage(exportState.error!),
+                          style: TextStyle(
+                            color: theme.colorScheme.onErrorContainer,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            if (exportState.hasValue && exportState.value != null)
-              Semantics(
-                liveRegion: true,
-                child: Card(
-                  color: theme.colorScheme.tertiaryContainer,
-                  child: Padding(
-                    padding: Spacing.paddingAllMd,
-                    child: Text(
-                      exportState.value == importSuccessfulKey
-                          ? l10n.importSuccessful
-                          : exportState.value!,
-                      style: TextStyle(
-                        color: theme.colorScheme.onTertiaryContainer,
                       ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          if (exportState.hasValue && exportState.value != null)
+            Semantics(
+              liveRegion: true,
+              child: Card(
+                color: theme.colorScheme.tertiaryContainer,
+                child: Padding(
+                  padding: Spacing.paddingAllMd,
+                  child: Text(
+                    exportState.value == importSuccessfulKey
+                        ? l10n.importSuccessful
+                        : exportState.value!,
+                    style: TextStyle(
+                      color: theme.colorScheme.onTertiaryContainer,
                     ),
                   ),
                 ),
               ),
-            Spacing.verticalLg,
-          ],
-        ),
-        loading: () =>
-            const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) =>
-            Center(child: Text(l10n.error(errorMessage(error)))),
+            ),
+          Spacing.verticalLg,
+        ],
       ),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+      error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
     );
   }
 

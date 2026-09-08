@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/constants/color_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/crypto/ssh_key_type.dart';
+import 'package:sshvault/core/routing/app_router.dart';
 import 'package:sshvault/core/utils/ssh_config_parser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
@@ -18,70 +18,61 @@ import 'package:sshvault/features/connection/presentation/providers/server_provi
 import 'package:sshvault/features/connection/presentation/providers/ssh_key_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
-final _sshConfigImportedProvider = StateProvider<bool>((ref) => false);
-
 /// Add-host entry point shared by the mobile [ServerListScreen] and the
-/// desktop Operations Console: on desktop with a readable `~/.ssh/config`
-/// it offers to import first, otherwise it falls through to the manual
-/// server form.
+/// desktop Command Palette: on desktop with a readable `~/.ssh/config` it
+/// offers to import first, otherwise it falls through to the manual server
+/// form.
 abstract final class ServerImportFlow {
   static bool get _isDesktop =>
       Platform.isLinux || Platform.isMacOS || Platform.isWindows;
 
   static void addServer(BuildContext context, WidgetRef ref) {
+    // `context` may belong to a caller that closes itself right after
+    // invoking this (the Command Palette pops before running its command).
+    // Route everything through the app's root navigator context instead,
+    // which stays valid for the life of the window — reusing the caller's
+    // context across the awaits below threw "No GoRouter found in context"
+    // once the palette's own route had finished tearing down.
+    final rootContext = rootNavigatorKey.currentContext;
+    if (rootContext == null) return;
+
     if (!_isDesktop || !SshConfigParser.configExists) {
-      context.push('/server/new');
+      rootContext.push('/server/new');
       return;
     }
 
-    final alreadyImported = ref.read(_sshConfigImportedProvider);
-    if (alreadyImported) {
-      _askReimportOrManual(context, ref);
-    } else {
-      _showSshConfigImportDialog(context, ref);
-    }
+    _showSshConfigImportDialog(rootContext, ref);
   }
 
-  static Future<void> _askReimportOrManual(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    final l10n = AppLocalizations.of(context)!;
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.sshConfigImportTitle),
-        content: Text(l10n.sshConfigImportAgain),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.sshConfigAddManually),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.sshConfigImportButton),
-          ),
-        ],
-      ),
-    );
-
-    if (!context.mounted) return;
-    if (result == true) {
-      _showSshConfigImportDialog(context, ref);
-    } else {
-      context.push('/server/new');
-    }
-  }
+  /// True when [entry] already corresponds to a saved server (same
+  /// hostname/port/username). Comparing against the real server list —
+  /// instead of an in-memory "did we show this dialog before" flag — is
+  /// what stops the dialog from re-proposing hosts on every single call,
+  /// including after an app restart.
+  static bool _hasMatchingServer(
+    SshConfigEntry entry,
+    List<ServerEntity> servers,
+  ) => servers.any(
+    (s) =>
+        s.hostname.toLowerCase() == entry.hostname.toLowerCase() &&
+        s.port == entry.port &&
+        s.username.toLowerCase() == entry.username.toLowerCase(),
+  );
 
   static Future<void> _showSshConfigImportDialog(
     BuildContext context,
     WidgetRef ref,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final entries = await SshConfigParser.parse();
-
+    final parsed = await SshConfigParser.parse();
     if (!context.mounted) return;
 
+    final existingServers = await ref.read(serverListProvider.future);
+    if (!context.mounted) return;
+
+    final entries = parsed
+        .where((e) => !_hasMatchingServer(e, existingServers))
+        .toList();
     if (entries.isEmpty) {
       context.push('/server/new');
       return;
@@ -137,7 +128,14 @@ abstract final class ServerImportFlow {
                 },
                 child: Text(l10n.sshConfigAddManually),
               ),
+              // Autofocused so the dialog is keyboard-usable the instant it
+              // opens: Enter imports the (default all-checked) selection
+              // immediately, and Tab/Shift+Tab from here reaches the
+              // individual checkboxes. Without an explicit autofocus target,
+              // nothing owns primary focus on open and Enter has nothing to
+              // activate.
               FilledButton(
+                autofocus: true,
                 onPressed: selectedCount > 0
                     ? () => Navigator.pop(ctx, true)
                     : null,
@@ -156,9 +154,8 @@ abstract final class ServerImportFlow {
       if (selected[i]) toImport.add(entries[i]);
     }
 
-    // Check if any selected entries reference identity files. Multiple
-    // server entries may share the same identity file — collapse them so
-    // we never offer to import the same key file twice in the dialog.
+    // Multiple server entries may share the same identity file — collapse
+    // them so we never touch the same key file twice.
     final entriesWithKeys = toImport
         .where((e) => e.identityFile != null)
         .toList();
@@ -166,48 +163,61 @@ abstract final class ServerImportFlow {
     for (final e in entriesWithKeys) {
       uniqueKeyPaths.putIfAbsent(e.identityFile!, () => e);
     }
-    var importKeys = false;
-    if (uniqueKeyPaths.isNotEmpty && context.mounted) {
-      importKeys =
-          await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text(l10n.sshConfigImportKeys),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (final e in uniqueKeyPaths.values)
-                    ListTile(
-                      dense: true,
-                      leading: const Icon(Icons.vpn_key_outlined, size: 20),
-                      title: Text(e.identityFile!),
-                      subtitle: Text(e.name),
-                    ),
+
+    // Resolve every identity file against the vault *before* asking
+    // anything: keys that already exist are linked silently, and only
+    // genuinely new keys are ever shown in a confirmation dialog. Keys
+    // that already exist are no longer offered as if they were new, and —
+    // unlike before — declining the "import new keys" prompt no longer
+    // throws away the link to keys that were already in the vault.
+    final keyIdByPath = <String, String>{};
+    var keysImported = 0;
+    if (uniqueKeyPaths.isNotEmpty) {
+      final resolved = await _resolveKeyImports(
+        ref,
+        uniqueKeyPaths.values.toList(),
+      );
+      keyIdByPath.addAll(resolved.existingIdByPath);
+
+      if (resolved.newKeys.isNotEmpty && context.mounted) {
+        final confirmed =
+            await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: Text(l10n.sshConfigImportKeys),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final k in resolved.newKeys)
+                      ListTile(
+                        dense: true,
+                        leading: const Icon(Icons.vpn_key_outlined, size: 20),
+                        title: Text(k.originalPath),
+                        subtitle: Text(k.entryName),
+                      ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: Text(l10n.cancel),
+                  ),
+                  FilledButton(
+                    autofocus: true,
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: Text(l10n.sshConfigImportButton),
+                  ),
                 ],
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: Text(l10n.cancel),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: Text(l10n.sshConfigImportButton),
-                ),
-              ],
-            ),
-          ) ??
-          false;
-    }
+            ) ??
+            false;
 
-    // Import SSH keys first so we can link them to servers. Pass the
-    // deduplicated key list so each unique identity file is processed once.
-    var keysImported = 0;
-    final keyIdByPath = <String, String>{};
-    if (importKeys) {
-      final result = await _importSshKeys(ref, uniqueKeyPaths.values.toList());
-      keysImported = result.newlyImported;
-      keyIdByPath.addAll(result.idByPath);
+        if (confirmed) {
+          final persisted = await _persistNewKeys(ref, resolved.newKeys);
+          keyIdByPath.addAll(persisted.idByPath);
+          keysImported = persisted.count;
+        }
+      }
     }
 
     var importedCount = 0;
@@ -243,8 +253,6 @@ abstract final class ServerImportFlow {
       }
     }
 
-    // Mark as imported and refresh providers
-    ref.read(_sshConfigImportedProvider.notifier).state = true;
     ref.invalidate(serverListProvider);
     ref.invalidate(folderGroupedServersProvider);
 
@@ -262,24 +270,19 @@ abstract final class ServerImportFlow {
     }
   }
 
-  /// Imports SSH keys, deduplicating against keys already in the vault.
-  ///
-  /// [entries] must already be deduplicated by `identityFile` so we only
-  /// touch each on-disk file once.
-  ///
-  /// Existing keys are matched by their stored private-key content; an
-  /// existing match means we reuse the existing id and do not create a
-  /// duplicate row.
-  static Future<({Map<String, String> idByPath, int newlyImported})>
-  _importSshKeys(WidgetRef ref, List<SshConfigEntry> entries) async {
-    final keyNotifier = ref.read(sshKeyListProvider.notifier);
+  /// Reads each identity file and matches it against the vault by private-
+  /// key content, without writing anything. [entries] must already be
+  /// deduplicated by `identityFile`.
+  static Future<
+    ({Map<String, String> existingIdByPath, List<_NewKeyImport> newKeys})
+  >
+  _resolveKeyImports(WidgetRef ref, List<SshConfigEntry> entries) async {
     final useCases = ref.read(sshKeyUseCasesProvider);
     final home =
         Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         '';
 
-    // Build a content → existingKeyId index from the current vault.
     final existingByContent = <String, String>{};
     final existingResult = await useCases.getAllSshKeys();
     final existingKeys = existingResult.fold(
@@ -298,8 +301,8 @@ abstract final class ServerImportFlow {
       );
     }
 
-    final idByPath = <String, String>{};
-    var newlyImported = 0;
+    final existingIdByPath = <String, String>{};
+    final newKeys = <_NewKeyImport>[];
 
     for (final entry in entries) {
       try {
@@ -314,31 +317,53 @@ abstract final class ServerImportFlow {
         final privateKey = (await keyFile.readAsString()).trim();
         final existingId = existingByContent[privateKey];
         if (existingId != null) {
-          // Already in vault — reuse it, do not create a duplicate.
-          idByPath[originalPath] = existingId;
+          existingIdByPath[originalPath] = existingId;
           continue;
         }
 
-        final keyType = _detectKeyType(privateKey);
-        final keyName = path.split(Platform.pathSeparator).last;
+        newKeys.add(
+          _NewKeyImport(
+            originalPath: originalPath,
+            entryName: entry.name,
+            privateKey: privateKey,
+            keyType: _detectKeyType(privateKey),
+            keyName: path.split(Platform.pathSeparator).last,
+          ),
+        );
+      } catch (_) {
+        // Skip keys that fail to read
+      }
+    }
+    return (existingIdByPath: existingIdByPath, newKeys: newKeys);
+  }
+
+  /// Writes the given (already vault-checked, genuinely new) keys.
+  static Future<({Map<String, String> idByPath, int count})> _persistNewKeys(
+    WidgetRef ref,
+    List<_NewKeyImport> newKeys,
+  ) async {
+    final keyNotifier = ref.read(sshKeyListProvider.notifier);
+    final idByPath = <String, String>{};
+    var count = 0;
+    for (final key in newKeys) {
+      try {
         final created = await keyNotifier.createSshKey(
           SshKeyEntity(
             id: '',
-            name: keyName,
-            keyType: keyType,
+            name: key.keyName,
+            keyType: key.keyType,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
           ),
-          privateKey: privateKey,
+          privateKey: key.privateKey,
         );
-        idByPath[originalPath] = created.id;
-        existingByContent[privateKey] = created.id;
-        newlyImported++;
+        idByPath[key.originalPath] = created.id;
+        count++;
       } catch (_) {
-        // Skip keys that fail to read or import
+        // Skip keys that fail to import
       }
     }
-    return (idByPath: idByPath, newlyImported: newlyImported);
+    return (idByPath: idByPath, count: count);
   }
 
   static SshKeyType _detectKeyType(String privateKey) {
@@ -357,4 +382,22 @@ abstract final class ServerImportFlow {
     }
     return SshKeyType.ed25519;
   }
+}
+
+/// An identity file confirmed (by content) to not already exist in the
+/// vault, and thus a genuine candidate for import.
+class _NewKeyImport {
+  final String originalPath;
+  final String entryName;
+  final String privateKey;
+  final SshKeyType keyType;
+  final String keyName;
+
+  _NewKeyImport({
+    required this.originalPath,
+    required this.entryName,
+    required this.privateKey,
+    required this.keyType,
+    required this.keyName,
+  });
 }

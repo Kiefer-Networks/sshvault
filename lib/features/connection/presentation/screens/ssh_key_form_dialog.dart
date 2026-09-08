@@ -7,6 +7,7 @@ import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
 import 'package:sshvault/core/utils/file_chooser.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/settings/settings_pane_header.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -66,12 +67,23 @@ class SshKeyFormDialog extends ConsumerStatefulWidget {
   /// file's basename (e.g. `id_ed25519`).
   final String? prefillName;
 
+  /// True when rendered inline inside `KeysMasterDetail`'s detail pane
+  /// instead of as its own pushed full-screen route. Only meaningful when
+  /// [existingKey] is set (editing) — "Add Key" keeps its Generate/Import
+  /// tabbed flow as a full route regardless, same as Hosts' "Add Server".
+  final bool embedded;
+  final VoidCallback? onSaved;
+  final VoidCallback? onCancel;
+
   const SshKeyFormDialog({
     super.key,
     this.existingKey,
     this.prefillPrivateKey,
     this.prefillPublicKey,
     this.prefillName,
+    this.embedded = false,
+    this.onSaved,
+    this.onCancel,
   });
 
   bool get isEditing => existingKey != null;
@@ -183,7 +195,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
             context,
             message: l10n.sshKeyDeletedSuccess,
           );
-          Navigator.pop(context, true);
+          if (widget.onSaved != null) {
+            widget.onSaved!();
+          } else {
+            Navigator.pop(context, true);
+          }
         }
       } catch (e) {
         if (mounted) _showError(_errorMessage(e));
@@ -390,7 +406,11 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
           context,
           message: AppLocalizations.of(context)!.sshKeySavedSuccess,
         );
-        Navigator.pop(context, true);
+        if (widget.onSaved != null) {
+          widget.onSaved!();
+        } else {
+          Navigator.pop(context, true);
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -407,6 +427,43 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
     final theme = Theme.of(context);
     final formState = ref.watch(_sshKeyFormStateProvider);
     final l10n = AppLocalizations.of(context)!;
+
+    if (widget.embedded && widget.isEditing) {
+      return Column(
+        children: [
+          SettingsPaneHeader(
+            title: widget.existingKey!.name,
+            actions: [
+              _DeleteKeyButton(
+                keyId: widget.existingKey!.id,
+                onDelete: formState.saving ? null : _onDelete,
+              ),
+              if (widget.onCancel != null)
+                TextButton(
+                  onPressed: widget.onCancel,
+                  child: Text(l10n.cancel),
+                ),
+              TextButton(
+                onPressed: formState.saving ? null : _onSave,
+                child: formState.saving
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(l10n.save),
+              ),
+            ],
+          ),
+          Expanded(
+            child: ListView(
+              padding: Spacing.paddingAllMd,
+              children: [_buildEditForm(theme, formState)],
+            ),
+          ),
+        ],
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -470,6 +527,7 @@ class _SshKeyFormDialogState extends ConsumerState<SshKeyFormDialog>
       children: [
         TextFormField(
           controller: _nameController,
+          autofocus: true,
           decoration: InputDecoration(
             labelText: l10n.sshKeyFormNameLabel,
             prefixIcon: const Icon(Icons.label_outline),

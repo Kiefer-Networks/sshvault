@@ -430,7 +430,18 @@ class TrayService with TrayListener {
     }
     if (key == 'settings') {
       _showWindow();
-      _navigate('/settings');
+      // Every other in-app trigger for Settings uses push (stacks on top
+      // of wherever you were); this was the one place still using go
+      // (replaces the whole stack), so returning from the tray landed you
+      // somewhere different than opening Settings normally would.
+      final ctx = rootNavigatorKey.currentContext;
+      if (ctx != null) {
+        try {
+          ctx.push('/settings');
+        } catch (_) {
+          // Router not ready — ignore.
+        }
+      }
       return;
     }
     if (key == 'quit') {

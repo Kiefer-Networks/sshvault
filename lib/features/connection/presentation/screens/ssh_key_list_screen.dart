@@ -14,11 +14,20 @@ import 'package:sshvault/features/connection/presentation/widgets/empty_state.da
 import 'package:sshvault/features/connection/presentation/widgets/ssh_key_tile.dart';
 
 class SshKeyListScreen extends ConsumerWidget {
-  const SshKeyListScreen({super.key});
+  /// Tighter rows for the desktop Keys master/detail column — see
+  /// `KeysMasterDetail`.
+  final bool dense;
+
+  /// When set (desktop master/detail), tapping a key selects it for the
+  /// detail pane instead of pushing the full-screen edit route.
+  final ValueChanged<String>? onKeySelected;
+
+  const SshKeyListScreen({super.key, this.dense = false, this.onKeySelected});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final keysAsync = ref.watch(sshKeyListProvider);
+    final selectedId = dense ? ref.watch(desktopSelectedKeyIdProvider) : null;
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -62,7 +71,11 @@ class SshKeyListScreen extends ConsumerWidget {
                 label: '${key.name}, ${key.keyType.displayName}',
                 child: SshKeyTile(
                   sshKey: key,
-                  onEdit: () => _editKey(context, ref, key),
+                  dense: dense,
+                  selected: key.id == selectedId,
+                  onEdit: onKeySelected == null
+                      ? () => _editKey(context, ref, key)
+                      : () => onKeySelected!(key.id),
                   onDelete: () => _deleteKey(context, ref, key),
                 ),
               );
@@ -110,6 +123,7 @@ class SshKeyListScreen extends ConsumerWidget {
           ),
           actions: [
             TextButton(
+              autofocus: true,
               onPressed: () => Navigator.pop(ctx),
               child: Text(AppLocalizations.of(ctx)!.close),
             ),

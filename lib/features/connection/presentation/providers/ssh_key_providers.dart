@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/utils/auto_sync_mixin.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/domain/entities/ssh_key_entity.dart';
@@ -8,6 +9,10 @@ final sshKeyListProvider =
     AsyncNotifierProvider<SshKeyListNotifier, List<SshKeyEntity>>(
       SshKeyListNotifier.new,
     );
+
+/// Key currently selected for the desktop SSH Keys master/detail pane.
+/// Mirrors `desktopSelectedServerIdProvider`'s own purpose for Hosts.
+final desktopSelectedKeyIdProvider = StateProvider<String?>((ref) => null);
 
 class SshKeyListNotifier extends AsyncNotifier<List<SshKeyEntity>>
     with AutoSyncMixin {

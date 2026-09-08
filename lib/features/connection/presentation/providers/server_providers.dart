@@ -13,6 +13,12 @@ import 'package:sshvault/features/connection/presentation/providers/ssh_key_prov
 /// Server currently selected for the wide desktop context pane.
 final desktopSelectedServerIdProvider = StateProvider<String?>((ref) => null);
 
+/// True while the Hosts master/detail pane's "+" is showing the inline
+/// create form instead of an existing host's detail/edit view. Separate
+/// from [desktopSelectedServerIdProvider] rather than a magic sentinel ID,
+/// so "creating" and "viewing host X" can never be confused for each other.
+final hostsCreatingProvider = StateProvider<bool>((ref) => false);
+
 enum ViewMode { list, grid }
 
 final viewModeProvider = StateProvider<ViewMode>((ref) => ViewMode.list);

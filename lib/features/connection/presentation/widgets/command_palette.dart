@@ -13,6 +13,7 @@ import 'package:sshvault/features/connection/presentation/screens/ssh_key_form_d
 import 'package:sshvault/features/connection/presentation/screens/tag_form_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
 import 'package:sshvault/features/connection/presentation/widgets/server_import_flow.dart';
+import 'package:sshvault/features/connection/presentation/widgets/server_refresh_action.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
 import 'package:sshvault/l10n/generated/app_localizations.dart';
 
@@ -172,12 +173,35 @@ class _CommandPalette extends ConsumerStatefulWidget {
 class _CommandPaletteState extends ConsumerState<_CommandPalette> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
+  final _scrollController = ScrollController();
+  // Keyed by row index so arrow-key navigation can scroll the newly
+  // selected row into view — ListView.builder only keeps the rows that
+  // fit on screen laid out, so without this the selection silently moves
+  // past the visible window and the user has to grab the mouse to see it.
+  final Map<int, GlobalKey> _rowKeys = {};
   int _selected = 0;
+
+  GlobalKey _rowKeyFor(int index) =>
+      _rowKeys.putIfAbsent(index, () => GlobalKey());
+
+  void _scrollSelectedIntoView(int index) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final rowContext = _rowKeys[index]?.currentContext;
+      if (rowContext == null) return;
+      Scrollable.ensureVisible(
+        rowContext,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+      );
+    });
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -231,7 +255,9 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
 
     void move(int delta) {
       if (entries.isEmpty) return;
-      setState(() => _selected = (selected + delta) % entries.length);
+      final next = (selected + delta) % entries.length;
+      setState(() => _selected = next);
+      _scrollSelectedIntoView(next);
     }
 
     return Align(
@@ -258,6 +284,21 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
               autofocus: true,
               onKeyEvent: (node, event) {
                 if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                // The palette pops itself and immediately runs the chosen
+                // command, which for "Add Server…" opens another dialog
+                // before this route has finished its own pop transition.
+                // Without this guard the still-mounted (but no longer
+                // current) palette route could keep swallowing Enter/
+                // Escape/arrow keys meant for that new dialog.
+                if (ModalRoute.of(context)?.isCurrent != true) {
+                  return KeyEventResult.ignored;
+                }
+                final ctrlPressed = HardwareKeyboard.instance.logicalKeysPressed
+                    .any(
+                      (k) =>
+                          k == LogicalKeyboardKey.controlLeft ||
+                          k == LogicalKeyboardKey.controlRight,
+                    );
                 switch (event.logicalKey) {
                   case LogicalKeyboardKey.arrowDown:
                     move(1);
@@ -265,13 +306,28 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
                   case LogicalKeyboardKey.arrowUp:
                     move(-1);
                     return KeyEventResult.handled;
+                  // Ctrl+J/Ctrl+P as vim-ish down/up aliases while the
+                  // search field has focus — bare j/k can't be used here,
+                  // they need to type into the query instead. (Ctrl+K
+                  // itself is already the global "open palette" shortcut,
+                  // so it can't double as "up" without reopening a second
+                  // palette on top of this one.)
+                  case LogicalKeyboardKey.keyJ when ctrlPressed:
+                    move(1);
+                    return KeyEventResult.handled;
+                  case LogicalKeyboardKey.keyP when ctrlPressed:
+                    move(-1);
+                    return KeyEventResult.handled;
                   case LogicalKeyboardKey.enter:
                   case LogicalKeyboardKey.numpadEnter:
                     if (entries.isNotEmpty) _activate(entries[selected]);
                     return KeyEventResult.handled;
-                  case LogicalKeyboardKey.escape:
-                    Navigator.of(context).pop();
-                    return KeyEventResult.handled;
+                  // Escape is handled globally in DesktopShortcuts (closes
+                  // the topmost poppable navigator, which a showDialog
+                  // palette always is) — handling it again here too would
+                  // pop twice for one keypress, since HardwareKeyboard's
+                  // global handler and this Focus-based one both run
+                  // independently for the same key event.
                   default:
                     return KeyEventResult.ignored;
                 }
@@ -298,7 +354,14 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
                             'Quick connect — type a host, tag, or command…',
                         prefixIcon: Icon(Icons.search, size: 20),
                       ),
-                      onChanged: (_) => setState(() => _selected = 0),
+                      onChanged: (_) {
+                        setState(() => _selected = 0);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (_scrollController.hasClients) {
+                            _scrollController.jumpTo(0);
+                          }
+                        });
+                      },
                       onSubmitted: (_) {
                         if (entries.isNotEmpty) _activate(entries[selected]);
                       },
@@ -318,6 +381,7 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
                             ),
                           )
                         : ListView.builder(
+                            controller: _scrollController,
                             shrinkWrap: true,
                             padding: const EdgeInsets.symmetric(vertical: 6),
                             itemCount: entries.length,
@@ -325,6 +389,7 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
                               final entry = entries[index];
                               final isSelected = index == selected;
                               return _PaletteRow(
+                                key: _rowKeyFor(index),
                                 entry: entry,
                                 isSelected: isSelected,
                                 onTap: () => _activate(entry),
@@ -348,6 +413,7 @@ class _PaletteRow extends ConsumerWidget {
   final VoidCallback onTap;
 
   const _PaletteRow({
+    super.key,
     required this.entry,
     required this.isSelected,
     required this.onTap,
@@ -481,6 +547,10 @@ class _ServerRowActions extends ConsumerWidget {
             await ref
                 .read(serverListProvider.notifier)
                 .duplicateServer(server.id, copySuffix: l10n.serverCopySuffix);
+          case 'refresh':
+            // Stays open — this is a quick background action, not
+            // navigation, so closing the palette on it would be jarring.
+            await refreshServerInfo(context, ref, server);
           case 'delete':
             final confirmed = await ConfirmDialog.show(
               context,
@@ -516,6 +586,10 @@ class _ServerRowActions extends ConsumerWidget {
             leading: const Icon(Icons.copy),
             title: Text(l10n.serverDuplicate),
           ),
+        ),
+        const PopupMenuItem(
+          value: 'refresh',
+          child: ListTile(leading: Icon(Icons.refresh), title: Text('Refresh')),
         ),
         PopupMenuItem(
           value: 'delete',

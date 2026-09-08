@@ -20,6 +20,7 @@ class ImportConflictDialog extends StatelessWidget {
       content: Text(l10n.importConflictDescription),
       actions: [
         TextButton(
+          autofocus: true,
           onPressed: () => Navigator.of(context).pop(),
           child: Text(l10n.cancel),
         ),
@@ -34,6 +35,10 @@ class ImportConflictDialog extends StatelessWidget {
           child: Text(l10n.importConflictRename),
         ),
         FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.error,
+            foregroundColor: Theme.of(context).colorScheme.onError,
+          ),
           onPressed: () =>
               Navigator.of(context).pop(ImportConflictStrategy.overwrite),
           child: Text(l10n.importConflictOverwrite),

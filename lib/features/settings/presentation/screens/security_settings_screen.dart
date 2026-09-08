@@ -10,7 +10,6 @@ import 'package:sshvault/core/storage/secure_storage_provider.dart'
     show keyringServiceProvider;
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/widgets/pin_dialog.dart';
-import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/core/ssh/windows_ssh_agent.dart';
 import 'package:sshvault/features/connection/presentation/providers/ssh_agent_provider.dart';
@@ -26,184 +25,55 @@ class SecuritySettingsScreen extends ConsumerWidget {
     final settingsAsync = ref.watch(settingsProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    return AdaptiveScaffold(
-      title: l10n.settingsSectionSecurity,
-      body: settingsAsync.when(
-        data: (settings) => ListView(
-          padding: Spacing.paddingHorizontalLgVerticalSm,
-          children: [
-            // App Lock section
-            Spacing.verticalSm,
-            SectionHeader(title: l10n.settingsSectionAppLock),
-            SettingsGroupCard(
-              children: [
-                Semantics(
-                  button: true,
-                  label: l10n.settingsAutoLock,
-                  child: SettingsTile(
-                    icon: Icons.lock_clock_outlined,
-                    iconColor: AppColors.iconRed,
-                    title: l10n.settingsAutoLock,
-                    subtitleText: settings.autoLockMinutes == 0
-                        ? l10n.settingsAutoLockDisabled
-                        : l10n.settingsAutoLockMinutes(
-                            settings.autoLockMinutes,
-                          ),
-                    onTap: () async {
-                      final v = await showSettingsSelectionDialog<int>(
-                        context: context,
-                        title: l10n.settingsAutoLock,
-                        currentValue: settings.autoLockMinutes,
-                        options: [
-                          SelectionOption(
-                            value: 0,
-                            label: l10n.settingsAutoLockOff,
-                          ),
-                          SelectionOption(
-                            value: 1,
-                            label: l10n.settingsAutoLock1Min,
-                          ),
-                          SelectionOption(
-                            value: 5,
-                            label: l10n.settingsAutoLock5Min,
-                          ),
-                          SelectionOption(
-                            value: 15,
-                            label: l10n.settingsAutoLock15Min,
-                          ),
-                          SelectionOption(
-                            value: 30,
-                            label: l10n.settingsAutoLock30Min,
-                          ),
-                        ],
-                      );
-                      if (v != null) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .setAutoLockMinutes(v);
-                        if (context.mounted) {
-                          AdaptiveNotification.show(
-                            context,
-                            message: l10n.settingsUpdated,
-                          );
-                        }
-                      }
-                    },
-                  ),
-                ),
-                _BiometricTile(settings: settings),
-                _PinTile(settings: settings),
-                _DuressPinTile(settings: settings),
-              ],
-            ),
-
-            // Privacy section
-            Spacing.verticalLg,
-            SectionHeader(title: l10n.settingsSectionPrivacy),
-            SettingsGroupCard(
-              children: [
-                if (ScreenProtectionService.isSupported)
-                  SettingsSwitchTile(
-                    icon: Icons.screenshot_monitor_outlined,
-                    iconColor: AppColors.iconAmber,
-                    title: l10n.settingsPreventScreenshots,
-                    subtitleText: l10n.settingsPreventScreenshotsDescription,
-                    value: settings.preventScreenshots,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setPreventScreenshots(v);
-                      AdaptiveNotification.show(
-                        context,
-                        message: l10n.settingsUpdated,
-                      );
-                    },
-                  ),
-                SettingsTile(
-                  icon: Icons.content_paste_off_outlined,
-                  iconColor: AppColors.iconPurple,
-                  title: l10n.settingsClipboardAutoClear,
-                  subtitleText: settings.clipboardAutoClearSecs == 0
-                      ? l10n.settingsClipboardAutoClearOff
-                      : l10n.settingsClipboardAutoClearValue(
-                          settings.clipboardAutoClearSecs,
-                        ),
+    return settingsAsync.when(
+      data: (settings) => ListView(
+        padding: Spacing.paddingHorizontalLgVerticalSm,
+        children: [
+          SettingsPaneHeader(title: l10n.settingsSectionSecurity),
+          // App Lock section
+          Spacing.verticalSm,
+          SectionHeader(title: l10n.settingsSectionAppLock),
+          SettingsGroupCard(
+            children: [
+              Semantics(
+                button: true,
+                label: l10n.settingsAutoLock,
+                child: SettingsTile(
+                  icon: Icons.lock_clock_outlined,
+                  title: l10n.settingsAutoLock,
+                  subtitleText: settings.autoLockMinutes == 0
+                      ? l10n.settingsAutoLockDisabled
+                      : l10n.settingsAutoLockMinutes(settings.autoLockMinutes),
                   onTap: () async {
                     final v = await showSettingsSelectionDialog<int>(
                       context: context,
-                      title: l10n.settingsClipboardAutoClear,
-                      currentValue: settings.clipboardAutoClearSecs,
+                      title: l10n.settingsAutoLock,
+                      currentValue: settings.autoLockMinutes,
                       options: [
                         SelectionOption(
                           value: 0,
-                          label: l10n.settingsClipboardAutoClearOff,
+                          label: l10n.settingsAutoLockOff,
+                        ),
+                        SelectionOption(
+                          value: 1,
+                          label: l10n.settingsAutoLock1Min,
+                        ),
+                        SelectionOption(
+                          value: 5,
+                          label: l10n.settingsAutoLock5Min,
                         ),
                         SelectionOption(
                           value: 15,
-                          label: l10n.settingsClipboardAutoClearValue(15),
+                          label: l10n.settingsAutoLock15Min,
                         ),
                         SelectionOption(
                           value: 30,
-                          label: l10n.settingsClipboardAutoClearValue(30),
-                        ),
-                        SelectionOption(
-                          value: 60,
-                          label: l10n.settingsClipboardAutoClearValue(60),
-                        ),
-                        SelectionOption(
-                          value: 120,
-                          label: l10n.settingsClipboardAutoClearValue(120),
-                        ),
-                      ],
-                    );
-                    if (v != null && context.mounted) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setClipboardAutoClear(v);
-                      if (context.mounted) {
-                        AdaptiveNotification.show(
-                          context,
-                          message: l10n.settingsUpdated,
-                        );
-                      }
-                    }
-                  },
-                ),
-                SettingsTile(
-                  icon: Icons.timer_off_outlined,
-                  iconColor: AppColors.iconOrange,
-                  title: l10n.settingsSessionTimeout,
-                  subtitleText: settings.sessionTimeoutMins == 0
-                      ? l10n.settingsSessionTimeoutOff
-                      : l10n.settingsSessionTimeoutValue(
-                          settings.sessionTimeoutMins,
-                        ),
-                  onTap: () async {
-                    final v = await showSettingsSelectionDialog<int>(
-                      context: context,
-                      title: l10n.settingsSessionTimeout,
-                      currentValue: settings.sessionTimeoutMins,
-                      options: [
-                        SelectionOption(
-                          value: 0,
-                          label: l10n.settingsSessionTimeoutOff,
-                        ),
-                        SelectionOption(
-                          value: 15,
-                          label: l10n.settingsSessionTimeoutValue(15),
-                        ),
-                        SelectionOption(
-                          value: 30,
-                          label: l10n.settingsSessionTimeoutValue(30),
-                        ),
-                        SelectionOption(
-                          value: 60,
-                          label: l10n.settingsSessionTimeoutValue(60),
+                          label: l10n.settingsAutoLock30Min,
                         ),
                       ],
                     );
                     if (v != null) {
-                      ref.read(settingsProvider.notifier).setSessionTimeout(v);
+                      ref.read(settingsProvider.notifier).setAutoLockMinutes(v);
                       if (context.mounted) {
                         AdaptiveNotification.show(
                           context,
@@ -213,281 +83,385 @@ class SecuritySettingsScreen extends ConsumerWidget {
                     }
                   },
                 ),
+              ),
+              _BiometricTile(settings: settings),
+              _PinTile(settings: settings),
+              _DuressPinTile(settings: settings),
+            ],
+          ),
+
+          // Privacy section
+          Spacing.verticalLg,
+          SectionHeader(title: l10n.settingsSectionPrivacy),
+          SettingsGroupCard(
+            children: [
+              if (ScreenProtectionService.isSupported)
                 SettingsSwitchTile(
-                  icon: Icons.insights_outlined,
-                  iconColor: AppColors.iconBlue,
-                  title: l10n.serverSystemInfoConsent,
-                  subtitleText: l10n.serverSystemInfoConsentDescription,
-                  value: settings.serverSystemInfoConsent,
-                  onChanged: (enabled) {
+                  icon: Icons.screenshot_monitor_outlined,
+                  title: l10n.settingsPreventScreenshots,
+                  subtitleText: l10n.settingsPreventScreenshotsDescription,
+                  value: settings.preventScreenshots,
+                  onChanged: (v) {
                     ref
                         .read(settingsProvider.notifier)
-                        .setServerSystemInfoConsent(enabled);
+                        .setPreventScreenshots(v);
                     AdaptiveNotification.show(
                       context,
                       message: l10n.settingsUpdated,
                     );
                   },
                 ),
-                SettingsSwitchTile(
-                  icon: Icons.update_outlined,
-                  iconColor: AppColors.iconCyan,
-                  title: l10n.serverSystemInfoAutoRefresh,
-                  subtitleText: l10n.serverSystemInfoAutoRefreshDescription,
-                  value: settings.serverSystemInfoAutoRefresh,
-                  onChanged: settings.serverSystemInfoConsent
-                      ? (enabled) => ref
-                            .read(settingsProvider.notifier)
-                            .setServerSystemInfoAutoRefresh(enabled)
-                      : null,
-                ),
-                SettingsTile(
-                  icon: Icons.schedule_outlined,
-                  iconColor: AppColors.iconPurple,
-                  title: l10n.serverSystemInfoRefreshInterval,
-                  subtitleText: l10n.serverSystemInfoRefreshIntervalMinutes(
-                    settings.serverSystemInfoRefreshIntervalSecs ~/ 60,
-                  ),
-                  onTap:
-                      settings.serverSystemInfoConsent &&
-                          settings.serverSystemInfoAutoRefresh
-                      ? () async {
-                          final value = await showSettingsSelectionDialog<int>(
-                            context: context,
-                            title: l10n.serverSystemInfoRefreshInterval,
-                            currentValue:
-                                settings.serverSystemInfoRefreshIntervalSecs,
-                            options: [
-                              for (final seconds in [60, 300, 900, 1800, 3600])
-                                SelectionOption(
-                                  value: seconds,
-                                  label: l10n
-                                      .serverSystemInfoRefreshIntervalMinutes(
-                                        seconds ~/ 60,
-                                      ),
-                                ),
-                            ],
-                          );
-                          if (value != null) {
-                            ref
-                                .read(settingsProvider.notifier)
-                                .setServerSystemInfoRefreshInterval(value);
-                            if (context.mounted) {
-                              AdaptiveNotification.show(
-                                context,
-                                message: l10n.settingsUpdated,
-                              );
-                            }
-                          }
-                        }
-                      : null,
-                ),
-              ],
-            ),
-
-            // Reminders section
-            Spacing.verticalLg,
-            SectionHeader(title: l10n.settingsSectionReminders),
-            SettingsGroupCard(
-              children: [
-                SettingsTile(
-                  icon: Icons.autorenew,
-                  iconColor: AppColors.iconCyan,
-                  title: l10n.settingsKeyRotationReminder,
-                  subtitleText: settings.keyRotationReminderDays == 0
-                      ? l10n.settingsKeyRotationOff
-                      : l10n.settingsKeyRotationValue(
-                          settings.keyRotationReminderDays,
-                        ),
-                  onTap: () async {
-                    final v = await showSettingsSelectionDialog<int>(
-                      context: context,
-                      title: l10n.settingsKeyRotationReminder,
-                      currentValue: settings.keyRotationReminderDays,
-                      options: [
-                        SelectionOption(
-                          value: 0,
-                          label: l10n.settingsKeyRotationOff,
-                        ),
-                        SelectionOption(
-                          value: 30,
-                          label: l10n.settingsKeyRotationValue(30),
-                        ),
-                        SelectionOption(
-                          value: 60,
-                          label: l10n.settingsKeyRotationValue(60),
-                        ),
-                        SelectionOption(
-                          value: 90,
-                          label: l10n.settingsKeyRotationValue(90),
-                        ),
-                      ],
-                    );
-                    if (v != null) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setKeyRotationReminder(v);
-                      if (context.mounted) {
-                        AdaptiveNotification.show(
-                          context,
-                          message: l10n.settingsUpdated,
-                        );
-                      }
-                    }
-                  },
-                ),
-              ],
-            ),
-
-            // ssh-agent integration. The feature degrades gracefully on
-            // platforms without an agent — the underlying SshAgent.isAvailable()
-            // returns false and the per-key/per-host buttons remain hidden at
-            // the call sites. On Windows, the SshAgent picks between the
-            // OpenSSH-for-Windows named pipe and PuTTY's Pageant
-            // automatically; we surface which backend was detected as a
-            // read-only chip so users can see why a specific key list shows up.
-            Spacing.verticalLg,
-            const SectionHeader(title: 'ssh-agent integration'),
-            SettingsGroupCard(
-              children: [
-                if (Platform.isWindows)
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final detection = ref.watch(
-                        windowsSshAgentBackendProvider,
-                      );
-                      return SettingsTile(
-                        icon: Icons.memory,
-                        iconColor: AppColors.iconDeepPurple,
-                        title: 'Detected agent',
-                        subtitleText: detection.when(
-                          data: (b) => b.label,
-                          loading: () => 'Detecting…',
-                          error: (_, _) => 'Detection failed',
-                        ),
-                        onTap: () =>
-                            ref.invalidate(windowsSshAgentBackendProvider),
-                      );
-                    },
-                  ),
-                SettingsSwitchTile(
-                  icon: Icons.alt_route,
-                  iconColor: AppColors.iconBlue,
-                  title: 'Forward agent by default',
-                  subtitleText:
-                      'Allow remote shells to use the local agent for signing. '
-                      'Enable only for servers you trust.',
-                  value: settings.sshAgentForwardByDefault,
-                  onChanged: (value) => ref
-                      .read(settingsProvider.notifier)
-                      .setSshAgentForwardByDefault(value),
-                ),
-                SettingsTile(
-                  icon: Icons.timer_outlined,
-                  iconColor: AppColors.iconCyan,
-                  title: 'Default key lifetime',
-                  subtitleText: settings.sshAgentDefaultLifetimeSecs == 0
-                      ? 'No expiry (kept until removed)'
-                      : '${settings.sshAgentDefaultLifetimeSecs ~/ 60} min',
-                  onTap: () async {
-                    final v = await showSettingsSelectionDialog<int>(
-                      context: context,
-                      title: 'Default key lifetime',
-                      currentValue: settings.sshAgentDefaultLifetimeSecs,
-                      options: const [
-                        SelectionOption(value: 0, label: 'No expiry'),
-                        SelectionOption(value: 900, label: '15 min'),
-                        SelectionOption(value: 1800, label: '30 min'),
-                        SelectionOption(value: 3600, label: '1 hour'),
-                        SelectionOption(value: 14400, label: '4 hours'),
-                        SelectionOption(value: 28800, label: '8 hours'),
-                      ],
-                    );
-                    if (v != null) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setSshAgentDefaultLifetimeSecs(v);
-                      if (context.mounted) {
-                        AdaptiveNotification.show(
-                          context,
-                          message: l10n.settingsUpdated,
-                        );
-                      }
-                    }
-                  },
-                ),
-              ],
-            ),
-
-            // Power management — Linux, Windows, and Android. Hidden on
-            // iOS / web because PowerInhibitorService is a no-op there.
-            // Strings are inline (not localized) to match the ssh-agent
-            // block above and avoid touching all 28 .arb files for a
-            // single toggle.
-            if (Platform.isLinux ||
-                Platform.isWindows ||
-                Platform.isAndroid) ...[
-              Spacing.verticalLg,
-              const SectionHeader(title: 'Power management'),
-              SettingsGroupCard(
-                children: [
-                  SettingsSwitchTile(
-                    icon: Icons.bedtime_off_outlined,
-                    iconColor: AppColors.iconBlue,
-                    title: 'Prevent suspend during SSH sessions',
-                    subtitleText: Platform.isLinux
-                        ? 'Hold a systemd-logind sleep inhibitor while at '
-                              'least one SSH session is connected so the '
-                              'system does not auto-suspend mid-session.'
-                        : Platform.isWindows
-                        ? 'Use SetThreadExecutionState to keep Windows '
-                              'awake while at least one SSH session is '
-                              'connected so the system does not '
-                              'auto-suspend mid-session.'
-                        : 'Hold a PARTIAL_WAKE_LOCK while at least one SSH '
-                              'session is connected so the CPU does not '
-                              'sleep mid-session when the screen turns off.',
-                    value: settings.preventSuspendDuringSshSessions,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setPreventSuspendDuringSshSessions(v);
+              SettingsTile(
+                icon: Icons.content_paste_off_outlined,
+                title: l10n.settingsClipboardAutoClear,
+                subtitleText: settings.clipboardAutoClearSecs == 0
+                    ? l10n.settingsClipboardAutoClearOff
+                    : l10n.settingsClipboardAutoClearValue(
+                        settings.clipboardAutoClearSecs,
+                      ),
+                onTap: () async {
+                  final v = await showSettingsSelectionDialog<int>(
+                    context: context,
+                    title: l10n.settingsClipboardAutoClear,
+                    currentValue: settings.clipboardAutoClearSecs,
+                    options: [
+                      SelectionOption(
+                        value: 0,
+                        label: l10n.settingsClipboardAutoClearOff,
+                      ),
+                      SelectionOption(
+                        value: 15,
+                        label: l10n.settingsClipboardAutoClearValue(15),
+                      ),
+                      SelectionOption(
+                        value: 30,
+                        label: l10n.settingsClipboardAutoClearValue(30),
+                      ),
+                      SelectionOption(
+                        value: 60,
+                        label: l10n.settingsClipboardAutoClearValue(60),
+                      ),
+                      SelectionOption(
+                        value: 120,
+                        label: l10n.settingsClipboardAutoClearValue(120),
+                      ),
+                    ],
+                  );
+                  if (v != null && context.mounted) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setClipboardAutoClear(v);
+                    if (context.mounted) {
                       AdaptiveNotification.show(
                         context,
                         message: l10n.settingsUpdated,
                       );
-                    },
-                  ),
-                ],
+                    }
+                  }
+                },
+              ),
+              SettingsTile(
+                icon: Icons.timer_off_outlined,
+                title: l10n.settingsSessionTimeout,
+                subtitleText: settings.sessionTimeoutMins == 0
+                    ? l10n.settingsSessionTimeoutOff
+                    : l10n.settingsSessionTimeoutValue(
+                        settings.sessionTimeoutMins,
+                      ),
+                onTap: () async {
+                  final v = await showSettingsSelectionDialog<int>(
+                    context: context,
+                    title: l10n.settingsSessionTimeout,
+                    currentValue: settings.sessionTimeoutMins,
+                    options: [
+                      SelectionOption(
+                        value: 0,
+                        label: l10n.settingsSessionTimeoutOff,
+                      ),
+                      SelectionOption(
+                        value: 15,
+                        label: l10n.settingsSessionTimeoutValue(15),
+                      ),
+                      SelectionOption(
+                        value: 30,
+                        label: l10n.settingsSessionTimeoutValue(30),
+                      ),
+                      SelectionOption(
+                        value: 60,
+                        label: l10n.settingsSessionTimeoutValue(60),
+                      ),
+                    ],
+                  );
+                  if (v != null) {
+                    ref.read(settingsProvider.notifier).setSessionTimeout(v);
+                    if (context.mounted) {
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsUpdated,
+                      );
+                    }
+                  }
+                },
+              ),
+              SettingsSwitchTile(
+                icon: Icons.insights_outlined,
+                title: l10n.serverSystemInfoConsent,
+                subtitleText: l10n.serverSystemInfoConsentDescription,
+                value: settings.serverSystemInfoConsent,
+                onChanged: (enabled) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .setServerSystemInfoConsent(enabled);
+                  AdaptiveNotification.show(
+                    context,
+                    message: l10n.settingsUpdated,
+                  );
+                },
+              ),
+              SettingsSwitchTile(
+                icon: Icons.update_outlined,
+                title: l10n.serverSystemInfoAutoRefresh,
+                subtitleText: l10n.serverSystemInfoAutoRefreshDescription,
+                value: settings.serverSystemInfoAutoRefresh,
+                onChanged: settings.serverSystemInfoConsent
+                    ? (enabled) => ref
+                          .read(settingsProvider.notifier)
+                          .setServerSystemInfoAutoRefresh(enabled)
+                    : null,
+              ),
+              SettingsTile(
+                icon: Icons.schedule_outlined,
+                title: l10n.serverSystemInfoRefreshInterval,
+                subtitleText: l10n.serverSystemInfoRefreshIntervalMinutes(
+                  settings.serverSystemInfoRefreshIntervalSecs ~/ 60,
+                ),
+                onTap:
+                    settings.serverSystemInfoConsent &&
+                        settings.serverSystemInfoAutoRefresh
+                    ? () async {
+                        final value = await showSettingsSelectionDialog<int>(
+                          context: context,
+                          title: l10n.serverSystemInfoRefreshInterval,
+                          currentValue:
+                              settings.serverSystemInfoRefreshIntervalSecs,
+                          options: [
+                            for (final seconds in [60, 300, 900, 1800, 3600])
+                              SelectionOption(
+                                value: seconds,
+                                label: l10n
+                                    .serverSystemInfoRefreshIntervalMinutes(
+                                      seconds ~/ 60,
+                                    ),
+                              ),
+                          ],
+                        );
+                        if (value != null) {
+                          ref
+                              .read(settingsProvider.notifier)
+                              .setServerSystemInfoRefreshInterval(value);
+                          if (context.mounted) {
+                            AdaptiveNotification.show(
+                              context,
+                              message: l10n.settingsUpdated,
+                            );
+                          }
+                        }
+                      }
+                    : null,
               ),
             ],
+          ),
 
-            // Status section
+          // Reminders section
+          Spacing.verticalLg,
+          SectionHeader(title: l10n.settingsSectionReminders),
+          SettingsGroupCard(
+            children: [
+              SettingsTile(
+                icon: Icons.autorenew,
+                title: l10n.settingsKeyRotationReminder,
+                subtitleText: settings.keyRotationReminderDays == 0
+                    ? l10n.settingsKeyRotationOff
+                    : l10n.settingsKeyRotationValue(
+                        settings.keyRotationReminderDays,
+                      ),
+                onTap: () async {
+                  final v = await showSettingsSelectionDialog<int>(
+                    context: context,
+                    title: l10n.settingsKeyRotationReminder,
+                    currentValue: settings.keyRotationReminderDays,
+                    options: [
+                      SelectionOption(
+                        value: 0,
+                        label: l10n.settingsKeyRotationOff,
+                      ),
+                      SelectionOption(
+                        value: 30,
+                        label: l10n.settingsKeyRotationValue(30),
+                      ),
+                      SelectionOption(
+                        value: 60,
+                        label: l10n.settingsKeyRotationValue(60),
+                      ),
+                      SelectionOption(
+                        value: 90,
+                        label: l10n.settingsKeyRotationValue(90),
+                      ),
+                    ],
+                  );
+                  if (v != null) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setKeyRotationReminder(v);
+                    if (context.mounted) {
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsUpdated,
+                      );
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+
+          // ssh-agent integration. The feature degrades gracefully on
+          // platforms without an agent â€” the underlying SshAgent.isAvailable()
+          // returns false and the per-key/per-host buttons remain hidden at
+          // the call sites. On Windows, the SshAgent picks between the
+          // OpenSSH-for-Windows named pipe and PuTTY's Pageant
+          // automatically; we surface which backend was detected as a
+          // read-only chip so users can see why a specific key list shows up.
+          Spacing.verticalLg,
+          const SectionHeader(title: 'ssh-agent integration'),
+          SettingsGroupCard(
+            children: [
+              if (Platform.isWindows)
+                Consumer(
+                  builder: (context, ref, _) {
+                    final detection = ref.watch(windowsSshAgentBackendProvider);
+                    return SettingsTile(
+                      icon: Icons.memory,
+                      title: 'Detected agent',
+                      subtitleText: detection.when(
+                        data: (b) => b.label,
+                        loading: () => 'Detectingâ€¦',
+                        error: (_, _) => 'Detection failed',
+                      ),
+                      onTap: () =>
+                          ref.invalidate(windowsSshAgentBackendProvider),
+                    );
+                  },
+                ),
+              SettingsSwitchTile(
+                icon: Icons.alt_route,
+                title: 'Forward agent by default',
+                subtitleText:
+                    'Allow remote shells to use the local agent for signing. '
+                    'Enable only for servers you trust.',
+                value: settings.sshAgentForwardByDefault,
+                onChanged: (value) => ref
+                    .read(settingsProvider.notifier)
+                    .setSshAgentForwardByDefault(value),
+              ),
+              SettingsTile(
+                icon: Icons.timer_outlined,
+                title: 'Default key lifetime',
+                subtitleText: settings.sshAgentDefaultLifetimeSecs == 0
+                    ? 'No expiry (kept until removed)'
+                    : '${settings.sshAgentDefaultLifetimeSecs ~/ 60} min',
+                onTap: () async {
+                  final v = await showSettingsSelectionDialog<int>(
+                    context: context,
+                    title: 'Default key lifetime',
+                    currentValue: settings.sshAgentDefaultLifetimeSecs,
+                    options: const [
+                      SelectionOption(value: 0, label: 'No expiry'),
+                      SelectionOption(value: 900, label: '15 min'),
+                      SelectionOption(value: 1800, label: '30 min'),
+                      SelectionOption(value: 3600, label: '1 hour'),
+                      SelectionOption(value: 14400, label: '4 hours'),
+                      SelectionOption(value: 28800, label: '8 hours'),
+                    ],
+                  );
+                  if (v != null) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setSshAgentDefaultLifetimeSecs(v);
+                    if (context.mounted) {
+                      AdaptiveNotification.show(
+                        context,
+                        message: l10n.settingsUpdated,
+                      );
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+
+          // Power management â€” Linux, Windows, and Android. Hidden on
+          // iOS / web because PowerInhibitorService is a no-op there.
+          // Strings are inline (not localized) to match the ssh-agent
+          // block above and avoid touching all 28 .arb files for a
+          // single toggle.
+          if (Platform.isLinux || Platform.isWindows || Platform.isAndroid) ...[
             Spacing.verticalLg,
-            SectionHeader(title: l10n.settingsSectionStatus),
+            const SectionHeader(title: 'Power management'),
             SettingsGroupCard(
               children: [
-                Semantics(
-                  label:
-                      '${l10n.settingsFailedAttempts}: ${settings.failedPinAttempts}',
-                  child: SettingsTile(
-                    icon: Icons.warning_amber_outlined,
-                    iconColor: AppColors.iconGrey,
-                    title: l10n.settingsFailedAttempts,
-                    subtitleText: settings.failedPinAttempts.toString(),
-                  ),
+                SettingsSwitchTile(
+                  icon: Icons.bedtime_off_outlined,
+                  title: 'Prevent suspend during SSH sessions',
+                  subtitleText: Platform.isLinux
+                      ? 'Hold a systemd-logind sleep inhibitor while at '
+                            'least one SSH session is connected so the '
+                            'system does not auto-suspend mid-session.'
+                      : Platform.isWindows
+                      ? 'Use SetThreadExecutionState to keep Windows '
+                            'awake while at least one SSH session is '
+                            'connected so the system does not '
+                            'auto-suspend mid-session.'
+                      : 'Hold a PARTIAL_WAKE_LOCK while at least one SSH '
+                            'session is connected so the CPU does not '
+                            'sleep mid-session when the screen turns off.',
+                  value: settings.preventSuspendDuringSshSessions,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setPreventSuspendDuringSshSessions(v);
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.settingsUpdated,
+                    );
+                  },
                 ),
-                const _MasterKeyStorageTile(),
               ],
             ),
-            Spacing.verticalLg,
           ],
-        ),
-        loading: () =>
-            const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) =>
-            Center(child: Text(l10n.error(errorMessage(error)))),
+
+          // Status section
+          Spacing.verticalLg,
+          SectionHeader(title: l10n.settingsSectionStatus),
+          SettingsGroupCard(
+            children: [
+              Semantics(
+                label:
+                    '${l10n.settingsFailedAttempts}: ${settings.failedPinAttempts}',
+                child: SettingsTile(
+                  icon: Icons.warning_amber_outlined,
+                  title: l10n.settingsFailedAttempts,
+                  subtitleText: settings.failedPinAttempts.toString(),
+                ),
+              ),
+              const _MasterKeyStorageTile(),
+            ],
+          ),
+          Spacing.verticalLg,
+        ],
       ),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+      error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
     );
   }
 }
@@ -513,7 +487,6 @@ class _BiometricTile extends ConsumerWidget {
 
     return SettingsSwitchTile(
       icon: Icons.fingerprint,
-      iconColor: AppColors.iconGreen,
       title: l10n.settingsBiometricUnlock,
       subtitleText: subtitleText,
       value: settings.biometricUnlock,
@@ -564,7 +537,6 @@ class _PinTile extends ConsumerWidget {
 
     return SettingsTile(
       icon: Icons.pin,
-      iconColor: AppColors.iconIndigo,
       title: l10n.settingsPinCode,
       subtitleText: settings.hasPin
           ? l10n.settingsPinIsSet
@@ -633,7 +605,6 @@ class _DuressPinTile extends ConsumerWidget {
 
     return SettingsTile(
       icon: Icons.dangerous_outlined,
-      iconColor: AppColors.iconRed,
       title: l10n.settingsDuressPin,
       subtitleText: settings.hasDuressPin
           ? l10n.settingsDuressPinSet
@@ -726,7 +697,16 @@ class _MasterKeyStorageTileState extends ConsumerState<_MasterKeyStorageTile> {
 
   void _refresh() {
     final keyring = ref.read(keyringServiceProvider);
-    setState(() => _backendFuture = keyring.currentBackend());
+    // `setState(() => _backendFuture = keyring.currentBackend())` looks
+    // fine but isn't: an arrow closure's body is an expression, and an
+    // assignment expression evaluates to its right-hand value â€” so that
+    // closure actually returns the Future, which trips Flutter's "setState
+    // callback returned a Future" assertion. Compute the future first,
+    // then only assign inside setState's (block-bodied) callback.
+    final future = keyring.currentBackend();
+    setState(() {
+      _backendFuture = future;
+    });
   }
 
   @override
@@ -755,7 +735,6 @@ class _MasterKeyStorageTileState extends ConsumerState<_MasterKeyStorageTile> {
 
         return SettingsTile(
           icon: Icons.key,
-          iconColor: AppColors.iconAmber,
           title: 'Master key stored in',
           subtitleText: subtitle,
           trailing: showReStoreButton

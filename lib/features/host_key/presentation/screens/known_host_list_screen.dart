@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/error/failures.dart';
-import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/core/widgets/settings/settings.dart';
 import 'package:sshvault/features/host_key/domain/entities/known_host_entity.dart';
 import 'package:sshvault/features/host_key/presentation/providers/known_host_providers.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
@@ -16,35 +16,41 @@ class KnownHostListScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final hostsAsync = ref.watch(knownHostListProvider);
 
-    return AdaptiveScaffold(
-      title: l10n.knownHostsTitle,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.delete_sweep),
-          tooltip: l10n.hostKeyDeleteAll,
-          onPressed: () => _confirmDeleteAll(context, ref, l10n),
+    return Column(
+      children: [
+        SettingsPaneHeader(
+          title: l10n.knownHostsTitle,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.delete_sweep),
+              tooltip: l10n.hostKeyDeleteAll,
+              onPressed: () => _confirmDeleteAll(context, ref, l10n),
+            ),
+          ],
         ),
-      ],
-      body: hostsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(l10n.error(errorMessage(e)))),
-        data: (hosts) {
-          if (hosts.isEmpty) {
-            return _EmptyState(l10n: l10n);
-          }
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: Spacing.sm),
-            itemCount: hosts.length,
-            itemBuilder: (context, index) {
-              final host = hosts[index];
-              return _KnownHostTile(
-                host: host,
-                onDelete: () => _deleteHost(ref, host.id),
+        Expanded(
+          child: hostsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) => Center(child: Text(l10n.error(errorMessage(e)))),
+            data: (hosts) {
+              if (hosts.isEmpty) {
+                return _EmptyState(l10n: l10n);
+              }
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: Spacing.sm),
+                itemCount: hosts.length,
+                itemBuilder: (context, index) {
+                  final host = hosts[index];
+                  return _KnownHostTile(
+                    host: host,
+                    onDelete: () => _deleteHost(ref, host.id),
+                  );
+                },
               );
             },
-          );
-        },
-      ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -60,10 +66,15 @@ class KnownHostListScreen extends ConsumerWidget {
         content: Text(l10n.hostKeyDeleteConfirm),
         actions: [
           TextButton(
+            autofocus: true,
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(l10n.cancel),
           ),
           FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+              foregroundColor: Theme.of(ctx).colorScheme.onError,
+            ),
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(l10n.delete),
           ),

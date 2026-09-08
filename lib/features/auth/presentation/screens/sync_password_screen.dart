@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sshvault/core/network/api_provider.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
+import 'package:sshvault/features/auth/presentation/providers/auth_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:sshvault/features/sync/presentation/widgets/first_sync_dialog.dart';
@@ -224,6 +225,18 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
                           )
                         : Text(l10n.save),
                   ),
+                  // Only real way off this screen before now was finishing
+                  // the form — correct for "enter" mode (the password IS
+                  // the decryption key, there is no safe bypass), but a
+                  // genuine dead end if you forgot it or, in "create" mode,
+                  // changed your mind about setting up sync at all. Logging
+                  // out is the safe escape: it never touches the sync
+                  // password or vault, unlike a bypass would.
+                  Spacing.verticalSm,
+                  TextButton(
+                    onPressed: formState.saving ? null : _cancel,
+                    child: Text(l10n.cancel),
+                  ),
                 ],
               ),
             ),
@@ -277,6 +290,11 @@ class _SyncPasswordScreenState extends ConsumerState<SyncPasswordScreen> {
         ref.read(_syncPasswordFormProvider.notifier).setSaving(false);
       }
     }
+  }
+
+  Future<void> _cancel() async {
+    await ref.read(authProvider.notifier).logout(deleteLocalData: false);
+    if (mounted) context.go('/login');
   }
 
   Future<void> _handleFirstSync(String password) async {

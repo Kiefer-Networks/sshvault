@@ -10,6 +10,7 @@ import 'package:sshvault/core/constants/color_constants.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
 import 'package:sshvault/core/constants/icon_constants.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
+import 'package:sshvault/core/widgets/settings/settings_pane_header.dart';
 import 'package:sshvault/features/connection/domain/entities/auth_method.dart';
 import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
 import 'package:sshvault/features/connection/domain/entities/server_credentials.dart';
@@ -94,7 +95,22 @@ final _serverFormStateProvider =
 class ServerFormScreen extends ConsumerStatefulWidget {
   final String? serverId;
 
-  const ServerFormScreen({super.key, this.serverId});
+  /// True when rendered inline inside the Hosts master/detail pane
+  /// (`HostsMasterDetail`) instead of as its own pushed `/server/new` or
+  /// `/server/:id/edit` route. Swaps the AppBar for a slim in-pane header
+  /// with the same actions, and calls [onSaved]/[onCancel] instead of
+  /// popping a route that was never pushed.
+  final bool embedded;
+  final VoidCallback? onSaved;
+  final VoidCallback? onCancel;
+
+  const ServerFormScreen({
+    super.key,
+    this.serverId,
+    this.embedded = false,
+    this.onSaved,
+    this.onCancel,
+  });
 
   bool get isEditing => serverId != null;
 
@@ -209,7 +225,318 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
 
     final l10n = AppLocalizations.of(context)!;
 
+    final formContent = Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: ListView(
+            padding: Spacing.paddingAllLg,
+            children: [
+              SectionCard(
+                padding: Spacing.paddingAllLg,
+                child: Column(
+                  children: [
+                    ServerFormFields(
+                      nameController: _nameController,
+                      hostnameController: _hostnameController,
+                      portController: _portController,
+                      usernameController: _usernameController,
+                      passwordController: _passwordController,
+                      notesController: _notesController,
+                      authMethod: formState.authMethod,
+                      onAuthMethodChanged: (m) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(authMethod: m),
+                      selectedSshKeyId: formState.sshKeyId,
+                      onSshKeyChanged: (id) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(sshKeyId: () => id),
+                    ),
+                    Spacing.verticalLg,
+                    JumpHostSelector(
+                      currentServerId: widget.serverId,
+                      selectedJumpHostId: formState.jumpHostId,
+                      onChanged: (id) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(jumpHostId: () => id),
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.verticalLg,
+
+              SectionCard(
+                padding: Spacing.paddingAllLg,
+                child: Column(
+                  children: [
+                    Builder(
+                      builder: (context) {
+                        final folderName = foldersAsync.whenOrNull(
+                          data: (folders) => folders
+                              .where((f) => f.id == formState.groupId)
+                              .firstOrNull
+                              ?.name,
+                        );
+                        return ListTile(
+                          leading: const Icon(Icons.folder_outlined),
+                          title: Text(folderName ?? l10n.serverNoFolder),
+                          subtitle: Text(l10n.navFolders),
+                          trailing: const Icon(Icons.chevron_right),
+                          contentPadding: EdgeInsets.zero,
+                          onTap: () async {
+                            final result = await FolderTreePicker.show(
+                              context,
+                              selectedFolderId: formState.groupId,
+                            );
+                            if (result != formState.groupId) {
+                              ref
+                                  .read(_serverFormStateProvider.notifier)
+                                  .state = formState.copyWith(
+                                groupId: () => result,
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    Spacing.verticalLg,
+
+                    TagSelector(
+                      selectedTagIds: formState.selectedTagIds,
+                      onChanged: (ids) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(selectedTagIds: ids),
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.verticalLg,
+
+              // Proxy Section
+              SectionCard(
+                padding: Spacing.paddingAllLg,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.proxySettings,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    Spacing.verticalMd,
+                    SwitchListTile(
+                      title: Text(l10n.proxyUseGlobal),
+                      value: formState.useGlobalProxy,
+                      contentPadding: EdgeInsets.zero,
+                      onChanged: (v) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(useGlobalProxy: v),
+                    ),
+                    if (!formState.useGlobalProxy) ...[
+                      Spacing.verticalSm,
+                      DropdownMenu<ProxyType>(
+                        initialSelection: formState.proxyType,
+                        label: Text(l10n.proxyType),
+                        expandedInsets: EdgeInsets.zero,
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(
+                            value: ProxyType.none,
+                            label: l10n.proxyNone,
+                          ),
+                          DropdownMenuEntry(
+                            value: ProxyType.socks5,
+                            label: l10n.proxySocks5,
+                          ),
+                          DropdownMenuEntry(
+                            value: ProxyType.httpConnect,
+                            label: l10n.proxyHttpConnect,
+                          ),
+                        ],
+                        onSelected: (v) =>
+                            ref.read(_serverFormStateProvider.notifier).state =
+                                formState.copyWith(proxyType: v),
+                      ),
+                      if (formState.proxyType != ProxyType.none) ...[
+                        Spacing.verticalMd,
+                        TextFormField(
+                          controller: _proxyHostController,
+                          decoration: InputDecoration(
+                            labelText: l10n.proxyHost,
+                            hintText: l10n.hintExampleProxyHost,
+                          ),
+                        ),
+                        Spacing.verticalMd,
+                        TextFormField(
+                          controller: _proxyPortController,
+                          decoration: InputDecoration(
+                            labelText: l10n.proxyPort,
+                            hintText: l10n.hintExampleProxyPort,
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                        Spacing.verticalMd,
+                        TextFormField(
+                          controller: _proxyUsernameController,
+                          decoration: InputDecoration(
+                            labelText: l10n.proxyUsername,
+                          ),
+                        ),
+                        Spacing.verticalMd,
+                        TextFormField(
+                          controller: _proxyPasswordController,
+                          decoration: InputDecoration(
+                            labelText: l10n.proxyPassword,
+                          ),
+                          obscureText: true,
+                        ),
+                      ],
+                    ],
+                    Spacing.verticalSm,
+                    SwitchListTile(
+                      title: Text(l10n.vpnRequired),
+                      subtitle: Text(l10n.vpnRequiredTooltip),
+                      value: formState.requiresVpn,
+                      contentPadding: EdgeInsets.zero,
+                      onChanged: (v) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(requiresVpn: v),
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.verticalLg,
+
+              // Post-Connect Commands
+              SectionCard(
+                padding: Spacing.paddingAllLg,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.postConnectCommands,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    Spacing.verticalXxs,
+                    Text(
+                      l10n.postConnectCommandsSubtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface
+                            .withAlpha(AppConstants.alpha153),
+                      ),
+                    ),
+                    Spacing.verticalMd,
+                    TextFormField(
+                      controller: _postConnectController,
+                      decoration: InputDecoration(
+                        hintText: l10n.postConnectCommandsHint,
+                      ),
+                      minLines: 2,
+                      maxLines: 5,
+                      keyboardType: TextInputType.multiline,
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.verticalLg,
+
+              SectionCard(
+                padding: Spacing.paddingAllLg,
+                child: Column(
+                  children: [
+                    ColorPickerField(
+                      selectedColor: formState.color,
+                      onColorChanged: (c) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(color: c),
+                    ),
+                    Spacing.verticalLg,
+
+                    IconPickerField(
+                      selectedIcon: formState.iconName,
+                      onIconChanged: (i) =>
+                          ref.read(_serverFormStateProvider.notifier).state =
+                              formState.copyWith(iconName: i),
+                      accentColor: formState.color,
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.verticalXxxl,
+            ],
+          ),
+        ),
+      ),
+    );
+    final saveButton = Tooltip(
+      message: l10n.save,
+      child: formState.saving
+          ? const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            )
+          : TextButton(onPressed: _save, child: Text(l10n.save)),
+    );
+
+    if (widget.embedded) {
+      return Column(
+        children: [
+          SettingsPaneHeader(
+            title: widget.isEditing
+                ? (_nameController.text.isEmpty
+                      ? l10n.serverFormTitleEdit
+                      : _nameController.text)
+                : l10n.serverFormTitleAdd,
+            actions: [
+              if (widget.isEditing) ...[
+                Text(l10n.serverActive),
+                Switch(
+                  value: formState.isActive,
+                  onChanged: (v) =>
+                      ref.read(_serverFormStateProvider.notifier).state =
+                          formState.copyWith(isActive: v),
+                ),
+                const SizedBox(width: 8),
+              ],
+              if (widget.onCancel != null)
+                TextButton(
+                  onPressed: widget.onCancel,
+                  child: Text(l10n.cancel),
+                ),
+              saveButton,
+            ],
+          ),
+          Expanded(child: formContent),
+        ],
+      );
+    }
+
     return AdaptiveScaffold.withAppBar(
+      breadcrumb: [
+        BreadcrumbSegment(
+          l10n.navHosts,
+          onTap: () => context.canPop() ? context.pop() : context.go('/'),
+        ),
+        if (widget.isEditing)
+          BreadcrumbSegment(
+            _nameController.text.isEmpty
+                ? l10n.serverFormTitleEdit
+                : _nameController.text,
+            // Deterministic jump to the detail screen regardless of how
+            // this edit form was actually reached (detail's edit icon,
+            // the list's own menu, or the command palette all land here
+            // the same way, but only one of those pushed through detail
+            // first — a plain pop() would be inconsistent).
+            onTap: () => context.go('/server/${widget.serverId}'),
+          ),
+        BreadcrumbSegment(
+          widget.isEditing ? l10n.edit : l10n.serverFormTitleAdd,
+        ),
+      ],
       appBar: AppBar(
         leading: Tooltip(
           message: l10n.close,
@@ -234,267 +561,10 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
                 ),
               ],
             ),
-          Tooltip(
-            message: l10n.save,
-            child: TextButton(
-              onPressed: formState.saving ? null : _save,
-              child: formState.saving
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(l10n.save),
-            ),
-          ),
+          saveButton,
         ],
       ),
-      body: Form(
-        key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600),
-            child: ListView(
-              padding: Spacing.paddingAllLg,
-              children: [
-                SectionCard(
-                  padding: Spacing.paddingAllLg,
-                  child: Column(
-                    children: [
-                      ServerFormFields(
-                        nameController: _nameController,
-                        hostnameController: _hostnameController,
-                        portController: _portController,
-                        usernameController: _usernameController,
-                        passwordController: _passwordController,
-                        notesController: _notesController,
-                        authMethod: formState.authMethod,
-                        onAuthMethodChanged: (m) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(authMethod: m),
-                        selectedSshKeyId: formState.sshKeyId,
-                        onSshKeyChanged: (id) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(sshKeyId: () => id),
-                      ),
-                      Spacing.verticalLg,
-                      JumpHostSelector(
-                        currentServerId: widget.serverId,
-                        selectedJumpHostId: formState.jumpHostId,
-                        onChanged: (id) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(jumpHostId: () => id),
-                      ),
-                    ],
-                  ),
-                ),
-                Spacing.verticalLg,
-
-                SectionCard(
-                  padding: Spacing.paddingAllLg,
-                  child: Column(
-                    children: [
-                      Builder(
-                        builder: (context) {
-                          final folderName = foldersAsync.whenOrNull(
-                            data: (folders) => folders
-                                .where((f) => f.id == formState.groupId)
-                                .firstOrNull
-                                ?.name,
-                          );
-                          return ListTile(
-                            leading: const Icon(Icons.folder_outlined),
-                            title: Text(folderName ?? l10n.serverNoFolder),
-                            subtitle: Text(l10n.navFolders),
-                            trailing: const Icon(Icons.chevron_right),
-                            contentPadding: EdgeInsets.zero,
-                            onTap: () async {
-                              final result = await FolderTreePicker.show(
-                                context,
-                                selectedFolderId: formState.groupId,
-                              );
-                              if (result != formState.groupId) {
-                                ref
-                                    .read(_serverFormStateProvider.notifier)
-                                    .state = formState.copyWith(
-                                  groupId: () => result,
-                                );
-                              }
-                            },
-                          );
-                        },
-                      ),
-                      Spacing.verticalLg,
-
-                      TagSelector(
-                        selectedTagIds: formState.selectedTagIds,
-                        onChanged: (ids) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(selectedTagIds: ids),
-                      ),
-                    ],
-                  ),
-                ),
-                Spacing.verticalLg,
-
-                // Proxy Section
-                SectionCard(
-                  padding: Spacing.paddingAllLg,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.proxySettings,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      Spacing.verticalMd,
-                      SwitchListTile(
-                        title: Text(l10n.proxyUseGlobal),
-                        value: formState.useGlobalProxy,
-                        contentPadding: EdgeInsets.zero,
-                        onChanged: (v) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(useGlobalProxy: v),
-                      ),
-                      if (!formState.useGlobalProxy) ...[
-                        Spacing.verticalSm,
-                        DropdownMenu<ProxyType>(
-                          initialSelection: formState.proxyType,
-                          label: Text(l10n.proxyType),
-                          expandedInsets: EdgeInsets.zero,
-                          dropdownMenuEntries: [
-                            DropdownMenuEntry(
-                              value: ProxyType.none,
-                              label: l10n.proxyNone,
-                            ),
-                            DropdownMenuEntry(
-                              value: ProxyType.socks5,
-                              label: l10n.proxySocks5,
-                            ),
-                            DropdownMenuEntry(
-                              value: ProxyType.httpConnect,
-                              label: l10n.proxyHttpConnect,
-                            ),
-                          ],
-                          onSelected: (v) =>
-                              ref
-                                  .read(_serverFormStateProvider.notifier)
-                                  .state = formState.copyWith(
-                                proxyType: v,
-                              ),
-                        ),
-                        if (formState.proxyType != ProxyType.none) ...[
-                          Spacing.verticalMd,
-                          TextFormField(
-                            controller: _proxyHostController,
-                            decoration: InputDecoration(
-                              labelText: l10n.proxyHost,
-                              hintText: l10n.hintExampleProxyHost,
-                            ),
-                          ),
-                          Spacing.verticalMd,
-                          TextFormField(
-                            controller: _proxyPortController,
-                            decoration: InputDecoration(
-                              labelText: l10n.proxyPort,
-                              hintText: l10n.hintExampleProxyPort,
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                          Spacing.verticalMd,
-                          TextFormField(
-                            controller: _proxyUsernameController,
-                            decoration: InputDecoration(
-                              labelText: l10n.proxyUsername,
-                            ),
-                          ),
-                          Spacing.verticalMd,
-                          TextFormField(
-                            controller: _proxyPasswordController,
-                            decoration: InputDecoration(
-                              labelText: l10n.proxyPassword,
-                            ),
-                            obscureText: true,
-                          ),
-                        ],
-                      ],
-                      Spacing.verticalSm,
-                      SwitchListTile(
-                        title: Text(l10n.vpnRequired),
-                        subtitle: Text(l10n.vpnRequiredTooltip),
-                        value: formState.requiresVpn,
-                        contentPadding: EdgeInsets.zero,
-                        onChanged: (v) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(requiresVpn: v),
-                      ),
-                    ],
-                  ),
-                ),
-                Spacing.verticalLg,
-
-                // Post-Connect Commands
-                SectionCard(
-                  padding: Spacing.paddingAllLg,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.postConnectCommands,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      Spacing.verticalXxs,
-                      Text(
-                        l10n.postConnectCommandsSubtitle,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface
-                              .withAlpha(AppConstants.alpha153),
-                        ),
-                      ),
-                      Spacing.verticalMd,
-                      TextFormField(
-                        controller: _postConnectController,
-                        decoration: InputDecoration(
-                          hintText: l10n.postConnectCommandsHint,
-                        ),
-                        minLines: 2,
-                        maxLines: 5,
-                        keyboardType: TextInputType.multiline,
-                      ),
-                    ],
-                  ),
-                ),
-                Spacing.verticalLg,
-
-                SectionCard(
-                  padding: Spacing.paddingAllLg,
-                  child: Column(
-                    children: [
-                      ColorPickerField(
-                        selectedColor: formState.color,
-                        onColorChanged: (c) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(color: c),
-                      ),
-                      Spacing.verticalLg,
-
-                      IconPickerField(
-                        selectedIcon: formState.iconName,
-                        onIconChanged: (i) =>
-                            ref.read(_serverFormStateProvider.notifier).state =
-                                formState.copyWith(iconName: i),
-                        accentColor: formState.color,
-                      ),
-                    ],
-                  ),
-                ),
-                Spacing.verticalXxxl,
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: formContent,
     );
   }
 
@@ -576,7 +646,11 @@ class _ServerFormScreenState extends ConsumerState<ServerFormScreen> {
           context,
           message: AppLocalizations.of(context)!.serverSaved,
         );
-        context.pop();
+        if (widget.onSaved != null) {
+          widget.onSaved!();
+        } else {
+          context.pop();
+        }
       }
     } catch (e) {
       if (mounted) {

@@ -22,7 +22,7 @@ import 'package:sshvault/features/settings/presentation/screens/appearance_setti
 import 'package:sshvault/features/settings/presentation/screens/export_settings_screen.dart';
 import 'package:sshvault/features/settings/presentation/screens/network_settings_screen.dart';
 import 'package:sshvault/features/settings/presentation/screens/security_settings_screen.dart';
-import 'package:sshvault/features/settings/presentation/screens/settings_hub_screen.dart';
+import 'package:sshvault/core/routing/settings_shell.dart';
 import 'package:sshvault/features/settings/presentation/screens/ssh_settings_screen.dart';
 import 'package:sshvault/features/snippet/presentation/screens/snippet_detail_screen.dart';
 import 'package:sshvault/features/snippet/presentation/screens/snippet_form_screen.dart';
@@ -31,6 +31,12 @@ import 'package:sshvault/features/sftp/presentation/screens/sftp_browser_screen.
 import 'package:sshvault/features/terminal/presentation/screens/terminal_branch_screen.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
+
+/// The outer [ShellRoute]'s own navigator — server/snippet detail+edit and
+/// `/settings` all live here as siblings, so a global Escape handler can
+/// pop exactly this navigator (keeping the rail on screen) without
+/// guessing whether the root navigator has something poppable too.
+final shellNavigatorKey = GlobalKey<NavigatorState>();
 
 abstract final class AppRouter {
   static final router = GoRouter(
@@ -48,6 +54,7 @@ abstract final class AppRouter {
       // rootNavigatorKey below to bypass this shell entirely.
       // ------------------------------------------------------------------
       ShellRoute(
+        navigatorKey: shellNavigatorKey,
         builder: (context, state, child) {
           return AppShell(location: state.uri.path, child: child);
         },
@@ -130,99 +137,112 @@ abstract final class AppRouter {
             ],
           ),
 
-          // Settings hub + sub-routes — nested here (not under
-          // rootNavigatorKey) so they inherit this ShellRoute's own
-          // navigator and keep the rail visible throughout.
-          GoRoute(
-            path: '/settings',
-            builder: (context, state) => const SettingsHubScreen(),
+          // Settings — a *nested* ShellRoute (its own master/detail tree +
+          // search sidebar) inside this outer one, so the app's main rail
+          // and the settings category tree are both visible together;
+          // selecting a category swaps only the right pane instead of
+          // re-navigating away from Settings. See settings_shell.dart.
+          ShellRoute(
+            builder: (context, state, child) =>
+                SettingsShell(location: state.uri.path, child: child),
             routes: [
               GoRoute(
-                path: 'account',
+                path: '/settings',
+                builder: (context, state) => const SettingsOverviewPane(),
+              ),
+              GoRoute(
+                path: '/settings/account',
                 builder: (context, state) => const AccountSyncScreen(),
               ),
               GoRoute(
-                path: 'security',
+                path: '/settings/security',
                 builder: (context, state) => const SecuritySettingsScreen(),
               ),
               GoRoute(
-                path: 'ssh',
+                path: '/settings/ssh',
                 builder: (context, state) => const SshSettingsScreen(),
               ),
               GoRoute(
-                path: 'appearance',
+                path: '/settings/appearance',
                 builder: (context, state) => const AppearanceSettingsScreen(),
               ),
               GoRoute(
-                path: 'network',
+                path: '/settings/network',
                 builder: (context, state) => const NetworkSettingsScreen(),
               ),
               GoRoute(
-                path: 'export',
+                path: '/settings/export',
                 builder: (context, state) => const ExportSettingsScreen(),
               ),
               GoRoute(
-                path: 'known-hosts',
+                path: '/settings/known-hosts',
                 builder: (context, state) => const KnownHostListScreen(),
               ),
               GoRoute(
-                path: 'import-ssh-config',
-                builder: (context, state) => const SshConfigImportScreen(),
-              ),
-              GoRoute(
-                path: 'about',
+                path: '/settings/about',
                 builder: (context, state) => const AboutScreen(),
               ),
             ],
+          ),
+
+          // Not a category — a one-off import wizard reached FROM Settings,
+          // so it stays a sibling full-bleed pane (still under the app's
+          // main rail) rather than living inside the category tree.
+          GoRoute(
+            path: '/settings/import-ssh-config',
+            builder: (context, state) => const SshConfigImportScreen(),
+          ),
+
+          // Server/snippet detail + edit — siblings of /settings under the
+          // same outer ShellRoute (not parentNavigatorKey: rootNavigatorKey
+          // like before) so the rail stays visible here too, matching how
+          // /settings already works. Each screen still builds its own
+          // Scaffold/AppBar and back control; only the *navigator* they
+          // push onto changed.
+          GoRoute(
+            path: '/server/new',
+            builder: (context, state) => const ServerFormScreen(),
+          ),
+          GoRoute(
+            path: '/server/:id',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return ServerDetailScreen(serverId: id);
+            },
+          ),
+          GoRoute(
+            path: '/server/:id/edit',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return ServerFormScreen(serverId: id);
+            },
+          ),
+          GoRoute(
+            path: '/snippet/new',
+            builder: (context, state) => const SnippetFormScreen(),
+          ),
+          GoRoute(
+            path: '/snippet/:id',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return SnippetDetailScreen(snippetId: id);
+            },
+          ),
+          GoRoute(
+            path: '/snippet/:id/edit',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return SnippetFormScreen(snippetId: id);
+            },
           ),
         ],
       ),
 
       // ------------------------------------------------------------------
-      // Detail routes — outside the shell (root navigator).
+      // Everything below stays outside the shell (root navigator): auth is
+      // pre-account (no host list to show a rail for), and these others are
+      // narrow, transient flows that intentionally take over the window.
       // ------------------------------------------------------------------
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/server/new',
-        builder: (context, state) => const ServerFormScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/server/:id',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return ServerDetailScreen(serverId: id);
-        },
-      ),
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/server/:id/edit',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return ServerFormScreen(serverId: id);
-        },
-      ),
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/snippet/new',
-        builder: (context, state) => const SnippetFormScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/snippet/:id',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return SnippetDetailScreen(snippetId: id);
-        },
-      ),
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/snippet/:id/edit',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return SnippetFormScreen(snippetId: id);
-        },
-      ),
 
       // Auth routes
       GoRoute(

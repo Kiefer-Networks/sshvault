@@ -51,6 +51,7 @@ Future<FirstSyncStrategy?> showFirstSyncDialog(BuildContext context) {
       ),
       actions: [
         TextButton(
+          autofocus: true,
           onPressed: () => Navigator.pop(ctx),
           child: Text(l10n.cancel),
         ),

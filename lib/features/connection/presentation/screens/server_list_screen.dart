@@ -30,7 +30,19 @@ final _hostFolderExpandedProvider = StateProvider.autoDispose
     .family<bool, String>((ref, key) => true);
 
 class ServerListScreen extends ConsumerWidget {
-  const ServerListScreen({super.key});
+  /// Tighter row density for the desktop Hosts master/detail column (see
+  /// `HostsMasterDetail`) — matches the command palette's own row sizing
+  /// instead of the roomier, touch-sized rows this screen renders on
+  /// mobile where it's used full-width.
+  final bool dense;
+
+  /// Overrides the "+" FAB's action (desktop master/detail only) — used to
+  /// open the inline create form in the detail pane instead of the
+  /// mobile/default `ServerImportFlow.addServer` (SSH-config bulk-import
+  /// prompt, then a full-screen route).
+  final VoidCallback? onAddPressed;
+
+  const ServerListScreen({super.key, this.dense = false, this.onAddPressed});
 
   static bool get _isDesktop =>
       Platform.isLinux || Platform.isMacOS || Platform.isWindows;
@@ -45,7 +57,10 @@ class ServerListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(serverFilterProvider);
-    final viewMode = ref.watch(viewModeProvider);
+    // The dense master/detail column (HostsMasterDetail) has no room for a
+    // grid — and shouldn't inherit whatever ViewMode the mobile/full-width
+    // screen was last left in — so it always renders the grouped list.
+    final viewMode = dense ? ViewMode.list : ref.watch(viewModeProvider);
     // Folder grouping only makes sense for the list layout. When the user
     // picks the grid view we always show a flat grid so the toggle has a
     // visible effect even without an active filter.
@@ -57,7 +72,7 @@ class ServerListScreen extends ConsumerWidget {
       appBar: buildShellAppBar(
         context,
         title: l10n.serverListTitle,
-        actions: [const ViewModeToggle(), Spacing.horizontalSm],
+        actions: dense ? null : [const ViewModeToggle(), Spacing.horizontalSm],
       ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
@@ -75,19 +90,34 @@ class ServerListScreen extends ConsumerWidget {
             button: true,
             child: Tooltip(
               message: l10n.serverAddButton,
-              child: FloatingActionButton(
-                heroTag: 'addServerFab',
-                tooltip: l10n.serverAddButton,
-                onPressed: () => ServerImportFlow.addServer(context, ref),
-                child: const Icon(Icons.add),
-              ),
+              child: dense
+                  ? FloatingActionButton.small(
+                      heroTag: 'addServerFab',
+                      tooltip: l10n.serverAddButton,
+                      onPressed:
+                          onAddPressed ??
+                          () => ServerImportFlow.addServer(context, ref),
+                      child: const Icon(Icons.add),
+                    )
+                  : FloatingActionButton(
+                      heroTag: 'addServerFab',
+                      tooltip: l10n.serverAddButton,
+                      onPressed:
+                          onAddPressed ??
+                          () => ServerImportFlow.addServer(context, ref),
+                      child: const Icon(Icons.add),
+                    ),
             ),
           ),
         ],
       ),
       body: Column(
         children: [
-          const _DashboardHeader(),
+          // The active-sessions/favorites/recents chip strip doesn't fit a
+          // 300px column, and duplicates what the command palette already
+          // shows (recents when its search is empty) — so it's Ctrl+K's
+          // job here, not this column's.
+          if (!dense) const _DashboardHeader(),
           const ActiveFilterChips(),
           Spacing.verticalSm,
           Expanded(
@@ -167,6 +197,7 @@ class ServerListScreen extends ConsumerWidget {
                       padding: EdgeInsets.only(left: group.depth * Spacing.xxl),
                       child: ServerListTile(
                         server: server,
+                        dense: dense,
                         onTap: () async {
                           if (_isDesktop) {
                             ref
@@ -283,6 +314,7 @@ class ServerListScreen extends ConsumerWidget {
         final server = servers[index];
         return ServerListTile(
           server: server,
+          dense: dense,
           onTap: () async {
             if (_isDesktop) {
               ref.read(desktopSelectedServerIdProvider.notifier).state =

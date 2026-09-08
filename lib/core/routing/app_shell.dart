@@ -17,7 +17,10 @@ import 'package:sshvault/features/settings/presentation/providers/settings_provi
 import 'package:sshvault/features/sync/presentation/providers/sync_providers.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
-import 'package:sshvault/features/connection/presentation/screens/command_deck_home_screen.dart';
+import 'package:sshvault/features/connection/presentation/screens/folders_master_detail.dart';
+import 'package:sshvault/features/connection/presentation/screens/hosts_master_detail.dart';
+import 'package:sshvault/features/connection/presentation/screens/keys_master_detail.dart';
+import 'package:sshvault/features/connection/presentation/screens/tags_master_detail.dart';
 import 'package:sshvault/features/connection/presentation/widgets/command_palette.dart';
 
 /// Breakpoint following Material 3 Compact vs. Medium/Expanded.
@@ -159,6 +162,16 @@ class ShellNavigationRegistrarState
 /// tablet / desktop (>= 600 dp).
 ///
 /// Branch screens can open the drawer via [AppShell.maybeOf(context)].
+const _branchRoots = {
+  '/',
+  '/sftp',
+  '/snippets',
+  '/keys',
+  '/folders',
+  '/tags',
+  '/terminal',
+};
+
 class AppShell extends ConsumerStatefulWidget {
   final String location;
   final Widget child;
@@ -348,7 +361,14 @@ class AppShellState extends ConsumerState<AppShell> {
     // StatefulShellRoute stays mounted underneath), so the rail can keep
     // highlighting where you'll land when you leave Settings.
     final currentIndex = ref.watch(shellNavigationProvider)?.currentIndex ?? 0;
-    final isSettings = widget.location.startsWith('/settings');
+    // Anything under this outer ShellRoute that isn't one of the 7 branch
+    // roots — /settings/*, /server/*, /snippet/* — is a pushed sibling
+    // route: it builds its own full screen and should render as-is instead
+    // of being squeezed into the branch Offstage/IndexedStack machinery
+    // below, exactly like /settings already did before this covered
+    // server/snippet screens too.
+    final isOverlay = !_branchRoots.contains(widget.location);
+    final isSettingsActive = widget.location.startsWith('/settings');
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -366,7 +386,8 @@ class AppShellState extends ConsumerState<AppShell> {
 
         return _DesktopScaffold(
           currentIndex: currentIndex,
-          isSettings: isSettings,
+          isOverlay: isOverlay,
+          isSettingsActive: isSettingsActive,
           onDestinationSelected: _onDestinationSelected,
           sessionCount: sessionCount,
           child: widget.child,
@@ -434,18 +455,34 @@ class _MobileScaffold extends StatelessWidget {
 
 class _DesktopScaffold extends StatelessWidget {
   final int currentIndex;
-  final bool isSettings;
+  final bool isOverlay;
+  final bool isSettingsActive;
   final ValueChanged<int> onDestinationSelected;
   final int sessionCount;
   final Widget child;
 
   const _DesktopScaffold({
     required this.currentIndex,
-    required this.isSettings,
+    required this.isOverlay,
+    required this.isSettingsActive,
     required this.onDestinationSelected,
     required this.sessionCount,
     required this.child,
   });
+
+  /// Branches with a desktop master/detail replacement for their plain
+  /// (mobile-shaped) route content — a list column plus a detail/edit
+  /// pane, matching how Settings already works. Branch indices per
+  /// `app_router.dart`'s `StatefulShellRoute`: 0 Hosts, 3 SSH Keys,
+  /// 4 Folders, 5 Tags. SFTP (1), Snippets (2) and Terminal (6) are
+  /// unchanged.
+  static Widget? _branchSubstitute(int index) => switch (index) {
+    0 => const HostsMasterDetail(),
+    3 => const KeysMasterDetail(),
+    4 => const FoldersMasterDetail(),
+    5 => const TagsMasterDetail(),
+    _ => null,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -459,9 +496,10 @@ class _DesktopScaffold extends StatelessWidget {
     );
 
     // Clamp selectedIndex if a dynamic item is hidden but was selected.
-    // -1 while on Settings so no branch icon falsely shows as active —
-    // _SettingsRailButton carries its own active state instead.
-    final clampedIndex = isSettings
+    // -1 while on an overlay route (Settings, server/snippet detail+edit)
+    // so no branch icon falsely shows as active — _SettingsRailButton
+    // carries its own, separate active state instead.
+    final clampedIndex = isOverlay
         ? -1
         : (currentIndex < items.length ? currentIndex : 0);
 
@@ -476,7 +514,7 @@ class _DesktopScaffold extends StatelessWidget {
             onDestinationSelected: onDestinationSelected,
             sessionCount: sessionCount,
             showTerminal: showTerminal,
-            settingsActive: isSettings,
+            settingsActive: isSettingsActive,
           ),
           VerticalDivider(
             thickness: 1,
@@ -484,23 +522,30 @@ class _DesktopScaffold extends StatelessWidget {
             color: theme.colorScheme.outlineVariant,
           ),
           Expanded(
-            // /settings (and its sub-routes) is a sibling route under the
-            // same outer ShellRoute as the branches — not a child of branch
-            // 0 — so it never needs the Offstage/CommandDeckHomeScreen
-            // substitution below; `child` is already exactly the settings
-            // screen and nothing else is mounted underneath it right now.
-            child: isSettings
+            // /settings and /server|/snippet detail+edit are sibling
+            // routes under the same outer ShellRoute as the branches —
+            // not a child of any branch — so they never need the
+            // Offstage/master-detail substitution below; `child` is
+            // already exactly that screen and nothing else is mounted
+            // underneath it right now.
+            child: isOverlay
                 ? child
-                : Stack(
-                    children: [
-                      // Branch 0's own route (ServerListScreen) stays
-                      // mounted — via Offstage, not omitted — so the
-                      // StatefulShellRoute branch keeps its Navigator/state
-                      // alive for when the window narrows back below the
-                      // mobile breakpoint.
-                      Offstage(offstage: currentIndex == 0, child: child),
-                      if (currentIndex == 0) const CommandDeckHomeScreen(),
-                    ],
+                : Builder(
+                    builder: (context) {
+                      final substitute = _branchSubstitute(currentIndex);
+                      if (substitute == null) return child;
+                      return Stack(
+                        children: [
+                          // The substituted branch's own route stays
+                          // mounted — via Offstage, not omitted — so the
+                          // StatefulShellRoute branch keeps its
+                          // Navigator/state alive for when the window
+                          // narrows back below the mobile breakpoint.
+                          Offstage(offstage: true, child: child),
+                          substitute,
+                        ],
+                      );
+                    },
                   ),
           ),
         ],

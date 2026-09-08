@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:sshvault/core/constants/app_constants.dart';
 import 'package:sshvault/core/constants/spacing_constants.dart';
 import 'package:sshvault/core/services/logging_service.dart';
@@ -238,6 +240,20 @@ class _LockScreenState extends ConsumerState<LockScreen>
     } finally {
       if (mounted) {
         ref.read(_lockStateProvider.notifier).setAuthenticating(false);
+      }
+      // The native Windows Hello / Touch ID prompt is its own top-level OS
+      // window. Cancelling or failing it does not hand keyboard focus back
+      // to SSHVault's window automatically — every key event (including
+      // PIN digits) was silently going nowhere until the user clicked
+      // something first. Explicitly reclaim focus so typing works right
+      // after the prompt closes, success or not.
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        try {
+          await windowManager.focus();
+        } catch (_) {
+          // Best-effort — window_manager may not be ready this early in
+          // some boot paths (e.g. minimized/headless start).
+        }
       }
     }
   }

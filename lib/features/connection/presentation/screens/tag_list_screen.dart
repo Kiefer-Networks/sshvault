@@ -16,11 +16,31 @@ import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog
 import 'package:sshvault/features/connection/presentation/widgets/empty_state.dart';
 
 class TagListScreen extends ConsumerWidget {
-  const TagListScreen({super.key});
+  /// Tighter rows for the desktop Tags master/detail column — see
+  /// `TagsMasterDetail`.
+  final bool dense;
+
+  /// When set (desktop master/detail), tapping a tag selects it for the
+  /// detail pane instead of the mobile behavior of jumping to the Hosts
+  /// list pre-filtered by that tag.
+  final ValueChanged<String>? onTagSelected;
+
+  /// Overrides the "+" FAB (desktop master/detail only) to open the
+  /// inline create form in the detail pane instead of the mobile/default
+  /// full-screen `TagFormDialog`.
+  final VoidCallback? onAddPressed;
+
+  const TagListScreen({
+    super.key,
+    this.dense = false,
+    this.onTagSelected,
+    this.onAddPressed,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tagsAsync = ref.watch(tagListProvider);
+    final selectedId = dense ? ref.watch(desktopSelectedTagIdProvider) : null;
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -35,7 +55,7 @@ class TagListScreen extends ConsumerWidget {
         child: FloatingActionButton(
           heroTag: 'addTagFab',
           tooltip: l10n.tagAddButton,
-          onPressed: () => _showTagForm(context, ref),
+          onPressed: onAddPressed ?? () => _showTagForm(context, ref),
           child: const Icon(Icons.add),
         ),
       ),
@@ -64,6 +84,11 @@ class TagListScreen extends ConsumerWidget {
                 label: tag.name,
                 child: _TagTile(
                   tag: tag,
+                  dense: dense,
+                  selected: tag.id == selectedId,
+                  onTap: onTagSelected == null
+                      ? null
+                      : () => onTagSelected!(tag.id),
                   onEdit: () => _showTagForm(context, ref, tag: tag),
                   onDelete: () => _deleteTag(context, ref, tag),
                 ),
@@ -107,11 +132,17 @@ class TagListScreen extends ConsumerWidget {
 
 class _TagTile extends ConsumerWidget {
   final TagEntity tag;
+  final bool dense;
+  final bool selected;
+  final VoidCallback? onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _TagTile({
     required this.tag,
+    this.dense = false,
+    this.selected = false,
+    this.onTap,
     required this.onEdit,
     required this.onDelete,
   });
@@ -123,6 +154,7 @@ class _TagTile extends ConsumerWidget {
     final tagColor = Color(tag.color);
     final serverCountAsync = ref.watch(serverCountByTagProvider(tag.id));
     final snippetCountAsync = ref.watch(snippetCountByTagProvider(tag.id));
+    final iconSize = dense ? 30.0 : 40.0;
 
     return Slidable(
       endActionPane: ActionPane(
@@ -148,19 +180,28 @@ class _TagTile extends ConsumerWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
+          color: selected ? theme.colorScheme.primary.withAlpha(22) : null,
           border: Border(left: BorderSide(color: tagColor, width: 4)),
         ),
         child: ListTile(
+          dense: dense,
+          visualDensity: dense ? VisualDensity.compact : null,
+          contentPadding: dense
+              ? const EdgeInsets.symmetric(horizontal: 12, vertical: 2)
+              : null,
           leading: Container(
-            width: 40,
-            height: 40,
+            width: iconSize,
+            height: iconSize,
             decoration: BoxDecoration(
               color: tagColor.withAlpha(30),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.label, color: tagColor, size: 22),
+            child: Icon(Icons.label, color: tagColor, size: dense ? 16 : 22),
           ),
-          title: Text(tag.name),
+          title: Text(
+            tag.name,
+            style: dense ? const TextStyle(fontSize: 13.5) : null,
+          ),
           subtitle: Builder(
             builder: (_) {
               final serverCount = serverCountAsync.whenOrNull(data: (c) => c);
@@ -202,13 +243,15 @@ class _TagTile extends ConsumerWidget {
               ),
             ],
           ),
-          onTap: () {
-            // Navigate to hosts filtered by this tag
-            ref.read(serverFilterProvider.notifier).state = ServerFilter(
-              tagIds: [tag.id],
-            );
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          },
+          onTap:
+              onTap ??
+              () {
+                // Mobile only: navigate to hosts filtered by this tag.
+                ref.read(serverFilterProvider.notifier).state = ServerFilter(
+                  tagIds: [tag.id],
+                );
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
         ),
       ),
     );

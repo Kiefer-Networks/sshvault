@@ -90,6 +90,7 @@ class _ChmodContentState extends State<_ChmodContent> {
           children: [
             TextField(
               controller: _controller,
+              autofocus: true,
               decoration: InputDecoration(
                 labelText: l10n.sftpChmodOctal,
                 border: const OutlineInputBorder(),

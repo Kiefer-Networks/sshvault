@@ -15,6 +15,7 @@ import 'package:sshvault/features/connection/domain/entities/proxy_config.dart';
 import 'package:sshvault/core/services/vpn_detector_service.dart';
 import 'package:sshvault/core/routing/shell_navigation_provider.dart';
 import 'package:sshvault/core/widgets/settings/section_card.dart';
+import 'package:sshvault/core/widgets/settings/settings_pane_header.dart';
 import 'package:sshvault/features/connection/presentation/providers/folder_providers.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
 import 'package:sshvault/features/connection/presentation/widgets/confirm_dialog.dart';
@@ -28,7 +29,22 @@ import 'package:sshvault/features/terminal/data/services/remote_system_metrics_s
 class ServerDetailScreen extends ConsumerWidget {
   final String serverId;
 
-  const ServerDetailScreen({super.key, required this.serverId});
+  /// True when rendered inline inside the Hosts master/detail pane
+  /// (`HostsMasterDetail`) instead of as its own pushed `/server/:id`
+  /// route. Swaps the AppBar/FAB chrome for a slim in-pane header with the
+  /// same actions, and routes Edit/Delete through the pane-local callbacks
+  /// instead of the router.
+  final bool embedded;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDeleted;
+
+  const ServerDetailScreen({
+    super.key,
+    required this.serverId,
+    this.embedded = false,
+    this.onEdit,
+    this.onDeleted,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,46 +62,42 @@ class ServerDetailScreen extends ConsumerWidget {
       }
     }
 
-    return AdaptiveScaffold.withAppBar(
-      appBar: AppBar(
-        title: Text(l10n.serverDetailTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => context.push('/server/$serverId/edit'),
-          ),
-          IconButton(
-            icon: Icon(Icons.delete, color: theme.colorScheme.error),
-            onPressed: () async {
-              final confirmed = await ConfirmDialog.show(
-                context,
-                title: l10n.serverDeleteTitle,
-                message: l10n.serverDetailDeleteMessage,
-              );
-              if (confirmed == true && context.mounted) {
-                await ref
-                    .read(serverListProvider.notifier)
-                    .deleteServer(serverId);
-                if (context.mounted) context.pop();
-              }
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'connectFab',
-        onPressed: connect,
-        icon: const Icon(Icons.terminal),
-        label: Text(l10n.serverConnect),
-      ),
-      body: serverAsync.when(
-        data: (server) {
-          return SingleChildScrollView(
-            padding: Spacing.paddingAllLg,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Card
+    Future<void> delete() async {
+      final confirmed = await ConfirmDialog.show(
+        context,
+        title: l10n.serverDeleteTitle,
+        message: l10n.serverDetailDeleteMessage,
+      );
+      if (confirmed != true || !context.mounted) return;
+      await ref.read(serverListProvider.notifier).deleteServer(serverId);
+      if (!context.mounted) return;
+      if (onDeleted != null) {
+        onDeleted!();
+      } else {
+        context.pop();
+      }
+    }
+
+    void edit() {
+      if (onEdit != null) {
+        onEdit!();
+      } else {
+        context.push('/server/$serverId/edit');
+      }
+    }
+
+    final content = serverAsync.when(
+      data: (server) {
+        return SingleChildScrollView(
+          padding: embedded ? Spacing.paddingAllMd : Spacing.paddingAllLg,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header card — skipped when embedded: the pane header
+              // above (SettingsPaneHeader) already shows the name and the
+              // Connect/Edit/Delete actions, so this big avatar+name card
+              // was pure duplication sitting right underneath it.
+              if (!embedded) ...[
                 SectionCard(
                   padding: Spacing.paddingAllXl,
                   child: Row(
@@ -143,191 +155,254 @@ class ServerDetailScreen extends ConsumerWidget {
                   ),
                 ),
                 Spacing.verticalLg,
+              ],
 
-                // Connection Info
-                SectionCard(
-                  padding: Spacing.paddingAllLg,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.serverDetailConnection,
-                        style: theme.textTheme.titleSmall,
-                      ),
-                      Spacing.verticalMd,
-                      InfoRow(
-                        icon: Icons.dns_outlined,
-                        label: l10n.serverDetailHost,
-                        value: server.hostname,
-                        onTap: () => _copy(context, ref, server.hostname),
-                      ),
-                      InfoRow(
-                        icon: Icons.numbers,
-                        label: l10n.serverDetailPort,
-                        value: server.port.toString(),
-                      ),
-                      InfoRow(
-                        icon: Icons.person_outline,
-                        label: l10n.serverDetailUsername,
-                        value: server.username,
-                        onTap: () => _copy(context, ref, server.username),
-                      ),
-                      if (server.jumpHostId != null)
-                        _JumpHostInfoRow(jumpHostId: server.jumpHostId!),
-                    ],
-                  ),
-                ),
-
-                // Proxy
-                if (server.proxyType != ProxyType.none ||
-                    server.useGlobalProxy) ...[
-                  Spacing.verticalLg,
-                  SectionCard(
-                    padding: Spacing.paddingAllLg,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.proxySettings,
-                          style: theme.textTheme.titleSmall,
-                        ),
-                        Spacing.verticalMd,
-                        if (server.useGlobalProxy &&
-                            server.proxyType == ProxyType.none)
-                          InfoRow(
-                            icon: Icons.public,
-                            label: l10n.proxyType,
-                            value: l10n.proxyGlobal,
-                          )
-                        else ...[
-                          InfoRow(
-                            icon: Icons.vpn_key_outlined,
-                            label: l10n.proxyType,
-                            value: switch (server.proxyType) {
-                              ProxyType.socks5 => l10n.proxySocks5,
-                              ProxyType.httpConnect => l10n.proxyHttpConnect,
-                              ProxyType.none => l10n.proxyNone,
-                            },
-                          ),
-                          if (server.proxyHost.isNotEmpty)
-                            InfoRow(
-                              icon: Icons.dns_outlined,
-                              label: l10n.proxyHost,
-                              value: '${server.proxyHost}:${server.proxyPort}',
-                            ),
-                        ],
-                        if (server.requiresVpn)
-                          _VpnStatusRow(serverId: serverId),
-                      ],
+              // Connection Info
+              SectionCard(
+                padding: Spacing.paddingAllLg,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.serverDetailConnection,
+                      style: theme.textTheme.titleSmall,
                     ),
-                  ),
-                ],
-
-                // Folder
-                if (server.groupId != null) ...[
-                  Spacing.verticalLg,
-                  _FolderSection(groupId: server.groupId!),
-                ],
-
-                // Distro
-                _DistroSection(
-                  serverId: serverId,
-                  distroId: server.distroId,
-                  distroName: server.distroName,
+                    Spacing.verticalMd,
+                    InfoRow(
+                      icon: Icons.dns_outlined,
+                      label: l10n.serverDetailHost,
+                      value: server.hostname,
+                      onTap: () => _copy(context, ref, server.hostname),
+                    ),
+                    InfoRow(
+                      icon: Icons.numbers,
+                      label: l10n.serverDetailPort,
+                      value: server.port.toString(),
+                    ),
+                    InfoRow(
+                      icon: Icons.person_outline,
+                      label: l10n.serverDetailUsername,
+                      value: server.username,
+                      onTap: () => _copy(context, ref, server.username),
+                    ),
+                    if (server.jumpHostId != null)
+                      _JumpHostInfoRow(jumpHostId: server.jumpHostId!),
+                  ],
                 ),
+              ),
 
-                if (server.systemMetricsJson != null)
-                  _SystemMetricsSection(raw: server.systemMetricsJson!),
-
+              // Proxy
+              if (server.proxyType != ProxyType.none ||
+                  server.useGlobalProxy) ...[
                 Spacing.verticalLg,
-
-                // Tags
-                if (server.tags.isNotEmpty) ...[
-                  SizedBox(
-                    width: double.infinity,
-                    child: SectionCard(
-                      padding: Spacing.paddingAllLg,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.serverDetailTags,
-                            style: theme.textTheme.titleSmall,
-                          ),
-                          Spacing.verticalSm,
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 4,
-                            children: server.tags
-                                .map((tag) => TagChip(tag: tag))
-                                .toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Spacing.verticalLg,
-                ],
-
-                // Notes
-                if (server.notes.isNotEmpty) ...[
-                  SectionCard(
-                    padding: Spacing.paddingAllLg,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.serverDetailNotes,
-                          style: theme.textTheme.titleSmall,
-                        ),
-                        Spacing.verticalSm,
-                        Text(
-                          server.notes,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withAlpha(
-                              AppConstants.alpha179,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Spacing.verticalLg,
-                ],
-
-                // Metadata
                 SectionCard(
                   padding: Spacing.paddingAllLg,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n.serverDetailInfo,
+                        l10n.proxySettings,
                         style: theme.textTheme.titleSmall,
                       ),
                       Spacing.verticalMd,
-                      InfoRow(
-                        icon: Icons.calendar_today,
-                        label: l10n.serverDetailCreated,
-                        value: formatDate(server.createdAt),
-                      ),
-                      InfoRow(
-                        icon: Icons.update,
-                        label: l10n.serverDetailUpdated,
-                        value: formatDate(server.updatedAt),
-                      ),
+                      if (server.useGlobalProxy &&
+                          server.proxyType == ProxyType.none)
+                        InfoRow(
+                          icon: Icons.public,
+                          label: l10n.proxyType,
+                          value: l10n.proxyGlobal,
+                        )
+                      else ...[
+                        InfoRow(
+                          icon: Icons.vpn_key_outlined,
+                          label: l10n.proxyType,
+                          value: switch (server.proxyType) {
+                            ProxyType.socks5 => l10n.proxySocks5,
+                            ProxyType.httpConnect => l10n.proxyHttpConnect,
+                            ProxyType.none => l10n.proxyNone,
+                          },
+                        ),
+                        if (server.proxyHost.isNotEmpty)
+                          InfoRow(
+                            icon: Icons.dns_outlined,
+                            label: l10n.proxyHost,
+                            value: '${server.proxyHost}:${server.proxyPort}',
+                          ),
+                      ],
+                      if (server.requiresVpn) _VpnStatusRow(serverId: serverId),
                     ],
                   ),
                 ),
               ],
-            ),
-          );
-        },
-        loading: () =>
-            const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) =>
-            Center(child: Text(l10n.error(errorMessage(error)))),
+
+              // Folder
+              if (server.groupId != null) ...[
+                Spacing.verticalLg,
+                _FolderSection(groupId: server.groupId!),
+              ],
+
+              // Distro
+              _DistroSection(
+                serverId: serverId,
+                distroId: server.distroId,
+                distroName: server.distroName,
+              ),
+
+              if (server.systemMetricsJson != null)
+                _SystemMetricsSection(raw: server.systemMetricsJson!),
+
+              Spacing.verticalLg,
+
+              // Tags
+              if (server.tags.isNotEmpty) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: SectionCard(
+                    padding: Spacing.paddingAllLg,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.serverDetailTags,
+                          style: theme.textTheme.titleSmall,
+                        ),
+                        Spacing.verticalSm,
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: server.tags
+                              .map((tag) => TagChip(tag: tag))
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Spacing.verticalLg,
+              ],
+
+              // Notes
+              if (server.notes.isNotEmpty) ...[
+                SectionCard(
+                  padding: Spacing.paddingAllLg,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.serverDetailNotes,
+                        style: theme.textTheme.titleSmall,
+                      ),
+                      Spacing.verticalSm,
+                      Text(
+                        server.notes,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withAlpha(
+                            AppConstants.alpha179,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Spacing.verticalLg,
+              ],
+
+              // Metadata
+              SectionCard(
+                padding: Spacing.paddingAllLg,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.serverDetailInfo,
+                      style: theme.textTheme.titleSmall,
+                    ),
+                    Spacing.verticalMd,
+                    InfoRow(
+                      icon: Icons.calendar_today,
+                      label: l10n.serverDetailCreated,
+                      value: formatDate(server.createdAt),
+                    ),
+                    InfoRow(
+                      icon: Icons.update,
+                      label: l10n.serverDetailUpdated,
+                      value: formatDate(server.updatedAt),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+      error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
+    );
+
+    if (embedded) {
+      return Column(
+        children: [
+          SettingsPaneHeader(
+            title: serverAsync.value?.name ?? l10n.serverDetailTitle,
+            actions: [
+              if (serverAsync.value != null) ...[
+                StatusBadge(isActive: serverAsync.value!.isActive),
+                const SizedBox(width: 12),
+              ],
+              IconButton(
+                tooltip: l10n.serverConnect,
+                icon: const Icon(Icons.terminal),
+                onPressed: connect,
+              ),
+              IconButton(
+                tooltip: l10n.edit,
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: edit,
+              ),
+              IconButton(
+                tooltip: l10n.delete,
+                icon: Icon(
+                  Icons.delete_outline,
+                  color: theme.colorScheme.error,
+                ),
+                onPressed: delete,
+              ),
+            ],
+          ),
+          Expanded(child: content),
+        ],
+      );
+    }
+
+    return AdaptiveScaffold.withAppBar(
+      // The "Hosts" segment pops back to whatever list this was opened
+      // from (Hosts, Folders, or the command palette) rather than jumping
+      // to the Hosts branch specifically — this screen is a pushed sibling
+      // route, not a child of that branch, so goBranch wouldn't dismiss it.
+      breadcrumb: [
+        BreadcrumbSegment(
+          l10n.navHosts,
+          onTap: () => context.canPop() ? context.pop() : context.go('/'),
+        ),
+        BreadcrumbSegment(serverAsync.value?.name ?? l10n.serverDetailTitle),
+      ],
+      appBar: AppBar(
+        title: Text(l10n.serverDetailTitle),
+        actions: [
+          IconButton(icon: const Icon(Icons.edit), onPressed: edit),
+          IconButton(
+            icon: Icon(Icons.delete, color: theme.colorScheme.error),
+            onPressed: delete,
+          ),
+        ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'connectFab',
+        onPressed: connect,
+        icon: const Icon(Icons.terminal),
+        label: Text(l10n.serverConnect),
+      ),
+      body: content,
     );
   }
 

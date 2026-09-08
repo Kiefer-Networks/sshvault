@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sshvault/core/widgets/settings/circle_icon.dart';
+import 'package:sshvault/core/widgets/settings/settings_row.dart';
 
 class SettingsCategoryTile extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
   final String title;
   final String? subtitle;
   final VoidCallback? onTap;
@@ -11,7 +10,6 @@ class SettingsCategoryTile extends StatelessWidget {
   const SettingsCategoryTile({
     super.key,
     required this.icon,
-    required this.iconColor,
     required this.title,
     this.subtitle,
     this.onTap,
@@ -22,21 +20,13 @@ class SettingsCategoryTile extends StatelessWidget {
     return Semantics(
       label: subtitle != null ? '$title, $subtitle' : title,
       button: true,
-      child: ListTile(
-        leading: CircleIcon(icon: icon, color: iconColor),
+      child: SettingsRow(
+        icon: icon,
         title: Text(title),
-        subtitle: subtitle != null
-            ? Text(
-                subtitle!,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              )
-            : null,
+        subtitle: subtitle != null ? Text(subtitle!) : null,
         trailing: Icon(
           Icons.chevron_right,
+          size: 18,
           color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
         onTap: onTap,

@@ -131,6 +131,7 @@ class _FilePreviewDialogState extends ConsumerState<FilePreviewDialog> {
         children: [
           Expanded(child: Text(l10n.sftpFilePreview)),
           IconButton(
+            autofocus: true,
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.pop(context),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:sshvault/core/utils/auto_sync_mixin.dart';
 import 'package:sshvault/features/connection/domain/entities/group_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/repository_providers.dart';
@@ -7,6 +8,14 @@ final folderListProvider =
     AsyncNotifierProvider<FolderListNotifier, List<GroupEntity>>(
       FolderListNotifier.new,
     );
+
+/// Folder currently selected for the desktop Folders master/detail pane.
+/// Mirrors `desktopSelectedServerIdProvider`'s own purpose for Hosts.
+final desktopSelectedFolderIdProvider = StateProvider<String?>((ref) => null);
+
+/// True while the Folders master/detail pane's "+" is showing the inline
+/// create form instead of an existing folder's detail/edit view.
+final foldersCreatingProvider = StateProvider<bool>((ref) => false);
 
 class FolderListNotifier extends AsyncNotifier<List<GroupEntity>>
     with AutoSyncMixin {

@@ -71,6 +71,7 @@ class _ExportPasswordDialogState extends ConsumerState<ExportPasswordDialog> {
           Spacing.verticalLg,
           TextFormField(
             controller: _passwordController,
+            autofocus: true,
             obscureText: visibility.obscurePassword,
             decoration: InputDecoration(
               labelText: l10n.exportPasswordLabel,

@@ -14,6 +14,7 @@ import 'package:sshvault/core/constants/icon_constants.dart';
 import 'package:sshvault/features/connection/domain/entities/server_entity.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_reachability_provider.dart';
 import 'package:sshvault/features/connection/presentation/providers/server_providers.dart';
+import 'package:sshvault/features/connection/presentation/widgets/server_refresh_action.dart';
 import 'package:sshvault/features/connection/presentation/widgets/tag_chip.dart';
 import 'package:sshvault/features/terminal/domain/entities/ssh_session_entity.dart';
 import 'package:sshvault/features/terminal/presentation/providers/terminal_providers.dart';
@@ -27,6 +28,12 @@ class ServerListTile extends ConsumerWidget {
   final VoidCallback? onDetail;
   final VoidCallback? onFavoriteToggle;
 
+  /// Tighter row for the desktop master/detail list columns (Hosts,
+  /// Folders, Tags, Keys) — sized to match the command palette's own row
+  /// density (17px icon, 9-11px padding) rather than the roomier,
+  /// touch-target-sized row this same tile renders on mobile.
+  final bool dense;
+
   const ServerListTile({
     super.key,
     required this.server,
@@ -36,6 +43,7 @@ class ServerListTile extends ConsumerWidget {
     required this.onDelete,
     this.onDetail,
     this.onFavoriteToggle,
+    this.dense = false,
   });
 
   /// `true` when the running platform is iPadOS (iOS + iPad-sized layout).
@@ -104,6 +112,11 @@ class ServerListTile extends ConsumerWidget {
         ],
       ),
       child: ListTile(
+        dense: dense,
+        visualDensity: dense ? VisualDensity.compact : null,
+        contentPadding: dense
+            ? const EdgeInsets.symmetric(horizontal: 12, vertical: 2)
+            : null,
         onTap: () {
           ref.read(desktopSelectedServerIdProvider.notifier).state = server.id;
           onTap();
@@ -114,7 +127,7 @@ class ServerListTile extends ConsumerWidget {
             CircleIcon(
               icon: IconConstants.getIcon(server.iconName),
               color: Color(server.color),
-              size: 44,
+              size: dense ? 30 : 44,
             ),
             Spacing.horizontalXs,
             ConnectionStatusBadge(
@@ -125,7 +138,18 @@ class ServerListTile extends ConsumerWidget {
         ),
         title: Row(
           children: [
-            Expanded(child: Text(server.name, overflow: TextOverflow.ellipsis)),
+            Expanded(
+              child: Text(
+                server.name,
+                overflow: TextOverflow.ellipsis,
+                style: dense
+                    ? const TextStyle(
+                        fontSize: 13.5,
+                        fontFamily: AppConstants.monospaceFontFamily,
+                      )
+                    : null,
+              ),
+            ),
             if (server.requiresVpn) ...[
               Spacing.horizontalXxs,
               Icon(
@@ -144,6 +168,7 @@ class ServerListTile extends ConsumerWidget {
             Text(
               '${server.username}@${server.hostname}:${server.port}',
               style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: dense ? 11 : null,
                 color: theme.colorScheme.onSurface.withAlpha(
                   AppConstants.alpha153,
                 ),
@@ -198,6 +223,8 @@ class ServerListTile extends ConsumerWidget {
                     await ref
                         .read(sessionManagerProvider.notifier)
                         .openSession(server.id);
+                  } else if (action == 'refresh') {
+                    await refreshServerInfo(context, ref, server);
                   }
                 },
                 itemBuilder: (_) => [
@@ -206,6 +233,13 @@ class ServerListTile extends ConsumerWidget {
                     child: ListTile(
                       leading: const Icon(Icons.terminal),
                       title: Text(l10n.serverConnect),
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'refresh',
+                    child: ListTile(
+                      leading: Icon(Icons.refresh),
+                      title: Text('Refresh'),
                     ),
                   ),
                   PopupMenuItem(

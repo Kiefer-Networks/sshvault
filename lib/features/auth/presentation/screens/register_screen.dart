@@ -58,7 +58,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 Spacing.verticalLg,
                 AdaptiveButton.filled(
-                  onPressed: () => context.go('/login'),
+                  // Pop back to wherever registration was opened from
+                  // (e.g. Settings > Account) instead of always resetting
+                  // to a bare /login — go() discarded that history even
+                  // when there was somewhere sensible to return to.
+                  onPressed: () =>
+                      context.canPop() ? context.pop() : context.go('/login'),
                   child: Text(l10n.authLogin),
                 ),
               ],

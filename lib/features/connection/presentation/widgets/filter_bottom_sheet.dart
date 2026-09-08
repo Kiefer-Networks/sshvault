@@ -249,6 +249,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
+                autofocus: true,
                 onPressed: () {
                   Navigator.pop(
                     context,

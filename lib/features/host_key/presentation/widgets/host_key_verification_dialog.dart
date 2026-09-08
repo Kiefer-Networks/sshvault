@@ -71,6 +71,7 @@ class HostKeyVerificationDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
+          autofocus: true,
           onPressed: () => Navigator.of(context).pop(false),
           child: Text(l10n.hostKeyReject),
         ),

@@ -1,8 +1,7 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/services/hidpi_service.dart';
 import 'package:sshvault/core/services/ios_widget_service.dart';
 import 'package:sshvault/core/widgets/adaptive/adaptive.dart';
@@ -23,512 +22,492 @@ class AppearanceSettingsScreen extends ConsumerWidget {
     final settingsAsync = ref.watch(settingsProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    return AdaptiveScaffold(
-      title: l10n.settingsSectionAppearance,
-      body: settingsAsync.when(
-        data: (settings) => ListView(
-          padding: Spacing.paddingHorizontalLgVerticalSm,
-          children: [
-            // Theme & Language
-            Spacing.verticalSm,
-            SectionHeader(title: l10n.settingsSectionAppearance),
-            SettingsGroupCard(
-              children: [
-                Semantics(
-                  label: l10n.settingsTheme,
-                  child: SettingsTile(
-                    icon: Icons.palette_outlined,
-                    iconColor: Theme.of(context).colorScheme.primary,
-                    title: l10n.settingsTheme,
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: Spacing.sm),
-                      child: AdaptiveSegmentedControl<AppThemeMode>(
-                        selected: settings.themeMode,
-                        segments: {
-                          AppThemeMode.system: l10n.settingsThemeSystem,
-                          AppThemeMode.light: l10n.settingsThemeLight,
-                          AppThemeMode.dark: l10n.settingsThemeDark,
-                        },
-                        onChanged: (mode) {
-                          ref
-                              .read(settingsProvider.notifier)
-                              .setThemeMode(mode);
-                          AdaptiveNotification.show(
-                            context,
-                            message: l10n.settingsThemeChanged,
-                          );
-                        },
-                      ),
+    return settingsAsync.when(
+      data: (settings) => ListView(
+        padding: Spacing.paddingHorizontalLgVerticalSm,
+        children: [
+          SettingsPaneHeader(title: l10n.settingsSectionAppearance),
+          // Theme & Language
+          Spacing.verticalSm,
+          SectionHeader(title: l10n.settingsSectionAppearance),
+          SettingsGroupCard(
+            children: [
+              Semantics(
+                label: l10n.settingsTheme,
+                child: SettingsTile(
+                  icon: Icons.palette_outlined,
+                  title: l10n.settingsTheme,
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: Spacing.sm),
+                    child: AdaptiveSegmentedControl<AppThemeMode>(
+                      selected: settings.themeMode,
+                      segments: {
+                        AppThemeMode.system: l10n.settingsThemeSystem,
+                        AppThemeMode.light: l10n.settingsThemeLight,
+                        AppThemeMode.dark: l10n.settingsThemeDark,
+                      },
+                      onChanged: (mode) {
+                        ref.read(settingsProvider.notifier).setThemeMode(mode);
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsThemeChanged,
+                        );
+                      },
                     ),
                   ),
                 ),
-                Semantics(
-                  button: true,
-                  label: l10n.settingsLanguage,
-                  child: SettingsTile(
-                    icon: Icons.language,
-                    iconColor: Theme.of(context).colorScheme.tertiary,
-                    title: l10n.settingsLanguage,
-                    subtitleText: _localeLabel(l10n, settings.locale),
-                    onTap: () async {
-                      final v = await showSettingsSelectionDialog<String>(
-                        context: context,
-                        title: l10n.settingsLanguage,
-                        currentValue: settings.locale.isEmpty
-                            ? ''
-                            : settings.locale,
-                        options: [
-                          SelectionOption(
-                            value: '',
-                            label: l10n.settingsLanguageSystem,
-                          ),
-                          SelectionOption(
-                            value: 'en',
-                            label: l10n.settingsLanguageEn,
-                          ),
-                          SelectionOption(
-                            value: 'ar',
-                            label: l10n.settingsLanguageAr,
-                          ),
-                          SelectionOption(
-                            value: 'cs',
-                            label: l10n.settingsLanguageCs,
-                          ),
-                          SelectionOption(
-                            value: 'da',
-                            label: l10n.settingsLanguageDa,
-                          ),
-                          SelectionOption(
-                            value: 'de',
-                            label: l10n.settingsLanguageDe,
-                          ),
-                          SelectionOption(
-                            value: 'el',
-                            label: l10n.settingsLanguageEl,
-                          ),
-                          SelectionOption(
-                            value: 'es',
-                            label: l10n.settingsLanguageEs,
-                          ),
-                          SelectionOption(
-                            value: 'fi',
-                            label: l10n.settingsLanguageFi,
-                          ),
-                          SelectionOption(
-                            value: 'fr',
-                            label: l10n.settingsLanguageFr,
-                          ),
-                          SelectionOption(
-                            value: 'he',
-                            label: l10n.settingsLanguageHe,
-                          ),
-                          SelectionOption(
-                            value: 'hi',
-                            label: l10n.settingsLanguageHi,
-                          ),
-                          SelectionOption(
-                            value: 'hu',
-                            label: l10n.settingsLanguageHu,
-                          ),
-                          SelectionOption(
-                            value: 'id',
-                            label: l10n.settingsLanguageId,
-                          ),
-                          SelectionOption(
-                            value: 'it',
-                            label: l10n.settingsLanguageIt,
-                          ),
-                          SelectionOption(
-                            value: 'ja',
-                            label: l10n.settingsLanguageJa,
-                          ),
-                          SelectionOption(
-                            value: 'ko',
-                            label: l10n.settingsLanguageKo,
-                          ),
-                          SelectionOption(
-                            value: 'nb',
-                            label: l10n.settingsLanguageNb,
-                          ),
-                          SelectionOption(
-                            value: 'nl',
-                            label: l10n.settingsLanguageNl,
-                          ),
-                          SelectionOption(
-                            value: 'pl',
-                            label: l10n.settingsLanguagePl,
-                          ),
-                          SelectionOption(
-                            value: 'pt',
-                            label: l10n.settingsLanguagePt,
-                          ),
-                          SelectionOption(
-                            value: 'ro',
-                            label: l10n.settingsLanguageRo,
-                          ),
-                          SelectionOption(
-                            value: 'ru',
-                            label: l10n.settingsLanguageRu,
-                          ),
-                          SelectionOption(
-                            value: 'sv',
-                            label: l10n.settingsLanguageSv,
-                          ),
-                          SelectionOption(
-                            value: 'th',
-                            label: l10n.settingsLanguageTh,
-                          ),
-                          SelectionOption(
-                            value: 'tr',
-                            label: l10n.settingsLanguageTr,
-                          ),
-                          SelectionOption(
-                            value: 'uk',
-                            label: l10n.settingsLanguageUk,
-                          ),
-                          SelectionOption(
-                            value: 'vi',
-                            label: l10n.settingsLanguageVi,
-                          ),
-                          SelectionOption(
-                            value: 'zh',
-                            label: l10n.settingsLanguageZh,
-                          ),
-                        ],
-                      );
-                      if (v != null) {
-                        ref.read(settingsProvider.notifier).setLocale(v);
-                        if (context.mounted) {
-                          AdaptiveNotification.show(
-                            context,
-                            message: l10n.settingsLanguageChanged,
-                          );
-                        }
+              ),
+              Semantics(
+                button: true,
+                label: l10n.settingsLanguage,
+                child: SettingsTile(
+                  icon: Icons.language,
+                  title: l10n.settingsLanguage,
+                  subtitleText: _localeLabel(l10n, settings.locale),
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<String>(
+                      context: context,
+                      title: l10n.settingsLanguage,
+                      currentValue: settings.locale.isEmpty
+                          ? ''
+                          : settings.locale,
+                      options: [
+                        SelectionOption(
+                          value: '',
+                          label: l10n.settingsLanguageSystem,
+                        ),
+                        SelectionOption(
+                          value: 'en',
+                          label: l10n.settingsLanguageEn,
+                        ),
+                        SelectionOption(
+                          value: 'ar',
+                          label: l10n.settingsLanguageAr,
+                        ),
+                        SelectionOption(
+                          value: 'cs',
+                          label: l10n.settingsLanguageCs,
+                        ),
+                        SelectionOption(
+                          value: 'da',
+                          label: l10n.settingsLanguageDa,
+                        ),
+                        SelectionOption(
+                          value: 'de',
+                          label: l10n.settingsLanguageDe,
+                        ),
+                        SelectionOption(
+                          value: 'el',
+                          label: l10n.settingsLanguageEl,
+                        ),
+                        SelectionOption(
+                          value: 'es',
+                          label: l10n.settingsLanguageEs,
+                        ),
+                        SelectionOption(
+                          value: 'fi',
+                          label: l10n.settingsLanguageFi,
+                        ),
+                        SelectionOption(
+                          value: 'fr',
+                          label: l10n.settingsLanguageFr,
+                        ),
+                        SelectionOption(
+                          value: 'he',
+                          label: l10n.settingsLanguageHe,
+                        ),
+                        SelectionOption(
+                          value: 'hi',
+                          label: l10n.settingsLanguageHi,
+                        ),
+                        SelectionOption(
+                          value: 'hu',
+                          label: l10n.settingsLanguageHu,
+                        ),
+                        SelectionOption(
+                          value: 'id',
+                          label: l10n.settingsLanguageId,
+                        ),
+                        SelectionOption(
+                          value: 'it',
+                          label: l10n.settingsLanguageIt,
+                        ),
+                        SelectionOption(
+                          value: 'ja',
+                          label: l10n.settingsLanguageJa,
+                        ),
+                        SelectionOption(
+                          value: 'ko',
+                          label: l10n.settingsLanguageKo,
+                        ),
+                        SelectionOption(
+                          value: 'nb',
+                          label: l10n.settingsLanguageNb,
+                        ),
+                        SelectionOption(
+                          value: 'nl',
+                          label: l10n.settingsLanguageNl,
+                        ),
+                        SelectionOption(
+                          value: 'pl',
+                          label: l10n.settingsLanguagePl,
+                        ),
+                        SelectionOption(
+                          value: 'pt',
+                          label: l10n.settingsLanguagePt,
+                        ),
+                        SelectionOption(
+                          value: 'ro',
+                          label: l10n.settingsLanguageRo,
+                        ),
+                        SelectionOption(
+                          value: 'ru',
+                          label: l10n.settingsLanguageRu,
+                        ),
+                        SelectionOption(
+                          value: 'sv',
+                          label: l10n.settingsLanguageSv,
+                        ),
+                        SelectionOption(
+                          value: 'th',
+                          label: l10n.settingsLanguageTh,
+                        ),
+                        SelectionOption(
+                          value: 'tr',
+                          label: l10n.settingsLanguageTr,
+                        ),
+                        SelectionOption(
+                          value: 'uk',
+                          label: l10n.settingsLanguageUk,
+                        ),
+                        SelectionOption(
+                          value: 'vi',
+                          label: l10n.settingsLanguageVi,
+                        ),
+                        SelectionOption(
+                          value: 'zh',
+                          label: l10n.settingsLanguageZh,
+                        ),
+                      ],
+                    );
+                    if (v != null) {
+                      ref.read(settingsProvider.notifier).setLocale(v);
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsLanguageChanged,
+                        );
                       }
-                    },
-                  ),
+                    }
+                  },
                 ),
-              ],
-            ),
-
-            // --- Windows 11 chrome (Mica + rounded corners) ---
-            // Both default-on. Win10 silently degrades: Mica falls back to
-            // Acrylic and the rounded-corner DWM attribute is a no-op.
-            if (Platform.isWindows) ...[
-              Spacing.verticalLg,
-              const SectionHeader(title: 'Windows chrome'),
-              SettingsGroupCard(
-                children: [
-                  SettingsSwitchTile(
-                    icon: Icons.blur_on,
-                    iconColor: Theme.of(context).colorScheme.primary,
-                    title: 'Use Mica backdrop',
-                    subtitleText:
-                        'Translucent Windows 11 Mica wallpaper effect. '
-                        'Falls back to Acrylic on Windows 10.',
-                    value: settings.windowsMicaBackdrop,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setWindowsMicaBackdrop(v);
-                    },
-                  ),
-                  SettingsSwitchTile(
-                    icon: Icons.rounded_corner,
-                    iconColor: Theme.of(context).colorScheme.secondary,
-                    title: 'Round window corners',
-                    subtitleText:
-                        'Apply Windows 11 rounded corners to the main window.',
-                    value: settings.windowsRoundCorners,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setWindowsRoundCorners(v);
-                    },
-                  ),
-                ],
               ),
             ],
+          ),
 
-            // --- Desktop integration (Linux only) ---
-            // The XDG appearance portal exposes the user's preferred color
-            // scheme + accent color. Honoring it makes SSHVault feel native
-            // on GNOME 42+ and KDE Plasma 6+.
-            if (Platform.isLinux) ...[
-              Spacing.verticalLg,
-              const SectionHeader(title: 'Desktop integration'),
-              SettingsGroupCard(
-                children: [
-                  SettingsSwitchTile(
-                    icon: Icons.color_lens_outlined,
-                    iconColor: Theme.of(context).colorScheme.primary,
-                    title: 'Follow GNOME accent color',
-                    subtitleText:
-                        'Use the desktop accent color from GNOME / KDE '
-                        'Settings as the app theme. Falls back to the '
-                        'built-in brand color when unavailable.',
-                    value: settings.followDesktopAccent,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setFollowDesktopAccent(v);
-                      AdaptiveNotification.show(
-                        context,
-                        message: l10n.settingsThemeChanged,
-                      );
-                    },
-                  ),
-                  // HiDPI override. `0.0` is the persisted sentinel for
-                  // "auto"; other values are forced verbatim.
-                  SettingsTile(
-                    icon: Icons.aspect_ratio,
-                    iconColor: Theme.of(context).colorScheme.secondary,
-                    title: 'Force pixel ratio',
-                    subtitleText: settings.forcedPixelRatio == 0
-                        ? 'Auto (use the OS-reported scale)'
-                        : '${settings.forcedPixelRatio}x (forced)',
-                    onTap: () async {
-                      final v = await showSettingsSelectionDialog<double>(
-                        context: context,
-                        title: 'Force pixel ratio',
-                        currentValue: settings.forcedPixelRatio,
-                        options: const [
-                          SelectionOption(value: 0.0, label: 'Auto'),
-                          SelectionOption(value: 1.0, label: '1.0x'),
-                          SelectionOption(value: 1.25, label: '1.25x'),
-                          SelectionOption(value: 1.5, label: '1.5x'),
-                          SelectionOption(value: 1.75, label: '1.75x'),
-                          SelectionOption(value: 2.0, label: '2.0x'),
-                        ],
-                      );
-                      if (v != null) {
-                        await ref
-                            .read(settingsProvider.notifier)
-                            .setForcedPixelRatio(v);
-                        // Mirror the persisted value into the in-memory
-                        // provider that `effectiveDevicePixelRatio` reads.
-                        // `0.0` means "auto" -> store as null.
-                        ref.read(forcedPixelRatioProvider.notifier).state =
-                            v == 0 ? null : v;
-                        if (context.mounted) {
-                          AdaptiveNotification.show(
-                            context,
-                            message: l10n.settingsThemeChanged,
-                          );
-                        }
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ],
-
-            // --- System integration (Android) ---
-            // Material You / Dynamic Color: on Android 12+ the platform
-            // exposes a wallpaper-derived CorePalette which we feed into
-            // the Material 3 ColorScheme as the seed. Pre-12 devices and
-            // non-Android targets ignore this flag (the dynamicColor
-            // provider returns null there, so the theme keeps the brand
-            // seed regardless of the toggle's value).
-            if (Platform.isAndroid) ...[
-              Spacing.verticalLg,
-              const SectionHeader(title: 'System integration'),
-              SettingsGroupCard(
-                children: [
-                  SettingsSwitchTile(
-                    icon: Icons.color_lens_outlined,
-                    iconColor: Theme.of(context).colorScheme.primary,
-                    title: 'Material You',
-                    subtitleText:
-                        'Use the Android 12+ wallpaper-derived accent '
-                        'color as the app theme. Falls back to the '
-                        'built-in brand color on Android 11 and earlier.',
-                    value: settings.followDynamicColor,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setFollowDynamicColor(v);
-                      AdaptiveNotification.show(
-                        context,
-                        message: l10n.settingsThemeChanged,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-
-            // --- Notifications (Windows / macOS) ---
-            // Native toasts on both platforms support inline action
-            // buttons that persist in the Action Center / Notification
-            // Center. Linux keeps using `flutter_local_notifications`,
-            // so this section is hidden there.
-            if (Platform.isWindows) ...[
-              Spacing.verticalLg,
-              const SectionHeader(title: 'Notifications'),
-              SettingsGroupCard(
-                children: [
-                  SettingsSwitchTile(
-                    icon: Icons.notifications_active_outlined,
-                    iconColor: Theme.of(context).colorScheme.primary,
-                    title: 'Show action buttons',
-                    subtitleText:
-                        'Add Disconnect / Show buttons to Windows toast '
-                        'notifications. Buttons persist in Action Center.',
-                    value: settings.windowsToastActionsEnabled,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setWindowsToastActionsEnabled(v);
-                    },
-                  ),
-                ],
-              ),
-            ],
-            if (Platform.isMacOS) ...[
-              Spacing.verticalLg,
-              const SectionHeader(title: 'Notifications'),
-              SettingsGroupCard(
-                children: [
-                  SettingsSwitchTile(
-                    icon: Icons.notifications_active_outlined,
-                    iconColor: Theme.of(context).colorScheme.primary,
-                    title: 'Show action buttons',
-                    subtitleText:
-                        'Add Disconnect / Show buttons to macOS '
-                        'notifications. Buttons persist in Notification Center.',
-                    value: settings.macosToastActionsEnabled,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setMacosToastActionsEnabled(v);
-                    },
-                  ),
-                ],
-              ),
-            ],
-
-            // iOS 16.1+ Live Activity toggle. The native bridge gates the
-            // actual ActivityKit call on `iOS 16.1` availability, but we
-            // surface the toggle on every iOS device so users see why
-            // their Dynamic Island stays empty on iOS 16.0 and earlier.
-            if (Platform.isIOS) ...[
-              Spacing.verticalLg,
-              const SectionHeader(title: 'Lock Screen'),
-              SettingsGroupCard(
-                children: [
-                  SettingsSwitchTile(
-                    icon: Icons.dynamic_feed_outlined,
-                    iconColor: Theme.of(context).colorScheme.primary,
-                    title: 'Show active sessions on Lock Screen',
-                    subtitleText:
-                        'Display the count and host names of active SSH '
-                        'sessions in the Dynamic Island and on the Lock '
-                        'Screen. Requires iOS 16.1 or later.',
-                    value: settings.iosLiveActivitySessions,
-                    onChanged: (v) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setIosLiveActivitySessions(v);
-                    },
-                  ),
-                  // Toggle for the Home Screen + Lock Screen widgets shipped
-                  // by `ios/SshvaultWidget/`. Default-on; flipping to false
-                  // pushes an empty payload over the App Group bridge so the
-                  // widget renders its placeholder. The Home Screen tiles
-                  // require iOS 14+; the Lock Screen complications require
-                  // iOS 16+ (the widget bundle availability-gates the latter
-                  // on the Swift side).
-                  SettingsSwitchTile(
-                    icon: Icons.widgets_outlined,
-                    iconColor: Theme.of(context).colorScheme.secondary,
-                    title: 'Show widgets',
-                    subtitleText:
-                        'Publish favorite + last-connected hosts to the '
-                        'iOS Home Screen and Lock Screen widgets. '
-                        'Home Screen widget requires iOS 14+; '
-                        'Lock Screen complication requires iOS 16+.',
-                    value: ref.watch(iosWidgetsEnabledProvider),
-                    onChanged: (v) {
-                      ref.read(iosWidgetsEnabledProvider.notifier).state = v;
-                    },
-                  ),
-                ],
-              ),
-            ],
-
-            // Terminal
+          // --- Windows 11 chrome (Mica + rounded corners) ---
+          // Both default-on. Win10 silently degrades: Mica falls back to
+          // Acrylic and the rounded-corner DWM attribute is a no-op.
+          if (Platform.isWindows) ...[
             Spacing.verticalLg,
-            SectionHeader(title: l10n.settingsSectionTerminal),
+            const SectionHeader(title: 'Windows chrome'),
             SettingsGroupCard(
               children: [
-                Builder(
-                  builder: (context) {
-                    final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
-                    return SettingsTile(
-                      icon: Icons.color_lens_outlined,
-                      iconColor: AppColors.iconDeepPurple,
-                      title: l10n.settingsTerminalTheme,
-                      subtitleText: themeKeyAsync.when(
-                        data: (key) => key.displayName,
-                        loading: () => l10n.loading,
-                        error: (_, _) => l10n.settingsTerminalThemeDefault,
-                      ),
-                      onTap: () => TerminalThemePicker.show(context),
+                SettingsSwitchTile(
+                  icon: Icons.blur_on,
+                  title: 'Use Mica backdrop',
+                  subtitleText:
+                      'Translucent Windows 11 Mica wallpaper effect. '
+                      'Falls back to Acrylic on Windows 10.',
+                  value: settings.windowsMicaBackdrop,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setWindowsMicaBackdrop(v);
+                  },
+                ),
+                SettingsSwitchTile(
+                  icon: Icons.rounded_corner,
+                  title: 'Round window corners',
+                  subtitleText:
+                      'Apply Windows 11 rounded corners to the main window.',
+                  value: settings.windowsRoundCorners,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setWindowsRoundCorners(v);
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          // --- Desktop integration (Linux only) ---
+          // The XDG appearance portal exposes the user's preferred color
+          // scheme + accent color. Honoring it makes SSHVault feel native
+          // on GNOME 42+ and KDE Plasma 6+.
+          if (Platform.isLinux) ...[
+            Spacing.verticalLg,
+            const SectionHeader(title: 'Desktop integration'),
+            SettingsGroupCard(
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.color_lens_outlined,
+                  title: 'Follow GNOME accent color',
+                  subtitleText:
+                      'Use the desktop accent color from GNOME / KDE '
+                      'Settings as the app theme. Falls back to the '
+                      'built-in brand color when unavailable.',
+                  value: settings.followDesktopAccent,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setFollowDesktopAccent(v);
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.settingsThemeChanged,
                     );
                   },
                 ),
-                Builder(
-                  builder: (context) {
-                    final fontSizeAsync = ref.watch(terminalFontSizeProvider);
-                    final fontSize = fontSizeAsync.value ?? 14.0;
-                    return SettingsTile(
-                      icon: Icons.text_fields_outlined,
-                      iconColor: AppColors.iconTeal,
-                      title: l10n.settingsFontSize,
-                      subtitleText: l10n.settingsFontSizeValue(
-                        fontSize.toInt(),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Tooltip(
-                            message: l10n.settingsFontSizeDecreaseTooltip,
-                            child: IconButton(
-                              icon: const Icon(Icons.remove),
-                              onPressed: fontSize <= 8
-                                  ? null
-                                  : () => ref
-                                        .read(terminalFontSizeProvider.notifier)
-                                        .decrease(),
-                            ),
-                          ),
-                          Tooltip(
-                            message: l10n.settingsFontSizeIncreaseTooltip,
-                            child: IconButton(
-                              icon: const Icon(Icons.add),
-                              onPressed: fontSize >= 24
-                                  ? null
-                                  : () => ref
-                                        .read(terminalFontSizeProvider.notifier)
-                                        .increase(),
-                            ),
-                          ),
-                        ],
-                      ),
+                // HiDPI override. `0.0` is the persisted sentinel for
+                // "auto"; other values are forced verbatim.
+                SettingsTile(
+                  icon: Icons.aspect_ratio,
+                  title: 'Force pixel ratio',
+                  subtitleText: settings.forcedPixelRatio == 0
+                      ? 'Auto (use the OS-reported scale)'
+                      : '${settings.forcedPixelRatio}x (forced)',
+                  onTap: () async {
+                    final v = await showSettingsSelectionDialog<double>(
+                      context: context,
+                      title: 'Force pixel ratio',
+                      currentValue: settings.forcedPixelRatio,
+                      options: const [
+                        SelectionOption(value: 0.0, label: 'Auto'),
+                        SelectionOption(value: 1.0, label: '1.0x'),
+                        SelectionOption(value: 1.25, label: '1.25x'),
+                        SelectionOption(value: 1.5, label: '1.5x'),
+                        SelectionOption(value: 1.75, label: '1.75x'),
+                        SelectionOption(value: 2.0, label: '2.0x'),
+                      ],
+                    );
+                    if (v != null) {
+                      await ref
+                          .read(settingsProvider.notifier)
+                          .setForcedPixelRatio(v);
+                      // Mirror the persisted value into the in-memory
+                      // provider that `effectiveDevicePixelRatio` reads.
+                      // `0.0` means "auto" -> store as null.
+                      ref.read(forcedPixelRatioProvider.notifier).state = v == 0
+                          ? null
+                          : v;
+                      if (context.mounted) {
+                        AdaptiveNotification.show(
+                          context,
+                          message: l10n.settingsThemeChanged,
+                        );
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          // --- System integration (Android) ---
+          // Material You / Dynamic Color: on Android 12+ the platform
+          // exposes a wallpaper-derived CorePalette which we feed into
+          // the Material 3 ColorScheme as the seed. Pre-12 devices and
+          // non-Android targets ignore this flag (the dynamicColor
+          // provider returns null there, so the theme keeps the brand
+          // seed regardless of the toggle's value).
+          if (Platform.isAndroid) ...[
+            Spacing.verticalLg,
+            const SectionHeader(title: 'System integration'),
+            SettingsGroupCard(
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.color_lens_outlined,
+                  title: 'Material You',
+                  subtitleText:
+                      'Use the Android 12+ wallpaper-derived accent '
+                      'color as the app theme. Falls back to the '
+                      'built-in brand color on Android 11 and earlier.',
+                  value: settings.followDynamicColor,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setFollowDynamicColor(v);
+                    AdaptiveNotification.show(
+                      context,
+                      message: l10n.settingsThemeChanged,
                     );
                   },
                 ),
               ],
             ),
-            Spacing.verticalLg,
           ],
-        ),
-        loading: () =>
-            const Center(child: CircularProgressIndicator.adaptive()),
-        error: (error, _) =>
-            Center(child: Text(l10n.error(errorMessage(error)))),
+
+          // --- Notifications (Windows / macOS) ---
+          // Native toasts on both platforms support inline action
+          // buttons that persist in the Action Center / Notification
+          // Center. Linux keeps using `flutter_local_notifications`,
+          // so this section is hidden there.
+          if (Platform.isWindows) ...[
+            Spacing.verticalLg,
+            const SectionHeader(title: 'Notifications'),
+            SettingsGroupCard(
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.notifications_active_outlined,
+                  title: 'Show action buttons',
+                  subtitleText:
+                      'Add Disconnect / Show buttons to Windows toast '
+                      'notifications. Buttons persist in Action Center.',
+                  value: settings.windowsToastActionsEnabled,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setWindowsToastActionsEnabled(v);
+                  },
+                ),
+              ],
+            ),
+          ],
+          if (Platform.isMacOS) ...[
+            Spacing.verticalLg,
+            const SectionHeader(title: 'Notifications'),
+            SettingsGroupCard(
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.notifications_active_outlined,
+                  title: 'Show action buttons',
+                  subtitleText:
+                      'Add Disconnect / Show buttons to macOS '
+                      'notifications. Buttons persist in Notification Center.',
+                  value: settings.macosToastActionsEnabled,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setMacosToastActionsEnabled(v);
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          // iOS 16.1+ Live Activity toggle. The native bridge gates the
+          // actual ActivityKit call on `iOS 16.1` availability, but we
+          // surface the toggle on every iOS device so users see why
+          // their Dynamic Island stays empty on iOS 16.0 and earlier.
+          if (Platform.isIOS) ...[
+            Spacing.verticalLg,
+            const SectionHeader(title: 'Lock Screen'),
+            SettingsGroupCard(
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.dynamic_feed_outlined,
+                  title: 'Show active sessions on Lock Screen',
+                  subtitleText:
+                      'Display the count and host names of active SSH '
+                      'sessions in the Dynamic Island and on the Lock '
+                      'Screen. Requires iOS 16.1 or later.',
+                  value: settings.iosLiveActivitySessions,
+                  onChanged: (v) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setIosLiveActivitySessions(v);
+                  },
+                ),
+                // Toggle for the Home Screen + Lock Screen widgets shipped
+                // by `ios/SshvaultWidget/`. Default-on; flipping to false
+                // pushes an empty payload over the App Group bridge so the
+                // widget renders its placeholder. The Home Screen tiles
+                // require iOS 14+; the Lock Screen complications require
+                // iOS 16+ (the widget bundle availability-gates the latter
+                // on the Swift side).
+                SettingsSwitchTile(
+                  icon: Icons.widgets_outlined,
+                  title: 'Show widgets',
+                  subtitleText:
+                      'Publish favorite + last-connected hosts to the '
+                      'iOS Home Screen and Lock Screen widgets. '
+                      'Home Screen widget requires iOS 14+; '
+                      'Lock Screen complication requires iOS 16+.',
+                  value: ref.watch(iosWidgetsEnabledProvider),
+                  onChanged: (v) {
+                    ref.read(iosWidgetsEnabledProvider.notifier).state = v;
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          // Terminal
+          Spacing.verticalLg,
+          SectionHeader(title: l10n.settingsSectionTerminal),
+          SettingsGroupCard(
+            children: [
+              Builder(
+                builder: (context) {
+                  final themeKeyAsync = ref.watch(terminalThemeKeyProvider);
+                  return SettingsTile(
+                    icon: Icons.color_lens_outlined,
+                    title: l10n.settingsTerminalTheme,
+                    subtitleText: themeKeyAsync.when(
+                      data: (key) => key.displayName,
+                      loading: () => l10n.loading,
+                      error: (_, _) => l10n.settingsTerminalThemeDefault,
+                    ),
+                    onTap: () => TerminalThemePicker.show(context),
+                  );
+                },
+              ),
+              Builder(
+                builder: (context) {
+                  final fontSizeAsync = ref.watch(terminalFontSizeProvider);
+                  final fontSize = fontSizeAsync.value ?? 14.0;
+                  return SettingsTile(
+                    icon: Icons.text_fields_outlined,
+                    title: l10n.settingsFontSize,
+                    subtitleText: l10n.settingsFontSizeValue(fontSize.toInt()),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Tooltip(
+                          message: l10n.settingsFontSizeDecreaseTooltip,
+                          child: IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed: fontSize <= 8
+                                ? null
+                                : () => ref
+                                      .read(terminalFontSizeProvider.notifier)
+                                      .decrease(),
+                          ),
+                        ),
+                        Tooltip(
+                          message: l10n.settingsFontSizeIncreaseTooltip,
+                          child: IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: fontSize >= 24
+                                ? null
+                                : () => ref
+                                      .read(terminalFontSizeProvider.notifier)
+                                      .increase(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          Spacing.verticalLg,
+        ],
       ),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
+      error: (error, _) => Center(child: Text(l10n.error(errorMessage(error)))),
     );
   }
 

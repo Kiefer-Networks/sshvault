@@ -1,11 +1,10 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sshvault/core/constants/app_colors.dart';
 import 'package:sshvault/core/services/android_background_sync_service.dart';
 import 'package:sshvault/core/services/ios_background_sync_service.dart';
 import 'package:sshvault/core/error/failures.dart';
@@ -70,321 +69,305 @@ class _AccountSyncScreenState extends ConsumerState<AccountSyncScreen> {
       }
     });
 
-    return AdaptiveScaffold(
-      title: l10n.settingsAccountAndSync,
-      body: ListView(
-        padding: Spacing.paddingHorizontalLgVerticalSm,
-        children: [
-          // Server Reachability Banner
-          if (isAuthenticated) ...[
-            Builder(
-              builder: (context) {
-                final reachable = ref.watch(serverReachableProvider);
-                if (reachable.value == false || reachable.hasError) {
-                  return Semantics(
-                    liveRegion: true,
-                    label: l10n.syncServerUnreachable,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: Spacing.lg),
-                      child: MaterialBanner(
-                        leading: Icon(
-                          Icons.cloud_off,
-                          color: theme.colorScheme.error,
-                        ),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.syncServerUnreachable,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                color: theme.colorScheme.error,
-                              ),
+    return ListView(
+      padding: Spacing.paddingHorizontalLgVerticalSm,
+      children: [
+        SettingsPaneHeader(title: l10n.settingsAccountAndSync),
+        // Server Reachability Banner
+        if (isAuthenticated) ...[
+          Builder(
+            builder: (context) {
+              final reachable = ref.watch(serverReachableProvider);
+              if (reachable.value == false || reachable.hasError) {
+                return Semantics(
+                  liveRegion: true,
+                  label: l10n.syncServerUnreachable,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: Spacing.lg),
+                    child: MaterialBanner(
+                      leading: Icon(
+                        Icons.cloud_off,
+                        color: theme.colorScheme.error,
+                      ),
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.syncServerUnreachable,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: theme.colorScheme.error,
                             ),
-                            Spacing.verticalXxs,
-                            Text(
-                              l10n.syncServerUnreachableHint,
-                              style: theme.textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        backgroundColor: theme.colorScheme.errorContainer
-                            .withAlpha(77),
-                        actions: [
-                          TextButton(
-                            onPressed: () =>
-                                ref.invalidate(serverReachableProvider),
-                            child: Text(l10n.serverConfigTest),
+                          ),
+                          Spacing.verticalXxs,
+                          Text(
+                            l10n.syncServerUnreachableHint,
+                            style: theme.textTheme.bodySmall,
                           ),
                         ],
                       ),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ],
-
-          // Login Card for unauthenticated users
-          if (!isAuthenticated) ...[
-            SectionCard(
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.cloud_sync_outlined,
-                    size: 48,
-                    color: theme.colorScheme.primary,
-                  ),
-                  Spacing.verticalLg,
-                  Text(
-                    l10n.authWhyLogin,
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  Spacing.verticalLg,
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () async {
-                        final serverUrl =
-                            ref.read(settingsProvider).value?.serverUrl ?? '';
-                        if (serverUrl.isEmpty) {
-                          await context.push('/server-config');
-                          if (!context.mounted) return;
-                          final updatedUrl =
-                              ref.read(settingsProvider).value?.serverUrl ?? '';
-                          if (updatedUrl.isEmpty) return;
-                        }
-                        if (context.mounted) context.push('/login');
-                      },
-                      icon: const Icon(Icons.login),
-                      label: Text(l10n.authLogin),
+                      backgroundColor: theme.colorScheme.errorContainer
+                          .withAlpha(77),
+                      actions: [
+                        TextButton(
+                          onPressed: () =>
+                              ref.invalidate(serverReachableProvider),
+                          child: Text(l10n.serverConfigTest),
+                        ),
+                      ],
                     ),
                   ),
-                  Spacing.verticalSm,
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () async {
-                        final serverUrl =
-                            ref.read(settingsProvider).value?.serverUrl ?? '';
-                        if (serverUrl.isEmpty) {
-                          await context.push('/server-config');
-                          if (!context.mounted) return;
-                          final updatedUrl =
-                              ref.read(settingsProvider).value?.serverUrl ?? '';
-                          if (updatedUrl.isEmpty) return;
-                        }
-                        if (context.mounted) context.push('/register');
-                      },
-                      icon: const Icon(Icons.person_add_outlined),
-                      label: Text(l10n.authRegister),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Spacing.verticalLg,
-          ],
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
 
-          // User Card
-          if (isAuthenticated) ...[
-            SectionHeader(title: l10n.accountTitle),
-            SectionCard(child: _buildUserCard(l10n, theme)),
-            Spacing.verticalLg,
-          ],
-
-          // Sync Controls
-          if (isAuthenticated) ...[
-            SectionHeader(title: l10n.syncTitle),
-            SettingsGroupCard(
+        // Login Card for unauthenticated users
+        if (!isAuthenticated) ...[
+          SectionCard(
+            child: Column(
               children: [
-                SettingsSwitchTile(
-                  icon: Icons.sync,
-                  iconColor: AppColors.iconLightBlue,
-                  title: l10n.syncAutoSync,
-                  subtitleText: l10n.syncAutoSyncDescription,
-                  value: settings?.autoSync ?? true,
-                  onChanged: (v) {
-                    ref.read(settingsProvider.notifier).setAutoSync(v);
-                  },
+                Icon(
+                  Icons.cloud_sync_outlined,
+                  size: 48,
+                  color: theme.colorScheme.primary,
                 ),
-                if (settings?.autoSync ?? false)
-                  Builder(
-                    builder: (context) {
-                      final interval = settings?.autoSyncIntervalMinutes ?? 5;
-                      return SettingsTile(
-                        icon: Icons.timer_outlined,
-                        iconColor: AppColors.iconTeal,
-                        title: l10n.autoSyncInterval,
-                        subtitleText: l10n.autoSyncIntervalValue(interval),
-                        onTap: () => _showIntervalPicker(l10n, interval),
-                      );
-                    },
-                  ),
-                // Mobile-only: opt-in background sync that runs even
-                // with the app closed. Android uses WorkManager, iOS
-                // uses BGTaskScheduler — both no-op on other platforms,
-                // so the toggle is hidden on desktop / web.
-                if (Platform.isAndroid || Platform.isIOS)
-                  SettingsSwitchTile(
-                    icon: Icons.cloud_queue,
-                    iconColor: AppColors.iconBlue,
-                    title: l10n.syncBackgroundSync,
-                    subtitleText: l10n.syncBackgroundSyncDescription,
-                    value: settings?.backgroundSyncEnabled ?? false,
-                    onChanged: (v) async {
-                      await ref
-                          .read(settingsProvider.notifier)
-                          .setBackgroundSyncEnabled(v);
-                      final intervalMins =
-                          settings?.autoSyncIntervalMinutes ?? 60;
-                      // WorkManager floors at 15min and BGTaskScheduler
-                      // throttles tight cadences — clamp on both so we
-                      // never pass a duration either OS would silently
-                      // ignore.
-                      final mins = intervalMins < 15 ? 60 : intervalMins;
-                      if (Platform.isAndroid) {
-                        final svc = ref.read(
-                          androidBackgroundSyncServiceProvider,
-                        );
-                        if (v) {
-                          await svc.enableBackgroundSync(
-                            interval: Duration(minutes: mins),
-                          );
-                        } else {
-                          await svc.disable();
-                        }
-                      } else {
-                        final svc = ref.read(iosBackgroundSyncServiceProvider);
-                        if (v) {
-                          await svc.enableBackgroundSync(
-                            interval: Duration(minutes: mins),
-                          );
-                        } else {
-                          await svc.disable();
-                        }
+                Spacing.verticalLg,
+                Text(
+                  l10n.authWhyLogin,
+                  style: theme.textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Spacing.verticalLg,
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () async {
+                      final serverUrl =
+                          ref.read(settingsProvider).value?.serverUrl ?? '';
+                      if (serverUrl.isEmpty) {
+                        await context.push('/server-config');
+                        if (!context.mounted) return;
+                        final updatedUrl =
+                            ref.read(settingsProvider).value?.serverUrl ?? '';
+                        if (updatedUrl.isEmpty) return;
                       }
+                      if (context.mounted) context.push('/login');
                     },
+                    icon: const Icon(Icons.login),
+                    label: Text(l10n.authLogin),
                   ),
-                SettingsTile(
-                  icon: isSyncing
-                      ? Icons.hourglass_top
-                      : Icons.cloud_sync_outlined,
-                  iconColor: AppColors.iconBlue,
-                  title: l10n.syncNow,
-                  subtitle: _buildSyncStatus(l10n, syncState),
-                  onTap: isSyncing
-                      ? null
-                      : () => ref.read(syncProvider.notifier).sync(),
                 ),
-                SettingsTile(
-                  icon: Icons.history,
-                  iconColor: AppColors.iconGrey,
-                  title: l10n.syncVaultVersion,
-                  subtitleText: 'v${settings?.localVaultVersion ?? 0}',
+                Spacing.verticalSm,
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      final serverUrl =
+                          ref.read(settingsProvider).value?.serverUrl ?? '';
+                      if (serverUrl.isEmpty) {
+                        await context.push('/server-config');
+                        if (!context.mounted) return;
+                        final updatedUrl =
+                            ref.read(settingsProvider).value?.serverUrl ?? '';
+                        if (updatedUrl.isEmpty) return;
+                      }
+                      if (context.mounted) context.push('/register');
+                    },
+                    icon: const Icon(Icons.person_add_outlined),
+                    label: Text(l10n.authRegister),
+                  ),
                 ),
               ],
             ),
-          ],
-
-          // Devices Card
-          if (isAuthenticated) ...[
-            Spacing.verticalLg,
-            SectionHeader(title: l10n.accountDevices),
-            SectionCard(child: _buildDevicesCard(l10n, theme)),
-          ],
-
-          // Account Actions
-          if (isAuthenticated) ...[
-            Spacing.verticalLg,
-            SectionHeader(title: l10n.accountTitle),
-            SettingsGroupCard(
-              children: [
-                SettingsTile(
-                  icon: Icons.history_outlined,
-                  iconColor: AppColors.iconBlueGrey,
-                  title: l10n.auditLogTitle,
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  onTap: () => context.push('/audit-log'),
-                ),
-                SettingsTile(
-                  icon: Icons.lock_outlined,
-                  iconColor: AppColors.iconIndigo,
-                  title: l10n.accountChangePassword,
-                  onTap: () => _changePassword(l10n),
-                ),
-                SettingsTile(
-                  icon: Icons.vpn_key_outlined,
-                  iconColor: AppColors.iconTeal,
-                  title: l10n.changeEncryptionPassword,
-                  onTap: () => _changeEncryptionPassword(l10n),
-                ),
-                SettingsTile(
-                  icon: Icons.devices_other,
-                  iconColor: AppColors.iconOrange,
-                  title: l10n.logoutAllDevices,
-                  onTap: () => _logoutAllDevices(l10n),
-                ),
-                SettingsTile(
-                  icon: Icons.delete_forever,
-                  iconColor: theme.colorScheme.error,
-                  title: l10n.accountDeleteAccount,
-                  onTap: () => _deleteAccount(l10n),
-                ),
-              ],
-            ),
-            Spacing.verticalSm,
-            SettingsGroupCard(
-              children: [
-                SettingsTile(
-                  icon: Icons.logout,
-                  iconColor: theme.colorScheme.error,
-                  title: l10n.accountLogout,
-                  onTap: () => _showLogoutSheet(l10n, theme),
-                ),
-              ],
-            ),
-          ],
-
-          // Server Configuration
-          Spacing.verticalLg,
-          SectionHeader(title: l10n.serverConfigTitle),
-          SettingsGroupCard(
-            children: [
-              if (settings?.serverUrl.isNotEmpty ?? false) ...[
-                SettingsTile(
-                  icon: Icons.cloud_outlined,
-                  iconColor: AppColors.iconBlueGrey,
-                  title: l10n.serverConfigUrlLabel,
-                  subtitleText: settings!.serverUrl,
-                ),
-                SettingsTile(
-                  icon: Icons.swap_horiz,
-                  iconColor: theme.colorScheme.error,
-                  title: l10n.settingsChangeServer,
-                  onTap: () => _changeServer(l10n),
-                ),
-              ] else
-                SettingsTile(
-                  icon: Icons.cloud_off_outlined,
-                  iconColor: AppColors.iconBlueGrey,
-                  title: l10n.settingsServerNotConfigured,
-                  subtitleText: l10n.settingsSetupSync,
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  onTap: () => context.push('/server-config'),
-                ),
-            ],
           ),
           Spacing.verticalLg,
         ],
-      ),
+
+        // User Card
+        if (isAuthenticated) ...[
+          SectionHeader(title: l10n.accountTitle),
+          SectionCard(child: _buildUserCard(l10n, theme)),
+          Spacing.verticalLg,
+        ],
+
+        // Sync Controls
+        if (isAuthenticated) ...[
+          SectionHeader(title: l10n.syncTitle),
+          SettingsGroupCard(
+            children: [
+              SettingsSwitchTile(
+                icon: Icons.sync,
+                title: l10n.syncAutoSync,
+                subtitleText: l10n.syncAutoSyncDescription,
+                value: settings?.autoSync ?? true,
+                onChanged: (v) {
+                  ref.read(settingsProvider.notifier).setAutoSync(v);
+                },
+              ),
+              if (settings?.autoSync ?? false)
+                Builder(
+                  builder: (context) {
+                    final interval = settings?.autoSyncIntervalMinutes ?? 5;
+                    return SettingsTile(
+                      icon: Icons.timer_outlined,
+                      title: l10n.autoSyncInterval,
+                      subtitleText: l10n.autoSyncIntervalValue(interval),
+                      onTap: () => _showIntervalPicker(l10n, interval),
+                    );
+                  },
+                ),
+              // Mobile-only: opt-in background sync that runs even
+              // with the app closed. Android uses WorkManager, iOS
+              // uses BGTaskScheduler â€” both no-op on other platforms,
+              // so the toggle is hidden on desktop / web.
+              if (Platform.isAndroid || Platform.isIOS)
+                SettingsSwitchTile(
+                  icon: Icons.cloud_queue,
+                  title: l10n.syncBackgroundSync,
+                  subtitleText: l10n.syncBackgroundSyncDescription,
+                  value: settings?.backgroundSyncEnabled ?? false,
+                  onChanged: (v) async {
+                    await ref
+                        .read(settingsProvider.notifier)
+                        .setBackgroundSyncEnabled(v);
+                    final intervalMins =
+                        settings?.autoSyncIntervalMinutes ?? 60;
+                    // WorkManager floors at 15min and BGTaskScheduler
+                    // throttles tight cadences â€” clamp on both so we
+                    // never pass a duration either OS would silently
+                    // ignore.
+                    final mins = intervalMins < 15 ? 60 : intervalMins;
+                    if (Platform.isAndroid) {
+                      final svc = ref.read(
+                        androidBackgroundSyncServiceProvider,
+                      );
+                      if (v) {
+                        await svc.enableBackgroundSync(
+                          interval: Duration(minutes: mins),
+                        );
+                      } else {
+                        await svc.disable();
+                      }
+                    } else {
+                      final svc = ref.read(iosBackgroundSyncServiceProvider);
+                      if (v) {
+                        await svc.enableBackgroundSync(
+                          interval: Duration(minutes: mins),
+                        );
+                      } else {
+                        await svc.disable();
+                      }
+                    }
+                  },
+                ),
+              SettingsTile(
+                icon: isSyncing
+                    ? Icons.hourglass_top
+                    : Icons.cloud_sync_outlined,
+                title: l10n.syncNow,
+                subtitle: _buildSyncStatus(l10n, syncState),
+                onTap: isSyncing
+                    ? null
+                    : () => ref.read(syncProvider.notifier).sync(),
+              ),
+              SettingsTile(
+                icon: Icons.history,
+                title: l10n.syncVaultVersion,
+                subtitleText: 'v${settings?.localVaultVersion ?? 0}',
+              ),
+            ],
+          ),
+        ],
+
+        // Devices Card
+        if (isAuthenticated) ...[
+          Spacing.verticalLg,
+          SectionHeader(title: l10n.accountDevices),
+          SectionCard(child: _buildDevicesCard(l10n, theme)),
+        ],
+
+        // Account Actions
+        if (isAuthenticated) ...[
+          Spacing.verticalLg,
+          SectionHeader(title: l10n.accountTitle),
+          SettingsGroupCard(
+            children: [
+              SettingsTile(
+                icon: Icons.history_outlined,
+                title: l10n.auditLogTitle,
+                trailing: Icon(
+                  Icons.chevron_right,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                onTap: () => context.push('/audit-log'),
+              ),
+              SettingsTile(
+                icon: Icons.lock_outlined,
+                title: l10n.accountChangePassword,
+                onTap: () => _changePassword(l10n),
+              ),
+              SettingsTile(
+                icon: Icons.vpn_key_outlined,
+                title: l10n.changeEncryptionPassword,
+                onTap: () => _changeEncryptionPassword(l10n),
+              ),
+              SettingsTile(
+                icon: Icons.devices_other,
+                title: l10n.logoutAllDevices,
+                onTap: () => _logoutAllDevices(l10n),
+              ),
+              SettingsTile(
+                icon: Icons.delete_forever,
+                title: l10n.accountDeleteAccount,
+                onTap: () => _deleteAccount(l10n),
+              ),
+            ],
+          ),
+          Spacing.verticalSm,
+          SettingsGroupCard(
+            children: [
+              SettingsTile(
+                icon: Icons.logout,
+                title: l10n.accountLogout,
+                onTap: () => _showLogoutSheet(l10n, theme),
+              ),
+            ],
+          ),
+        ],
+
+        // Server Configuration
+        Spacing.verticalLg,
+        SectionHeader(title: l10n.serverConfigTitle),
+        SettingsGroupCard(
+          children: [
+            if (settings?.serverUrl.isNotEmpty ?? false) ...[
+              SettingsTile(
+                icon: Icons.cloud_outlined,
+                title: l10n.serverConfigUrlLabel,
+                subtitleText: settings!.serverUrl,
+              ),
+              SettingsTile(
+                icon: Icons.swap_horiz,
+                title: l10n.settingsChangeServer,
+                onTap: () => _changeServer(l10n),
+              ),
+            ] else
+              SettingsTile(
+                icon: Icons.cloud_off_outlined,
+                title: l10n.settingsServerNotConfigured,
+                subtitleText: l10n.settingsSetupSync,
+                trailing: Icon(
+                  Icons.chevron_right,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                onTap: () => context.push('/server-config'),
+              ),
+          ],
+        ),
+        Spacing.verticalLg,
+      ],
     );
   }
 

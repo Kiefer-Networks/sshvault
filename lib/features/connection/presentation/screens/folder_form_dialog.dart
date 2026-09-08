@@ -10,6 +10,7 @@ import 'package:sshvault/features/connection/presentation/providers/folder_provi
 import 'package:sshvault/features/connection/presentation/widgets/color_picker_field.dart';
 import 'package:sshvault/features/connection/presentation/widgets/folder_tree_picker.dart';
 import 'package:sshvault/features/connection/presentation/widgets/icon_picker_field.dart';
+import 'package:sshvault/core/widgets/settings/settings_pane_header.dart';
 
 class _FolderFormReactiveState {
   final int color;
@@ -43,7 +44,19 @@ final _folderFormStateProvider =
 class FolderFormDialog extends ConsumerStatefulWidget {
   final GroupEntity? folder;
 
-  const FolderFormDialog({super.key, this.folder});
+  /// True when rendered inline inside `FoldersMasterDetail`'s detail pane
+  /// instead of as its own pushed full-screen route.
+  final bool embedded;
+  final VoidCallback? onSaved;
+  final VoidCallback? onCancel;
+
+  const FolderFormDialog({
+    super.key,
+    this.folder,
+    this.embedded = false,
+    this.onSaved,
+    this.onCancel,
+  });
 
   bool get isEditing => folder != null;
 
@@ -111,6 +124,73 @@ class _FolderFormDialogState extends ConsumerState<FolderFormDialog> {
           folders.where((f) => f.id == formState.parentId).firstOrNull?.name,
     );
 
+    final formFields = ListView(
+      padding: Spacing.paddingAllMd,
+      children: [
+        TextField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            labelText: l10n.folderFormNameLabel,
+            prefixIcon: const Icon(Icons.folder_outlined),
+          ),
+          keyboardType: TextInputType.text,
+          autofocus: true,
+        ),
+        Spacing.verticalLg,
+        ListTile(
+          leading: const Icon(Icons.account_tree),
+          title: Text(parentName ?? l10n.folderFormParentNone),
+          subtitle: Text(l10n.folderFormParentLabel),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () async {
+            final result = await FolderTreePicker.show(
+              context,
+              selectedFolderId: formState.parentId,
+              excludeFolderId: widget.folder?.id,
+            );
+            if (result != formState.parentId) {
+              ref.read(_folderFormStateProvider.notifier).state = formState
+                  .copyWith(parentId: () => result);
+            }
+          },
+        ),
+        Spacing.verticalLg,
+        ColorPickerField(
+          selectedColor: formState.color,
+          onColorChanged: (c) =>
+              ref.read(_folderFormStateProvider.notifier).state = formState
+                  .copyWith(color: c),
+        ),
+        Spacing.verticalLg,
+        IconPickerField(
+          selectedIcon: formState.iconName,
+          onIconChanged: (i) =>
+              ref.read(_folderFormStateProvider.notifier).state = formState
+                  .copyWith(iconName: i),
+          accentColor: formState.color,
+        ),
+      ],
+    );
+
+    if (widget.embedded) {
+      return Column(
+        children: [
+          SettingsPaneHeader(
+            title: titleText,
+            actions: [
+              if (widget.onCancel != null)
+                TextButton(
+                  onPressed: widget.onCancel,
+                  child: Text(l10n.cancel),
+                ),
+              TextButton(onPressed: _save, child: Text(saveText)),
+            ],
+          ),
+          Expanded(child: formFields),
+        ],
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -120,53 +200,7 @@ class _FolderFormDialogState extends ConsumerState<FolderFormDialog> {
         title: Text(titleText),
         actions: [TextButton(onPressed: _save, child: Text(saveText))],
       ),
-      body: ListView(
-        padding: Spacing.paddingAllLg,
-        children: [
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: l10n.folderFormNameLabel,
-              prefixIcon: const Icon(Icons.folder_outlined),
-            ),
-            keyboardType: TextInputType.text,
-            autofocus: true,
-          ),
-          Spacing.verticalLg,
-          ListTile(
-            leading: const Icon(Icons.account_tree),
-            title: Text(parentName ?? l10n.folderFormParentNone),
-            subtitle: Text(l10n.folderFormParentLabel),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () async {
-              final result = await FolderTreePicker.show(
-                context,
-                selectedFolderId: formState.parentId,
-                excludeFolderId: widget.folder?.id,
-              );
-              if (result != formState.parentId) {
-                ref.read(_folderFormStateProvider.notifier).state = formState
-                    .copyWith(parentId: () => result);
-              }
-            },
-          ),
-          Spacing.verticalLg,
-          ColorPickerField(
-            selectedColor: formState.color,
-            onColorChanged: (c) =>
-                ref.read(_folderFormStateProvider.notifier).state = formState
-                    .copyWith(color: c),
-          ),
-          Spacing.verticalLg,
-          IconPickerField(
-            selectedIcon: formState.iconName,
-            onIconChanged: (i) =>
-                ref.read(_folderFormStateProvider.notifier).state = formState
-                    .copyWith(iconName: i),
-            accentColor: formState.color,
-          ),
-        ],
-      ),
+      body: formFields,
     );
   }
 
@@ -201,6 +235,11 @@ class _FolderFormDialogState extends ConsumerState<FolderFormDialog> {
       );
     }
 
-    if (mounted) Navigator.of(context).pop();
+    if (!mounted) return;
+    if (widget.onSaved != null) {
+      widget.onSaved!();
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 }
