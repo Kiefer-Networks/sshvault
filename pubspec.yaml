@@ -37,7 +37,7 @@ dependencies:
   # backend talks to GNOME Keyring / KWallet over the freedesktop Secret
   # Service API. On headless boxes KeyringService transparently falls
   # back to an encrypted file (see lib/core/storage/keyring_service.dart).
-  flutter_secure_storage: ^11.1.1
+  flutter_secure_storage: ^11.2.0
 
   # Crypto
   pointycastle: ^4.0.0
@@ -46,11 +46,11 @@ dependencies:
 
   # File System
   path: ^1.9.0
-  archive: ^4.0.2
+  archive: ^4.3.0
   path_provider: ^2.1.6
   file_picker: ^12.2.0
   share_plus: ^13.3.0
-  flutter_local_notifications: ^22.3.0
+  flutter_local_notifications: ^22.3.1
   url_launcher: ^6.3.1
   image_picker: ^1.2.3
 
@@ -134,7 +134,7 @@ dev_dependencies:
 
   # Code Generation
   build_runner: ^2.15.1
-  freezed: ^4.0.1
+  freezed: ^4.0.2
   json_serializable: ^6.14.1
   riverpod_generator: ^4.0.9
   drift_dev: ^2.34.0
