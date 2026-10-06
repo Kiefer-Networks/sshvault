@@ -72,7 +72,7 @@ dependencies:
   # In-App Purchase
 
   # UI
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^2.0.0
   font_awesome_flutter: ^11.0.0
   flutter_slidable: ^4.0.3
 
